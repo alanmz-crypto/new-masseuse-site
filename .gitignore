@@ -1,0 +1,24 @@
+# Disposable runtime tree — restored via scripts/, not tracked.
+# (No custom child theme exists yet; revisit this exclusion once one does,
+# the way willowyhollow-practice ancestor-unignores its canonical theme.)
+public_html/
+
+# Backups (restic repo, password file, snapshots)
+backups/
+
+# Migration/deploy staging — production DB dumps, a 79MB files tarball,
+# and production wp-config/.htaccess. Never belongs in git.
+deploy/
+source-files/
+source-db.sql
+new-masseuse-db-fixed.sql
+
+# Secrets — plaintext SSH/DB credentials for the live thaisolitude.com site.
+remote_execution.txt
+sql_manager.txt
+
+# Generic
+*.sql
+*.sql.gz
+*.tar.gz
+.DS_Store

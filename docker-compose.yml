@@ -1,0 +1,50 @@
+name: new-masseuse-site
+
+# Image digests pinned 2026-09-27 so rebuilds resolve the same bits a tag
+# could later point away from. Re-pin deliberately with:
+#   docker buildx imagetools inspect <name:tag>
+services:
+  db:
+    image: mariadb:10.6@sha256:40153feb479c0da88b5cfe3f50f44c91f7baf05a1b7bcc5beb7eb37a890a8f16
+    container_name: new-masseuse-db-1
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: newrootpassword
+      MYSQL_DATABASE: new_masseuse_db
+      MYSQL_USER: new
+      MYSQL_PASSWORD: newpassword
+    volumes:
+      - new_masseuse_db_data:/var/lib/mysql
+
+  wordpress:
+    image: wordpress:latest@sha256:e1736f6dba253975920681a6faf57f833973a5ae8a1057a495fe94bfced2d41c
+    container_name: new-masseuse-wordpress-1
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8090:80"
+    depends_on:
+      - db
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_NAME: new_masseuse_db
+      WORDPRESS_DB_USER: new
+      WORDPRESS_DB_PASSWORD: newpassword
+    volumes:
+      - ./public_html:/var/www/html
+
+  wpcli:
+    image: wordpress:cli@sha256:0f7f0f895c379bb7b60b8f09562811084ac0424d544747f76d95cc785feccac0
+    container_name: new-masseuse-wpcli
+    depends_on:
+      - db
+      - wordpress
+    volumes:
+      - ./public_html:/var/www/html
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_NAME: new_masseuse_db
+      WORDPRESS_DB_USER: new
+      WORDPRESS_DB_PASSWORD: newpassword
+
+volumes:
+  new_masseuse_db_data:
