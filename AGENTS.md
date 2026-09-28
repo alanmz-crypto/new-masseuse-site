@@ -60,9 +60,14 @@ staged — check `git status` after any broad `git add`.
 ## Migration context
 
 This site is mid-migration from `thaisolitude.com` (see `deploy/DEPLOY-NOTES.md`,
-not tracked in git). `public_html/mystaging01/` is a nested WordPress install —
-this appears to be pulled from a shared-hosting staging subdirectory, not an
-intentional local structure; verify before treating it as authoritative.
+not tracked in git). `public_html/mystaging01/` is a **separate, self-contained
+WordPress install** nested inside `public_html/` — it has its own `wp-config.php`
+and its own database name (different from `new_masseuse_db`), with `DB_HOST`
+set to `127.0.0.1`, which is meaningless inside this stack (no second DB
+service exists for it). It came along with the migration pull — most likely a
+shared-hosting staging clone from the original host — and is orphaned and
+non-functional as-is inside this Docker stack. It is client data: don't delete
+it without asking, but don't treat it as part of the practice site either.
 
 The active theme is stock **Astra** (parent theme only) — no child theme has
 been created yet. Once custom theme work starts, track it explicitly the way
