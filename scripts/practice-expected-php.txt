@@ -23,8 +23,8 @@ thaisolitude_php=8.2.34
 # practice :8090 - PHP baked into the digest-pinned wordpress/wpcli images
 #   recorded 2026-09-28
 #   refresh: docker exec new-masseuse-wordpress-1 php -r 'echo PHP_VERSION;'
-#   note: wordpress:latest currently resolves to php:8.3-apache base. Not yet
-#         re-pinned to match thaisolitude.com's php8.2 -- that is a separate,
-#         deliberate task (same as willowyhollow-practice's e803f0c), not done
-#         as part of adding this check.
-practice_php=8.3.35
+#   note: re-pinned from wordpress:php8.3-apache/wordpress:cli-php8.3 (8.3.35)
+#         to wordpress:php8.2-apache/wordpress:cli-php8.2 to match
+#         thaisolitude.com. Verified live after recreate: PHP_VERSION=8.2.34,
+#         HTTP 200, no fatal/parse errors.
+practice_php=8.2.34

@@ -7,6 +7,9 @@ name: new-masseuse-site
 # :cli-php8.3 -- same exact digest, same bits, only the tag now states the PHP
 # version so scripts/practice-image-parity.sh can verify it against the
 # recorded practice_php value instead of refusing a version-agnostic tag.
+# wordpress/wpcli re-pinned 2026-09-28 to php8.2 tags to match thaisolitude.com
+# PHP (8.2.34); see scripts/practice-image-parity.sh and
+# scripts/practice-expected-php.txt for the parity check this closes.
 services:
   db:
     image: mariadb:10.6@sha256:40153feb479c0da88b5cfe3f50f44c91f7baf05a1b7bcc5beb7eb37a890a8f16
@@ -21,7 +24,7 @@ services:
       - new_masseuse_db_data:/var/lib/mysql
 
   wordpress:
-    image: wordpress:php8.3-apache@sha256:e1736f6dba253975920681a6faf57f833973a5ae8a1057a495fe94bfced2d41c
+    image: wordpress:php8.2-apache@sha256:155d6534e01341dccfda59cdc2d44b016009768100cf0c67b8e3f991d1b53d36
     container_name: new-masseuse-wordpress-1
     restart: unless-stopped
     ports:
@@ -37,7 +40,7 @@ services:
       - ./public_html:/var/www/html
 
   wpcli:
-    image: wordpress:cli-php8.3@sha256:0f7f0f895c379bb7b60b8f09562811084ac0424d544747f76d95cc785feccac0
+    image: wordpress:cli-php8.2@sha256:aaa79b1239f24fccbb1634ec0a25c3e4fac6271bc9bf2334c40c3c8ef77bce89
     container_name: new-masseuse-wpcli
     depends_on:
       - db
