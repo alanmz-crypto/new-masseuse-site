@@ -12,6 +12,7 @@
 #   ./scripts/test-restore.sh --down   # stop and delete the test stack + volume + tmp files
 #   RESTORE_PROJECT=restore-check MASSEUSE_RESTORE_ROOT=/tmp/restore-check TEST_PORT=8092 ./scripts/test-restore.sh
 #   Use those same overrides with --down to remove that isolated run.
+#   RESTORE_FILES_SNAPSHOT=<id> RESTORE_DB_SNAPSHOT=<id> select snapshots instead of latest.
 #
 # The restore run fails unless the DB options are local, FORBIDDEN_HOST is absent,
 # / and /services/ load, and their upload images exist and return HTTP success.
@@ -32,6 +33,8 @@ COMPOSE_FILE="$RESTORE_ROOT/docker-compose.yml"
 DB_CONTAINER="${PROJECT}-db-1"
 DB_NAME="new_masseuse_db"
 FORBIDDEN_HOST="${FORBIDDEN_HOST:-thaisolitude.com}"
+FILES_SNAPSHOT="${RESTORE_FILES_SNAPSHOT:-latest}"
+DB_SNAPSHOT="${RESTORE_DB_SNAPSHOT:-latest}"
 export RESTIC_CACHE_DIR="${MASSEUSE_RESTIC_CACHE_DIR:-/tmp/masseuse-restore-restic-cache}"
 
 teardown() {
@@ -135,16 +138,16 @@ echo "=============================================="
 
 mkdir -p "$RESTORE_ROOT"
 
-echo "[1/9] Restore files snapshot -> $RESTORE_ROOT/public_html ..."
-restic restore latest --tag files --target "$RESTORE_ROOT/extract" >/dev/null
+echo "[1/9] Restore files snapshot '$FILES_SNAPSHOT' -> $RESTORE_ROOT/public_html ..."
+restic restore "$FILES_SNAPSHOT" --tag files --target "$RESTORE_ROOT/extract" >/dev/null
 # restic restores the absolute source path; relocate to a clean public_html
 SRC="$RESTORE_ROOT/extract$SITE_DIR/public_html"
 [[ -d "$SRC" ]] || SRC="$(dirname "$(find "$RESTORE_ROOT/extract" -maxdepth 8 -name wp-load.php | head -1)")"
 [[ -f "$SRC/wp-load.php" ]] || fail "Restored files snapshot does not contain wp-load.php"
 mv "$SRC" "$RESTORE_ROOT/public_html"
 
-echo "[2/9] Restore DB snapshot -> $RESTORE_ROOT/db.sql ..."
-restic dump latest --tag db "$DB_NAME.sql" > "$RESTORE_ROOT/db.sql"
+echo "[2/9] Restore DB snapshot '$DB_SNAPSHOT' -> $RESTORE_ROOT/db.sql ..."
+restic dump "$DB_SNAPSHOT" "$DB_NAME.sql" --tag db > "$RESTORE_ROOT/db.sql"
 [[ -s "$RESTORE_ROOT/db.sql" ]] || fail "Restored database dump is empty"
 
 echo "[3/9] Write throwaway wp-config-local.php + compose file ..."
