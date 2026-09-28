@@ -52,6 +52,10 @@ while [[ $# -gt 0 ]]; do
     --list)
       if restic cat config >/dev/null 2>&1; then
         restic snapshots --compact
+      elif [[ -e "$RESTIC_REPOSITORY/config" ]]; then
+        echo "[error] A repository exists at $RESTIC_REPOSITORY but cannot be opened." >&2
+        echo "        Check its password and repository health; refusing to report it as empty." >&2
+        exit 1
       else
         echo "No restic repo yet at $RESTIC_REPOSITORY (run a backup first)."
       fi
@@ -72,6 +76,11 @@ if [[ ! -f "$PW_FILE" ]]; then
   chmod 600 "$PW_FILE"
 fi
 if ! restic cat config >/dev/null 2>&1; then
+  if [[ -e "$RESTIC_REPOSITORY/config" ]]; then
+    echo "[error] A repository exists at $RESTIC_REPOSITORY but cannot be opened." >&2
+    echo "        Check its password and repository health; refusing to initialize over it." >&2
+    exit 1
+  fi
   echo "[init] Initialising local restic repo -> $RESTIC_REPOSITORY"
   restic init >/dev/null
 fi
@@ -106,11 +115,13 @@ if [[ "$DO_DB" -eq 1 ]]; then
              --stdin --stdin-filename "$DB_NAME.sql"; then
       :
     else
-      echo "[db] WARN: database dump/backup failed." >&2
+      echo "[db] ERROR: database dump/backup failed; this backup is incomplete." >&2
+      exit 1
     fi
   else
-    echo "[db] Skipping — container '$DB_CONTAINER' not running."
-    echo "     Start the stack first (docker compose up -d)."
+    echo "[db] ERROR: container '$DB_CONTAINER' is not running; this backup is incomplete." >&2
+    echo "     Start the stack first (docker compose up -d), or request --files-only explicitly." >&2
+    exit 1
   fi
 fi
 
