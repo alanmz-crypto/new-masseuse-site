@@ -3,6 +3,10 @@ name: new-masseuse-site
 # Image digests pinned 2026-09-27 so rebuilds resolve the same bits a tag
 # could later point away from. Re-pin deliberately with:
 #   docker buildx imagetools inspect <name:tag>
+# wordpress/wpcli retagged 2026-09-28 from :latest/:cli to :php8.3-apache/
+# :cli-php8.3 -- same exact digest, same bits, only the tag now states the PHP
+# version so scripts/practice-image-parity.sh can verify it against the
+# recorded practice_php value instead of refusing a version-agnostic tag.
 services:
   db:
     image: mariadb:10.6@sha256:40153feb479c0da88b5cfe3f50f44c91f7baf05a1b7bcc5beb7eb37a890a8f16
@@ -17,7 +21,7 @@ services:
       - new_masseuse_db_data:/var/lib/mysql
 
   wordpress:
-    image: wordpress:latest@sha256:e1736f6dba253975920681a6faf57f833973a5ae8a1057a495fe94bfced2d41c
+    image: wordpress:php8.3-apache@sha256:e1736f6dba253975920681a6faf57f833973a5ae8a1057a495fe94bfced2d41c
     container_name: new-masseuse-wordpress-1
     restart: unless-stopped
     ports:
@@ -33,7 +37,7 @@ services:
       - ./public_html:/var/www/html
 
   wpcli:
-    image: wordpress:cli@sha256:0f7f0f895c379bb7b60b8f09562811084ac0424d544747f76d95cc785feccac0
+    image: wordpress:cli-php8.3@sha256:0f7f0f895c379bb7b60b8f09562811084ac0424d544747f76d95cc785feccac0
     container_name: new-masseuse-wpcli
     depends_on:
       - db

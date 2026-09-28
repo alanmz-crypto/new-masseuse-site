@@ -74,9 +74,22 @@ been created yet. Once custom theme work starts, track it explicitly the way
 `willowyhollow-practice` ancestor-unignores `public_html/wp-content/themes/astra-child/`
 inside an otherwise-ignored `public_html/`.
 
-## No PHP-parity check yet
+## PHP-parity check
 
-`willowyhollow-practice` has `scripts/practice-image-parity.sh` comparing its
-pinned PHP version against staging2/production. That doesn't exist here yet —
-it needs a verified reading of `thaisolitude.com`'s actual production PHP
-version first, which hasn't been checked in this pass.
+```bash
+./scripts/practice-image-parity.sh          # exit 1 on drift or unverifiable input
+./scripts/practice-image-parity.sh --warn   # drift only warns; unpinned/unverifiable still fails
+```
+
+Compares the PHP version baked into the pinned `wordpress` image against
+`thaisolitude.com`'s actual production PHP (`scripts/practice-expected-php.txt`,
+each reading dated with its exact refresh command). Read-only, unwired — no
+sync script exists yet in this single-tier project to call it from.
+
+**Known, real drift as of 2026-09-28:** practice runs PHP 8.3.35;
+thaisolitude.com runs 8.2.34. `wordpress:latest`/`wordpress:cli` were retagged
+to `wordpress:php8.3-apache`/`wordpress:cli-php8.3` (same digest, zero behavior
+change) so the checker could verify the pin at all — a version-agnostic tag is
+rejected outright, not assumed correct. Re-pinning practice to php8.2 to close
+the drift is a separate, deliberate task (same pattern as
+`willowyhollow-practice`'s `e803f0c`), not done as part of adding this check.

@@ -1,0 +1,30 @@
+# PHP version expectations for the practice stack (:8090) and its deploy target.
+#
+# Purpose: the practice stack exists to approximate thaisolitude.com. When the
+# PHP version baked into the pinned wordpress/wpcli images diverges from what
+# the deploy target actually serves, practice stops being a faithful stand-in
+# and any parity conclusion drawn from it is suspect.
+#
+# Read by: scripts/practice-image-parity.sh (read-only, unwired -- no sync
+# script exists yet in this single-tier project to wire it into).
+# Refresh a value by running its recorded command and updating the number here.
+#
+# ---------------------------------------------------------------------------
+# thaisolitude.com (SiteGround, live production -- the deploy target this
+# practice stack approximates)
+#   recorded 2026-09-28
+#   refresh: ssh -i ~/.ssh/thaisolitude u3302-bwfv7ug4e2fy@thaisolitude.com \
+#              -p 18765 "php -r 'echo PHP_VERSION;'"
+#   note: host is thaisolitude.com, NOT ssh.thaisolitude.com (remote_execution.txt
+#         has the wrong host; every attempt against ssh.thaisolitude.com fails
+#         auth even with the correct key loaded).
+thaisolitude_php=8.2.34
+
+# practice :8090 - PHP baked into the digest-pinned wordpress/wpcli images
+#   recorded 2026-09-28
+#   refresh: docker exec new-masseuse-wordpress-1 php -r 'echo PHP_VERSION;'
+#   note: wordpress:latest currently resolves to php:8.3-apache base. Not yet
+#         re-pinned to match thaisolitude.com's php8.2 -- that is a separate,
+#         deliberate task (same as willowyhollow-practice's e803f0c), not done
+#         as part of adding this check.
+practice_php=8.3.35
