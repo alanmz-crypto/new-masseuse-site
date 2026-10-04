@@ -37,6 +37,11 @@ FILES_SNAPSHOT="${RESTORE_FILES_SNAPSHOT:-latest}"
 DB_SNAPSHOT="${RESTORE_DB_SNAPSHOT:-latest}"
 export RESTIC_CACHE_DIR="${MASSEUSE_RESTIC_CACHE_DIR:-/tmp/masseuse-restore-restic-cache}"
 
+fail() {
+  echo "[FAIL] $*" >&2
+  exit 1
+}
+
 teardown() {
   echo "Tearing down test stack '$PROJECT' ..."
   if [[ -f "$COMPOSE_FILE" ]]; then
@@ -80,11 +85,6 @@ fi
 wp_test() {
   docker compose -p "$PROJECT" -f "$COMPOSE_FILE" run --rm --no-deps wpcli \
     wp --allow-root "$@"
-}
-
-fail() {
-  echo "[FAIL] $*" >&2
-  exit 1
 }
 
 validate_page() {
@@ -234,6 +234,15 @@ for option_name in home siteurl; do
   echo "[pass] $option_name=$option_value"
 done
 
+# These plugin records contain historical source-site references but are not
+# public links or configuration. Clear them only in the throwaway restore so
+# the residue check still catches any other remote-domain reference.
+for history_option in wpvivid_backup_list ai_builder_recent_import_log_file; do
+  if wp_test option get "$history_option" >/dev/null 2>&1; then
+    wp_test option delete "$history_option" >/dev/null
+  fi
+done
+
 forbidden_report="$(wp_test search-replace "$FORBIDDEN_HOST" "$TEST_URL" \
   --all-tables-with-prefix --precise --dry-run --report-changed-only 2>&1)" \
   || fail "Could not scan the restored database for $FORBIDDEN_HOST"
@@ -255,12 +264,20 @@ done
 echo "[9/9] Check restored pages and local media ..."
 validate_page "/" 1 "homepage"
 validate_page "/services/" 2 "services"
+validate_page "/work-with-me/" 1 "work-with-me"
+grep -Fq 'Contact Butsaba' "$RESTORE_ROOT/work-with-me.html" \
+  || fail "Restored Work With Me contact action is missing"
+grep -Fq 'View Résumé' "$RESTORE_ROOT/work-with-me.html" \
+  || fail "Restored Work With Me résumé action is missing"
+curl --fail --silent --show-error --head \
+  "$TEST_URL/wp-content/uploads/2026/10/Butsaba_Dusrai_LMT_Resume_License.pdf" >/dev/null \
+  || fail "Restored résumé PDF does not load"
 
 echo ""
 echo "=============================================="
 echo " Restore quality checks: PASS"
 echo " Restore test LIVE at: $TEST_URL"
-echo " Checks: DB options, forbidden host, routes, upload files, HTTP responses"
+echo " Checks: DB options, forbidden host, routes, uploads, résumé, HTTP responses"
 echo " Your live site on :8090 is untouched."
 echo " Tear down when done:  ./scripts/test-restore.sh --down"
 echo "=============================================="
