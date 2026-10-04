@@ -69,6 +69,15 @@ editor metadata, so inspect them before deciding what belongs in a remote Git
 repository. The complete current site state is in the local database and
 files backup.
 
+The sitewide license and SEO-title follow-up is stored in
+`scripts/credibility-pass/sitewide-license-titles.php`. It checks four
+SureRank page titles and Astra's copyright footer without writing by default.
+After a local database backup, run it through WP-CLI with `apply-local` to
+apply only the reviewed values to localhost. It accepts `apply-staging12` only
+on the exact staging12 host; that remote action requires its own SiteGround
+backup and authorization. The script refuses independent title or footer edits
+instead of replacing them. It has no production apply mode.
+
 ## If local data is lost or reset
 
 Use `./scripts/test-restore.sh` to check a chosen local snapshot in an
