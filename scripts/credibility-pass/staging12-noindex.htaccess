@@ -1,0 +1,6 @@
+
+# BEGIN staging12 crawlable noindex
+<IfModule mod_headers.c>
+    Header always set X-Robots-Tag "noindex, follow"
+</IfModule>
+# END staging12 crawlable noindex
