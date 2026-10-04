@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Restore the latest backup into a THROWAWAY stack on :8091 to verify it works.
+# Restore a backup into a THROWAWAY stack on :8091 to verify it works.
 #
 # Fully isolated from your live :8090 stack:
 #   - separate compose project name (masseuse-restore-test)
@@ -15,10 +15,12 @@
 #   RESTORE_FILES_SNAPSHOT=<id> RESTORE_DB_SNAPSHOT=<id> select snapshots instead of latest.
 #
 # The restore run fails unless the DB options are local, FORBIDDEN_HOST is absent,
-# / and /services/ load, and their upload images exist and return HTTP success.
+# Home, Services, and Work With Me load, their upload images exist, and the
+# résumé file responds. Its images are pinned to this checkout's Compose file.
 set -euo pipefail
 
-SITE_DIR="${SITE_DIR:-$HOME/WordPress/new-masseuse-site}"
+SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SITE_DIR="${SITE_DIR:-$SOURCE_DIR}"
 cd "$SITE_DIR"
 
 export RESTIC_REPOSITORY="${MASSEUSE_RESTIC_REPO:-$SITE_DIR/backups/restic-repo}"
@@ -81,6 +83,21 @@ if ! restic snapshots --compact >/dev/null; then
   echo "        Check the repository path and password before starting a restore test." >&2
   exit 1
 fi
+
+# Restore with the same pinned image versions as the practice stack. This also
+# lets the script run from a clean Git checkout while SITE_DIR points at a
+# separately restored runtime tree.
+compose_json="$(docker compose -f "$SOURCE_DIR/docker-compose.yml" config --format json)" \
+  || fail "Could not read the source checkout's Docker Compose configuration"
+image_for() {
+  python3 -c 'import json, sys; print(json.load(sys.stdin)["services"][sys.argv[1]]["image"])' "$1" <<< "$compose_json"
+}
+db_image="$(image_for db)"
+wordpress_image="$(image_for wordpress)"
+wpcli_image="$(image_for wpcli)"
+for image in "$db_image" "$wordpress_image" "$wpcli_image"; do
+  [[ "$image" == *@sha256:* ]] || fail "Restore image is not digest-pinned: $image"
+done
 
 wp_test() {
   docker compose -p "$PROJECT" -f "$COMPOSE_FILE" run --rm --no-deps wpcli \
@@ -172,7 +189,7 @@ cat > "$COMPOSE_FILE" <<EOF
 name: $PROJECT
 services:
   db:
-    image: mariadb:10.6
+    image: $db_image
     container_name: ${PROJECT}-db-1
     environment:
       MYSQL_ROOT_PASSWORD: newrootpassword
@@ -180,7 +197,7 @@ services:
     volumes:
       - test_db_data:/var/lib/mysql
   wordpress:
-    image: wordpress:latest
+    image: $wordpress_image
     container_name: ${PROJECT}-wordpress-1
     depends_on: [db]
     ports:
@@ -193,7 +210,7 @@ services:
     volumes:
       - $RESTORE_ROOT/public_html:/var/www/html
   wpcli:
-    image: wordpress:cli
+    image: $wpcli_image
     depends_on: [db, wordpress]
     volumes:
       - $RESTORE_ROOT/public_html:/var/www/html

@@ -29,6 +29,35 @@ current résumé source is in `scripts/assets/`. Review files for private data
 before adding them to Git. The live WordPress tree, database dumps, backup
 repository, and credentials remain excluded from Git.
 
+### Keep Git edits separate from the runtime checkout
+
+The checkout that owns `public_html/` is the **runtime checkout**. It may have
+unrelated local files. Do not broadly stage, stash, clean, or pull over them.
+Fetch `origin/main`, then make a clean Git worktree for the next source change:
+
+```bash
+git fetch origin
+git worktree add -b docs/YYYY-MM-DD-short-name /tmp/thai-source-edit origin/main
+```
+
+Edit and commit only the intended source files in that worktree. When a WP-CLI
+script in the clean worktree needs to read the running localhost database,
+mount its scripts read-only into a one-shot WP-CLI container while using the
+runtime checkout's Compose file:
+
+```bash
+RUNTIME=/home/lauer/WordPress/new-masseuse-site
+SOURCE=/tmp/thai-source-edit
+docker compose -f "$RUNTIME/docker-compose.yml" run --rm \
+  -v "$SOURCE/scripts:/edit-scripts:ro" wpcli \
+  wp eval-file /edit-scripts/credibility-pass/verify-local.php
+```
+
+Take the database backup from the runtime checkout before any installer or
+other DB mutation. Push each source commit to its own branch; Git never
+captures a WordPress database change by itself. Review the rendered localhost
+page as well as the source diff.
+
 For the current local credibility pass, the six `source/page-*.html` files in
 `scripts/credibility-pass/` are the packaged staging12 inputs. Run
 `python3 scripts/credibility-pass/build-content.py` to regenerate the six
@@ -49,6 +78,41 @@ the WordPress installers. The files in `scripts/credibility-pass/` are an
 edit source for the staging12-based local credibility pass, not a substitute
 for a complete site backup.
 
+### Recovery on another computer
+
+A private Git checkout contains the scripts and approved edit sources, but it
+does **not** contain the WordPress files or database. To recreate the full
+practice site, retain all three: a Git checkout, a copy of the encrypted
+`backups/restic-repo/`, and its `backups/restic.password` secret. Store the
+password separately from the backup copy, such as in a password manager.
+The currently configured restic repository is local only. An encrypted copy
+on another computer or writable external destination remains a separate step.
+
+Once a destination is chosen and writable, take a fresh complete backup, let
+it finish, then copy `backups/restic-repo/` with `rsync -a` to that destination.
+Do not copy while a backup or prune is running. Verify the **copied** repo with
+`restic -r /destination/restic-repo --password-file /path/to/restic.password
+check --read-data`; this reads every encrypted pack. Keep the password in a
+separate location and verify that it can be retrieved during recovery. If a
+copied repo contains a stale lock, inspect its PID/time before running
+`restic unlock` against the copy; never unlock an active writer.
+
+On a new computer with Docker, Compose, restic, Python 3, and curl installed,
+clone the private repository, put the encrypted repository and password at
+separate readable paths, then run the isolated recovery check:
+
+```bash
+MASSEUSE_RESTIC_REPO=/path/to/copied/restic-repo \
+MASSEUSE_RESTIC_PASSWORD_FILE=/path/to/restic.password \
+./scripts/test-restore.sh
+```
+
+The restore check uses digest-pinned images from the checked-out Compose file,
+rewrites URLs only in its throwaway database, checks routes and media, and
+leaves the original practice stack untouched. It does not replace the live
+runtime automatically. Select a known files snapshot and its paired DB
+snapshot with `RESTORE_FILES_SNAPSHOT` and `RESTORE_DB_SNAPSHOT` when needed.
+
 ## Staging and production
 
 Staging12 and production are separate SiteGround WordPress installations.
@@ -57,3 +121,9 @@ before a separately authorized production promotion. Keep staging crawlable
 with `noindex` and check that production remains crawlable and indexable.
 Never copy localhost's `siteurl`, `home`, or localhost media URLs directly to
 a remote database.
+
+Run `python3 scripts/release-preflight.py` for read-only public checks of
+staging12 and production, then follow `scripts/RELEASE-WORKFLOW.md` for the
+manual SiteGround backup, claim review, Custom Deploy selection, and post-deploy
+checks. The script cannot establish that the public claims are accurate or
+that a SiteGround backup exists.
