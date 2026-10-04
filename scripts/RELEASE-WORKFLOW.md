@@ -31,6 +31,11 @@ production: the license number was visible on Work With Me but absent from
 the other checked pages; About and Contact titles said "Registered Therapist";
 Home and Services titles contained outcome language requiring review. Re-run
 the preflight after corrections rather than relying on this dated observation.
+The locally reviewed license/footer and title values are captured in
+`scripts/credibility-pass/sitewide-license-titles.php`. Its default `check`
+mode is read-only; applying it to staging12 is a separate authorized step
+after a remote backup. It does not resolve the remaining service, location, or
+facility facts.
 
 Separately confirm the contact form or email reaches Butsaba and a test booking
 can be completed without disturbing real appointments. Verify pages in a
