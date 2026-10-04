@@ -97,14 +97,21 @@ password separately from the backup copy, such as in a password manager.
 The currently configured restic repository is local only. An encrypted copy
 on another computer or writable external destination remains a separate step.
 
-Once a destination is chosen and writable, take a fresh complete backup, let
-it finish, then copy `backups/restic-repo/` with `rsync -a` to that destination.
-Do not copy while a backup or prune is running. Verify the **copied** repo with
-`restic -r /destination/restic-repo --password-file /path/to/restic.password
-check --read-data`; this reads every encrypted pack. Keep the password in a
-separate location and verify that it can be retrieved during recovery. If a
-copied repo contains a stale lock, inspect its PID/time before running
-`restic unlock` against the copy; never unlock an active writer.
+Once a separate writable destination is chosen, take a fresh complete backup
+and let it finish. From this checkout, use
+`scripts/copy-restic-offsite.sh --destination /destination/restic-repo` to preview
+the exact source and target; add `--apply` only after the destination is
+authorized. If running the script from a clean Git worktree without the local
+backup, prefix the command with
+`SITE_DIR=/home/lauer/WordPress/new-masseuse-site`. The script initializes an encrypted
+destination restic repository with the source chunker parameters, copies
+missing snapshots with `restic copy`, and runs `restic check --read-data` on
+the destination. It refuses a destination on the source filesystem. Later
+runs copy only snapshots that are missing. This backup copy does not contain
+the password file; store that secret separately and verify that it can be
+retrieved during recovery. A restic repository on a second drive protects
+against loss of the source drive; remove or replicate that drive separately
+for protection against loss of this whole computer.
 
 On a new computer with Docker, Compose, restic, Python 3, and curl installed,
 clone the private repository, put the encrypted repository and password at
