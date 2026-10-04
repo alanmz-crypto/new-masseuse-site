@@ -25,13 +25,15 @@
 #     | docker exec -i new-masseuse-db-1 mysql -u root -pnewrootpassword new_masseuse_db
 set -euo pipefail
 
-SITE_DIR="${SITE_DIR:-$HOME/WordPress/new-masseuse-site}"
+SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SITE_DIR="${SITE_DIR:-$SOURCE_DIR}"
 cd "$SITE_DIR"
 
 # --- restic repo + password (local, self-contained) ------------------------
 export RESTIC_REPOSITORY="${MASSEUSE_RESTIC_REPO:-$SITE_DIR/backups/restic-repo}"
 PW_FILE="${MASSEUSE_RESTIC_PASSWORD_FILE:-$SITE_DIR/backups/restic.password}"
 export RESTIC_PASSWORD_FILE="$PW_FILE"
+export RESTIC_CACHE_DIR="${MASSEUSE_RESTIC_CACHE_DIR:-$SITE_DIR/backups/restic-cache}"
 
 DB_CONTAINER="${MASSEUSE_DB_CONTAINER:-new-masseuse-db-1}"
 DB_NAME="${MASSEUSE_DB_NAME:-new_masseuse_db}"
@@ -128,8 +130,10 @@ fi
 # --- Retention: keep last N per tag group -----------------------------------
 if [[ "$KEEP" -gt 0 ]]; then
   echo "[prune] Keeping last $KEEP snapshots per group ..."
-  restic forget --keep-last "$KEEP" --group-by 'tags,paths' --prune >/dev/null 2>&1 \
-    || echo "[prune] (nothing to prune yet)"
+  if ! restic forget --keep-last "$KEEP" --group-by 'tags,paths' --prune >/dev/null; then
+    echo "[prune] ERROR: retention failed; inspect repository locks and health." >&2
+    exit 1
+  fi
 fi
 
 echo ""
