@@ -64,13 +64,14 @@ if [[ "$apply" -eq 0 ]]; then
   exit 0
 fi
 
-[[ -w "$parent" ]] || fail "Destination parent is not writable: $parent"
 if [[ -e "$destination" && ! -d "$destination" ]]; then
   fail 'Destination exists and is not a directory.'
 fi
 if [[ ! -d "$destination" ]]; then
+  [[ -w "$parent" ]] || fail "Destination parent is not writable: $parent"
   mkdir -m 700 "$destination"
 fi
+[[ -w "$destination" ]] || fail "Destination is not writable: $destination"
 if [[ ! -f "$destination/config" ]]; then
   [[ -z "$(ls -A "$destination")" ]] \
     || fail 'Destination is nonempty but is not a restic repository.'
