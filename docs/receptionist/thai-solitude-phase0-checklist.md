@@ -4,7 +4,7 @@
 
 ## Practice and source
 
-- [ ] Document which inquiries Butsaba misses while giving a massage, the channels they arrive through, and whether FAQ/contact/booking links actually address those tasks. Do not present this release as live phone or message coverage if it cannot provide it.
+- [ ] Document the frequency and channel of inquiries Butsaba misses while giving a massage, how they are handled today, and whether clients need an immediate answer, an acknowledgment with a callback time, or self-service booking. Check whether FAQ/contact/booking links address the common tasks. Do not present this release as live phone or message coverage if it cannot provide it; do not promise a callback time Butsaba has not approved and can meet.
 - [ ] Butsaba confirms the practice accepts private clients. Ryan reviews the **actual employment agreement** for the FAQ, contact, and booking path. If either point is unresolved, do not publish a client-booking FAQ.
 - [ ] Questions come from Butsaba's actual experience. Unanswered health-suitability questions use one approved boundary entry and contact path, with no individual contraindication advice.
 - [ ] Each published registry entry has a named editor, source, dated `approval_ref`, compliance checklist SHA-256/reviewer/date, and future `review_by`. An expired entry is removed or replaced before release.
