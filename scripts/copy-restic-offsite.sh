@@ -87,7 +87,44 @@ restic -r "$destination" -p "$password_file" copy \
 
 echo '[check] Reading all destination packs ...'
 restic -r "$destination" -p "$password_file" check --read-data
-dest_count="$(snapshot_count "$destination")" || fail 'Cannot read destination snapshots.'
-(( dest_count >= source_count )) \
-  || fail "Destination has $dest_count snapshots, fewer than source's $source_count."
-echo "[pass] $dest_count verified encrypted snapshots at $destination"
+echo '[compare] Matching source snapshots against the destination ...'
+python3 - "$source_repo" "$destination" "$password_file" <<'PY'
+import collections
+import json
+import subprocess
+import sys
+
+source, destination, password_file = sys.argv[1:]
+
+
+def snapshots(repo):
+    result = subprocess.check_output(
+        ["restic", "-r", repo, "-p", password_file, "snapshots", "--json"]
+    )
+    return json.loads(result)
+
+
+def identity(snapshot):
+    return (
+        snapshot["time"],
+        snapshot["tree"],
+        snapshot.get("hostname"),
+        snapshot.get("username"),
+        tuple(sorted(snapshot.get("paths") or [])),
+        tuple(sorted(snapshot.get("tags") or [])),
+    )
+
+
+source_snapshots = snapshots(source)
+destination_snapshots = snapshots(destination)
+missing = collections.Counter(map(identity, source_snapshots)) - collections.Counter(
+    map(identity, destination_snapshots)
+)
+if missing:
+    print(f"[error] Destination is missing {sum(missing.values())} source snapshot(s).", file=sys.stderr)
+    sys.exit(1)
+print(
+    f"[pass] All {len(source_snapshots)} source snapshots are present among "
+    f"{len(destination_snapshots)} verified encrypted destination snapshots at {destination}"
+)
+PY

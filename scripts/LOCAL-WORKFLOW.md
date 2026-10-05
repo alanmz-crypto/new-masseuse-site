@@ -109,8 +109,10 @@ need `sudo`. If running the script from a clean Git worktree without the local
 backup, prefix the command with
 `SITE_DIR=/home/lauer/WordPress/new-masseuse-site`. The script initializes an encrypted
 destination restic repository with the source chunker parameters, copies
-missing snapshots with `restic copy`, and runs `restic check --read-data` on
-the destination. It refuses a destination on the source filesystem. Later
+missing snapshots with `restic copy`, reads every destination pack with
+`restic check --read-data`, and confirms every source snapshot is present
+by matching its time, content tree, paths, and tags. It refuses a destination
+on the source filesystem. Later
 runs copy only snapshots that are missing. This backup copy does not contain
 the password file; store that secret separately and verify that it can be
 retrieved during recovery. A restic repository on a second drive protects
