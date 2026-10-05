@@ -1,9 +1,10 @@
-# Thai Solitude Phase 0 release checklist — v3
+# Thai Solitude Phase 0 release checklist — v4
 
-> Planning attachment to [receptionist plan v5](thai-solitude-receptionist-plan.md). Complete on the actual release candidate and record evidence before asking Ryan to approve a live promotion. This is the AI-free FAQ and contact release; the [chat suite](thai-solitude-receptionist-acceptance.md) is reference material for a phase that is not planned.
+> Planning attachment to [receptionist plan v6](thai-solitude-receptionist-plan.md). Complete on the actual release candidate and record evidence before asking Ryan to approve a live promotion. This is the AI-free FAQ and contact release; the [chat suite](thai-solitude-receptionist-acceptance.md) is reference material for a phase that is not planned.
 
 ## Practice and source
 
+- [ ] Document which inquiries Butsaba misses while giving a massage, the channels they arrive through, and whether FAQ/contact/booking links actually address those tasks. Do not present this release as live phone or message coverage if it cannot provide it.
 - [ ] Butsaba confirms the practice accepts private clients. Ryan reviews the **actual employment agreement** for the FAQ, contact, and booking path. If either point is unresolved, do not publish a client-booking FAQ.
 - [ ] Questions come from Butsaba's actual experience. Unanswered health-suitability questions use one approved boundary entry and contact path, with no individual contraindication advice.
 - [ ] Each published registry entry has a named editor, source, dated `approval_ref`, compliance checklist SHA-256/reviewer/date, and future `review_by`. An expired entry is removed or replaced before release.

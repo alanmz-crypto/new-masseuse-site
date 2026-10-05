@@ -1,15 +1,15 @@
-# Thai Solitude receptionist plan — v5
+# Thai Solitude receptionist plan — v6
 
 > **Planning only, revised 2026-10-05.** This document authorizes no site change, data deletion, provider signup, corpus ingest, or live deployment. Ryan approves each release; Butsaba approves practice facts and wording.
-> **Current status: discovery only.** No Phase 0 copy or site work begins until Butsaba confirms she wants to take private clients and Ryan reviews the actual employment agreement. Phase 1 chat is **not planned**; its specifications are reference material and reopen only with documented visitor need that the FAQ and existing email cannot meet, plus a new approval of safety and deployment design.
+> **Current status: discovery only.** Ryan confirms that Butsaba wants a receptionist because she cannot answer clients while giving a massage. This establishes the need for inquiry coverage, not which channels or tasks the receptionist should handle. No Phase 0 copy or site work begins until Butsaba confirms she wants to take private clients and Ryan reviews the actual employment agreement. Phase 1 chat is **not planned**; its specifications are reference material and reopen only with documented visitor need that the FAQ and existing email cannot meet, plus a new approval of safety and deployment design.
 >
-> Sources: the 2026-10-04 plan and review, the Thai Solitude project instructions, and an earlier shallow read of convmem at `ca0397c`. OpenClaw and convmem implementation details and their current arc states require a fresh check before private-side work.
+> Sources: Ryan's 2026-10-05 clarification about Butsaba's need, the 2026-10-04 plan and review, the Thai Solitude project instructions, and an earlier shallow read of convmem at `ca0397c`. OpenClaw and convmem implementation details and their current arc states require a fresh check before private-side work.
 
 ## 1. Purpose and first release
 
-Help visitors find accurate answers and reach Butsaba without implying that an automated system can decide health suitability, policy exceptions, or whether an appointment is confirmed.
+Help visitors find accurate answers and reach Butsaba while she is occupied with a massage, without implying that an automated system can decide health suitability, policy exceptions, or whether an appointment is confirmed. Discovery must identify whether the missed inquiries arrive by phone, text, email, or the site, and what response clients need while she is unavailable.
 
-**Phase 0 is a plain FAQ page, a clear contact path, and a link to the scheduling platform's booking page once Butsaba chooses one. It uses no AI.** First confirm that the practice is taking private clients and review the actual employment agreement before deciding whether this contact and booking path is permitted. If Butsaba has recurring client questions, use them to seed the FAQ; do not assume that 20 such questions exist. A “Didn't find your answer?” prompt offers contact. Butsaba can count unanswered topics manually from her inbox without copying message text into a new system.
+**The Phase 0 candidate is a plain FAQ page, a clear contact path, and a link to the scheduling platform's booking page once Butsaba chooses one. It uses no AI.** A FAQ can reduce routine questions, but it does not answer an incoming call or promise an immediate reply. First learn which channels create the missed-contact problem, confirm that the practice is taking private clients, and review the actual employment agreement before deciding whether this contact and booking path fits. If Butsaba has recurring client questions, use them to seed the FAQ; do not assume that 20 such questions exist. A “Didn't find your answer?” prompt offers contact. Butsaba can count unanswered topics manually from her inbox without copying message text into a new system.
 
 Thai Solitude is currently a WordPress site with a local practice stack and a SiteGround staging-to-live path. The project rule keeps remotely deployed site design and behavior in WordPress storage, not remote plugin or theme files. Phase 0 fits the existing page-content workflow. Section 5 preserves the unapproved chat design for reference.
 
@@ -54,7 +54,7 @@ Use the existing local backup → localhost review → staging review → SiteGr
 
 ## 4. Phase 0: FAQ and handoff
 
-- Confirm that the practice is taking private clients and review the actual employment agreement for this client-facing FAQ and booking path. Ask Butsaba for questions she actually receives; group duplicates without inventing answers.
+- Record how inquiries reach Butsaba while she is in a session (phone, text, email, or site), what clients need at that moment, and how those inquiries are handled today. Confirm that the practice is taking private clients and review the actual employment agreement for this client-facing FAQ and booking path. Ask Butsaba for questions she actually receives; group duplicates without inventing answers.
 - Draft answers from Butsaba-confirmed facts. Each public answer points to its registry ID in the authoring source.
 - Publish a navigable FAQ with contact options and a “Didn't find your answer?” prompt. Health-suitability questions use the single boundary answer and contact path. Do not require visitors to describe a health concern.
 - Add a direct booking-page link when the scheduling platform and public URL are confirmed. Do not build availability or booking APIs in this phase.
@@ -129,7 +129,7 @@ Track B belongs to a separately authorized convmem/OpenClaw slice if it modifies
 
 | Phase | Start condition | Done when |
 |---|---|---|
-| 0 — FAQ and handoff | Butsaba confirms the practice accepts private clients; Ryan reviews the actual employment agreement and identifies the site release | Approved FAQ, independent compliance record, existing-copy inventory and disposition, existing contact links verified, and Phase 0 checklist pass staging review; Ryan approves exact live promotion. Existing inbox privacy/legal review runs in parallel unless the release changes the contact-data flow |
+| 0 — FAQ and handoff | Inbound channels and missed-contact tasks are identified; Butsaba confirms the practice accepts private clients; Ryan reviews the actual employment agreement and identifies the site release | Approved FAQ, independent compliance record, existing-copy inventory and disposition, existing contact links verified, and Phase 0 checklist pass staging review; Ryan approves exact live promotion. Existing inbox privacy/legal review runs in parallel unless the release changes the contact-data flow |
 | 1 — bounded chat, not planned | No start under this plan; a documented unmet visitor need and new safety/deployment approval would be required to reopen | Reference suite has no current release role |
 | 2 — availability display, optional | Chosen scheduler has a scoped availability API and a demonstrated visitor need | Free slots are correct; booking and confirmation remain in the platform |
 | B1 — private curation, optional | Separate Ryan authorization for the private environment | Human-reviewed registry proposals improve the FAQ without corpus-to-public automation |
@@ -137,7 +137,7 @@ Track B belongs to a separately authorized convmem/OpenClaw slice if it modifies
 
 ## 9. Decisions still needed
 
-1. Whether the practice is taking private clients and whether the actual employment agreement permits solicitation; Butsaba's actual recurring questions, service model, location, hours, lengths, prices, credentials, contact channels, and approval cadence. Existing site `[ASK]` items remain unresolved until she answers them.
+1. Which inquiries arrive during massage sessions, through which channels, how they are handled now, and what a receptionist should do before Butsaba is free. Whether the practice is taking private clients and whether the actual employment agreement permits solicitation also remain open; gather Butsaba's actual recurring questions, service model, location, hours, lengths, prices, credentials, contact channels, and approval cadence. Existing site `[ASK]` items remain unresolved until she answers them.
 2. Whether client booking is active now, which scheduling platform owns it, and the approved booking URL.
 3. The exact Phase 0 WordPress pages, live form presence, existing-copy inventory and disposition, existing contact links, future staging/local copy procedure, posts/options to promote, with a usable remote backup. Review the existing inbox's retention in parallel.
 4. If chat is warranted: runtime and release design under the no-plugin rule; provider, retention and training settings; visitor consent; budget and rate limits.
