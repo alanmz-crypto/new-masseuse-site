@@ -94,17 +94,34 @@ does **not** contain the WordPress files or database. To recreate the full
 practice site, retain all three: a Git checkout, a copy of the encrypted
 `backups/restic-repo/`, and its `backups/restic.password` secret. Store the
 password separately from the backup copy, such as in a password manager.
-The currently configured restic repository is local only. An encrypted copy
-on another computer or writable external destination remains a separate step.
+The source restic repository is local. An encrypted copy was created on
+2026-10-05 at
+`/run/media/lauer/rszl-larch-5t-fs/thai-solitude-restic-repo` and restored
+successfully into an isolated test stack. Keep that copy current after new
+local backups.
 
-Once a destination is chosen and writable, take a fresh complete backup, let
-it finish, then copy `backups/restic-repo/` with `rsync -a` to that destination.
-Do not copy while a backup or prune is running. Verify the **copied** repo with
-`restic -r /destination/restic-repo --password-file /path/to/restic.password
-check --read-data`; this reads every encrypted pack. Keep the password in a
-separate location and verify that it can be retrieved during recovery. If a
-copied repo contains a stale lock, inspect its PID/time before running
-`restic unlock` against the copy; never unlock an active writer.
+Take a fresh complete backup and let it finish. From this checkout, run:
+
+```bash
+./scripts/copy-restic-offsite.sh --destination /run/media/lauer/rszl-larch-5t-fs/thai-solitude-restic-repo
+```
+
+This previews the source and target; add `--apply` to copy and verify. The destination directory
+is already owned by `lauer` with mode 700, so routine copy and checks do not
+need `sudo`. If running the script from a clean Git worktree without the local
+backup, prefix the command with
+`SITE_DIR=/home/lauer/WordPress/new-masseuse-site`. The script initializes an encrypted
+destination restic repository with the source chunker parameters, copies
+missing snapshots with `restic copy`, reads every destination pack with
+`restic check --read-data`, and confirms every source snapshot is present
+by matching its time, content tree, paths, and tags. It refuses a destination
+on the source filesystem or a temporary in-memory filesystem. Later runs copy
+only snapshots that are missing.
+This backup copy does not contain
+the password file; store that secret separately and verify that it can be
+retrieved during recovery. A restic repository on a second drive protects
+against loss of the source drive; remove or replicate that drive separately
+for protection against loss of this whole computer.
 
 On a new computer with Docker, Compose, restic, Python 3, and curl installed,
 clone the private repository, put the encrypted repository and password at
@@ -115,6 +132,10 @@ MASSEUSE_RESTIC_REPO=/path/to/copied/restic-repo \
 MASSEUSE_RESTIC_PASSWORD_FILE=/path/to/restic.password \
 ./scripts/test-restore.sh
 ```
+
+To test the copy itself, set `MASSEUSE_RESTIC_REPO` to the external path above
+and `MASSEUSE_RESTIC_PASSWORD_FILE` to the separately held password file when
+running `test-restore.sh`.
 
 The restore check uses digest-pinned images from the checked-out Compose file,
 rewrites URLs only in its throwaway database, checks routes and media, and
