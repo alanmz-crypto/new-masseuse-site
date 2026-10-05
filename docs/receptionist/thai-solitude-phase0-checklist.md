@@ -1,10 +1,11 @@
-# Thai Solitude Phase 0 release checklist — v4
+# Thai Solitude Phase 0 release checklist — v5
 
-> Planning attachment to [receptionist plan v6](thai-solitude-receptionist-plan.md). Complete on the actual release candidate and record evidence before asking Ryan to approve a live promotion. This is the AI-free FAQ and contact release; the [chat suite](thai-solitude-receptionist-acceptance.md) is reference material for a phase that is not planned.
+> Planning attachment to [receptionist plan v7](thai-solitude-receptionist-plan.md). Complete on the actual release candidate and record evidence before asking Ryan to approve a live promotion. This is the AI-free FAQ and contact release; the [chat suite](thai-solitude-receptionist-acceptance.md) is reference material for a phase that is not planned.
 
 ## Practice and source
 
 - [ ] Document the frequency and channel of inquiries Butsaba misses while giving a massage, how they are handled today, and whether clients need an immediate answer, an acknowledgment with a callback time, or self-service booking. Check whether FAQ/contact/booking links address the common tasks. Do not present this release as live phone or message coverage if it cannot provide it; do not promise a callback time Butsaba has not approved and can meet.
+- [ ] Dry-run representative non-identifying inquiries through the proposed path: routine fact, immediate answer, callback, booking without speaking, and suitability requiring Butsaba's judgment. Record which tasks it handles and which still interrupt her. If the common missed-call task remains unanswered, label the FAQ as a site improvement rather than a receptionist solution.
 - [ ] Butsaba confirms the practice accepts private clients. Ryan reviews the **actual employment agreement** for the FAQ, contact, and booking path. If either point is unresolved, do not publish a client-booking FAQ.
 - [ ] Questions come from Butsaba's actual experience. Unanswered health-suitability questions use one approved boundary entry and contact path, with no individual contraindication advice.
 - [ ] Each published registry entry has a named editor, source, dated `approval_ref`, compliance checklist SHA-256/reviewer/date, and future `review_by`. An expired entry is removed or replaced before release.

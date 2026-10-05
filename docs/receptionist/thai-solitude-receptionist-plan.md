@@ -1,10 +1,10 @@
-# Thai Solitude receptionist plan — v6
+# Thai Solitude receptionist plan — v7
 
 > **Planning only, revised 2026-10-05.** This document authorizes no site change, data deletion, provider signup, corpus ingest, or live deployment. Ryan approves each release; Butsaba approves practice facts and wording.
-> **Current status: discovery only.** Ryan confirms that Butsaba wants a receptionist because she cannot answer clients while giving a massage. This establishes the need for inquiry coverage, not which channels or tasks the receptionist should handle. No Phase 0 copy or site work begins until Butsaba confirms she wants to take private clients and Ryan reviews the actual employment agreement. Phase 1 chat is **not planned**; its specifications are reference material and reopen only with documented visitor need that the FAQ and existing email cannot meet, plus a new approval of safety and deployment design.
+> **Current status: discovery; implementation on ice.** Ryan confirms that Butsaba wants a receptionist because she cannot answer clients while giving a massage. This establishes the need for inquiry coverage, not which channels or tasks the receptionist should handle. Resume solution selection only with Butsaba's account of missed inquiries and expected responses, confirmation of private-client status, and Ryan's review of the actual employment agreement. No Phase 0 copy or site work begins before those facts are resolved. Phase 1 chat is **not planned**; its specifications are reference material and reopen only with documented visitor need that the FAQ and existing email cannot meet, plus a new approval of safety and deployment design.
 > **Ryan's subjective 2026-10-05 confidence:** need for inquiry coverage 95%; discovery before choosing a channel 95%; FAQ, existing email, and booking link as the solution 45%; starting Phase 0 site work now 15%; starting chat now 0%. These are planning judgments, not measured safety or success rates.
 >
-> Sources: Ryan's 2026-10-05 clarification about Butsaba's need, the 2026-10-04 plan and review, the Thai Solitude project instructions, and an earlier shallow read of convmem at `ca0397c`. OpenClaw and convmem implementation details and their current arc states require a fresh check before private-side work.
+> Sources: Ryan's 2026-10-05 clarification and confidence review, the 2026-10-05 read-only public contact-path check, the 2026-10-04 plan and review, the Thai Solitude project instructions, and an earlier shallow read of convmem at `ca0397c`. OpenClaw and convmem implementation details and their current arc states require a fresh check before private-side work.
 
 ## 1. Purpose and first release
 
@@ -62,7 +62,25 @@ Use the existing local backup → localhost review → staging review → SiteGr
 - Make clear that Butsaba personally handles suitability, exceptions, complaints, and special arrangements.
 - Complete the separate [Phase 0 release checklist](thai-solitude-phase0-checklist.md), including copy, metadata/schema, contact-data flow, mobile layout, and the staging/live crawling split.
 
-**Phase 0 is done** when the practice/client path is confirmed, Butsaba approves the questions and every published answer, the compliance check is recorded, the Phase 0 checklist passes on staging, and Ryan approves the exact stage-to-live operation.
+### Discovery test before choosing a release
+
+Once private-client inquiries are actually arriving, count missed inquiries for roughly two working weeks by channel (call, text, email, site) and needed outcome (immediate answer, callback acknowledgment, self-service booking, or other). Record only counts and whether a response was possible after the session; do not copy names, message text, or health details into the planning record. If the practice is not yet accepting clients, use Butsaba's recollection to draft scenarios but label the frequency unknown. A zero count before opening is not evidence that no receptionist is needed.
+
+Walk through representative, non-identifying scenarios with Butsaba: a routine fact question, a caller who needs an immediate answer, a caller willing to wait for a callback, a person who wants to book without speaking, and a suitability question that needs her personal judgment. For each candidate, check whether the visitor can reach an accurate next step without interrupting a massage. A FAQ is an adjunct if calls still need live handling. A callback path needs a response window Butsaba can meet. Self-service booking needs an approved, working platform link; neither the site nor a receptionist invents confirmation. If the common task is an immediate answer, evaluate live human coverage as a separate candidate rather than relabeling a FAQ as coverage.
+
+Keep three operational candidates distinct until the inquiry counts identify the primary task:
+
+- **Acknowledgment and callback:** a caller can leave a message and learn when Butsaba expects to respond. Test the actual phone route, message delivery, and her ability to meet the promised window. This fails as the main solution if callers commonly need an immediate answer.
+- **Self-service booking:** a caller or visitor can reach the chosen scheduler and complete a representative booking without speaking to Butsaba. Test the real link, service choices, confirmation, and cancellation in the platform. This is unavailable until a platform and public URL are approved.
+- **Live answering:** a named human covers the periods when clients expect an immediate response. Test coverage hours, permitted answers, handoff boundaries, and cost against observed call volume before choosing a provider. It is unnecessary if delayed acknowledgment or self-booking resolves the common task.
+
+An approved FAQ may complement any candidate for routine facts. It does not substitute for the candidate's phone or booking test.
+
+**Read-only desk test, 2026-10-05:** The eight inspected routes on both [live Thai Solitude](https://thaisolitude.com/) and [staging12](https://staging12.thaisolitude.com/) returned pages without visible forms or booking-link candidates. [Live Contact](https://thaisolitude.com/contact/) exposed `tel:` and `mailto:` links; [staging12 Contact](https://staging12.thaisolitude.com/contact/) exposed an `sms:` link and no visible email link, although Work With Me exposed `mailto:` on both hosts. The home buttons led to Contact. This HTML check does not establish voicemail, actual call routing, inbox behavior, hidden routes, or whether a caller receives an acknowledgment. The current site therefore demonstrates contact paths, not receptionist coverage or self-service booking.
+
+**Decision rule:** Prefer the least complex path that handles the observed common tasks and has an approved owner, response policy, and data flow. Do not start Phase 0 site work on the strength of the need alone. The present desk test does not validate any of the three operational candidates: callback behavior has not been checked, no booking link is exposed, and no live-answering coverage is identified. If private-client permission, the employment review, or usable inquiry evidence remains unavailable, put implementation on ice and retain this discovery plan. Do not treat an untested FAQ as completion of the receptionist objective.
+
+**Phase 0 is done** when the practice/client path is confirmed, the candidate is shown to handle the observed common tasks it claims to handle, Butsaba approves the questions and every published answer, the compliance check is recorded, the Phase 0 checklist passes on staging, and Ryan approves the exact stage-to-live operation.
 
 ## 5. Reference only: public chat is not planned
 

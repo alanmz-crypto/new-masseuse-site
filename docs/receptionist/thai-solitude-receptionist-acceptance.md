@@ -1,6 +1,6 @@
 # Thai Solitude bounded chat acceptance suite — draft v4
 
-> Reference attachment to [receptionist plan v6](thai-solitude-receptionist-plan.md) and the [handoff behavior spec](thai-solitude-handoff-behavior.md). These are **52 newly written cases based on the review categories**, not a transcription of an unavailable earlier conversation. Phase 0 has its own [release checklist](thai-solitude-phase0-checklist.md). Chat is not planned and no implementation has been tested.
+> Reference attachment to [receptionist plan v7](thai-solitude-receptionist-plan.md) and the [handoff behavior spec](thai-solitude-handoff-behavior.md). These are **52 newly written cases based on the review categories**, not a transcription of an unavailable earlier conversation. Phase 0 has its own [release checklist](thai-solitude-phase0-checklist.md). Chat is not planned and no implementation has been tested.
 
 ## How to run
 

@@ -1,6 +1,6 @@
 # Thai Solitude handoff behavior — v3
 
-> Reference attachment to [receptionist plan v6](thai-solitude-receptionist-plan.md). This specifies behavior for the Phase 0 FAQ/contact path and records a bounded-chat design that is not planned. Butsaba approves practice wording; the regulated-copy reviewer checks every public string. Crisis wording needs review against authoritative crisis-service guidance, not only approval by an LMT.
+> Reference attachment to [receptionist plan v7](thai-solitude-receptionist-plan.md). This specifies behavior for the Phase 0 FAQ/contact path and records a bounded-chat design that is not planned. Butsaba approves practice wording; the regulated-copy reviewer checks every public string. Crisis wording needs review against authoritative crisis-service guidance, not only approval by an LMT.
 
 ## General rule
 
