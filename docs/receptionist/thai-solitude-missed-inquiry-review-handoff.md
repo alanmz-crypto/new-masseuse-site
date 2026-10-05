@@ -1,0 +1,38 @@
+# [Arc none] Thai Solitude missed-inquiry recovery — adversarial review handoff
+
+> **Proposal for review, 2026-10-05. No implementation authorization.** Review against [receptionist plan v7](thai-solitude-receptionist-plan.md), whose implementation remains on ice. This handoff proposes a way to choose a solution; it does not select a vendor, change the phone line, publish copy, or reopen chat.
+
+## Decision to improve
+
+Butsaba wants coverage because she cannot answer clients while giving a massage. The 2026-10-05 desk test found a `tel:` and `mailto:` path on live Contact, an `sms:` path on staging12 Contact, and no visible booking link on eight inspected routes of either site. It did not establish what happens to an unanswered call or whether a client receives an acknowledgment. The plan currently names callback, self-booking, and live answering as separate candidates. None has been shown to solve the observed missed-inquiry problem.
+
+**Design hypothesis:** treat the first release as *missed-inquiry recovery*, with one primary response path and a fallback chosen from observed client tasks. A FAQ may support routine facts, but it is not the recovery path for a caller who has already dialed. The first thing to test is the existing phone route, because live Contact already invites calls while no booking link is visible. This is a test priority, not a decision to use voicemail or callback.
+
+## Proposed discovery and decision protocol
+
+1. **Establish permission and context.** Butsaba confirms whether she is taking private clients, which phone number and channels she owns for them, and whether calls actually arrive during sessions. Ryan reviews the actual employment agreement before any client-facing site or phone change. If private-client traffic has not started, use hypothetical scenarios to test mechanics but leave demand and frequency marked unknown.
+2. **Count attempts, including silent losses where observable.** For roughly two working weeks, record aggregate counts of calls, texts, email, and site inquiries received while she is unavailable. Separate missed calls with voicemail, missed calls without voicemail, messages, and known bookings. Record only channel, broad task, time sensitivity, and whether the inquiry was ultimately resolved *when known*; mark unknown for a caller who leaves no information. No names, phone numbers, message text, or health details enter the planning record. Do not infer that voicemail count equals missed-call count. If the existing call log cannot show unanswered attempts, record that blind spot rather than estimating them from voicemails. Butsaba can use her existing call log and inbox without exporting content into this plan.
+3. **Trace the current phone path with scheduled, non-sensitive test calls.** With Butsaba present for the test, call during a simulated unavailable period. Observe ringing, voicemail or carrier behavior, whether a caller receives any acknowledgment, where a message lands, who can access it, and whether Butsaba notices it after a session. Repeat for a caller who hangs up without leaving a message. Record the path and timestamps without retaining caller identifiers. No phone setting changes are part of this test.
+4. **Have Butsaba rank real tasks.** Review counts and five non-identifying scenarios: routine fact, appointment request, callback-tolerant question, immediate-answer request, and health-suitability question. For each, ask what the client needs *before she is free* and what she can realistically promise. Consider consequence and time sensitivity as well as frequency; a frequent low-stakes question does not erase a less frequent task that needs live handling.
+5. **Choose one primary candidate, with a named fallback, only after the above evidence.** Callback requires a verified message route and an approved response window she can meet. Self-booking requires an approved scheduler and successful end-to-end booking in its own interface. Live answering requires a named human, coverage hours, a narrow approved answer set, escalation to Butsaba for personal judgment, and cost justified by observed demand. A mixture is allowed if the task mix warrants it, but each channel needs a clear owner and visitor promise. Chat remains unplanned.
+6. **Rehearse before release.** Walk through the representative cases on the proposed route, including unanswered call, no voicemail, booking, and health-suitability handoff. The visitor must reach an accurate next step without an invented booking confirmation or an unsupported callback promise. The rehearsal is not a substitute for a later limited real-world pilot and release approval.
+
+## Evidence that could raise confidence
+
+The design choice should not be called high confidence until the phone path is observed, Butsaba confirms which tasks matter and what she can deliver, the primary candidate handles those tasks in a non-sensitive rehearsal, and any new channel has its data-flow and legal review. A limited pilot would then measure contact capture, correct next step, callback-window adherence or booking completion, interruptions to sessions, and Butsaba's workload. Counts should be reported with denominators and dates; a handful of successful synthetic calls cannot establish client acceptance.
+
+If the two-week count is absent or too small to distinguish candidates, keep the solution on ice. A mechanics test may still reveal a broken voicemail or message route, but it cannot prove which receptionist service clients want. Do not substitute a longer plan or more model testing for this missing evidence.
+
+**Current subjective confidence, for review:** 80% that this protocol will expose the main choice, but only 40% that callback is the right solution, 25% for self-booking, 35% for live answering, and 30% for FAQ as the primary receptionist solution. These are rough design judgments, not observed success rates. The gap between the protocol and the candidates is the reason to stop designing a specific implementation until Butsaba's evidence arrives.
+
+## Specific attack requested from the reviewer
+
+1. Does the protocol miss a common caller task, especially people who hang up without a message, callers who expect immediate help, or people who cannot use a booking page?
+2. Can counts be obtained without creating a new health-data copy? Are call-log metadata, voicemail storage, phone-provider retention, and any existing inbox copy treated correctly?
+3. Is the scheduled phone test sufficient to expose silent delivery failures? What additional **read-only or reversible** observation would change the decision?
+4. Is “one primary path plus fallback” too simple for a mix of calls, texts, and email? Identify a concrete counterexample from the known site state or a plausible representative inquiry.
+5. Are the callback, self-booking, and live-answering gates falsifiable, or could a preferred option pass on vague judgment? Which result should stop each option?
+6. Does any proposed wording imply a response time, staff, booking confirmation, health judgment, or OBMT-regulated claim that needs a separate review? Who owns review of a future voicemail or text script?
+7. Is this another diminishing-returns planning pass? If so, say exactly which Butsaba answer or observation is the next information-bearing step, and recommend **defer** rather than a speculative design change.
+
+Please give a **PASS, FAIL, or DEFER on this discovery-and-selection design**, then list blocking flaws separately from facts only Butsaba or Ryan can provide. Do not score an unbuilt callback, scheduler, or human-answering service as if it had been tested. Do not treat a PASS here as authorization to implement or merge site changes.
