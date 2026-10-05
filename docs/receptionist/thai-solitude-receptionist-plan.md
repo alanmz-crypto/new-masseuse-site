@@ -1,6 +1,7 @@
-# Thai Solitude receptionist plan — v4
+# Thai Solitude receptionist plan — v5
 
 > **Planning only, revised 2026-10-05.** This document authorizes no site change, data deletion, provider signup, corpus ingest, or live deployment. Ryan approves each release; Butsaba approves practice facts and wording.
+> **Current status: discovery only.** No Phase 0 copy or site work begins until Butsaba confirms she wants to take private clients and Ryan reviews the actual employment agreement. Phase 1 chat is **not planned**; its specifications are reference material and reopen only with documented visitor need that the FAQ and existing email cannot meet, plus a new approval of safety and deployment design.
 >
 > Sources: the 2026-10-04 plan and review, the Thai Solitude project instructions, and an earlier shallow read of convmem at `ca0397c`. OpenClaw and convmem implementation details and their current arc states require a fresh check before private-side work.
 
@@ -10,7 +11,7 @@ Help visitors find accurate answers and reach Butsaba without implying that an a
 
 **Phase 0 is a plain FAQ page, a clear contact path, and a link to the scheduling platform's booking page once Butsaba chooses one. It uses no AI.** First confirm that the practice is taking private clients and review the actual employment agreement before deciding whether this contact and booking path is permitted. If Butsaba has recurring client questions, use them to seed the FAQ; do not assume that 20 such questions exist. A “Didn't find your answer?” prompt offers contact. Butsaba can count unanswered topics manually from her inbox without copying message text into a new system.
 
-Thai Solitude is currently a WordPress site with a local practice stack and a SiteGround staging-to-live path. The project rule keeps remotely deployed site design and behavior in WordPress storage, not remote plugin or theme files. Phase 0 fits the existing page-content workflow. A later model endpoint needs its own reviewed deployment design (§5).
+Thai Solitude is currently a WordPress site with a local practice stack and a SiteGround staging-to-live path. The project rule keeps remotely deployed site design and behavior in WordPress storage, not remote plugin or theme files. Phase 0 fits the existing page-content workflow. Section 5 preserves the unapproved chat design for reference.
 
 ## 2. Decisions
 
@@ -62,7 +63,9 @@ Use the existing local backup → localhost review → staging review → SiteGr
 
 **Phase 0 is done** when the practice/client path is confirmed, Butsaba approves the questions and every published answer, the compliance check is recorded, the Phase 0 checklist passes on staging, and Ryan approves the exact stage-to-live operation.
 
-## 5. Later public chat, only if Phase 0 evidence warrants it
+## 5. Reference only: public chat is not planned
+
+Do not start chat implementation, provider selection, or a chat release from this plan. Reopening requires evidence of a visitor task the FAQ and existing email cannot serve, followed by a new decision on routing safety and a deployable runtime under the site rule. The material below records prior design work and is not an active phase.
 
 ### Trigger and answer boundary
 
@@ -127,7 +130,7 @@ Track B belongs to a separately authorized convmem/OpenClaw slice if it modifies
 | Phase | Start condition | Done when |
 |---|---|---|
 | 0 — FAQ and handoff | Butsaba confirms the practice accepts private clients; Ryan reviews the actual employment agreement and identifies the site release | Approved FAQ, independent compliance record, existing-copy inventory and disposition, existing contact links verified, and Phase 0 checklist pass staging review; Ryan approves exact live promotion. Existing inbox privacy/legal review runs in parallel unless the release changes the contact-data flow |
-| 1 — bounded chat, optional | Repeated unmet visitor task is documented; endpoint and provider decisions are approved | Structured selection and renderer pass the attached suite on staging; explicit release approval |
+| 1 — bounded chat, not planned | No start under this plan; a documented unmet visitor need and new safety/deployment approval would be required to reopen | Reference suite has no current release role |
 | 2 — availability display, optional | Chosen scheduler has a scoped availability API and a demonstrated visitor need | Free slots are correct; booking and confirmation remain in the platform |
 | B1 — private curation, optional | Separate Ryan authorization for the private environment | Human-reviewed registry proposals improve the FAQ without corpus-to-public automation |
 | B2 — private drafts, optional | Handoff volume justifies it; provider and retention decision made | Butsaba reviews every send and finds drafts useful; privacy and injection cases pass |

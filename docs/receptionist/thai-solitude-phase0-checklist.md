@@ -1,6 +1,6 @@
 # Thai Solitude Phase 0 release checklist — v3
 
-> Planning attachment to [receptionist plan v4](thai-solitude-receptionist-plan.md). Complete on the actual release candidate and record evidence before asking Ryan to approve a live promotion. This is the AI-free FAQ and contact release; the [chat suite](thai-solitude-receptionist-acceptance.md) is a later gate.
+> Planning attachment to [receptionist plan v5](thai-solitude-receptionist-plan.md). Complete on the actual release candidate and record evidence before asking Ryan to approve a live promotion. This is the AI-free FAQ and contact release; the [chat suite](thai-solitude-receptionist-acceptance.md) is reference material for a phase that is not planned.
 
 ## Practice and source
 
