@@ -1,6 +1,6 @@
-# Thai Solitude receptionist plan — v2
+# Thai Solitude receptionist plan — v3
 
-> **Planning only, revised 2026-10-05.** This document authorizes no site change, provider signup, corpus ingest, or live deployment. Ryan approves each release; Butsaba approves practice facts and wording.
+> **Planning only, revised 2026-10-05.** This document authorizes no site change, data deletion, provider signup, corpus ingest, or live deployment. Ryan approves each release; Butsaba approves practice facts and wording.
 >
 > Sources: the 2026-10-04 plan and review, the Thai Solitude project instructions, and an earlier shallow read of convmem at `ca0397c`. OpenClaw and convmem implementation details and their current arc states require a fresh check before private-side work.
 
@@ -8,7 +8,7 @@
 
 Help visitors find accurate answers and reach Butsaba without implying that an automated system can decide health suitability, policy exceptions, or whether an appointment is confirmed.
 
-**Phase 0 is a plain FAQ page, a clear contact path, and a link to the scheduling platform's booking page once Butsaba chooses one. It uses no AI.** First confirm that the practice is taking private clients and that any employer arrangement permits this contact and booking path. If Butsaba has recurring client questions, use them to seed the FAQ; do not assume that 20 such questions exist. A “Didn't find your answer?” prompt offers contact. Butsaba can count unanswered topics manually from her inbox without copying message text into a new system.
+**Phase 0 is a plain FAQ page, a clear contact path, and a link to the scheduling platform's booking page once Butsaba chooses one. It uses no AI.** First confirm that the practice is taking private clients and review the actual employment agreement before deciding whether this contact and booking path is permitted. If Butsaba has recurring client questions, use them to seed the FAQ; do not assume that 20 such questions exist. A “Didn't find your answer?” prompt offers contact. Butsaba can count unanswered topics manually from her inbox without copying message text into a new system.
 
 Thai Solitude is currently a WordPress site with a local practice stack and a SiteGround staging-to-live path. The project rule keeps remotely deployed site design and behavior in WordPress storage, not remote plugin or theme files. Phase 0 fits the existing page-content workflow. A later model endpoint needs its own reviewed deployment design (§5).
 
@@ -37,13 +37,13 @@ approved_by: Butsaba
 approved_date: "<date>"
 approval_ref: "<dated email/message or signed review reference>"
 compliance_checked:
-  checklist_revision: "<revision/date of Thai Solitude Fix Checklist>"
-  reviewer: "<name>"
+  checklist_sha256: "<SHA-256 of exact Thai Solitude Fix Checklist bytes checked>"
+  reviewer: "<Ryan or named independent human reviewer>"
   checked_date: "<date>"
 review_by: "<date>"
 ```
 
-The authoring registry lives in this site's reviewed source repository under a path chosen before Phase 0, with a named editor who transcribes Butsaba's approved plain-language answers. Butsaba does not need to edit YAML. `approval_ref` identifies the actual dated approval, without putting private messages or health details into the public registry. The compliance reviewer checks both the site's forbidden-term list and whether wording implies diagnosis, treatment, an unsupported outcome, or an unverified credential. An entry lacking either approval record or compliance check cannot publish.
+The authoring registry lives in this site's reviewed source repository under a path chosen before Phase 0, with a named editor who transcribes Butsaba's approved plain-language answers. Butsaba does not need to edit YAML. `approval_ref` identifies the actual dated approval, without putting private messages or health details into the public registry. **Ryan is the default regulated-copy reviewer and cannot approve an entry he edited; if Ryan edits it, name another independent human reviewer before release.** The model cannot approve its own output. The reviewer checks the site's forbidden-term list and whether wording implies diagnosis, treatment, an unsupported outcome, or an unverified credential. Because the canonical checklist is untracked, record its SHA-256 at check time; a changed hash requires rechecking affected entries. An entry lacking either approval record or independent compliance check cannot publish.
 
 Cover location, service model, hours, prices, session lengths, booking link, credentials, and contact details only when confirmed. Do not fill the site's unresolved `[ASK]` items by inference. Health-suitability questions share one approved boundary answer directing the visitor to Butsaba; do not publish individual pregnancy, medication, injury, or contraindication answers as FAQ claims. Before release, check FAQ text, chat connectives, fixed replies, title/meta/OG/Twitter fields, image alt text, and rendered schema/JSON-LD (including any Spectra `FAQPage` output and SureRank fields). Check the Oregon LMT license number in the rendered footer on every page and in any standalone promotional surface. A changed fact triggers a registry revision and a new page release.
 
@@ -53,7 +53,7 @@ Use the existing local backup → localhost review → staging review → SiteGr
 
 ## 4. Phase 0: FAQ and handoff
 
-- Confirm that the practice is taking private clients and that this client-facing FAQ and booking path fit any employer arrangement. Ask Butsaba for questions she actually receives; group duplicates without inventing answers.
+- Confirm that the practice is taking private clients and review the actual employment agreement for this client-facing FAQ and booking path. Ask Butsaba for questions she actually receives; group duplicates without inventing answers.
 - Draft answers from Butsaba-confirmed facts. Each public answer points to its registry ID in the authoring source.
 - Publish a navigable FAQ with contact options and a “Didn't find your answer?” prompt. Health-suitability questions use the single boundary answer and contact path. Do not require visitors to describe a health concern.
 - Add a direct booking-page link when the scheduling platform and public URL are confirmed. Do not build availability or booking APIs in this phase.
@@ -68,11 +68,11 @@ Use the existing local backup → localhost review → staging review → SiteGr
 
 Propose chat only after reviewing recurring unanswered topics counted manually from Butsaba's inbox. Phase 0 does not add a feedback widget, script, or storage. A concrete case for chat must explain which visitor task the FAQ and contact path cannot serve well.
 
-The model output is structured, for example `{action, claim_ids, connective_id, clarification_id}`. **Handoff is the default.** An answer is rendered only after a positive match to an allowed answer action and currently approved IDs. The server rejects unknown or expired IDs, incompatible combinations, and actions outside a closed enum. The renderer composes only approved answer text and reviewed fact-free connective text. The model does not write registry entries or invent links, credentials, discounts, suitability, or booking state.
+The model output is structured, for example `{action, claim_ids, connective_id, clarification_id, fixed_response_id}`. **Handoff is the default for ordinary uncertainty.** The model may select a reviewed fixed-response ID for crisis or immediate danger but never write its text. Routing precedence is **crisis fixed response → other fixed safety response → health handoff → ordinary handoff → approved answer**. A crisis route overrides any answer IDs and never points the visitor to Butsaba's inbox as the primary response. An answer is rendered only after a positive match to an allowed answer action and currently approved IDs. The server rejects unknown or expired IDs, incompatible combinations, and actions outside a closed enum. The renderer composes only approved answer text and reviewed fact-free connective text. The model does not write registry entries or invent links, credentials, discounts, suitability, or booking state.
 
-Before a model call, a deterministic pre-filter checks reviewed terms and patterns for pregnancy, medication, injury, surgery, crisis, and related health context, including common misspellings and Thai wording. A match forces handoff or a fixed response. This filter is a floor, not complete language understanding: the model's route can still escalate, and only a positive allowed answer can escape the default handoff. Fixed responses use pre-model detection; the model cannot author their text.
+Before a model call, a deterministic pre-filter checks reviewed terms and patterns for pregnancy, medication, injury, surgery, crisis, and related health context, including common misspellings and Thai wording. A match forces handoff or a fixed response. This filter is a floor, not complete language understanding: **when it misses crisis wording, the model may still choose the crisis action and fixed-response ID; code renders only the reviewed fixed text.** If the model marks safety ambiguity, use a reviewed fixed safety response rather than an ordinary inbox handoff. Neither model nor pre-filter is assumed complete; the crisis paraphrase cases are release blockers.
 
-If a clarifying turn is retained, keep only an opaque first-party session key, the pending approved question/claim ID, and a sticky `health_context` flag in server-side state for at most 30 minutes after the last turn. Do not persist raw prior messages or send them to the provider. Once any turn sets `health_context`, later turns in that session hand off; a benign follow-up cannot clear it. If this state cannot be implemented within the approved runtime and retention decision, use single-turn chat only.
+If a clarifying turn is retained, keep only an opaque first-party session key, the pending approved question/claim ID, and a sticky `health_context` flag in server-side state for at most 30 minutes after the last turn. The key needs a first-party `Secure`, `HttpOnly`, `SameSite` cookie and a disclosed retention/expiry rule. Do not persist raw prior messages or send them to the provider. Once any turn sets `health_context`, later turns in that session hand off; a benign follow-up cannot clear it. If this state cannot be implemented within the approved runtime and retention decision, use single-turn chat only.
 
 Keep the connective set small: greetings, transitions, and one neutral clarifying question. No open free-text slot. This may sound less fluid than free-form generation; review the actual visitor experience before widening it. A wrong approved claim still needs the misrouting cases in the [acceptance suite](thai-solitude-receptionist-acceptance.md).
 
@@ -102,14 +102,17 @@ The governing promise is **minimization**, not that health details can never occ
 | Phase 0 contact path | Prefer direct email/phone links with no new site form; any existing form can receive visitor-supplied health detail | Decide whether the existing form remains, its database entry setting, inbox retention, and consent before Phase 0 release |
 | Later hosted chat model | Current visitor message, minimal approved registry context, and coarse sticky health flag if needed; no raw prior turns | Name provider, retention, training use, abuse-monitoring logs, and deletion terms; decide whether visitor text may be sent |
 | Later receptionist runtime | Minimal request state, rate-limit keys, coarse failure counts | Specify retention, IP treatment, error-log redaction, and budget cap; no transcript logging by default |
+| Optional multi-turn session cookie | Random first-party key only; server state holds pending ID and sticky health flag | Decide cookie notice, `Secure`/`HttpOnly`/`SameSite` attributes, 30-minute expiry, and deletion behavior |
 | Scheduling platform | Data visitor supplies in the platform UI | Confirm booking URL, availability scope if used, privacy terms, and confirmation behavior |
 | Optional B2 private drafter | Only text the visitor chose to share and approved registry export | Decide local versus external provider, access and retention; Butsaba reviews and sends every reply |
 
 Avoid storing health-specific handoff reason enums with a session identifier. Use a coarse “needs personal judgment” category for operational counts, or aggregate counts without a session identifier. The handoff can explain its boundary without persisting a diagnosis-like label. Consent text must distinguish opening a contact channel from sending a note or transcript.
 
-The local practice copy has SureForms installed but inactive, while Google Site Kit is active; that does **not** establish either plugin's production behavior. Inspection of the installed SureForms code confirms it ordinarily creates entries in a WordPress table and has a form-level no-storage path when its compliance options are enabled. For Phase 0, the default is **no new free-text form**. If an existing live form remains, choose **entry storage off for new submissions**, verify that setting and delivery on the actual staging/production form, and document inbox retention; disabling new entries does not remove historical entries or email copies. If the no-storage path cannot be verified, use direct contact links and do not promote a new form.
+The local practice copy has SureForms installed but inactive, one published form definition, and no local page embedding that form according to the second read-only review. Google Site Kit is active locally; neither finding establishes production behavior. **First inspect the rendered live Contact page and page source for whether any form actually appears.** If no form is exposed, plan removal of the unused form and its entries through a separately authorized, backup-first cleanup; there is no new-form storage or notification workflow to implement for Phase 0. If a form is exposed and retained, choose **entry storage off for new submissions**, verify the actual remote setting and delivery, and document inbox retention. The installed SureForms code ordinarily stores entries in a WordPress table and has a form-level no-storage path when compliance options are enabled. Disabling new entries does not remove historical entries or email copies.
 
-Before making a SiteGround staging copy or a local database pull, identify and exclude or scrub visitor-entry tables and related metadata in a documented, backup-first copy procedure; verify the copy contains no visitor text. Keep historical backups under their own access and retention rule. Check that Google Analytics/Site Kit does not receive form values, health text, URL query parameters, or page paths containing such values. Do not assume Site Kit is sending Analytics data merely because the plugin is active locally.
+**Existing-copy inventory comes first.** The second read-only review found one SureForms entry dated 2026-06-08 in the local database and its table in `source-db.sql`, `new-masseuse-db-fixed.sql`, and `deploy/10-production-thaisolitude.sql`; the entry text was not read and its test/visitor status is unknown. Inventory production, the local database, these three dumps, staging4/staging5, local Restic snapshots, SiteGround backups, and any notification inbox using counts, dates, and metadata only. Ryan or Butsaba classifies the entry as test or real visitor data through an authorized private review. For **each** existing copy, record owner, access, classification, retention or purge decision, and completion evidence. No purge or DB mutation occurs without its required backup and explicit authorization; retention of a real visitor entry must have a stated purpose and period. Future SiteGround and local copies must exclude or scrub visitor data where possible; if cloning creates a full copy first, restrict access and scrub before use. Verify without printing visitor text. Check that Google Analytics/Site Kit does not receive form values, health text, URL query parameters, or page paths containing such values. Do not infer Analytics activation from a locally active plugin.
+
+Direct email and phone links avoid a **new WordPress form**, not collection of health detail. A visitor may email health information to Butsaba's inbox. The inbox's recipient, access, retention, deletion, and any forwarding or provider processing belong in the same privacy and legal review as a form. No new client-facing contact path is published until that review covers the chosen channel.
 
 ## 7. Private assistance: optional Track B
 
@@ -123,7 +126,7 @@ Track B belongs to a separately authorized convmem/OpenClaw slice if it modifies
 
 | Phase | Start condition | Done when |
 |---|---|---|
-| 0 — FAQ and handoff | Butsaba confirms the practice accepts private clients and permits this path, supplies facts, and Ryan identifies the site release | Approved FAQ, compliance record, data-flow decision, and Phase 0 checklist pass staging review; Ryan approves exact live promotion |
+| 0 — FAQ and handoff | Butsaba confirms the practice accepts private clients; Ryan reviews the actual employment agreement and identifies the site release | Approved FAQ, independent compliance record, existing-copy inventory and disposition, contact-channel review, and Phase 0 checklist pass staging review; Ryan approves exact live promotion |
 | 1 — bounded chat, optional | Repeated unmet visitor task is documented; endpoint and provider decisions are approved | Structured selection and renderer pass the attached suite on staging; explicit release approval |
 | 2 — availability display, optional | Chosen scheduler has a scoped availability API and a demonstrated visitor need | Free slots are correct; booking and confirmation remain in the platform |
 | B1 — private curation, optional | Separate Ryan authorization for the private environment | Human-reviewed registry proposals improve the FAQ without corpus-to-public automation |
@@ -131,12 +134,12 @@ Track B belongs to a separately authorized convmem/OpenClaw slice if it modifies
 
 ## 9. Decisions still needed
 
-1. Whether the practice is taking private clients and any employer arrangement permits solicitation; Butsaba's actual recurring questions, service model, location, hours, lengths, prices, credentials, contact channels, and approval cadence. Existing site `[ASK]` items remain unresolved until she answers them.
+1. Whether the practice is taking private clients and whether the actual employment agreement permits solicitation; Butsaba's actual recurring questions, service model, location, hours, lengths, prices, credentials, contact channels, and approval cadence. Existing site `[ASK]` items remain unresolved until she answers them.
 2. Whether client booking is active now, which scheduling platform owns it, and the approved booking URL.
-3. The exact Phase 0 WordPress pages, contact form/storage choice, staging copy and visitor-data scrub procedure, posts/options to promote, with a usable remote backup.
+3. The exact Phase 0 WordPress pages, live form presence, existing-copy inventory and disposition, contact channel and inbox retention, future staging/local copy procedure, posts/options to promote, with a usable remote backup.
 4. If chat is warranted: runtime and release design under the no-plugin rule; provider, retention and training settings; visitor consent; budget and rate limits.
 5. Whether optional B1/B2 work is worth a separate private-side arc and who owns it.
-6. Legal review before any visitor free-text field: assess whether Washington's [My Health My Data Act](https://app.leg.wa.gov/rcw/default.aspx?cite=19.373) applies to this practice and these visitors, including collection, sharing, consent, privacy notice, and processor duties. Review any applicable automated-assistant disclosure requirements before Phase 1. This plan does not decide legal applicability.
+6. Legal review before publishing **any new contact path that can receive free-text health detail, including a direct email link or an inbox**: assess whether Washington's [My Health My Data Act](https://app.leg.wa.gov/rcw/default.aspx?cite=19.373) applies to this practice and these visitors, including collection, sharing, consent, privacy notice, and processor duties. Review any applicable automated-assistant disclosure requirements before Phase 1. This plan does not decide legal applicability.
 
 ## 10. Hard stops
 

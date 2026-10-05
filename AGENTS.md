@@ -158,7 +158,8 @@ database.
 
 ## What's tracked in git vs. not
 
-Only `docker-compose.yml`, `scripts/`, `.gitignore`, and this file are tracked.
+Tracked project material includes `docker-compose.yml`, `scripts/`,
+`docs/receptionist/` planning documents, `.gitignore`, and this file.
 Everything else is disposable, secret, or both:
 
 | Path | Why excluded |
