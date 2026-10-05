@@ -10,7 +10,6 @@ password_file="${MASSEUSE_RESTIC_PASSWORD_FILE:-$runtime_dir/backups/restic.pass
 export RESTIC_CACHE_DIR="${MASSEUSE_RESTIC_CACHE_DIR:-/tmp/thai-restic-offsite-cache}"
 destination=''
 apply=0
-local_test=0
 
 usage() {
   echo "Usage: $0 --destination /absolute/path/to/restic-repo [--apply]" >&2
@@ -24,7 +23,6 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --destination) destination="${2:?--destination needs a path}"; shift 2 ;;
     --apply) apply=1; shift ;;
-    --local-test) local_test=1; shift ;;
     -h|--help) usage; exit 0 ;;
     *) usage; fail "Unknown argument: $1" ;;
   esac
@@ -44,10 +42,15 @@ parent="$(dirname "$destination")"
 
 source_device="$(stat -c %d "$source_repo")"
 dest_device="$(stat -c %d "$parent")"
-if [[ "$source_device" == "$dest_device" ]]; then
-  [[ "$local_test" -eq 1 && "$destination" == /tmp/thai-restic-copy-test* ]] \
-    || fail 'Destination is on the source filesystem; choose a separate drive.'
-fi
+[[ "$source_device" != "$dest_device" ]] \
+  || fail 'Destination is on the source filesystem; choose a separate drive.'
+dest_fstype="$(findmnt -f -n -r -o FSTYPE -T "$parent")" \
+  || fail "Cannot identify destination filesystem: $parent"
+case "$dest_fstype" in
+  tmpfs|ramfs|overlay|squashfs)
+    fail "Destination filesystem '$dest_fstype' is not suitable for a durable backup."
+    ;;
+esac
 
 snapshot_count() {
   restic -r "$1" -p "$password_file" snapshots --json \

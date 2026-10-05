@@ -100,10 +100,13 @@ The source restic repository is local. An encrypted copy was created on
 successfully into an isolated test stack. Keep that copy current after new
 local backups.
 
-Take a fresh complete backup and let it finish. From this checkout, use
-`scripts/copy-restic-offsite.sh --destination
-/run/media/lauer/rszl-larch-5t-fs/thai-solitude-restic-repo` to preview the
-source and target; add `--apply` to copy and verify. The destination directory
+Take a fresh complete backup and let it finish. From this checkout, run:
+
+```bash
+./scripts/copy-restic-offsite.sh --destination /run/media/lauer/rszl-larch-5t-fs/thai-solitude-restic-repo
+```
+
+This previews the source and target; add `--apply` to copy and verify. The destination directory
 is already owned by `lauer` with mode 700, so routine copy and checks do not
 need `sudo`. If running the script from a clean Git worktree without the local
 backup, prefix the command with
@@ -112,8 +115,9 @@ destination restic repository with the source chunker parameters, copies
 missing snapshots with `restic copy`, reads every destination pack with
 `restic check --read-data`, and confirms every source snapshot is present
 by matching its time, content tree, paths, and tags. It refuses a destination
-on the source filesystem. Later
-runs copy only snapshots that are missing. This backup copy does not contain
+on the source filesystem or a temporary in-memory filesystem. Later runs copy
+only snapshots that are missing.
+This backup copy does not contain
 the password file; store that secret separately and verify that it can be
 retrieved during recovery. A restic repository on a second drive protects
 against loss of the source drive; remove or replicate that drive separately
