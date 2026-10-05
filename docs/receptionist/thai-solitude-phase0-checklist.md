@@ -38,16 +38,18 @@ Review the existing direct-email inbox's provider, recipients, forwarding, acces
 
 ### Repeatable public-page check
 
-Run on the release candidate's public host; replace only `base` when checking staging. This counts HTML elements and SureForms asset URLs without printing form entries or message text. Inspect Contact's `mailto:` destination separately with Butsaba. The eight routes are `/`, `/about/`, `/services/`, `/therapeutic-massage/`, `/deep-tissue-massage/`, `/thai-massage/`, `/work-with-me/`, and `/contact/`.
+Run on the release candidate's public host; replace only `base` when checking staging. This counts HTML elements and SureForms asset URLs without printing form entries or message text. Inspect Contact's `mailto:` destination separately with Butsaba. Check the eight content routes—`/`, `/about/`, `/services/`, `/therapeutic-massage/`, `/deep-tissue-massage/`, `/thai-massage/`, `/work-with-me/`, and `/contact/`—plus the form's standalone route, `/form/simple-contact-form/`. Record its HTTP status even when it returns 404; a later 200 response requires inspection before release.
 
 ```bash
 python3 - <<'PY'
 from html.parser import HTMLParser
+from urllib.error import HTTPError
 from urllib.request import urlopen
 
 base = 'https://thaisolitude.com'
 routes = ('/', '/about/', '/services/', '/therapeutic-massage/',
-          '/deep-tissue-massage/', '/thai-massage/', '/work-with-me/', '/contact/')
+          '/deep-tissue-massage/', '/thai-massage/', '/work-with-me/', '/contact/',
+          '/form/simple-contact-form/')
 
 class Scan(HTMLParser):
     def __init__(self):
@@ -64,9 +66,14 @@ class Scan(HTMLParser):
             self.counts['mailto'] += 1
 
 for route in routes:
-    html = urlopen(base + route, timeout=20).read().decode('utf-8', errors='replace')
+    try:
+        response = urlopen(base + route, timeout=20)
+    except HTTPError as error:
+        print(route, {'http_status': error.code})
+        continue
+    html = response.read().decode('utf-8', errors='replace')
     scan = Scan()
     scan.feed(html)
-    print(route, scan.counts)
+    print(route, {'http_status': response.status, **scan.counts})
 PY
 ```
