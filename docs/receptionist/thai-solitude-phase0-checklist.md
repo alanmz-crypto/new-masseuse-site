@@ -1,6 +1,6 @@
-# Thai Solitude Phase 0 release checklist — v2
+# Thai Solitude Phase 0 release checklist — v3
 
-> Planning attachment to [receptionist plan v3](thai-solitude-receptionist-plan.md). Complete on the actual release candidate and record evidence before asking Ryan to approve a live promotion. This is the AI-free FAQ and contact release; the [chat suite](thai-solitude-receptionist-acceptance.md) is a later gate.
+> Planning attachment to [receptionist plan v4](thai-solitude-receptionist-plan.md). Complete on the actual release candidate and record evidence before asking Ryan to approve a live promotion. This is the AI-free FAQ and contact release; the [chat suite](thai-solitude-receptionist-acceptance.md) is a later gate.
 
 ## Practice and source
 
@@ -18,11 +18,10 @@
 
 ## Contact and visitor data
 
-- [ ] Recheck the **rendered live routes and source** on the release candidate. A 2026-10-05 public-HTML check of the eight listed pages found no form/input/textarea elements or SureForms assets; Contact had a direct email link. This does not establish the state of hidden routes or future releases. If no form is exposed, plan separately authorized, backup-first removal of the unused form and its entries. If a live form is exposed and retained, verify remote plugin status, form settings, and notification behavior.
+- [ ] Recheck the **rendered live routes and source** on the release candidate using the repeatable command below. A 2026-10-05 public-HTML check of these eight routes found no form/input/textarea elements or SureForms assets; Contact had a direct email link. This does not establish the state of hidden routes or future releases. If no form is exposed, plan separately authorized, backup-first removal of the unused form and its entries. If a live form is exposed and retained, verify remote plugin status, form settings, and notification behavior.
 - [ ] For a retained form, turn entry storage **off for new submissions** and verify no new WordPress entry row appears after a non-sensitive test. Document inbox delivery and retention. “No database entry” does not mean “no stored message.”
-- [ ] Start an **existing-copy inventory**: local database (one entry dated 2026-06-08, content unclassified), `source-db.sql`, `new-masseuse-db-fixed.sql`, `deploy/10-production-thaisolitude.sql`, production, staging4/staging5, local Restic, SiteGround backups, and notification inboxes. Use counts/dates/metadata only. Ryan or Butsaba privately classifies the entry as test or visitor data. For each copy, record owner, access, retention or purge decision, and completion evidence. No data mutation or purge without a backup and explicit authorization.
+- [ ] Start an **existing-copy inventory**: local database (one entry dated 2026-06-08, content unclassified), `source-db.sql`, `new-masseuse-db-fixed.sql`, `deploy/10-production-thaisolitude.sql`, production, staging4/staging5, local Restic, SiteGround backups, and notification inboxes. Use counts/dates/metadata only. Ryan or Butsaba privately classifies the entry as test or visitor data. For each copy, record owner, access, retention or purge decision, and completion evidence. For Restic, normal `KEEP=10` aging may be selected: record snapshot groups and backup cadence, estimate the expiry date, then verify expiry. Do not improvise a snapshot rewrite or forget whole snapshots. No data mutation or purge without a backup and explicit authorization.
 - [ ] For **future** SiteGround staging and local database copies, document how visitor-entry tables and related metadata are excluded or scrubbed. If the tool clones the full database first, restrict access and scrub before using the copy; verify with counts and non-sensitive metadata, without printing visitor text.
-- [ ] Review notice, consent, privacy policy, and the unresolved legal question about health detail from Washington visitors for **both** a form and direct email. Record the inbox provider, recipients, forwarding, access, retention, and deletion before publishing a new email link; a mailto link can still collect health detail.
 - [ ] Verify Google Site Kit/Analytics behavior on the actual remote page. Confirm form values, health text, URL query parameters, and page paths containing such values do not reach analytics. Do not infer Analytics activation from an installed plugin alone.
 - [ ] If a form remains, a non-sensitive staging submission reaches the intended inbox and no staging notification goes to an unintended live recipient. If the contact path uses direct links, verify each address/number and the destination inbox policy with Butsaba.
 
@@ -32,3 +31,42 @@
 - [ ] FAQ and contact path work by keyboard and on mobile; links, focus, headings, and layout remain usable.
 - [ ] Staging returns `Disallow: /`; live `robots.txt` still allows crawling and advertises the sitemap after promotion.
 - [ ] A usable SiteGround backup for the relevant remote site is confirmed. Review the exact Custom Deploy file/table selections, preserving live-only submissions. Ryan approves the named live promotion.
+
+### Parallel current-site task — not a Phase 0 gate
+
+Review the existing direct-email inbox's provider, recipients, forwarding, access, retention, deletion, notice, and legal questions. Keeping the already published email link does not wait for that review. Complete privacy and legal review before a new free-text channel, form, chat, or link to a different inbox is published; a `mailto:` link can still collect health detail.
+
+### Repeatable public-page check
+
+Run on the release candidate's public host; replace only `base` when checking staging. This counts HTML elements and SureForms asset URLs without printing form entries or message text. Inspect Contact's `mailto:` destination separately with Butsaba. The eight routes are `/`, `/about/`, `/services/`, `/therapeutic-massage/`, `/deep-tissue-massage/`, `/thai-massage/`, `/work-with-me/`, and `/contact/`.
+
+```bash
+python3 - <<'PY'
+from html.parser import HTMLParser
+from urllib.request import urlopen
+
+base = 'https://thaisolitude.com'
+routes = ('/', '/about/', '/services/', '/therapeutic-massage/',
+          '/deep-tissue-massage/', '/thai-massage/', '/work-with-me/', '/contact/')
+
+class Scan(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.counts = {'form': 0, 'input': 0, 'textarea': 0, 'sureforms_assets': 0, 'mailto': 0}
+    def handle_starttag(self, tag, attrs):
+        data = dict(attrs)
+        if tag in ('form', 'input', 'textarea'):
+            self.counts[tag] += 1
+        asset_url = (data.get('src', '') + data.get('href', '')).lower()
+        if tag in ('script', 'link') and ('sureforms' in asset_url or 'srfm' in asset_url):
+            self.counts['sureforms_assets'] += 1
+        if tag == 'a' and data.get('href', '').lower().startswith('mailto:'):
+            self.counts['mailto'] += 1
+
+for route in routes:
+    html = urlopen(base + route, timeout=20).read().decode('utf-8', errors='replace')
+    scan = Scan()
+    scan.feed(html)
+    print(route, scan.counts)
+PY
+```
