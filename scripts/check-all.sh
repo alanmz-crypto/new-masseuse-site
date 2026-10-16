@@ -7,8 +7,10 @@
 # Gates:   PHP lint on the same pinned PHP image the practice stack uses (production is PHP 8.2)
 #          bash -n on every shell script; shellcheck (warnings fatal in work-with-me-employer/, errors fatal elsewhere)
 #          Python syntax on every file (no .pyc written); ruff for real errors only (syntax, undefined names)
+#          installer drift: each generated staging installer differs from its localhost original only in allow-list, mode names
+#          and messages, and no allow-list names a production host
 #          with a URL: verify-home.py and verify-client-pages.py
-# Not a gate: verify-rendered.py (its menu-label check still expects "Work With Me" until that decision is recorded).
+# Not a gate: verify-rendered.py (the older whole-site check; run it by hand: python3 work-with-me-employer/verify-rendered.py URL).
 # shellcheck disable=SC2329  # the gate functions below are called indirectly through `gate`
 set -u
 
@@ -57,6 +59,9 @@ PY
 }
 gate "python syntax" py_syntax
 if command -v ruff >/dev/null; then gate "ruff (syntax and undefined names)" ruff check --select E9,F63,F7,F82 --no-cache "$here"; else skip "ruff" "not installed"; fi
+
+# ---- installer drift and allow-lists ---------------------------------------------------------------------------------------------------
+gate "staging installers match their localhost originals; no production host in any allow-list" python3 -I -B "$here/work-with-me-employer/check-installer-drift.py"
 
 # ---- rendered pages (read-only) ------------------------------------------------------------------------------------------------------
 if [ -n "${1:-}" ]; then

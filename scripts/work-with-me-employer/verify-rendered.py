@@ -228,7 +228,8 @@ status, headers, _ = get(RESUME, "HEAD")
 check("linked résumé PDF resolves", status == 200 and "pdf" in headers.get("Content-Type", ""), headers.get("Content-Type", ""))
 
 nav = re.findall(r'<a[^>]+href="[^"]*/work-with-me/"[^>]*>\s*(?:<span[^>]*>)?\s*([^<]+)', page)
-check("shared menu label unchanged (Work With Me)", "Work With Me" in [n.strip() for n in nav], str([n.strip() for n in nav][:3]))
+labels = [n.strip() for n in nav]
+check("shared menu label is 'For Practices' and no 'Work With Me' label remains", "For Practices" in labels and "Work With Me" not in labels, str(labels[:4]))
 
 # Contact page: an employer arriving from the header's "Get in Touch" button (it points at /contact/ on every page)
 # must find a route to hiring, and the client details must be unchanged.
