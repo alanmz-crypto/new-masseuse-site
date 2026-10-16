@@ -1,0 +1,12 @@
+
+/* TS SERVICE IMAGE RESPONSIVE START — keep the compact 6:5 frames when Spectra stacks service rows. */
+@media (max-width: 1024px) {
+  body.home .wp-block-uagb-container.uagb-block-db0b5e62 > figure.wp-block-image,
+  body.home .wp-block-uagb-container.uagb-block-9d58695e > figure.wp-block-image,
+  body.home .wp-block-uagb-container.uagb-block-bb505ec2 > figure.wp-block-image {
+    max-width: 320px;
+    margin-inline: auto;
+    justify-self: center;
+  }
+}
+/* TS SERVICE IMAGE RESPONSIVE END */
