@@ -9,8 +9,10 @@
 # reads PHP_BIN, and this script launches /usr/local/wp-cli/wp-cli.php under each version directly so it can send PHP's log to a file of its own
 # (a relative error_log would otherwise write into the site's php_errorlog; see php-compat-scan.sh). It changes no setting anywhere.
 # Method: 8.2 is rendered twice (the difference between those two is the NOISE FLOOR: nonces, timestamps), then each newer version once.
-# A version PASSES when every page is identical to the 8.2 render (after masking only what the noise run proves is volatile) and its
-# log has no diagnostics from the site's own code. wp-cli's own notices are reported separately and do not count against the site.
+# A version PASSES when every page is identical to the 8.2 render (after masking only what the noise run proves is volatile) and it adds no HARD
+# problems (warnings, fatals) from the site's own code; new deprecation notices are reported separately and do not fail it (WordPress hides them on a
+# production site anyway; render-page.php switches full reporting on so they stay visible here). wp-cli's own notices are reported separately and do not count against the site.
+# Compile cache: opcache is switched off on every invocation, because a cached file does not re-emit its compile-time notices (see php-compat-scan.sh).
 # Not covered (needs a real switch in Site Tools): admin screens, AJAX and cron under the new version, and the web server's own PHP handler.
 # Side effects: like any visitor, a render may refresh caches/transients on the staging copy. Nothing is changed on live.
 # Access: credentials file + ssh-agent (SSH_AUTH_SOCK=/tmp/claude-1000/tsag/a.sock).
@@ -47,14 +49,19 @@ run() { # run PHPVERSION TAG
   mkdir -p "$W/out/$tag"; : > "$W/out/$tag.log"
   for p in $pages; do
     name=$([ "$p" = / ] && echo home || echo "${p//\//}")
-    /usr/local/bin/php$v -d memory_limit=2048M -d display_errors=0 -d log_errors=1 -d error_reporting=-1 -d "error_log=$W/out/$tag.log" \
+    /usr/local/bin/php$v -d memory_limit=2048M -d display_errors=0 -d log_errors=1 -d error_reporting=-1 -d opcache.enable=0 -d opcache.enable_cli=0 -d opcache.file_cache_only=0 -d opcache.file_cache= -d "error_log=$W/out/$tag.log" \
       /usr/local/wp-cli/wp-cli.php --path="$doc" --url="http://$want" eval-file "$W/render-page.php" "$p" "$W/out/$tag/$name.html" >"$W/out/$tag/$name.txt" 2>&1
   done
 }
 echo "positive control: a deliberate warning must reach each version's log, or a clean log would mean nothing ..."
 for v in 82 $vers; do
   C=$W/out/control$v.log; : > "$C"
-  /usr/local/bin/php$v -d memory_limit=2048M -d display_errors=0 -d log_errors=1 -d error_reporting=-1 -d "error_log=$C" /usr/local/wp-cli/wp-cli.php --path="$doc" --url="http://$want" eval 'trigger_error("wwm-control-warning", E_USER_WARNING);' >/dev/null 2>&1
+  /usr/local/bin/php$v -d memory_limit=2048M -d display_errors=0 -d log_errors=1 -d error_reporting=-1 -d opcache.enable=0 -d opcache.enable_cli=0 -d opcache.file_cache_only=0 -d opcache.file_cache= -d "error_log=$C" /usr/local/wp-cli/wp-cli.php --path="$doc" --url="http://$want" eval 'trigger_error("wwm-control-warning", E_USER_WARNING);' >/dev/null 2>&1
+  if [ "$v" -ge 84 ]; then
+    /usr/local/bin/php$v -d memory_limit=2048M -d display_errors=0 -d log_errors=1 -d error_reporting=-1 -d opcache.enable=0 -d opcache.enable_cli=0 -d opcache.file_cache_only=0 -d opcache.file_cache= -d "error_log=$C" /usr/local/wp-cli/wp-cli.php --path="$doc" --url="http://$want" eval 'error_reporting(-1); eval("function wwm_ctl_nullable(int \$x = null) { return \$x; }");' >/dev/null 2>&1
+    grep -q "Implicitly marking parameter" "$C" || { echo "TEST INVALID: PHP $v did not log a deliberate COMPILE-TIME deprecation, so a clean log could be hiding them."; exit 2; }
+    echo "  PHP $v: compile-time deprecations reach the log too"
+  fi
   if grep -q "wwm-control-warning" "$C"; then echo "  PHP $v: log capture works"; else echo "TEST INVALID: PHP $v did not log the deliberate warning, so a clean log proves nothing."; exit 2; fi
 done
 echo "rendering 8 pages x PHP 8.2 (twice, for the noise floor) and PHP: $vers ..."
@@ -120,8 +127,9 @@ for t in tags:
         k = klass(l); by[(k, lvl.group(1) if lvl else "other")] += 1
         msgs[re.sub(r"\s+", " ", re.sub(r"^\[[^\]]+\] PHP \w+( error)?:\s*", "", re.sub(r" in /\S+ on line \d+", "", l)))[:150] + "  [" + k + "]"] += 1
     site_code = sum(n for (k, lvl), n in by.items() if k.startswith(("plugin:", "theme:", "wordpress core", "other")))
-    summary[t] = (len(lines), site_code)
-    print("PHP %-4s %3d diagnostics (%d from the site's own code, %d from wp-cli itself)" % (t, len(lines), site_code, len(lines) - site_code))
+    site_hard = sum(n for (k, lvl), n in by.items() if k.startswith(("plugin:", "theme:", "wordpress core", "other")) and lvl in ("Fatal error", "Parse error", "Warning"))
+    summary[t] = (len(lines), site_code, site_hard)
+    print("PHP %-4s %3d diagnostics: %d hard problems (warnings/fatals) + %d deprecation/notice from the site's own code, %d from wp-cli itself" % (t, len(lines), site_hard, site_code - site_hard, len(lines) - site_code))
     for (k, lvl), n in by.most_common(6): print("      %4d  %-12s %s" % (n, lvl, k))
     if t in tags[2:] or len(lines):
         for m, n in msgs.most_common(4): print("        e.g. x%d %s" % (n, m))
@@ -129,10 +137,11 @@ print("\n== VERDICT ==")
 ok = True
 for t in tags[2:]:
     same, diff = results[t]
-    nd = summary[t][1] - summary["82a"][1]
-    good = (not diff) and nd <= 0
+    hard = summary[t][2] - summary["82a"][2]
+    soft = (summary[t][1] - summary[t][2]) - (summary["82a"][1] - summary["82a"][2])
+    good = (not diff) and hard <= 0
     ok &= good
-    print("PHP %-3s %s: %d/%d pages identical to 8.2; %+d diagnostics from the site's code vs 8.2" % (t, "PASS" if good else "NEEDS A LOOK", same, len(names), nd))
+    print("PHP %-3s %s: %d/%d pages identical to 8.2; %+d hard problems and %+d deprecation notices from the site's code vs 8.2" % (t, "PASS" if good else "NEEDS A LOOK", same, len(names), hard, soft))
 raise SystemExit(0 if ok and not still else 1)
 PY
 rc=$?

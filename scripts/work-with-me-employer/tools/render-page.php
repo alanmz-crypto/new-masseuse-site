@@ -1,6 +1,8 @@
 <?php
 // Render ONE public page through WordPress in the command line, like a front-end request. usage: wp eval-file render-page.php <request-path> <output-file>
 // Runs under whatever PHP the caller launched WP-CLI with. Writes only the output file.
+// WordPress turns deprecation reporting off after it loads unless WP_DEBUG is on (normal for production). The test wants to SEE them, so reporting is set to everything here.
+error_reporting( -1 );
 $args = isset( $args ) && is_array( $args ) ? $args : array();
 if ( count( $args ) < 2 ) { WP_CLI::error( 'usage: render-page.php <path> <outfile>' ); }
 list( $path, $outfile ) = $args;
