@@ -8,7 +8,9 @@
 # RUNTIME problems (dynamic properties, removed functions called only on some pages): the real test is switching a staging copy's PHP version
 # in Site Tools -> PHP Manager and running scripts/check-all.sh <url> plus the visual and structured-data comparisons.
 # Counts only genuine PHP diagnostics (lines that start with Deprecated/Warning/Notice), never file names that merely contain "deprecated".
-# Changes nothing. Access: credentials file + ssh-agent (SSH_AUTH_SOCK=/tmp/claude-1000/tsag/a.sock).
+# Changes nothing: PHP's own logging is switched off for every lint (log_errors=0, error_log=/dev/null), because the server's default error_log is a
+# RELATIVE file name, so a lint run from a site's folder would otherwise append a line to that site's php_errorlog for every file (it once wrote 42,000 lines).
+# Access: credentials file + ssh-agent (SSH_AUTH_SOCK=/tmp/claude-1000/tsag/a.sock).
 set -euo pipefail
 
 here=$(cd "$(dirname "$0")" && pwd)
@@ -36,14 +38,14 @@ doc=""
 while IFS= read -r cfg; do d=$(dirname "$cfg"); h=$(wp --path="$d" --skip-plugins --skip-themes option get home 2>/dev/null || true); hh=${h#http://}; hh=${hh#https://}; hh=${hh%/}; [ "$hh" = "$want" ] && doc=$d; done < "$cfgs"
 [ -n "$doc" ] || { echo "no install reports $want"; exit 1; }
 cd "$doc" || exit 1
-lintone='b=$1; shift; out=$("$b" -d display_errors=1 -d html_errors=0 -d error_reporting=-1 -l "$1" 2>&1); if printf "%s" "$out" | grep -q "No syntax errors"; then printf "%s" "$out" | grep -E "^(PHP )?(Deprecated|Warning|Notice): " | head -3 | sed "s#^#DEPR|$1|#"; else printf "%s" "$out" | head -2 | tr "\n" " " | sed "s#^#ERR|$1|#"; echo; fi'
+lintone='b=$1; shift; out=$("$b" -d display_errors=1 -d html_errors=0 -d log_errors=0 -d error_log=/dev/null -d error_reporting=-1 -l "$1" 2>&1); if printf "%s" "$out" | grep -q "No syntax errors"; then printf "%s" "$out" | grep -E "^(PHP )?(Deprecated|Warning|Notice): " | head -3 | sed "s#^#DEPR|$1|#"; else printf "%s" "$out" | head -2 | tr "\n" " " | sed "s#^#ERR|$1|#"; echo; fi'
 echo "== self-test: can the scanner see what we are hunting for? (a deliberate PHP 8.4 deprecation) =="
 t=$(mktemp --suffix=.php); printf '<?php\nfunction f(int $x = null) { return $x; }\n' > "$t"
-for v in $vers; do printf 'php%s on a file with an implicit-nullable parameter: ' "$v"; /usr/local/php$v/bin/php -d display_errors=1 -d html_errors=0 -d error_reporting=-1 -l "$t" 2>&1 | grep -E "^(PHP )?Deprecated: |No syntax" | head -2 | tr '\n' ' ' | cut -c1-150; echo; done; rm -f "$t"
+for v in $vers; do printf 'php%s on a file with an implicit-nullable parameter: ' "$v"; /usr/local/php$v/bin/php -d display_errors=1 -d html_errors=0 -d log_errors=0 -d error_log=/dev/null -d error_reporting=-1 -l "$t" 2>&1 | grep -E "^(PHP )?Deprecated: |No syntax" | head -2 | tr '\n' ' ' | cut -c1-150; echo; done; rm -f "$t"
 echo
 for v in $vers; do
   bin=/usr/local/php$v/bin/php
-  echo "######## PHP $($bin -v 2>/dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')"
+  echo "######## PHP $($bin -d log_errors=0 -d error_log=/dev/null -v 2>/dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')"
   res=$(mktemp)
   find . -type f -name '*.php' ! -path './wp-content/wpvividbackups/*' ! -path './wp-content/wpvivid_uploads/*' ! -path './wp-content/uploads/*' ! -path './wp-content/upgrade*' -print0 \
     | xargs -0 -P 4 -n 1 sh -c "$lintone" _ "$bin" > "$res" 2>/dev/null
