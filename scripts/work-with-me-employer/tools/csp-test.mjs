@@ -1,5 +1,6 @@
 // Content-Security-Policy testing without touching the server.
 //   node csp-test.mjs <base-url> --discover                       what do the 8 public pages load, and from where? (no policy)
+//   node csp-test.mjs <base-url> --check [screenshot-dir]         NO injection: load the pages as a logged-out visitor with whatever header the SERVER really sends; report it and any violations
 //   node csp-test.mjs <base-url> "<policy>" [screenshot-dir]      load every page with <policy> ADDED to the document response by the test browser
 //                                                                 (enforcing, not report-only) and report every violation; optional screenshots
 // Read-only: it only loads public pages. The header is added inside the browser (request interception), so nothing on any site changes.
@@ -9,18 +10,19 @@ import fs from 'fs';
 const require = createRequire('/home/lauer/Projects/SubProjects/Mirror/package.json');
 const { chromium } = require('playwright');
 const [base, mode, shotDir] = process.argv.slice(2);
-if (!base || !mode) { console.error('usage: node csp-test.mjs <base-url> --discover | "<policy>" [screenshot-dir]'); process.exit(1); }
+if (!base || !mode) { console.error('usage: node csp-test.mjs <base-url> --discover | --check | "<policy>" [screenshot-dir]'); process.exit(1); }
 const discover = mode === '--discover';
+const check = mode === '--check';
 const pages = ['/', '/about/', '/services/', '/thai-massage/', '/therapeutic-massage/', '/deep-tissue-massage/', '/work-with-me/', '/contact/'];
 const views = [[1280, 900, 'd'], [390, 844, 'm']];
 if (shotDir) fs.mkdirSync(shotDir, { recursive: true });
 const b = await chromium.launch();
-const origins = {}, viol = {}, inline = { scripts: 0, styles: 0, styleAttrs: 0, handlers: 0, jsHrefs: 0, iframes: 0, forms: 0, evalLike: 0 };
+const origins = {}, viol = {}, realCsp = {}, inline = { scripts: 0, styles: 0, styleAttrs: 0, handlers: 0, jsHrefs: 0, iframes: 0, forms: 0, evalLike: 0 };
 let bad = 0;
 const bump = (o, k) => { o[k] = (o[k] || 0) + 1; };
 for (const [w, h, v] of views) {
   const ctx = await b.newContext({ viewport: { width: w, height: h }, reducedMotion: 'reduce', deviceScaleFactor: 1 });
-  if (!discover) {
+  if (!discover && !check) {
     await ctx.route('**/*', async (route) => {
       if (route.request().resourceType() === 'document') {
         const resp = await route.fetch();
@@ -35,6 +37,7 @@ for (const [w, h, v] of views) {
     try {
       const r = await page.goto(base + p, { waitUntil: 'networkidle', timeout: 60000 });
       if (r.status() !== 200) { console.log('status', r.status(), p); bad++; }
+      bump(realCsp, r.headers()['content-security-policy'] || '(none)');
       await page.addStyleTag({ content: '*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}' }).catch(() => {});
       await page.evaluate(async () => { const step = innerHeight * 0.8; for (let y = 0; y < document.body.scrollHeight; y += step) { scrollTo(0, y); await new Promise(r => setTimeout(r, 120)); } scrollTo(0, 0); });
       await page.waitForTimeout(500);
@@ -67,7 +70,10 @@ if (discover) {
   console.log('  ' + Object.entries(inline).filter(([k]) => k !== 'evalLike').map(([k, n]) => k + ' ' + n).join(' | '));
 } else {
   const n = Object.values(viol).reduce((a, c) => a + c, 0);
-  console.log('policy: ' + mode.slice(0, 160) + (mode.length > 160 ? ' ...' : ''));
+  if (check) {
+    console.log('Content-Security-Policy header the SERVER really sent, over 16 page-views:');
+    for (const [k, c] of top(realCsp)) console.log('  ' + String(c).padStart(3) + ' x ' + (k === '(none)' ? '(no header)' : k.slice(0, 120) + (k.length > 120 ? ' ...' : '')));
+  } else console.log('policy: ' + mode.slice(0, 160) + (mode.length > 160 ? ' ...' : ''));
   console.log('violations across 16 page-views: ' + n + (bad ? ' | load problems: ' + bad : ''));
   for (const [k, c] of top(viol).slice(0, 15)) console.log('  ' + String(c).padStart(4) + ' x ' + k);
 }

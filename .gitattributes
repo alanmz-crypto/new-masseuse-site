@@ -1,3 +1,4 @@
 # Keep the structured-data test fixture byte-exact: it deliberately holds the Windows (CRLF) line endings of the real stored WPCode snippet.
 # Without this, Git on a machine with core.autocrlf could rewrite them and the offline guard test would fail confusingly.
 scripts/work-with-me-employer/structured-data/tests/fixtures/* binary
+scripts/work-with-me-employer/headers/tests/fixtures/* binary

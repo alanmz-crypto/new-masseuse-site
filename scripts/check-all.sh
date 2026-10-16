@@ -10,6 +10,7 @@
 #          installer drift: each generated staging installer differs from its localhost original only in allow-list, mode names
 #          and messages, and no allow-list names a production host
 #          structured-data installer: its snippet output and exact-bytes guard, tested offline against stubbed WordPress functions
+#          headers installer: the old and new security-headers snippet run in a header-capturing harness (logged in/out, https/http)
 #          with a URL: verify-home.py and verify-client-pages.py
 # Not a gate: verify-rendered.py (the older whole-site check; run it by hand: python3 work-with-me-employer/verify-rendered.py URL).
 # shellcheck disable=SC2329  # the gate functions below are called indirectly through `gate`
@@ -67,6 +68,10 @@ gate "staging installers match their localhost originals; no production host in 
 # ---- structured-data installer: snippet behaviour and guard, offline --------------------------------------------------------------------
 sd_test() { docker run --rm --network none --entrypoint php -v "$here/work-with-me-employer/structured-data:/pkg:ro" "$img" /pkg/tests/snippet-test.php; }
 if [ -n "$img" ] && command -v docker >/dev/null; then gate "structured-data snippet and guard (offline test)" sd_test; else skip "structured-data offline test" "docker or the pinned image is not available"; fi
+
+# ---- headers installer: security-headers snippet and CSP, offline -----------------------------------------------------------------------
+hd_test() { docker run --rm --network none --entrypoint php -v "$here/work-with-me-employer/headers:/pkg:ro" "$img" /pkg/tests/csp-snippet-test.php; }
+if [ -n "$img" ] && command -v docker >/dev/null; then gate "headers snippet and CSP (offline test)" hd_test; else skip "headers offline test" "docker or the pinned image is not available"; fi
 
 # ---- rendered pages (read-only) ------------------------------------------------------------------------------------------------------
 if [ -n "${1:-}" ]; then
