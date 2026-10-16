@@ -347,3 +347,25 @@ before mutations, no build step, handoff docs kept out of the deployed tree.
 A project-wide `~/WordPress/scripts` repo documents the cross-site Docker/Podman
 port map and sync pipelines. `convmem ask "…"` may already have the answer to a
 project-specific question.
+
+## Tooling and the change routine (added 2026-10-16)
+
+Everything below lives in `scripts/work-with-me-employer/` unless noted. Each remote tool reads `remote_execution.txt` (gitignored, mode 600)
+plus an ssh-agent holding the deploy key, finds the install by `wp option get home` (never by folder name), and is a **dry run unless you pass
+`--apply`**. Every tool names its allowed targets in the script; the SSH account also holds live, so none of this is a licence to touch live:
+**a write to live still needs Ryan's explicit go**, and `main` is merged by Ryan.
+
+- **Code gates:** `scripts/check-all.sh [URL]` (PHP lint on the pinned PHP 8.2 image, bash/shellcheck, Python, installer-drift and allow-list test,
+  structured-data guard test; with a URL it also runs the rendered-page verifiers).
+- **Before a change:** a fresh DB export that is also copied OFF the server and verified (`sync-server-backups.sh`; copies live in
+  `~/WordPress/thai-solitude-server-backups`, outside git). A DB export does not hold plugin/theme files: for those use `mirror-versions.sh`
+  (tarball + export) or a SiteGround backup.
+- **After a change ("push, then test"):** `post-change-test.sh <target>` (gates, page statuses, structured data and 16 pixel comparisons against the
+  reference site, new PHP errors) and `prove-restore.sh <target>` (restores the newest export into a throwaway database and shows exactly which
+  fingerprints moved). Both refuse to report a result when nothing was compared.
+- **Tools:** `secure-backups.sh` (public WPvivid zips), `structured-data/push-structured-data.sh`, `mirror-versions.sh` (staging31 to live's plugin/theme
+  versions), `check-no-new-zips.sh`, `php-compat-scan.sh` (read-only PHP 8.3/8.4 lint), `push-human-facing-staging.sh` (staging26/27).
+- **Hard-won rules:** a comparison that matched nothing is INVALID, never "identical". A tool run from a site's folder can append to that site's
+  `php_errorlog` (the server's `error_log` is a relative name), so disable PHP logging in scans. Under WP-CLI `home_url('/', 'https')` returns the
+  site's own scheme; use `set_url_scheme()`. Guard on exact stored bytes (the WPCode snippet is stored with Windows line endings; read raw bytes).
+- The "October 5 staging19 task boundary" paragraph near the top is historical; it does not describe the current work.
