@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+# One command for every code gate. Read-only: it touches no server and writes nothing into the tree.
+#
+#   scripts/check-all.sh                                   syntax and lint gates only (offline)
+#   scripts/check-all.sh https://staging31.thaisolitude.com   the same, plus the rendered-page verifiers against that URL (read-only GETs)
+#
+# Gates:   PHP lint on the same pinned PHP image the practice stack uses (production is PHP 8.2)
+#          bash -n on every shell script; shellcheck (warnings fatal in work-with-me-employer/, errors fatal elsewhere)
+#          Python syntax on every file (no .pyc written); ruff for real errors only (syntax, undefined names)
+#          with a URL: verify-home.py and verify-client-pages.py
+# Not a gate: verify-rendered.py (its menu-label check still expects "Work With Me" until that decision is recorded).
+# shellcheck disable=SC2329  # the gate functions below are called indirectly through `gate`
+set -u
+
+here=$(cd "$(dirname "$0")" && pwd)
+root=$(dirname "$here")
+fails=0
+gate() { # gate NAME COMMAND...
+  local name=$1; shift
+  local out
+  if out=$("$@" 2>&1); then echo "PASS  $name"; else echo "FAIL  $name"; printf '%s\n' "$out" | sed 's/^/        /' | head -25; fails=$((fails + 1)); fi
+}
+skip() { echo "SKIP  $1 ($2)"; }
+
+# ---- PHP -----------------------------------------------------------------------------------------------------------------------------
+img=$(sed -n 's/^[[:space:]]*image:[[:space:]]*\(wordpress:cli[^[:space:]]*\).*/\1/p' "$root/docker-compose.yml" | head -1)
+php_lint() {
+  docker run --rm --network none --entrypoint sh -v "$here:/s:ro" "$img" -c \
+    'n=0; bad=0; for f in $(find /s -name "*.php" | sort); do n=$((n+1)); php -l "$f" >/dev/null 2>/tmp/e || { cat /tmp/e; bad=$((bad+1)); }; done; echo "$n files, $bad failing"; [ "$bad" -eq 0 ]'
+}
+if [ -n "$img" ] && command -v docker >/dev/null; then gate "php -l (pinned image)" php_lint; else skip "php -l" "docker or the pinned wordpress:cli image is not available"; fi
+
+# ---- shell ---------------------------------------------------------------------------------------------------------------------------
+mapfile -t sh_all < <(find "$here" -name '*.sh' -not -path '*/node_modules/*' | sort)
+mapfile -t sh_new < <(find "$here/work-with-me-employer" -maxdepth 1 -name '*.sh' | sort)
+bash_n() { local f; for f in "${sh_all[@]}"; do bash -n "$f" || return 1; done; echo "${#sh_all[@]} files"; }
+gate "bash -n" bash_n
+if command -v shellcheck >/dev/null; then
+  gate "shellcheck, work-with-me-employer (warnings fatal)" shellcheck -S warning "${sh_new[@]}"
+  gate "shellcheck, all scripts (errors fatal)" shellcheck -S error "${sh_all[@]}"
+else skip "shellcheck" "not installed"; fi
+
+# ---- Python --------------------------------------------------------------------------------------------------------------------------
+mapfile -t py_all < <(find "$here" -name '*.py' -not -path '*/node_modules/*' | sort)
+py_syntax() {
+  python3 -I -B - "${py_all[@]}" <<'PY'
+import ast, sys
+bad = 0
+for f in sys.argv[1:]:
+    try:
+        ast.parse(open(f, encoding="utf-8").read(), f)
+    except SyntaxError as e:
+        print("syntax error:", f, e); bad += 1
+print(len(sys.argv) - 1, "files")
+sys.exit(1 if bad else 0)
+PY
+}
+gate "python syntax" py_syntax
+if command -v ruff >/dev/null; then gate "ruff (syntax and undefined names)" ruff check --select E9,F63,F7,F82 --no-cache "$here"; else skip "ruff" "not installed"; fi
+
+# ---- rendered pages (read-only) ------------------------------------------------------------------------------------------------------
+if [ -n "${1:-}" ]; then
+  gate "verify-home.py $1" python3 -I -B "$here/work-with-me-employer/home/verify-home.py" "$1"
+  gate "verify-client-pages.py $1" python3 -I -B "$here/work-with-me-employer/client-pages/verify-client-pages.py" "$1"
+else skip "rendered-page verifiers" "give a URL as the first argument to run them"; fi
+
+echo
+if [ "$fails" -eq 0 ]; then echo "ALL GATES PASSED"; else echo "$fails GATE(S) FAILED"; fi
+exit $(( fails > 0 ))
+
+# ref: ../docker-compose.yml — source of the pinned PHP image; ./practice-image-parity.sh — the PHP-version parity check
+# ref: ./work-with-me-employer/home/verify-home.py, ./work-with-me-employer/client-pages/verify-client-pages.py — the verifiers run with a URL
