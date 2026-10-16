@@ -59,7 +59,7 @@ for cfg in glob.glob(os.path.expanduser("~/www/*/public_html/wp-config.php")):
     h = subprocess.run(["wp", "--path=" + d, "--skip-plugins", "--skip-themes", "option", "get", "home"], capture_output=True, text=True).stdout.strip()
     if re.sub(r"^https?://|/$", "", h) == want: doc = d
 if not doc: print("NOHOST"); raise SystemExit
-now = datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None); hits = 0; lines = []
+now = datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None); hits = 0; tool = 0; lines = []
 for name in ("php_errorlog", "wp-content/debug.log"):
     p = os.path.join(doc, name)
     if not os.path.isfile(p): continue
@@ -68,12 +68,14 @@ for name in ("php_errorlog", "wp-content/debug.log"):
         if not m: continue
         t = datetime.datetime.strptime(m.group(1), "%d-%b-%Y %H:%M:%S")
         if (now - t).total_seconds() <= mins * 60 and re.search(r"PHP (Fatal|Parse|Warning|Notice|Deprecated)", m.group(2)):
+            if "/usr/local/wp-cli/" in m.group(2): tool += 1; continue   # SiteGround's own CLI tool (e.g. the Site Tools login helper), not the site
             hits += 1; lines.append(line[:220].replace(doc, ""))
 print("COUNT", hits)
+if tool: print("NOTE %d diagnostic(s) came from /usr/local/wp-cli (SiteGround's own CLI tool, e.g. the Site Tools login helper), not from the site; not counted" % tool)
 for l in lines[-10:]: print(l)
 PY
 )
-  if [ "$(printf '%s' "$out" | head -1)" = "COUNT 0" ]; then echo "  no PHP errors, warnings or deprecations logged"; note 0
+  if [ "$(printf '%s' "$out" | head -1)" = "COUNT 0" ]; then echo "  no PHP errors, warnings or deprecations logged from the site's code"; printf '%s\n' "$out" | tail -n +2 | while IFS= read -r l; do printf '  %s\n' "$l"; done; note 0
   elif printf '%s' "$out" | head -1 | grep -q '^COUNT'; then printf '  %s\n' "${out//$'\n'/$'\n  '}"; note 1
   else echo "  could not read the log: $(printf '%s' "$out" | head -1)"; note 1; fi
 else
