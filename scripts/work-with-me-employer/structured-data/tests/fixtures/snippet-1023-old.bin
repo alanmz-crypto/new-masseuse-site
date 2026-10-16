@@ -1,0 +1,21 @@
+add_action('wp_head', function() {
+    echo '<script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "@id": "{HOME}/#localbusiness",
+      "name": "Thai Solitude",
+      "telephone": "+1-312-539-4328",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "",
+        "addressLocality": "Portland",
+        "addressRegion": "OR",
+        "postalCode": "97213",
+        "addressCountry": "US"
+      },
+      "priceRange": "$$",
+      "url": "{HOME}"
+    }
+    </script>';
+});
