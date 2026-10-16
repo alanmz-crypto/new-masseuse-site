@@ -25,7 +25,8 @@
 #     | docker exec -i new-masseuse-db-1 mysql -u root -pnewrootpassword new_masseuse_db
 set -euo pipefail
 
-SITE_DIR="${SITE_DIR:-$HOME/WordPress/new-masseuse-site}"
+SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SITE_DIR="${SITE_DIR:-$SOURCE_DIR}"
 cd "$SITE_DIR"
 
 # --- restic repo + password (local, self-contained) ------------------------
@@ -129,8 +130,10 @@ fi
 # --- Retention: keep last N per tag group -----------------------------------
 if [[ "$KEEP" -gt 0 ]]; then
   echo "[prune] Keeping last $KEEP snapshots per group ..."
-  restic forget --keep-last "$KEEP" --group-by 'tags,paths' --prune >/dev/null 2>&1 \
-    || echo "[prune] (nothing to prune yet)"
+  if ! restic forget --keep-last "$KEEP" --group-by 'tags,paths' --prune >/dev/null; then
+    echo "[prune] ERROR: retention failed; inspect repository locks and health." >&2
+    exit 1
+  fi
 fi
 
 echo ""

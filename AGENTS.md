@@ -90,17 +90,22 @@ curl -s http://localhost:8090/wp-json/wp/v2/media
 ## Backup / restore
 
 ```bash
-./scripts/backup-site.sh                 # snapshot files + DB now (restic, local-only)
+./scripts/backup-site.sh                 # snapshot local files + DB now
 ./scripts/backup-site.sh --note wip      # tag the snapshot
 ./scripts/backup-site.sh --list          # list snapshots
+./scripts/copy-restic-offsite.sh --destination /run/media/lauer/rszl-larch-5t-fs/thai-solitude-restic-repo --apply
 ./scripts/test-restore.sh                # restore latest into an isolated throwaway stack on :8091
 ./scripts/test-restore.sh --down         # tear down the throwaway stack
 ```
 
-Backups are local-only (restic repo under `backups/`, gitignored) — nothing is
-sent to SiteGround, WordPress, or any git remote. `test-restore.sh` never
-touches the live :8090 stack; it restores into a separate compose project and
-separate DB volume.
+The source restic repo is local under `backups/` (gitignored). Its encrypted
+copy lives on the separate `rszl-larch-5t-fs` drive. The destination directory
+is owned by `lauer`; copying and checking it require no `sudo`. The password
+file stays outside that copy and needs its own independent safe storage.
+Nothing is sent to SiteGround, WordPress, or a git remote. `test-restore.sh`
+never touches the live :8090 stack; it restores into a separate compose project
+and separate DB volume. See `scripts/LOCAL-WORKFLOW.md` for a restore check
+using the external repository.
 
 The restic repo is configured by env vars the script sets itself
 (`MASSEUSE_RESTIC_REPO`, `MASSEUSE_RESTIC_PASSWORD_FILE`, `MASSEUSE_RESTIC_CACHE_DIR`,
