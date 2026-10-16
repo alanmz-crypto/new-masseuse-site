@@ -82,7 +82,7 @@ purge() { wp --path="$doc" --user=1 sg purge >/dev/null 2>&1 && echo "SiteGround
 if [ "$mode" = rollback ]; then run rollback "$snap"; purge; exit 0; fi
 
 dump="$HOME/private-backups/${target}-before-${pkg}-$(date +%Y%m%d-%H%M%S).sql"
-wp --path="$doc" db export "$dump" >/dev/null
+( umask 077; wp --path="$doc" db export "$dump" >/dev/null )   # owner-only from birth; umask is limited to this one command so no web-served file is affected
 [ -s "$dump" ] || { echo "Database export is empty; stopping before any change." >&2; exit 1; }
 echo "fresh database export: $dump ($(stat -c%s "$dump") bytes)"
 run preflight

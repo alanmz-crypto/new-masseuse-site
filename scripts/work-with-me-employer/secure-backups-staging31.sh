@@ -84,7 +84,7 @@ if [ "$mode" = apply ]; then
   WPQ eval '$o = get_option("wpvivid_schedule_setting"); exit(is_array($o) && array_key_exists("enable", $o) ? 0 : 1);' || { echo "Refusing: wpvivid_schedule_setting is missing or has an unexpected shape." >&2; exit 1; }
   mkdir -p "$pv" "$vault"; chmod 700 "$pv" "$vault"
   dump="$pv/staging31-before-backups-secure-$ts.sql"
-  wp --path="$doc" db export "$dump" >/dev/null
+  ( umask 077; wp --path="$doc" db export "$dump" >/dev/null )   # owner-only from birth; umask is limited to this one command so no web-served file is affected
   [ -s "$dump" ] || { echo "Database export is empty; stopping before any change." >&2; exit 1; }
   echo "fresh database export: ${dump#"$HOME"/} ($(stat -c%s "$dump") bytes)"
   mf="$pv/staging31-backups-secure-$ts.json"
