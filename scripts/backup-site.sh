@@ -32,6 +32,7 @@ cd "$SITE_DIR"
 export RESTIC_REPOSITORY="${MASSEUSE_RESTIC_REPO:-$SITE_DIR/backups/restic-repo}"
 PW_FILE="${MASSEUSE_RESTIC_PASSWORD_FILE:-$SITE_DIR/backups/restic.password}"
 export RESTIC_PASSWORD_FILE="$PW_FILE"
+export RESTIC_CACHE_DIR="${MASSEUSE_RESTIC_CACHE_DIR:-$SITE_DIR/backups/restic-cache}"
 
 DB_CONTAINER="${MASSEUSE_DB_CONTAINER:-new-masseuse-db-1}"
 DB_NAME="${MASSEUSE_DB_NAME:-new_masseuse_db}"
