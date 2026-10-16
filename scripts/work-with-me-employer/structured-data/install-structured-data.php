@@ -1,7 +1,7 @@
 <?php
 /**
- * Structured-data fixes for ONE staging site (staging31). Never production: live is added to the allow-list only on Ryan's second, explicit go.
- * Ryan, 2026-10-16: "fix these" (the structured-data findings of the staging31 backend audit).
+ * Structured-data fixes for staging31 and, since Ryan's second explicit go, live (thaisolitude.com). No other site is allowed.
+ * Ryan, 2026-10-16: "fix these" (the structured-data findings of the staging31 backend audit); then "i made a backup on siteground. go" for live.
  *
  * What it changes (three stores, each snapshotted and reversible):
  *   1. SureRank global option surerank_settings: the Organization schema's knowsLanguage "Hungarian" -> "Thai, English".
@@ -26,8 +26,8 @@ if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) ) {
 $home       = untrailingslashit( home_url() );
 $home_https = untrailingslashit( set_url_scheme( home_url( '/' ), 'https' ) );   // not home_url('/', 'https'): WP-CLI filters home_url and ignores the scheme
 $host       = (string) wp_parse_url( $home, PHP_URL_HOST ) . ( wp_parse_url( $home, PHP_URL_PORT ) ? ':' . wp_parse_url( $home, PHP_URL_PORT ) : '' );
-if ( ! in_array( $host, array( 'staging31.thaisolitude.com' ), true ) ) {
-	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (staging31 only).' );
+if ( ! in_array( $host, array( 'staging31.thaisolitude.com', 'thaisolitude.com' ), true ) ) {
+	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (staging31 or live only).' );
 }
 if ( 'astra' !== get_stylesheet() ) {
 	WP_CLI::error( 'Active theme is not Astra.' );
