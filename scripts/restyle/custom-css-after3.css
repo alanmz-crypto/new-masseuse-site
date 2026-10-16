@@ -1,0 +1,553 @@
+@import url("https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=Hanken+Grotesk:wght@400;500;600&display=swap");
+/* Thai Solitude homepage service illustration frames: 6:5 */
+body.home .wp-block-uagb-container.uagb-block-db0b5e62 > figure.wp-block-image,
+body.home .wp-block-uagb-container.uagb-block-9d58695e > figure.wp-block-image,
+body.home .wp-block-uagb-container.uagb-block-bb505ec2 > figure.wp-block-image {
+    width: 100%;
+    margin: 0;
+    overflow: hidden;
+    border-radius: 16px;
+}
+
+body.home .wp-block-uagb-container.uagb-block-db0b5e62 > figure.wp-block-image img,
+body.home .wp-block-uagb-container.uagb-block-9d58695e > figure.wp-block-image img,
+body.home .wp-block-uagb-container.uagb-block-bb505ec2 > figure.wp-block-image img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 6 / 5;
+    object-fit: cover;
+}
+
+/* TS WORK WITH ME START */
+.ts-wwm{--ts-green:var(--ast-global-color-0,#377a00);--ts-deep:var(--ast-global-color-3,#012104);--ts-pale:var(--ast-global-color-4,#eaf7eb);--ts-line:var(--ast-global-color-6,#d0ebcf);color:var(--ts-deep);margin:0 auto;max-width:1180px}
+.ts-wwm>div{box-sizing:border-box}
+.ts-wwm h1,.ts-wwm h2,.ts-wwm h3{color:#151716;line-height:1.12}
+.ts-wwm h1{font-size:clamp(3.4rem,6vw,5.8rem);letter-spacing:-.055em;margin:.12em 0 .18em}
+.ts-wwm h2{font-size:clamp(2rem,3.7vw,3.3rem);letter-spacing:-.035em;max-width:840px;margin:.15em 0 .55em}
+.ts-wwm h3{font-size:1.35rem;margin:.35em 0 .55em}
+.ts-wwm p{line-height:1.65}
+.ts-wwm .ts-wwm__eyebrow{font-size:.78rem;font-weight:700;letter-spacing:.16em;line-height:1.4;text-transform:uppercase;color:var(--ts-green);margin-bottom:1.1rem}
+.ts-wwm p a:not(.wp-block-button__link),.ts-wwm .ts-wwm__credential-list a{color:var(--ts-green);text-decoration:underline;text-underline-offset:.16em}
+.ts-wwm p a:not(.wp-block-button__link):hover,.ts-wwm p a:not(.wp-block-button__link):focus-visible,.ts-wwm .ts-wwm__credential-list a:hover,.ts-wwm .ts-wwm__credential-list a:focus-visible{color:var(--ts-deep)}
+.ts-wwm .ts-wwm__hero{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) minmax(230px,.55fr);align-items:center;gap:clamp(1.5rem,4vw,4rem);min-height:470px;padding:clamp(3rem,6vw,5.5rem) clamp(1.5rem,6vw,5.5rem);background:var(--ts-pale);border-radius:22px}
+.ts-wwm .ts-wwm__hero:after{content:"";position:absolute;width:39%;aspect-ratio:1;right:-8%;top:6%;border:2px solid var(--ts-line);border-radius:48% 52% 56% 44%;transform:rotate(-26deg);box-shadow:-28px 30px 0 -10px #dff1df,-58px 60px 0 -20px #cfe8cc;pointer-events:none}
+.ts-wwm .ts-wwm__hero>*{position:relative;z-index:1}
+.ts-wwm .ts-wwm__hero-photo{margin:0;align-self:stretch;max-height:430px;min-height:320px}
+.ts-wwm .ts-wwm__hero-photo img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 24%;border-radius:16px}
+.ts-wwm .ts-wwm__identity{font-size:1rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ts-green);margin:0 0 1rem}
+.ts-wwm .ts-wwm__lead{font-size:clamp(1.15rem,1.8vw,1.35rem);line-height:1.55;max-width:650px;margin:0}
+.ts-wwm .ts-wwm__experience{font-size:.93rem;font-weight:700;margin:1.3rem 0 0}
+.ts-wwm .ts-wwm__hero-links{font-size:.88rem;margin:1rem 0 0}
+.ts-wwm .wp-block-buttons{gap:.8rem;margin-top:1.8rem}
+.ts-wwm .wp-block-button__link{border-radius:10px;padding:.8em 1.4em;text-decoration:none}
+.ts-wwm .wp-block-button__link:focus-visible,.ts-wwm a:focus-visible{outline:3px solid var(--ts-deep);outline-offset:3px}
+.ts-wwm .ts-wwm__intro,.ts-wwm .ts-wwm__approach,.ts-wwm .ts-wwm__owners,.ts-wwm .ts-wwm__credentials,.ts-wwm .ts-wwm__invitation,.ts-wwm .ts-wwm__clients{padding:clamp(3.2rem,7vw,6rem) clamp(1.5rem,6vw,5.5rem)}
+.ts-wwm .ts-wwm__intro{max-width:900px;margin:auto;text-align:center}
+.ts-wwm .ts-wwm__intro h2{margin-left:auto;margin-right:auto}
+.ts-wwm .ts-wwm__intro p:not(.ts-wwm__eyebrow){font-size:1.08rem}
+.ts-wwm .ts-wwm__approach{text-align:center;background:#f7fbf7;border-radius:22px}
+.ts-wwm .ts-wwm__approach h2,.ts-wwm .ts-wwm__section-lead{margin-left:auto;margin-right:auto}
+.ts-wwm .ts-wwm__section-lead{font-size:1.08rem;max-width:760px}
+.ts-wwm .ts-wwm__cards{gap:1rem;margin-top:2rem;text-align:left}
+.ts-wwm .ts-wwm__cards>.wp-block-column{background:#fff;border:1px solid var(--ts-line);border-radius:16px;padding:1.7rem}
+.ts-wwm .ts-wwm__number{font-size:.82rem;font-weight:700;color:var(--ts-green);letter-spacing:.12em;margin-bottom:1.25rem}
+.ts-wwm .ts-wwm__owners-grid{gap:1rem;margin:2rem 0 0}
+.ts-wwm .ts-wwm__owners,.ts-wwm .ts-wwm__credentials,.ts-wwm .ts-wwm__clients{scroll-margin-top:90px}
+.ts-wwm .ts-wwm__owners-grid>.wp-block-column{border-top:3px solid var(--ts-green);background:var(--ts-pale);padding:1.7rem;border-radius:0 0 14px 14px}
+.ts-wwm .ts-wwm__credentials{background:#f7fbf7;border-radius:22px}
+.ts-wwm .ts-wwm__credential-list{list-style:none;padding:0;margin:1.8rem 0 0;max-width:800px}
+.ts-wwm .ts-wwm__credential-list li{border-top:1px solid var(--ts-line);padding:.85rem 0;line-height:1.55;font-size:1.05rem}
+.ts-wwm .ts-wwm__credential-list li:last-child{border-bottom:1px solid var(--ts-line)}
+.ts-wwm .ts-wwm__invitation{background:var(--ts-pale);border-radius:22px;margin:2rem 0}
+.ts-wwm .ts-wwm__invitation p:not(.ts-wwm__eyebrow){max-width:730px;font-size:1.08rem}
+.ts-wwm .ts-wwm__invitation .ts-wwm__email{font-size:.93rem;margin-top:1.4rem}
+.ts-wwm .ts-wwm__clients{background:#f7fbf7;border-radius:22px;margin-bottom:4rem}
+.ts-wwm .ts-wwm__clients p:not(.ts-wwm__eyebrow){max-width:800px;font-size:1.08rem}
+.ts-wwm .is-style-outline .wp-block-button__link{color:var(--ts-green);border-color:var(--ts-green);background:transparent}
+@media(max-width:781px){.ts-wwm .ts-wwm__hero{min-height:0;grid-template-columns:minmax(0,1fr) minmax(180px,.52fr)}.ts-wwm .ts-wwm__hero:after{width:50%;opacity:.35}.ts-wwm .ts-wwm__cards,.ts-wwm .ts-wwm__owners-grid{gap:1rem}}
+@media(max-width:600px){.ts-wwm .ts-wwm__hero,.ts-wwm .ts-wwm__approach,.ts-wwm .ts-wwm__credentials,.ts-wwm .ts-wwm__invitation,.ts-wwm .ts-wwm__clients{border-radius:14px}.ts-wwm .ts-wwm__hero:after{display:none}.ts-wwm .ts-wwm__hero{grid-template-columns:1fr;padding-top:3rem;padding-bottom:2rem}.ts-wwm .ts-wwm__hero-photo{min-height:0;max-height:300px}.ts-wwm .ts-wwm__hero-photo img{height:300px;object-position:center 20%}.ts-wwm .ts-wwm__intro,.ts-wwm .ts-wwm__approach{text-align:left}.ts-wwm .ts-wwm__clients{margin-bottom:2rem}}
+/* TS WORK WITH ME END */
+
+/* TS COMING SOON START */
+.ts-coming-soon {
+  box-sizing: border-box;
+  max-width: 1180px;
+  margin: 24px auto 12px !important;
+  padding: 15px 22px;
+  border-left: 4px solid var(--ast-global-color-0);
+  border-radius: 10px;
+  background: #eaf7eb;
+  box-shadow: 0 8px 22px rgba(24, 58, 31, 0.14);
+  color: var(--ast-global-color-2);
+  line-height: 1.55;
+}
+.ts-coming-soon a { font-weight: 600; }
+@media (max-width: 767px) {
+  .ts-coming-soon { margin: 16px 20px 12px !important; padding: 13px 16px; }
+}
+/* TS COMING SOON END */
+
+/* TS RESTYLE START — editorial restyle, styling only (no text or image changes).
+   Remove everything from START to END (and the @import line at the very top) to roll back. */
+
+/* 1. Palette: re-point Astra's global colors, which Astra, Spectra and the
+      Work With Me styles all read from */
+:root {
+  --ast-global-color-0: #1C2531; /* primary (was green)     -> ink        */
+  --ast-global-color-1: #36424F; /* primary hover          -> ink, lifted */
+  --ast-global-color-2: #1C2531; /* headings               -> ink        */
+  --ast-global-color-3: #3A4654; /* body text              -> slate      */
+  --ast-global-color-4: #ECEBE4; /* pale panels (was mint) -> stone      */
+  --ast-global-color-6: #D5D6CF; /* borders                -> warm rule  */
+  --ast-global-color-7: #151C26; /* darkest                -> night      */
+
+  --ts-ground: #F5F4EF;
+  --ts-stone: #ECEBE4;
+  --ts-panel: #FAF9F6;
+  --ts-ink: #1C2531;
+  --ts-text: #3A4654;
+  --ts-muted: #4A5563;
+  --ts-rule: #D5D6CF;
+  --ts-accent: #C8963E;
+  --ts-accent-deep: #7A520A;
+  --ts-night: #151C26;
+  --ts-serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --ts-sans: "Hanken Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+/* 2. Ground and body type */
+body,
+.site,
+.site-content,
+.ast-plain-container,
+.ast-plain-container .site-content,
+#primary,
+.ast-separate-container {
+  background-color: var(--ts-ground);
+}
+body,
+button,
+input,
+select,
+textarea,
+.ast-button,
+.ast-custom-button {
+  font-family: var(--ts-sans);
+}
+body {
+  color: var(--ts-text);
+  font-size: 16px;
+  line-height: 1.65;
+}
+.entry-content p,
+.entry-content li {
+  line-height: 1.7;
+}
+
+/* 3. Headings: light serif, sentence-style casing instead of all caps */
+h1, h2, h3, h4, h5, h6,
+.entry-content :where(h1, h2, h3, h4, h5, h6),
+.entry-content .uagb-heading-text,
+.entry-content .uagb-ifb-title,
+.site-footer .uagb-ifb-title,
+.site-title,
+.site-title a {
+  font-family: var(--ts-serif);
+  text-transform: none !important;
+  color: var(--ts-ink);
+}
+h1, .entry-content :where(h1) {
+  font-weight: 300;
+  font-size: clamp(2.6rem, 6vw, 5.4rem);
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+}
+/* Spectra sets per-block sizes with higher specificity; hold the scale steady */
+body .entry-content h1.uagb-heading-text {
+  font-weight: 300;
+  font-size: clamp(2.6rem, 6vw, 5.4rem) !important;
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+}
+h2, .entry-content :where(h2) {
+  font-weight: 300;
+  font-size: clamp(2.1rem, 3.8vw, 3.4rem);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+}
+body .entry-content h2.uagb-heading-text,
+body .entry-content h2.uagb-ifb-title {
+  font-weight: 300;
+  font-size: clamp(2.1rem, 3.8vw, 3.4rem) !important;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+}
+h3, .entry-content :where(h3) {
+  font-weight: 400;
+  font-size: clamp(1.55rem, 2.2vw, 1.95rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+body .entry-content h3.uagb-heading-text,
+body .entry-content h3.uagb-ifb-title {
+  font-weight: 400;
+  font-size: clamp(1.55rem, 2.2vw, 1.95rem) !important;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+/* Short headings set as paragraphs (Why Choose rows, founder name) */
+body .entry-content p.uagb-heading-text,
+body .entry-content p.uagb-ifb-title {
+  font-weight: 400;
+  font-size: 1.6rem;
+  line-height: 1.2;
+}
+/* A short saffron rule under each page's main heading */
+.entry-content h1::after {
+  content: "";
+  display: block;
+  width: 56px;
+  height: 2px;
+  margin-top: 0.42em;
+  background: var(--ts-accent);
+}
+.entry-content :where(h1, h2, h3) + p,
+.entry-content .uagb-desc-text,
+.entry-content .uagb-ifb-desc {
+  color: var(--ts-text);
+}
+
+/* 4. Links */
+.entry-content a:not(.wp-block-button__link):not(.uagb-infobox-cta-link):not(.uagb-buttons-repeater),
+.ts-coming-soon a {
+  color: var(--ts-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--ts-accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+.entry-content a:not(.wp-block-button__link):hover,
+.ts-coming-soon a:hover {
+  color: var(--ts-muted);
+}
+
+/* 5. Buttons: pill shape, ink; colors already follow the palette above */
+.wp-block-button__link,
+.uagb-buttons-repeater,
+.ast-custom-button,
+.ast-custom-button-link .ast-custom-button,
+.menu-toggle {
+  border-radius: 999px !important;
+  font-family: var(--ts-sans) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.01em;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.ast-custom-button {
+  padding: 12px 22px !important;
+}
+.menu-toggle {
+  border-radius: 10px !important;
+}
+.wp-block-button__link:focus-visible,
+.uagb-buttons-repeater:focus-visible,
+.ast-custom-button-link:focus-visible,
+.menu-link:focus-visible {
+  outline: 2px solid var(--ts-accent) !important;
+  outline-offset: 3px;
+}
+
+/* 6. Header */
+.ast-primary-header-bar,
+.ast-mobile-header-wrap .ast-primary-header-bar,
+.main-header-menu .menu-link,
+.ast-builder-menu-mobile .main-navigation .main-header-menu .sub-menu,
+#ast-mobile-header .ast-mobile-header-content,
+.ast-mobile-header-content .main-header-menu .menu-link {
+  background-color: var(--ts-ground) !important;
+}
+.ast-primary-header-bar {
+  border-bottom-color: var(--ts-rule) !important;
+}
+.site-title,
+.site-title a {
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+.site-header .custom-logo {
+  border-radius: 50%;
+}
+.main-header-menu .menu-link {
+  font-family: var(--ts-sans);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ts-ink) !important;
+}
+.ast-builder-menu-1 .menu-item.current-menu-item > .menu-link,
+.ast-builder-menu-mobile .main-navigation .menu-item.current-menu-item > .menu-link {
+  color: var(--ts-ink) !important;
+  text-decoration: underline;
+  text-decoration-color: var(--ts-accent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 8px;
+}
+.main-header-menu .menu-link:hover {
+  color: var(--ts-muted) !important;
+}
+
+/* 7. "Coming soon" notice: a quiet editorial note instead of a shadowed card */
+.ts-coming-soon {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: 0 !important;
+  border-left: 2px solid var(--ts-accent) !important;
+  border-radius: 0 !important;
+  padding: 6px 0 6px 18px !important;
+  font-size: 14px;
+  color: var(--ts-text) !important;
+}
+.ts-coming-soon strong {
+  color: var(--ts-ink);
+  font-weight: 600;
+}
+
+/* 8. Panels, cards and images */
+.entry-content .wp-block-uagb-container:not(.alignfull) {
+  border-radius: 6px;
+}
+.entry-content .wp-block-uagb-image__figure img,
+.entry-content figure.wp-block-image,
+.entry-content figure.wp-block-image img,
+.entry-content .uagb-ifb-image-content img:not([src*="avatar"]) {
+  border-radius: 4px !important;
+  box-shadow: none !important;
+}
+.entry-content .uagb-ifb-image-content img[src*="avatar"] {
+  border-radius: 50% !important;
+}
+/* Spectra separators and borders pick up the warm rule color */
+.entry-content .wp-block-uagb-separator__inner {
+  border-top-color: var(--ts-rule) !important;
+}
+
+/* 9. Home */
+body.home .entry-content > .uagb-is-root-container:first-of-type .uagb-ifb-desc {
+  font-size: 1.15rem;
+  line-height: 1.6;
+}
+/* "Discover the healing power…" line and the six benefit words */
+body.home .entry-content > .uagb-is-root-container:nth-of-type(2) .wp-block-uagb-advanced-heading p.uagb-desc-text {
+  font-family: var(--ts-serif);
+  font-style: italic;
+  font-size: 1.6rem;
+  line-height: 1.3;
+  color: var(--ts-text);
+}
+body.home .entry-content .uagb-icon-list__label {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink);
+}
+body.home .entry-content .uagb-icon-list__source-wrap svg {
+  fill: var(--ts-accent) !important;
+  color: var(--ts-accent) !important;
+  width: 9px !important;
+  height: 9px !important;
+}
+/* Service cards: the small "Services" link reads as an editorial text link */
+body.home .entry-content .uagb-buttons-repeater {
+  background: transparent !important;
+  color: var(--ts-ink) !important;
+  border: 0 !important;
+  padding: 10px 0 !important;
+  text-decoration: underline !important;
+  text-decoration-color: var(--ts-accent) !important;
+  text-underline-offset: 0.25em;
+}
+
+/* "About Thai Solitude": a text link, not a pill */
+body.home .entry-content .wp-block-uagb-info-box--has-margin .uagb-infobox-cta-link {
+  border-radius: 0 !important;
+  border-color: var(--ts-accent) !important;
+}
+
+/* 10. About: the "Learn About" band and its accordions */
+.entry-content > .uagb-is-root-container:has(.wp-block-uagb-faq) {
+  background-image: none !important;
+  background-color: var(--ts-stone) !important;
+}
+.entry-content .wp-block-uagb-faq .uagb-faq-child__outer-wrap,
+.entry-content .wp-block-uagb-faq .uagb-faq-item {
+  background: var(--ts-panel) !important;
+  border-color: var(--ts-rule) !important;
+  border-radius: 4px !important;
+}
+.entry-content .wp-block-uagb-faq .uagb-question {
+  font-family: var(--ts-serif);
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: var(--ts-ink);
+}
+.entry-content .wp-block-uagb-faq .uagb-icon svg,
+.entry-content .wp-block-uagb-faq .uagb-icon-active svg {
+  fill: var(--ts-accent) !important;
+}
+
+/* 11. Contact: the three detail cards were hard-coded mint */
+body.page-id-301 .entry-content .wp-block-group .wp-block-uagb-container .wp-block-uagb-container {
+  background-color: var(--ts-panel) !important;
+  border-color: var(--ts-rule) !important;
+}
+
+/* 12. Work With Me: same type and palette; soften the mint-specific details */
+.ts-wwm h1,
+.ts-wwm h2,
+.ts-wwm h3 {
+  font-family: var(--ts-serif);
+  color: var(--ts-ink);
+  text-transform: none !important;
+}
+.ts-wwm h1 {
+  font-weight: 300;
+  letter-spacing: -0.025em;
+}
+.ts-wwm h2 {
+  font-weight: 300;
+  letter-spacing: -0.02em;
+}
+.ts-wwm h3 {
+  font-weight: 400;
+  font-size: 1.55rem;
+  letter-spacing: -0.005em;
+}
+.ts-wwm .ts-wwm__eyebrow,
+.ts-wwm .ts-wwm__number {
+  color: var(--ts-accent-deep);
+}
+.ts-wwm .ts-wwm__identity {
+  color: var(--ts-ink);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  font-size: 0.85rem;
+}
+.ts-wwm .ts-wwm__number {
+  font-family: var(--ts-serif);
+  font-size: 2.2rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1;
+  color: var(--ts-accent);
+}
+.ts-wwm .ts-wwm__hero,
+.ts-wwm .ts-wwm__approach,
+.ts-wwm .ts-wwm__credentials,
+.ts-wwm .ts-wwm__invitation,
+.ts-wwm .ts-wwm__clients {
+  border-radius: 6px;
+}
+.ts-wwm .ts-wwm__approach,
+.ts-wwm .ts-wwm__credentials,
+.ts-wwm .ts-wwm__clients {
+  background: var(--ts-panel);
+  border: 1px solid var(--ts-rule);
+}
+.ts-wwm .ts-wwm__hero:after {
+  border-color: var(--ts-rule);
+  box-shadow: -28px 30px 0 -10px #E6E5DE, -58px 60px 0 -20px #DEDDD5;
+}
+.ts-wwm .ts-wwm__hero-photo img {
+  border-radius: 4px;
+}
+.ts-wwm .ts-wwm__cards > .wp-block-column {
+  background: #FFFFFF;
+  border-color: var(--ts-rule);
+  border-radius: 4px;
+}
+.ts-wwm .ts-wwm__owners-grid > .wp-block-column {
+  border-top: 2px solid var(--ts-accent);
+  border-radius: 0 0 4px 4px;
+}
+.ts-wwm p a:not(.wp-block-button__link),
+.ts-wwm .ts-wwm__credential-list a {
+  color: var(--ts-ink);
+  text-decoration-color: var(--ts-accent);
+}
+.ts-wwm .wp-block-button__link {
+  border-radius: 999px;
+}
+.ts-wwm .is-style-outline .wp-block-button__link {
+  color: var(--ts-ink);
+  border-color: var(--ts-ink);
+}
+
+/* 13. Footer: ink "Coming soon" band over the existing texture, dark base row */
+.site-primary-footer-wrap[data-section="section-primary-footer-builder"] {
+  background-color: var(--ts-night) !important;
+  background-image: linear-gradient(rgba(21, 28, 38, 0.88), rgba(21, 28, 38, 0.88)), url("/wp-content/uploads/2026/06/00FooterGrainy.webp") !important;
+}
+.site-footer .uagb-ifb-title {
+  color: #F5F4EF !important;
+  font-weight: 300;
+  font-size: clamp(2.2rem, 4.5vw, 3.6rem) !important;
+  line-height: 1.06;
+  letter-spacing: -0.02em;
+}
+.site-footer .uagb-ifb-title::before {
+  content: "";
+  display: block;
+  width: 48px;
+  height: 2px;
+  margin: 0 auto 0.6em;
+  background: var(--ts-accent);
+}
+.site-footer .uagb-ifb-desc {
+  color: #C9CED6 !important;
+}
+.site-footer .uagb-infobox-cta-link.wp-block-button__link {
+  background: #F5F4EF !important;
+  color: var(--ts-ink) !important;
+  border-color: #F5F4EF !important;
+}
+.site-footer .uagb-infobox-cta-link.wp-block-button__link:hover {
+  background: #FFFFFF !important;
+}
+.site-below-footer-wrap[data-section="section-below-footer-builder"] {
+  background-color: var(--ts-night) !important;
+  border-top-color: rgba(255, 255, 255, 0.08) !important;
+}
+.site-below-footer-wrap .ast-footer-copyright,
+.site-below-footer-wrap .ast-footer-copyright p {
+  color: #C9CED6 !important;
+}
+.site-below-footer-wrap .menu-link {
+  color: #E6E8EC !important;
+}
+.site-below-footer-wrap .current-menu-item > .menu-link {
+  color: #FFFFFF !important;
+  text-decoration: underline;
+  text-decoration-color: var(--ts-accent);
+  text-underline-offset: 6px;
+}
+.site-below-footer-wrap .menu-link:hover {
+  color: #FFFFFF !important;
+}
+#ast-scroll-top {
+  background-color: var(--ts-ink) !important;
+  border-radius: 999px;
+}
+/* TS RESTYLE END */
+
+/* TS TRANSITION START — soft cross-fade between pages (Chrome, Edge, Safari).
+   Uses the browser's default cross-fade so shared parts (menu, footer) stay steady.
+   Remove everything from START to END to roll back. Skipped for reduced-motion users. */
+@view-transition { navigation: auto; }
+html { background-color: var(--ts-ground, #F5F4EF); }
+::view-transition-old(root),
+::view-transition-new(root) { animation-duration: 0.3s; }
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+}
+/* TS TRANSITION END */

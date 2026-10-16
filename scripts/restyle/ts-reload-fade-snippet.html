@@ -1,0 +1,13 @@
+<!-- TS RELOAD FADE — NOT APPLIED. Two parts; both are needed.
+     PART 1 (JS) goes in the site <head> via the Insert Headers and Footers plugin ("Scripts in Header").
+     PART 2 (CSS) goes at the end of Additional CSS, after the TS TRANSITION block.
+     It fades the page in on F5 and on first visits only; page-to-page clicks keep the plain cross-fade.
+     Roll back by removing both parts. -->
+
+<!-- PART 1: JS -->
+<script>try{var n=performance.getEntriesByType("navigation")[0],o=location.origin;if((n&&n.type==="reload")||!document.referrer||document.referrer.indexOf(o)!==0)document.documentElement.classList.add("ts-fade-in")}catch(e){}</script>
+
+/* PART 2: CSS (Additional CSS) */
+@keyframes ts-fade-in { from { opacity: 0; } to { opacity: 1; } }
+html.ts-fade-in body { animation: ts-fade-in 0.4s cubic-bezier(0, 0, 0.2, 1) backwards; }
+@media (prefers-reduced-motion: reduce) { html.ts-fade-in body { animation: none; } }

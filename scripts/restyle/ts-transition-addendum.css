@@ -1,0 +1,11 @@
+/* TS TRANSITION START — soft cross-fade between pages (Chrome, Edge, Safari).
+   Uses the browser's default cross-fade so shared parts (menu, footer) stay steady.
+   Remove everything from START to END to roll back. Skipped for reduced-motion users. */
+@view-transition { navigation: auto; }
+html { background-color: var(--ts-ground, #F5F4EF); }
+::view-transition-old(root),
+::view-transition-new(root) { animation-duration: 0.3s; }
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+}
+/* TS TRANSITION END */

@@ -1,0 +1,53 @@
+/* TS WWM EMPLOYER START */
+.ts-wwm .ts-wwm__contact{display:flex;flex-wrap:wrap;column-gap:1.25rem;font-size:.98rem;margin:1rem 0 0}
+.ts-wwm .ts-wwm__contact a{display:inline-block;padding:.45rem .1rem}
+.ts-wwm .ts-wwm__contact+.ts-wwm__experience{margin-top:.6rem}
+.ts-wwm .ts-wwm__experience+.ts-wwm__hero-links{margin-top:.5rem}
+.ts-wwm .ts-wwm__availability{padding-top:clamp(2rem,4vw,3rem);padding-bottom:clamp(1.5rem,3vw,2.5rem);scroll-margin-top:90px}
+.ts-wwm .ts-wwm__owners>p:not(.ts-wwm__eyebrow){max-width:800px;font-size:1.08rem}
+.ts-wwm .ts-wwm__owners .wp-block-uagb-faq{max-width:840px}
+.ts-wwm .ts-wwm__approach-close{max-width:760px;margin:2rem auto 0;font-size:1.08rem}
+.ts-wwm .ts-wwm__approach-close+.ts-wwm__approach-close{margin-top:1rem}
+.ts-wwm .ts-wwm__story{max-width:720px;margin:1.8rem auto 0;padding-left:1.4rem;border-left:3px solid var(--ts-accent,#c8963e);text-align:left}
+.ts-wwm .ts-wwm__story .ts-wwm__eyebrow{margin:0 0 .5rem}
+.ts-wwm .ts-wwm__story h3{margin:.1rem 0 .9rem}
+.ts-wwm .ts-wwm__story p:not(.ts-wwm__eyebrow){font-size:1.08rem;margin:0 0 .9rem}
+.ts-wwm .ts-wwm__story p:last-child{margin-bottom:0}
+.ts-wwm .ts-wwm__note{max-width:800px;margin:1.4rem 0 0;font-size:1rem}
+@media(max-width:600px){.ts-wwm .ts-wwm__hero{grid-template-columns:minmax(0,1fr);padding-top:2rem}.ts-wwm .ts-wwm__hero-copy{width:100%}.ts-wwm .ts-wwm__identity{margin-bottom:.75rem}.ts-wwm .ts-wwm__hero .wp-block-buttons{margin-top:1.2rem}}
+.ts-wwm .ts-wwm__hero-copy{min-width:0}
+.ts-wwm .wp-block-button{font-size:1rem;width:17.8em;max-width:100%}
+.ts-wwm .wp-block-button:not(.is-style-outline) .wp-block-button__link{border-color:var(--ts-green)}
+.ts-wwm .wp-block-button:not(.is-style-outline) .wp-block-button__link:hover,.ts-wwm .wp-block-button:not(.is-style-outline) .wp-block-button__link:focus{border-color:var(--ast-global-color-1)}
+.ts-wwm .wp-block-button__link{border-width:2px;border-style:solid;font-size:inherit;box-sizing:border-box;display:flex;align-items:center;justify-content:center;text-align:center;width:100%;min-height:3.67em}
+body .ts-wwm .wp-block-buttons .wp-block-button .wp-block-button__link.wp-element-button{padding:0 1em}
+@media(max-width:921px){.ts-wwm .wp-block-button{font-size:.9333rem}.ts-wwm .wp-block-button__link{min-height:3.45em}}
+@media(max-width:360px){.ts-wwm .wp-block-button{width:13.8rem}.ts-wwm .wp-block-button__link{min-height:4.93em}}
+.ts-wwm .ts-wwm__invitation .ts-wwm__verify{font-size:.93rem;margin-top:.5rem}
+.ts-wwm .ts-wwm__thai{box-sizing:border-box;background:var(--ts-pale);border:1px solid var(--ts-line);border-radius:22px;margin:2rem 0;padding:clamp(2rem,5vw,3.6rem) clamp(1.25rem,5vw,3.4rem);scroll-margin-top:90px}
+.ts-wwm .ts-wwm__thai-grid{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.15fr);grid-template-areas:"intro image" "methods image" "note note";column-gap:2rem;row-gap:1.8rem}
+.ts-wwm .ts-wwm__thai-grid>*,.ts-wwm .ts-wwm__thai-methods>*{margin-block-start:0}
+.ts-wwm .ts-wwm__thai-intro{grid-area:intro;min-width:0}
+.ts-wwm .ts-wwm__thai-intro h2{margin:.1em 0 .5em}
+.ts-wwm .ts-wwm__thai-intro p:not(.ts-wwm__eyebrow){max-width:38ch;font-size:1.05rem;margin:0}
+.ts-wwm .ts-wwm__thai-image{grid-area:image;align-self:end;margin:0;min-width:0}
+.ts-wwm .ts-wwm__thai-image img{display:block;width:100%;height:auto;aspect-ratio:1/1;margin:-9% 0 -6%}
+.ts-wwm .ts-wwm__thai-methods{grid-area:methods;min-width:0}
+.ts-wwm .ts-wwm__thai-method{display:grid;grid-template-columns:2.4rem minmax(0,1fr);column-gap:.6rem;padding:.95rem 0;border-top:1px solid var(--ts-line)}
+.ts-wwm .ts-wwm__thai-method .ts-wwm__number{grid-row:1/span 2;margin:.15rem 0 0;font-size:1.15rem;letter-spacing:.02em;line-height:1.3;white-space:nowrap}
+.ts-wwm .ts-wwm__thai-method h3{grid-column:2;margin:0 0 .3rem}
+.ts-wwm .ts-wwm__thai-method p:not(.ts-wwm__number){grid-column:2;margin:0;font-size:.98rem}
+.ts-wwm .ts-wwm__thai-note{grid-area:note;display:grid;grid-template-columns:minmax(0,1fr);row-gap:.8rem;padding-top:.4rem}
+.ts-wwm .ts-wwm__thai-note h3{margin:0;max-width:20ch}
+.ts-wwm .ts-wwm__thai-note p{margin:0;font-size:1.05rem}
+@media(max-width:720px){.ts-wwm .ts-wwm__thai-grid{grid-template-columns:minmax(0,1fr);grid-template-areas:"intro" "image" "methods" "note";row-gap:1.5rem}.ts-wwm .ts-wwm__thai-image{width:100%;max-width:460px;justify-self:center}.ts-wwm .ts-wwm__thai-note{grid-template-columns:minmax(0,1fr);row-gap:.8rem;padding-top:1.4rem}.ts-wwm .ts-wwm__thai-note h3{max-width:none}}
+.ts-wwm .ts-wwm__sticky{display:none}
+@media(max-width:600px){.ts-wwm .ts-wwm__sticky{display:flex;gap:.6rem;position:fixed;left:0;right:0;bottom:0;max-width:none;z-index:60;box-sizing:border-box;padding:.6rem .8rem calc(.6rem + env(safe-area-inset-bottom,0px));background:#fff;border-top:1px solid var(--ts-line)}.ts-wwm .ts-wwm__sticky a{flex:1;display:flex;align-items:center;justify-content:center;min-height:44px;box-sizing:border-box;border:2px solid var(--ts-ink,#1c2531);border-radius:999px;background:transparent;color:var(--ts-ink,#1c2531);font-size:.95rem;font-weight:600;text-decoration:none}.entry-content .ts-wwm .ts-wwm__sticky a:not(.wp-block-button__link):not(.uagb-buttons-repeater){color:var(--ts-ink,#1c2531);text-decoration:none}.ts-wwm .ts-wwm__sticky a:focus-visible{outline:3px solid var(--ts-deep);outline-offset:2px}body:has(.ts-wwm__sticky){padding-bottom:calc(4.6rem + env(safe-area-inset-bottom,0px))}body:has(.ts-wwm__sticky) #ast-scroll-top{bottom:calc(5.2rem + env(safe-area-inset-bottom,0px))}}
+/* Site-wide, Ryan 2026-10-16: the footer panel (a footer widget, stored in options, so it is changed by hand on live) says only "Portland, OR"; keep its band compact. */
+#colophon .site-primary-footer-wrap{padding-top:2.2rem;padding-bottom:2.2rem}
+#colophon .ts-footer-location{margin:0;text-align:center;letter-spacing:.14em;text-transform:uppercase;font-size:.9rem;color:var(--ts-ground,#f5f4ef)}
+.ts-wwm .ts-wwm__owners>*,.ts-wwm .ts-wwm__credentials>*,.ts-wwm .ts-wwm__invitation>*,.ts-wwm .ts-wwm__clients>*{margin-left:0!important;margin-right:auto!important}
+/* TS WWM EMPLOYER END */
+
+/* ref: ./install-local.php — applies this block inside the TS WORK WITH ME section of Additional CSS */
+/* src: ../work-with-me.css — existing .ts-wwm rules these additions extend */

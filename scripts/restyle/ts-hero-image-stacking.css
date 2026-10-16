@@ -1,0 +1,4 @@
+/* TS HERO IMAGE STACKING START — hero images overhang their box (margin-bottom: -180px) and the later full-width section below
+   painted over their bottom edge (Therapeutic and others). Raise the image block above later sections. Remove START..END to roll back. */
+.entry-content .uagb-is-root-container.uagb-layout-grid > .wp-block-uagb-image { position: relative; z-index: 2; }
+/* TS HERO IMAGE STACKING END */

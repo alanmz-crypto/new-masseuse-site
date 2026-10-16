@@ -1,0 +1,15 @@
+/* TS HOME TRIAL START */
+/* Home page: licence line under the H1, the Learn About link colour, and a footer line. */
+body.home .ts-home-trust{margin:-2.4rem 0 0;font-size:.95rem;font-weight:600;letter-spacing:.03em;color:var(--ast-global-color-0)}
+body.home .ts-home-trust a{color:inherit;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:921px){body.home .ts-home-trust{margin-top:-1.6rem}}
+@media(max-width:600px){body.home .ts-home-trust{margin-top:-.4rem}}
+/* "About Thai Solitude" link in the Learn About info-box: the theme gives button links white text and this one has no fill, so it was white on cream (1.1:1). Navy, like the paragraph above it. */
+body.home .uagb-block-36c16d4d .uagb-infobox-cta-link,body.home .uagb-block-36c16d4d .uagb-infobox-cta-link:hover,body.home .uagb-block-36c16d4d .uagb-infobox-cta-link:focus-visible{color:var(--ast-global-color-0)}
+/* Site-wide footer panel (a footer widget, stored in options): email and résumé link under "Portland, OR". */
+#colophon .ts-footer-links{margin:.7rem 0 0;text-align:center;font-size:.95rem;color:var(--ts-ground,#f5f4ef)}
+#colophon .ts-footer-links a{color:inherit;text-decoration:underline;text-underline-offset:3px}
+/* TS HOME TRIAL END */
+
+/* ref: ./install-home-local.php — applies this block to Additional CSS (and removes it on revert) */
+/* src: ../employer-additions.css — footer-location rule this sits beside */
