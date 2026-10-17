@@ -362,7 +362,7 @@ plus an ssh-agent holding the deploy key, finds the install by `wp option get ho
 - **Before a change:** a fresh DB export that is also copied OFF the server and verified (`sync-server-backups.sh`; copies live in
   `~/WordPress/thai-solitude-server-backups`, outside git). A DB export does not hold plugin/theme files: for those use `mirror-versions.sh`
   (tarball + export) or a SiteGround backup.
-- **After a change ("push, then test"):** `post-change-test.sh <target>` (gates, page statuses, structured data and 16 pixel comparisons against the
+- **After a change ("push, then test"):** `post-change-test.sh <target>` (gates, page statuses, structured data and 18 pixel comparisons (9 pages x 2 widths, /privacy-policy/ included since 2026-10-17) against the
   reference site, new PHP errors) and `prove-restore.sh <target>` (restores the newest export into a throwaway database and shows exactly which
   fingerprints moved). Both refuse to report a result when nothing was compared.
 - **Tools:** `secure-backups.sh` (public WPvivid zips), `structured-data/push-structured-data.sh`, `mirror-versions.sh` (staging31 to live's plugin/theme
@@ -404,9 +404,10 @@ plus an ssh-agent holding the deploy key, finds the install by `wp option get ho
 - **Hard-won rules:** a comparison that matched nothing is INVALID, never "identical". A tool run from a site's folder can append to that site's
   `php_errorlog` (the server's `error_log` is a relative name), so disable PHP logging in scans. Under WP-CLI `home_url('/', 'https')` returns the
   site's own scheme; use `set_url_scheme()`. Guard on exact stored bytes (the WPCode snippet is stored with Windows line endings; read raw bytes).
-- **Privacy policy page (2026-10-17):** `privacy/install-privacy-page.php` + `push-privacy-page.sh` (`--apply` / `--rollback FILE`, staging31 only until Ryan says go live) add a very short `/privacy-policy/`
+- **Privacy policy page (2026-10-17):** `privacy/install-privacy-page.php` + `push-privacy-page.sh` (`--apply` / `--rollback FILE`; `S_TARGET=staging31|live`, default staging31) add a very short `/privacy-policy/`
   page (privacy-policy.html), set it as WordPress's privacy page (`wp_page_for_privacy_policy`) and add "Privacy Policy" to the centered footer row (widget block 7, options table). The copyright/license lines are not touched.
   Written for what the site really does (6 live pages checked: 0 forms, 0 iframes, no cookies, no analytics, only Google Fonts as an outside load): **if a form, booking widget, analytics or a map embed is ever added, update the
-  page first.** The installer refuses any forbidden OBMT term and we/our/us. Applied on staging31 with rollback proven there and locally. Ryan's longer generic template is saved, unused, for later review:
-  `docs/inter-model/Thai Solitude - Privacy Policy - Longer Draft (review later).md`. For live: add the host to the installer allow-list and push script, add `/privacy-policy/` to the page list in `post-change-test.sh`.
+  page first.** The installer refuses any forbidden OBMT term and we/our/us. Applied on staging31 (rollback proven there and locally), then on LIVE the same day on Ryan's "publish that. add the slug and go" (live page #1227; `post-change-test.sh live` ALL 5 PASS with 18/18 pixel-identical to staging31;
+  `prove-restore.sh live` showed only the expected differences). Live rollback: `S_TARGET=live ./push-privacy-page.sh --rollback '$HOME/private-backups/privacy-page-before-20261017-194902.json'`. Ryan's longer generic template is saved, unused, for later review:
+  `docs/inter-model/Thai Solitude - Privacy Policy - Longer Draft (review later).md`.
 - The "October 5 staging19 task boundary" paragraph near the top is historical; it does not describe the current work.

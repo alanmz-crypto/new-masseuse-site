@@ -6,9 +6,9 @@
 #
 # Run it right after changing a site (a PHP version switch, a plugin or theme update, a deploy). It checks:
 #   1. every code gate and the rendered-page verifiers (check-all.sh <url>)
-#   2. the 8 pages, sitemap and robots.txt answer 200
+#   2. the 9 pages (the 8 original ones plus /privacy-policy/), sitemap and robots.txt answer 200
 #   3. the structured data (JSON-LD) matches the reference site's, with each site's own address normalised
-#   4. every page, at desktop and mobile width, is PIXEL-IDENTICAL to the reference site's (zero tolerance)
+#   4. every page (18 page-views), at desktop and mobile width, is PIXEL-IDENTICAL to the reference site's (zero tolerance)
 #   5. no new PHP errors, warnings or deprecations in the server's php_errorlog in the last N minutes
 # Reference site: live for a staging copy; staging31 for live. If the two sites are meant to differ, differences are reported, not hidden.
 # Needs: Playwright via the Mirror project, Pillow + numpy, and the ssh-agent (SSH_AUTH_SOCK=/tmp/claude-1000/tsag/a.sock) for the log read.
@@ -38,13 +38,13 @@ step 1 "code gates and rendered-page verifiers"
 "$here/../check-all.sh" "$url_t" 2>&1 | tail -20; [ "${PIPESTATUS[0]}" -eq 0 ]; note $?
 
 step 2 "pages answer 200"
-bad=0; for p in / /about/ /services/ /thai-massage/ /therapeutic-massage/ /deep-tissue-massage/ /work-with-me/ /contact/ /wp-sitemap.xml /robots.txt; do
+bad=0; for p in / /about/ /services/ /thai-massage/ /therapeutic-massage/ /deep-tissue-massage/ /work-with-me/ /contact/ /privacy-policy/ /wp-sitemap.xml /robots.txt; do
   c=$(curl -s -o /dev/null -m 30 -w '%{http_code}' "$url_t$p"); printf '  %s %s\n' "$c" "$p"; [ "$c" = 200 ] || bad=1; done; note $bad
 
 step 3 "structured data vs the reference"
 python3 -I -B "$here/tools/jsonld-compare.py" "$url_t" "$url_r"; note $?
 
-step 4 "pixel comparison vs the reference (16 page-views, zero tolerance)"
+step 4 "pixel comparison vs the reference (18 page-views, zero tolerance)"
 node "$here/tools/capture-pages.mjs" "$url_t" "$work/candidate" 2>&1 | tail -2 &
 node "$here/tools/capture-pages.mjs" "$url_r" "$work/reference" 2>&1 | tail -2 &
 wait

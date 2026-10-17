@@ -8,7 +8,8 @@
  * header, no analytics or ad host; the only outside loads are Google Fonts files, the contact route is an email link and a phone link.
  * If the site ever gains a form, analytics, a booking widget or a map embed, the page must be updated first.
  *
- * Allow-list: localhost:8090 and staging31 ONLY. Live is added only on Ryan's go, after staging31 has been checked (no production host appears here today).
+ * Allow-list: localhost:8090, staging31 and live. Live was added on Ryan's go (2026-10-17: "publish that. add the slug and go"), after the change was applied, checked
+ * and rollback-proven on staging31 and localhost, and live's footer widget was proven byte-identical to the one the guard expects.
  *
  * What it writes (all in WordPress's own storage, so a SiteGround push carries it: posts table + options table; no files, no MU-plugin):
  *   1. a published page "Privacy Policy" (slug privacy-policy)
@@ -31,8 +32,8 @@ if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) ) {
 
 $home = untrailingslashit( home_url() );
 $host = (string) wp_parse_url( $home, PHP_URL_HOST ) . ( wp_parse_url( $home, PHP_URL_PORT ) ? ':' . wp_parse_url( $home, PHP_URL_PORT ) : '' );
-if ( ! in_array( $host, array( 'localhost:8090', 'staging31.thaisolitude.com' ), true ) ) {
-	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090 or staging31 only).' );
+if ( ! in_array( $host, array( 'localhost:8090', 'staging31.thaisolitude.com', 'thaisolitude.com' ), true ) ) {
+	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090, staging31 or live only).' );
 }
 if ( 'astra' !== get_stylesheet() ) {
 	WP_CLI::error( 'Active theme is not Astra.' );
