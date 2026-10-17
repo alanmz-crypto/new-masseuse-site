@@ -71,7 +71,7 @@ check_pins
 # and a stale claim would make this whole check report parity that does not
 # exist. wordpress:latest does not state a PHP version in its tag at all, so
 # that tag is rejected as unverifiable rather than assumed correct -- re-pin to
-# a version-stating tag (e.g. wordpress:php8.2-apache) before this check can
+# a version-stating tag (e.g. wordpress:php8.5-apache) before this check can
 # confirm anything about it.
 check_tag_matches_recorded() {
 	local recorded="$1" tags tag minor
