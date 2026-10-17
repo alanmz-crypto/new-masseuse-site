@@ -5,6 +5,8 @@
 #
 # Checks live and staging27/30/31 (staging24/25/26 were deleted on purpose on 2026-10-16 and show as 'gone'; any OTHER missing site is a FAIL): zero zips in wp-content/wpvividbackups, the nightly flag still 0,
 # no scheduled wpvivid_main_schedule_event, and the newest file in that folder is older than this fix. Changes nothing.
+# Since 2026-10-17 (WPvivid deleted on live): a site whose plugin folder is gone shows the nightly flag as 'gone' (that is the BEST state, not a failure), and the
+# 'other' column counts leftover files (the plugin's logs) still sitting in the PUBLIC wp-content/wpvividbackups folder: the server serves them, so any > 0 is a FAIL.
 # This is about WPvivid only. SiteGround's own backups are separate (Site Tools -> Security -> Backups) and cannot be checked from here.
 set -euo pipefail
 
@@ -25,24 +27,27 @@ for want in thaisolitude.com staging24.thaisolitude.com staging25.thaisolitude.c
   doc=""
   while IFS= read -r cfg; do d=$(dirname "$cfg"); h=$(wp --path="$d" --skip-plugins --skip-themes option get home 2>/dev/null || true); hh=${h#http://}; hh=${hh#https://}; hh=${hh%/}; [ "$hh" = "$want" ] && doc=$d; done < "$cfgs"
   if [ -z "$doc" ]; then
-    case "$want" in staging24.*|staging25.*|staging26.*) echo "$want|REMOVED|-|-|-" ;; *) echo "$want|NOT_FOUND|-|-|-" ;; esac   # REMOVED = deleted on purpose (2026-10-16, no longer in Site Tools); NOT_FOUND = a site that should exist is missing
+    case "$want" in staging24.*|staging25.*|staging26.*) echo "$want|REMOVED|-|-|-|-" ;; *) echo "$want|NOT_FOUND|-|-|-|-" ;; esac   # REMOVED = deleted on purpose (2026-10-16, no longer in Site Tools); NOT_FOUND = a site that should exist is missing
     continue
   fi
   zips=$(find "$doc/wp-content/wpvividbackups" -maxdepth 1 -name '*.zip' 2>/dev/null | wc -l)
-  flag=$(wp --path="$doc" --skip-plugins --skip-themes eval '$o = get_option("wpvivid_schedule_setting"); echo is_array($o) ? (int) ($o["enable"] ?? 0) : "n/a";' 2>/dev/null || echo "?")
+  other=$(find "$doc/wp-content/wpvividbackups" -type f ! -name .htaccess ! -name '*.zip' 2>/dev/null | wc -l)   # leftover logs etc. in the PUBLIC folder: the server serves static files there even though a .htaccess sits beside them
+  if [ -d "$doc/wp-content/plugins/wpvivid-backuprestore" ]; then   # plugin deleted -> its schedule setting went with it, which is the best state: "gone", not a failure
+    flag=$(wp --path="$doc" --skip-plugins --skip-themes eval '$o = get_option("wpvivid_schedule_setting"); echo is_array($o) ? (int) ($o["enable"] ?? 0) : "n/a";' 2>/dev/null || echo "?")
+  else flag="gone"; fi
   cron=$(wp --path="$doc" --skip-plugins --skip-themes eval '$n = 0; foreach ((array) _get_cron_array() as $h) { if (isset($h["wpvivid_main_schedule_event"])) { $n++; } } echo $n;' 2>/dev/null || echo "?")
   newest=$(find "$doc/wp-content/wpvividbackups" -type f -printf '%TY-%Tm-%Td %TH:%TM\n' 2>/dev/null | sort | tail -1)
-  echo "$want|$zips|$flag|$cron|${newest:--}"
+  echo "$want|$zips|$flag|$cron|${newest:--}|$other"
 done
 REMOTE
 )
 fail=0
-printf '%-32s %5s %9s %6s  %s\n' "site" "zips" "nightly" "cron" "newest file in the backup folder (UTC)"
-while IFS='|' read -r site zips flag cron newest; do
-  if [ "$zips" = "REMOVED" ]; then st="gone"; elif [ "$zips" = "0" ] && [ "$flag" = "0" ] && [ "$cron" = "0" ]; then st="ok  "; else st="FAIL"; fail=1; fi
-  printf '%s %-27s %5s %9s %6s  %s\n' "$st" "$site" "$zips" "$flag" "$cron" "$newest"
+printf '%-32s %5s %9s %6s %6s  %s\n' "site" "zips" "nightly" "cron" "other" "newest file in the backup folder (UTC)"
+while IFS='|' read -r site zips flag cron newest other; do
+  if [ "$zips" = "REMOVED" ]; then st="gone"; elif [ "$zips" = "0" ] && { [ "$flag" = "0" ] || [ "$flag" = "gone" ]; } && [ "$cron" = "0" ] && [ "$other" = "0" ]; then st="ok  "; else st="FAIL"; fail=1; fi
+  printf '%s %-27s %5s %9s %6s %6s  %s\n' "$st" "$site" "$zips" "$flag" "$cron" "$other" "$newest"
 done <<<"$out"
 echo
-if [ "$fail" -eq 0 ]; then echo "PASS: no backup zip in any public web root, the nightly job is still off everywhere."; else echo "FAIL: a site has a zip back, or its nightly flag/cron is on. Fix with: scripts/work-with-me-employer/secure-backups.sh <site> --apply" >&2; exit 1; fi
+if [ "$fail" -eq 0 ]; then echo "PASS: no backup zip or leftover file in any public WPvivid folder, and the nightly job is off (or the plugin is gone) everywhere."; else echo "FAIL: a site has a zip back, a leftover file in wp-content/wpvividbackups (it IS served publicly), or its nightly flag/cron is on. Zips/schedule: scripts/work-with-me-employer/secure-backups.sh <site> --apply (needs the plugin). Leftover files after the plugin was deleted: move or delete wp-content/wpvividbackups (ask Ryan; live writes need his go)."; fi
 
 # ref: ./secure-backups.sh — the tool that turned the nightly job off and moved the zips; ../../remote_execution.txt — gitignored access details (never printed)
