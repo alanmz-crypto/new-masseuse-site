@@ -385,6 +385,13 @@ plus an ssh-agent holding the deploy key, finds the install by `wp option get ho
   look fine. Never trust `wp`'s exit status on live: check OUTPUT and FILES (as `remove-dead-plugins.sh` does), or run with `--skip-plugins=sg-security`
   or `PHP_BIN=php82` (a name under /usr/local/bin, not a path). Installer guards still stop writes, because `WP_CLI::error` ends the PHP script before any write.
   The local practice stack has the same plugin: `sg_security_disable_activity_log` is set to 1 in its DB (redo after refreshing the local DB from production).
+- **Dead-plugin cleanup:** `cleanup/remove-dead-plugins.sh [--apply | --rollback TARBALL]` removes inactive autoptimize 3.1.16, siteground-migrator 2.1.2 and
+  autoptimize's leftover `wp-content/autoptimize_404_handler.php` (targets: staging31 and live). Applied and rollback-proven on staging31 2026-10-17; on live
+  Ryan removed the same plugins through the WordPress admin the same day (no tool backup; live verified healthy afterwards), so it stays as the reviewed way to
+  remove inactive plugins. Backs up first (DB export + tarball of exactly those files + manifest fingerprint, all copied off-server and verified), refuses unless
+  each plugin is inactive at the reviewed version, restores itself if its post-removal check fails. The auto-mode classifier blocks an agent from running
+  `--apply` (deletion): Ryan runs it with `!`. Still open on live: Site Kit and Starter Templates are inactive (delete later, then clear their leftover
+  settings), SureForms leftovers (1 unread entry from 2026-06-08), WPvivid, 11 draft snippets; each removal is asked twice.
 - **Hard-won rules:** a comparison that matched nothing is INVALID, never "identical". A tool run from a site's folder can append to that site's
   `php_errorlog` (the server's `error_log` is a relative name), so disable PHP logging in scans. Under WP-CLI `home_url('/', 'https')` returns the
   site's own scheme; use `set_url_scheme()`. Guard on exact stored bytes (the WPCode snippet is stored with Windows line endings; read raw bytes).
