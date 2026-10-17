@@ -1,21 +1,19 @@
 <?php
 /**
- * Create the WPCode PHP snippet "PerformanceLazyLoadImages" for ONE site at a time.
- * Allow-list: staging31 only. Live is added only on Ryan's explicit go. Ryan, 2026-10-17: "the homepage loads images slower than it could. we can fix that."
+ * Create ONE of the small performance WPCode PHP snippets for ONE site at a time. Allow-list: staging31 only. Live is added only on Ryan's explicit go.
+ * Ryan, 2026-10-17: "the homepage loads images slower than it could. we can fix that." (then: read Google's PageSpeed report directly)
  *
- * Why: WordPress treats the FIRST THREE images of a page as above the fold and never lazy-loads them (wp_omit_loading_attr_threshold() = 3). On a phone the hero photo plus the two
- * service illustrations all count, and they share a slow connection with the fonts: measured on a throttled phone the hero took 2.26 s; with the two lower images out of the first
- * view it takes 1.30 s. The snippet sets the threshold to 1, so only the first image is eager and the rest lazy-load as the visitor scrolls. Nothing is removed, no file is touched.
+ * Keys (second WP-CLI argument):
+ *   lazy-images   PerformanceLazyLoadImages    only the FIRST image counts as above the fold (WordPress's default is three): hero 2.26 s -> 1.32 s on a throttled phone.
+ *                 Side effect, by design and already true today for the 4th image onward: lazy images get sizes="auto", so on a 1x screen the browser picks the 300 px copy for a
+ *                 298 px slot (slightly softer, like the third illustration on live today); on 2x phones/retina the 512 px copy is still chosen (pixel-identical).
+ *   work-sans     PerformanceDropUnusedWorkSans   Astra puts Google's "Work Sans" 600 in a render-blocking stylesheet, but no page ever downloads Work Sans (the Additional CSS uses
+ *                 Newsreader and Hanken Grotesk everywhere; checked on all 8 pages). Lighthouse mobile what-if on live: first paint 3.4 s -> 1.7 s, score 77 -> 84.
  *
- * Side effect, by design and already true today for the 4th image onward: WordPress 6.7+ gives a LAZY image sizes="auto, ...", so on a 1x (non-retina) screen the browser picks the smaller
- * 300 px copy for a 298 px slot instead of the 512 px copy. Pixel comparison on staging31 (1x): the two service illustrations look slightly softer on 1x screens, exactly like the third
- * illustration already does on live; on 2x phones/retina screens the 512 px copy is still chosen, so nothing changes there. (A second filter, wp_img_tag_add_auto_sizes = false, was tried
- * and rejected: it only moves the difference onto the images that are already lazy today.)
- *
- * Modes (first WP-CLI argument; run with --user=1):
- *   (none) / preflight    read-only: report the state (ready = snippet absent, applied = exactly this snippet is there, CHANGED = anything else)
- *   apply                 snapshot, then create + activate the snippet and refresh WPCode's cache
- *   rollback FILE         delete the snippet this installer created, if it is still exactly what it wrote
+ * Modes (first WP-CLI argument; run with --user=1):  <mode> <key> [FILE]
+ *   preflight    read-only: report the state (ready = snippet absent, applied = exactly this snippet is there, CHANGED = anything else)
+ *   apply        snapshot, then create + activate the snippet and refresh WPCode's cache
+ *   rollback     put things back by deleting the snippet this installer created, if it is still exactly what it wrote (FILE = the before-snapshot)
  * apply and rollback need WWM_BACKUP_DIR (an existing, writable absolute directory outside the web root).
  */
 
@@ -39,19 +37,44 @@ if ( ! function_exists( 'wpcode' ) || ! class_exists( 'WPCode_Snippet' ) ) {
 }
 $args = isset( $args ) && is_array( $args ) ? $args : array();
 $mode = $args ? (string) $args[0] : 'preflight';
+$key  = isset( $args[1] ) ? (string) $args[1] : '';
 if ( ! in_array( $mode, array( 'preflight', 'apply', 'rollback' ), true ) ) {
 	WP_CLI::error( 'Unknown mode: ' . $mode );
 }
 
-$title = 'PerformanceLazyLoadImages';
-$code  = <<<'CODE'
+$lazy_code = <<<'CODE'
 // Only the FIRST image on a page counts as above the fold (WordPress's default is the first three); the rest lazy-load as the visitor scrolls,
 // so the main photo gets a slow phone's connection to itself. Measured 2026-10-17: hero 2.26 s -> 1.30 s. Remove this snippet to go back to the default.
 add_filter( 'wp_omit_loading_attr_threshold', function () {
 	return 1;
 } );
 CODE;
-$code .= "\n";
+$work_sans_code = <<<'CODE'
+// Astra loads Google's "Work Sans" (weight 600) in a render-blocking stylesheet, but the site's own CSS uses Newsreader and Hanken Grotesk everywhere and no page ever
+// downloads Work Sans. Dropping the unused request removes a blocking round trip to another company's server on every visit (Lighthouse mobile what-if 2026-10-17: first paint 3.4 s -> 1.7 s).
+// Remove this snippet to go back to Astra's default.
+add_action( 'wp_enqueue_scripts', function () {
+	wp_dequeue_style( 'astra-google-fonts' );
+	wp_deregister_style( 'astra-google-fonts' );
+}, 1000 );
+// The preconnect / dns-prefetch hints for fonts.googleapis.com are then pointless; the one for fonts.gstatic.com (the real font files) stays.
+add_filter( 'wp_resource_hints', function ( $urls ) {
+	return array_values( array_filter( (array) $urls, function ( $u ) {
+		$h = is_array( $u ) ? ( isset( $u['href'] ) ? $u['href'] : '' ) : (string) $u;
+		return false === strpos( $h, 'fonts.googleapis.com' );
+	} ) );
+}, 1000 );
+CODE;
+$variants = array(
+	'lazy-images' => array( 'title' => 'PerformanceLazyLoadImages', 'code' => $lazy_code . "\n", 'marker' => 'wp_omit_loading_attr_threshold' ),
+	'work-sans'   => array( 'title' => 'PerformanceDropUnusedWorkSans', 'code' => $work_sans_code . "\n", 'marker' => 'astra-google-fonts' ),
+);
+if ( ! isset( $variants[ $key ] ) ) {
+	WP_CLI::error( 'Second argument must be one of: ' . implode( ', ', array_keys( $variants ) ) );
+}
+$title  = $variants[ $key ]['title'];
+$code   = $variants[ $key ]['code'];
+$marker = $variants[ $key ]['marker'];
 
 $found = get_posts( array( 'post_type' => 'wpcode', 'post_status' => 'any', 'title' => $title, 'numberposts' => -1, 'suppress_filters' => true ) );
 if ( 0 === count( $found ) ) {
@@ -61,7 +84,7 @@ if ( 0 === count( $found ) ) {
 } else {
 	$state = 'CHANGED';
 }
-$report = sprintf( 'host=%s snippet_%s=%s threshold_now=%d', $home, $title, $state, wp_omit_loading_attr_threshold() );
+$report = sprintf( 'host=%s snippet_%s=%s', $home, $title, $state );
 
 if ( 'preflight' === $mode ) {
 	if ( 'CHANGED' === $state ) {
@@ -76,11 +99,11 @@ if ( ! $backup_dir || '/' !== $backup_dir[0] || ! is_dir( $backup_dir ) || ! is_
 	WP_CLI::error( 'WWM_BACKUP_DIR must be an existing, writable absolute directory outside the web root.' );
 }
 /** Rebuild WPCode's snippet cache; true if the cache now reflects whether the filter text is present. */
-$refresh_cache = function ( $expected ) {
+$refresh_cache = function ( $expected ) use ( $marker ) {
 	if ( isset( wpcode()->cache ) && method_exists( wpcode()->cache, 'cache_all_loaded_snippets' ) ) {
 		wpcode()->cache->cache_all_loaded_snippets();
 	}
-	return $expected === ( false !== strpos( maybe_serialize( get_option( 'wpcode_snippets' ) ), 'wp_omit_loading_attr_threshold' ) );
+	return $expected === ( false !== strpos( maybe_serialize( get_option( 'wpcode_snippets' ) ), $marker ) );
 };
 
 if ( 'apply' === $mode ) {
@@ -91,8 +114,8 @@ if ( 'apply' === $mode ) {
 		WP_CLI::success( 'Nothing to do: already applied. ' . $report );
 		return;
 	}
-	$file = rtrim( $backup_dir, '/' ) . '/lazy-images-before-' . gmdate( 'Ymd-His' ) . '.json';
-	if ( false === file_put_contents( $file, wp_json_encode( array( 'created' => gmdate( 'c' ), 'home' => $home, 'title' => $title, 'code_sha256' => hash( 'sha256', $code ), 'created_id' => null ) ) ) || ! filesize( $file ) ) {
+	$file = rtrim( $backup_dir, '/' ) . '/perf-' . $key . '-before-' . gmdate( 'Ymd-His' ) . '.json';
+	if ( false === file_put_contents( $file, wp_json_encode( array( 'created' => gmdate( 'c' ), 'home' => $home, 'title' => $title, 'key' => $key, 'code_sha256' => hash( 'sha256', $code ), 'created_id' => null ) ) ) || ! filesize( $file ) ) {
 		WP_CLI::error( 'Could not write the before-snapshot; nothing was changed.' );
 	}
 	chmod( $file, 0600 );
@@ -104,14 +127,14 @@ if ( 'apply' === $mode ) {
 		'auto_insert' => 1,
 		'priority'    => 10,
 		'active'      => true,
-		'note'        => 'Created 2026-10-17 by scripts/work-with-me-employer/performance/install-lazy-images.php (rollback: delete this snippet).',
+		'note'        => 'Created 2026-10-17 by scripts/work-with-me-employer/performance/install-perf-snippet.php (rollback: delete this snippet).',
 	) );
 	$id = $snippet->save();
 	$p  = $id ? get_post( $id ) : null;
 	$ok = $p && 'wpcode' === $p->post_type && 'publish' === $p->post_status && trim( (string) $p->post_content ) === trim( $code )
 		&& array( 'php' ) === wp_get_object_terms( $id, 'wpcode_type', array( 'fields' => 'slugs' ) ) && array( 'everywhere' ) === wp_get_object_terms( $id, 'wpcode_location', array( 'fields' => 'slugs' ) );
 	if ( $ok ) {
-		file_put_contents( $file, wp_json_encode( array( 'created' => gmdate( 'c' ), 'home' => $home, 'title' => $title, 'code_sha256' => hash( 'sha256', $code ), 'created_id' => (int) $id ) ) );
+		file_put_contents( $file, wp_json_encode( array( 'created' => gmdate( 'c' ), 'home' => $home, 'title' => $title, 'key' => $key, 'code_sha256' => hash( 'sha256', $code ), 'created_id' => (int) $id ) ) );
 		$ok = $refresh_cache( true );
 	}
 	if ( ! $ok ) {
@@ -126,7 +149,7 @@ if ( 'apply' === $mode ) {
 }
 
 // ---- rollback FILE ---------------------------------------------------------------------------------------------------------
-$file = isset( $args[1] ) ? (string) $args[1] : '';
+$file = isset( $args[2] ) ? (string) $args[2] : '';
 $snap = $file && is_file( $file ) ? json_decode( (string) file_get_contents( $file ), true ) : null;
 if ( ! is_array( $snap ) || ( $snap['home'] ?? '' ) !== $home || empty( $snap['created_id'] ) ) {
 	WP_CLI::error( 'Snapshot is missing, incomplete (the apply may not have finished), or from another site.' );
