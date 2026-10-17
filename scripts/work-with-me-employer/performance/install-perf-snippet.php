@@ -1,6 +1,7 @@
 <?php
 /**
- * Create ONE of the small performance WPCode PHP snippets for ONE site at a time. Allow-list: staging31 only. Live is added only on Ryan's explicit go.
+ * Create ONE of the small performance WPCode PHP snippets for ONE site at a time. Allow-list: staging31 and live. Live was added on Ryan's go (2026-10-17) after both snippets were
+ * applied, measured and rolled back/re-applied on staging31 and live's page text was proven identical to staging31's.
  * Ryan, 2026-10-17: "the homepage loads images slower than it could. we can fix that." (then: read Google's PageSpeed report directly)
  *
  * Keys (second WP-CLI argument):
@@ -23,8 +24,8 @@ if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) ) {
 
 $home = untrailingslashit( home_url() );
 $host = (string) wp_parse_url( $home, PHP_URL_HOST ) . ( wp_parse_url( $home, PHP_URL_PORT ) ? ':' . wp_parse_url( $home, PHP_URL_PORT ) : '' );
-if ( ! in_array( $host, array( 'staging31.thaisolitude.com' ), true ) ) {
-	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (staging31 only).' );
+if ( ! in_array( $host, array( 'staging31.thaisolitude.com', 'thaisolitude.com' ), true ) ) {
+	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (staging31 or live only).' );
 }
 if ( 'astra' !== get_stylesheet() ) {
 	WP_CLI::error( 'Active theme is not Astra.' );

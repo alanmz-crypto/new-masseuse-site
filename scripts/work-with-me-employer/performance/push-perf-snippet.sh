@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Create one of the small performance WPCode snippets on staging31 (live is added only on Ryan's explicit go, after staging31 was applied, measured, tested and rolled back/re-applied).
+# Create one of the small performance WPCode snippets on staging31 or live (S_TARGET=staging31|live; default staging31). Live was added on Ryan's go (2026-10-17), after staging31 was applied, measured, tested and rolled back/re-applied.
 #
 #   ./push-perf-snippet.sh <key>                       dry run: connect, locate the site, upload the package, preflight (read-only on the site)
 #   ./push-perf-snippet.sh <key> --apply               export the DB -> preflight -> COPY the export to this computer and verify it -> apply -> purge cache -> check it really runs
@@ -31,7 +31,7 @@ case "${2:-}" in
   *) echo "Unknown option: $2" >&2; exit 1 ;;
 esac
 target="${S_TARGET:-staging31}"
-case "$target" in staging31) ;; *) echo "S_TARGET must be staging31 (live is added only on Ryan's go)." >&2; exit 1 ;; esac
+case "$target" in staging31|live) ;; *) echo "S_TARGET must be staging31 or live." >&2; exit 1 ;; esac
 echo "Target site: $target   snippet: $key   mode: $mode"
 ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 "$user@$host")
 
@@ -44,7 +44,7 @@ read -r -d '' REMOTE <<'EOS' || true
 set -euo pipefail
 wp() { command wp --skip-plugins=sg-security "$@"; }   # SiteGround Security 1.6.9 + PHP 8.5 makes EVERY wp exit 0 on live (shutdown-handler bug); skipping that one plugin keeps exit codes true. See AGENTS.md and check-wp-exit-codes.sh.
 phase=$1; target=$2; key=$3; snap=${4:-}
-case "$target" in staging31) want="staging31.thaisolitude.com" ;; *) echo "Remote refused: target must be staging31, got '$target'." >&2; exit 1 ;; esac
+case "$target" in staging31) want="staging31.thaisolitude.com" ;; live) want="thaisolitude.com" ;; *) echo "Remote refused: target must be staging31 or live, got '$target'." >&2; exit 1 ;; esac
 command -v wp >/dev/null || { echo "wp-cli not found on the server" >&2; exit 1; }
 doc=""
 cfgs=$(mktemp); trap 'rm -f "$cfgs"' EXIT
