@@ -31,7 +31,7 @@ GOOD = {
     "robots": "User-agent: *\nDisallow: /wp-admin/\nAllow: /wp-admin/admin-ajax.php\n\nSitemap: http://x/wp-sitemap.xml\n",
 }
 OPEN_PATHS = ("/wp-content/wpvividbackups/", "/wp-content/uploads/", "/wp-content/plugins/", "/wp-content/themes/", "/wp-includes/",
-              "/wp-content/debug.log", "/.git/config", "/.env", "/wp-config.php.bak", "/wp-config.php~", "/backup.zip", "/xmlrpc.php")
+              "/wp-content/debug.log", "/php_errorlog", "/.git/config", "/.env", "/wp-config.php.bak", "/wp-config.php~", "/backup.zip", "/xmlrpc.php")
 
 
 def handler_for(cfg):
@@ -130,6 +130,7 @@ BREAKS = [
     ("backup folder served (200)", variant(status={"/wp-content/wpvividbackups/": 200}), "exposure"),
     ("a stray .env served (200)", variant(status={"/.env": 200}), "exposure"),
     ("debug.log served (200)", variant(status={"/wp-content/debug.log": 200}), "exposure"),
+    ("php_errorlog in the web root served (200)", variant(status={"/php_errorlog": 200}), "exposure"),
     ("xmlrpc.php open (200)", variant(status={"/xmlrpc.php": 200}), "xmlrpc"),
     ("install.php offers a fresh install", variant(install="<h1>Welcome</h1> Information needed. Site Title"), "install"),
     ("/?author=1 reveals the author archive", variant(author=("301", "/author/butsaba/")), "author"),

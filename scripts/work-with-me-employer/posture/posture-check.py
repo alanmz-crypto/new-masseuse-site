@@ -40,7 +40,7 @@ HEADERS = [  # (code, header name, exact expected value, https only)
 ]
 NOT_PUBLIC = [  # paths that must never answer 2xx
     "/wp-content/wpvividbackups/", "/wp-content/uploads/", "/wp-content/plugins/", "/wp-content/themes/", "/wp-includes/",
-    "/wp-content/debug.log", "/.git/config", "/.env", "/wp-config.php.bak", "/wp-config.php~", "/backup.zip",
+    "/wp-content/debug.log", "/php_errorlog", "/.git/config", "/.env", "/wp-config.php.bak", "/wp-config.php~", "/backup.zip",
 ]
 MIN_CERT_DAYS = 14
 
@@ -178,7 +178,7 @@ def check_site(base, role, csp_mode, skip, timeout, policy, verbose=False):
             else:
                 leaks = "@" in body or any("email" in u_ for u_ in data if isinstance(u_, dict))
                 rep.check("users", not leaks and isinstance(data, list), "public users list exposes no email address" if not leaks else "the public users list exposes an email address")
-                rep.info(f"public users endpoint is OPEN and lists {len(data)} user(s) (slug/name only): known open item")
+                rep.info(f"public users endpoint is OPEN and lists {len(data)} user(s) (slug/name only; on 2026-10-17 the slug was verified to differ from the login name): known, low risk")
         else:
             rep.check("users", True, f"public users endpoint answers {r[0]} (not listing users)")
     r = get("/readme.html")
