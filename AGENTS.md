@@ -395,7 +395,12 @@ plus an ssh-agent holding the deploy key, finds the install by `wp option get ho
   remove inactive plugins. Backs up first (DB export + tarball of exactly those files + manifest fingerprint, all copied off-server and verified), refuses unless
   each plugin is inactive at the reviewed version, restores itself if its post-removal check fails. The auto-mode classifier blocks an agent from running
   `--apply` (deletion): Ryan runs it with `!`. Still open on live: Site Kit and Starter Templates are inactive (delete later, then clear their leftover
-  settings), SureForms leftovers (1 unread entry from 2026-06-08), WPvivid, 11 draft snippets; each removal is asked twice.
+  settings), SureForms leftovers (1 unread entry from 2026-06-08), 11 draft snippets; each removal is asked twice.
+- **WPvivid leftovers:** WPvivid was deleted on live 2026-10-17 (staging31 only deactivated; staging27/30 still ACTIVE). Its uninstall leaves `wp-content/wpvividbackups`
+  (22 log files, SERVED publicly), `wpvivid_uploads`, `wpvivid_staging`, 5 options and a 1-row table. `cleanup/quarantine-wpvivid-leftovers.sh <live|staging27|staging30|staging31> [--apply | --rollback MANIFEST]`
+  MOVES the three folders into `~/private-backups/<target>-wpvivid-leftovers-<ts>/` (sha256 of every file checked, manifest, exact rollback; refuses while the plugin is active or a zip is present).
+  Done on live and staging31 2026-10-17 (rollback proven on staging31). `check-no-new-zips.sh` flags any leftover file in the public folder. Quarantined zips + logs sit in the vault until the
+  credentials are rotated; deleting them is asked twice.
 - **Hard-won rules:** a comparison that matched nothing is INVALID, never "identical". A tool run from a site's folder can append to that site's
   `php_errorlog` (the server's `error_log` is a relative name), so disable PHP logging in scans. Under WP-CLI `home_url('/', 'https')` returns the
   site's own scheme; use `set_url_scheme()`. Guard on exact stored bytes (the WPCode snippet is stored with Windows line endings; read raw bytes).
