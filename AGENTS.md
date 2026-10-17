@@ -372,6 +372,12 @@ plus an ssh-agent holding the deploy key, finds the install by `wp option get ho
   server header, reports violations and takes screenshots. Policy keeps `'unsafe-inline'` (Astra/Spectra need it), so it limits other-origin loads,
   objects, base/form hijack and framing, not injected inline script. **A new embed (video, other map or font provider, analytics) is blocked until it
   is added to the policy: re-run `csp-test.mjs --check` after any content change that adds one.** wp-login.php carries only core's own `frame-ancestors 'self'`.
+- **Speed (images):** measure with `tools/perf-images.mjs <url>` (per-image size/format/waste/caching + LCP) and `tools/perf-lcp-runs.mjs <url> 3` (median hero time, throttled phone); compare screenshots at 2x too.
+  Findings 2026-10-17: images are already WebP, cached 1 year, text compressed, sizes declared, hero `fetchpriority=high`; the slowness on a phone was bandwidth CONTENTION: WordPress treats the first
+  THREE images as above the fold (`wp_omit_loading_attr_threshold` = 3), so the hero plus two service illustrations plus 307 KB of fonts share one slow pipe. `performance/install-lazy-images.php` (via
+  `push-lazy-images.sh`) creates the WPCode snippet `PerformanceLazyLoadImages` (threshold 1): hero 2276 -> 1316 ms (-42%). Lazy images get `sizes="auto"`, so on 1x screens the two illustrations use the 300 px copy
+  (slightly softer, as the third already is on live); at 2x nothing changes (pixel-identical). A second filter (`wp_img_tag_add_auto_sizes` false) was tried and rejected. Still open: the three Newsreader/
+  Hanken Grotesk font files (307 KB, from our Additional CSS) and the unused render-blocking Work Sans Google Fonts link; the 512 px avatar shown at 50 px.
 - **Posture check:** `posture/posture-check.py <url> [-v]` (read-only, public requests only; runs from `check-all.sh <url>`) pins the headers/CSP, exposure
   paths (backups, config, logs, VCS, listings, xmlrpc), install.php, author/user leaks, robots (staging blocked, live crawlable), http->https and cert
   expiry. `--csp skip` for a site cloned before the 2026-10-17 CSP deploy (staging27/30). Its self-test (`posture/tests/selftest.py`, a mock site broken
