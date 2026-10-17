@@ -8,9 +8,11 @@
  * It only accepts a page that still holds EXACTLY version 1 (privacy-policy-v1.html, what install-privacy-page.php wrote), with the footer link and the privacy option in
  * place; a hand-edited page, a missing page or any other footer text stops the run. Nothing else is written: the page title, slug, footer link and option stay as they are.
  *
- * FACTS: the Online privacy panel was verified against the live site on 2026-10-17. The Client privacy panel comes from Ryan's template, made generic (no payment provider,
- * storage product or retention period is named), but it still says the practice MAY collect health history and session notes: Butsaba must confirm it describes how she
- * works before it goes on LIVE. Allow-list: localhost:8090 and staging31 ONLY; live is added only on Ryan's go after that confirmation.
+ * FACTS (Ryan, 2026-10-17: "include what we can from this list while being completely true"): the Online privacy panel was verified against the live site on 2026-10-17;
+ * the Client privacy panel keeps only what the site itself says (service pages: tell me about health conditions, medications, pregnancy, injury or surgery before a session;
+ * About: goals, tailored sessions; footer: not a substitute for medical care) or what is plainly true, plus one commitment ("I do not sell ... or use it for marketing") that
+ * matches the live page and that Butsaba should be comfortable with. Payments, record keeping, retention, providers and promotional messages are left out until confirmed.
+ * Allow-list: localhost:8090 and staging31 ONLY; live is added only on Ryan's go.
  *
  * Modes (first WP-CLI argument; run with --user=1):  <mode> [FILE]
  *   preflight    read-only: v1 = the page holds exactly version 1 (ready to update); v2 = already version 2; CHANGED = anything else (stop)

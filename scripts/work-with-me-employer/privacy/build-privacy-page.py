@@ -12,10 +12,15 @@ Spectra renders a panel's answer as <p>ANSWER</p> through wp_kses_post, so an an
 separated with <br><br>. (Real lists or headings inside an answer would nest a block element inside a <p>.)
 
 Wording rules (AGENTS.md): first person ("I"), never we/our/us, none of the OBMT forbidden terms (install-privacy-page.php refuses them again before every write).
-FACTS: the Online privacy panel states only what was verified on the live site on 2026-10-17 (0 forms, 0 iframes, no cookies, no analytics, Google Fonts the only outside
-load). The Client privacy panel is Ryan's template made generic: it names no payment provider, no storage product and no retention period because none is known; every
-sentence in it is hedged ("may collect", "such as"). Butsaba must confirm it describes how she actually works before it goes on the live site (see the review notes in
-docs/inter-model/Thai Solitude - Privacy Policy - Longer Draft (review later).md).
+FACTS (Ryan, 2026-10-17: "include what we can from this list while being completely true"): every sentence is either verified or plainly true.
+  Online privacy: verified against the live site on 2026-10-17 (0 forms, 0 iframes, no cookies, no analytics, Google Fonts the only outside load, hosted by SiteGround).
+  Client privacy keeps only what the site itself says or what is true of any practice: the service pages tell clients to share "any health conditions, medications, pregnancy,
+  recent injury or surgery" before a session; the About page speaks of sharing goals and tailoring each session; the footer says massage is not a substitute for medical care
+  and that she does not diagnose or treat; the law-requires and no-system-is-completely-secure sentences are generally true. The one COMMITMENT in it, "I do not sell the
+  information you share with me or use it for marketing", is the same promise the live page already makes for contact details; Butsaba should be comfortable with it.
+  LEFT OUT because nothing documents it: payment details and processor, "I do not store full card numbers", how records are kept and protected, retention periods, service
+  providers for scheduling/email/storage, promotional messages and unsubscribing, appointment history, any mailing address. Add them back only when Butsaba confirms them
+  (original template and notes: docs/inter-model/Thai Solitude - Privacy Policy - Longer Draft (review later).md).
 """
 import json
 import os
@@ -35,7 +40,7 @@ ONLINE = ('<strong>What this site collects</strong><br>'
           '<br><br>'
           '<strong>If you contact me</strong><br>'
           'If you email or call me, I receive whatever you choose to share, such as your name, your email address or phone number, and your message. '
-          'I use it only to reply and to arrange an appointment. I do not sell it or share it for marketing.'
+          'I use it to reply to you and to arrange an appointment. I do not sell it or share it for marketing.'
           '<br><br>'
           '<strong>Hosting and fonts</strong><br>'
           'The site is hosted by SiteGround, which keeps routine server records, such as visitors’ IP addresses and the pages requested, to keep the site running and secure. '
@@ -44,28 +49,22 @@ ONLINE = ('<strong>What this site collects</strong><br>'
           '<strong>Links to other sites</strong><br>'
           'Some pages link to other sites, such as the Oregon license lookup and Google Maps. Those sites have their own privacy practices.')
 
-CLIENT = ('This section covers the information I handle if you book an appointment or receive a session.'
+CLIENT = ('This section covers the information you share with me directly: when you reach out, when you arrange an appointment, and before or during a session.'
           '<br><br>'
-          '<strong>Information I collect</strong><br>'
-          'Depending on how you contact me, I may collect your name, phone number, email address, and appointment times; the amount and date of a payment; '
-          'and health and session information you choose to share, such as your health history, the areas you would like me to focus on, and notes about how you prefer your sessions. '
+          '<strong>What you may share</strong><br>'
+          'Before a session, my service pages ask you to tell me about any health conditions, medications, pregnancy, or a recent injury or surgery. '
+          'If you do, I receive that information, along with whatever else you choose to tell me, such as your name, your phone number or email address, and your goals for the session. '
           'Please share only what is relevant to your session, and feel free to ask how a piece of information will be used before you provide it.'
           '<br><br>'
           '<strong>How I use it</strong><br>'
-          'I use information to schedule and confirm appointments, to provide and document massage therapy services, to communicate with you about your appointments, '
-          'to process payments and keep business and professional records, to meet legal, licensing, insurance, and recordkeeping requirements, and to maintain this website. '
-          'I do not sell your personal information or use your health information for advertising.'
+          'I use what you share to plan and adjust your session and to arrange appointments. '
+          'Massage is not a substitute for medical care, and I do not diagnose or treat medical conditions.'
           '<br><br>'
-          '<strong>When I share it</strong><br>'
-          'I do not share your information except as needed to run my practice or as permitted or required by law. '
-          'For example, service providers that help with scheduling, payments, email, website hosting, or record storage may handle information on my behalf. '
-          'I may also disclose information when the law requires it, to respond to a lawful request, or to protect the safety of clients or others.'
+          '<strong>Sharing and selling</strong><br>'
+          'I do not sell the information you share with me or use it for marketing. I may disclose information when the law requires it.'
           '<br><br>'
-          '<strong>How I protect and keep it</strong><br>'
-          'I use reasonable safeguards to protect practice records and limit access to what is needed. '
-          'No website, email, or electronic storage system can be guaranteed completely secure. '
-          'I keep records for as long as needed for professional and business purposes and for legal and licensing requirements, '
-          'and I dispose of them securely when they are no longer needed.')
+          '<strong>Security</strong><br>'
+          'No website, email, or electronic storage system can be guaranteed completely secure, so please keep that in mind when deciding what to send by email.')
 
 QUESTIONS = ('To ask what information I have about you, to request a correction, or to ask about deletion, email '
              '<a href="mailto:butsabad@gmail.com">butsabad@gmail.com</a>. '
