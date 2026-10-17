@@ -78,7 +78,11 @@ if [ -n "$img" ] && command -v docker >/dev/null; then gate "headers snippet and
 gate "posture check self-test (mock site and deliberate breaks)" python3 -I -B "$here/work-with-me-employer/posture/tests/selftest.py"
 
 # ---- rendered pages (read-only) ------------------------------------------------------------------------------------------------------
-if [ -n "${1:-}" ]; then
+if [ -n "${1:-}" ] && ! edge_msg=$("$here/work-with-me-employer/posture/edge-check.sh" "$1" 2>&1); then
+  # the web edge did not answer with the site (SiteGround bot challenge, or no answer): every verifier would fail for that one reason, so say it once
+  echo "FAIL  the site is not reachable for testing: $edge_msg"; fails=$((fails + 1))
+  skip "rendered-page verifiers and posture check" "not run: see the line above (INVALID, not a failure of the site)"
+elif [ -n "${1:-}" ]; then
   gate "verify-home.py $1" python3 -I -B "$here/work-with-me-employer/home/verify-home.py" "$1"
   gate "verify-client-pages.py $1" python3 -I -B "$here/work-with-me-employer/client-pages/verify-client-pages.py" "$1"
   case "$1" in

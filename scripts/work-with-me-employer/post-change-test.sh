@@ -29,6 +29,11 @@ fails=0; step() { echo; echo "[$1] $2"; }
 note() { if [ "$1" -eq 0 ]; then echo "  -> PASS"; else echo "  -> FAIL"; fails=$((fails + 1)); fi; }
 echo "Target: $target ($url_t)   reference: $ref_t ($url_r)   $(date -u '+%Y-%m-%d %H:%M UTC')"
 
+# One request each to the target and the reference: stop with ONE clear message if SiteGround's bot challenge (HTTP 202) is answering instead of the site.
+for u in "$url_t" "$url_r"; do
+  "$here/posture/edge-check.sh" "$u" || { echo "STOPPING: nothing was tested (INVALID). Wait, then run it once more; do not retry in a loop."; exit 2; }
+done
+
 step 1 "code gates and rendered-page verifiers"
 "$here/../check-all.sh" "$url_t" 2>&1 | tail -20; [ "${PIPESTATUS[0]}" -eq 0 ]; note $?
 

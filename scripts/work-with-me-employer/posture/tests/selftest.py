@@ -151,6 +151,32 @@ expect("challenge on SOME requests -> INVALID (exit 2) even though the rest pass
 code, out = run(variant(challenge_paths=["/.env"], status={"/backup.zip": 200}))
 expect("a real failure still wins over a challenge (exit 1)", code == 1 and re.search(r"FAIL .*\[exposure\]", out) is not None, f"exit={code} {out[-300:]!r}")
 
+# edge-check.sh (the one-request pre-check used by check-all.sh <url> and post-change-test.sh)
+EDGE = os.path.join(HERE, "..", "edge-check.sh")
+
+
+def edge(cfg, url=None):
+    srv = http.server.ThreadingHTTPServer(("127.0.0.1", 0), handler_for(cfg))
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    try:
+        r = subprocess.run(["bash", EDGE, url if url is not None else f"http://127.0.0.1:{srv.server_address[1]}/"], capture_output=True, text=True, timeout=60, check=False)
+    finally:
+        srv.shutdown()
+        srv.server_close()
+    return r.returncode, r.stdout + r.stderr
+
+
+code, out = edge(GOOD)
+expect("edge-check: a normal site answers (exit 0)", code == 0 and "answered (200)" in out, f"exit={code} {out!r}")
+code, out = edge(variant(home=500))
+expect("edge-check: a site answering 500 is still 'the site answered' (exit 0); that is posture-check's job", code == 0, f"exit={code} {out!r}")
+code, out = edge(variant(challenge=True))
+expect("edge-check: the bot challenge (202 + sg-captcha) -> exit 2 and BLOCKED", code == 2 and "BLOCKED" in out, f"exit={code} {out!r}")
+code, out = edge(GOOD, "http://127.0.0.1:9/")
+expect("edge-check: no answer at all -> exit 1", code == 1 and "NO ANSWER" in out, f"exit={code} {out!r}")
+code, out = edge(GOOD, "")
+expect("edge-check: no URL given -> exit 1, never success", code == 1, f"exit={code} {out!r}")
+
 code, out = run(GOOD, "--skip", "csp")
 expect("--skip works (CSP skipped on a good site: still exit 0)", code == 0, out[-200:])
 code, out = run(variant(home_headers=without(H, "Content-Security-Policy")), "--csp", "skip")
