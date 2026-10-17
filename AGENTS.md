@@ -384,6 +384,10 @@ plus an ssh-agent holding the deploy key, finds the install by `wp option get ho
   `sg_security_disable_activity_log` is not 1. On **live** the bare `wp` (wrapper -> PHP 8.5.11) therefore exits 0 for every failure, while staging copies
   look fine. Never trust `wp`'s exit status on live: check OUTPUT and FILES (as `remove-dead-plugins.sh` does), or run with `--skip-plugins=sg-security`
   or `PHP_BIN=php82` (a name under /usr/local/bin, not a path). Installer guards still stop writes, because `WP_CLI::error` ends the PHP script before any write.
+  **Our live-capable scripts now define `wp() { command wp --skip-plugins=sg-security "$@"; }` at the top of their remote section** (headers/structured-data pushes,
+  secure-backups, mirror-versions, check-no-new-zips) so their exit statuses are true; any NEW script that calls `wp` on the server must do the same.
+  `check-wp-exit-codes.sh [live|staging31]` is the read-only canary: it says BUG ACTIVE / NOT PRESENT and whether the workaround holds. Re-run it after any
+  SiteGround Security update; when live shows NOT PRESENT the workaround can be retired.
   The local practice stack has the same plugin: `sg_security_disable_activity_log` is set to 1 in its DB (redo after refreshing the local DB from production).
 - **Hard-won rules:** a comparison that matched nothing is INVALID, never "identical". A tool run from a site's folder can append to that site's
   `php_errorlog` (the server's `error_log` is a relative name), so disable PHP logging in scans. Under WP-CLI `home_url('/', 'https')` returns the
