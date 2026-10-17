@@ -40,6 +40,7 @@ esac
 echo "Target: $target (mode: $mode)"
 ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 "$user@$host" bash -s -- "$mode" "$target" "$manifest" <<'REMOTE'
 set -euo pipefail
+wp() { command wp --skip-plugins=sg-security "$@"; }   # SiteGround Security 1.6.9 + PHP 8.5 makes EVERY wp exit 0 on live (shutdown-handler bug); skipping that one plugin keeps exit codes true. See AGENTS.md and check-wp-exit-codes.sh.
 mode=$1; target=$2; manifest=${3:-}
 case "$target" in
   live) want="thaisolitude.com" ;;

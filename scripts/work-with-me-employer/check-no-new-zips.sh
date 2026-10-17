@@ -18,6 +18,7 @@ host=$(field Host); port=$(field Port); user=$(field User); user="${user%%@*}"
 
 out=$(ssh -p "$port" -o BatchMode=yes -o ConnectTimeout=20 "$user@$host" bash -s <<'REMOTE'
 set -u
+wp() { command wp --skip-plugins=sg-security "$@"; }   # SiteGround Security 1.6.9 + PHP 8.5 makes EVERY wp exit 0 on live (shutdown-handler bug); skipping that one plugin keeps exit codes true. See AGENTS.md and check-wp-exit-codes.sh.
 cfgs=$(mktemp); trap 'rm -f "$cfgs"' EXIT
 find "$HOME/www" -maxdepth 4 -name wp-config.php 2>/dev/null > "$cfgs"
 for want in thaisolitude.com staging24.thaisolitude.com staging25.thaisolitude.com staging26.thaisolitude.com staging27.thaisolitude.com staging30.thaisolitude.com staging31.thaisolitude.com; do
