@@ -3,7 +3,10 @@
  * Add a very short Privacy Policy page (/privacy-policy/) and a "Privacy Policy" link in the footer, for ONE site at a time.
  * Ryan, 2026-10-17: "add a privacy policy page. keep it very very simple".
  *
- * The wording is privacy-policy.html next to this file. It is written in the first person ("I"), like the footer disclaimer, and avoids every term on the OBMT
+ * THIS FILE CREATES VERSION 1 (privacy-policy-v1.html: the short page). Version 2 (privacy-policy.html, built by build-privacy-page.py: two accordion panels, Online
+ * privacy and Client privacy) is applied on top of it by install-privacy-page-v2.php, which only accepts a page that still holds exactly version 1.
+ *
+ * The wording of version 1 is privacy-policy-v1.html next to this file. It is written in the first person ("I"), like the footer disclaimer, and avoids every term on the OBMT
  * forbidden list (we/our/us, studio, ...). Every statement in it was checked against the live site on 2026-10-17: 6 pages fetched, 0 forms, 0 iframes, no Set-Cookie
  * header, no analytics or ad host; the only outside loads are Google Fonts files, the contact route is an email link and a phone link.
  * If the site ever gains a form, analytics, a booking widget or a map embed, the page must be updated first.
@@ -47,10 +50,10 @@ if ( ! in_array( $mode, array( 'preflight', 'apply', 'rollback' ), true ) ) {
 	WP_CLI::error( 'Unknown mode: ' . $mode );
 }
 
-$content = file_get_contents( __DIR__ . '/privacy-policy.html' );
+$content = file_get_contents( __DIR__ . '/privacy-policy-v1.html' );
 $content = false === $content ? '' : trim( $content );
 if ( '' === $content ) {
-	WP_CLI::error( 'privacy-policy.html is missing or empty next to the installer.' );
+	WP_CLI::error( 'privacy-policy-v1.html is missing or empty next to the installer.' );
 }
 // The OBMT forbidden terms must never reach this page (the list is in AGENTS.md); "we/our/us" are whole-word checks.
 foreach ( array( 'heal', 'proof', 'measurable', 'effective', 'pain relief', 'pain management', 'sciatica', 'headache', 'chronic', 'adhesion', 'corrective', 'accelerate', 'restore balance', 'nervous system', 'circulation', 'anxiety', 'cancer', 'neurological', 'disabilit', 'prevention', 'lasting', 'long-term wellness', 'overall health', 'real results', 'studio' ) as $bad ) {

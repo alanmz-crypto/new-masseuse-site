@@ -36,7 +36,7 @@ ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o 
 
 echo "[1] Connecting and uploading the package to ~/wwm-package-privacy (outside every web root) ..."
 "${ssh_cmd[@]}" true 2>/dev/null || { echo "SSH login refused; check the ssh-agent holds the right key." >&2; exit 2; }
-tar -C "$here" -cf - install-privacy-page.php privacy-policy.html \
+tar -C "$here" -cf - install-privacy-page.php privacy-policy-v1.html \
   | "${ssh_cmd[@]}" 'rm -rf "$HOME/wwm-package-privacy" && mkdir -p "$HOME/wwm-package-privacy" && tar -xf - -C "$HOME/wwm-package-privacy"'
 
 read -r -d '' REMOTE <<'EOS' || true
