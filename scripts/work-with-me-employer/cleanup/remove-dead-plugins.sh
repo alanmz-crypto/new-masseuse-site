@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Remove dead (inactive, unused) plugin code from ONE site: autoptimize 3.1.16, siteground-migrator 2.1.2, and autoptimize's leftover
 # wp-content/autoptimize_404_handler.php. Inactive plugin code is still reachable by URL and is a common way in once it goes out of date.
-# Allow-list: staging31 only. Live is added only after Ryan's second, explicit yes ("ask twice before removing anything").
-# Ryan, 2026-10-17: "you're the expert. proceed." (attack-surface cleanup #5; rehearsal on staging31 first).
+# Allow-list: staging31 and live. Live was added on Ryan's second go ("can you proceed?", 2026-10-17) after staging31 was applied, verified and rolled back/re-applied.
+# Ryan, 2026-10-17: "you're the expert. proceed." (attack-surface cleanup #5; rehearsal on staging31 first). The apply itself is run by Ryan (`!`).
 #
 #   ./remove-dead-plugins.sh                        dry run: connect, locate the site, report the state (read-only on the site)
 #   ./remove-dead-plugins.sh --apply                DB export + a tarball of exactly the files to be removed + manifest (all copied OFF the server and
@@ -35,7 +35,7 @@ case "${1:-}" in
   *) echo "Unknown option: $1" >&2; exit 1 ;;
 esac
 target="${S_TARGET:-staging31}"
-case "$target" in staging31) ;; *) echo "S_TARGET must be staging31 (live is added only after Ryan's second yes)." >&2; exit 1 ;; esac
+case "$target" in staging31|live) ;; *) echo "S_TARGET must be staging31 or live." >&2; exit 1 ;; esac
 echo "Target site: $target   mode: $mode"
 ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 "$user@$host")
 "${ssh_cmd[@]}" true 2>/dev/null || { echo "SSH login refused; check the ssh-agent holds the right key." >&2; exit 2; }
@@ -43,7 +43,7 @@ ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o 
 read -r -d '' REMOTE <<'EOS' || true
 set -euo pipefail
 phase=$1; target=$2; arg=${3:-}
-case "$target" in staging31) want="staging31.thaisolitude.com" ;; *) echo "Remote refused: target must be staging31, got '$target'." >&2; exit 1 ;; esac
+case "$target" in staging31) want="staging31.thaisolitude.com" ;; live) want="thaisolitude.com" ;; *) echo "Remote refused: target must be staging31 or live, got '$target'." >&2; exit 1 ;; esac
 command -v wp >/dev/null || { echo "wp-cli not found on the server" >&2; exit 1; }
 doc=""
 cfgs=$(mktemp); trap 'rm -f "$cfgs"' EXIT
