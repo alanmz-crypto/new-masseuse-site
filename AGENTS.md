@@ -366,7 +366,7 @@ plus an ssh-agent holding the deploy key, finds the install by `wp option get ho
 - **Tools:** `secure-backups.sh` (public WPvivid zips), `structured-data/push-structured-data.sh`, `mirror-versions.sh` (staging31 to live's plugin/theme
   versions), `check-no-new-zips.sh`, `php-compat-scan.sh` (read-only PHP 8.3/8.4 lint), `push-human-facing-staging.sh` (staging26/27).
 - **Security headers / CSP:** snippet 1036 "HeaderSecurityProduction" sets the headers; `headers/push-headers-csp.sh` adds a Content-Security-Policy
-  sent only to logged-out visitors (staging31 only until Ryan's second go for live; rollback proven). `tools/csp-test.mjs <url> --check` reads the REAL
+  sent only to logged-out visitors (staging31 first, then live on Ryan's "go live" 2026-10-17; rollback proven). `tools/csp-test.mjs <url> --check` reads the REAL
   server header, reports violations and takes screenshots. Policy keeps `'unsafe-inline'` (Astra/Spectra need it), so it limits other-origin loads,
   objects, base/form hijack and framing, not injected inline script. **A new embed (video, other map or font provider, analytics) is blocked until it
   is added to the policy: re-run `csp-test.mjs --check` after any content change that adds one.** wp-login.php carries only core's own `frame-ancestors 'self'`.

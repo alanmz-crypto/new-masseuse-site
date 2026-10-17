@@ -1,7 +1,7 @@
 <?php
 /**
  * Add a Content-Security-Policy to WPCode snippet 1036 "HeaderSecurityProduction" (the PHP snippet that sets the site's security headers) for ONE site at a time.
- * Allow-list: staging31 only. Live is added only on Ryan's second, explicit go. Ryan, 2026-10-17: "go" (security headers, CSP for logged-out visitors only).
+ * Allow-list: staging31 and live. Ryan, 2026-10-17: "go" (security headers, CSP for logged-out visitors only), then "go live" after staging31 was proven.
  *
  * What it changes (one store, snapshotted and reversible): the snippet gains a block that sends Content-Security-Policy ONLY when ! is_user_logged_in(), so a
  * logged-in admin (previewing pages, admin bar, Site Kit) never receives it; wp-admin and wp-login.php do not run the send_headers hook at all. The five headers the
@@ -21,8 +21,8 @@ if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) ) {
 
 $home = untrailingslashit( home_url() );
 $host = (string) wp_parse_url( $home, PHP_URL_HOST ) . ( wp_parse_url( $home, PHP_URL_PORT ) ? ':' . wp_parse_url( $home, PHP_URL_PORT ) : '' );
-if ( ! in_array( $host, array( 'staging31.thaisolitude.com' ), true ) ) {
-	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (staging31 only).' );
+if ( ! in_array( $host, array( 'staging31.thaisolitude.com', 'thaisolitude.com' ), true ) ) {
+	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (staging31 or live only).' );
 }
 if ( 'astra' !== get_stylesheet() ) {
 	WP_CLI::error( 'Active theme is not Astra.' );

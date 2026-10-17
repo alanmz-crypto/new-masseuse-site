@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Push the Content-Security-Policy change (WPCode snippet 1036, security headers) to staging31. Live is added only on Ryan's second, explicit go.
+# Push the Content-Security-Policy change (WPCode snippet 1036, security headers) to staging31 or live (S_TARGET=staging31|live; default staging31).
+# Live was added on Ryan's second, explicit go ("go live", 2026-10-17), after staging31 was applied, tested and rolled back/re-applied.
 # The backup is part of the apply and cannot be skipped.
 #
 #   ./push-headers-csp.sh                       dry run: connect, locate the site, upload the package, preflight (read-only on the site)
@@ -31,7 +32,7 @@ case "${1:-}" in
   *) echo "Unknown option: $1" >&2; exit 1 ;;
 esac
 target="${S_TARGET:-staging31}"
-case "$target" in staging31) ;; *) echo "S_TARGET must be staging31 (live is added only on Ryan's second go)." >&2; exit 1 ;; esac
+case "$target" in staging31|live) ;; *) echo "S_TARGET must be staging31 or live." >&2; exit 1 ;; esac
 echo "Target site: $target   mode: $mode"
 ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 "$user@$host")
 
@@ -43,7 +44,7 @@ tar -C "$here" -cf - install-headers-csp.php \
 read -r -d '' REMOTE <<'EOS' || true
 set -euo pipefail
 phase=$1; target=$2; snap=${3:-}
-case "$target" in staging31) want="staging31.thaisolitude.com" ;; *) echo "Remote refused: target must be staging31, got '$target'." >&2; exit 1 ;; esac
+case "$target" in staging31) want="staging31.thaisolitude.com" ;; live) want="thaisolitude.com" ;; *) echo "Remote refused: target must be staging31 or live, got '$target'." >&2; exit 1 ;; esac
 command -v wp >/dev/null || { echo "wp-cli not found on the server" >&2; exit 1; }
 doc=""
 cfgs=$(mktemp); trap 'rm -f "$cfgs"' EXIT
