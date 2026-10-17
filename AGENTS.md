@@ -389,6 +389,11 @@ plus an ssh-agent holding the deploy key, finds the install by `wp option get ho
   `check-wp-exit-codes.sh [live|staging31]` is the read-only canary: it says BUG ACTIVE / NOT PRESENT and whether the workaround holds. Re-run it after any
   SiteGround Security update; when live shows NOT PRESENT the workaround can be retired.
   The local practice stack has the same plugin: `sg_security_disable_activity_log` is set to 1 in its DB (redo after refreshing the local DB from production).
+- **Plugin data leftovers:** deleting a plugin in the admin does NOT clean its data (Site Kit left 13 options + 6 user-meta rows; Starter Templates 9 options + 1 user-meta row + `uploads/astra-sites`
+  7 MB + `uploads/ai-builder`). `cleanup/remove-plugin-leftovers.sh <live|staging31> <sitekit|starter> [--apply | --rollback SNAPSHOT]` removes them once the plugin FOLDER is gone: DB export + snapshot
+  copied off-server first, rows deleted, folders MOVED into `~/private-backups/<target>-<family>-leftovers-<ts>/` with sha256 checks, exact rollback. It never touches the shared Spectra design-library
+  options (`ast_block%`, `ast_blocks%`) or the importer markers in post/term meta. Site Kit family rehearsed on staging31 2026-10-17 (apply -> rollback verified -> apply); the starter family needs the
+  plugin deleted on staging31 first to rehearse the folder move. Reading or deleting the SureForms entry is Ryan's call.
 - **Dead-plugin cleanup:** `cleanup/remove-dead-plugins.sh [--apply | --rollback TARBALL]` removes inactive autoptimize 3.1.16, siteground-migrator 2.1.2 and
   autoptimize's leftover `wp-content/autoptimize_404_handler.php` (targets: staging31 and live). Applied and rollback-proven on staging31 2026-10-17; on live
   Ryan removed the same plugins through the WordPress admin the same day (no tool backup; live verified healthy afterwards), so it stays as the reviewed way to
