@@ -370,6 +370,11 @@ plus an ssh-agent holding the deploy key, finds the install by `wp option get ho
   server header, reports violations and takes screenshots. Policy keeps `'unsafe-inline'` (Astra/Spectra need it), so it limits other-origin loads,
   objects, base/form hijack and framing, not injected inline script. **A new embed (video, other map or font provider, analytics) is blocked until it
   is added to the policy: re-run `csp-test.mjs --check` after any content change that adds one.** wp-login.php carries only core's own `frame-ancestors 'self'`.
+- **Dead-plugin cleanup:** `cleanup/remove-dead-plugins.sh [--apply | --rollback TARBALL]` removes inactive autoptimize 3.1.16, siteground-migrator 2.1.2 and
+  autoptimize's leftover `wp-content/autoptimize_404_handler.php` (staging31 only; applied and rollback-proven there 2026-10-17; live needs Ryan's second yes).
+  Backs up first (DB export + tarball of exactly those files + manifest fingerprint, all copied off-server and verified), refuses unless each plugin is
+  inactive at the reviewed version, restores itself if its post-removal check fails. The auto-mode classifier blocks an agent from running `--apply`
+  (deletion): Ryan runs it with `!`. Still open on live: SureForms leftovers (1 unread entry from 2026-06-08), WPvivid, astra-sites, 11 draft snippets.
 - **Hard-won rules:** a comparison that matched nothing is INVALID, never "identical". A tool run from a site's folder can append to that site's
   `php_errorlog` (the server's `error_log` is a relative name), so disable PHP logging in scans. Under WP-CLI `home_url('/', 'https')` returns the
   site's own scheme; use `set_url_scheme()`. Guard on exact stored bytes (the WPCode snippet is stored with Windows line endings; read raw bytes).
