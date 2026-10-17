@@ -221,7 +221,9 @@ Compares the PHP version baked into the pinned `wordpress` image against
 `thaisolitude.com`'s actual production PHP (`scripts/practice-expected-php.txt`,
 each reading dated with its exact refresh command). Read-only, unwired — no
 sync script exists yet in this single-tier project to call it from. As of
-2026-09-28 both sides are PHP 8.2, closing the earlier 8.3-vs-8.2 drift.
+2026-10-17 both sides are PHP 8.5.11 (live moved 8.2 -> 8.3 -> 8.5.11 on 2026-10-16; the recorded value and the images were refreshed the next day).
+The check compares RECORDED values, so it only stays honest if `thaisolitude_php` is refreshed after any PHP change on live; read the web PHP
+from `site-tools-client -j location-phpver list` (a bare `php`/`wp` on the server follows the CLI setting, not necessarily what visitors get).
 
 A version-agnostic tag (`wordpress:latest`) is **rejected outright** by this
 checker, not assumed correct. If you retag images, use a version-stating tag
@@ -355,7 +357,7 @@ plus an ssh-agent holding the deploy key, finds the install by `wp option get ho
 `--apply`**. Every tool names its allowed targets in the script; the SSH account also holds live, so none of this is a licence to touch live:
 **a write to live still needs Ryan's explicit go**, and `main` is merged by Ryan.
 
-- **Code gates:** `scripts/check-all.sh [URL]` (PHP lint on the pinned PHP 8.2 image, bash/shellcheck, Python, installer-drift and allow-list test,
+- **Code gates:** `scripts/check-all.sh [URL]` (PHP lint on the pinned PHP 8.5 image, bash/shellcheck, Python, installer-drift and allow-list test,
   structured-data and headers guard tests; with a URL it also runs the rendered-page verifiers).
 - **Before a change:** a fresh DB export that is also copied OFF the server and verified (`sync-server-backups.sh`; copies live in
   `~/WordPress/thai-solitude-server-backups`, outside git). A DB export does not hold plugin/theme files: for those use `mirror-versions.sh`
@@ -377,6 +379,12 @@ plus an ssh-agent holding the deploy key, finds the install by `wp option get ho
   `sg-captcha: challenge`**: the tool reports BLOCKED / INVALID (exit 2), never pass and never "exposed". Wait (tens of minutes) and repeat; do not
   hammer the site while challenged. `posture/edge-check.sh <url>` (one request; exit 2 = challenged) runs first in `check-all.sh <url>` and
   `post-change-test.sh`, so a challenged site gives one clear message instead of a pile of failures.
+- **WP-CLI exit codes are unreliable on live under PHP 8.5 (found 2026-10-17):** SiteGround Security 1.6.9 registers a shutdown handler whose `exit;`
+  (when `WP_CLI` is defined) overwrites the real exit status with 0 on PHP 8.5, but only where `WP_ENVIRONMENT_TYPE` is not `staging` and
+  `sg_security_disable_activity_log` is not 1. On **live** the bare `wp` (wrapper -> PHP 8.5.11) therefore exits 0 for every failure, while staging copies
+  look fine. Never trust `wp`'s exit status on live: check OUTPUT and FILES (as `remove-dead-plugins.sh` does), or run with `--skip-plugins=sg-security`
+  or `PHP_BIN=php82` (a name under /usr/local/bin, not a path). Installer guards still stop writes, because `WP_CLI::error` ends the PHP script before any write.
+  The local practice stack has the same plugin: `sg_security_disable_activity_log` is set to 1 in its DB (redo after refreshing the local DB from production).
 - **Hard-won rules:** a comparison that matched nothing is INVALID, never "identical". A tool run from a site's folder can append to that site's
   `php_errorlog` (the server's `error_log` is a relative name), so disable PHP logging in scans. Under WP-CLI `home_url('/', 'https')` returns the
   site's own scheme; use `set_url_scheme()`. Guard on exact stored bytes (the WPCode snippet is stored with Windows line endings; read raw bytes).
