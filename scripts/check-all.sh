@@ -11,7 +11,8 @@
 #          and messages, and no allow-list names a production host
 #          structured-data installer: its snippet output and exact-bytes guard, tested offline against stubbed WordPress functions
 #          headers installer: the old and new security-headers snippet run in a header-capturing harness (logged in/out, https/http)
-#          with a URL: verify-home.py and verify-client-pages.py
+#          posture check self-test: a mock site, then the same site broken one way at a time; every break must be caught
+#          with a URL: verify-home.py and verify-client-pages.py, and (for thaisolitude.com hosts) posture-check.py
 # Not a gate: verify-rendered.py (the older whole-site check; run it by hand: python3 work-with-me-employer/verify-rendered.py URL).
 # shellcheck disable=SC2329  # the gate functions below are called indirectly through `gate`
 set -u
@@ -73,10 +74,18 @@ if [ -n "$img" ] && command -v docker >/dev/null; then gate "structured-data sni
 hd_test() { docker run --rm --network none --entrypoint php -v "$here/work-with-me-employer/headers:/pkg:ro" "$img" /pkg/tests/csp-snippet-test.php; }
 if [ -n "$img" ] && command -v docker >/dev/null; then gate "headers snippet and CSP (offline test)" hd_test; else skip "headers offline test" "docker or the pinned image is not available"; fi
 
+# ---- posture check: self-test, offline --------------------------------------------------------------------------------------------------
+gate "posture check self-test (mock site and deliberate breaks)" python3 -I -B "$here/work-with-me-employer/posture/tests/selftest.py"
+
 # ---- rendered pages (read-only) ------------------------------------------------------------------------------------------------------
 if [ -n "${1:-}" ]; then
   gate "verify-home.py $1" python3 -I -B "$here/work-with-me-employer/home/verify-home.py" "$1"
   gate "verify-client-pages.py $1" python3 -I -B "$here/work-with-me-employer/client-pages/verify-client-pages.py" "$1"
+  case "$1" in
+    *//staging27.thaisolitude.com*|*//staging30.thaisolitude.com*) gate "posture-check.py $1 (no CSP: cloned before the 2026-10-17 deploy)" python3 -I -B "$here/work-with-me-employer/posture/posture-check.py" "$1" --csp skip ;;
+    *//thaisolitude.com*|*.thaisolitude.com*) gate "posture-check.py $1" python3 -I -B "$here/work-with-me-employer/posture/posture-check.py" "$1" ;;
+    *) skip "posture check" "only meaningful for thaisolitude.com hosts" ;;
+  esac
 else skip "rendered-page verifiers" "give a URL as the first argument to run them"; fi
 
 echo
@@ -84,4 +93,4 @@ if [ "$fails" -eq 0 ]; then echo "ALL GATES PASSED"; else echo "$fails GATE(S) F
 exit $(( fails > 0 ))
 
 # ref: ../docker-compose.yml — source of the pinned PHP image; ./practice-image-parity.sh — the PHP-version parity check
-# ref: ./work-with-me-employer/home/verify-home.py, ./work-with-me-employer/client-pages/verify-client-pages.py — the verifiers run with a URL
+# ref: ./work-with-me-employer/home/verify-home.py, ./work-with-me-employer/client-pages/verify-client-pages.py, ./work-with-me-employer/posture/posture-check.py — the verifiers run with a URL
