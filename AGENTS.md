@@ -404,4 +404,9 @@ plus an ssh-agent holding the deploy key, finds the install by `wp option get ho
 - **Hard-won rules:** a comparison that matched nothing is INVALID, never "identical". A tool run from a site's folder can append to that site's
   `php_errorlog` (the server's `error_log` is a relative name), so disable PHP logging in scans. Under WP-CLI `home_url('/', 'https')` returns the
   site's own scheme; use `set_url_scheme()`. Guard on exact stored bytes (the WPCode snippet is stored with Windows line endings; read raw bytes).
+- **Privacy policy page (2026-10-17):** `privacy/install-privacy-page.php` + `push-privacy-page.sh` (`--apply` / `--rollback FILE`, staging31 only until Ryan says go live) add a very short `/privacy-policy/`
+  page (privacy-policy.html), set it as WordPress's privacy page (`wp_page_for_privacy_policy`) and add "Privacy Policy" to the centered footer row (widget block 7, options table). The copyright/license lines are not touched.
+  Written for what the site really does (6 live pages checked: 0 forms, 0 iframes, no cookies, no analytics, only Google Fonts as an outside load): **if a form, booking widget, analytics or a map embed is ever added, update the
+  page first.** The installer refuses any forbidden OBMT term and we/our/us. Applied on staging31 with rollback proven there and locally. Ryan's longer generic template is saved, unused, for later review:
+  `docs/inter-model/Thai Solitude - Privacy Policy - Longer Draft (review later).md`. For live: add the host to the installer allow-list and push script, add `/privacy-policy/` to the page list in `post-change-test.sh`.
 - The "October 5 staging19 task boundary" paragraph near the top is historical; it does not describe the current work.
