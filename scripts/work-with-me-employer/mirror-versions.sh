@@ -35,6 +35,7 @@ ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o 
 
 read -r -d '' REMOTE <<'EOS' || true
 set -euo pipefail
+wp() { command wp --skip-plugins=sg-security "$@"; }   # SiteGround Security 1.6.9 + PHP 8.5 makes EVERY wp exit 0 on live (shutdown-handler bug); skipping that one plugin keeps exit codes true. See AGENTS.md and check-wp-exit-codes.sh.
 phase=$1; target=$2; tarball=${3:-}
 case "$target" in staging31) want="staging31.thaisolitude.com" ;; *) echo "Remote refused: unknown target '$target'." >&2; exit 1 ;; esac
 command -v wp >/dev/null || { echo "wp-cli not found" >&2; exit 1; }
