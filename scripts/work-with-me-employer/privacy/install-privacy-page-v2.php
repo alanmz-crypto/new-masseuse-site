@@ -12,7 +12,7 @@
  * the Client privacy panel keeps only what the site itself says (service pages: tell me about health conditions, medications, pregnancy, injury or surgery before a session;
  * About: goals, tailored sessions; footer: not a substitute for medical care) or what is plainly true, plus one commitment ("I do not sell ... or use it for marketing") that
  * matches the live page and that Butsaba should be comfortable with. Payments, record keeping, retention, providers and promotional messages are left out until confirmed.
- * Allow-list: localhost:8090 and staging31 ONLY; live is added only on Ryan's go.
+ * Allow-list: localhost:8090, staging31 and live. Live was added on Ryan's "go live" (2026-10-17), after version 2 was applied, checked and rollback-proven on staging31 and localhost.
  *
  * Modes (first WP-CLI argument; run with --user=1):  <mode> [FILE]
  *   preflight    read-only: v1 = the page holds exactly version 1 (ready to update); v2 = already version 2; CHANGED = anything else (stop)
@@ -28,8 +28,8 @@ if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) ) {
 
 $home = untrailingslashit( home_url() );
 $host = (string) wp_parse_url( $home, PHP_URL_HOST ) . ( wp_parse_url( $home, PHP_URL_PORT ) ? ':' . wp_parse_url( $home, PHP_URL_PORT ) : '' );
-if ( ! in_array( $host, array( 'localhost:8090', 'staging31.thaisolitude.com' ), true ) ) {
-	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090 or staging31 only).' );
+if ( ! in_array( $host, array( 'localhost:8090', 'staging31.thaisolitude.com', 'thaisolitude.com' ), true ) ) {
+	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090, staging31 or live only).' );
 }
 if ( 'astra' !== get_stylesheet() ) {
 	WP_CLI::error( 'Active theme is not Astra.' );

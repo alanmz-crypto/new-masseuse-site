@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Privacy Policy page VERSION 2 on staging31 (S_TARGET=staging31, the only target enabled): replace the short page with an accordion of two panels, "Online privacy" and "Client privacy".
-# Live is NOT enabled: it is added to the installer and to this script only on Ryan's go, after Butsaba has confirmed that the Client privacy panel describes how she works.
+# Privacy Policy page VERSION 2 on staging31 or live (S_TARGET=staging31|live; default staging31): replace the short page with an accordion of two panels, "Online privacy" and "Client privacy".
+# Live was added on Ryan's "go live" (2026-10-17), after version 2 was applied, checked and rollback-proven on staging31 and localhost.
 # Needs version 1 of the page first (push-privacy-page.sh); the installer refuses any page that is not exactly version 1.
 #
 #   ./push-privacy-page-v2.sh                    dry run: connect, locate the site, upload the package, preflight (read-only on the site)
@@ -31,7 +31,7 @@ case "${1:-}" in
   *) echo "Usage: $0 [--apply | --rollback FILE]" >&2; exit 1 ;;
 esac
 target="${S_TARGET:-staging31}"
-case "$target" in staging31) ;; *) echo "S_TARGET must be staging31 (live is not enabled for version 2)." >&2; exit 1 ;; esac
+case "$target" in staging31|live) ;; *) echo "S_TARGET must be staging31 or live." >&2; exit 1 ;; esac
 echo "Target site: $target   mode: $mode"
 ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 "$user@$host")
 
@@ -44,7 +44,7 @@ read -r -d '' REMOTE <<'EOS' || true
 set -euo pipefail
 wp() { command wp --skip-plugins=sg-security "$@"; }   # SiteGround Security 1.6.9 + PHP 8.5 makes EVERY wp exit 0 on live (shutdown-handler bug); skipping that one plugin keeps exit codes true. See AGENTS.md and check-wp-exit-codes.sh.
 phase=$1; target=$2; snap=${3:-}
-case "$target" in staging31) want="staging31.thaisolitude.com" ;; *) echo "Remote refused: target must be staging31, got '$target'." >&2; exit 1 ;; esac
+case "$target" in staging31) want="staging31.thaisolitude.com" ;; live) want="thaisolitude.com" ;; *) echo "Remote refused: target must be staging31 or live, got '$target'." >&2; exit 1 ;; esac
 command -v wp >/dev/null || { echo "wp-cli not found on the server" >&2; exit 1; }
 doc=""
 cfgs=$(mktemp); trap 'rm -f "$cfgs"' EXIT
