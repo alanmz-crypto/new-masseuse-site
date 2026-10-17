@@ -400,7 +400,9 @@ plus an ssh-agent holding the deploy key, finds the install by `wp option get ho
   (22 log files, SERVED publicly), `wpvivid_uploads`, `wpvivid_staging`, 5 options and a 1-row table. `cleanup/quarantine-wpvivid-leftovers.sh <live|staging27|staging30|staging31> [--apply | --rollback MANIFEST]`
   MOVES the three folders into `~/private-backups/<target>-wpvivid-leftovers-<ts>/` (sha256 of every file checked, manifest, exact rollback; refuses while the plugin is active or a zip is present).
   Done on live and staging31 2026-10-17 (rollback proven on staging31). `check-no-new-zips.sh` flags any leftover file in the public folder. Quarantined zips + logs sit in the vault until the
-  credentials are rotated; deleting them is asked twice.
+  credentials are rotated; deleting them is asked twice. `cleanup/remove-wpvivid-db-leftovers.sh <live|staging31> [--apply | --rollback MANIFEST]` removes the 5 leftover `wpvivid_*` options and the
+  1-row table (refuses while the plugin folder exists; DB export + snapshot copied off-server first; rollback restores them exactly). Done on live 2026-10-17 (rollback proven); staging31 waits for its
+  plugin to be deleted.
 - **Hard-won rules:** a comparison that matched nothing is INVALID, never "identical". A tool run from a site's folder can append to that site's
   `php_errorlog` (the server's `error_log` is a relative name), so disable PHP logging in scans. Under WP-CLI `home_url('/', 'https')` returns the
   site's own scheme; use `set_url_scheme()`. Guard on exact stored bytes (the WPCode snippet is stored with Windows line endings; read raw bytes).
