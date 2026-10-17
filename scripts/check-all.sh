@@ -4,7 +4,7 @@
 #   scripts/check-all.sh                                   syntax and lint gates only (offline)
 #   scripts/check-all.sh https://staging31.thaisolitude.com   the same, plus the rendered-page verifiers against that URL (read-only GETs)
 #
-# Gates:   PHP lint on the same pinned PHP image the practice stack uses (production is PHP 8.2)
+# Gates:   PHP lint on the same pinned PHP image the practice stack uses (production is PHP 8.5.11)
 #          bash -n on every shell script; shellcheck (warnings fatal in work-with-me-employer/, errors fatal elsewhere)
 #          Python syntax on every file (no .pyc written); ruff for real errors only (syntax, undefined names)
 #          installer drift: each generated staging installer differs from its localhost original only in allow-list, mode names

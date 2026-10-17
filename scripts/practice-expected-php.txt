@@ -12,19 +12,23 @@
 # ---------------------------------------------------------------------------
 # thaisolitude.com (SiteGround, live production -- the deploy target this
 # practice stack approximates)
-#   recorded 2026-09-28
-#   refresh: ssh -i ~/.ssh/thaisolitude u3302-bwfv7ug4e2fy@thaisolitude.com \
-#              -p 18765 "php -r 'echo PHP_VERSION;'"
-#   note: host is thaisolitude.com, NOT ssh.thaisolitude.com (remote_execution.txt
-#         has the wrong host; every attempt against ssh.thaisolitude.com fails
-#         auth even with the correct key loaded).
-thaisolitude_php=8.2.34
+#   recorded 2026-10-17 (was 8.2.34 until the 2026-10-16 move 8.2 -> 8.3 -> 8.5.11)
+#   refresh: TWO reads over the project's ssh access (credentials in remote_execution.txt
+#            + the ssh-agent; see scripts/work-with-me-employer/*.sh for the pattern):
+#     1. which series the WEBSITE serves:  site-tools-client -j location-phpver list
+#        (row domain_name=thaisolitude.com path=/ ; version_id 85 = PHP 8.5)
+#     2. the exact patch:  /usr/local/bin/php85 -r 'echo PHP_VERSION;'
+#   WARNING: do not read the version from a bare `php`/`wp` on the server. The server has several
+#   CLI builds (php82..php85) and the bare commands follow SiteGround's 'recommended' CLI setting,
+#   a different setting from the PHP the website serves (they happened to match, 8.5.11, on
+#   2026-10-17). The old refresh command here (`php -r ...`) read that CLI setting, not the website.
+thaisolitude_php=8.5.11
 
 # practice :8090 - PHP baked into the digest-pinned wordpress/wpcli images
-#   recorded 2026-09-28
+#   recorded 2026-10-17
 #   refresh: docker exec new-masseuse-wordpress-1 php -r 'echo PHP_VERSION;'
-#   note: re-pinned from wordpress:php8.3-apache/wordpress:cli-php8.3 (8.3.35)
-#         to wordpress:php8.2-apache/wordpress:cli-php8.2 to match
-#         thaisolitude.com. Verified live after recreate: PHP_VERSION=8.2.34,
-#         HTTP 200, no fatal/parse errors.
-practice_php=8.2.34
+#   note: 2026-10-17 re-pinned from wordpress:php8.2-apache/wordpress:cli-php8.2 (8.2.34)
+#         to wordpress:php8.5-apache/wordpress:cli-php8.5 (both PHP_VERSION=8.5.11, read
+#         from the pulled images) to match thaisolitude.com. Earlier: 2026-09-28
+#         php8.3 (8.3.35) -> php8.2 to match the then-live 8.2.34.
+practice_php=8.5.11
