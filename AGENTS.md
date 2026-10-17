@@ -370,6 +370,13 @@ plus an ssh-agent holding the deploy key, finds the install by `wp option get ho
   server header, reports violations and takes screenshots. Policy keeps `'unsafe-inline'` (Astra/Spectra need it), so it limits other-origin loads,
   objects, base/form hijack and framing, not injected inline script. **A new embed (video, other map or font provider, analytics) is blocked until it
   is added to the policy: re-run `csp-test.mjs --check` after any content change that adds one.** wp-login.php carries only core's own `frame-ancestors 'self'`.
+- **Posture check:** `posture/posture-check.py <url> [-v]` (read-only, public requests only; runs from `check-all.sh <url>`) pins the headers/CSP, exposure
+  paths (backups, config, logs, VCS, listings, xmlrpc), install.php, author/user leaks, robots (staging blocked, live crawlable), http->https and cert
+  expiry. `--csp skip` for a site cloned before the 2026-10-17 CSP deploy (staging27/30). Its self-test (`posture/tests/selftest.py`, a mock site broken
+  one way at a time, mutation-checked) runs in every `check-all.sh`. **SiteGround answers a burst of requests from one IP with HTTP 202 +
+  `sg-captcha: challenge`**: the tool reports BLOCKED / INVALID (exit 2), never pass and never "exposed". Wait (tens of minutes) and repeat; do not
+  hammer the site while challenged. `posture/edge-check.sh <url>` (one request; exit 2 = challenged) runs first in `check-all.sh <url>` and
+  `post-change-test.sh`, so a challenged site gives one clear message instead of a pile of failures.
 - **Hard-won rules:** a comparison that matched nothing is INVALID, never "identical". A tool run from a site's folder can append to that site's
   `php_errorlog` (the server's `error_log` is a relative name), so disable PHP logging in scans. Under WP-CLI `home_url('/', 'https')` returns the
   site's own scheme; use `set_url_scheme()`. Guard on exact stored bytes (the WPCode snippet is stored with Windows line endings; read raw bytes).
