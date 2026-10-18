@@ -17,7 +17,7 @@
  * Why a snippet and not the page content: these items are saved as static HTML, so a link added in the editor needs the exact markup Spectra's own save() produces; the snippet needs none
  * of that and is undone by deactivating it. Trade-off: the editor does not show the links (a note says where they come from).
  *
- * Allow-list: localhost:8090 and staging32 ONLY; live is added only on Ryan's go (or it arrives through a SiteGround Custom Deploy of the posts table from staging32).
+ * Allow-list: localhost:8090, staging32 and live. Live was added on Ryan's "push it" (2026-10-18), after the corrected version was applied, tested and rollback-proven on localhost and staging32.
  *
  * Modes (first WP-CLI argument; run with --user=1):  <mode> [FILE]
  *   preflight    read-only: ready = no such snippet and no CSS block; applied = exactly both are there; CHANGED = anything else (stop)
@@ -32,8 +32,8 @@ if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) ) {
 
 $home = untrailingslashit( home_url() );
 $host = (string) wp_parse_url( $home, PHP_URL_HOST ) . ( wp_parse_url( $home, PHP_URL_PORT ) ? ':' . wp_parse_url( $home, PHP_URL_PORT ) : '' );
-if ( ! in_array( $host, array( 'localhost:8090', 'staging32.thaisolitude.com' ), true ) ) {
-	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090 or staging32 only).' );
+if ( ! in_array( $host, array( 'localhost:8090', 'staging32.thaisolitude.com', 'thaisolitude.com' ), true ) ) {
+	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090, staging32 or live only).' );
 }
 if ( 'astra' !== get_stylesheet() ) {
 	WP_CLI::error( 'Active theme is not Astra.' );
