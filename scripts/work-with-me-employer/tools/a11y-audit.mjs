@@ -72,13 +72,31 @@ for (const v of views) {
         const visible = (cs.outlineStyle !== 'none' && parseFloat(cs.outlineWidth) > 0) || (cs.boxShadow && cs.boxShadow !== 'none') || (e.matches(':focus-visible') && cs.textDecorationLine === 'underline');
         const cx = Math.min(Math.max(r.left + r.width / 2, 0), innerWidth - 1), cy = Math.min(Math.max(r.top + r.height / 2, 0), innerHeight - 1);
         const top = document.elementFromPoint(cx, cy);
-        return { id: e.tagName + ':' + (e.textContent || e.getAttribute('aria-label') || e.className).trim().slice(0, 30) + ':' + Math.round(r.top + scrollY), visible, covered: !!top && !(e === top || e.contains(top) || top.contains(e)) && r.width > 0, inView: r.bottom > 0 && r.top < innerHeight };
+        return { x: r.left, y: r.top, w: r.width, h: r.height, id: e.tagName + ':' + (e.textContent || e.getAttribute('aria-label') || e.className).trim().slice(0, 30) + ':' + Math.round(r.top + scrollY), visible, covered: !!top && !(e === top || e.contains(top) || top.contains(e)) && r.width > 0, inView: r.bottom > 0 && r.top < innerHeight };
       });
       if (!s) continue;
       if (seen.has(s.id)) break;
       seen.add(s.id); kb.stops++;
+      // A first look can be wrong: themes animate focus styles (measured too early the element looks unstyled), and a ring may be drawn as a border or pseudo-element that
+      // the computed-style test does not see. So anything flagged is re-checked once things have settled, by pixels: is the element photographed with focus different from
+      // the same spot without focus?
+      if (!s.visible && s.inView && s.w > 0 && s.h > 0) {
+        await page.waitForTimeout(400);
+        const clip = { x: Math.max(0, s.x - 8), y: Math.max(0, s.y - 8), width: Math.min(s.w + 16, v.w - Math.max(0, s.x - 8)), height: Math.min(s.h + 16, v.h - Math.max(0, s.y - 8)) };
+        if (clip.width > 1 && clip.height > 1) {
+          const withFocus = await page.screenshot({ clip });
+          await page.keyboard.press('Shift+Tab'); await page.waitForTimeout(400);
+          const without = await page.screenshot({ clip });
+          await page.keyboard.press('Tab'); await page.waitForTimeout(150);
+          if (!withFocus.equals(without)) s.visible = true;
+        }
+      }
       if (!s.visible) kb.noVisibleFocus.push(s.id);
-      if (s.covered && s.inView) kb.covered.push(s.id);
+      if (s.covered && s.inView) {
+        await page.waitForTimeout(450);   // let smooth scrolling finish, then look again
+        const still = await page.evaluate(() => { const e = document.activeElement; if (!e) return false; const r = e.getBoundingClientRect(); const cx = Math.min(Math.max(r.left + r.width / 2, 1), innerWidth - 2), cy = Math.min(Math.max(r.top + r.height / 2, 1), innerHeight - 2); const top = document.elementFromPoint(cx, cy); return !!top && !(e === top || e.contains(top) || top.contains(e)); });
+        if (still) kb.covered.push(s.id);
+      }
     }
     // accordion by keyboard: focus the first panel header, press Enter, then Space, and see whether the open/closed state changes
     let accordion = null;

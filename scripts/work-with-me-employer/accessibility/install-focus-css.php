@@ -3,10 +3,12 @@
  * Two keyboard-focus fixes found by the accessibility audit (2026-10-17, tools/a11y-audit.mjs), appended to Additional CSS as ONE marked block, for ONE site at a time.
  * Ryan, 2026-10-17: "work on an accessibility page ... you can use web research tools to confirm anything we missed" (the audit is what makes the page's statements true).
  *
- *   1. #ast-scroll-top (the round "scroll to top" button, a focusable div): Astra turns its outline off, so a keyboard user could not see where focus was (WCAG 2.4.7 Focus Visible).
- *      Fix: a double ring (white outline + dark halo) on :focus-visible only; mouse users see no change.
- *   2. The sticky in-page menu on the For Practices page (.ts-wwm__sticky) is fixed to the BOTTOM of a phone screen (61 px high); tabbing scrolled links underneath it (16 of 59 stops
- *      on a 390 px screen; WCAG 2.2 2.4.11 Focus Not Obscured, AA). Fix: scroll-padding-bottom on the page so focused items stop above the bar. No change on other pages
+ *   1. #ast-scroll-top (the round "scroll to top" button, a focusable div): CORRECTION 2026-10-18: its original keyboard focus is a thin dotted white 1px border, which IS visible, so this
+ *      was NOT a failure; the first audit pass flagged it wrongly because the checker looked only at outline and box-shadow, not border. The rule is kept as a harmless strengthening:
+ *      a double ring (white outline + dark halo) on :focus-visible only; mouse users see no change.
+ *   2. The sticky in-page menu on the For Practices page (.ts-wwm__sticky) is fixed to the BOTTOM of a phone screen (61 px high); tabbing scrolled links underneath it (the bar sat over the
+ *      centre of 16 of 59 focused items on a 390 px screen, re-checked after scrolling settled; WCAG 2.2 2.4.11 Focus Not Obscured, AA looks at items hidden ENTIRELY, so this is a
+ *      near-miss rather than a proven failure, and that page is not client-facing). Fix: scroll-padding-bottom on the page so focused items stop above the bar. No change on other pages
  *      (the :has() selector matches only pages that contain that menu) or for mouse and touch use.
  *
  * Why Additional CSS: styles must live in WordPress's own storage so a SiteGround push carries them (no MU-plugin; see AGENTS.md). The block is delimited by marker comments.
