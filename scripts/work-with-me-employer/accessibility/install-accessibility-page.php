@@ -6,7 +6,7 @@
  * The wording is accessibility-page.html next to this file (built by build-accessibility-page.py; every sentence is limited to what was actually tested, see that file).
  * W3C WAI advises linking an accessibility statement from the footer and using one consistent link name: the link is called "Accessibility".
  *
- * Allow-list: localhost:8090 and staging32 ONLY; live is added only on Ryan's go (or the page arrives through a SiteGround Custom Deploy from staging32).
+ * Allow-list: localhost:8090, staging32 and live. Live was added on Ryan's "push it" (2026-10-17), after the page was applied, audited and rollback-proven on localhost and staging32.
  *
  * What it writes (WordPress's own storage: posts table + options table; no files, no MU-plugin):
  *   1. a published page "Accessibility" (slug accessibility)
@@ -26,8 +26,8 @@ if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) ) {
 
 $home = untrailingslashit( home_url() );
 $host = (string) wp_parse_url( $home, PHP_URL_HOST ) . ( wp_parse_url( $home, PHP_URL_PORT ) ? ':' . wp_parse_url( $home, PHP_URL_PORT ) : '' );
-if ( ! in_array( $host, array( 'localhost:8090', 'staging32.thaisolitude.com' ), true ) ) {
-	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090 or staging32 only).' );
+if ( ! in_array( $host, array( 'localhost:8090', 'staging32.thaisolitude.com', 'thaisolitude.com' ), true ) ) {
+	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090, staging32 or live only).' );
 }
 if ( 'astra' !== get_stylesheet() ) {
 	WP_CLI::error( 'Active theme is not Astra.' );

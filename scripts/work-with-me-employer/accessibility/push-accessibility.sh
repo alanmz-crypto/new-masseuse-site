@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Accessibility work on staging32 (S_TARGET=staging32, the only target enabled; live is NOT enabled, it is added only on Ryan's go or the change arrives through a SiteGround Custom Deploy).
+# Accessibility work on staging32 or live (S_TARGET=staging32|live; default staging32). Live was added on Ryan's "push it" (2026-10-17), after both parts were applied, audited and rollback-proven on staging32.
 #   page  the Accessibility page (/accessibility/) plus an "Accessibility" link after "Privacy Policy" in the footer row   (install-accessibility-page.php)
 #   css   two keyboard-focus fixes in the Additional CSS: visible focus on the scroll-to-top button, and focus kept clear of the phone's bottom bar   (install-focus-css.php)
 #
@@ -32,7 +32,7 @@ case "${1:-}" in
   *) echo "Usage: $0 <page|css> [--apply | --rollback FILE]" >&2; exit 1 ;;
 esac
 target="${S_TARGET:-staging32}"
-case "$target" in staging32) ;; *) echo "S_TARGET must be staging32 (live is not enabled for this change)." >&2; exit 1 ;; esac
+case "$target" in staging32|live) ;; *) echo "S_TARGET must be staging32 or live." >&2; exit 1 ;; esac
 echo "Target site: $target   part: $part   mode: $mode"
 ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 "$user@$host")
 
@@ -45,7 +45,7 @@ read -r -d '' REMOTE <<'EOS' || true
 set -euo pipefail
 wp() { command wp --skip-plugins=sg-security "$@"; }   # SiteGround Security 1.6.9 + PHP 8.5 makes EVERY wp exit 0 on live (shutdown-handler bug); skipping that one plugin keeps exit codes true. See AGENTS.md and check-wp-exit-codes.sh.
 phase=$1; target=$2; part=$3; snap=${4:-}
-case "$target" in staging32) want="staging32.thaisolitude.com" ;; *) echo "Remote refused: target must be staging32, got '$target'." >&2; exit 1 ;; esac
+case "$target" in staging32) want="staging32.thaisolitude.com" ;; live) want="thaisolitude.com" ;; *) echo "Remote refused: target must be staging32 or live, got '$target'." >&2; exit 1 ;; esac
 command -v wp >/dev/null || { echo "wp-cli not found on the server" >&2; exit 1; }
 doc=""
 cfgs=$(mktemp); trap 'rm -f "$cfgs"' EXIT

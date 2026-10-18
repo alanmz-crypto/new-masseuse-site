@@ -1,4 +1,4 @@
-// Full-page screenshots of the 9 public pages (the 8 original ones plus /privacy-policy/, added 2026-10-17) at desktop (1280) and mobile (390) widths. Read-only: it only loads public pages.
+// Full-page screenshots of the 10 public pages (the 8 original ones plus /privacy-policy/ and /accessibility/, added 2026-10-17) at desktop (1280) and mobile (390) widths. Read-only: it only loads public pages.
 // usage: node capture-pages.mjs <base-url> <output-dir>
 // Playwright is taken from the Mirror project (the same install the earlier restyle checks used).
 import { createRequire } from 'module';
@@ -8,7 +8,7 @@ const { chromium } = require('playwright');
 const [base, out] = process.argv.slice(2);
 if (!base || !out) { console.error('usage: node capture-pages.mjs <base-url> <output-dir>'); process.exit(1); }
 fs.mkdirSync(out, { recursive: true });
-const pages = ['/', '/about/', '/services/', '/thai-massage/', '/therapeutic-massage/', '/deep-tissue-massage/', '/work-with-me/', '/contact/', '/privacy-policy/'];
+const pages = ['/', '/about/', '/services/', '/thai-massage/', '/therapeutic-massage/', '/deep-tissue-massage/', '/work-with-me/', '/contact/', '/privacy-policy/', '/accessibility/'];
 const views = [[1280, 900, 'd'], [390, 844, 'm']];
 const b = await chromium.launch();
 let ok = 0, bad = 0;
