@@ -9,7 +9,7 @@
  * Content: privacy-policy.html (built by build-privacy-page.py). It only accepts a page that still holds EXACTLY version 2 (privacy-policy-v2.html), with the footer link and
  * the privacy option in place; anything else stops the run. Nothing else is written: title, slug, footer link and option stay as they are.
  *
- * Allow-list: localhost:8090 and staging32 ONLY; live is added only on Ryan's go.
+ * Allow-list: localhost:8090, staging32 and live. Live was added on Ryan's go (2026-10-17: "fix the privacy correction on live now"), after version 3 was applied, checked and rollback-proven on localhost and staging32.
  *
  * Modes (first WP-CLI argument; run with --user=1):  <mode> [FILE]
  *   preflight    read-only: old = the page holds exactly version 2 (ready to correct); new = already version 3; CHANGED = anything else (stop)
@@ -24,8 +24,8 @@ if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) ) {
 
 $home = untrailingslashit( home_url() );
 $host = (string) wp_parse_url( $home, PHP_URL_HOST ) . ( wp_parse_url( $home, PHP_URL_PORT ) ? ':' . wp_parse_url( $home, PHP_URL_PORT ) : '' );
-if ( ! in_array( $host, array( 'localhost:8090', 'staging32.thaisolitude.com' ), true ) ) {
-	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090 or staging32 only).' );
+if ( ! in_array( $host, array( 'localhost:8090', 'staging32.thaisolitude.com', 'thaisolitude.com' ), true ) ) {
+	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090, staging32 or live only).' );
 }
 if ( 'astra' !== get_stylesheet() ) {
 	WP_CLI::error( 'Active theme is not Astra.' );
