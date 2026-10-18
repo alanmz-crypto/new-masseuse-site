@@ -13,7 +13,7 @@ separated with <br><br>. (Real lists or headings inside an answer would nest a b
 
 Wording rules (AGENTS.md): first person ("I"), never we/our/us, none of the OBMT forbidden terms (install-privacy-page.php refuses them again before every write).
 FACTS (Ryan, 2026-10-17: "include what we can from this list while being completely true"): every sentence is either verified or plainly true.
-  Online privacy: verified against the live site on 2026-10-17 (0 forms, 0 iframes, no cookies, no analytics, Google Fonts the only outside load, hosted by SiteGround).
+  Online privacy: verified against the site on 2026-10-17 in a real browser (0 forms, no cookies set, no analytics, hosted by SiteGround; outside loads are Google Fonts on every page and, on the Contact page only, an embedded Google Map from Google's servers; an earlier raw-HTML check had missed the map because a script inserts it).
   Client privacy keeps only what the site itself says or what is true of any practice: the service pages tell clients to share "any health conditions, medications, pregnancy,
   recent injury or surgery" before a session; the About page speaks of sharing goals and tailoring each session; the footer says massage is not a substitute for medical care
   and that she does not diagnose or treat; the law-requires and no-system-is-completely-secure sentences are generally true. The one COMMITMENT in it, "I do not sell the
@@ -36,18 +36,18 @@ INTRO = ('Thai Solitude is the practice of Butsaba Dusrai, LMT (Oregon License L
          'first online and then as a client. Choose a section below.')
 
 ONLINE = ('<strong>What this site collects</strong><br>'
-          'This site has no forms, no accounts, no ads, and no tracking tools. It does not ask you for personal information, and it does not set cookies for visitors.'
+          'This site has no forms, no accounts, no ads, and no tracking tools. It does not ask you for personal information, and the site itself does not set cookies for visitors.'
           '<br><br>'
           '<strong>If you contact me</strong><br>'
           'If you email or call me, I receive whatever you choose to share, such as your name, your email address or phone number, and your message. '
           'I use it to reply to you and to arrange an appointment. I do not sell it or share it for marketing.'
           '<br><br>'
-          '<strong>Hosting and fonts</strong><br>'
+          '<strong>Hosting, fonts, and the map</strong><br>'
           'The site is hosted by SiteGround, which keeps routine server records, such as visitors’ IP addresses and the pages requested, to keep the site running and secure. '
-          'The site’s fonts load from Google Fonts, so your browser connects to Google to display them.'
+          'The site’s fonts load from Google Fonts, and the Contact page shows an embedded Google Map. Both come from Google’s servers, so your browser connects to Google to display them, and Google handles that information under its own privacy policy.'
           '<br><br>'
           '<strong>Links to other sites</strong><br>'
-          'Some pages link to other sites, such as the Oregon license lookup and Google Maps. Those sites have their own privacy practices.')
+          'Some pages link to other sites, such as the Oregon license lookup and the schools and organizations named on the For Practices page. Those sites have their own privacy practices.')
 
 CLIENT = ('This section covers the information you share with me directly: when you reach out, when you arrange an appointment, and before or during a session.'
           '<br><br>'
