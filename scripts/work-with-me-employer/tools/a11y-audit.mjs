@@ -1,6 +1,6 @@
 // Read-only accessibility audit of the public pages, in a real browser: axe-core (WCAG 2.0/2.1/2.2 A and AA rules) plus checks axe cannot make: language, titles, headings,
 // image alt text, landmarks, zoom allowed, small click targets, side-scrolling at 320 px, keyboard order, visible focus, focus hidden behind something, accordion by keyboard.
-//   node a11y-audit.mjs <base-url> [out.json]       e.g. node a11y-audit.mjs https://staging32.thaisolitude.com
+//   node a11y-audit.mjs <base-url> [out.json]       e.g. node a11y-audit.mjs https://staging33.thaisolitude.com
 // It only loads public pages like a visitor (10 pages x 3 window sizes); it changes nothing. Keep traffic low: SiteGround blocks addresses that send bursts (HTTP 202 = INVALID).
 // An automated pass finds only part of what WCAG asks for (roughly a third of the criteria can be tested by a machine): a clean result means "no automatically detectable problems",
 // never "conforms". The accessibility statement must say what was actually done.

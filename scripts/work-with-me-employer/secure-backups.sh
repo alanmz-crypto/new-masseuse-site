@@ -6,7 +6,7 @@
 #                                                      set wpvivid_schedule_setting.enable=0, clear the wpvivid_main_schedule_event cron hook, purge the SG cache
 #   ./secure-backups.sh <target> --rollback FILE       put the zips back, restore the schedule setting and cron event from a <target>-backups-secure-*.json manifest
 #
-# <target> is one of: live staging24 staging25 staging26 staging27 staging30 staging31 staging32   (anything else is refused, here and again on the server)
+# <target> is one of: live staging24 staging25 staging26 staging27 staging30 staging31 staging32 staging33   (anything else is refused, here and again on the server)
 #
 # Why: wp-content/wpvividbackups/*.zip answered HTTP 200 application/zip to anyone (the folder .htaccess is ignored for static files on SiteGround),
 # and WPvivid wrote a new full-site zip there every night (local only, keep 3). Moving files alone would not hold, so the schedule goes off too.
@@ -19,8 +19,8 @@ here=$(cd "$(dirname "$0")" && pwd)
 creds="${S26_CREDS:-$here/../../remote_execution.txt}"
 target="${1:-}"
 case "$target" in
-  live|staging24|staging25|staging26|staging27|staging30|staging31|staging32) shift ;;
-  *) echo "Usage: $0 <live|staging24|staging25|staging26|staging27|staging30|staging31|staging32> [--apply | --rollback FILE]" >&2; exit 1 ;;
+  live|staging24|staging25|staging26|staging27|staging30|staging31|staging32|staging33) shift ;;
+  *) echo "Usage: $0 <live|staging24|staging25|staging26|staging27|staging30|staging31|staging32|staging33> [--apply | --rollback FILE]" >&2; exit 1 ;;
 esac
 [ -f "$creds" ] || { echo "Missing credentials file: $creds" >&2; exit 1; }
 field() { sed -n "s/^$1:[[:space:]]*//p" "$creds" | head -1; }
@@ -44,7 +44,7 @@ wp() { command wp --skip-plugins=sg-security "$@"; }   # SiteGround Security 1.6
 mode=$1; target=$2; manifest=${3:-}
 case "$target" in
   live) want="thaisolitude.com" ;;
-  staging24|staging25|staging26|staging27|staging30|staging31|staging32) want="${target}.thaisolitude.com" ;;
+  staging24|staging25|staging26|staging27|staging30|staging31|staging32|staging33) want="${target}.thaisolitude.com" ;;
   *) echo "Remote refused: unknown target '$target'." >&2; exit 1 ;;
 esac
 command -v wp >/dev/null && command -v python3 >/dev/null || { echo "wp-cli and python3 are required on the server" >&2; exit 1; }
