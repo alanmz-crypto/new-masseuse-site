@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Work With Me page: link "Thammasat University" (BA line) to https://tu.ac.th/en/ on staging32 (S_TARGET=staging32; live is added only on Ryan's go).
+# Work With Me page: link "Thammasat University" (BA line) to https://tu.ac.th/en/ on staging32 or live (S_TARGET=staging32|live; default staging32). Live was added on Ryan's "push it" (2026-10-18).
 # Ryan, 2026-10-18: "add a link to Thammasat University on the work-with-me page. https://tu.ac.th/en/"
 #
 #   ./push-thammasat-link.sh                    dry run: connect, locate the site, upload the package, preflight (read-only on the site)
@@ -30,7 +30,7 @@ case "${1:-}" in
   *) echo "Usage: $0 [--apply | --rollback FILE]" >&2; exit 1 ;;
 esac
 target="${S_TARGET:-staging32}"
-case "$target" in staging32) ;; *) echo "S_TARGET must be staging32 (live is added only on Ryan's go)." >&2; exit 1 ;; esac
+case "$target" in staging32|live) ;; *) echo "S_TARGET must be staging32 or live." >&2; exit 1 ;; esac
 echo "Target site: $target   mode: $mode"
 ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 "$user@$host")
 
@@ -43,7 +43,7 @@ read -r -d '' REMOTE <<'EOS' || true
 set -euo pipefail
 wp() { command wp --skip-plugins=sg-security "$@"; }   # SiteGround Security 1.6.9 + PHP 8.5 makes EVERY wp exit 0 on live (shutdown-handler bug); skipping that one plugin keeps exit codes true. See AGENTS.md and check-wp-exit-codes.sh.
 phase=$1; target=$2; snap=${3:-}
-case "$target" in staging32) want="staging32.thaisolitude.com" ;; *) echo "Remote refused: target must be staging32, got '$target'." >&2; exit 1 ;; esac
+case "$target" in staging32) want="staging32.thaisolitude.com" ;; live) want="thaisolitude.com" ;; *) echo "Remote refused: target must be staging32 or live, got '$target'." >&2; exit 1 ;; esac
 command -v wp >/dev/null || { echo "wp-cli not found on the server" >&2; exit 1; }
 doc=""
 cfgs=$(mktemp); trap 'rm -f "$cfgs"' EXIT

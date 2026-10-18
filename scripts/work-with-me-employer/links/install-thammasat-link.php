@@ -12,7 +12,7 @@
  * Nothing else on the page is read as an instruction or changed, so edits made elsewhere on the page in the meantime survive. The guard demands the old line to occur
  * EXACTLY once and the new line zero times (ready), or the new line exactly once and the old zero times (applied); anything else stops the run.
  *
- * Allow-list: localhost:8090 and staging32. Live is added only on Ryan's go, after the change has been applied, checked and rollback-proven on both.
+ * Allow-list: localhost:8090, staging32 and live. Live was added on Ryan's "push it" (2026-10-18), after the change was applied, checked and rollback-proven on localhost and staging32.
  *
  * Modes (first WP-CLI argument; run with --user=1):  <mode> [FILE]
  *   preflight    read-only: ready = the old line is there once; applied = the linked line is there once; CHANGED = anything else (stop)
@@ -27,8 +27,8 @@ if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) ) {
 
 $home = untrailingslashit( home_url() );
 $host = (string) wp_parse_url( $home, PHP_URL_HOST ) . ( wp_parse_url( $home, PHP_URL_PORT ) ? ':' . wp_parse_url( $home, PHP_URL_PORT ) : '' );
-if ( ! in_array( $host, array( 'localhost:8090', 'staging32.thaisolitude.com' ), true ) ) {
-	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090 or staging32 only).' );
+if ( ! in_array( $host, array( 'localhost:8090', 'staging32.thaisolitude.com', 'thaisolitude.com' ), true ) ) {
+	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090, staging32 or live only).' );
 }
 if ( 'astra' !== get_stylesheet() ) {
 	WP_CLI::error( 'Active theme is not Astra.' );
