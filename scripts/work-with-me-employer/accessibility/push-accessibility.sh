@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Accessibility work on staging32 or live (S_TARGET=staging32|live; default staging32). Live was added on Ryan's "push it" (2026-10-17), after both parts were applied, audited and rollback-proven on staging32.
 #   page  the Accessibility page (/accessibility/) plus an "Accessibility" link after "Privacy Policy" in the footer row   (install-accessibility-page.php)
+#   jump  a discreet row of 2-4 "On this page" links under the header of every page with sections (WPCode snippet + Additional CSS block)   (install-jump-links.php)
 #   css   two keyboard-focus fixes in the Additional CSS: visible focus on the scroll-to-top button, and focus kept clear of the phone's bottom bar   (install-focus-css.php)
 #
 #   ./push-accessibility.sh <page|css>                    dry run: connect, locate the site, upload the package, preflight (read-only on the site)
@@ -23,13 +24,13 @@ host=$(field Host); port=$(field Port); user=$(field User); user="${user%%@*}"
 SSH_AUTH_SOCK="$SSH_AUTH_SOCK" ssh-add -l >/dev/null 2>&1 || { echo "The ssh-agent at $SSH_AUTH_SOCK holds no keys." >&2; exit 2; }
 
 part="${1:-}"
-case "$part" in page|css) shift ;; *) echo "Usage: $0 <page|css> [--apply | --rollback FILE]" >&2; exit 1 ;; esac
+case "$part" in page|css|jump) shift ;; *) echo "Usage: $0 <page|css|jump> [--apply | --rollback FILE]" >&2; exit 1 ;; esac
 mode=dry; snap=""
 case "${1:-}" in
   "") ;;
   --apply) mode=apply ;;
   --rollback) mode=rollback; snap="${2:-}"; [ -n "$snap" ] || { echo "--rollback needs the snapshot file path on the server" >&2; exit 1; } ;;
-  *) echo "Usage: $0 <page|css> [--apply | --rollback FILE]" >&2; exit 1 ;;
+  *) echo "Usage: $0 <page|css|jump> [--apply | --rollback FILE]" >&2; exit 1 ;;
 esac
 target="${S_TARGET:-staging32}"
 case "$target" in staging32|live) ;; *) echo "S_TARGET must be staging32 or live." >&2; exit 1 ;; esac
@@ -38,7 +39,7 @@ ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o 
 
 echo "[1] Connecting and uploading the package to ~/wwm-package-a11y (outside every web root) ..."
 "${ssh_cmd[@]}" true 2>/dev/null || { echo "SSH login refused; check the ssh-agent holds the right key." >&2; exit 2; }
-tar -C "$here" -cf - install-accessibility-page.php install-focus-css.php accessibility-page.html \
+tar -C "$here" -cf - install-accessibility-page.php install-focus-css.php install-jump-links.php accessibility-page.html \
   | "${ssh_cmd[@]}" 'rm -rf "$HOME/wwm-package-a11y" && mkdir -p "$HOME/wwm-package-a11y" && tar -xf - -C "$HOME/wwm-package-a11y"'
 
 read -r -d '' REMOTE <<'EOS' || true
@@ -63,7 +64,7 @@ done < "$cfgs"
 echo "$target is ${doc#"$HOME"/}"
 mkdir -p "$HOME/private-backups"; chmod 700 "$HOME/private-backups"
 export WWM_BACKUP_DIR="$HOME/private-backups"
-case "$part" in page) inst=install-accessibility-page.php ;; css) inst=install-focus-css.php ;; *) echo "unknown part" >&2; exit 1 ;; esac
+case "$part" in page) inst=install-accessibility-page.php ;; css) inst=install-focus-css.php ;; jump) inst=install-jump-links.php ;; *) echo "unknown part" >&2; exit 1 ;; esac
 run() { local m=$1; shift; wp --path="$doc" --user=1 eval-file "$HOME/wwm-package-a11y/$inst" "$m" "$@"; }
 purge() { wp --path="$doc" --user=1 sg purge >/dev/null 2>&1 && echo "SiteGround cache purged" || echo "(sg purge unavailable; purge the cache in Site Tools if a page looks stale)"; }
 case "$phase" in
@@ -91,6 +92,12 @@ case "$phase" in
       css)
         grep -q 'ts-a11y-focus:start' <<<"$home" && grep -q 'ts-a11y-focus:end' <<<"$home" || { echo "The CSS block is not in the public page (cache?); use --rollback if it persists." >&2; exit 1; }
         echo "public check: the ts-a11y-focus CSS block is in the public page; the license line is still on the home page" ;;
+      jump)
+        grep -q 'ts-a11y-jump:start' <<<"$home" && grep -q 'ts-a11y-jump:end' <<<"$home" || { echo "The jump-link CSS block is not in the public page (cache?); use --rollback if it persists." >&2; exit 1; }
+        grep -q '<nav class="ts-jump" aria-label="On this page">' <<<"$home" || { echo "The jump-link row is not on the public home page (cache?); use --rollback if it persists." >&2; exit 1; }
+        svc=$(curl -s --max-time 30 "https://$want/services/" || true)
+        grep -q 'href="#ts-therapeutic-massage"' <<<"$svc" || { echo "The Services page has no jump-link row; use --rollback if it persists." >&2; exit 1; }
+        echo "public check: the jump-link row is on the home and Services pages, its CSS is in the public page, and the license line is still on the home page" ;;
     esac ;;
   rollback) snap=${snap/#\$HOME/$HOME}; run rollback "$snap"; purge ;;
   *) echo "unknown phase" >&2; exit 1 ;;
