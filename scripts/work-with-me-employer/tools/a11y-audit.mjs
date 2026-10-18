@@ -1,6 +1,7 @@
 // Read-only accessibility audit of the public pages, in a real browser: axe-core (WCAG 2.0/2.1/2.2 A and AA rules) plus checks axe cannot make: language, titles, headings,
 // image alt text, landmarks, zoom allowed, small click targets, side-scrolling at 320 px, keyboard order, visible focus, focus hidden behind something, accordion by keyboard.
 //   node a11y-audit.mjs <base-url> [out.json]       e.g. node a11y-audit.mjs https://staging33.thaisolitude.com
+//   TS_THEME=dark node a11y-audit.mjs <base-url> [out.json]   the same audit with the dark mode switched on (once the dark/light button from theme/ is installed)
 // It only loads public pages like a visitor (10 pages x 3 window sizes); it changes nothing. Keep traffic low: SiteGround blocks addresses that send bursts (HTTP 202 = INVALID).
 // An automated pass finds only part of what WCAG asks for (roughly a third of the criteria can be tested by a machine): a clean result means "no automatically detectable problems",
 // never "conforms". The accessibility statement must say what was actually done.
@@ -22,6 +23,7 @@ const result = [];
 const b = await chromium.launch();
 for (const v of views) {
   const ctx = await b.newContext({ viewport: { width: v.w, height: v.h }, deviceScaleFactor: v.dpr, isMobile: !!v.mobile, hasTouch: !!v.mobile });
+  if (process.env.TS_THEME === 'dark') { await ctx.addInitScript(() => { try { localStorage.setItem('ts-theme', 'dark'); } catch (e) { /* ignore */ } }); }   // TS_THEME=dark: audit the dark mode (the header button's saved choice)
   for (const p of pages) {
     const page = await ctx.newPage();
     const r0 = await page.goto(base + p, { waitUntil: 'networkidle', timeout: 90000 });

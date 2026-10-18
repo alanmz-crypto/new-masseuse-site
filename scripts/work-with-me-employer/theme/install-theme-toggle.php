@@ -13,7 +13,7 @@
  * Sources: theme-init.js, theme-toggle.js and theme-toggle.css next to this file (the same files the browser prototype used).
  * Trade-off: no JavaScript = no button (the site stays light and works exactly as before). Google's embedded map stays light (it is Google's content).
  *
- * Allow-list: localhost:8090 and staging33. Live is added only on Ryan's go, after the button has been applied, tested and rollback-proven on both.
+ * Allow-list: localhost:8090, staging33 and live. Live was added on Ryan's "add that and i'll push" (2026-10-18), after the button was applied, tested and rollback-proven on localhost and staging33.
  *
  * Modes (first WP-CLI argument; run with --user=1):  <mode> [FILE]
  *   preflight    read-only: ready = no such snippet and no CSS block; applied = exactly both are there; CHANGED = anything else (stop)
@@ -28,8 +28,8 @@ if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) ) {
 
 $home = untrailingslashit( home_url() );
 $host = (string) wp_parse_url( $home, PHP_URL_HOST ) . ( wp_parse_url( $home, PHP_URL_PORT ) ? ':' . wp_parse_url( $home, PHP_URL_PORT ) : '' );
-if ( ! in_array( $host, array( 'localhost:8090', 'staging33.thaisolitude.com' ), true ) ) {
-	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090 or staging33 only).' );
+if ( ! in_array( $host, array( 'localhost:8090', 'staging33.thaisolitude.com', 'thaisolitude.com' ), true ) ) {
+	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090, staging33 or live only).' );
 }
 if ( 'astra' !== get_stylesheet() ) {
 	WP_CLI::error( 'Active theme is not Astra.' );
