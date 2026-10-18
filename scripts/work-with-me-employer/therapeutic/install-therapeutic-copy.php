@@ -15,11 +15,9 @@
  * The new wording is checked against the site's OBMT forbidden-term list, we/our/us, and a list of claims the handoff said not to make (cure, treat, diagnose, inflammation, detox, guarantee).
  * The safety guidance on the page ("see a doctor" lines) is outside these edits; the read-back proves the page is otherwise byte-identical.
  *
- * OPEN ITEM (found by post-change-test.sh staging33 after the first apply): the sentence "Research suggests massage may provide short-term relief for some people with neck or shoulder pain." uses the bare word
- * "relief", which the repo's own Therapeutic-page gate (client-pages/verify-client-pages.py, restricted-wording list) rejects, so that ONE gate FAILs on staging33 until Ryan decides. The wording above is exactly what he pasted and is kept.
- * Gate-clean alternative that follows the NCCIH article's own sentence ("may be helpful for neck or shoulder pain, but the benefits may only last for a short time"):
- * "Research suggests massage may be helpful for some people with neck or shoulder pain, though the benefits may last only a short time." To switch: roll back FIRST (the guard compares against this file's text), edit the
- * 'new' text of the 'reasons' edit above, then apply again.
+ * WORDING DECISION (Ryan, 2026-10-18): the pasted handoff said "...may provide short-term relief for some people with neck or shoulder pain." The repo's own Therapeutic-page gate (client-pages/verify-client-pages.py) bans the bare
+ * word "relief" (and "relieve", "restore"), so Ryan asked for a new way to say it; the sentence now follows the NCCIH article's own wording ("may be helpful for neck or shoulder pain, but the benefits may only last for a short time").
+ * The check below mirrors that gate so the installer refuses the banned words itself. To change this wording later: roll back FIRST (the guard compares against this file's text), edit the 'reasons' text, apply again.
  *
  * Allow-list: localhost:8090 and staging33 ONLY. Live is NOT allowed: it needs Ryan's explicit go, after which the host is added here and in push-therapeutic-copy.sh.
  *
@@ -62,7 +60,7 @@ $q3 = '"question":"What Is the Difference Between Therapeutic and Relaxation Mas
 $edits = array(
 	'reasons' => array(
 		'old' => 'People often book therapeutic massage for everyday tension and stiffness, or simply for time to slow down. Before I begin, I ask about your preferences and anything I should know about your health. During the session you can ask for lighter pressure, a different focus, or a pause at any time.',
-		'new' => 'People often book therapeutic massage for everyday muscle tension and stiffness, or simply to make time to slow down. Some also seek focused work for neck or shoulder discomfort. Research suggests massage may provide short-term relief for some people with neck or shoulder pain.' . $mark . ' Massage has also been studied for low-back pain, although the evidence is limited.' . $mark . ' Before I begin, I ask about your preferences and anything I should know about your health. You can request lighter pressure, a different focus, or a pause at any time.',
+		'new' => 'People often book therapeutic massage for everyday muscle tension and stiffness, or simply to make time to slow down. Some also seek focused work for neck or shoulder discomfort. Research suggests massage may be helpful for some people with neck or shoulder pain, though the benefits may last only a short time.' . $mark . ' Massage has also been studied for low-back pain, although the evidence is limited.' . $mark . ' Before I begin, I ask about your preferences and anything I should know about your health. You can request lighter pressure, a different focus, or a pause at any time.',
 	),
 	'faq_no_complaint' => array(
 		'old' => $q2 . 'Yes. You don’t need a particular area of concern to book. Tell me what kind of session would feel good, and I will plan around that."',
@@ -80,7 +78,7 @@ foreach ( $edits as $e ) {
 	$new_text .= ' ' . $e['new'];
 }
 $text = html_entity_decode( wp_strip_all_tags( $new_text ), ENT_QUOTES, 'UTF-8' );
-foreach ( array( 'proof', 'measurable', 'effective', 'pain relief', 'pain management', 'sciatica', 'headache', 'chronic', 'adhesion', 'corrective', 'accelerate', 'restore balance', 'nervous system', 'circulation', 'anxiety', 'cancer', 'neurological', 'disabilit', 'prevention', 'lasting', 'long-term wellness', 'overall health', 'real results', 'studio', 'cure', 'treat', 'diagnos', 'inflammation', 'detox', 'guarantee', 'relieve' ) as $bad ) {
+foreach ( array( 'proof', 'measurable', 'effective', 'pain relief', 'pain management', 'sciatica', 'headache', 'chronic', 'adhesion', 'corrective', 'accelerate', 'restore balance', 'nervous system', 'circulation', 'anxiety', 'cancer', 'neurological', 'disabilit', 'prevention', 'lasting', 'long-term wellness', 'overall health', 'real results', 'studio', 'cure', 'treat', 'diagnos', 'inflammation', 'detox', 'guarantee', 'relieve', 'relief', 'restore' ) as $bad ) {
 	if ( false !== stripos( $text, $bad ) ) {
 		WP_CLI::error( 'The new wording contains a term this site must not use: ' . $bad );
 	}
