@@ -12,7 +12,8 @@
  * Why Additional CSS: styles must live in WordPress's own storage so a SiteGround push carries them (no MU-plugin; see AGENTS.md). The block is delimited by marker comments and appended AFTER the ts-theme block.
  * The guard refuses unless the known site CSS is there AND the dark-mode block (ts-theme) is there (this fix only makes sense around it).
  *
- * Allow-list: localhost:8090 and staging34. Live is added only after Ryan's explicit go (an agent adding a live host is refused by the auto-mode classifier: hand him a tested patch).
+ * Allow-list: localhost:8090, staging34 and live. Live was added by Ryan's go ("that fix worked. you can push it live", 2026-10-19) after the block was applied, checked and rollback-proven on localhost and staging34;
+ * he applies it himself (the auto-mode classifier refuses an agent adding a live host).
  *
  * Modes (first WP-CLI argument; run with --user=1):  <mode> [FILE]
  *   preflight    read-only: ready = the block is absent; applied = the block is there exactly once, exactly as reviewed; CHANGED = anything else (stop)
@@ -27,8 +28,8 @@ if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) ) {
 
 $home = untrailingslashit( home_url() );
 $host = (string) wp_parse_url( $home, PHP_URL_HOST ) . ( wp_parse_url( $home, PHP_URL_PORT ) ? ':' . wp_parse_url( $home, PHP_URL_PORT ) : '' );
-if ( ! in_array( $host, array( 'localhost:8090', 'staging34.thaisolitude.com' ), true ) ) {
-	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090 or staging34 only).' );
+if ( ! in_array( $host, array( 'localhost:8090', 'staging34.thaisolitude.com', 'thaisolitude.com' ), true ) ) {
+	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090, staging34 or live only).' );
 }
 if ( 'astra' !== get_stylesheet() ) {
 	WP_CLI::error( 'Active theme is not Astra.' );
