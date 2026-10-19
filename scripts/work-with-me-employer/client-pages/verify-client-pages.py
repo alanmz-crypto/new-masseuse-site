@@ -139,6 +139,32 @@ if thai_title == THAI_TITLE or thai_desc == THAI_DESC:
 else:
     print("INFO Thai Massage meta is still the auto-built one (not set yet): " + str(thai_desc))
 
+# ---- Therapeutic Massage and Deep Tissue Massage: meta title and description (Ryan, 2026-10-19: "finish one and two then go to three") -----------------------------------------
+# Strict checks only where the change is in (services-meta/install-service-meta.php); the wording check always runs on whatever meta the page has.
+SERVICE_META = [
+    ("Therapeutic Massage", "/therapeutic-massage/", "Therapeutic Massage | Butsaba Dusrai, Oregon LMT",
+     "Therapeutic massage in Mt. Tabor, Portland with Butsaba Dusrai, LMT: focused work where you ask for it, with pressure and pace adjusted as you go."),
+    ("Deep Tissue Massage", "/deep-tissue-massage/", "Deep Tissue Massage | Butsaba Dusrai, Oregon LMT",
+     "Deep tissue massage in Mt. Tabor, Portland with Butsaba Dusrai, LMT: slow, deliberate pressure on tight muscles, lightened whenever you ask."),
+]
+for label, path, want_title, want_desc in SERVICE_META:
+    pg, pcode = get(path)
+    check("%s page returns 200 (meta check)" % label, pcode == 200, pcode)
+    m_t = re.search(r"<title>(.*?)</title>", pg, re.S)
+    got_title = html.unescape(m_t.group(1)).strip() if m_t else ""
+    got_desc = meta(pg, "name", "description")
+    head_text = " ".join(filter(None, [got_title, got_desc, meta(pg, "property", "og:description"), meta(pg, "name", "twitter:description")]))
+    bad_h = wt.hits(head_text, wt.VOICE + wt.CLAIMS + wt.EVIDENCE)
+    check("%s title, meta/og/twitter descriptions carry no restricted wording" % label, not bad_h, bad_h)
+    if got_title == want_title or got_desc == want_desc:
+        check("%s title is the approved one" % label, got_title == want_title, got_title)
+        check("%s meta description is the approved one" % label, got_desc == want_desc, got_desc)
+        check("%s og and twitter title and description follow" % label, all(meta(pg, a, n) == v for a, n, v in (("property", "og:title", want_title), ("name", "twitter:title", want_title), ("property", "og:description", want_desc), ("name", "twitter:description", want_desc))))
+        check("%s description fits one snippet (<= 160) and the title one line (<= 60)" % label, len(want_desc) <= 160 and len(want_title) <= 60, "%d/%d" % (len(want_desc), len(want_title)))
+        check("%s description is a whole sentence (no heading text, no cut-off)" % label, got_desc is not None and got_desc.endswith(".") and ("What Is " + label) not in got_desc)
+    else:
+        print("INFO %s meta is still the auto-built one (not set yet): %s" % (label, got_desc))
+
 print("\nRESULT: " + ("all checks passed" if not fails else f"{fails} check(s) FAILED"))
 sys.exit(1 if fails else 0)
 
