@@ -115,6 +115,13 @@ else:
     check("Therapeutic Massage: as many Sources entries as numbers", len(re.findall(r'<cite class="ts-source">', mh_th)) == len(order), len(order))
     hosts = {re.match(r"https://([^/]+)/", u).group(1) for u, _ in links if re.match(r"https://([^/]+)/", u)}
     check("Therapeutic Massage: sources are only PubMed, doi.org, Cochrane or NCCIH", hosts <= {"pubmed.ncbi.nlm.nih.gov", "doi.org", "www.cochrane.org", "www.nccih.nih.gov"}, sorted(hosts))
+    # The "sandwich" version of the research panels (Ryan, 2026-10-19; installed by evidence-update/): strict checks only where it is in.
+    if "studies of massage used for specific medical conditions are not summarized here" in tt:
+        check("Therapeutic Massage: scope note and 'included the disappointing results' sentence once each", tt.count("studies of massage used for specific medical conditions are not summarized here") == 1 and tt.count("I included the studies I found with disappointing results, not only the favorable ones.") == 1)
+        check("Therapeutic Massage: the safety results are on the page (adverse-events review) and the encouraging close once", "138 adverse events" in tt and tt.count("Reviews describe serious events as rare") == 1)
+        check("Therapeutic Massage: the added discouraging results are there (lower vigor after hard exercise, placebo massage as good as real for back pain, no HRV or blood pressure difference)", "a lower mood score for vigor" in tt and "adding real massage or a placebo massage for three weeks both reduced pain" in tt and "not followed by significant differences in heart-rate variability or blood pressure" in tt)
+    else:
+        print("INFO Therapeutic Massage: the sandwich version of the research panels is not on this site yet (version 1 is; the structure checks above still ran)")
     alts = re.findall(r'<img [^>]*?alt="([^"]*)"[^>]*?title="([^"]*)"', mh_th)
     check("Therapeutic Massage: five pictures with five different alt texts, tooltip equal to the alt, none saying 'by Butsaba'", len(alts) == 5 and len({a1 for a1, _ in alts}) == 5 and all(a1 and a1 == t1 for a1, t1 in alts) and "by Butsaba" not in mh_th, len(alts))
 for old in ["Before your session, tell me about any health conditions, medications, pregnancy, recent injury or surgery.", "New numbness, weakness, unexplained swelling or radiating pain means you should see a doctor before massage."]:
@@ -164,6 +171,13 @@ if res["found"]:
     check("Thai Massage: as many Sources entries as numbers", len(re.findall(r'<cite class="ts-source">', tmh)) == len(order), len(order))
     hosts = {re.match(r"https://([^/]+)/", u).group(1) if re.match(r"https://([^/]+)/", u) else u for u, _ in marks}
     check("Thai Massage: sources are only PubMed, doi.org, Cochrane, NCCIH or UNESCO", hosts <= {"pubmed.ncbi.nlm.nih.gov", "doi.org", "www.cochrane.org", "www.nccih.nih.gov", "ich.unesco.org"}, sorted(hosts))
+    # The "sandwich" version of the research panels (Ryan, 2026-10-19; installed by evidence-update/): strict checks only where it is in.
+    if "studies of massage used for specific medical conditions are not summarized here" in tt:
+        check("Thai Massage: scope note and 'included the disappointing results' sentence once each", tt.count("studies of massage used for specific medical conditions are not summarized here") == 1 and tt.count("I included the studies I found with disappointing results, not only the favorable ones.") == 1)
+        check("Thai Massage: the safety results are on the page (adverse-events review, the Thai case report, the commentary) and the encouraging close once", "138 adverse events" in tt and "spinal epidural hematoma" in tt and "heart attack around the time of a Thai massage" in tt and tt.count("Reviews describe serious events as rare") == 1)
+        check("Thai Massage: the null shoulder-strength result is quoted from the authors", "strength in shoulders was not significantly different" in tt)
+    else:
+        print("INFO Thai Massage: the sandwich version of the research panels is not on this site yet (version 1 is; the structure checks above still ran)")
 else:
     print("INFO Thai Massage: the evidence section is not on this site yet (structure checks skipped; the wording check above still ran)")
 for old in ["You stay fully clothed, so wear something loose and comfortable.", "New numbness, weakness, unexplained swelling or radiating pain means you should see a doctor before massage."]:

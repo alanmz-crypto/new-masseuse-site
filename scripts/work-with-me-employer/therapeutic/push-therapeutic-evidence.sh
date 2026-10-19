@@ -86,7 +86,7 @@ case "$phase" in
     }
     chk "research heading (no duplicate)" 1 "$(count 'What the Research Says About Therapeutic Massage')"
     chk "five collapsible panels" 5 "$(count '<details class="wp-block-details')"
-    chk "25 source entries" 25 "$(count '<cite class="ts-source">')"
+    chk "30 source entries" 30 "$(count '<cite class="ts-source">')"
     chk "FAQ: difference from deep tissue" 1 "$(count 'How Is Therapeutic Massage Different From Deep Tissue Massage?')"
     chk "FAQ: changing the pressure" 1 "$(count 'Can I Change the Pressure During a Session?')"
     chk "FAQ: where sessions take place" 1 "$(count 'Where Do Sessions Take Place?')"

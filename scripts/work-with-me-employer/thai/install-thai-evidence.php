@@ -8,7 +8,7 @@
  *   1. "What Is Thai Massage?": one paragraph is added at the end (UNESCO 2019 listing, numbered source [1]; her training, which the About page already states). The old text is anchored to its own
  *      closing sentence and occurs exactly once.
  *   2. Two sections are APPENDED after the last block on the page, so nothing above moves: "Questions About Thai Massage" (Spectra FAQ, link-free answers) and "What the Research Says About Thai Massage"
- *      (an intro and five native "details" panels; 25 numbered sources; the last panel lists them with their titles quoted as published).
+ *      (an intro and five native "details" panels; 31 numbered sources; the last panel lists them with their titles quoted as published).
  * What it writes: the page's own post_content in the posts table (no files, no MU-plugin, no theme or CSS change). Images, headings above, the safety paragraph and the four steps are not touched.
  * The guard: ready = the heritage anchor occurs once, the new sections are absent and the page still ENDS with the reviewed tail; applied = the new heritage text once and the sections once at the end;
  * anything else (a half-applied or hand-edited page, a block id already used by another post) stops the run.

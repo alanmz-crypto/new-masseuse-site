@@ -7,7 +7,7 @@
  *   1. The two body paragraphs that carry numbered research links are replaced EXACTLY (each old text occurs once): the stroke and cancer-pain studies the page cited are out (studies of massage as a treatment for a disease are not
  *      used, as on the Thai page), the caregiver sentence is reworded, the neck/shoulder sentence now says the research is mixed and names the 2024 Cochrane review, and the numbers are re-derived from the registry.
  *   2. Four generic questions are appended to the existing FAQ accordion (link-free answers; every statement restates what the site already says or what Ryan said).
- *   3. Two things are APPENDED after the last block, so nothing above moves: the heading "What the Research Says About Therapeutic Massage", its intro, and five native "details" panels (25 numbered sources; the last panel lists
+ *   3. Two things are APPENDED after the last block, so nothing above moves: the heading "What the Research Says About Therapeutic Massage", its intro, and five native "details" panels (30 numbered sources; the last panel lists
  *      them with their titles quoted as published).
  *   4. The five pictures (one illustration in five colour tints) get an alt text and tooltip that say what they show, instead of one identical sentence and "Therapeutic Massage by Butsaba" on every one.
  * What it writes: the page's own post_content in the posts table (no files, no MU-plugin, no theme or CSS change, no new picture).
