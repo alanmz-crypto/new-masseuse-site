@@ -1,7 +1,7 @@
 <?php
 /**
  * Accessibility page, VERSION 2: add the paragraph about the dark/light button in the header (and "keeps its own light colors in dark mode" to the map limitation), for ONE site at a time.
- * Ryan, 2026-10-18: "add that and i'll push" (after testing the dark/light button on staging33). The wording is accessibility-page.html next to this file (built by build-accessibility-page.py);
+ * Ryan, 2026-10-18: "add that and i'll push" (after testing the dark/light button on staging33). The wording is accessibility-page-v2.html next to this file (the version-2 text as built on 2026-10-18; build-accessibility-page.py now builds version 3);
  * every sentence is limited to what was tested (see that file). accessibility-page-v1.html is the exact version-1 text.
  *
  * What it writes: ONLY the page content of the published page with the slug "accessibility". Title, slug, the footer link and everything else stay as they are.
@@ -39,11 +39,11 @@ if ( ! in_array( $mode, array( 'preflight', 'apply', 'rollback' ), true ) ) {
 }
 
 $old = file_get_contents( __DIR__ . '/accessibility-page-v1.html' );
-$new = file_get_contents( __DIR__ . '/accessibility-page.html' );
+$new = file_get_contents( __DIR__ . '/accessibility-page-v2.html' );
 $old = false === $old ? '' : trim( $old );
 $new = false === $new ? '' : trim( $new );
 if ( '' === $old || '' === $new || $old === $new ) {
-	WP_CLI::error( 'accessibility-page-v1.html and accessibility-page.html must both exist next to the installer and differ.' );
+	WP_CLI::error( 'accessibility-page-v1.html and accessibility-page-v2.html must both exist next to the installer and differ.' );
 }
 // The OBMT forbidden terms (list in AGENTS.md): substring checks, "heal" and "we/our/us" as whole words ("health" is allowed).
 $text = html_entity_decode( wp_strip_all_tags( $new ), ENT_QUOTES, 'UTF-8' );
@@ -152,4 +152,4 @@ if ( 'old' !== $check['state'] ) {
 }
 WP_CLI::success( 'Rollback done: the page holds version 1 again.' );
 
-// ref: ./build-accessibility-page.py — builds accessibility-page.html (this version); ./accessibility-page-v1.html — the exact old text; ../theme/install-theme-toggle.php — must be applied first; ../privacy/install-privacy-page-v3.php — the pattern this follows
+// ref: ./build-accessibility-page.py — builds accessibility-page.html (now version 3); ./accessibility-page-v2.html (this version's text), ./accessibility-page-v1.html — the exact old text; ../theme/install-theme-toggle.php — must be applied first; ../privacy/install-privacy-page-v3.php — the pattern this follows
