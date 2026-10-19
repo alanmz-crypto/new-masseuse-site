@@ -160,12 +160,16 @@ PANELS = [
         'authors made a strong recommendation only for the comparison with no massage and a weak one for sham massage and other approaches.{crawford} A 2015 review of 26 randomized trials with 2,565 people with '
         'muscle and joint problems found low-to-moderate-level evidence that massage reduced pain in the short term compared with no intervention in some groups, such as people with shoulder pain, but not in '
         'people with neck or low-back pain. Function improved in the short term for people with low-back and shoulder pain. Compared with another active approach, no clear benefit was seen.{bervoets}',
-        'Massage is generally described as low risk, and rare serious problems have still been reported. The U.S. National Center for Complementary and Integrative Health notes that the risk of harm appears to be '
-        'low, although rare serious side effects such as a blood clot, nerve injury or bone fracture have been reported.{nccih} A 2014 review of 40 published reports found 138 adverse events over 11 years, mainly '
-        'disc herniation, soft-tissue injury, nerve problems, spinal cord injury and tears in the neck arteries, with spinal manipulation inside a massage repeatedly linked to the serious ones.{yin} A 2003 review '
-        'of published case reports found that most serious events followed unusual techniques or massage by untrained people rather than by massage therapists, and concluded that serious events are probably true '
-        'rarities.{ernst} The U.S. center also advises against using massage to put off seeing a health care provider about a medical problem. Reviews describe serious events as rare: I ask about your health, '
-        'medications, pregnancy and recent injuries before each session, and you can ask for lighter pressure or a pause at any time.',
+        'Massage is generally described as low risk, and where serious problems on record can be traced to who gave the massage, they are mostly tied to people who were not trained massage therapists. The U.S. '
+        'National Center for Complementary and Integrative Health notes that the risk of harm appears to be low, although rare serious side effects such as a blood clot, nerve injury or bone fracture have been '
+        'reported.{nccih} A 2014 review of 40 published reports found 138 adverse events over 11 years, mainly disc herniation, soft-tissue injury, nerve problems, spinal cord injury and tears in the neck arteries, '
+        'with spinal manipulation inside a massage repeatedly linked to the serious ones. Massage therapists were the practitioners in only 8 of the 138 events (5.8 percent) and chiropractors in 33 (23.9 percent); '
+        'the rest (70.3 percent) involved unregistered people or other health professionals, and the authors concluded that massage by nonprofessionals and forceful techniques is often associated with adverse '
+        'events.{yin} A 2003 review of published case reports likewise found that most serious events followed unusual techniques or massage by laypeople rather than by massage therapists, and concluded that serious '
+        'events are probably true rarities.{ernst} The U.S. center also advises against using massage to put off seeing a health care provider about a medical problem. Taken together, in the reports that say who '
+        'gave the massage, trained massage therapists were rarely involved: the serious injuries were mostly linked to people who were not massage therapists, including laypeople and unregistered practitioners, and '
+        'to forceful or unusual techniques. Serious events are rare: I ask about your health, medications, pregnancy and recent injuries before each session, and you can ask for lighter pressure or a pause at any '
+        'time.',
     ]),
     ('Neck, Shoulders and Back', False, [
         'Several reviews report short-term gains from massage for neck, shoulder and back pain. A 2015 Cochrane review of 25 trials found that massage was better than no intervention for low-back pain in the short '

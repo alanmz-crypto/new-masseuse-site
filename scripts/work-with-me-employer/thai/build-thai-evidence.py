@@ -117,14 +117,18 @@ PANELS = [
         'some short-term benefits, but the studies were small and of low quality, and its authors said they had “very little confidence” in the results.{cochrane_lbp} A 2024 Cochrane review of 33 studies with '
         '1,994 people with neck pain found that massage probably made little or no difference compared with a placebo massage after about 12 weeks (low-certainty evidence).{cochrane_neck}',
         'That neck review also found that higher doses, meaning eight or more sessions of at least 30 minutes over four weeks, favored massage in a subgroup analysis, which suggests that regular sessions may matter.{cochrane_neck}',
-        'Massage is generally described as low risk, and rare serious problems have still been reported. The U.S. National Center for Complementary and Integrative Health notes that the risk of harm appears to be '
-        'low, although rare serious side effects such as a blood clot, nerve injury or bone fracture have been reported.{nccih} A 2014 review of 40 published reports found 138 adverse events over 11 years, mainly '
-        'disc herniation, soft-tissue injury, nerve problems, spinal cord injury and tears in the neck arteries, with spinal manipulation inside a massage repeatedly linked to the serious ones.{yin} For Thai massage '
-        'specifically, a 2019 case report described a 20-year-old man who developed bleeding around the spinal cord (a spinal epidural hematoma) with delayed leg weakness three days after a Thai massage given by a '
-        'friend, and who needed emergency surgery.{hematoma} A 2015 commentary also discussed a patient who had a heart attack around the time of a Thai massage and the possible adverse effects of Thai massage.{wiwanitkit} '
-        'A 2003 review of published case reports found that most serious events followed unusual techniques or massage by untrained people rather than by massage therapists, and concluded that serious events are '
-        'probably true rarities.{ernst} The U.S. center also advises against using massage to put off seeing a health care provider about a medical problem.{nccih} Reviews describe serious events as rare: I ask '
-        'about your health, medications and recent injuries before each session, and I set the pressure and the range of each stretch by what is comfortable for you.',
+        'Massage is generally described as low risk, and where serious problems on record can be traced to who gave the massage, they are mostly tied to people who were not trained massage therapists. The U.S. '
+        'National Center for Complementary and Integrative Health notes that the risk of harm appears to be low, although rare serious side effects such as a blood clot, nerve injury or bone fracture have been '
+        'reported.{nccih} A 2014 review of 40 published reports found 138 adverse events over 11 years, mainly disc herniation, soft-tissue injury, nerve problems, spinal cord injury and tears in the neck arteries, '
+        'with spinal manipulation inside a massage repeatedly linked to the serious ones. Massage therapists were the practitioners in only 8 of the 138 events (5.8 percent) and chiropractors in 33 (23.9 percent); '
+        'the rest (70.3 percent) involved unregistered people or other health professionals, and the authors concluded that massage by nonprofessionals and forceful techniques is often associated with adverse '
+        'events.{yin} A 2003 review of published case reports likewise found that most serious events followed unusual techniques or massage by laypeople rather than by massage therapists, and concluded that serious '
+        'events are probably true rarities.{ernst} For Thai massage specifically, a 2019 case report described a 20-year-old man who developed bleeding around the spinal cord (a spinal epidural hematoma) with '
+        'delayed leg weakness three days after a Thai massage given by a layperson, a friend, and who needed emergency surgery.{hematoma} A 2015 commentary also discussed a patient who had a heart attack around '
+        'the time of a Thai massage and the possible adverse effects of Thai massage.{wiwanitkit} The U.S. center also advises against using massage to put off seeing a health care provider about a medical '
+        'problem. Taken together, in the reports that say who gave the massage, trained massage therapists were rarely involved: the serious injuries were mostly linked to people who were not massage therapists, '
+        'including laypeople and unregistered practitioners, and to forceful or unusual techniques. Serious events are rare: I ask about your health, medications and recent injuries before each session, and I set '
+        'the pressure and the range of each stretch by what is comfortable for you.',
     ]),
     ('Back Pain', False, [
         'Two trials with a comparison that was not another massage reported clear differences. In 50 adults with upper-back pain, one 30-minute session of Thai massage was followed by larger reductions in pain, '

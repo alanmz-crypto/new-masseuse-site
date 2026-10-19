@@ -88,7 +88,9 @@ case "$phase" in
       chk "$page: scope note" 1 "$(count 'studies of massage used for specific medical conditions are not summarized here')"
       chk "$page: 'included the disappointing results' sentence" 1 "$(count 'I included the studies I found with disappointing results, not only the favorable ones.')"
       chk "$page: adverse-events review" 1 "$(count '138 adverse events')"
-      chk "$page: encouraging safety close" 1 "$(count 'Reviews describe serious events as rare')"
+      chk "$page: encouraging safety close" 1 "$(count 'Serious events are rare: I ask about your health')"
+      chk "$page: who was involved (8 of 138 events were massage therapists)" 1 "$(count 'Massage therapists were the practitioners in only 8 of the 138 events')"
+      chk "$page: the closing summary on who was involved" 1 "$(count 'the serious injuries were mostly linked to people who were not massage therapists')"
       chk "$page: five collapsible panels" 5 "$(count '<details class="wp-block-details')"
       chk "$page: licence number in the footer" 1 "$([ "$(count 'LMT-29905')" -ge 1 ] && echo 1 || echo 0)"
       if [ "$page" = thai-massage ]; then
