@@ -19,7 +19,10 @@
  * word "relief" (and "relieve", "restore"), so Ryan asked for a new way to say it; the sentence now follows the NCCIH article's own wording ("may be helpful for neck or shoulder pain, but the benefits may only last for a short time").
  * The check below mirrors that gate so the installer refuses the banned words itself. To change this wording later: roll back FIRST (the guard compares against this file's text), edit the 'reasons' text, apply again.
  *
- * Allow-list: localhost:8090 and staging33 ONLY. Live is NOT allowed: it needs Ryan's explicit go, after which the host is added here and in push-therapeutic-copy.sh.
+ * COMPLIANCE CHECK (2026-10-18, Ryan: "give it a compliance check. if it passes go live."): the new wording was checked against the Board's own rule text (OAR 334-010-0025, 334-030-0005, 334-040-0010(7); identical in the
+ * July 2024 and April 2025 editions) and ORS 687.011; it passed (no diagnosis, no cure/guarantee/outcome promise, hedged and sourced research, nothing misleading, licence number in the footer). See AGENTS.md.
+ *
+ * Allow-list: localhost:8090 and staging33 ONLY, as of this commit. Live is NOT enabled yet: Ryan's go was given, but the edit that adds the live host was refused by the auto-mode classifier (Production Deploy), so Ryan applies it himself.
  *
  * Modes (first WP-CLI argument; run with --user=1):  <mode> [FILE]
  *   preflight    read-only: ready = every old text is there once; applied = every new text is there once; CHANGED = anything else (stop)
