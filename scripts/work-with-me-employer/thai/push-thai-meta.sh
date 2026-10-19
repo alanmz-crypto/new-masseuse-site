@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Thai Massage page: SEO title and meta description, on staging33 (S_TARGET=staging33; default). Live is NOT enabled: it needs Ryan's explicit go, and the live host is added to install-thai-meta.php
-# only then (the auto-mode classifier refuses an agent adding a live host: hand him a tested patch, as for the Therapeutic page).
+# Thai Massage page: SEO title and meta description, on staging33 or live (S_TARGET=staging33|live; default staging33). Live was enabled by Ryan's go ("push it live", 2026-10-19):
+# the live host was added to install-thai-meta.php by Ryan (the auto-mode classifier refuses an agent adding a live host); he runs the live --apply himself.
 # Ryan, 2026-10-19: "I like yours. Go with that meta." (after he asked what a meta description is and saw the before/after).
 #
 #   ./push-thai-meta.sh                    dry run: connect, locate the site, upload the package, preflight (read-only on the site)
@@ -31,7 +31,7 @@ case "${1:-}" in
   *) echo "Usage: $0 [--apply | --rollback FILE]" >&2; exit 1 ;;
 esac
 target="${S_TARGET:-staging33}"
-case "$target" in staging33) ;; *) echo "S_TARGET must be staging33 (live is not enabled for this change)." >&2; exit 1 ;; esac
+case "$target" in staging33|live) ;; *) echo "S_TARGET must be staging33 or live." >&2; exit 1 ;; esac
 echo "Target site: $target   mode: $mode"
 ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 "$user@$host")
 
@@ -44,7 +44,7 @@ read -r -d '' REMOTE <<'EOS' || true
 set -euo pipefail
 wp() { command wp --skip-plugins=sg-security "$@"; }   # SiteGround Security 1.6.9 + PHP 8.5 makes EVERY wp exit 0 on live (shutdown-handler bug); skipping that one plugin keeps exit codes true. See AGENTS.md and check-wp-exit-codes.sh.
 phase=$1; target=$2; snap=${3:-}
-case "$target" in staging33) want="staging33.thaisolitude.com" ;; *) echo "Remote refused: target must be staging33, got '$target'." >&2; exit 1 ;; esac
+case "$target" in staging33) want="staging33.thaisolitude.com" ;; live) want="thaisolitude.com" ;; *) echo "Remote refused: target must be staging33 or live, got '$target'." >&2; exit 1 ;; esac
 command -v wp >/dev/null || { echo "wp-cli not found on the server" >&2; exit 1; }
 doc=""
 cfgs=$(mktemp); trap 'rm -f "$cfgs"' EXIT

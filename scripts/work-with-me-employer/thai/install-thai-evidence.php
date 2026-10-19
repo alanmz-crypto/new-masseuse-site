@@ -22,7 +22,7 @@
  * COMPLIANCE: the research sentences were checked against each paper's own abstract (2026-10-19). Studies of Thai massage as a treatment for a disease are deliberately not used (OAR 334-010-0025(2)(c) and (4);
  * 334-040-0010(7)). See the builder's header and AGENTS.md. This is a check against the published rules, not legal advice or a Board ruling.
  *
- * Allow-list: localhost:8090 and staging33 only. Live is added only after Ryan's explicit go (an agent adding a live host is refused by the auto-mode classifier; hand him a tested patch, as for the Therapeutic page).
+ * Allow-list: localhost:8090, staging33 and live. Live was added by Ryan's go ("push it live", 2026-10-19) after the change was applied, checked and rollback-proven on localhost and staging33; he applies it himself (the auto-mode classifier refuses an agent adding a live host).
  *
  * Modes (first WP-CLI argument; run with --user=1):  <mode> [FILE]
  *   preflight    read-only: ready / applied / CHANGED (stop)
@@ -37,8 +37,8 @@ if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) ) {
 
 $home = untrailingslashit( home_url() );
 $host = (string) wp_parse_url( $home, PHP_URL_HOST ) . ( wp_parse_url( $home, PHP_URL_PORT ) ? ':' . wp_parse_url( $home, PHP_URL_PORT ) : '' );
-if ( ! in_array( $host, array( 'localhost:8090', 'staging33.thaisolitude.com' ), true ) ) {
-	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090 or staging33 only).' );
+if ( ! in_array( $host, array( 'localhost:8090', 'staging33.thaisolitude.com', 'thaisolitude.com' ), true ) ) {
+	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090, staging33 or live only).' );
 }
 if ( 'astra' !== get_stylesheet() ) {
 	WP_CLI::error( 'Active theme is not Astra.' );
