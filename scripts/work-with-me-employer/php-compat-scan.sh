@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Read-only PHP compatibility scan: lint every PHP file of a site (WordPress core, plugins, theme) under newer PHP versions installed on the server.
 #
-#   ./php-compat-scan.sh <target> [versions]       target: live staging24 staging25 staging26 staging27 staging30 staging31 staging32 staging33 staging34;  versions default "83 84" (PHP 8.3, 8.4)
+#   ./php-compat-scan.sh <target> [versions]       target: live staging24 staging25 staging26 staging27 staging30 staging31 staging32 staging33 staging34 staging36;  versions default "83 84" (PHP 8.3, 8.4)
 #
 # It runs `php -l` only, so it PARSES every file and executes none. It catches removed syntax (parse errors) and compile-time deprecations
 # (for example PHP 8.4's "implicitly nullable parameter"), and proves it can see them with a deliberate bad snippet first. It cannot see
@@ -20,8 +20,8 @@ creds="${S26_CREDS:-$here/../../remote_execution.txt}"
 target="${1:-}"; vers="${2:-83 84}"
 case "$target" in
   live) want="thaisolitude.com" ;;
-  staging24|staging25|staging26|staging27|staging30|staging31|staging32|staging33|staging34) want="$target.thaisolitude.com" ;;
-  *) echo "Usage: $0 <live|staging24|staging25|staging26|staging27|staging30|staging31|staging32|staging33|staging34> [versions, e.g. \"83 84\"]" >&2; exit 1 ;;
+  staging24|staging25|staging26|staging27|staging30|staging31|staging32|staging33|staging34|staging36) want="$target.thaisolitude.com" ;;
+  *) echo "Usage: $0 <live|staging24|staging25|staging26|staging27|staging30|staging31|staging32|staging33|staging34|staging36> [versions, e.g. \"83 84\"]" >&2; exit 1 ;;
 esac
 case "$vers" in *[!0-9\ ]*) echo "versions must be digits like \"83 84\"" >&2; exit 1 ;; esac
 [ -f "$creds" ] || { echo "Missing credentials file: $creds" >&2; exit 1; }
