@@ -59,6 +59,15 @@ foreach ( array( 'uagb/faq', 'uagb/faq-child', 'core/paragraph', 'core/details',
 }
 
 $data   = require __DIR__ . '/therapeutic-evidence-content.php';
+// A version-1 research section (before the "sandwich" update in ../evidence-update/) may still be on this page, on live until that update is applied there: then work against that content, so preflight and rollback
+// still match what is really on the page. A page without it (or with the new text) uses the current content above.
+if ( is_file( __DIR__ . '/therapeutic-evidence-content-v1.php' ) ) {
+	$v1    = require __DIR__ . '/therapeutic-evidence-content-v1.php';
+	$probe = get_posts( array( 'post_type' => 'page', 'name' => 'therapeutic-massage', 'post_status' => 'publish', 'numberposts' => -1, 'suppress_filters' => true ) );
+	if ( 1 === count( $probe ) && 1 === substr_count( (string) $probe[0]->post_content, $v1['sections'] ) && 0 === substr_count( (string) $probe[0]->post_content, $data['sections'] ) ) {
+		$data = $v1;
+	}
+}
 $slug   = 'therapeutic-massage';
 $tail   = $data['tail'];
 $sec    = $data['sections'];

@@ -38,7 +38,7 @@ ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o 
 
 echo "[1] Connecting and uploading the package to ~/wwm-package-therapeutic-evidence (outside every web root) ..."
 "${ssh_cmd[@]}" true 2>/dev/null || { echo "SSH login refused; check the ssh-agent holds the right key." >&2; exit 2; }
-tar -C "$here" -cf - install-therapeutic-evidence.php therapeutic-evidence-content.php \
+tar -C "$here" -cf - install-therapeutic-evidence.php therapeutic-evidence-content.php therapeutic-evidence-content-v1.php \
   | "${ssh_cmd[@]}" 'rm -rf "$HOME/wwm-package-therapeutic-evidence" && mkdir -p "$HOME/wwm-package-therapeutic-evidence" && tar -xf - -C "$HOME/wwm-package-therapeutic-evidence"'
 
 read -r -d '' REMOTE <<'EOS' || true
