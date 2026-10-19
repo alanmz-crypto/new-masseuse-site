@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Therapeutic Massage and Deep Tissue Massage pages: SEO title and meta description, on staging34 (S_TARGET=staging34; default). Live is NOT enabled: it needs Ryan's explicit go, and the live host is
-# added to install-service-meta.php only then (the auto-mode classifier refuses an agent adding a live host: hand him a tested patch).
+# Therapeutic Massage and Deep Tissue Massage pages: SEO title and meta description, on staging34 or live (S_TARGET=staging34|live; default staging34). Live was enabled by Ryan's go ("go live", 2026-10-19);
+# the live host was added to install-service-meta.php by Ryan (the auto-mode classifier refuses an agent adding a live host); he runs the live --apply himself.
 # Ryan, 2026-10-19: "finish one and two then go to three" (three = the meta descriptions on Therapeutic and Deep Tissue, the same fix he approved for the Thai page).
 #
 #   ./push-service-meta.sh                    dry run: connect, locate the site, upload the package, preflight (read-only on the site)
