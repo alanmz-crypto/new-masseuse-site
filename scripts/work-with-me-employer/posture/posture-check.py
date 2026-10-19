@@ -8,8 +8,8 @@ is never reported as a pass and never as an exposure: those checks are reported 
 
 It pins what was fixed on 2026-10-16/17 so it cannot quietly regress:
   headers     the five security headers snippet 1036 sends, with their exact values, and no X-Powered-By
-  csp         exactly one Content-Security-Policy on the home page, byte-equal to the policy validated in a browser (TESTED_POLICY in
-              headers/tests/csp-snippet-test.php, the same string the snippet test proves the snippet emits); the login page must NOT get it
+  csp         exactly one Content-Security-Policy on the home page, byte-equal to the policy validated in a browser (TESTED_POLICY_V2 in
+              headers/tests/csp-snippet-test.php, the same string the snippet test proves the version-2 snippet emits); the login page must NOT get it
   exposure    backup, config, log, VCS and directory-listing paths are never served (not 2xx); xmlrpc.php is blocked; install.php says "already installed"
   identity    /?author=1 does not redirect to an author archive; the public users endpoint (if open) exposes no email address
   robots      staging: "Disallow: /" (kept out of search); live: crawlable and advertises the sitemap
@@ -80,10 +80,15 @@ def expected_policy(path):
         src = open(path, encoding="utf-8").read()
     except OSError as e:
         raise SystemExit(f"cannot read the validated policy from {path}: {e}") from e
-    m = re.search(r'const TESTED_POLICY = "([^"\n]+)";', src)
+    m = re.search(r'const TESTED_POLICY_V2 = "([^"\n]+)";', src)
     if not m or "default-src" not in m.group(1):
-        raise SystemExit(f"no TESTED_POLICY found in {path}")
+        raise SystemExit(f"no TESTED_POLICY_V2 found in {path}")
     return m.group(1)
+
+
+def OLD_V1_POLICY(policy):
+    """The version-1 policy (before the 2026-10-18 map fix), derived from the pinned version-2 policy."""
+    return policy.replace("object-src https://maps.google.com https://www.google.com;", "object-src https://maps.google.com;")
 
 
 def days_left(not_after, now=None):
@@ -144,7 +149,7 @@ def check_site(base, role, csp_mode, skip, timeout, policy, verbose=False):
         rep.check("xpb", not values(hdrs, "x-powered-by"), "no X-Powered-By header" if not values(hdrs, "x-powered-by") else f"X-Powered-By leaks: {values(hdrs, 'x-powered-by')}")
         if csp_mode == "require":
             got = values(hdrs, "content-security-policy")
-            rep.check("csp", got == [policy], "exactly one Content-Security-Policy, byte-equal to the validated policy" if got == [policy] else f"{len(got)} header(s); expected exactly one equal to the validated policy; got {[g[:70] for g in got]}")
+            rep.check("csp", got == [policy], "exactly one Content-Security-Policy, byte-equal to the validated policy" if got == [policy] else f"{len(got)} header(s); expected exactly one equal to the validated policy; got {[g[:70] for g in got]}" + (" (this is the OLD version-1 policy: object-src lacks https://www.google.com, so Firefox and Safari block the Contact page map; apply headers/push-headers-csp-v2.sh)" if got == [OLD_V1_POLICY(policy)] else ""))
 
     login = get("/wp-login.php")
     if login and csp_mode == "require":

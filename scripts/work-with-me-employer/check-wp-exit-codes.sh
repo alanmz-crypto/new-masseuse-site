@@ -3,7 +3,7 @@
 # Read-only. Runs three harmless probes (an eval that only exits, a WP_CLI::error, a missing option) twice per site: with the bare `wp` and with the
 # workaround our scripts use (`wp --skip-plugins=sg-security`).
 #
-#   ./check-wp-exit-codes.sh [live|staging31|staging27|staging30]      default: live
+#   ./check-wp-exit-codes.sh [live|staging31|staging32|staging33|staging27|staging30]      default: live
 #
 # Verdicts:  BUG ACTIVE, workaround OK   bare wp swallows failures; our scripts are protected (exit 0). Normal today on live.
 #            BUG NOT PRESENT             bare wp returns true codes (a staging copy, or SiteGround fixed the plugin): the workaround can be retired.
@@ -19,8 +19,8 @@ creds="${S26_CREDS:-$here/../../remote_execution.txt}"
 target="${1:-live}"
 case "$target" in
   live) want="thaisolitude.com" ;;
-  staging27|staging30|staging31) want="$target.thaisolitude.com" ;;
-  *) echo "Usage: $0 [live|staging27|staging30|staging31]" >&2; exit 1 ;;
+  staging27|staging30|staging31|staging32|staging33) want="$target.thaisolitude.com" ;;
+  *) echo "Usage: $0 [live|staging27|staging30|staging31|staging32|staging33]" >&2; exit 1 ;;
 esac
 [ -f "$creds" ] || { echo "Missing credentials file: $creds" >&2; exit 1; }
 field() { sed -n "s/^$1:[[:space:]]*//p" "$creds" | head -1; }

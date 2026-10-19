@@ -14,7 +14,7 @@ import threading
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 TOOL = os.path.join(HERE, "..", "posture-check.py")
-POLICY = re.search(r'const TESTED_POLICY = "([^"\n]+)";', open(os.path.join(HERE, "..", "..", "headers", "tests", "csp-snippet-test.php"), encoding="utf-8").read()).group(1)
+POLICY = re.search(r'const TESTED_POLICY_V2 = "([^"\n]+)";', open(os.path.join(HERE, "..", "..", "headers", "tests", "csp-snippet-test.php"), encoding="utf-8").read()).group(1)
 
 GOOD = {
     "home": 200,
@@ -120,6 +120,7 @@ BREAKS = [
     ("CSP header missing", variant(home_headers=without(H, "Content-Security-Policy")), "csp"),
     ("CSP changed by one character", variant(home_headers=replace_header(H, "Content-Security-Policy", POLICY.replace("'self'", "'sef'", 1))), "csp"),
     ("two CSP headers", variant(home_headers=H + [("Content-Security-Policy", POLICY)]), "csp"),
+    ("old version-1 policy (Firefox/Safari map bug)", variant(home_headers=replace_header(H, "Content-Security-Policy", POLICY.replace("object-src https://maps.google.com https://www.google.com;", "object-src https://maps.google.com;"))), "csp"),
     ("X-Frame-Options weakened", variant(home_headers=replace_header(H, "X-Frame-Options", "ALLOWALL")), "xfo"),
     ("Referrer-Policy missing", variant(home_headers=without(H, "Referrer-Policy")), "refpol"),
     ("Permissions-Policy changed", variant(home_headers=replace_header(H, "Permissions-Policy", "geolocation=*")), "permpol"),
