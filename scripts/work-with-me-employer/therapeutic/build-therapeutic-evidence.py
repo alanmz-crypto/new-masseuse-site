@@ -8,7 +8,7 @@
 SOURCE OF THE REQUEST (Ryan, 2026-10-19): "that is the page we want to emulate [the Thai page] ... the Therapeutic page is the page we are working on ... these are the instructions we have to follow [deep-research-report (1).md]",
 then, to the six questions in docs/inter-model/therapeutic-massage-page-enhancement-plan.md: "use your judgement to make it honest". Decisions taken on that basis (the plan's section 7):
   Q1 the post-stroke review and the cancer-pain review that the page cited are DROPPED (studies of massage as a treatment for a disease are not used, as on the Thai page; OAR 334-010-0025(2)(c) and (4)); the body markers renumber.
-  Q2 the neck-and-shoulder sentence is made honest against the 2024 Cochrane review ("mixed"), with both sources named.
+  Q2 the neck-and-shoulder sentence is made honest against the 2024 Cochrane review ("mixed"), with both sources named; Ryan then asked for an encouraging idea on each side of it (a pace-and-pressure sentence before, the review's dose subgroup after).
   Q3 the Thai rules apply: every massage-scope trial or review found (pain, movement, soreness, recovery, stress, relaxation, well-being), unfavourable and mixed results included, no disease-treatment studies, no new pictures.
   Q4 only facts the site already states go into the FAQ (Services, Contact, the page's own text, Ryan's "no travel to clients"); what she lies on, clothing, session lengths, pregnancy and techniques are NOT stated: nobody has told us.
   Q5 the meta pair already on staging34 stands (services-meta/); Q6 no new call-to-action line and no new body links (the Thai page has none).
@@ -113,8 +113,13 @@ B_FIRST = ('People often book therapeutic massage for everyday muscle tension an
 B_LAST = (' Before I begin, I ask about your preferences and anything I should know about your health. You can request lighter pressure, a different focus, or a pause at any time.</p>')
 BODY_B_OLD = (B_FIRST + 'Research suggests massage may be helpful for some people with neck or shoulder pain, though the benefits may last only a short time.' + NCCIH_A
               + ' Massage has also been studied for low-back pain, although the evidence is limited.' + NCCIH_A + B_LAST)
-BODY_B_NEW = (B_FIRST + 'Research on massage for neck and shoulder pain is mixed. It may help some people for a short time,{nccih} but a 2024 Cochrane review found that, for neck pain, massage probably makes little or no '
-              'difference compared with a placebo massage.{cochrane_neck} Massage has also been studied for low-back pain, although the evidence is limited.{nccih}' + B_LAST)
+# Ryan, 2026-10-19 ("This is fine, it's honest, however edit it so that the idea before you say this and the idea after you say this says something encouraging about therapeutic massage"): the honest "mixed" sentences stay
+# exactly as they were; an encouraging idea now sits on each side, and both are true to their source (what the Services page says about pace and pressure; the Cochrane review's own dose subgroup, hedged as the review hedges it).
+B_FIRST_NEW = ('People often book therapeutic massage for everyday muscle tension and stiffness, or simply to make time to slow down. Some also seek focused work for neck or shoulder discomfort, '
+               'and I adapt the pace and pressure to what suits you. ')
+BODY_B_NEW = (B_FIRST_NEW + 'Research on massage for neck and shoulder pain is mixed. It may help some people for a short time,{nccih} but a 2024 Cochrane review found that, for neck pain, massage probably makes little or no '
+              'difference compared with a placebo massage.{cochrane_neck} A subgroup analysis in that review favored higher doses (eight or more sessions of at least 30 minutes over four weeks), which suggests that '
+              'regular sessions may matter.{cochrane_neck} Massage has also been studied for low-back pain, although the evidence is limited.{nccih}' + B_LAST)
 
 # ---- the FAQ: four generic questions appended to the existing accordion. Every statement restates what the site already says (Services, Contact, this page) or what Ryan said (no travel to clients). ------------------
 FAQ = [

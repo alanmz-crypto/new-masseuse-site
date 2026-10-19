@@ -95,6 +95,8 @@ else:
         check("Therapeutic Massage: %r once" % sentence[:56], tt.count(sentence) == 1)
     check("Therapeutic Massage: no links inside FAQ answers (axe nested-interactive)", not re.search(r'uagb-faq-content[^>]*>(?:(?!</div>).)*<a ', mh_th, re.S))
     check("Therapeutic Massage: the reworded neck and shoulder sentence once, the old one gone", tt.count("Research on massage for neck and shoulder pain is mixed.") == 1 and "Research suggests massage may be helpful for some people with neck or shoulder pain" not in tt)
+    check("Therapeutic Massage: an encouraging sentence before the 'mixed' one (pace and pressure) and one after it (the review's dose subgroup), once each", tt.count("and I adapt the pace and pressure to what suits you.") == 1
+          and tt.count("which suggests that regular sessions may matter.") == 1)
     check("Therapeutic Massage: low-back sentence kept once", tt.count("Massage has also been studied for low-back pain, although the evidence is limited.") == 1)
     check("Therapeutic Massage: the post-stroke and cancer-pain studies are not cited", not any(u.endswith(("/33919371/", "/39558520/")) for u, _ in links))
     summ = [wt.text(x) for x in re.findall(r"<summary>(.*?)</summary>", mh_th, re.S)]

@@ -94,6 +94,8 @@ case "$phase" in
     chk "FAQ: how to book" 1 "$(count 'How Do I Book a Session?')"
     chk "old FAQ questions still there once each" 1 "$(count 'Can I Ask You to Focus on My Neck and Shoulders?')"
     chk "reworded neck and shoulder sentence" 1 "$(count 'Research on massage for neck and shoulder pain is mixed.')"
+    chk "encouraging sentence before it (pace and pressure)" 1 "$(count 'and I adapt the pace and pressure to what suits you.')"
+    chk "encouraging sentence after it (the review's dose subgroup)" 1 "$(count 'which suggests that regular sessions may matter.')"
     chk "old neck and shoulder sentence gone" 0 "$(count 'Research suggests massage may be helpful for some people with neck or shoulder pain')"
     chk "post-stroke study no longer linked" 0 "$(count 'pubmed.ncbi.nlm.nih.gov/33919371')"
     chk "cancer-pain study no longer linked" 0 "$(count 'pubmed.ncbi.nlm.nih.gov/39558520')"

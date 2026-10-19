@@ -49,6 +49,7 @@ for (const theme of ['light', 'dark']) {
         scroll: document.documentElement.scrollWidth - document.documentElement.clientWidth, faqLinks: document.querySelectorAll('.uagb-faq-content a').length,
         droppedLinks: dropped.filter(u => hrefs.includes(u)).length, imgs,
         neck: document.body.innerText.includes('Research on massage for neck and shoulder pain is mixed.'),
+        encouraging: document.body.innerText.includes('and I adapt the pace and pressure to what suits you.') && document.body.innerText.includes('which suggests that regular sessions may matter.'),
         oldNeck: document.body.innerText.includes('Research suggests massage may be helpful for some people with neck or shoulder pain'),
         byButsaba: document.body.innerHTML.includes('Therapeutic Massage by Butsaba'), doctorCount: (document.body.innerText.match(/doctor/g) || []).length };
     }, DROPPED);
@@ -61,6 +62,7 @@ for (const theme of ['light', 'dark']) {
     check(`${tag}: markers numbered 1..N in first-use order and N Sources entries`, r.firstUse.length > 0 && r.firstUse.every((n, i) => n === i + 1) && r.cites === r.firstUse.length, `${r.firstUse.length} numbers, ${r.cites} sources, ${r.markerCount} links`);
     check(`${tag}: the stroke and cancer-pain studies are no longer linked anywhere`, r.droppedLinks === 0, r.droppedLinks);
     check(`${tag}: neck/shoulder sentence is the reworded one, the old one is gone`, r.neck && !r.oldNeck, `${r.neck},${r.oldNeck}`);
+    check(`${tag}: an encouraging sentence on each side of the 'mixed' one`, r.encouraging);
     check(`${tag}: five pictures, five different alt texts, tooltip equal to the alt`, r.imgs.length === 5 && new Set(r.imgs.map(i => i.alt)).size === 5 && r.imgs.every(i => i.alt && i.alt === i.title), r.imgs.map(i => i.alt.slice(0, 24)).join(' | '));
     check(`${tag}: no "Therapeutic Massage by Butsaba" tooltip left`, !r.byButsaba);
     if (width === 1280 || width === 390) {
