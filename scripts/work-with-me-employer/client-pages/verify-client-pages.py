@@ -31,10 +31,12 @@ def meta(page, attr, name):
     return html.unescape(m.group(1)) if m else None
 
 
-BAD = [r"\bheal(?:s|ed|ers?|ing)?\b", r"\bproof\b", r"\bmeasurable\b", r"\beffective", r"pain relief", r"relieve", r"\brelief\b", r"pain management", r"\bsciatica\b", r"\bheadaches?\b",
-       r"\bchronic\b", r"\badhesions?\b", r"\bcorrective\b", r"\baccelerat", r"restore", r"nervous system", r"\bcirculation\b", r"\banxiety\b", r"\bcancer\b",
-       r"\bneurological\b", r"\bdisabilit", r"\bprevention\b", r"\blasting\b", r"long-term wellness", r"overall health", r"real results", r"\bstudio\b",
-       r"\b(we|our|us)\b", r"Portland[- ]area", r"Portland metro"]
+import importlib.util
+import os
+_spec = importlib.util.spec_from_file_location("wording_tiers", os.path.join(os.path.dirname(os.path.abspath(__file__)), "wording_tiers.py"))
+wt = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(wt)
+BAD = wt.BAD   # unchanged for Services and Therapeutic Massage; the Thai Massage research section uses the three tiers in wording_tiers.py (Ryan, 2026-10-19)
 
 # ---- Services -------------------------------------------------------------------------------------------------------------
 svc, code = get("/services/")
@@ -52,28 +54,165 @@ bad = [p for p in BAD if re.search(p, head_text, re.I)]
 check("Services title and descriptions carry no restricted wording", not bad, bad)
 
 # ---- Therapeutic Massage --------------------------------------------------------------------------------------------------
+# Two states. BEFORE the research section (therapeutic/install-therapeutic-evidence.php): the page as the 2026-10-18 copy change left it (the checks below the "old state" line). AFTER it: the new structure and wording
+# (Ryan, 2026-10-19; plan in docs/inter-model/therapeutic-massage-page-enhancement-plan.md). The wording check always runs, with the full list outside the research section and the tiers inside it (wording_tiers.py).
 th, code = get("/therapeutic-massage/")
 check("Therapeutic Massage returns 200", code == 200, code)
 main = re.search(r"<main.*?</main>", th, re.S)
-tt = text_of(main.group(0)) if main else ""
+mh_th = main.group(0) if main else ""
+tt = text_of(mh_th)
 check("page body found", bool(tt))
-s1 = "Research has explored massage in several adult groups, including family caregivers. [2] [6] [7] [8]"
-s2 = "Research has also examined massage in relation to stress and quality-of-life measures in specific adult groups. [9] [10] [5]"
-check("research sentence 1 reworded, citations [2][6][7][8] kept, once", tt.count(s1) == 1)
-check("research sentence 2 reworded, citations [9][10][5] kept, once", tt.count(s2) == 1)
-links = re.findall(r'<a [^>]*href="(https://pubmed\.ncbi\.nlm\.nih\.gov/\d+/)"[^>]*>\[(\d+)\]</a>', main.group(0) if main else "")
-check("all 12 numbered study links still present, same order", [n for _, n in links] == ["1", "2", "3", "4", "5", "2", "6", "7", "8", "9", "10", "5"], [n for _, n in links])
-check("reference numbers still map to the same studies", {n: u for u, n in links} == {"1": "https://pubmed.ncbi.nlm.nih.gov/39008297/", "2": "https://pubmed.ncbi.nlm.nih.gov/27165971/", "3": "https://pubmed.ncbi.nlm.nih.gov/32426160/", "4": "https://pubmed.ncbi.nlm.nih.gov/32901072/", "5": "https://pubmed.ncbi.nlm.nih.gov/17709060/", "6": "https://pubmed.ncbi.nlm.nih.gov/33919371/", "7": "https://pubmed.ncbi.nlm.nih.gov/39558520/", "8": "https://pubmed.ncbi.nlm.nih.gov/31003683/", "9": "https://pubmed.ncbi.nlm.nih.gov/27901219/", "10": "https://pubmed.ncbi.nlm.nih.gov/33053005/"})
+res_th = wt.check(mh_th)
 q = "Can I Ask You to Focus on My Neck and Shoulders?"
 a = "Yes. Tell me at the start where you would like the focus, and you can change it at any point during the session. For anything new, severe, or worrying, please see a doctor first."
 check("neck-and-shoulders FAQ present once (question and answer)", tt.count(q) == 1 and tt.count(a) == 1)
-check("old headache FAQ gone from the rendered page", "Tension Headaches" not in tt and "headache" not in tt.lower())
-bad = [p for p in BAD if re.search(p, tt, re.I)]
-check("no restricted wording anywhere in the Therapeutic Massage body", not bad, bad)
+check("old headache FAQ gone from the rendered page", "Tension Headaches" not in tt and "headache" not in wt.text(wt.split_page(mh_th)[0] if res_th["found"] else mh_th).lower())
+links = re.findall(r'<a [^>]*href="(https://[^"]+)"[^>]*>\[(\d+)\]</a>', mh_th)
+if not res_th["found"]:
+    # ---- old state
+    s1 = "Research has explored massage in several adult groups, including family caregivers. [2] [6] [7] [8]"
+    s2 = "Research has also examined massage in relation to stress and quality-of-life measures in specific adult groups. [9] [10] [5]"
+    check("research sentence 1 reworded, citations [2][6][7][8] kept, once", tt.count(s1) == 1)
+    check("research sentence 2 reworded, citations [9][10][5] kept, once", tt.count(s2) == 1)
+    pm = [(u, n) for u, n in links if "pubmed" in u]
+    check("all 12 numbered study links still present, same order", [n for _, n in pm] == ["1", "2", "3", "4", "5", "2", "6", "7", "8", "9", "10", "5"], [n for _, n in pm])
+    check("reference numbers still map to the same studies", {n: u for u, n in pm} == {"1": "https://pubmed.ncbi.nlm.nih.gov/39008297/", "2": "https://pubmed.ncbi.nlm.nih.gov/27165971/", "3": "https://pubmed.ncbi.nlm.nih.gov/32426160/", "4": "https://pubmed.ncbi.nlm.nih.gov/32901072/", "5": "https://pubmed.ncbi.nlm.nih.gov/17709060/", "6": "https://pubmed.ncbi.nlm.nih.gov/33919371/", "7": "https://pubmed.ncbi.nlm.nih.gov/39558520/", "8": "https://pubmed.ncbi.nlm.nih.gov/31003683/", "9": "https://pubmed.ncbi.nlm.nih.gov/27901219/", "10": "https://pubmed.ncbi.nlm.nih.gov/33053005/"})
+    bad = [p for p in BAD if re.search(p, tt, re.I)]
+    check("no restricted wording anywhere in the Therapeutic Massage body", not bad, bad)
+    print("INFO Therapeutic Massage: the evidence section is not on this site yet (old-state checks ran; the wording check above ran with the full list)")
+else:
+    # ---- new state
+    check("Therapeutic Massage: no restricted wording outside the research section", not res_th["before"], res_th["before"])
+    check("Therapeutic Massage research section: no claim verbs, no we/our/us/studio", not res_th["research"], res_th["research"])
+    check("Therapeutic Massage source titles: no we/our/us/studio", not res_th["cites"], res_th["cites"])
+    for qq in ["What Is the Difference Between Therapeutic and Relaxation Massage?", "How Is a Therapeutic Session Planned?", "Will I Feel the Results Right Away?", "How Often Should I Come In for Therapeutic Massage?",
+               "Is Therapeutic Massage Appropriate If I Have No Specific Complaint?", "Can I Ask You to Focus on My Neck and Shoulders?", "How Is Therapeutic Massage Different From Deep Tissue Massage?",
+               "Can I Change the Pressure During a Session?", "Where Do Sessions Take Place?", "How Do I Book a Session?"]:
+        check("Therapeutic Massage: FAQ question %r appears once" % qq, tt.count(qq) == 1)
+    for sentence in ["Yes. You can ask for lighter pressure, a different focus, or a pause at any time, and I will adjust.", "Sessions take place in Mt. Tabor, Portland. I do not currently travel to clients.",
+                     "Use the Contact page to reach me by phone or email, and tell me what you would like. I will reply to arrange a time.",
+                     "Deep tissue massage uses focused strokes and sustained pressure on areas that stay tight."]:
+        check("Therapeutic Massage: %r once" % sentence[:56], tt.count(sentence) == 1)
+    check("Therapeutic Massage: no links inside FAQ answers (axe nested-interactive)", not re.search(r'uagb-faq-content[^>]*>(?:(?!</div>).)*<a ', mh_th, re.S))
+    check("Therapeutic Massage: the reworded neck and shoulder sentence once, the old one gone", tt.count("Research on massage for neck and shoulder pain is mixed.") == 1 and "Research suggests massage may be helpful for some people with neck or shoulder pain" not in tt)
+    check("Therapeutic Massage: an encouraging sentence before the 'mixed' one (pace and pressure) and one after it (the review's dose subgroup), once each", tt.count("and I adapt the pace and pressure to what suits you.") == 1
+          and tt.count("which suggests that regular sessions may matter.") == 1)
+    check("Therapeutic Massage: low-back sentence kept once", tt.count("Massage has also been studied for low-back pain, although the evidence is limited.") == 1)
+    check("Therapeutic Massage: the post-stroke and cancer-pain studies are not cited", not any(u.endswith(("/33919371/", "/39558520/")) for u, _ in links))
+    summ = [wt.text(x) for x in re.findall(r"<summary>(.*?)</summary>", mh_th, re.S)]
+    check("Therapeutic Massage: the five research panels in order", summ == ["Reviews, and What They Say About Limits", "Neck, Shoulders and Back", "Exercise, Flexibility and Recovery", "Stress, Relaxation and Well-Being", "Sources"], summ)
+    det = re.findall(r"<details[^>]*>", mh_th)
+    check("Therapeutic Massage: first panel open, the other four closed", [" open" in d for d in det] == [True, False, False, False, False], len(det))
+    order = []
+    for _, n in links:
+        if int(n) not in order:
+            order.append(int(n))
+    check("Therapeutic Massage: numbered markers run 1..N in order of first use", bool(order) and order == list(range(1, len(order) + 1)), order[-3:])
+    mapping = {}
+    for u, n in links:
+        mapping.setdefault(n, set()).add(u)
+    check("Therapeutic Massage: every number points to exactly one source", all(len(v) == 1 for v in mapping.values()))
+    check("Therapeutic Massage: as many Sources entries as numbers", len(re.findall(r'<cite class="ts-source">', mh_th)) == len(order), len(order))
+    hosts = {re.match(r"https://([^/]+)/", u).group(1) for u, _ in links if re.match(r"https://([^/]+)/", u)}
+    check("Therapeutic Massage: sources are only PubMed, doi.org, Cochrane or NCCIH", hosts <= {"pubmed.ncbi.nlm.nih.gov", "doi.org", "www.cochrane.org", "www.nccih.nih.gov"}, sorted(hosts))
+    alts = re.findall(r'<img [^>]*?alt="([^"]*)"[^>]*?title="([^"]*)"', mh_th)
+    check("Therapeutic Massage: five pictures with five different alt texts, tooltip equal to the alt, none saying 'by Butsaba'", len(alts) == 5 and len({a1 for a1, _ in alts}) == 5 and all(a1 and a1 == t1 for a1, t1 in alts) and "by Butsaba" not in mh_th, len(alts))
+for old in ["Before your session, tell me about any health conditions, medications, pregnancy, recent injury or surgery.", "New numbness, weakness, unexplained swelling or radiating pain means you should see a doctor before massage."]:
+    check("Therapeutic Massage: existing wording kept: %r" % old[:48], tt.count(old) == 1)
+check("Therapeutic Massage: the four jump links are intact", all(('href="#%s"' % a1) in th for a1 in ("ts-what-it-is", "ts-common-reasons", "ts-who-can-benefit", "ts-what-to-expect")))
+check("Therapeutic Massage: licence number in the footer", "LMT-29905" in th)
 th_head = " ".join(filter(None, [meta(th, "name", "description"), meta(th, "property", "og:description")]))
 bad = [p for p in BAD if re.search(p, th_head, re.I)]
 check("Therapeutic Massage meta/og descriptions carry no restricted wording", not bad, bad)
-print("INFO Therapeutic meta description (auto-built from page text, not set): " + str(meta(th, "name", "description")))
+print("INFO Therapeutic meta description: " + str(meta(th, "name", "description")))
+
+# ---- Thai Massage ---------------------------------------------------------------------------------------------------------
+# The page may or may not carry the evidence section yet (staging33 and localhost first, live later): the structure checks run only where the section exists,
+# the wording checks always run (full list outside the research section, tiers inside it; see wording_tiers.py).
+thm, code = get("/thai-massage/")
+check("Thai Massage returns 200", code == 200, code)
+tmain = re.search(r"<main.*?</main>", thm, re.S)
+tmh = tmain.group(0) if tmain else ""
+check("Thai Massage body found", bool(tmh))
+res = wt.check(tmh)
+check("Thai Massage: no restricted wording outside the research section", not res["before"], res["before"])
+if res["found"]:
+    check("Thai Massage research section: no claim verbs, no we/our/us/studio", not res["research"], res["research"])
+    check("Thai Massage source titles: no we/our/us/studio", not res["cites"], res["cites"])
+    tt = wt.text(tmh)
+    for q in ["What Should I Wear to a Thai Massage?", "What Will I Lie On?", "How Long Is a Session?", "Do I Need to Be Flexible?", "Where Do Sessions Take Place?",
+              "How Is Thai Massage Different From Your Other Services?", "How Do I Book a Session?", "Questions About Thai Massage"]:
+        check("Thai Massage: %r appears once" % q, tt.count(q) == 1)
+    for sentence in ["Sessions are 60 or 90 minutes.", "Thai massage is done on a mat.", "I do not currently travel to clients.", "I trained in traditional Thai bodywork at Still Light Center.",
+                     "in 2019 UNESCO added Nuad Thai, traditional Thai massage,"]:
+        check("Thai Massage: %r once" % sentence, tt.count(sentence) == 1)
+    check("Thai Massage: no links inside FAQ answers (axe nested-interactive)", not re.search(r'uagb-faq-content[^>]*>(?:(?!</div>).)*<a ', tmh, re.S))
+    summ = [wt.text(x) for x in re.findall(r"<summary>(.*?)</summary>", tmh, re.S)]
+    check("Thai Massage: the five research panels in order", summ == ["Reviews, and What They Say About Limits", "Back Pain", "Neck, Shoulders, Arms and Feet", "Stress, Energy and Recovery", "Sources"], summ)
+    det = re.findall(r"<details[^>]*>", tmh)
+    check("Thai Massage: first panel open, the other four closed", [" open" in d for d in det] == [True, False, False, False, False], len(det))
+    marks = re.findall(r'<a [^>]*href="([^"]+)"[^>]*>\[(\d+)\]</a>', tmh)
+    order = []
+    for _, n in marks:
+        if int(n) not in order:
+            order.append(int(n))
+    check("Thai Massage: numbered markers run 1..N in order of first use", bool(order) and order == list(range(1, len(order) + 1)), order[-3:])
+    mapping = {}
+    for u, n in marks:
+        mapping.setdefault(n, set()).add(u)
+    check("Thai Massage: every number points to exactly one source", all(len(v) == 1 for v in mapping.values()))
+    check("Thai Massage: as many Sources entries as numbers", len(re.findall(r'<cite class="ts-source">', tmh)) == len(order), len(order))
+    hosts = {re.match(r"https://([^/]+)/", u).group(1) if re.match(r"https://([^/]+)/", u) else u for u, _ in marks}
+    check("Thai Massage: sources are only PubMed, doi.org, Cochrane, NCCIH or UNESCO", hosts <= {"pubmed.ncbi.nlm.nih.gov", "doi.org", "www.cochrane.org", "www.nccih.nih.gov", "ich.unesco.org"}, sorted(hosts))
+else:
+    print("INFO Thai Massage: the evidence section is not on this site yet (structure checks skipped; the wording check above still ran)")
+for old in ["You stay fully clothed, so wear something loose and comfortable.", "New numbness, weakness, unexplained swelling or radiating pain means you should see a doctor before massage."]:
+    check("Thai Massage: existing wording kept: %r" % old[:48], wt.text(tmh).count(old) == 1)
+check("Thai Massage: the three jump links are intact", all(('href="#%s"' % a) in thm for a in ("ts-what-it-is", "ts-common-reasons", "ts-what-to-expect")))
+check("Thai Massage: licence number in the footer", "LMT-29905" in thm)
+# Meta title and description (Ryan, 2026-10-19: "I like yours. Go with that meta."). Strict checks only where the change is in; the wording check always runs on whatever meta the page has.
+THAI_TITLE = "Thai Massage in Mt. Tabor | Butsaba Dusrai, Oregon LMT"
+THAI_DESC = "Fully clothed Thai massage in Mt. Tabor, Portland with Butsaba Dusrai, LMT: rhythmic compression, gentle rocking and assisted stretching at your pace."
+tt_m = re.search(r"<title>(.*?)</title>", thm, re.S)
+thai_title = html.unescape(tt_m.group(1)).strip() if tt_m else ""
+thai_desc = meta(thm, "name", "description")
+head_all = " ".join(filter(None, [thai_title, thai_desc, meta(thm, "property", "og:description"), meta(thm, "name", "twitter:description")]))
+bad_head = wt.hits(head_all, wt.VOICE + wt.CLAIMS + wt.EVIDENCE)
+check("Thai Massage title, meta/og/twitter descriptions carry no restricted wording", not bad_head, bad_head)
+if thai_title == THAI_TITLE or thai_desc == THAI_DESC:
+    check("Thai Massage title is the approved one", thai_title == THAI_TITLE, thai_title)
+    check("Thai Massage meta description is the approved one", thai_desc == THAI_DESC, thai_desc)
+    check("Thai Massage og and twitter title and description follow", all(meta(thm, a, n) == v for a, n, v in (("property", "og:title", THAI_TITLE), ("name", "twitter:title", THAI_TITLE), ("property", "og:description", THAI_DESC), ("name", "twitter:description", THAI_DESC))))
+    check("Thai Massage description fits one snippet (<= 160) and the title one line (<= 60)", len(THAI_DESC) <= 160 and len(THAI_TITLE) <= 60, "%d/%d" % (len(THAI_DESC), len(THAI_TITLE)))
+    check("Thai Massage description is a whole sentence (no heading text, no cut-off)", thai_desc is not None and thai_desc.endswith(".") and "What Is Thai Massage?" not in thai_desc)
+else:
+    print("INFO Thai Massage meta is still the auto-built one (not set yet): " + str(thai_desc))
+
+# ---- Therapeutic Massage and Deep Tissue Massage: meta title and description (Ryan, 2026-10-19: "finish one and two then go to three") -----------------------------------------
+# Strict checks only where the change is in (services-meta/install-service-meta.php); the wording check always runs on whatever meta the page has.
+SERVICE_META = [
+    ("Therapeutic Massage", "/therapeutic-massage/", "Therapeutic Massage | Butsaba Dusrai, Oregon LMT",
+     "Therapeutic massage in Mt. Tabor, Portland with Butsaba Dusrai, LMT: focused work where you ask for it, with pressure and pace adjusted as you go."),
+    ("Deep Tissue Massage", "/deep-tissue-massage/", "Deep Tissue Massage | Butsaba Dusrai, Oregon LMT",
+     "Deep tissue massage in Mt. Tabor, Portland with Butsaba Dusrai, LMT: slow, deliberate pressure on tight muscles, lightened whenever you ask."),
+]
+for label, path, want_title, want_desc in SERVICE_META:
+    pg, pcode = get(path)
+    check("%s page returns 200 (meta check)" % label, pcode == 200, pcode)
+    m_t = re.search(r"<title>(.*?)</title>", pg, re.S)
+    got_title = html.unescape(m_t.group(1)).strip() if m_t else ""
+    got_desc = meta(pg, "name", "description")
+    head_text = " ".join(filter(None, [got_title, got_desc, meta(pg, "property", "og:description"), meta(pg, "name", "twitter:description")]))
+    bad_h = wt.hits(head_text, wt.VOICE + wt.CLAIMS + wt.EVIDENCE)
+    check("%s title, meta/og/twitter descriptions carry no restricted wording" % label, not bad_h, bad_h)
+    if got_title == want_title or got_desc == want_desc:
+        check("%s title is the approved one" % label, got_title == want_title, got_title)
+        check("%s meta description is the approved one" % label, got_desc == want_desc, got_desc)
+        check("%s og and twitter title and description follow" % label, all(meta(pg, a, n) == v for a, n, v in (("property", "og:title", want_title), ("name", "twitter:title", want_title), ("property", "og:description", want_desc), ("name", "twitter:description", want_desc))))
+        check("%s description fits one snippet (<= 160) and the title one line (<= 60)" % label, len(want_desc) <= 160 and len(want_title) <= 60, "%d/%d" % (len(want_desc), len(want_title)))
+        check("%s description is a whole sentence (no heading text, no cut-off)" % label, got_desc is not None and got_desc.endswith(".") and ("What Is " + label) not in got_desc)
+    else:
+        print("INFO %s meta is still the auto-built one (not set yet): %s" % (label, got_desc))
 
 print("\nRESULT: " + ("all checks passed" if not fails else f"{fails} check(s) FAILED"))
 sys.exit(1 if fails else 0)

@@ -1,0 +1,16 @@
+/* ts-header-fit:start (2026-10-19, Ryan: the dark/light button made the phone header wrap "Thai Solitude" and split the word on an iPhone SE) */
+@media (max-width: 389px) {
+  /* the button added 44 px + ~28 px of spacing to a row that only had room for the logo and title: tighten the spacing around it, keep every tap target */
+  #ast-mobile-header .ast-builder-grid-row { column-gap: 8px; }
+  #ast-mobile-header .ts-theme-toggle-wrap { margin-right: 8px; padding-right: 0; }
+  #ast-mobile-header .site-header-primary-section-right .ast-builder-layout-element:not(.ts-theme-toggle-wrap) { padding-left: 0; }
+  #ast-mobile-header .site-logo-img { padding-right: 10px; }
+  /* never wrap or split the name */
+  #ast-mobile-header .site-title,
+  #ast-mobile-header .site-title a { white-space: nowrap; }
+}
+@media (max-width: 349px) {
+  /* below ~350 px the name shrinks smoothly (it is 23.712px at 350 px, so there is no jump) instead of wrapping */
+  #ast-mobile-header .site-title { font-size: calc((100vw - 222px) / 5.4); }
+}
+/* ts-header-fit:end */
