@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Therapeutic Massage page: three small copy changes on staging33 (S_TARGET=staging33; the only target allowed. Live needs Ryan's explicit go, then the host is added here and in the installer).
+# Therapeutic Massage page: three small copy changes on staging33 or live (S_TARGET=staging33|live; default staging33). Live was enabled by Ryan on his "give it a compliance check. if it passes go live." (2026-10-18), after the check passed.
 # Ryan, 2026-10-18: pasted implementation handoff "Improve Thai Solitude's Therapeutic Massage Page", then "do this on staging33".
 #
 #   ./push-therapeutic-copy.sh                    dry run: connect, locate the site, upload the package, preflight (read-only on the site)
@@ -7,7 +7,7 @@
 #                                                 -> copy the new before-snapshot to this computer. Stops before applying if the copy cannot be verified.
 #   ./push-therapeutic-copy.sh --rollback FILE    put the old wording back, from a therapeutic-copy-before-*.json snapshot on the server
 # What it changes is described at the top of install-therapeutic-copy.php (three exact replacements inside the page content; nothing else).
-# The backup is part of the apply and cannot be skipped. After a push, test the site: scripts/work-with-me-employer/post-change-test.sh staging33 (the Therapeutic page is expected to differ from the live reference).
+# The backup is part of the apply and cannot be skipped. After a push, test the site: scripts/work-with-me-employer/post-change-test.sh <target> (on staging33 the Therapeutic page differs from live until live has the change; on live expect 20/20 identical to staging33).
 # Access: credentials file + ssh-agent. The SSH account also holds live, so every write is conditional
 # on `wp option get home` being exactly the chosen site (checked here to pick the folder, and again inside the installer's own allow-list).
 # shellcheck disable=SC2016  # the single-quoted commands below are meant to expand on the server, not here
@@ -30,7 +30,7 @@ case "${1:-}" in
   *) echo "Usage: $0 [--apply | --rollback FILE]" >&2; exit 1 ;;
 esac
 target="${S_TARGET:-staging33}"
-case "$target" in staging33) ;; *) echo "S_TARGET must be staging33 (live is not enabled for this change)." >&2; exit 1 ;; esac
+case "$target" in staging33|live) ;; *) echo "S_TARGET must be staging33 or live." >&2; exit 1 ;; esac
 echo "Target site: $target   mode: $mode"
 ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 "$user@$host")
 
@@ -43,7 +43,7 @@ read -r -d '' REMOTE <<'EOS' || true
 set -euo pipefail
 wp() { command wp --skip-plugins=sg-security "$@"; }   # SiteGround Security 1.6.9 + PHP 8.5 makes EVERY wp exit 0 on live (shutdown-handler bug); skipping that one plugin keeps exit codes true. See AGENTS.md and check-wp-exit-codes.sh.
 phase=$1; target=$2; snap=${3:-}
-case "$target" in staging33) want="staging33.thaisolitude.com" ;; *) echo "Remote refused: target must be staging33, got '$target'." >&2; exit 1 ;; esac
+case "$target" in staging33) want="staging33.thaisolitude.com" ;; live) want="thaisolitude.com" ;; *) echo "Remote refused: target must be staging33 or live, got '$target'." >&2; exit 1 ;; esac
 command -v wp >/dev/null || { echo "wp-cli not found on the server" >&2; exit 1; }
 doc=""
 cfgs=$(mktemp); trap 'rm -f "$cfgs"' EXIT

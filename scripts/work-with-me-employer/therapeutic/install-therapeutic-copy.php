@@ -22,7 +22,7 @@
  * COMPLIANCE CHECK (2026-10-18, Ryan: "give it a compliance check. if it passes go live."): the new wording was checked against the Board's own rule text (OAR 334-010-0025, 334-030-0005, 334-040-0010(7); identical in the
  * July 2024 and April 2025 editions) and ORS 687.011; it passed (no diagnosis, no cure/guarantee/outcome promise, hedged and sourced research, nothing misleading, licence number in the footer). See AGENTS.md.
  *
- * Allow-list: localhost:8090 and staging33 ONLY, as of this commit. Live is NOT enabled yet: Ryan's go was given, but the edit that adds the live host was refused by the auto-mode classifier (Production Deploy), so Ryan applies it himself.
+ * Allow-list: localhost:8090, staging33 and live. Live was added by Ryan (he applied this change himself: the auto-mode classifier refuses an agent adding a live host) on his "give it a compliance check. if it passes go live." (2026-10-18), after the page was applied, checked and rollback-proven on localhost and staging33.
  *
  * Modes (first WP-CLI argument; run with --user=1):  <mode> [FILE]
  *   preflight    read-only: ready = every old text is there once; applied = every new text is there once; CHANGED = anything else (stop)
@@ -37,8 +37,8 @@ if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) ) {
 
 $home = untrailingslashit( home_url() );
 $host = (string) wp_parse_url( $home, PHP_URL_HOST ) . ( wp_parse_url( $home, PHP_URL_PORT ) ? ':' . wp_parse_url( $home, PHP_URL_PORT ) : '' );
-if ( ! in_array( $host, array( 'localhost:8090', 'staging33.thaisolitude.com' ), true ) ) {
-	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090 or staging33 only).' );
+if ( ! in_array( $host, array( 'localhost:8090', 'staging33.thaisolitude.com', 'thaisolitude.com' ), true ) ) {
+	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090, staging33 or live only).' );
 }
 if ( 'astra' !== get_stylesheet() ) {
 	WP_CLI::error( 'Active theme is not Astra.' );
