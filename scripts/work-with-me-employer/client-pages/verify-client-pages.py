@@ -121,7 +121,23 @@ for old in ["You stay fully clothed, so wear something loose and comfortable.", 
     check("Thai Massage: existing wording kept: %r" % old[:48], wt.text(tmh).count(old) == 1)
 check("Thai Massage: the three jump links are intact", all(('href="#%s"' % a) in thm for a in ("ts-what-it-is", "ts-common-reasons", "ts-what-to-expect")))
 check("Thai Massage: licence number in the footer", "LMT-29905" in thm)
-print("INFO Thai Massage meta description (auto-built from page text, not set): " + str(meta(thm, "name", "description")))
+# Meta title and description (Ryan, 2026-10-19: "I like yours. Go with that meta."). Strict checks only where the change is in; the wording check always runs on whatever meta the page has.
+THAI_TITLE = "Thai Massage in Mt. Tabor | Butsaba Dusrai, Oregon LMT"
+THAI_DESC = "Fully clothed Thai massage in Mt. Tabor, Portland with Butsaba Dusrai, LMT: rhythmic compression, gentle rocking and assisted stretching at your pace."
+tt_m = re.search(r"<title>(.*?)</title>", thm, re.S)
+thai_title = html.unescape(tt_m.group(1)).strip() if tt_m else ""
+thai_desc = meta(thm, "name", "description")
+head_all = " ".join(filter(None, [thai_title, thai_desc, meta(thm, "property", "og:description"), meta(thm, "name", "twitter:description")]))
+bad_head = wt.hits(head_all, wt.VOICE + wt.CLAIMS + wt.EVIDENCE)
+check("Thai Massage title, meta/og/twitter descriptions carry no restricted wording", not bad_head, bad_head)
+if thai_title == THAI_TITLE or thai_desc == THAI_DESC:
+    check("Thai Massage title is the approved one", thai_title == THAI_TITLE, thai_title)
+    check("Thai Massage meta description is the approved one", thai_desc == THAI_DESC, thai_desc)
+    check("Thai Massage og and twitter title and description follow", all(meta(thm, a, n) == v for a, n, v in (("property", "og:title", THAI_TITLE), ("name", "twitter:title", THAI_TITLE), ("property", "og:description", THAI_DESC), ("name", "twitter:description", THAI_DESC))))
+    check("Thai Massage description fits one snippet (<= 160) and the title one line (<= 60)", len(THAI_DESC) <= 160 and len(THAI_TITLE) <= 60, "%d/%d" % (len(THAI_DESC), len(THAI_TITLE)))
+    check("Thai Massage description is a whole sentence (no heading text, no cut-off)", thai_desc is not None and thai_desc.endswith(".") and "What Is Thai Massage?" not in thai_desc)
+else:
+    print("INFO Thai Massage meta is still the auto-built one (not set yet): " + str(thai_desc))
 
 print("\nRESULT: " + ("all checks passed" if not fails else f"{fails} check(s) FAILED"))
 sys.exit(1 if fails else 0)
