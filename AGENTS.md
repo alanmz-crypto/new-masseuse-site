@@ -372,6 +372,20 @@ plus an ssh-agent holding the deploy key, finds the install by `wp option get ho
   server header, reports violations and takes screenshots. Policy keeps `'unsafe-inline'` (Astra/Spectra need it), so it limits other-origin loads,
   objects, base/form hijack and framing, not injected inline script. **A new embed (video, other map or font provider, analytics) is blocked until it
   is added to the policy: re-run `csp-test.mjs --check` after any content change that adds one.** wp-login.php carries only core's own `frame-ancestors 'self'`.
+- **Speed (2026-10-17, from Google's own PageSpeed report + local Lighthouse 13.5.0):** live mobile score was 77 (FCP 3.4 s, LCP 4.5 s); desktop passes. Measure with `tools/lighthouse-mobile.sh <url> <label>` (same engine and defaults as PageSpeed;
+  3-5 runs, compare medians; `--blocked-url-patterns=...` for what-ifs), `tools/perf-lcp-runs.mjs <url> 3` (browser, throttled phone) and `tools/perf-images.mjs <url>` (per image); compare screenshots at 2x too.
+  Two small WPCode snippets, installed by `performance/install-perf-snippet.php` via `push-perf-snippet.sh <lazy-images|work-sans> [--apply | --rollback FILE]` (allowed on staging31 and live; a write to live needs Ryan's go):
+  `work-sans` drops Astra's UNUSED render-blocking Google Fonts request (Work Sans 600; no page ever downloads it, checked on all 8 pages): first paint 3.4 s -> 1.1 s in Lighthouse, 1.49 s -> 0.45 s in a real unthrottled load,
+  pixel-identical; `lazy-images` (WordPress `wp_omit_loading_attr_threshold` 3 -> 1) so the hero is not fighting two illustrations and 307 KB of fonts: hero 2276 -> 1316 ms on a throttled phone; at 1x the two illustrations get the
+  300 px copy (slightly softer, as the third already is on live), at 2x nothing changes. Both applied on staging31: Lighthouse median score 77 -> 99 (runs vary 88-99). Still open: the 3 Newsreader/Hanken font files (307 KB,
+  29 @font-face rules in the Additional CSS, variable fonts incl. the opsz axis: instancing is a visual change) which now decide LCP; the 512 px avatar shown at 50 px (21 KiB); WebP quality of the hero/illustrations (~42 KiB).
+  **Historical record (same day): Google PageSpeed's mobile score does not match the likely real experience.** Both snippets are on live and staging31, yet Google's reports
+  (captured 17:44/17:48 UTC, after the changes) still show mobile 77 (live) and 79 (staging31), FCP 3.3 s, LCP 4.2 s; desktop is 99 and the real-user section says "No Data".
+  In Google's mobile run the files finish loading by ~0.6 s but nothing paints until 1.3-2.4 s on its slow shared test machine (the later run's speed benchmark was 438 against 1048
+  for the earlier one); the simulator then charges the 3 font files (309 KB) against a simulated slow phone. Re-scoring recorded slow-paint runs offline reproduced Google's 78-80, and
+  deleting just the font requests from the same recordings gave 86-87. A real phone paints in about 0.5 s. So the local Lighthouse "99" does not predict Google's mobile number, and neither
+  number is the visitor experience. Ryan asked only for this record, so no further speed work is planned; revisit when real-user data appears. The one real lever is slimming the fonts by
+  dropping the Newsreader optical-size axis (309 -> ~158 KB), a visible lettering change that needs Ryan's OK and a staging31 pixel check first.
 - **Posture check:** `posture/posture-check.py <url> [-v]` (read-only, public requests only; runs from `check-all.sh <url>`) pins the headers/CSP, exposure
   paths (backups, config, logs, VCS, listings, xmlrpc), install.php, author/user leaks, robots (staging blocked, live crawlable), http->https and cert
   expiry. `--csp skip` for a site cloned before the 2026-10-17 CSP deploy (staging27/30). Its self-test (`posture/tests/selftest.py`, a mock site broken
