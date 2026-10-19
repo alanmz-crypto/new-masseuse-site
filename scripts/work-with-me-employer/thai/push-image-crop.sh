@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Thai Massage page: let the three illustrations show in their own proportions (Additional CSS block ts-thai-image-crop), on staging34 (S_TARGET=staging34; default). Live is NOT enabled: it needs
-# Ryan's explicit go, and the live host is added to install-image-crop.php only then (the auto-mode classifier refuses an agent adding a live host: hand him a tested patch).
+# Thai Massage page: let the three illustrations show in their own proportions (Additional CSS block ts-thai-image-crop), on staging34 or live (S_TARGET=staging34|live; default staging34). Live was enabled
+# by Ryan's go (2026-10-19); the live host was added to install-image-crop.php by Ryan (the auto-mode classifier refuses an agent adding a live host); he runs the live --apply himself.
 # Ryan, 2026-10-19: "the pictures need to be cropped closer to their original square shape".
 #
 #   ./push-image-crop.sh                    dry run: connect, locate the site, upload the package, preflight (read-only on the site)
@@ -31,7 +31,7 @@ case "${1:-}" in
   *) echo "Usage: $0 [--apply | --rollback FILE]" >&2; exit 1 ;;
 esac
 target="${S_TARGET:-staging34}"
-case "$target" in staging34) ;; *) echo "S_TARGET must be staging34 (live is not enabled for this change)." >&2; exit 1 ;; esac
+case "$target" in staging34|live) ;; *) echo "S_TARGET must be staging34 or live." >&2; exit 1 ;; esac
 echo "Target site: $target   mode: $mode"
 ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 "$user@$host")
 
@@ -44,7 +44,7 @@ read -r -d '' REMOTE <<'EOS' || true
 set -euo pipefail
 wp() { command wp --skip-plugins=sg-security "$@"; }   # SiteGround Security 1.6.9 + PHP 8.5 makes EVERY wp exit 0 on live (shutdown-handler bug); skipping that one plugin keeps exit codes true. See AGENTS.md and check-wp-exit-codes.sh.
 phase=$1; target=$2; snap=${3:-}
-case "$target" in staging34) want="staging34.thaisolitude.com" ;; *) echo "Remote refused: target must be staging34, got '$target'." >&2; exit 1 ;; esac
+case "$target" in staging34) want="staging34.thaisolitude.com" ;; live) want="thaisolitude.com" ;; *) echo "Remote refused: target must be staging34 or live, got '$target'." >&2; exit 1 ;; esac
 command -v wp >/dev/null || { echo "wp-cli not found on the server" >&2; exit 1; }
 doc=""
 cfgs=$(mktemp); trap 'rm -f "$cfgs"' EXIT
