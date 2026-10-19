@@ -1,0 +1,10 @@
+/* ts-thai-image-crop:start (2026-10-19, Ryan: "the pictures need to be cropped closer to their original square shape") */
+/* The three Thai Massage illustrations are 512 x 460. Spectra gives each frame a fixed pixel HEIGHT, so the frame's shape drifts away from the picture as the screen narrows (up to 50% of the
+   picture was cut off). The height now follows the width, in the picture's own proportions. "body" in front makes this win over Spectra's identical selector whatever order the files load in. */
+body .uagb-block-5b6bb4f3.wp-block-uagb-image .wp-block-uagb-image__figure img,
+body .uagb-block-04d0e681.wp-block-uagb-image .wp-block-uagb-image__figure img,
+body .uagb-block-f48b2ed7.wp-block-uagb-image .wp-block-uagb-image__figure img {
+  height: auto;
+  aspect-ratio: 512 / 460;
+}
+/* ts-thai-image-crop:end */
