@@ -94,7 +94,7 @@ case "$phase" in
       if [ "$page" = thai-massage ]; then
         chk "$page: research heading once" 1 "$(count 'What the Research Says About Thai Massage')"
         chk "$page: 31 source entries" 31 "$(count '<cite class="ts-source">')"
-        chk "$page: the Thai case report" 1 "$(count 'spinal epidural hematoma')"
+        chk "$page: the Thai case report (once in the sentence, once as the verbatim title in Sources)" 2 "$(count 'spinal epidural hematoma')"
         chk "$page: the null shoulder-strength result, quoted" 1 "$(count 'strength in shoulders was not significantly different')"
         chk "$page: old first sentence gone" 0 "$(count 'The review noted that the reduction')"
       else
