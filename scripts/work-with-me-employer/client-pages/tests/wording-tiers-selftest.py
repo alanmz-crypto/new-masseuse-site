@@ -49,6 +49,20 @@ expect("'treatment' is accepted in a verbatim title", not wt.check(page("", "", 
 # ---- laundering attempts
 expect("a <cite> placed BEFORE the research heading is not exempt", bool(wt.check('<main><p><cite class="ts-source">chronic</cite></p><h2>%s</h2><p>ok</p></main>' % H)["before"]))
 expect("a second research heading disables the exemption (a word placed after it is refused)", bool(wt.check('<main><h2>%s</h2><p>ok</p><h2>%s</h2><p>chronic</p></main>' % (H, H))["before"]))
+# ---- the Therapeutic Massage heading works the same way, and the headings do not combine
+H2 = "What the Research Says About Therapeutic Massage"
+def page2(before="", research="", cites=""):
+    return page(before, research, cites).replace(H, H2)
+expect("the Therapeutic heading is one of the approved headings", H2 in wt.RESEARCH_HEADINGS and H in wt.RESEARCH_HEADINGS)
+expect("Therapeutic: 'chronic' is accepted inside its research section", not wt.check(page2("", "The trial measured chronic pain in 40 people.", ""))["research"] and wt.check(page2("", "The trial measured chronic pain in 40 people.", ""))["found"])
+expect("Therapeutic: 'chronic' is refused before its research section", bool(wt.check(page2("People with chronic problems come to me.", "", ""))["before"]))
+expect("Therapeutic: 'chronic' in a verbatim title is accepted", not wt.check(page2("", "", "Smith J. A study of chronic pain. J Test, 2015."))["cites"])
+expect("Therapeutic: claim verbs are refused inside its research section", bool(wt.check(page2("", "Massage can treat it.", ""))["research"]))
+expect("Therapeutic: 'we' is refused in its source titles", bool(wt.check(page2("", "", "Smith J. We came. J Test, 2015."))["cites"]))
+expect("Therapeutic: no exemption if the heading is missing", bool(wt.check(page2("", "The trial measured chronic pain.", "").replace(H2, "Something else"))["before"]))
+both = '<main><h2>%s</h2><p>ok</p><h2>%s</h2><p>chronic</p></main>' % (H, H2)
+expect("two DIFFERENT approved headings on one page disable the exemption (a word placed after them is refused)", bool(wt.check(both)["before"]) and not wt.check(both)["found"])
+expect("an unapproved heading ('...About Deep Tissue Massage') gives no exemption", bool(wt.check('<main><h2>What the Research Says About Deep Tissue Massage</h2><p>chronic</p></main>')["before"]))
 expect("the old list is unchanged for the Services and Therapeutic pages (BAD still has all 25 evidence/voice/heal patterns)", len(wt.BAD) == 1 + len(wt.EVIDENCE) + len(wt.VOICE) and len(wt.EVIDENCE) == 25)
 
 print("\nRESULT: " + ("all cases right" if not fails else "%d case(s) WRONG" % fails))

@@ -54,28 +54,75 @@ bad = [p for p in BAD if re.search(p, head_text, re.I)]
 check("Services title and descriptions carry no restricted wording", not bad, bad)
 
 # ---- Therapeutic Massage --------------------------------------------------------------------------------------------------
+# Two states. BEFORE the research section (therapeutic/install-therapeutic-evidence.php): the page as the 2026-10-18 copy change left it (the checks below the "old state" line). AFTER it: the new structure and wording
+# (Ryan, 2026-10-19; plan in docs/inter-model/therapeutic-massage-page-enhancement-plan.md). The wording check always runs, with the full list outside the research section and the tiers inside it (wording_tiers.py).
 th, code = get("/therapeutic-massage/")
 check("Therapeutic Massage returns 200", code == 200, code)
 main = re.search(r"<main.*?</main>", th, re.S)
-tt = text_of(main.group(0)) if main else ""
+mh_th = main.group(0) if main else ""
+tt = text_of(mh_th)
 check("page body found", bool(tt))
-s1 = "Research has explored massage in several adult groups, including family caregivers. [2] [6] [7] [8]"
-s2 = "Research has also examined massage in relation to stress and quality-of-life measures in specific adult groups. [9] [10] [5]"
-check("research sentence 1 reworded, citations [2][6][7][8] kept, once", tt.count(s1) == 1)
-check("research sentence 2 reworded, citations [9][10][5] kept, once", tt.count(s2) == 1)
-links = re.findall(r'<a [^>]*href="(https://pubmed\.ncbi\.nlm\.nih\.gov/\d+/)"[^>]*>\[(\d+)\]</a>', main.group(0) if main else "")
-check("all 12 numbered study links still present, same order", [n for _, n in links] == ["1", "2", "3", "4", "5", "2", "6", "7", "8", "9", "10", "5"], [n for _, n in links])
-check("reference numbers still map to the same studies", {n: u for u, n in links} == {"1": "https://pubmed.ncbi.nlm.nih.gov/39008297/", "2": "https://pubmed.ncbi.nlm.nih.gov/27165971/", "3": "https://pubmed.ncbi.nlm.nih.gov/32426160/", "4": "https://pubmed.ncbi.nlm.nih.gov/32901072/", "5": "https://pubmed.ncbi.nlm.nih.gov/17709060/", "6": "https://pubmed.ncbi.nlm.nih.gov/33919371/", "7": "https://pubmed.ncbi.nlm.nih.gov/39558520/", "8": "https://pubmed.ncbi.nlm.nih.gov/31003683/", "9": "https://pubmed.ncbi.nlm.nih.gov/27901219/", "10": "https://pubmed.ncbi.nlm.nih.gov/33053005/"})
+res_th = wt.check(mh_th)
 q = "Can I Ask You to Focus on My Neck and Shoulders?"
 a = "Yes. Tell me at the start where you would like the focus, and you can change it at any point during the session. For anything new, severe, or worrying, please see a doctor first."
 check("neck-and-shoulders FAQ present once (question and answer)", tt.count(q) == 1 and tt.count(a) == 1)
-check("old headache FAQ gone from the rendered page", "Tension Headaches" not in tt and "headache" not in tt.lower())
-bad = [p for p in BAD if re.search(p, tt, re.I)]
-check("no restricted wording anywhere in the Therapeutic Massage body", not bad, bad)
+check("old headache FAQ gone from the rendered page", "Tension Headaches" not in tt and "headache" not in wt.text(wt.split_page(mh_th)[0] if res_th["found"] else mh_th).lower())
+links = re.findall(r'<a [^>]*href="(https://[^"]+)"[^>]*>\[(\d+)\]</a>', mh_th)
+if not res_th["found"]:
+    # ---- old state
+    s1 = "Research has explored massage in several adult groups, including family caregivers. [2] [6] [7] [8]"
+    s2 = "Research has also examined massage in relation to stress and quality-of-life measures in specific adult groups. [9] [10] [5]"
+    check("research sentence 1 reworded, citations [2][6][7][8] kept, once", tt.count(s1) == 1)
+    check("research sentence 2 reworded, citations [9][10][5] kept, once", tt.count(s2) == 1)
+    pm = [(u, n) for u, n in links if "pubmed" in u]
+    check("all 12 numbered study links still present, same order", [n for _, n in pm] == ["1", "2", "3", "4", "5", "2", "6", "7", "8", "9", "10", "5"], [n for _, n in pm])
+    check("reference numbers still map to the same studies", {n: u for u, n in pm} == {"1": "https://pubmed.ncbi.nlm.nih.gov/39008297/", "2": "https://pubmed.ncbi.nlm.nih.gov/27165971/", "3": "https://pubmed.ncbi.nlm.nih.gov/32426160/", "4": "https://pubmed.ncbi.nlm.nih.gov/32901072/", "5": "https://pubmed.ncbi.nlm.nih.gov/17709060/", "6": "https://pubmed.ncbi.nlm.nih.gov/33919371/", "7": "https://pubmed.ncbi.nlm.nih.gov/39558520/", "8": "https://pubmed.ncbi.nlm.nih.gov/31003683/", "9": "https://pubmed.ncbi.nlm.nih.gov/27901219/", "10": "https://pubmed.ncbi.nlm.nih.gov/33053005/"})
+    bad = [p for p in BAD if re.search(p, tt, re.I)]
+    check("no restricted wording anywhere in the Therapeutic Massage body", not bad, bad)
+    print("INFO Therapeutic Massage: the evidence section is not on this site yet (old-state checks ran; the wording check above ran with the full list)")
+else:
+    # ---- new state
+    check("Therapeutic Massage: no restricted wording outside the research section", not res_th["before"], res_th["before"])
+    check("Therapeutic Massage research section: no claim verbs, no we/our/us/studio", not res_th["research"], res_th["research"])
+    check("Therapeutic Massage source titles: no we/our/us/studio", not res_th["cites"], res_th["cites"])
+    for qq in ["What Is the Difference Between Therapeutic and Relaxation Massage?", "How Is a Therapeutic Session Planned?", "Will I Feel the Results Right Away?", "How Often Should I Come In for Therapeutic Massage?",
+               "Is Therapeutic Massage Appropriate If I Have No Specific Complaint?", "Can I Ask You to Focus on My Neck and Shoulders?", "How Is Therapeutic Massage Different From Deep Tissue Massage?",
+               "Can I Change the Pressure During a Session?", "Where Do Sessions Take Place?", "How Do I Book a Session?"]:
+        check("Therapeutic Massage: FAQ question %r appears once" % qq, tt.count(qq) == 1)
+    for sentence in ["Yes. You can ask for lighter pressure, a different focus, or a pause at any time, and I will adjust.", "Sessions take place in Mt. Tabor, Portland. I do not currently travel to clients.",
+                     "Use the Contact page to reach me by phone or email, and tell me what you would like. I will reply to arrange a time.",
+                     "Deep tissue massage uses focused strokes and sustained pressure on areas that stay tight."]:
+        check("Therapeutic Massage: %r once" % sentence[:56], tt.count(sentence) == 1)
+    check("Therapeutic Massage: no links inside FAQ answers (axe nested-interactive)", not re.search(r'uagb-faq-content[^>]*>(?:(?!</div>).)*<a ', mh_th, re.S))
+    check("Therapeutic Massage: the reworded neck and shoulder sentence once, the old one gone", tt.count("Research on massage for neck and shoulder pain is mixed.") == 1 and "Research suggests massage may be helpful for some people with neck or shoulder pain" not in tt)
+    check("Therapeutic Massage: low-back sentence kept once", tt.count("Massage has also been studied for low-back pain, although the evidence is limited.") == 1)
+    check("Therapeutic Massage: the post-stroke and cancer-pain studies are not cited", not any(u.endswith(("/33919371/", "/39558520/")) for u, _ in links))
+    summ = [wt.text(x) for x in re.findall(r"<summary>(.*?)</summary>", mh_th, re.S)]
+    check("Therapeutic Massage: the five research panels in order", summ == ["Reviews, and What They Say About Limits", "Neck, Shoulders and Back", "Exercise, Flexibility and Recovery", "Stress, Relaxation and Well-Being", "Sources"], summ)
+    det = re.findall(r"<details[^>]*>", mh_th)
+    check("Therapeutic Massage: first panel open, the other four closed", [" open" in d for d in det] == [True, False, False, False, False], len(det))
+    order = []
+    for _, n in links:
+        if int(n) not in order:
+            order.append(int(n))
+    check("Therapeutic Massage: numbered markers run 1..N in order of first use", bool(order) and order == list(range(1, len(order) + 1)), order[-3:])
+    mapping = {}
+    for u, n in links:
+        mapping.setdefault(n, set()).add(u)
+    check("Therapeutic Massage: every number points to exactly one source", all(len(v) == 1 for v in mapping.values()))
+    check("Therapeutic Massage: as many Sources entries as numbers", len(re.findall(r'<cite class="ts-source">', mh_th)) == len(order), len(order))
+    hosts = {re.match(r"https://([^/]+)/", u).group(1) for u, _ in links if re.match(r"https://([^/]+)/", u)}
+    check("Therapeutic Massage: sources are only PubMed, doi.org, Cochrane or NCCIH", hosts <= {"pubmed.ncbi.nlm.nih.gov", "doi.org", "www.cochrane.org", "www.nccih.nih.gov"}, sorted(hosts))
+    alts = re.findall(r'<img [^>]*?alt="([^"]*)"[^>]*?title="([^"]*)"', mh_th)
+    check("Therapeutic Massage: five pictures with five different alt texts, tooltip equal to the alt, none saying 'by Butsaba'", len(alts) == 5 and len({a1 for a1, _ in alts}) == 5 and all(a1 and a1 == t1 for a1, t1 in alts) and "by Butsaba" not in mh_th, len(alts))
+for old in ["Before your session, tell me about any health conditions, medications, pregnancy, recent injury or surgery.", "New numbness, weakness, unexplained swelling or radiating pain means you should see a doctor before massage."]:
+    check("Therapeutic Massage: existing wording kept: %r" % old[:48], tt.count(old) == 1)
+check("Therapeutic Massage: the four jump links are intact", all(('href="#%s"' % a1) in th for a1 in ("ts-what-it-is", "ts-common-reasons", "ts-who-can-benefit", "ts-what-to-expect")))
+check("Therapeutic Massage: licence number in the footer", "LMT-29905" in th)
 th_head = " ".join(filter(None, [meta(th, "name", "description"), meta(th, "property", "og:description")]))
 bad = [p for p in BAD if re.search(p, th_head, re.I)]
 check("Therapeutic Massage meta/og descriptions carry no restricted wording", not bad, bad)
-print("INFO Therapeutic meta description (auto-built from page text, not set): " + str(meta(th, "name", "description")))
+print("INFO Therapeutic meta description: " + str(meta(th, "name", "description")))
 
 # ---- Thai Massage ---------------------------------------------------------------------------------------------------------
 # The page may or may not carry the evidence section yet (staging33 and localhost first, live later): the structure checks run only where the section exists,
