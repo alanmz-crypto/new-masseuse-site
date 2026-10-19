@@ -2,6 +2,7 @@
 // image alt text, landmarks, zoom allowed, small click targets, side-scrolling at 320 px, keyboard order, visible focus, focus hidden behind something, accordion by keyboard.
 //   node a11y-audit.mjs <base-url> [out.json]       e.g. node a11y-audit.mjs https://staging33.thaisolitude.com
 //   TS_THEME=dark node a11y-audit.mjs <base-url> [out.json]   the same audit with the dark mode switched on (once the dark/light button from theme/ is installed)
+//   TS_PAGES=/thai-massage/ node a11y-audit.mjs <base-url> [out.json]   only the named page(s), comma-separated (a one-page change needs far less traffic than the whole site)
 // It only loads public pages like a visitor (10 pages x 3 window sizes); it changes nothing. Keep traffic low: SiteGround blocks addresses that send bursts (HTTP 202 = INVALID).
 // An automated pass finds only part of what WCAG asks for (roughly a third of the criteria can be tested by a machine): a clean result means "no automatically detectable problems",
 // never "conforms". The accessibility statement must say what was actually done.
@@ -16,7 +17,7 @@ const [base, outFile] = process.argv.slice(2);
 if (!base) { console.error('usage: node a11y-audit.mjs <base-url> [out.json]'); process.exit(1); }
 const AXE = os.homedir() + '/.cache/ts-axe/node_modules/axe-core/axe.min.js';
 if (!fs.existsSync(AXE)) { console.error('axe-core is not installed in ~/.cache/ts-axe (see the install line at the top of this file)'); process.exit(2); }
-const pages = ['/', '/about/', '/services/', '/thai-massage/', '/therapeutic-massage/', '/deep-tissue-massage/', '/work-with-me/', '/contact/', '/privacy-policy/', '/accessibility/'];
+const pages = process.env.TS_PAGES ? process.env.TS_PAGES.split(',') : ['/', '/about/', '/services/', '/thai-massage/', '/therapeutic-massage/', '/deep-tissue-massage/', '/work-with-me/', '/contact/', '/privacy-policy/', '/accessibility/'];   // TS_PAGES=/thai-massage/ audits only the named page(s): keeps traffic to SiteGround low after a one-page change
 const views = [{ n: 'desktop', w: 1280, h: 900, dpr: 1 }, { n: 'phone', w: 390, h: 844, dpr: 2, mobile: true }, { n: 'reflow320', w: 320, h: 640, dpr: 1, mobile: true }];
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 const result = [];
@@ -42,6 +43,15 @@ for (const v of views) {
       await page.locator('.uagb-faq-item .uagb-faq-questions-button').nth(i).click();
       await page.waitForTimeout(700);
       states.push(await runAxe('accordion panel ' + (i + 1) + ' open'));
+    }
+    // native collapsible panels (core "details" blocks, used on the Thai page since 2026-10-19): audit them all open, then put them back so the keyboard test below sees the page as loaded
+    const nDet = await page.locator('details.wp-block-details').count();
+    if (nDet) {
+      const was = await page.evaluate(() => [...document.querySelectorAll('details.wp-block-details')].map((d) => d.open));
+      await page.evaluate(() => document.querySelectorAll('details.wp-block-details').forEach((d) => { d.open = true; }));
+      await page.waitForTimeout(500);
+      states.push(await runAxe('all ' + nDet + ' native panels open'));
+      await page.evaluate((w) => document.querySelectorAll('details.wp-block-details').forEach((d, i) => { d.open = w[i]; }), was);
     }
     const extra = await page.evaluate(() => {
       const q = (s) => [...document.querySelectorAll(s)];
