@@ -76,5 +76,20 @@ replacing it still needs authorization and verification of the new connection.
 Update the privacy disclosure before enabling a different data use or sharing
 destination. Do not request permissions for integrations that do not yet exist.
 
+## Current deployment
+
+As of October 20, 2026, both pages are on staging36; production is still pending
+Ryan's live apply. Desktop and phone checks pass for direct access, noindex,
+navigation exclusion, search exclusion and both XML sitemap files. Local
+rollback/reapply and duplicate-apply checks pass. Production preflight is ready.
+
+The staging export `staging36-before-personal-automation-20261020-235156.sql`
+was verified off-server and restored successfully into a disposable database.
+Its comparison with staging shows only the two new pages, snippet and associated
+metadata/cache changes. The rollback manifest is
+`/home/customer/private-backups/personal-automation-before-20261020-235221-ItU9wx.json`,
+also copied off-server. Installed staging IDs are 1254 (homepage), 1255 (privacy)
+and 1256 (visibility snippet).
+
 <!-- ref: ./install.php, ./deploy.sh, ./local.sh, ./verify.mjs — installation, rollback and checks -->
 <!-- src: ../../scripts/LOCAL-WORKFLOW.md, /home/lauer/WordPress/new-masseuse-site/AGENTS.md — isolated worktree and staging-first, Ryan-run production workflow -->

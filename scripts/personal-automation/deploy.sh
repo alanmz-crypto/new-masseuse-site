@@ -32,6 +32,10 @@ phase=$1; target=$2; package=$3; dump=${4:-}; snapshot=${5:-}
 case "$target" in staging36) want=staging36.thaisolitude.com ;; live) want=thaisolitude.com ;; *) exit 1 ;; esac
 [[ "$package" =~ ^rpa-package-[a-f0-9]{16}$ ]] || exit 1
 doc=""
+# SiteGround's shell has no /dev/fd, so process substitution is unavailable.
+configs=$(mktemp)
+trap 'rm -f "$configs"' EXIT
+find "$HOME/www" -maxdepth 4 -name wp-config.php > "$configs"
 while IFS= read -r cfg; do
   d=$(dirname "$cfg")
   h=$(wp --path="$d" option get home 2>/dev/null || true)
@@ -40,7 +44,7 @@ while IFS= read -r cfg; do
     [[ -z "$doc" ]] || { echo 'Ambiguous WordPress install'; exit 1; }
     doc=$d
   fi
-done < <(find "$HOME/www" -maxdepth 4 -name wp-config.php 2>/dev/null)
+done < "$configs"
 [[ -n "$doc" ]] || { echo 'Target install not found'; exit 1; }
 export RPA_BACKUP_DIR="$HOME/private-backups"
 mkdir -p "$RPA_BACKUP_DIR"; chmod 700 "$RPA_BACKUP_DIR"
