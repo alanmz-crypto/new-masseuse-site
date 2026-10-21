@@ -177,13 +177,13 @@ destination. Do not request permissions for integrations that do not yet exist.
 
 As of October 20, 2026 (local time), all three original pages are live. Ryan
 ran the base live apply at 23:59 UTC and the terms extension at 00:12 UTC on
-October 21. The expanded disclosures are applied on staging36 only, pending
-Ryan's production apply. Desktop and phone checks pass on the three updated
-staging pages for direct access, noindex, navigation exclusion, search exclusion
-and both XML sitemap files. Local rollback/reapply passes for all three releases.
-All five staging post-change checks pass: the 20 existing public page-views are
-pixel-identical to production, structured data matches, and no new PHP errors
-were found. The live disclosure preflight reports ready with no database writes.
+October 21. Ryan published the expanded disclosures at 01:47 UTC on October 21;
+they are now applied on both staging36 and production. Desktop and phone checks
+pass on all three updated pages on both sites for direct access, noindex,
+navigation exclusion, search exclusion and both XML sitemap files. Local
+rollback/reapply passes for all three releases. All five post-change checks pass
+on both staging and production: the 20 existing public page-views are
+pixel-identical, structured data matches, and no new PHP errors were found.
 
 Disclosure staging export: `staging36-before-personal-automation-20261021-012802.sql`.
 Its off-server copy is checksum-verified and restores successfully. Comparison
@@ -191,7 +191,14 @@ with staging shows only the three intended page contents and the posts row
 count (revisions); CSS, snippets, SEO metadata and compared settings match.
 Staging rollback manifest:
 `/home/customer/private-backups/personal-automation-disclosures-before-20261021-012813-mXD4fX.json`.
-Search Console authorization is pending production publication and API enablement.
+Production disclosure export: `live-before-personal-automation-20261021-014704.sql`.
+Its off-server copy is checksum-verified and restores successfully. The
+comparison shows the three intended page contents, three additional post rows
+(revisions), four postmeta rows and seven SiteGround security-log rows. Compared
+CSS, snippets, SEO values and settings are unchanged. The completed production
+rollback manifest is
+`/home/customer/private-backups/personal-automation-disclosures-before-20261021-014715-cMkbXu.json`.
+Search Console authorization is pending API enablement confirmation from Ryan.
 
 Terms on staging: page 1257, with a new link on homepage 1254 and visibility
 snippet 1256 extended to the terms path. Export
