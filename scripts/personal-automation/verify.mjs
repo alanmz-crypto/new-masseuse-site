@@ -7,6 +7,8 @@ const require = createRequire(import.meta.url);
 const { chromium } = require(process.env.RPA_PLAYWRIGHT || '/home/lauer/Projects/SubProjects/Mirror/node_modules/playwright');
 const base = (process.argv[2] || 'http://localhost:8090').replace(/\/$/, '');
 const output = process.argv[3] || '/tmp/personal-automation-preview';
+const slugs = ['personal-automation', 'personal-automation/privacy'];
+if (process.env.RPA_TERMS === '1') slugs.push('personal-automation/terms');
 mkdirSync(output, { recursive: true });
 const browser = await chromium.launch({ headless: true, executablePath: process.env.RPA_CHROMIUM || '/usr/bin/chromium' });
 try {
@@ -16,7 +18,7 @@ try {
   page.on('pageerror', error => errors.push(error.message));
   for (const width of [1280, 390]) {
     await page.setViewportSize({ width, height: 900 });
-    for (const slug of ['personal-automation', 'personal-automation/privacy']) {
+    for (const slug of slugs) {
       const response = await page.goto(`${base}/${slug}/`, { waitUntil: 'networkidle' });
       assert.equal(response.status(), 200, `${slug}: page unavailable or challenged`);
       assert.match(response.headers()['x-robots-tag'] || '', /noindex/i);
@@ -28,6 +30,11 @@ try {
       assert.equal(await page.locator('.entry-content a[href="mailto:ryan.steitz@gmail.com"]').count(), 1);
       await page.screenshot({ path: `${output}/${slug.replaceAll('/', '-')}-${width}.png`, fullPage: true });
       if (slug === 'personal-automation') {
+        if (process.env.RPA_TERMS === '1') {
+          await page.locator('.entry-content a[href="/personal-automation/terms/"]').click();
+          assert.match(page.url(), /\/personal-automation\/terms\/$/);
+          await page.goBack({waitUntil: 'networkidle'});
+        }
         await page.locator('.entry-content a[href="/personal-automation/privacy/"]').click();
         assert.match(page.url(), /\/personal-automation\/privacy\/$/);
       }

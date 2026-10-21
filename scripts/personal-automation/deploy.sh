@@ -8,6 +8,12 @@ creds=${S26_CREDS:-$here/../../remote_execution.txt}
 target=${S_TARGET:-staging36}
 mode=preflight
 snapshot=""
+files=(install.php unlisted.php home.html privacy.html)
+case "${RPA_RELEASE:-base}" in
+  base) installer=install.php ;;
+  terms) installer=install-terms.php; files+=(install-terms.php terms.html) ;;
+  *) echo 'RPA_RELEASE must be base or terms.' >&2; exit 1 ;;
+esac
 case "${1:-}" in
   '') ;;
   --apply) mode=apply ;;
@@ -22,13 +28,14 @@ host=$(field Host); port=$(field Port); user=$(field User); user=${user%%@*}
 ssh-add -l >/dev/null || { echo 'SSH agent unavailable.' >&2; exit 1; }
 ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 "$user@$host")
 # Content-addressed packages avoid overwriting another session's staging input.
-package="rpa-package-$(cat "$here"/{install.php,unlisted.php,home.html,privacy.html} | sha256sum | cut -c1-16)"
-tar -C "$here" -cf - install.php unlisted.php home.html privacy.html |
+package="rpa-package-$(cd "$here"; cat "${files[@]}" | sha256sum | cut -c1-16)"
+tar -C "$here" -cf - "${files[@]}" |
   "${ssh_cmd[@]}" "umask 077; mkdir -p \"\$HOME/$package\"; tar -xf - -C \"\$HOME/$package\""
 read -r -d '' remote <<'REMOTE' || true
 set -euo pipefail
 wp() { command wp --skip-plugins=sg-security "$@"; }
-phase=$1; target=$2; package=$3; dump=${4:-}; snapshot=${5:-}
+phase=$1; target=$2; package=$3; dump=${4:-}; snapshot=${5:-}; installer=$6
+case "$installer" in install.php|install-terms.php) ;; *) exit 1 ;; esac
 case "$target" in staging36) want=staging36.thaisolitude.com ;; live) want=thaisolitude.com ;; *) exit 1 ;; esac
 [[ "$package" =~ ^rpa-package-[a-f0-9]{16}$ ]] || exit 1
 doc=""
@@ -48,7 +55,7 @@ done < "$configs"
 [[ -n "$doc" ]] || { echo 'Target install not found'; exit 1; }
 export RPA_BACKUP_DIR="$HOME/private-backups"
 mkdir -p "$RPA_BACKUP_DIR"; chmod 700 "$RPA_BACKUP_DIR"
-run() { wp --path="$doc" --user=1 eval-file "$HOME/$package/install.php" "$@"; }
+run() { wp --path="$doc" --user=1 eval-file "$HOME/$package/$installer" "$@"; }
 case "$phase" in
   preflight) run preflight ;;
   prepare)
@@ -70,7 +77,7 @@ esac
 REMOTE
 run_remote() {
   local command
-  printf -v command 'bash -s -- %q %q %q %q %q' "$1" "$target" "$package" "${2:-}" "$snapshot"
+  printf -v command 'bash -s -- %q %q %q %q %q %q' "$1" "$target" "$package" "${2:-}" "$snapshot" "$installer"
   "${ssh_cmd[@]}" "$command" <<< "$remote"
 }
 echo "Target: $target; operation: $mode"
