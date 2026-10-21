@@ -12,7 +12,8 @@ files=(install.php unlisted.php home.html privacy.html)
 case "${RPA_RELEASE:-base}" in
   base) installer=install.php ;;
   terms) installer=install-terms.php; files+=(install-terms.php terms.html) ;;
-  *) echo 'RPA_RELEASE must be base or terms.' >&2; exit 1 ;;
+  disclosures) installer=install-disclosures.php; files+=(install-disclosures.php terms.html home-tools.html privacy-tools.html terms-tools.html) ;;
+  *) echo 'RPA_RELEASE must be base, terms or disclosures.' >&2; exit 1 ;;
 esac
 case "${1:-}" in
   '') ;;
@@ -35,7 +36,7 @@ read -r -d '' remote <<'REMOTE' || true
 set -euo pipefail
 wp() { command wp --skip-plugins=sg-security "$@"; }
 phase=$1; target=$2; package=$3; dump=${4:-}; snapshot=${5:-}; installer=$6
-case "$installer" in install.php|install-terms.php) ;; *) exit 1 ;; esac
+case "$installer" in install.php|install-terms.php|install-disclosures.php) ;; *) exit 1 ;; esac
 case "$target" in staging36) want=staging36.thaisolitude.com ;; live) want=thaisolitude.com ;; *) exit 1 ;; esac
 [[ "$package" =~ ^rpa-package-[a-f0-9]{16}$ ]] || exit 1
 doc=""
@@ -92,4 +93,4 @@ dump=$(printf '%s\n' "$prepared" | sed -n 's/^RPA_EXPORT=//p')
 S26_CREDS="$creds" bash "$here/../work-with-me-employer/sync-server-backups.sh"
 run_remote "$mode" "$dump"
 S26_CREDS="$creds" bash "$here/../work-with-me-employer/sync-server-backups.sh"
-# ref: ./install.php, ../work-with-me-employer/sync-server-backups.sh — guarded mutation and verified off-server backup
+# ref: ./install.php, ./install-terms.php, ./install-disclosures.php, ../work-with-me-employer/sync-server-backups.sh — guarded mutation and verified off-server backup
