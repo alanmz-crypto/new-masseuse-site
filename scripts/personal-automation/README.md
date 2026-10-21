@@ -198,7 +198,13 @@ comparison shows the three intended page contents, three additional post rows
 CSS, snippets, SEO values and settings are unchanged. The completed production
 rollback manifest is
 `/home/customer/private-backups/personal-automation-disclosures-before-20261021-014715-cMkbXu.json`.
-Search Console authorization is pending API enablement confirmation from Ryan.
+Search Console authorization is complete and verified as of October 20, 2026
+(local time). The saved token identifies `butsabad@gmail.com`, refreshes
+successfully, and has read-only access to `sc-domain:thaisolitude.com`; the
+account itself has owner permission. Fresh-process checks passed for property
+access, 28 days of performance data, the submitted sitemap, and homepage URL
+inspection, which reported “Submitted and indexed.” No Search Console settings
+or website content were changed by these checks.
 
 Terms on staging: page 1257, with a new link on homepage 1254 and visibility
 snippet 1256 extended to the terms path. Export
