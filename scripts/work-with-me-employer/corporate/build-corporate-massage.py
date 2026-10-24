@@ -261,9 +261,10 @@ ROW_DESC = ('On-site chair massage for employee appreciation days and workplace 
 
 
 def build_row():
-    """The row as a template: {{IMG_ID}} and {{IMG_URL}} are filled in by the installer once the picture is in the media library (the URL is made relative, so a staging-to-live push stays correct)."""
-    pic = ('<!-- wp:image {"id":{{IMG_ID}},"sizeSlug":"full","linkDestination":"none","className":"ts-corp-pic"} -->\n'
-           '<figure class="wp-block-image size-full ts-corp-pic"><img src="{{IMG_URL}}" alt="%s" title="%s" class="wp-image-{{IMG_ID}}"/></figure>\n<!-- /wp:image -->') % (esc(IMG_ALT), esc(IMG_ALT))   # tooltip = alt text, the site's convention (SureRank would otherwise add the page title)
+    """The row as a template: {{IMG_URL}} is filled in by the installer once the picture is in the media library (the URL is made relative, so a staging-to-live push stays correct)."""
+    # No media id in the markup (like the Work With Me photo): the row then depends only on the file's URL, so applying again after a rollback gives byte-identical content.
+    pic = ('<!-- wp:image {"sizeSlug":"full","linkDestination":"none","className":"ts-corp-pic"} -->\n'
+           '<figure class="wp-block-image size-full ts-corp-pic"><img src="{{IMG_URL}}" alt="%s" title="%s"/></figure>\n<!-- /wp:image -->') % (esc(IMG_ALT), esc(IMG_ALT))   # tooltip = alt text, the site's convention (SureRank would otherwise add the page title)
     return ('<!-- wp:uagb/container %s -->\n'
             '<div class="wp-block-uagb-container uagb-layout-grid uagb-block-%s">%s\n\n'
             '<!-- wp:uagb/advanced-heading %s -->\n<div class="wp-block-uagb-advanced-heading uagb-block-%s"></div>\n<!-- /wp:uagb/advanced-heading -->\n\n'

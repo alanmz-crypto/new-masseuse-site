@@ -74,7 +74,7 @@ foreach ( array( '@import', 'url(', 'expression', '!important', 'javascript:', '
 		WP_CLI::error( 'corporate-massage.css contains something the review did not cover: ' . $bad );
 	}
 }
-if ( 0 !== substr_count( $row_tpl, $anchor ) || 1 !== substr_count( $row_tpl, '"block_id":"' . $data['row_id'] . '"' ) || 2 !== substr_count( $row_tpl, '{{IMG_ID}}' ) || 1 !== substr_count( $row_tpl, '{{IMG_URL}}' ) ) {
+if ( 0 !== substr_count( $row_tpl, $anchor ) || 1 !== substr_count( $row_tpl, '"block_id":"' . $data['row_id'] . '"' ) || 0 !== substr_count( $row_tpl, '{{IMG_ID}}' ) || 1 !== substr_count( $row_tpl, '{{IMG_URL}}' ) ) {
 	WP_CLI::error( 'Internal error: the Services row is not what was reviewed.' );
 }
 $img      = isset( $data['image'] ) && is_array( $data['image'] ) ? $data['image'] : array();
@@ -82,7 +82,7 @@ $img_path = __DIR__ . '/images/' . ( isset( $img['name'] ) ? basename( (string) 
 if ( empty( $img['name'] ) || empty( $img['sha256'] ) || empty( $img['alt'] ) || empty( $img['title'] ) || ! is_file( $img_path ) || hash_file( 'sha256', $img_path ) !== $img['sha256'] ) {
 	WP_CLI::error( 'The picture is missing or is not the reviewed file (images/' . ( $img['name'] ?? '?' ) . ').' );
 }
-/** The Services row for a given media item (the URL is made relative, so a staging-to-live push stays correct). */
+/** The Services row for a given media item: it refers to the file by its URL only (made relative, so a staging-to-live push stays correct), never by the item's database id, so applying again after a rollback gives the same content. */
 $row_for = function ( $att_id ) use ( $row_tpl ) {
 	$url = wp_make_link_relative( (string) wp_get_attachment_url( (int) $att_id ) );
 	return str_replace( array( '{{IMG_ID}}', '{{IMG_URL}}' ), array( (string) (int) $att_id, $url ), $row_tpl );
