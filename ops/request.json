@@ -1,8 +1,7 @@
 {
-  "id": "deep-tissue-live-dry-1",
-  "op": "run",
-  "target": "live",
-  "script": "deep-tissue/push-deep-tissue-copy.sh",
-  "args": [],
-  "tests": "auto"
+  "id": "inspect-deep-tissue-2",
+  "op": "inspect",
+  "target": "staging36",
+  "query": "page",
+  "arg": "deep-tissue-massage"
 }
