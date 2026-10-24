@@ -1,0 +1,109 @@
+# Site op `deep-evidence-a11y-1`
+
+| | |
+|---|---|
+| operation | `run` on `staging36` |
+| script | `tools/a11y-audit.mjs` `https://staging36.thaisolitude.com` |
+| lane | ops (site-ops.yml) |
+| commit | `e52d03aecea19a386cf3c1d3178b278e6b89a9fd` on `claude/charming-galileo-hb7mf8` |
+| run | https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/40112959800 |
+| started | 2026-10-24 16:44:43 UTC |
+
+## a11y-audit.mjs https://staging36.thaisolitude.com(S_TARGET=staging36): PASS
+
+```text
+
+== axe-core 4.13.0, WCAG 2.0/2.1/2.2 A+AA rules: VIOLATIONS ==
+
+  nested-interactive [serious] Interactive controls must not be nested
+     on: desktop /work-with-me/ | phone /work-with-me/ | reflow320 /work-with-me/
+     e.g. <div class="wp-block-uagb-faq-child uagb-faq-child__outer-wrap uagb-faq-item uagb-block-dd747e84 uagb-faq-item-active" role="tab" tabindex="0" aria-expanded="tr
+
+== axe "needs manual review" (could not be decided by the machine) ==
+  color-contrast: Elements must meet minimum color contrast ratio thresholds (132 runs)
+
+== per page: language, title, h1 count, heading jumps, landmarks, images without alt, zoom blocked, side-scroll, small targets, keyboard ==
+desktop   /                        lang=en-US title=yes h1=1 jumps=0 main=1 nav=4 footer=1 img=8(noalt 0, decorative 0, filename-alt 0) zoomBlocked=false sideScroll=false smallTargets=8 skipLink=true | tab stops 35, no visible focus 0, covered 0
+     small targets: Skip to content 1x1; Personalized 137x21; Relief 75x21; Mobility 96x21; Balance 93x21; Comfort 100x21
+desktop   /about/                  lang=en-US title=yes h1=1 jumps=0 main=1 nav=4 footer=1 img=3(noalt 0, decorative 0, filename-alt 0) zoomBlocked=false sideScroll=false smallTargets=1 skipLink=true | tab stops 26, no visible focus 0, covered 0
+     small targets: Skip to content 1x1
+     accordion by keyboard: Enter works, Space works (false,false,true -> false,true,false -> false,false,false)
+desktop   /services/               lang=en-US title=yes h1=1 jumps=1 main=1 nav=4 footer=1 img=7(noalt 0, decorative 0, filename-alt 0) zoomBlocked=false sideScroll=false smallTargets=1 skipLink=true | tab stops 27, no visible focus 0, covered 0
+     small targets: Skip to content 1x1
+desktop   /thai-massage/           lang=en-US title=yes h1=1 jumps=0 main=1 nav=4 footer=1 img=5(noalt 0, decorative 0, filename-alt 0) zoomBlocked=false sideScroll=false smallTargets=1 skipLink=true | tab stops 46, no visible focus 0, covered 0
+     small targets: Skip to content 1x1
+     accordion by keyboard: Enter works, Space works (false,false,false,false,false,false,true -> false,true,false,false,false,false,false -> false,false,false,false,false,false,false)
+desktop   /therapeutic-massage/    lang=en-US title=yes h1=1 jumps=0 main=1 nav=4 footer=1 img=7(noalt 0, decorative 0, filename-alt 0) zoomBlocked=false sideScroll=false smallTargets=1 skipLink=true | tab stops 60, no visible focus 0, covered 0
+     small targets: Skip to content 1x1
+     accordion by keyboard: Enter works, Space works (false,false,false,false,false,false,false,false,false,true -> false,true,false,false,false,false,false,false,false,false -> false,false,false,false,false,false,false,false,false,false)
+desktop   /deep-tissue-massage/    lang=en-US title=yes h1=1 jumps=0 main=1 nav=4 footer=1 img=5(noalt 0, decorative 0, filename-alt 0) zoomBlocked=false sideScroll=false smallTargets=1 skipLink=true | tab stops 54, no visible focus 0, covered 0
+     small targets: Skip to content 1x1
+     accordion by keyboard: Enter works, Space works (false,false,false,false,false,true -> false,true,false,false,false,false -> false,false,false,false,false,false)
+desktop   /work-with-me/           lang=en-US title=yes h1=1 jumps=0 main=1 nav=4 footer=1 img=4(noalt 0, decorative 0, filename-alt 0) zoomBlocked=false sideScroll=false smallTargets=1 skipLink=true | tab stops 45, no visible focus 0, covered 0
+     small targets: Skip to content 1x1
+     accordion by keyboard: Enter works, Space works (false,false,true -> false,true,false -> false,false,false)
+desktop   /contact/                lang=en-US title=yes h1=1 jumps=0 main=1 nav=4 footer=1 img=3(noalt 0, decorative 0, filename-alt 0) zoomBlocked=false sideScroll=false smallTargets=1 skipLink=true | tab stops 29, no visible focus 0, covered 0
+     small targets: Skip to content 1x1
+desktop   /privacy-policy/         lang=en-US title=yes h1=1 jumps=0 main=1 nav=4 footer=1 img=2(noalt 0, decorative 0, filename-alt 0) zoomBlocked=false sideScroll=false smallTargets=1 skipLink=true | tab stops 25, no visible focus 0, covered 0
+     small targets: Skip to content 1x1
+     accordion by keyboard: Enter works, Space works (false,true -> false,false -> false,true)
+desktop   /accessibility/          lang=en-US title=yes h1=1 jumps=0 main=1 nav=4 footer=1 img=2(noalt 0, decorative 0, filename-alt 0) zoomBlocked=false sideScroll=false smallTargets=1 skipLink=true | tab stops 24, no visible focus 0, covered 0
+     small targets: Skip to content 1x1
+phone     /                        lang=en-US title=yes h1=1 jumps=0 main=1 nav=4 footer=1 img=8(noalt 0, decorative 0, filename-alt 0) zoomBlocked=false sideScroll=false smallTargets=8 skipLink=true | tab stops 30, no visible focus 0, covered 0
+     small targets: Skip to content 1x1; Personalized 137x21; Relief 75x21; Mobility 96x21; Balance 93x21; Comfort 100x21
+phone     /about/                  lang=en-US title=yes h1=1 jumps=0 main=1 nav=4 footer=1 img=3(noalt 0, decorative 0, filename-alt 0) zoomBlocked=false sideScroll=false smallTargets=1 skipLink=true | tab stops 21, no visible focus 0, covered 0
+     small targets: Skip to content 1x1
+     accordion by keyboard: Enter works, Space works (false,false,true -> false,true,false -> false,false,false)
+phone     /services/               lang=en-US title=yes h1=1 jumps=1 main=1 nav=4 footer=1 img=7(noalt 0, decorative 0, filename-alt 0) zoomBlocked=false sideScroll=false smallTargets=1 skipLink=true | tab stops 22, no visible focus 0, covered 0
+     small targets: Skip to content 1x1
+phone     /thai-massage/           lang=en-US title=yes h1=1 jumps=0 main=1 nav=4 footer=1 img=5(noalt 0, decorative 0, filename-alt 0) zoomBlocked=false sideScroll=false smallTargets=1 skipLink=true | tab stops 41, no visible focus 0, covered 0
+     small targets: Skip to content 1x1
+     accordion by keyboard: Enter works, Space works (false,false,false,false,false,false,true -> false,true,false,false,false,false,false -> false,false,false,false,false,false,false)
+phone     /therapeutic-massage/    lang=en-US title=yes h1=1 jumps=0 main=1 nav=4 footer=1 img=7(noalt 0, decorative 0, filename-alt 0) zoomBlocked=false sideScroll=false smallTargets=1 skipLink=true | tab stops 55, no visible focus 0, covered 0
+     small targets: Skip to content 1x1
+     accordion by keyboard: Enter works, Space works (false,false,false,false,false,false,false,false,false,true -> false,true,false,false,false,false,false,false,false,false -> false,false,false,false,false,false,false,false,false,false)
+phone     /deep-tissue-massage/    lang=en-US title=yes h1=1 jumps=0 main=1 nav=4 footer=1 img=5(noalt 0, decorative 0, filename-alt 0) zoomBlocked=false sideScroll=false smallTargets=1 skipLink=true | tab stops 49, no visible focus 0, covered 1
+     small targets: Skip to content 1x1
+     focus covered: A:[3]:6464
+     accordion by keyboard: Enter works, Space works (false,false,false,false,false,true -> false,true,false,false,false,false -> false,false,false,false,false,false)
+phone     /work-with-me/           lang=en-US title=yes h1=1 jumps=0 main=1 nav=4 footer=1 img=4(noalt 0, decorative 0, filename-alt 0) zoomBlocked=false sideScroll=false smallTargets=1 skipLink=true | tab stops 42, no visible focus 0, covered 0
+     small targets: Skip to content 1x1
+     accordion by keyboard: Enter works, Space works (false,false,true -> false,true,false -> false,false,false)
+phone     /contact/                lang=en-US title=yes h1=1 jumps=0 main=1 nav=4 footer=1 img=3(noalt 0, decorative 0, filename-alt 0) zoomBlocked=false sideScroll=false smallTargets=1 skipLink=true | tab stops 14, no visible focus 0, covered 0
+     small targets: Skip to content 1x1
+phone     /privacy-policy/         lang=en-US title=yes h1=1 jumps=0 main=1 nav=4 footer=1 img=2(noalt 0, decorative 0, filename-alt 0) zoomBlocked=false sideScroll=false smallTargets=1 skipLink=true | tab stops 20, no visible focus 0, covered 0
+     small targets: Skip to content 1x1
+     accordion by keyboard: Enter works, Space works (false,true -> false,false -> false,true)
+phone     /accessibility/          lang=en-US title=yes h1=1 jumps=0 main=1 nav=4 footer=1 img=2(noalt 0, decorative 0, filename-alt 0) zoomBlocked=false sideScroll=false smallTargets=1 skipLink=true | tab stops 19, no visible focus 0, covered 0
+     small targets: Skip to content 1x1
+reflow320 /                        lang=en-US title=yes h1=1 jumps=0 main=1 nav=4 footer=1 img=8(noalt 0, decorative 0, filename-alt 0) zoomBlocked=false sideScroll=false smallTargets=8 skipLink=true | tab stops 30, no visible focus 0, covered 0
+     small targets: Skip to content 1x1; Personalized 137x21; Relief 75x21; Mobility 96x21; Balance 93x21; Comfort 100x21
+reflow320 /about/                  lang=en-US title=yes h1=1 jumps=0 main=1 nav=4 footer=1 img=3(noalt 0, decorative 0, filename-alt 0) zoomBlocked=false sideScroll=false smallTargets=1 skipLink=true | tab stops 21, no visible focus 0, covered 0
+     small targets: Skip to content 1x1
+     accordion by keyboard: Enter works, Space works (false,false,true -> false,true,false -> false,false,false)
+reflow320 /services/               lang=en-US title=yes h1=1 jumps=1 main=1 nav=4 footer=1 img=7(noalt 0, decorative 0, filename-alt 0) zoomBlocked=false sideScroll=false smallTargets=1 skipLink=true | tab stops 22, no visible focus 0, covered 0
+     small targets: Skip to content 1x1
+reflow320 /thai-massage/           lang=en-US title=yes h1=1 jumps=0 main=1 nav=4 footer=1 img=5(noalt 0, decorative 0, filename-alt 0) zoomBlocked=false sideScroll=false smallTargets=1 skipLink=true | tab stops 41, no visible focus 0, covered 0
+     small targets: Skip to content 1x1
+     accordion by keyboard: Enter works, Space works (false,false,false,false,false,false,true -> false,true,false,false,false,false,false -> false,false,false,false,false,false,false)
+reflow320 /therapeutic-massage/    lang=en-US title=yes h1=1 jumps=0 main=1 nav=4 footer=1 img=7(noalt 0, decorative 0, filename-alt 0) zoomBlocked=false sideScroll=false smallTargets=1 skipLink=true | tab stops 55, no visible focus 0, covered 0
+     small targets: Skip to content 1x1
+     accordion by keyboard: Enter works, Space works (false,false,false,false,false,false,false,false,false,true -> false,true,false,false,false,false,false,false,false,false -> false,false,false,false,false,false,false,false,false,false)
+reflow320 /deep-tissue-massage/    lang=en-US title=yes h1=1 jumps=0 main=1 nav=4 footer=1 img=5(noalt 0, decorative 0, filename-alt 0) zoomBlocked=false sideScroll=false smallTargets=1 skipLink=true | tab stops 49, no visible focus 0, covered 0
+     small targets: Skip to content 1x1
+     accordion by keyboard: Enter works, Space works (false,false,false,false,false,true -> false,true,false,false,false,false -> false,false,false,false,false,false)
+reflow320 /work-with-me/           lang=en-US title=yes h1=1 jumps=0 main=1 nav=4 footer=1 img=4(noalt 0, decorative 0, filename-alt 0) zoomBlocked=false sideScroll=false smallTargets=1 skipLink=true | tab stops 42, no visible focus 0, covered 0
+     small targets: Skip to content 1x1
+     accordion by keyboard: Enter works, Space works (false,false,true -> false,true,false -> false,false,false)
+reflow320 /contact/                lang=en-US title=yes h1=1 jumps=0 main=1 nav=4 footer=1 img=3(noalt 0, decorative 0, filename-alt 0) zoomBlocked=false sideScroll=false smallTargets=1 skipLink=true | tab stops 14, no visible focus 0, covered 0
+     small targets: Skip to content 1x1
+reflow320 /privacy-policy/         lang=en-US title=yes h1=1 jumps=0 main=1 nav=4 footer=1 img=2(noalt 0, decorative 0, filename-alt 0) zoomBlocked=false sideScroll=false smallTargets=1 skipLink=true | tab stops 20, no visible focus 0, covered 0
+     small targets: Skip to content 1x1
+     accordion by keyboard: Enter works, Space works (false,true -> false,false -> false,true)
+reflow320 /accessibility/          lang=en-US title=yes h1=1 jumps=0 main=1 nav=4 footer=1 img=2(noalt 0, decorative 0, filename-alt 0) zoomBlocked=false sideScroll=false smallTargets=1 skipLink=true | tab stops 19, no visible focus 0, covered 0
+     small targets: Skip to content 1x1
+```
+
+**RESULT: PASS** - a11y-audit.mjs succeeded
+
+_finished 2026-10-24 16:49:07 UTC_
