@@ -1,8 +1,10 @@
 {
-  "id": "live-dry-bundle-1",
+  "id": "live-check-postchange-1",
   "op": "run",
   "target": "live",
-  "script": "deep-tissue/push-deep-tissue-and-slide.sh",
-  "args": [],
+  "script": "post-change-test.sh",
+  "args": [
+    "live"
+  ],
   "tests": "auto"
 }
