@@ -19,8 +19,8 @@ creds="${S26_CREDS:-$here/../../remote_execution.txt}"
 target="${1:-live}"
 case "$target" in
   live) want="thaisolitude.com" ;;
-  staging27|staging30|staging31|staging32|staging33|staging34|staging36) want="$target.thaisolitude.com" ;;
-  *) echo "Usage: $0 [live|staging27|staging30|staging31|staging32|staging33|staging34|staging36]" >&2; exit 1 ;;
+  staging27|staging30|staging31|staging32|staging33|staging34|staging36|staging37) want="$target.thaisolitude.com" ;;
+  *) echo "Usage: $0 [live|staging27|staging30|staging31|staging32|staging33|staging34|staging36|staging37]" >&2; exit 1 ;;
 esac
 [ -f "$creds" ] || { echo "Missing credentials file: $creds" >&2; exit 1; }
 field() { sed -n "s/^$1:[[:space:]]*//p" "$creds" | head -1; }

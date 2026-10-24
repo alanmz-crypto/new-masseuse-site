@@ -288,6 +288,43 @@ for label, path, want_title, want_desc in SERVICE_META:
     else:
         print("INFO %s meta is still the auto-built one (not set yet): %s" % (label, got_desc))
 
+# ---- Corporate & Group Massage (Ryan, 2026-10-24; corporate/install-corporate-massage.php) ------------------------------------------------------------------------------------------
+# Everything here is ADDED (a new page, a Services row, a menu item, an announcement strip). The checks run only on a site that has the new page; there the whole house wording list applies (the page has no research section).
+cp_page, cp_code = get("/corporate-massage-portland/")
+if cp_code == 404:
+    print("INFO Corporate & Group Massage: the page is not on this site yet (corporate/install-corporate-massage.php has not been applied here)")
+else:
+    check("Corporate & Group Massage returns 200", cp_code == 200, cp_code)
+    cmain = re.search(r"<main.*?</main>", cp_page, re.S)
+    cmh = cmain.group(0) if cmain else ""
+    ct = text_of(cmh)
+    check("Corporate & Group Massage body found", bool(ct))
+    res_cp = wt.check(cmh)
+    check("Corporate & Group Massage: no restricted wording anywhere on the page (no research section: the full list applies)", not res_cp["before"] and not res_cp["research"] and not res_cp["cites"], res_cp)
+    CP_TITLE = "Corporate Chair Massage in Portland, OR | Thai Solitude"
+    CP_DESC = "On-site chair massage for employee appreciation days and workplace events in Portland, with table massage at suitable host venues. Request a quote."
+    m_ct = re.search(r"<title>(.*?)</title>", cp_page, re.S)
+    got_ct = html.unescape(m_ct.group(1)).strip() if m_ct else ""
+    check("Corporate & Group Massage title and meta description are the approved ones", got_ct == CP_TITLE and meta(cp_page, "name", "description") == CP_DESC, got_ct)
+    check("Corporate & Group Massage og and twitter title and description follow", all(meta(cp_page, a, n) == v for a, n, v in (("property", "og:title", CP_TITLE), ("name", "twitter:title", CP_TITLE), ("property", "og:description", CP_DESC), ("name", "twitter:description", CP_DESC))))
+    check("Corporate & Group Massage description fits one snippet (<= 160) and the title one line (<= 60)", len(CP_DESC) <= 160 and len(CP_TITLE) <= 60, "%d/%d" % (len(CP_DESC), len(CP_TITLE)))
+    check("Corporate & Group Massage: one h1", len(re.findall(r"<h1[ >]", cmh)) == 1)
+    check("Corporate & Group Massage: licence number in the footer", "LMT-29905" in cp_page)
+    check("Corporate & Group Massage: both quote buttons carry the same mailto link with a subject and a body", len(set(re.findall(r'href="(mailto:butsabad@gmail\.com\?subject=Corporate%20massage%20quote%20request&amp;body=[^"]+)"', cmh))) == 1 and len(re.findall(r'>Request a Corporate Massage Quote</a>', cmh)) == 2)
+    check("Corporate & Group Massage: no link inside FAQ answers (axe nested-interactive)", not re.search(r'uagb-faq-content[^>]*>(?:(?!</div>).)*<a ', cmh, re.S))
+    check("Corporate & Group Massage: the capacity figure is stated as an estimate", ct.count("A three-hour booking can often fit around 12–15 short appointments.") == 1 and "planning estimate, not a promise" in ct)
+    check("Corporate & Group Massage: the rate is shown as proposed and confirmed by a written quote", "per service hour" in ct and "Proposed corporate rate." in ct and "confirmed in your written quote" in ct)
+    check("Corporate & Group Massage: no invented fee, minimum, deposit or cancellation terms", not re.search(r"travel (fee|charge)|setup fee|minimum|deposit|cancell", ct, re.I), re.findall(r"travel (?:fee|charge)|setup fee|minimum|deposit|cancell\w*", ct, re.I))
+    check("Corporate & Group Massage: no testimonials, logos or insurance claims", not re.search(r"testimonial|insured|insurance|background[- ]check", ct, re.I))
+    svc2, _ = get("/services/")
+    svt = text_of(svc2)
+    if "Corporate & Group Massage" in svt:
+        check("Services: the corporate row links to the new page and the three existing service links are still there",
+              svc2.count('href="/corporate-massage-portland/">Corporate &amp; Group Massage</a>') == 1 and all(("/%s/" % s) in svc2 for s in ("thai-massage", "therapeutic-massage", "deep-tissue-massage")))
+        check("Services: the existing descriptions are unchanged", all(s in svt for s in ("Thai massage is my specialty.", "Therapeutic massage gives steady attention", "Deep tissue massage uses focused strokes", "Every session begins with a conversation about what you want")))
+    else:
+        print("INFO Services: the Corporate & Group Massage row is not there yet")
+
 print("\nRESULT: " + ("all checks passed" if not fails else f"{fails} check(s) FAILED"))
 sys.exit(1 if fails else 0)
 

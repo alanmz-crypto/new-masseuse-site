@@ -1,0 +1,346 @@
+/* ts-corp:start (2026-10-24, corporate and group massage: announcement strip, the page, the Services tile) */
+/* Uses only the site's own tokens (--ts-*), which the dark palette already overrides: no colours of its own, no image or font loads, no forced overrides. */
+
+/* 1. Announcement strip under the header (WPCode snippet "CorporateBand") */
+.ts-corp-band {
+  background: var(--ts-stone);
+  border-bottom: 1px solid var(--ts-rule);
+}
+.ts-corp-band__inner {
+  box-sizing: border-box;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0.6rem 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1.25rem;
+}
+.ts-corp-band__label {
+  margin: 0;
+  font-family: var(--ts-sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  line-height: 1.4;
+  text-transform: uppercase;
+  color: var(--ts-accent-deep);
+}
+.ts-corp-band__text {
+  margin: 0;
+  flex: 1 1 22rem;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: var(--ts-text);
+}
+.ts-corp-band__text strong {
+  font-weight: 600;
+  color: var(--ts-ink);
+}
+.ts-corp-band__link {
+  margin-left: auto;
+  padding: 0.3rem 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ts-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--ts-accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  white-space: nowrap;
+}
+.ts-corp-band__link:hover {
+  color: var(--ts-muted);
+}
+.ts-corp-band__link:focus-visible {
+  outline: 3px solid var(--ts-accent);
+  outline-offset: 3px;
+}
+@media (max-width: 767px) {
+  .ts-corp-band__inner {
+    padding: 0.6rem 1rem;
+    gap: 0.1rem 1rem;
+  }
+  .ts-corp-band__label {
+    display: none;
+  }
+  .ts-corp-band__text {
+    flex-basis: 100%;
+    font-size: 0.86rem;
+  }
+  .ts-corp-band__link {
+    margin-left: 0;
+  }
+}
+@media print {
+  .ts-corp-band {
+    display: none;
+  }
+}
+
+/* 2. The Corporate & Group Massage page */
+.ts-corp > * + * {
+  margin-top: clamp(2.5rem, 6vw, 4.5rem);
+}
+.ts-corp [id] {
+  scroll-margin-top: 6rem;
+}
+.ts-corp h1,
+.ts-corp h2,
+.ts-corp h3 {
+  font-family: var(--ts-serif);
+  color: var(--ts-ink);
+  text-transform: none;
+}
+.ts-corp h1 {
+  margin: 0.15em 0 0.25em;
+  font-size: clamp(2.5rem, 5.2vw, 4.4rem);
+  font-weight: 300;
+  letter-spacing: -0.025em;
+  line-height: 1.08;
+}
+.ts-corp h2 {
+  max-width: 44rem;
+  margin: 0 0 0.6em;
+  font-size: clamp(1.9rem, 3.4vw, 2.8rem);
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  line-height: 1.12;
+}
+.ts-corp h3 {
+  margin: 0 0 0.4em;
+  font-size: 1.4rem;
+  font-weight: 400;
+  line-height: 1.2;
+}
+.ts-corp p,
+.ts-corp li {
+  color: var(--ts-text);
+}
+.ts-corp__eyebrow {
+  margin: 0 0 0.9rem;
+  font-family: var(--ts-sans);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  line-height: 1.4;
+  text-transform: uppercase;
+  color: var(--ts-accent-deep);
+}
+.ts-corp__hero {
+  padding: clamp(2.2rem, 6vw, 5rem) clamp(1.25rem, 5vw, 4.5rem);
+  background: var(--ts-stone);
+  border-radius: 6px;
+}
+.ts-corp__lead {
+  margin: 0 0 1rem;
+  font-family: var(--ts-serif);
+  font-size: clamp(1.3rem, 2.2vw, 1.75rem);
+  line-height: 1.3;
+  color: var(--ts-ink);
+}
+.ts-corp__hero p:not(.ts-corp__eyebrow):not(.ts-corp__lead):not(.ts-corp__fine) {
+  max-width: 40rem;
+  font-size: 1.08rem;
+}
+.ts-corp__actions {
+  margin: 1.6rem 0 0;
+  gap: 0.75rem;
+}
+.ts-corp__fine {
+  max-width: 40rem;
+  margin: 1.1rem 0 0;
+  font-size: 0.93rem;
+  color: var(--ts-muted);
+}
+.ts-corp__glance,
+.ts-corp__steps,
+.ts-corp__blocks {
+  gap: 1rem;
+}
+.ts-corp__glance > .wp-block-column,
+.ts-corp__steps > .wp-block-column,
+.ts-corp__blocks > .wp-block-column {
+  padding: 1.5rem;
+  background: var(--ts-panel);
+  border: 1px solid var(--ts-rule);
+  border-radius: 4px;
+}
+.ts-corp__glance p,
+.ts-corp__steps p:not(.ts-corp__num),
+.ts-corp__blocks p {
+  margin: 0;
+}
+.ts-corp__glance .ts-corp__card-title {
+  margin: 0 0 0.4em;
+  font-family: var(--ts-serif);
+  font-size: 1.4rem;
+  line-height: 1.2;
+  color: var(--ts-ink);
+}
+.ts-corp__num {
+  margin: 0 0 0.5rem;
+  font-family: var(--ts-serif);
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--ts-accent-deep);
+}
+.ts-corp__section > p {
+  max-width: 44rem;
+  font-size: 1.05rem;
+}
+.ts-corp__section > p + p,
+.ts-corp__section > .ts-corp__note + p {
+  margin-top: 1.1rem;
+}
+.ts-corp__note {
+  max-width: 44rem;
+  margin: 1.4rem 0;
+  padding: 1rem 1.25rem;
+  background: var(--ts-panel);
+  border: 1px solid var(--ts-rule);
+  border-left: 3px solid var(--ts-accent);
+  border-radius: 4px;
+}
+.ts-corp__note p {
+  margin: 0;
+}
+.ts-corp__rate {
+  max-width: 44rem;
+  margin: 0 0 1.4rem;
+  padding: 1.25rem 1.5rem;
+  background: var(--ts-stone);
+  border-radius: 4px;
+}
+.ts-corp__rate p {
+  margin: 0;
+}
+.ts-corp__rate .ts-corp__rate-line {
+  font-family: var(--ts-serif);
+  font-size: 1.5rem;
+  color: var(--ts-ink);
+}
+.ts-corp__rate .ts-corp__rate-line strong {
+  font-size: 2.4rem;
+  font-weight: 400;
+  line-height: 1.1;
+}
+.ts-corp__rate .ts-corp__rate-note {
+  margin-top: 0.4rem;
+  font-size: 0.95rem;
+}
+.ts-corp__booking > p {
+  margin-top: 1.4rem;
+}
+.ts-corp__section ul {
+  max-width: 44rem;
+  margin: 0.4rem 0 1.1rem;
+  padding-left: 1.2rem;
+}
+.ts-corp__section li {
+  margin: 0.3rem 0;
+  font-size: 1.05rem;
+}
+.ts-corp__cta {
+  padding: clamp(1.8rem, 4vw, 3.2rem) clamp(1.25rem, 5vw, 3.6rem);
+  background: var(--ts-stone);
+  border-radius: 6px;
+}
+.ts-corp__cta h2 {
+  margin-bottom: 0.4em;
+}
+.ts-corp__cta > p:not(.ts-corp__eyebrow):not(.ts-corp__fine) {
+  max-width: 40rem;
+  font-size: 1.08rem;
+}
+.ts-corp .ts-corp__actions .wp-block-button__link:focus-visible {
+  outline: 3px solid var(--ts-accent);
+  outline-offset: 3px;
+}
+
+/* 3. The Corporate & Group Massage row on the Services page: a text tile where the other rows show a picture.
+   (Spectra gives every block inside its containers width:100%, so the size is capped with max-width and the tile is centred in its column.) */
+.ts-corp-tile {
+  box-sizing: border-box;
+  max-width: 200px;
+  height: 200px;
+  justify-self: center;
+  margin: 0 auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: var(--ts-stone);
+  border: 1px solid var(--ts-rule);
+  border-radius: 20px;
+}
+.ts-corp-tile p {
+  margin: 0;
+}
+.ts-corp-tile .ts-corp-tile__eyebrow {
+  margin-bottom: 0.5rem;
+  font-family: var(--ts-sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  line-height: 1.4;
+  text-transform: uppercase;
+  color: var(--ts-accent-deep);
+}
+.ts-corp-tile .ts-corp-tile__title {
+  font-family: var(--ts-serif);
+  font-size: 1.6rem;
+  line-height: 1.15;
+  color: var(--ts-ink);
+}
+@media (max-width: 976px) {
+  .ts-corp-tile {
+    max-width: 282px;
+    height: 194px;
+    border-radius: 16px;
+  }
+}
+@media (max-width: 767px) {
+  .ts-corp-tile {
+    max-width: none;
+    height: auto;
+    min-height: 120px;
+    border-radius: 14px;
+  }
+}
+
+/* 4. The "Corporate Massage" menu item (class ts-corp-nav) must not push the header or the footer menu into a layout they did not have before.
+   Measured on the site: six items need about 633 px where five need 459 px. The header menu has 0.5 x width - 8 px, the footer menu at most 575 px (555 px at 1240).
+   - Header, 1120-1349 px: the space between items is tightened so six items stay on one line (1350 px and wider need nothing).
+   - Footer, 1240 px and wider, and 545-921 px: the space after each item is tightened so six items stay on one line (they cannot fit at the original spacing at any width).
+   - Between 922 and 1119 px (header) and in the footer at 601-819 and 922-1239 px the menus do not have room, so they show the original five items exactly as before.
+   The phone menu (921 px and below), the announcement strip and the Services row reach the page from every width. */
+@media (min-width: 1120px) and (max-width: 1349px) {
+  #ast-hf-menu-1 > .menu-item > .menu-link {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+  }
+}
+@media (min-width: 1240px) {
+  #astra-footer-menu > .menu-item > .menu-link {
+    padding-right: 12px;
+  }
+}
+@media (min-width: 545px) and (max-width: 921px) {
+  #astra-footer-menu > .menu-item > .menu-link {
+    padding-right: 8px;
+  }
+}
+@media (min-width: 922px) and (max-width: 1119px) {
+  #ast-hf-menu-1 > .ts-corp-nav {
+    display: none;
+  }
+}
+@media (min-width: 601px) and (max-width: 819px), (min-width: 922px) and (max-width: 1239px) {
+  #astra-footer-menu > .menu-item.ts-corp-nav {
+    display: none;
+  }
+}
+/* ts-corp:end */
