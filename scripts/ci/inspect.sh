@@ -49,7 +49,7 @@ doc=""
 while IFS= read -r cfg; do
   d=$(dirname "$cfg"); h=$(wp --path="$d" option get home 2>/dev/null || true); hh=${h#http://}; hh=${hh#https://}; hh=${hh%/}
   if [ "$hh" = "$want" ]; then [ -z "$doc" ] || { echo "More than one install reports $want; refusing to guess." >&2; exit 1; }; doc=$d; fi
-done < <(find "$HOME/www" -maxdepth 4 -name wp-config.php 2>/dev/null)
+done <<<"$(find "$HOME/www" -maxdepth 4 -name wp-config.php 2>/dev/null || true)"   # a here-string, not < <(...): the SiteGround shell has no /dev/fd
 [ -n "$doc" ] || { echo "No WordPress install under ~/www reports home host $want." >&2; exit 1; }
 w() { INSPECT_ARG="$arg" wp --path="$doc" "$@"; }   # wp eval takes no arguments: the PHP below reads the slug/ID from INSPECT_ARG
 echo "# $want is ${doc#"$HOME"/}   (read-only inspect: $query $arg)"
