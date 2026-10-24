@@ -64,10 +64,12 @@ read -r -d '' REMOTE <<'EOS' || true
 set -euo pipefail
 want=$1; part=$2; uploads=${3:-0}
 doc=""
+cfgs=$(mktemp); trap 'rm -f "$cfgs"' EXIT   # a file, not < <(...): the SiteGround shell has no /dev/fd for process substitution
+find "$HOME/www" -maxdepth 4 -name wp-config.php 2>/dev/null > "$cfgs"
 while IFS= read -r cfg; do
   d=$(dirname "$cfg"); h=$(wp --path="$d" --skip-plugins --skip-themes option get home 2>/dev/null || true); hh=${h#http://}; hh=${hh#https://}; hh=${hh%/}
   if [ "$hh" = "$want" ]; then [ -z "$doc" ] || { echo "More than one install reports $want; refusing to guess." >&2; exit 1; }; doc=$d; fi
-done < <(find "$HOME/www" -maxdepth 4 -name wp-config.php 2>/dev/null)
+done < "$cfgs"
 [ -n "$doc" ] || { echo "No WordPress install under ~/www reports home host $want." >&2; exit 1; }
 case "$part" in
   info) printf 'folder=%s\nprefix=%s\nversion=%s\nhome=%s\n' "${doc#"$HOME"/}" "$(wp --path="$doc" --skip-plugins --skip-themes db prefix)" "$(wp --path="$doc" --skip-plugins --skip-themes core version)" "$(wp --path="$doc" --skip-plugins --skip-themes option get home)" ;;
@@ -93,7 +95,7 @@ echo "$info" | sed 's/^/  source /'
 
 echo "[1] streaming the database and the files (read-only on the server) ..."
 remote db > "$work/db.sql.gz" || invalid "database export failed"
-[ "$(gzip -dc "$work/db.sql.gz" | head -c 4096 | wc -c)" -gt 1000 ] || invalid "the database export is empty"
+[ "$(gzip -dc "$work/db.sql.gz" 2>/dev/null | head -c 4096 | wc -c)" -gt 1000 ] || invalid "the database export is empty"
 remote files "$uploads" | tar -C "$pub" -xf - || invalid "file copy failed"
 [ -f "$pub/wp-includes/version.php" ] || invalid "the file copy has no WordPress core"
 chmod -R a+rwX "$pub"
@@ -140,9 +142,11 @@ done
 [ "$ready" = 1 ] || invalid "the database never became ready"
 gzip -dc "$work/db.sql.gz" | sed 's/utf8mb4_0900_ai_ci/utf8mb4_unicode_ci/g' | dc exec -T db mariadb -uroot -prehearsal --default-character-set=utf8mb4 wp \
   || invalid "the database import failed"
-wpc() { dc run --rm -T --no-deps wpcli wp --skip-plugins=sg-security "$@"; }   # SiteGround Security + PHP 8.5 would make every exit status 0 (AGENTS.md)
-wpdb() { dc run --rm -T --no-deps wpcli wp --skip-plugins --skip-themes "$@"; }   # database-only commands: load no plugin or theme
-dc run --rm -T --no-deps wpcli wp config create --dbname=wp --dbuser=wp --dbpass=wp --dbhost=db --dbprefix="$prefix" --skip-check --force --extra-php >/dev/null <<'PHP' || invalid "wp config create failed"
+# --entrypoint wp: the image's own entrypoint guesses whether to put "wp" in front (it runs `wp help "$1"`), and with a real site in place
+# it guessed wrong on a GitHub runner ("'wp' is not a registered wp command"), so name WP-CLI directly.
+wpc() { dc run --rm -T --no-deps --entrypoint wp wpcli --skip-plugins=sg-security "$@"; }   # SiteGround Security + PHP 8.5 would make every exit status 0 (AGENTS.md)
+wpdb() { dc run --rm -T --no-deps --entrypoint wp wpcli --skip-plugins --skip-themes "$@"; }   # database-only commands: load no plugin or theme
+dc run --rm -T --no-deps --entrypoint wp wpcli config create --dbname=wp --dbuser=wp --dbpass=wp --dbhost=db --dbprefix="$prefix" --skip-check --force --extra-php >/dev/null <<'PHP' || invalid "wp config create failed"
 define( 'WP_ENVIRONMENT_TYPE', 'local' );
 define( 'DISABLE_WP_CRON', true );
 define( 'FS_METHOD', 'direct' );

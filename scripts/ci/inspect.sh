@@ -46,10 +46,12 @@ set -euo pipefail
 wp() { command wp --skip-plugins=sg-security "$@"; }   # true exit codes on live under PHP 8.5 (see AGENTS.md, check-wp-exit-codes.sh)
 want=$1; query=$2; arg=${3:-}
 doc=""
+cfgs=$(mktemp); trap 'rm -f "$cfgs"' EXIT   # a file, not < <(...): the SiteGround shell has no /dev/fd for process substitution
+find "$HOME/www" -maxdepth 4 -name wp-config.php 2>/dev/null > "$cfgs"
 while IFS= read -r cfg; do
   d=$(dirname "$cfg"); h=$(wp --path="$d" option get home 2>/dev/null || true); hh=${h#http://}; hh=${hh#https://}; hh=${hh%/}
   if [ "$hh" = "$want" ]; then [ -z "$doc" ] || { echo "More than one install reports $want; refusing to guess." >&2; exit 1; }; doc=$d; fi
-done < <(find "$HOME/www" -maxdepth 4 -name wp-config.php 2>/dev/null)
+done < "$cfgs"
 [ -n "$doc" ] || { echo "No WordPress install under ~/www reports home host $want." >&2; exit 1; }
 w() { INSPECT_ARG="$arg" wp --path="$doc" "$@"; }   # wp eval takes no arguments: the PHP below reads the slug/ID from INSPECT_ARG
 echo "# $want is ${doc#"$HOME"/}   (read-only inspect: $query $arg)"

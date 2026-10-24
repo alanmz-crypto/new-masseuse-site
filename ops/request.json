@@ -1,0 +1,7 @@
+{
+  "id": "rehearse-check-2",
+  "op": "rehearse",
+  "target": "staging36",
+  "installer": "thai/install-image-crop.php",
+  "args": []
+}
