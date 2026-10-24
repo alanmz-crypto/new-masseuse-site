@@ -1,12 +1,13 @@
 {
-  "id": "deep-evidence-browser-2",
+  "id": "deep-evidence-browser-ff-1",
   "op": "run",
   "target": "staging36",
   "script": "deep-tissue/check-deep-tissue-evidence.mjs",
   "args": [
     "https://staging36.thaisolitude.com",
-    "/tmp/ds-shots",
-    "staging36"
+    "/tmp/ds-shots-ff",
+    "staging36-ff",
+    "firefox"
   ],
   "tests": "auto"
 }
