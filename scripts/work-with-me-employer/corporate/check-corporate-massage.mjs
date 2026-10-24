@@ -7,7 +7,7 @@
 //                 no side-scroll, no script errors, no picture, no we/our/us, every internal link answers 200, both quote buttons carry the SAME mailto: link whose subject and body prompts decode correctly,
 //                 the visible email address is a mailto link, title and meta description, canonical, the in-page anchors exist.
 //   THE STRIP     exactly one on each of the 8 client pages, none on Home, Work With Me, the new page or the unrelated pages; directly under the header; compact; its link opens the new page; keyboard focus is visible.
-//   SERVICES      four service links in order (the three existing ones unchanged, the new one last), the new row before "Your Session", the tile and its link, no overlap, no side-scroll.
+//   SERVICES      four service links in order (the three existing ones unchanged, the new one last), the new row before "Your Session", its picture (loaded, whole, with a description) and its link, no overlap, no side-scroll.
 //   MENU          the header, the footer and the phone menu all carry "Corporate Massage" (the header and footer only where there is room: see section 4 of corporate-massage.css) and the original items are still there in order.
 // Exit codes: 0 all passed, 1 a check failed, 2 INVALID (SiteGround's bot challenge answered HTTP 202: nothing was tested; try once more later, not in a loop).
 import { createRequire } from 'module';
@@ -187,21 +187,27 @@ for (const width of quick ? [1280, 390] : [1280, 820, 390]) {
   const errors = [];
   const { page } = await open(ctx, '/services/', errors);
   const tag = `services ${width}`;
+  // the picture is lazy-loaded (WordPress core): scroll it into view and wait for it, as the other picture checkers do
+  await page.locator('.ts-corp-pic img').first().scrollIntoViewIfNeeded().catch(() => {});
+  await page.waitForFunction(() => { const i = document.querySelector('.ts-corp-pic img'); return !!(i && i.complete && i.naturalWidth > 0); }, null, { timeout: 20000 }).catch(() => {});
   const s = await page.evaluate(() => {
     const links = [...document.querySelectorAll('.entry-content h3.uagb-heading-text a')].map(a => a.getAttribute('href'));
     const h3 = [...document.querySelectorAll('.entry-content h3.uagb-heading-text')].map(h => h.textContent.replace(/\s+/g, ' ').trim());
-    const tile = document.querySelector('.ts-corp-tile'); const row = tile && tile.parentElement;
+    const pic = document.querySelector('.ts-corp-pic'); const img = pic && pic.querySelector('img'); const row = pic && pic.parentElement;
     const rect = e => { const r = e.getBoundingClientRect(); return [r.left, r.top, r.right, r.bottom]; };
     const text = row && row.querySelector('.wp-block-uagb-advanced-heading:last-child');
-    const t = tile && rect(tile), x = text && rect(text);
+    const t = img && rect(img), x = text && rect(text);
     const overlap = !!(t && x && t[0] < x[2] && x[0] < t[2] && t[1] < x[3] && x[1] < t[3]);
     const rows = [...document.querySelectorAll('.entry-content .uagb-layout-grid')].map(r => (r.querySelector('h3') || {}).textContent || '').map(s => s.trim());
-    return { links, h3, tile: t && [Math.round(t[2] - t[0]), Math.round(t[3] - t[1])], overlap, rows, descLink: row ? [...row.querySelectorAll('.uagb-desc-text a')].map(a => a.getAttribute('href')) : [], scroll: document.documentElement.scrollWidth - document.documentElement.clientWidth };
+    return { links, h3, pic: t && [Math.round(t[2] - t[0]), Math.round(t[3] - t[1])], loaded: !!(img && img.complete && img.naturalWidth > 0), natural: img ? [img.naturalWidth, img.naturalHeight] : null, alt: img ? img.alt : '', title: img ? img.title : '', overlap, rows, descLink: row ? [...row.querySelectorAll('.uagb-desc-text a')].map(a => a.getAttribute('href')) : [], scroll: document.documentElement.scrollWidth - document.documentElement.clientWidth };
   });
   const rel = l => l.replace(base, '').replace(/^https?:\/\/[^/]+/, '');
   check(`${tag}: four service links in order, the three existing ones unchanged and the new one last`, JSON.stringify(s.links.map(rel)) === JSON.stringify(SERVICE_LINKS), s.links.map(rel).join(' '));
   check(`${tag}: the new row sits before "Your Session"`, s.rows.indexOf('Corporate & Group Massage') >= 0 && s.rows.indexOf('Corporate & Group Massage') + 1 === s.rows.indexOf('Your Session'), s.rows.join(' | '));
-  check(`${tag}: the row has a tile, a description link to the corporate page, and nothing overlaps`, !!s.tile && s.descLink.length === 1 && rel(s.descLink[0]) === SLUG && !s.overlap, `tile ${s.tile}, overlap=${s.overlap}`);
+  check(`${tag}: the row has a description link to the corporate page, and nothing overlaps`, s.descLink.length === 1 && rel(s.descLink[0]) === SLUG && !s.overlap, `overlap=${s.overlap}`);
+  const aspectOk = s.pic && s.natural && Math.abs(s.pic[0] / s.pic[1] - s.natural[0] / s.natural[1]) < 0.02;
+  check(`${tag}: the picture loads, is shown whole (the browser box has the picture's own proportions: nothing cropped) and fits its column`, s.loaded && aspectOk && s.pic[0] <= 360, `${s.pic} of natural ${s.natural}`);
+  check(`${tag}: the picture's description is the approved one and its tooltip equals it`, s.alt === 'Illustration of a massage therapist giving a shoulder massage to a client lying on a massage table, with plants and flowers around them.' && s.title === s.alt, s.title.slice(0, 40));
   check(`${tag}: no side-scroll`, s.scroll <= 0, s.scroll);
   if (width === 1280) {
     await page.locator('h3 a', { hasText: 'Corporate & Group Massage' }).first().click();

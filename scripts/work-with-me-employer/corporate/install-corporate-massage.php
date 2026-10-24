@@ -7,20 +7,21 @@
  * EVERYTHING HERE IS ADDED. No existing page text, block, menu item, setting or CSS rule is edited, reworded or removed. What it writes (WordPress's own storage, so a SiteGround push carries it;
  * no files, no MU-plugin):
  *   1. a NEW page /corporate-massage-portland/ (posts table), with the theme's own title switched off like the other pages (site-post-title = disabled) and SureRank's title and description for it;
- *   2. ONE new row inserted into the Services page content immediately before the "Your Session" row (exact anchor: that row's block id). The text of every existing block is untouched;
+ *   2. ONE new row inserted into the Services page content immediately before the "Your Session" row (exact anchor: that row's block id). The text of every existing block is untouched. Its picture
+ *      (images/corporate-group-massage.webp, supplied by Ryan 2026-10-24; sha256 checked) is imported into the media library first, as a new item, and shown whole (not cropped);
  *   3. ONE new menu item "Corporate Massage" in the Primary Menu, after Services. Placing it there moves the two items after it (For Practices, Contact) one position later (their menu_order +1);
  *      the order the visitor sees for the existing items does not change, and rollback puts the numbers back exactly;
  *   4. a WPCode PHP snippet "CorporateBand": a slim announcement strip under the header on the client-facing pages listed in the snippet (NOT Home, NOT Work With Me, NOT the new page, and not the
  *      unrelated pages on this install);
- *   5. ONE marked block "ts-corp" appended to Additional CSS (the strip, the page, the Services tile).
+ *   5. ONE marked block "ts-corp" appended to Additional CSS (the strip, the page, the Services picture).
  * Source of every string: build-corporate-massage.py -> corporate-massage-content.php (generated; never edit by hand); the CSS block: corporate-massage.css.
  *
  * Allow-list: localhost:8090 and staging37. Live is NOT allowed: it is added only on Ryan's explicit go, after staging37 is reviewed, and he starts the live run himself.
  *
  * Modes (first WP-CLI argument; run with --user=1):  <mode> [FILE]
- *   preflight    read-only: ready = none of the five parts is there; applied = all five are there exactly as written; CHANGED = anything else (stop)
- *   apply        snapshot, create the page, SureRank fields, CSS block, snippet, Services row, menu item; read everything back; put everything back (reverse order) if any read-back differs
- *   rollback     FILE = the before-snapshot: take all five parts out again (the page and snippet this installer created are deleted; the Services content, the CSS and the menu order are restored)
+ *   preflight    read-only: ready = none of the six parts is there; applied = all six are there exactly as written; CHANGED = anything else (stop)
+ *   apply        snapshot, create the page, SureRank fields, CSS block, snippet, import the picture, Services row, menu item; read everything back; put everything back (reverse order) if any read-back differs
+ *   rollback     FILE = the before-snapshot: take all six parts out again (the page, snippet and media item this installer created are deleted; the Services content, the CSS and the menu order are restored)
  * apply and rollback need WWM_BACKUP_DIR (an existing, writable absolute directory outside the web root). (WordPress also keeps its own revision of the Services page.)
  */
 
@@ -59,7 +60,7 @@ foreach ( array( 'slug', 'title', 'nav_label', 'nav_class', 'seo_title', 'seo_de
 	}
 }
 $slug      = (string) $data['slug'];
-$row       = (string) $data['row'];
+$row_tpl   = (string) $data['row'];   // a template: {{IMG_ID}} and {{IMG_URL}} are filled in from the media item
 $anchor    = (string) $data['row_anchor'];
 $band_code = (string) $data['band_code'];
 $start     = '/* ts-corp:start';
@@ -73,13 +74,23 @@ foreach ( array( '@import', 'url(', 'expression', '!important', 'javascript:', '
 		WP_CLI::error( 'corporate-massage.css contains something the review did not cover: ' . $bad );
 	}
 }
-if ( 0 !== substr_count( $row, $anchor ) || 1 !== substr_count( $row, '"block_id":"' . $data['row_id'] . '"' ) ) {
+if ( 0 !== substr_count( $row_tpl, $anchor ) || 1 !== substr_count( $row_tpl, '"block_id":"' . $data['row_id'] . '"' ) || 2 !== substr_count( $row_tpl, '{{IMG_ID}}' ) || 1 !== substr_count( $row_tpl, '{{IMG_URL}}' ) ) {
 	WP_CLI::error( 'Internal error: the Services row is not what was reviewed.' );
 }
+$img      = isset( $data['image'] ) && is_array( $data['image'] ) ? $data['image'] : array();
+$img_path = __DIR__ . '/images/' . ( isset( $img['name'] ) ? basename( (string) $img['name'] ) : '' );
+if ( empty( $img['name'] ) || empty( $img['sha256'] ) || empty( $img['alt'] ) || empty( $img['title'] ) || ! is_file( $img_path ) || hash_file( 'sha256', $img_path ) !== $img['sha256'] ) {
+	WP_CLI::error( 'The picture is missing or is not the reviewed file (images/' . ( $img['name'] ?? '?' ) . ').' );
+}
+/** The Services row for a given media item (the URL is made relative, so a staging-to-live push stays correct). */
+$row_for = function ( $att_id ) use ( $row_tpl ) {
+	$url = wp_make_link_relative( (string) wp_get_attachment_url( (int) $att_id ) );
+	return str_replace( array( '{{IMG_ID}}', '{{IMG_URL}}' ), array( (string) (int) $att_id, $url ), $row_tpl );
+};
 
 // ---- wording checks on everything that becomes visible (the page has no research section, so the whole house list applies) ---------------------------------------
 $visible = array(
-	'page' => $data['page_content'], 'row' => $data['row'], 'faq' => $data['faq_text'], 'band' => $data['band_text'], 'seo' => $data['seo_title'] . ' ' . $data['seo_desc'], 'nav' => $data['nav_label'],
+	'page' => $data['page_content'], 'row' => $data['row'], 'picture alt text' => $img['alt'] . ' ' . $img['title'], 'faq' => $data['faq_text'], 'band' => $data['band_text'], 'seo' => $data['seo_title'] . ' ' . $data['seo_desc'], 'nav' => $data['nav_label'],
 );
 foreach ( $visible as $what => $raw ) {
 	$text = html_entity_decode( wp_strip_all_tags( $raw ), ENT_QUOTES, 'UTF-8' );
@@ -115,7 +126,7 @@ $find_menu = function () {
 };
 
 /** Current state of each of the five parts. */
-$read = function () use ( $slug, $data, $row, $anchor, $block, $band_code, $title_snippet, $find_menu ) {
+$read = function () use ( $slug, $data, $row_tpl, $row_for, $img, $anchor, $block, $band_code, $title_snippet, $find_menu ) {
 	$r = array();
 
 	// 1. the page (and its SureRank fields)
@@ -133,12 +144,28 @@ $read = function () use ( $slug, $data, $row, $anchor, $block, $band_code, $titl
 	}
 	$page_id = ( 1 === count( $pages ) && 'exact' === $r['page'] ) ? (int) $pages[0]->ID : 0;
 
-	// 2. the Services row
+	// 2a. the picture in the media library
+	$atts = get_posts( array( 'post_type' => 'attachment', 'post_status' => 'inherit', 'numberposts' => -1, 'meta_key' => '_ts_corp_src_sha256', 'meta_value' => $img['sha256'], 'suppress_filters' => true ) );
+	$r['atts'] = $atts;
+	$att_id    = 0;
+	if ( 0 === count( $atts ) ) {
+		$r['image'] = 'absent';
+	} elseif ( 1 === count( $atts ) && is_file( (string) get_attached_file( $atts[0]->ID ) ) && hash_file( 'sha256', (string) get_attached_file( $atts[0]->ID ) ) === $img['sha256']
+		&& get_post_meta( $atts[0]->ID, '_wp_attachment_image_alt', true ) === $img['alt'] ) {
+		$r['image'] = 'exact';
+		$att_id     = (int) $atts[0]->ID;
+	} else {
+		$r['image'] = 'CHANGED';
+	}
+
+	// 2b. the Services row
 	$svc = get_page_by_path( 'services' );
 	$c   = $svc ? (string) $svc->post_content : '';
 	$r['services_content'] = $c;
+	$row = $att_id ? $row_for( $att_id ) : null;
+	$r['row_html'] = $row;
 	$n_anchor = substr_count( $c, $anchor );
-	$n_row    = substr_count( $c, $row . $anchor );
+	$n_row    = $row ? substr_count( $c, $row . $anchor ) : 0;
 	$n_id     = substr_count( $c, '"block_id":"' . $data['row_id'] . '"' );
 	if ( 1 === $n_anchor && 0 === $n_id && 0 === substr_count( $c, 'Corporate &amp; Group Massage' ) ) {
 		$r['row'] = 'absent';
@@ -205,15 +232,15 @@ $read = function () use ( $slug, $data, $row, $anchor, $block, $band_code, $titl
 		$r['css_state'] = 'CHANGED';
 	}
 
-	$parts = array( $r['page'], $r['row'], $r['menu'], $r['snippet'], $r['css_state'] );
-	if ( 5 === count( array_filter( $parts, function ( $s ) { return 'absent' === $s; } ) ) ) {
+	$parts = array( $r['page'], $r['image'], $r['row'], $r['menu'], $r['snippet'], $r['css_state'] );
+	if ( 6 === count( array_filter( $parts, function ( $s ) { return 'absent' === $s; } ) ) ) {
 		$r['state'] = 'ready';
-	} elseif ( 5 === count( array_filter( $parts, function ( $s ) { return 'exact' === $s; } ) ) ) {
+	} elseif ( 6 === count( array_filter( $parts, function ( $s ) { return 'exact' === $s; } ) ) ) {
 		$r['state'] = 'applied';
 	} else {
 		$r['state'] = 'CHANGED';
 	}
-	$r['report'] = sprintf( 'page=%s services_row=%s menu_item=%s snippet=%s css_block=%s', $r['page'], $r['row'], $r['menu'], $r['snippet'], $r['css_state'] );
+	$r['report'] = sprintf( 'page=%s picture=%s services_row=%s menu_item=%s snippet=%s css_block=%s', $r['page'], $r['image'], $r['row'], $r['menu'], $r['snippet'], $r['css_state'] );
 	return $r;
 };
 $now    = $read();
@@ -232,7 +259,7 @@ if ( 'preflight' === $mode ) {
 		}
 	}
 	if ( 'CHANGED' === $state ) {
-		WP_CLI::error( 'The five parts are not all absent or all exactly as written (or the Services page, the menu or a slug clash is not as reviewed); stop and review. ' . $report );
+		WP_CLI::error( 'The six parts are not all absent or all exactly as written (or the Services page, the menu or a slug clash is not as reviewed); stop and review. ' . $report );
 	}
 	WP_CLI::success( 'Preflight passed; nothing changed. ' . $report );
 	return;
@@ -280,7 +307,7 @@ if ( 'apply' === $mode ) {
 	$snap = array(
 		'created' => gmdate( 'c' ), 'home' => $home, 'services_id' => $svc_id, 'services_sha256' => hash( 'sha256', $old_services ), 'services_content' => $old_services,
 		'css_sha256' => hash( 'sha256', $old_css ), 'css' => $old_css, 'menu_id' => $menu_id, 'menu_orders' => $old_orders, 'services_menu_order' => $svc_order,
-		'page_id' => null, 'snippet_id' => null, 'menu_item_id' => null,
+		'page_id' => null, 'snippet_id' => null, 'menu_item_id' => null, 'attachment_id' => null,
 	);
 	$ok = false !== file_put_contents( $file, wp_json_encode( $snap ) );
 	if ( ! $ok || filesize( $file ) < 1000 ) {
@@ -303,6 +330,9 @@ if ( 'apply' === $mode ) {
 		}
 		if ( (string) get_post_field( 'post_content', $svc_id ) !== $old_services ) {
 			$set_content( $svc_id, $old_services );
+		}
+		if ( ! empty( $snap['attachment_id'] ) ) {
+			wp_delete_attachment( (int) $snap['attachment_id'], true );   // after the Services content is back: nothing refers to it any more
 		}
 		if ( ! empty( $snap['snippet_id'] ) ) {
 			wp_delete_post( (int) $snap['snippet_id'], true );
@@ -359,7 +389,23 @@ if ( 'apply' === $mode ) {
 	}
 	$refresh();
 
-	// 4. the Services row (one exact insertion in front of the "Your Session" row)
+	// 4. the picture (imported into the media library; its sha256 is kept on the item so a repeat run finds it; the Services row below points at it)
+	$tmp = wp_tempnam( $img['name'] );
+	if ( ! copy( $img_path, $tmp ) ) {
+		$fail( 'Could not stage the picture.' );
+	}
+	$att = media_handle_sideload( array( 'name' => $img['name'], 'tmp_name' => $tmp ), 0, $img['title'] );
+	if ( is_wp_error( $att ) ) {
+		@unlink( $tmp );
+		$fail( 'Import of the picture failed: ' . $att->get_error_message() . '.' );
+	}
+	$snap['attachment_id'] = (int) $att;
+	$save_snap();
+	update_post_meta( $att, '_ts_corp_src_sha256', $img['sha256'] );
+	update_post_meta( $att, '_wp_attachment_image_alt', $img['alt'] );
+	$row = $row_for( $att );
+
+	// 5. the Services row (one exact insertion in front of the "Your Session" row)
 	$new_services = str_replace( $anchor, $row . $anchor, $old_services, $count );
 	if ( 1 !== $count || $new_services === $old_services ) {
 		$fail( 'The Services anchor was not found exactly once.' );
@@ -369,7 +415,7 @@ if ( 'apply' === $mode ) {
 		$fail( 'The Services page did not save exactly as written.' );
 	}
 
-	// 5. the menu item (move the later items one place along, then add this one after Services)
+	// 6. the menu item (move the later items one place along, then add this one after Services)
 	foreach ( $now['items'] as $it ) {
 		if ( (int) $it->menu_order > $svc_order ) {
 			wp_update_post( array( 'ID' => (int) $it->ID, 'menu_order' => (int) $it->menu_order + 1 ) );
@@ -391,23 +437,24 @@ if ( 'apply' === $mode ) {
 	if ( 'applied' !== $after['state'] ) {
 		$fail( 'Read-back differed from what was written (' . $after['report'] . ').' );
 	}
-	WP_CLI::success( 'Added page #' . $page_id . ' (/' . $slug . '/), the Services row, menu item #' . $item_id . ', snippet #' . $sid . ' "' . $title_snippet . '" and the ts-corp CSS block. Before-snapshot: ' . $file );
+	WP_CLI::success( 'Added page #' . $page_id . ' (/' . $slug . '/), picture #' . $att . ', the Services row, menu item #' . $item_id . ', snippet #' . $sid . ' "' . $title_snippet . '" and the ts-corp CSS block. Before-snapshot: ' . $file );
 	return;
 }
 
 // ---- rollback FILE ---------------------------------------------------------------------------------------------------------
 $file = isset( $args[1] ) ? (string) $args[1] : '';
 $snap = $file && is_file( $file ) ? json_decode( (string) file_get_contents( $file ), true ) : null;
-if ( ! is_array( $snap ) || ( $snap['home'] ?? '' ) !== $home || empty( $snap['page_id'] ) || empty( $snap['snippet_id'] ) || empty( $snap['menu_item_id' ] ) || empty( $snap['css'] ) || ! isset( $snap['services_content'] )
+if ( ! is_array( $snap ) || ( $snap['home'] ?? '' ) !== $home || empty( $snap['page_id'] ) || empty( $snap['snippet_id'] ) || empty( $snap['menu_item_id' ] ) || empty( $snap['attachment_id'] ) || empty( $snap['css'] ) || ! isset( $snap['services_content'] )
 	|| hash( 'sha256', (string) $snap['css'] ) !== ( $snap['css_sha256'] ?? '' ) || hash( 'sha256', (string) $snap['services_content'] ) !== ( $snap['services_sha256'] ?? '' ) ) {
 	WP_CLI::error( 'Snapshot is missing, incomplete (the apply may not have finished), damaged, or from another site.' );
 }
-if ( 'applied' !== $state || (int) $now['pages'][0]->ID !== (int) $snap['page_id'] || (int) $now['found'][0]->ID !== (int) $snap['snippet_id'] || (int) $now['marked'][0]->ID !== (int) $snap['menu_item_id'] ) {
+if ( 'applied' !== $state || (int) $now['pages'][0]->ID !== (int) $snap['page_id'] || (int) $now['found'][0]->ID !== (int) $snap['snippet_id'] || (int) $now['marked'][0]->ID !== (int) $snap['menu_item_id'] || (int) $now['atts'][0]->ID !== (int) $snap['attachment_id'] ) {
 	WP_CLI::success( 'Nothing to roll back: what this installer wrote is not there in its original form. ' . $report );
 	return;
 }
 // Services: take only the row out (so edits made elsewhere on the page since the apply survive); it is byte-identical to the snapshot if nothing else changed.
 $cur_services = (string) $now['services_content'];
+$row          = (string) $now['row_html'];
 $restored_svc = ( $cur_services === str_replace( $anchor, $row . $anchor, (string) $snap['services_content'] ) ) ? (string) $snap['services_content'] : str_replace( $row . $anchor, $anchor, $cur_services );
 // CSS: exact old CSS, or just the block out if other edits were made since.
 $old_css      = (string) $snap['css'];
@@ -420,6 +467,7 @@ foreach ( (array) $snap['menu_orders'] as $item_id => $order ) {
 	}
 }
 $set_content( (int) $snap['services_id'], $restored_svc );
+wp_delete_attachment( (int) $snap['attachment_id'], true );   // after the Services content is back: nothing refers to it any more
 wp_delete_post( (int) $snap['snippet_id'], true );
 wp_update_custom_css_post( $restored_css, array( 'stylesheet' => 'astra' ) );
 wp_delete_post( (int) $snap['page_id'], true );
@@ -430,6 +478,6 @@ if ( 'ready' !== $check['state'] ) {
 }
 $same_svc = hash( 'sha256', (string) $check['services_content'] ) === $snap['services_sha256'];
 $same_css = hash( 'sha256', (string) $check['css'] ) === $snap['css_sha256'];
-WP_CLI::success( 'Rollback done: the page, snippet and menu item are deleted, the menu order is back, the Services row and the ts-corp block are out (Services content ' . ( $same_svc ? 'byte-identical to the snapshot' : 'differs from the snapshot: it was edited after the apply, and those edits were kept' ) . '; Additional CSS ' . ( $same_css ? 'byte-identical' : 'differs: edited after the apply, and those edits were kept' ) . ').' );
+WP_CLI::success( 'Rollback done: the page, snippet, menu item and picture are deleted, the menu order is back, the Services row and the ts-corp block are out (Services content ' . ( $same_svc ? 'byte-identical to the snapshot' : 'differs from the snapshot: it was edited after the apply, and those edits were kept' ) . '; Additional CSS ' . ( $same_css ? 'byte-identical' : 'differs: edited after the apply, and those edits were kept' ) . ').' );
 
 // ref: ./build-corporate-massage.py, ./corporate-massage.css — the reviewed sources; ../theme/install-theme-toggle.php — the snippet + CSS-block pattern; ../deep-tissue/install-deep-tissue-copy.php — the exact-replacement pattern

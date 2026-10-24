@@ -1,4 +1,4 @@
-/* ts-corp:start (2026-10-24, corporate and group massage: announcement strip, the page, the Services tile) */
+/* ts-corp:start (2026-10-24, corporate and group massage: announcement strip, the page, the Services picture) */
 /* Uses only the site's own tokens (--ts-*), which the dark palette already overrides: no colours of its own, no image or font loads, no forced overrides. */
 
 /* 1. Announcement strip under the header (WPCode snippet "CorporateBand") */
@@ -258,55 +258,34 @@
   outline-offset: 3px;
 }
 
-/* 3. The Corporate & Group Massage row on the Services page: a text tile where the other rows show a picture.
-   (Spectra gives every block inside its containers width:100%, so the size is capped with max-width and the tile is centred in its column.) */
-.ts-corp-tile {
-  box-sizing: border-box;
+/* 3. The picture in the Corporate & Group Massage row on the Services page. It is shown whole (the other rows crop theirs to a square), centred in its column like the others.
+   (Spectra gives every block inside its containers width:100%, so the size is capped with max-width.) */
+.ts-corp-pic {
   max-width: 200px;
-  height: 200px;
-  justify-self: center;
   margin: 0 auto;
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  background: var(--ts-stone);
-  border: 1px solid var(--ts-rule);
+  justify-self: center;
+}
+.ts-corp-pic img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 512 / 416;
   border-radius: 20px;
-}
-.ts-corp-tile p {
-  margin: 0;
-}
-.ts-corp-tile .ts-corp-tile__eyebrow {
-  margin-bottom: 0.5rem;
-  font-family: var(--ts-sans);
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  line-height: 1.4;
-  text-transform: uppercase;
-  color: var(--ts-accent-deep);
-}
-.ts-corp-tile .ts-corp-tile__title {
-  font-family: var(--ts-serif);
-  font-size: 1.6rem;
-  line-height: 1.15;
-  color: var(--ts-ink);
+  box-shadow: 2px 5px 5px -1px rgba(21, 28, 38, 0.25);
 }
 @media (max-width: 976px) {
-  .ts-corp-tile {
+  .ts-corp-pic {
     max-width: 282px;
-    height: 194px;
+  }
+  .ts-corp-pic img {
     border-radius: 16px;
   }
 }
 @media (max-width: 767px) {
-  .ts-corp-tile {
-    max-width: none;
-    height: auto;
-    min-height: 120px;
+  .ts-corp-pic {
+    max-width: 360px;
+  }
+  .ts-corp-pic img {
     border-radius: 14px;
   }
 }

@@ -10,15 +10,16 @@ SOURCE OF THE REQUEST (Ryan, 2026-10-24): the three briefs docs/inter-model/00_R
 So EVERYTHING HERE IS ADDED; nothing already on the site is edited, removed or reworded. What is added (install-corporate-massage.php does all of it as one guarded change):
   1. A new page, /corporate-massage-portland/ (slug), "Corporate & Group Massage in Portland": hero, three at-a-glance cards, chair massage, table massage, booking blocks and rate, what I plan with the host,
      how it works, about Butsaba, a Spectra FAQ accordion (7 questions, link-free answers) and a closing quote panel. Core blocks + the site's own colour tokens; no picture (see below).
-  2. A fourth row on the Services page, after Thai Massage and before "Your Session": the same row layout, a text tile instead of a picture, a heading link and a short description that link to the new page.
-     Inserted by exact anchor (the block id of the "Your Session" row); no existing block is touched.
+  2. A fourth row on the Services page, after Thai Massage and before "Your Session": the same row layout, Ryan's picture (corporate-group-massage.webp, imported into the media library with its sha256 checked), a heading
+     link and a short description that link to the new page. Inserted by exact anchor (the block id of the "Your Session" row); no existing block is touched.
   3. One menu item "Corporate Massage" in the Primary Menu (header, phone menu and footer share that menu), placed after Services.
   4. A WPCode snippet "CorporateBand" that prints a slim announcement strip under the header on the client-facing pages listed in BAND_PAGES (NOT Home, NOT Work With Me, NOT the new page itself, and not the
-     unrelated pages on this install), and one marked block "ts-corp" in Additional CSS (the strip, the page and the Services tile).
+     unrelated pages on this install), and one marked block "ts-corp" in Additional CSS (the strip, the page and the Services picture).
   5. SureRank's title and meta description for the new page only.
 The quote path is a mailto: link with a prefilled subject and body (the Contact page uses the same pattern for LMT inquiries): the site has no form backend and its privacy policy says it has no forms.
 
-NO PICTURE: every illustration on the site shows a person on a massage table in a room; used for this offer they would suggest individual table sessions and a treatment room, which the briefs rule out.
+NO PICTURE ON THE CORPORATE PAGE ITSELF: every illustration on the site shows a person on a massage table in a room; the briefs ask for no image that suggests individual table sessions or a treatment room. The one picture used
+for this offer is the Services-page row's, which Ryan supplied on 2026-10-24 ("put the image ... next to the link on the services page"): an illustration of a therapist and a client on a table, shown whole (not cropped).
 Nothing here invents facts: no travel, setup, minimum, deposit, cancellation, insurance, equipment or five-hour capacity statement; the rate is shown as "proposed" with "a written quote confirms".
 
 WORDING RULES (AGENTS.md): first person ("I"), never we/our/us; none of the OBMT house-list words (the whole list applies: this page has no research section); no claim verbs. The installer re-checks every string.
@@ -52,6 +53,10 @@ def heading(block_id, text):
 SLUG = 'corporate-massage-portland'
 PAGE_TITLE = 'Corporate & Group Massage in Portland'
 NAV_LABEL = 'Corporate Massage'
+IMG_NAME = 'corporate-group-massage.webp'
+IMG_SHA256 = '764a7ef428cbd2985156b584116f8bc196dd5c3a900e2426ff4f49f8582a747e'
+IMG_TITLE = 'Corporate and group massage illustration'
+IMG_ALT = 'Illustration of a massage therapist giving a shoulder massage to a client lying on a massage table, with plants and flowers around them.'
 NAV_CLASS = 'ts-corp-nav'             # on the menu item, so the CSS can keep it out of a header or footer row it would not fit in
 EMAIL = 'butsabad@gmail.com'          # the address the Contact page and the footer already publish
 CTA_LABEL = 'Request a Corporate Massage Quote'
@@ -238,7 +243,7 @@ def build_page():
     return '<!-- wp:group {"className":"ts-corp"} -->\n<div class="wp-block-group ts-corp">%s</div>\n<!-- /wp:group -->\n' % '\n\n'.join(parts)
 
 
-# ---- the Services page row (same grid as the Thai Massage row; a text tile instead of a picture; relative links so a staging-to-live push stays correct) -----------------
+# ---- the Services page row (same grid as the Thai Massage row; Ryan's picture; relative links so a staging-to-live push stays correct) -----------------
 ROW_CONTAINER_ATTRS = ('{"block_id":"%s","bottomPaddingDesktop":40,"topPaddingTablet":0,"bottomPaddingTablet":40,"leftPaddingTablet":0,"rightPaddingTablet":0,"topPaddingMobile":0,"bottomPaddingMobile":30,'
                        '"leftPaddingMobile":0,"rightPaddingMobile":0,"paddingLink":false,"rowGapMobile":12,"columnGapDesktop":32,"columnGapTablet":20,"containerBorderTopWidth":0,"containerBorderLeftWidth":0,'
                        '"containerBorderRightWidth":0,"containerBorderBottomWidth":1,"containerBorderLink":false,"containerBorderStyle":"solid","containerBorderColor":"var(--ast-global-color-6)","layout":"grid",'
@@ -256,13 +261,15 @@ ROW_DESC = ('On-site chair massage for employee appreciation days and workplace 
 
 
 def build_row():
-    tile = group('ts-corp-tile', [p('Groups &amp; events', 'ts-corp-tile__eyebrow'), p('On-site chair massage', 'ts-corp-tile__title')])
+    """The row as a template: {{IMG_ID}} and {{IMG_URL}} are filled in by the installer once the picture is in the media library (the URL is made relative, so a staging-to-live push stays correct)."""
+    pic = ('<!-- wp:image {"id":{{IMG_ID}},"sizeSlug":"full","linkDestination":"none","className":"ts-corp-pic"} -->\n'
+           '<figure class="wp-block-image size-full ts-corp-pic"><img src="{{IMG_URL}}" alt="%s" title="%s" class="wp-image-{{IMG_ID}}"/></figure>\n<!-- /wp:image -->') % (esc(IMG_ALT), esc(IMG_ALT))   # tooltip = alt text, the site's convention (SureRank would otherwise add the page title)
     return ('<!-- wp:uagb/container %s -->\n'
             '<div class="wp-block-uagb-container uagb-layout-grid uagb-block-%s">%s\n\n'
             '<!-- wp:uagb/advanced-heading %s -->\n<div class="wp-block-uagb-advanced-heading uagb-block-%s"></div>\n<!-- /wp:uagb/advanced-heading -->\n\n'
             '<!-- wp:uagb/advanced-heading %s -->\n<div class="wp-block-uagb-advanced-heading uagb-block-%s"><h3 class="uagb-heading-text"><a href="/%s/">Corporate &amp; Group Massage</a></h3>'
             '<p class="uagb-desc-text">%s</p></div>\n<!-- /wp:uagb/advanced-heading --></div>\n<!-- /wp:uagb/container -->\n\n') % (
-        ROW_CONTAINER_ATTRS % ID_ROW, ID_ROW, tile, ROW_SPACER_ATTRS % ID_ROW_SPACER, ID_ROW_SPACER, ROW_TEXT_ATTRS % ID_ROW_TEXT, ID_ROW_TEXT, SLUG, ROW_DESC)
+        ROW_CONTAINER_ATTRS % ID_ROW, ID_ROW, pic, ROW_SPACER_ATTRS % ID_ROW_SPACER, ID_ROW_SPACER, ROW_TEXT_ATTRS % ID_ROW_TEXT, ID_ROW_TEXT, SLUG, ROW_DESC)
 
 
 # ---- the announcement band (WPCode PHP snippet, runs on astra_header_after) ---------------------------------------------------------------------------
@@ -298,6 +305,7 @@ def build():
         'ids': [ID_FAQ_HEAD, ID_FAQ] + ID_FAQ_CHILD + [ID_ROW, ID_ROW_SPACER, ID_ROW_TEXT],
         'page_content': page,
         'row': row, 'row_anchor': ROW_ANCHOR, 'row_id': ID_ROW,
+        'image': {'name': IMG_NAME, 'sha256': IMG_SHA256, 'title': IMG_TITLE, 'alt': IMG_ALT},
         'band_code': code, 'band_pages': BAND_PAGES,
         'faq_text': ' '.join(q + ' ' + a for q, a in FAQ),     # the FAQ lives in block attributes, which a tag-stripper cannot see; the installer's wording check reads this copy
         'band_text': ' '.join([BAND_LABEL, BAND_HEAD, BAND_TEXT, BAND_LINK]),

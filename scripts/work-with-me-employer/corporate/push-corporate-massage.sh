@@ -38,7 +38,7 @@ ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o 
 
 echo "[1] Connecting and uploading the package to ~/wwm-package-corporate-massage (outside every web root) ..."
 "${ssh_cmd[@]}" true 2>/dev/null || { echo "SSH login refused; check the ssh-agent holds the right key." >&2; exit 2; }
-tar -C "$here" -cf - install-corporate-massage.php corporate-massage-content.php corporate-massage.css \
+tar -C "$here" -cf - install-corporate-massage.php corporate-massage-content.php corporate-massage.css images/corporate-group-massage.webp \
   | "${ssh_cmd[@]}" 'rm -rf "$HOME/wwm-package-corporate-massage" && mkdir -p "$HOME/wwm-package-corporate-massage" && tar -xf - -C "$HOME/wwm-package-corporate-massage"'
 
 read -r -d '' REMOTE <<'EOS' || true
@@ -95,7 +95,10 @@ case "$phase" in
       need "$pg" 'class="ts-corp-band__link" href="https://'"$want"'/corporate-massage-portland/">Explore Corporate Massage</a>' 1
     done
     need services 'href="/corporate-massage-portland/">Corporate &amp; Group Massage</a>' 1
-    need services 'ts-corp-tile__title wp-block-paragraph">On-site chair massage</p>' 1
+    need services 'class="wp-block-image size-full ts-corp-pic"' 1
+    pic=$(grep -o 'src="/wp-content/uploads/[^"]*corporate-group-massage[^"]*"' "$tmp/services.html" | head -1 | sed 's/^src="//; s/"$//')
+    picinfo=$(curl -s -o /dev/null -w '%{http_code} %{content_type}' --max-time 30 "https://$want$pic" || true); echo "  $picinfo $pic (the picture)"
+    [ "$picinfo" = "200 image/webp" ] || { echo "CHECK FAILED: the picture does not answer 200 image/webp ($picinfo); use --rollback if it persists." >&2; return 1; }
     for existing in thai-massage therapeutic-massage deep-tissue-massage; do atleast services "href=\"https://$want/$existing/\"" 1; done
     fetch home /
     need home "$band" 0
@@ -108,7 +111,7 @@ case "$phase" in
         [ "$code" != 200 ] || need "x-$extra" "$band" 0
       fi
     done
-    echo "public check: the page, the Services row and tile, the menu link (header, phone menu, footer), the strip on the 8 client pages, and no strip on Home, Work With Me, the new page itself or the unrelated pages" ;;
+    echo "public check: the page, the Services row and its picture, the menu link (header, phone menu, footer), the strip on the 8 client pages, and no strip on Home, Work With Me, the new page itself or the unrelated pages" ;;
   rollback) snap=${snap/#\$HOME/$HOME}; run rollback "$snap"; purge ;;
   *) echo "unknown phase" >&2; exit 1 ;;
 esac

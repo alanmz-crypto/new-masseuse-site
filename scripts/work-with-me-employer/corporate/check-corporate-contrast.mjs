@@ -1,5 +1,5 @@
 // Contrast of every text element the Corporate & Group Massage change adds, in the LIGHT and the DARK version, at 1280 and 390 px (read-only; public requests only):
-//   the whole new page (.ts-corp, with the first FAQ answer open), the announcement strip (.ts-corp-band, on /about/), the Services tile and its description (the new row), and the new menu item.
+//   the whole new page (.ts-corp, with the first FAQ answer open), the announcement strip (.ts-corp-band, on /about/), the Services picture's row (its title link and description), and the new menu item.
 // WCAG 2.x ratio of the computed text colour against the effective background (alpha layers composited down the ancestors). An element on a gradient or an image background is listed as
 // "not measurable" (never counted as a pass). AA needs 4.5:1, or 3:1 for large text (24 px, or 18.66 px bold). Method copied from accessibility/check-research-contrast.mjs.
 // Usage: node check-corporate-contrast.mjs <base-url> [firefox]      Exit 1 if any measured element is below AA or too little was measured. Exit 2 = SiteGround's bot challenge (INVALID).
@@ -10,7 +10,7 @@ const base = (process.argv[2] || 'http://localhost:8090').replace(/\/$/, '');
 const useFirefox = process.env.BROWSER === 'firefox' || process.argv[3] === 'firefox';
 const engine = useFirefox ? pw.firefox : pw.chromium;
 const browser = await engine.launch(useFirefox ? {} : { executablePath: '/usr/bin/chromium', args: ['--no-sandbox'] });
-const TARGETS = [['/corporate-massage-portland/', '.ts-corp', 60], ['/about/', '.ts-corp-band', 4], ['/services/', '.ts-corp-tile', 2], ['/services/', '.ts-corp-tile', 0]];
+const TARGETS = [['/corporate-massage-portland/', '.ts-corp', 60], ['/about/', '.ts-corp-band', 4], ['/services/', '.ts-corp-pic', 2]];
 let fails = 0;
 const check = (name, ok, detail = '') => { console.log((ok ? 'PASS ' : 'FAIL ') + name + (detail !== '' ? '  [' + detail + ']' : '')); if (!ok) fails++; };
 for (const theme of ['light', 'dark']) {
@@ -29,7 +29,7 @@ for (const theme of ['light', 'dark']) {
         const lum = (c) => { const f = (x) => { x /= 255; return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4); }; return 0.2126 * f(c.r) + 0.7152 * f(c.g) + 0.0722 * f(c.b); };
         const roots = [...document.querySelectorAll(sel)];
         // on Services also the new row's description and on every page the new menu item
-        const extra = sel === '.ts-corp-tile' ? [...document.querySelectorAll('.ts-corp-tile')].map(t => t.parentElement) : [];
+        const extra = sel === '.ts-corp-pic' ? [...document.querySelectorAll('.ts-corp-pic')].map(t => t.parentElement) : [];
         const menu = [...document.querySelectorAll('.menu-item.ts-corp-nav')];
         const all = new Set(); [...roots, ...extra, ...menu].forEach(root => { all.add(root); root.querySelectorAll('*').forEach(e => all.add(e)); });
         const rows = []; let skipped = 0;
