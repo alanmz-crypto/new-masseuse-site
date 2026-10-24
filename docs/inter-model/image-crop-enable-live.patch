@@ -1,0 +1,52 @@
+--- a/scripts/work-with-me-employer/thai/install-image-crop.php
++++ b/scripts/work-with-me-employer/thai/install-image-crop.php
+@@ -12,7 +12,8 @@
+  * Why Additional CSS: styles must live in WordPress's own storage so a SiteGround push carries them (no MU-plugin; see AGENTS.md). The block is delimited by marker comments and appended at the end.
+  * The guard: the known site CSS is present, the Thai page holds all three image blocks, and the block is the reviewed single marked block with no url(), @import or !important.
+  *
+- * Allow-list: localhost:8090 and staging34. Live is added only after Ryan's explicit go (an agent adding a live host is refused by the auto-mode classifier: hand him a tested patch).
++ * Allow-list: localhost:8090, staging34 and live. Live was added by Ryan's go (2026-10-19) after the block was applied, checked and rollback-proven on localhost and staging34;
++ * he applies it himself (the auto-mode classifier refuses an agent adding a live host).
+  *
+  * Modes (first WP-CLI argument; run with --user=1):  <mode> [FILE]
+  *   preflight    read-only: ready = the block is absent; applied = the block is there exactly once, exactly as reviewed; CHANGED = anything else (stop)
+@@ -27,8 +28,8 @@
+ 
+ $home = untrailingslashit( home_url() );
+ $host = (string) wp_parse_url( $home, PHP_URL_HOST ) . ( wp_parse_url( $home, PHP_URL_PORT ) ? ':' . wp_parse_url( $home, PHP_URL_PORT ) : '' );
+-if ( ! in_array( $host, array( 'localhost:8090', 'staging34.thaisolitude.com' ), true ) ) {
+-	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090 or staging34 only).' );
++if ( ! in_array( $host, array( 'localhost:8090', 'staging34.thaisolitude.com', 'thaisolitude.com' ), true ) ) {
++	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090, staging34 or live only).' );
+ }
+ if ( 'astra' !== get_stylesheet() ) {
+ 	WP_CLI::error( 'Active theme is not Astra.' );
+--- a/scripts/work-with-me-employer/thai/push-image-crop.sh
++++ b/scripts/work-with-me-employer/thai/push-image-crop.sh
+@@ -1,6 +1,6 @@
+ #!/usr/bin/env bash
+-# Thai Massage page: let the three illustrations show in their own proportions (Additional CSS block ts-thai-image-crop), on staging34 (S_TARGET=staging34; default). Live is NOT enabled: it needs
+-# Ryan's explicit go, and the live host is added to install-image-crop.php only then (the auto-mode classifier refuses an agent adding a live host: hand him a tested patch).
++# Thai Massage page: let the three illustrations show in their own proportions (Additional CSS block ts-thai-image-crop), on staging34 or live (S_TARGET=staging34|live; default staging34). Live was enabled
++# by Ryan's go (2026-10-19); the live host was added to install-image-crop.php by Ryan (the auto-mode classifier refuses an agent adding a live host); he runs the live --apply himself.
+ # Ryan, 2026-10-19: "the pictures need to be cropped closer to their original square shape".
+ #
+ #   ./push-image-crop.sh                    dry run: connect, locate the site, upload the package, preflight (read-only on the site)
+@@ -31,7 +31,7 @@
+   *) echo "Usage: $0 [--apply | --rollback FILE]" >&2; exit 1 ;;
+ esac
+ target="${S_TARGET:-staging34}"
+-case "$target" in staging34) ;; *) echo "S_TARGET must be staging34 (live is not enabled for this change)." >&2; exit 1 ;; esac
++case "$target" in staging34|live) ;; *) echo "S_TARGET must be staging34 or live." >&2; exit 1 ;; esac
+ echo "Target site: $target   mode: $mode"
+ ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 "$user@$host")
+ 
+@@ -44,7 +44,7 @@
+ set -euo pipefail
+ wp() { command wp --skip-plugins=sg-security "$@"; }   # SiteGround Security 1.6.9 + PHP 8.5 makes EVERY wp exit 0 on live (shutdown-handler bug); skipping that one plugin keeps exit codes true. See AGENTS.md and check-wp-exit-codes.sh.
+ phase=$1; target=$2; snap=${3:-}
+-case "$target" in staging34) want="staging34.thaisolitude.com" ;; *) echo "Remote refused: target must be staging34, got '$target'." >&2; exit 1 ;; esac
++case "$target" in staging34) want="staging34.thaisolitude.com" ;; live) want="thaisolitude.com" ;; *) echo "Remote refused: target must be staging34 or live, got '$target'." >&2; exit 1 ;; esac
+ command -v wp >/dev/null || { echo "wp-cli not found on the server" >&2; exit 1; }
+ doc=""
+ cfgs=$(mktemp); trap 'rm -f "$cfgs"' EXIT

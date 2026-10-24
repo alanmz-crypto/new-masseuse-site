@@ -1,0 +1,34 @@
+--- a/scripts/work-with-me-employer/services-meta/install-service-meta.php
++++ b/scripts/work-with-me-employer/services-meta/install-service-meta.php
+@@ -20,7 +20,8 @@
+  * Rollback is exact: the snapshot holds every SureRank row both pages had (raw stored values); rollback puts exactly those back and removes any row the apply added.
+  * The new wording is checked against the site's whole banned-word list (no research exemption applies to meta fields), the claim verbs and we/our/us, and the length limits.
+  *
+- * Allow-list: localhost:8090 and staging34. Live is added only after Ryan's explicit go (an agent adding a live host is refused by the auto-mode classifier: hand him a tested patch).
++ * Allow-list: localhost:8090, staging34 and live. Live was added by Ryan's go ("go live", 2026-10-19) after the change was applied, checked and rollback-proven on localhost and staging34;
++ * he applies it himself (the auto-mode classifier refuses an agent adding a live host).
+  *
+  * Modes (first WP-CLI argument; run with --user=1):  <mode> [FILE]
+  *   preflight    read-only: ready / applied / CHANGED (stop)
+@@ -35,8 +36,8 @@
+ 
+ $home = untrailingslashit( home_url() );
+ $host = (string) wp_parse_url( $home, PHP_URL_HOST ) . ( wp_parse_url( $home, PHP_URL_PORT ) ? ':' . wp_parse_url( $home, PHP_URL_PORT ) : '' );
+-if ( ! in_array( $host, array( 'localhost:8090', 'staging34.thaisolitude.com' ), true ) ) {
+-	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090 or staging34 only).' );
++if ( ! in_array( $host, array( 'localhost:8090', 'staging34.thaisolitude.com', 'thaisolitude.com' ), true ) ) {
++	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090, staging34 or live only).' );
+ }
+ if ( 'astra' !== get_stylesheet() ) {
+ 	WP_CLI::error( 'Active theme is not Astra.' );
+--- a/scripts/work-with-me-employer/services-meta/push-service-meta.sh
++++ b/scripts/work-with-me-employer/services-meta/push-service-meta.sh
+@@ -1,6 +1,6 @@
+ #!/usr/bin/env bash
+-# Therapeutic Massage and Deep Tissue Massage pages: SEO title and meta description, on staging34 (S_TARGET=staging34; default). Live is NOT enabled: it needs Ryan's explicit go, and the live host is
+-# added to install-service-meta.php only then (the auto-mode classifier refuses an agent adding a live host: hand him a tested patch).
++# Therapeutic Massage and Deep Tissue Massage pages: SEO title and meta description, on staging34 or live (S_TARGET=staging34|live; default staging34). Live was enabled by Ryan's go ("go live", 2026-10-19);
++# the live host was added to install-service-meta.php by Ryan (the auto-mode classifier refuses an agent adding a live host); he runs the live --apply himself.
+ # Ryan, 2026-10-19: "finish one and two then go to three" (three = the meta descriptions on Therapeutic and Deep Tissue, the same fix he approved for the Thai page).
+ #
+ #   ./push-service-meta.sh                    dry run: connect, locate the site, upload the package, preflight (read-only on the site)

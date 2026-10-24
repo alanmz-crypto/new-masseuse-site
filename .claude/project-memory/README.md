@@ -1,0 +1,36 @@
+# Project memory (snapshot for cloud sessions)
+
+A copy of the notes Claude keeps on Ryan's computer for this project, taken 2026-10-24 with the SSH username, the login email,
+Butsaba's Gmail address and Ryan's home IP masked. The computer's copy is the original. A cloud session reads the entries that
+matter for its task, and when it learns something durable (a decision of Ryan's, a hard-won rule) it adds or updates an entry
+here in the same style and commits it, so the next session and the computer can pick it up. Index:
+
+- [Ryan browses with Dark Reader](ryan-browses-with-dark-reader.md) — Chrome + Dark Reader on all sites + KDE dark; "dark mode" bugs are usually Dark Reader
+- [Dark Reader white-flash causes](darkreader-white-flash-causes.md) — !important light colors and @import in inline CSS; fix pattern + test harness location
+- [No MU-plugins rule](no-mu-plugins-rule.md) — design must live in Additional CSS/options/page content so a SiteGround push carries it; whole site, rehearse on localhost first
+- [Target content may be newer](target-content-may-be-newer.md) — compare text before apply; use CSS-only installer for design fixes; never overwrite edits
+- [Keep Butsaba's values statements](keep-butsaba-values-statements.md) — don't recast her first-person commitment/values copy as reader tips; About restore 2026-10-13
+- [SureRank per-page SEO storage](surerank-per-page-meta-storage.md) — grouped general/social meta; flat keys are ignored; use update_post_meta_common
+- [Work With Me employer update (local)](work-with-me-employer-update-local.md) — 2026-10-15 localhost rewrite state, held-back decisions, rollback path
+- [Thai Solitude SSH access](thaisolitude-ssh-access.md) — passphrase key needs Ryan's ssh-agent socket; plain username; staging path + sg purge; guard on home URL
+- [Sleep-story voice direction](sleep-story-voice-direction.md) — 2026-10-15 polished placeholder lives only in chat; settled voice rules; needs Butsaba's own account
+- [/tmp inode exhaustion](tmp-inode-exhaustion.md) — /tmp tmpfs capped at 1,048,576 inodes; other arcs' dirs fill it and kill Bash with ENOSPC; keep restores/scratch on /home
+- [staging31 backend audit](staging31-backend-audit.md) — 2026-10-16/17 full record: backups secured, PHP 8.5.11 on live+local, CSP on live+staging31, posture/edge/exit-code canary tools, plugin verdicts (keep SureRank + SG Security + SG Optimizer; Site Kit/Starter Templates inactive on live; Autoptimize/Migrator deleted), ALL PRs #9-#13 MERGED. OPEN: public tests blocked by SG 202 challenge (retry ONE request tomorrow), WPvivid review, credentials rotation + 2FA (SG manual backup first), (312) number, June form entry, SG backup-list glance, Track A index once convmem doctor passes
+- [Stop before hard-to-reverse changes](stop-before-hard-to-reverse-changes.md) — Ryan's rule: warn and stop before the point of no return (deletes, live writes, main, un-snapshotted changes); otherwise continue without re-asking
+- [SiteGround bot challenge](siteground-bot-challenge.md) — 202 + sg-captcha after bursts of test traffic from this IP; treat as INVALID, ration requests, wait it out
+- [Allow bots, block malicious](allow-bots-block-malicious.md) — Ryan welcomes crawlers/AI bots; harden against malicious behavior only, no blanket bot-blocking
+- [Plugin checks: do the hidden-code work](plugin-checks-behind-the-scenes.md) — when Ryan names a plugin, I check dependencies/running/data/what it does and give a plain verdict (six-question method)
+- [PageSpeed vs local Lighthouse](pagespeed-vs-local-lighthouse.md) — Google mobile stays ~77-79: late paint on its machine + 309 KB fonts charged to FCP; local 99 does not predict it
+- [Privacy policy page](privacy-policy-page.md) — v3 (accordion, Google Map wording corrected) LIVE since 2026-10-18 UTC; left-out client facts need Butsaba; PR 18 awaits merge
+- [staging36 working copy (file name staging32-fresh-copy)](staging32-fresh-copy.md) — CURRENT working copy since 2026-10-19 (fresh copy of live after the research-panel update), verified identical to live over SSH, tools accept it, live's reference; staging34/33 are old; change on staging then live on Ryan's go
+- [Accessibility page](accessibility-page.md) — LIVE: page, footer link, focus CSS, jump-link rows under the header (2-4 per page), privacy v3 correction; only For Practices accordion links remain (documented, Ryan: leave)
+- [CSP blocked the map in Firefox/Safari](csp-map-bug.md) — my 2026-10-17 CSP; FIXED on live 2026-10-18 (Ryan ran the apply; agent live deploys get blocked by the classifier); test CSP in Firefox too
+- [Dark/light mode button](dark-mode-toggle.md) — LIVE and VERIFIED (2026-10-19): header toggle, default light, snippet #1237 + CSS block `ts-theme`, Accessibility page v2
+- [Thammasat link](thammasat-link.md) — LIVE 2026-10-18 (Ryan ran the apply; the auto-mode classifier blocks agent live deploys, hand him the `!` line); CSP change needs the posture pin updated; zsh gotchas
+- [Therapeutic copy](therapeutic-copy-staging33.md) — LIVE and VERIFIED (2026-10-19 00:29 UTC): compliance check vs OAR 334 passed, no "relief" (house gate bans it); classifier blocked my live allow-list edit so Ryan applied my tested patch; live = staging33 content
+- [Search Console duplicate notice](search-console-duplicate-notice.md) — Oct 2026 "Duplicate without user-selected canonical" on the homepage (stale Sept 13 crawl); site checked clean, Ryan requested indexing; what to ask if it returns
+- [Thai page evidence](thai-page-evidence.md) — LIVE and VERIFIED 2026-10-19 04:18 UTC: research section + generic FAQ + heritage line + approved meta (Ryan: "push it live"); rollback cmds for live+staging33 inside; open: image/mat mismatch, 3 FAQ answers for Butsaba, Therapeutic/Deep Tissue meta
+- [Banned words: research exception](banned-words-research-exception.md) — Ryan's rule: accept a listed word when evidence needs it; three tiers, research section only, never we/our/us or claim verbs; no disease-treatment studies
+- [Replicate Thai treatment on other service pages](service-pages-replication.md) — Therapeutic LIVE (see therapeutic-page-evidence); Deep Tissue not started; PR #20 merged to main (24 commits); the last 8 local commits are STILL UNPUSHED (Ryan pushes, then opens a final PR with docs/inter-model/pr-final-body.md)
+- [Phone header wrap fix](phone-header-fit.md) — my dark/light button made the phone header wrap/split "Thai Solitude" (<= 380 px); fix LIVE and VERIFIED 2026-10-19 05:36 UTC (Ryan confirmed on his phone); live rollback cmd inside
+- [Therapeutic page evidence](therapeutic-page-evidence.md) — LIVE and VERIFIED 2026-10-19 14:31 UTC (+ Therapeutic/Deep Tissue meta pair); Ryan said "use your judgement to make it honest" (dropped stroke/cancer studies, softened neck sentence); rollback cmd inside; Butsaba must confirm 2 FAQ lines

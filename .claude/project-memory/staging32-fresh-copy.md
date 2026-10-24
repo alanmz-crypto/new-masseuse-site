@@ -1,0 +1,25 @@
+---
+name: staging32-fresh-copy
+description: staging36 is the CURRENT working copy (2026-10-19; staging34, 33, 32 before it): verified identical to live over SSH, tools accept it, post-change-test live references it; change on staging then live on Ryan's go; no direct live writes by the agent
+metadata:
+  node_type: memory
+  type: project
+  originSessionId: b7972be6-8d16-4d78-b186-706afcc661a9
+  modified: 2026-10-18T07:36:00.545Z
+---
+
+Ryan pulled staging32 from live on 2026-10-17 after the privacy page v2 went live, to "return to pushing from staging". Verified read-only: same IDs as live (privacy page 1227, snippets 1225/1226), same plugins/PHP 8.5.11/row counts, environment type staging, robots Disallow, pages/theme settings/CSS identical once the address is normalised; post-change-test.sh staging32 ALL 5 PASS (18/18 pixel-identical to live). Read-only tools accept staging32; write tools (push scripts, installers) still only staging31/live.
+
+**Why:** staging31 had drifted (different post IDs, e.g. privacy page 1227 live vs 1230 staging31; staging31's 1227 is a snippet), so a SiteGround table deploy from it could have put wrong content on wrong items. A fresh copy removes that.
+
+**How to apply:** do changes on staging32 only, then push soon with SiteGround Custom Deploy (review every file/table; Full Deploy only if specifically authorised); a table deploy overwrites anything changed on live after the copy, so make NO direct live writes while a staging32 change is pending; each promotion needs Ryan's explicit go; take the verified off-server live backup first (sync-server-backups.sh) and run post-change-test.sh live + prove-restore.sh live afterwards. Retiring staging31 is Ryan's call (ask twice). Related: [[privacy-policy-page]], [[stop-before-hard-to-reverse-changes]].
+
+**Update 2026-10-18 UTC:** staging32 and live now carry the same changes (privacy v3, Accessibility page 1230/1232 + footer link, focus CSS); I applied them to live with my guarded installers on Ryan's go, not a Custom Deploy. `post-change-test.sh live` now uses staging32 as its reference. Future changes: build on staging32, then Custom Deploy or installers on his go.
+
+**Update 2026-10-18 (late):** Ryan will "pull another staging copy from live" soon (replacing staging32; probably a new number). Before he did, verified staging32 holds nothing live lacks (pages, snippets, CSS, widgets, menus, options and SEO values identical with addresses normalised; only generated caches differ) and everything is pushed (PR #18 head 5f6311c); CSP map fix + Thammasat link are on both. When the new copy exists: ask for its number, add it to the read-only tools' target lists (post-change-test.sh, prove-restore.sh, capture lists), make it the post-change-test.sh live reference, and repeat the parity check (compare actual values, not hashes of serialized meta; the scratch fingerprint script was ~/.cache/wwm-scratch/fp/ and is not in the repo). `prove-restore.sh <staging> <live export>` is NOT a staging-vs-live comparison.
+
+**Update 2026-10-18 (staging33):** Ryan: "From now we have staging33 to work on." Done and pushed (1f5ac94): read-only tools accept staging33; `post-change-test.sh live` now references staging33. Verified: install www/staging33.thaisolitude.com/public_html, env staging (live production), PHP 8.5.11, WP 7.1.3, 10 pages, 5 plugins; 54-line content fingerprint + SEO values IDENTICAL to live; posture 28/28; `post-change-test.sh staging33` ALL 5 PASS 20/20 pixel-identical to live. Existing installers/push scripts were NOT extended to staging33 (they are applied/finished); NEW installers allow localhost:8090 + staging33 and add live only after Ryan's go. Ryan runs live `--apply` himself (classifier blocks agent production deploys). staging32 is now just an old copy.
+
+**Newest working copy: staging34 (2026-10-19, Ryan: "we are going to have a new staging in a moment. staging34"):** a fresh copy of live after the Thai research section, meta, and dark-mode button. The phone-header fix ([[phone-header-fit]]) and the Thai image swap ([[thai-page-evidence]]) are there ONLY (not live). The read-only tools (`post-change-test.sh`, `prove-restore.sh`, `php-compat-scan.sh`, `check-wp-exit-codes.sh`) accept staging34; `post-change-test.sh live` still uses staging33 as its reference (it equals live), so use staging34 only as a TARGET until its changes are live.
+
+**staging36 is the working copy from 2026-10-19 (Ryan: "we now have staging36 to work on").** Verified read-only over SSH: one staging install, WP 7.1.3, PHP 8.5.11, same plugins/theme; the content fingerprint (37 posts, 17 options, plugins) is IDENTICAL to live (only generated caches differ; SEO values identical), robots `Disallow: /`, pages 200 (server-side curl), CSP present. Tools accept it; `post-change-test.sh live` now compares against staging36. staging34 is the previous copy; staging35 unused. New installers for staging36 only; live writes still need Ryan's go and his own `!` apply. Parity scripts: `~/.cache/wwm-scratch/fp/run-fp.sh <live|staging36>`.
