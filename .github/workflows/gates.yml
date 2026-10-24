@@ -1,0 +1,30 @@
+# Code gates on every push and pull request: scripts/check-all.sh without a URL (PHP lint on the pinned PHP 8.5 image, bash -n and
+# shellcheck, Python syntax and ruff, installer drift and allow-lists, the offline snippet/CSP/posture/wording tests, and every builder's
+# --check). Touches no server and needs no secret. The same command runs on Ryan's computer and in a cloud session.
+name: Gates
+
+on:
+  push:
+    branches-ignore: [ops-log]
+    paths-ignore: ['ops/**']
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gates-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gates:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Tools
+        run: scripts/ci/install-base-tools.sh
+      - name: check-all.sh (offline gates)
+        run: scripts/check-all.sh
+
+# ref: ../../scripts/check-all.sh — the gates; ../../scripts/ci/install-base-tools.sh — ruff

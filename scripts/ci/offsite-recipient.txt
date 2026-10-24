@@ -1,0 +1,5 @@
+# age public key for the encrypted off-site backups made by GitHub Actions (scripts/ci/offsite-store.sh).
+# Made 2026-10-23 on Ryan's computer; the matching private key is ~/.config/thai-solitude/offsite-backups.agekey there (never in git).
+# Keep a copy of that private key somewhere safe (password manager): without it the off-site copies cannot be read.
+# To replace the key: age-keygen -o NEWKEY, put its public key below (one age1... line), commit; older copies still need the old key.
+age1ds7cheanpv0sgeh409qg9yfwy6zunhu3590ajp5t3ckcw6ysr5ls22kr7u

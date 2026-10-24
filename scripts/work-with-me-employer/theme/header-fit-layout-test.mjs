@@ -1,7 +1,7 @@
 // Layout proof that a header change (here: theme/header-fit.css, 2026-10-19) only changes the header: for every element below it, position and size RELATIVE TO THE HEADER'S BOTTOM EDGE must be identical with and without the fix.
 // Usage: node below-header-structure.mjs <base-url> <css-file>        (read-only; the css is injected in the browser, nothing is written to the site)
 import { createRequire } from 'module'; import fs from 'fs';
-const require = createRequire('/home/lauer/Projects/SubProjects/Mirror/package.json');
+const require = createRequire(process.env.TS_PLAYWRIGHT_ROOT || '/home/lauer/Projects/SubProjects/Mirror/package.json');
 const { chromium } = require('playwright');
 const [base, cssFile] = process.argv.slice(2); const css = fs.readFileSync(cssFile, 'utf8');
 const pages = ['/', '/about/', '/services/', '/thai-massage/', '/therapeutic-massage/', '/deep-tissue-massage/', '/work-with-me/', '/contact/', '/privacy-policy/', '/accessibility/'];

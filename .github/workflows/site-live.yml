@@ -1,0 +1,63 @@
+# The ONLY way GitHub writes to the live site thaisolitude.com. Ryan starts it himself, on main:
+#   Actions > Site ops (LIVE) > Run workflow > branch: main > confirm: the id in ops/live-request.json
+# What it runs is ops/live-request.json as merged to main (a pull request Ryan reviewed and merged, together with the change it applies).
+# Guards: the job runs only on main; the "production" environment gives its secrets only to runs from main (Settings > Environments);
+# run-op.sh refuses anything but a push-*.sh write on live, and a confirmation that is not the request id. GitHub's "required reviewers"
+# button is not available for private repositories on this plan, so starting the run by hand IS the approval: agents never start it.
+# Same routine as every write: DB export on the server, verified encrypted off-site copy, apply, then post-change-test.sh and prove-restore.sh.
+name: Site ops (LIVE)
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type the id from ops/live-request.json on main (it starts with live-)'
+        required: true
+
+permissions:
+  contents: write   # the encrypted off-site backups (draft releases) and the report (ops-log branch)
+
+concurrency:
+  group: site-ops   # shared with site-ops.yml: never two SiteGround operations at once
+  cancel-in-progress: false
+
+jobs:
+  live:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    environment: production   # deployment branches: main only
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Request
+        run: scripts/ci/prepare-request.sh live
+      - name: Tools
+        run: scripts/ci/install-base-tools.sh
+      - name: SiteGround access
+        env:
+          SG_HOST: ${{ secrets.SG_HOST }}
+          SG_PORT: ${{ secrets.SG_PORT }}
+          SG_USER: ${{ secrets.SG_USER }}
+          SG_SSH_KEY: ${{ secrets.SG_SSH_KEY }}
+          SG_KNOWN_HOSTS: ${{ secrets.SG_KNOWN_HOSTS }}
+        run: scripts/ci/setup-ssh.sh
+      - name: Run the live request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CONFIRM: ${{ inputs.confirm }}
+        run: scripts/ci/run-op.sh "$RUNNER_TEMP/request.json" live "$RUNNER_TEMP/report.md"
+      - name: Publish the report
+        if: always()
+        run: scripts/ci/publish-report.sh "$RUNNER_TEMP/report.md" "$RUNNER_TEMP/request.json"
+      - name: Keep logs and screenshots
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: site-live-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/ops-out
+            /home/runner/.cache/ts-post-change
+          retention-days: 90
+          if-no-files-found: ignore
+
+# ref: ../../scripts/ci/run-op.sh — the live-lane rules; ./site-ops.yml — everything that is not a live write

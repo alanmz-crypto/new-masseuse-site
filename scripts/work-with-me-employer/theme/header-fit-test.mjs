@@ -4,7 +4,7 @@
 // For every width: the site name on ONE line, no word split, nothing overlapping, tap targets kept (toggle >= 44, menu >= 44), >= 8 px between the two buttons, no side-scroll. Light and dark.
 import { createRequire } from 'module';
 import fs from 'fs';
-const require = createRequire('/home/lauer/Projects/SubProjects/Mirror/package.json');
+const require = createRequire(process.env.TS_PLAYWRIGHT_ROOT || '/home/lauer/Projects/SubProjects/Mirror/package.json');
 const { chromium, firefox } = require('playwright');
 const isFF = process.env.BROWSER === 'firefox';   // BROWSER=firefox node header-fit-test.mjs <url>: a second engine (WebKit, i.e. iOS Safari, does not run on this machine)
 const [base, cssFile] = process.argv.slice(2);

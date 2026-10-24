@@ -6,7 +6,7 @@
 import { createRequire } from 'module';
 import fs from 'fs';
 import path from 'path';
-const require = createRequire('/home/lauer/Projects/SubProjects/Mirror/package.json');
+const require = createRequire(process.env.TS_PLAYWRIGHT_ROOT || '/home/lauer/Projects/SubProjects/Mirror/package.json');
 const { chromium } = require('playwright');
 const [base, outDir, label = 'page'] = process.argv.slice(2);
 if (!base || !outDir) { console.error('usage: node check-therapeutic-page.mjs <base-url> <out-dir> [label]'); process.exit(1); }

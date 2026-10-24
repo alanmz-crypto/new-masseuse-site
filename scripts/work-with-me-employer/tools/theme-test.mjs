@@ -6,7 +6,7 @@
 // Playwright is taken from the Mirror project; axe-core 4.13.0 from ~/.cache/ts-axe (install line in a11y-audit.mjs).
 import { createRequire } from 'module';
 import fs from 'fs';
-const require = createRequire('/home/lauer/Projects/SubProjects/Mirror/package.json');
+const require = createRequire(process.env.TS_PLAYWRIGHT_ROOT || '/home/lauer/Projects/SubProjects/Mirror/package.json');
 const { chromium, firefox } = require('playwright');
 const engine = process.env.BROWSER === 'firefox' ? firefox : chromium;   // BROWSER=firefox node theme-test.mjs <url>: test in more than one engine (WebKit does not run on this machine)
 const [base, flag] = process.argv.slice(2);
@@ -54,7 +54,7 @@ for (const [w, h, v] of [[1280, 900, 'desktop'], [390, 844, 'phone']]) {
 }
 
 if (flag === '--contrast') {
-  const AXE = fs.readFileSync('/home/lauer/.cache/ts-axe/node_modules/axe-core/axe.min.js', 'utf8');
+  const AXE = fs.readFileSync((process.env.HOME || '/home/lauer') + '/.cache/ts-axe/node_modules/axe-core/axe.min.js', 'utf8');
   const pages = ['/', '/about/', '/services/', '/thai-massage/', '/therapeutic-massage/', '/deep-tissue-massage/', '/work-with-me/', '/contact/', '/privacy-policy/', '/accessibility/'];
   for (const mode of ['light', 'dark']) {
     let total = 0; const bad = [];

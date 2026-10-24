@@ -2,7 +2,7 @@
 // Added 2026-10-19 (Ryan: swap the page's three images). Per width (1280/1024/768/600/390/375/320), in the chosen theme: exactly three illustrations, each loaded, object-fit cover, the reviewed
 // files in the reviewed order (hero = 00illaCNN512Curve.webp, then thai_massage_immage.webp, then thai_massage_immage_magenta.webp), the frame boxes (the page's original fixed sizes, or the pictures' own proportions once image-crop.css is in), distinct non-empty alt text, no side-scroll. Saves screenshots at 1280/390/320 when an out-prefix is given. Exit 1 on any failure.
 import { createRequire } from 'module';
-const require = createRequire('/home/lauer/Projects/SubProjects/Mirror/package.json');
+const require = createRequire(process.env.TS_PLAYWRIGHT_ROOT || '/home/lauer/Projects/SubProjects/Mirror/package.json');
 const { chromium } = require('playwright');
 const [base, prefix, theme] = process.argv.slice(2);
 const FILES = ['00illaCNN512Curve.webp', 'thai_massage_immage.webp', 'thai_massage_immage_magenta.webp'];
