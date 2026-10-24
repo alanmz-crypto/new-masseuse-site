@@ -1,7 +1,8 @@
 {
-  "id": "deep-evidence-rehearse-2",
-  "op": "rehearse",
+  "id": "deep-evidence-dry-1",
+  "op": "run",
   "target": "staging36",
-  "installer": "deep-tissue/install-deep-tissue-evidence.php",
-  "args": []
+  "script": "deep-tissue/push-deep-tissue-evidence.sh",
+  "args": [],
+  "tests": "auto"
 }
