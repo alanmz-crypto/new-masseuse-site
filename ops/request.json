@@ -1,7 +1,7 @@
 {
-  "id": "inspect-deep-tissue-1",
-  "op": "inspect",
+  "id": "deep-tissue-rehearse-1",
+  "op": "rehearse",
   "target": "staging36",
-  "query": "page",
-  "arg": "deep-tissue-massage"
+  "installer": "deep-tissue/install-deep-tissue-copy.php",
+  "args": []
 }
