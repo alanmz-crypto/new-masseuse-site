@@ -10,7 +10,8 @@
  * Why Additional CSS: styles must live in WordPress's own storage so a SiteGround push carries them (no MU-plugin; see AGENTS.md). The block is delimited by marker comments and appended at the end.
  * The guard: the known site CSS is present, the Thai and Therapeutic pages hold their research panels, and the block is the reviewed single marked block with no url(), @import or !important.
  *
- * Allow-list: localhost:8090 and staging36 ONLY. Live is deliberately not in it; it is added only on Ryan's own go.
+ * Allow-list: localhost:8090, staging36 and live. Live was added on Ryan's go ("Prepare both for live", 2026-10-24) after the block was rehearsed, applied, rolled back exactly and re-applied on staging36;
+ * Ryan merges the pull request and starts the live run himself.
  *
  * Modes (first WP-CLI argument; run with --user=1):  <mode> [FILE]
  *   preflight    read-only: ready = the block is absent; applied = the block is there exactly once, exactly as reviewed; CHANGED = anything else (stop)
@@ -25,8 +26,8 @@ if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) ) {
 
 $home = untrailingslashit( home_url() );
 $host = (string) wp_parse_url( $home, PHP_URL_HOST ) . ( wp_parse_url( $home, PHP_URL_PORT ) ? ':' . wp_parse_url( $home, PHP_URL_PORT ) : '' );
-if ( ! in_array( $host, array( 'localhost:8090', 'staging36.thaisolitude.com' ), true ) ) {
-	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090 or staging36 only).' );
+if ( ! in_array( $host, array( 'localhost:8090', 'staging36.thaisolitude.com', 'thaisolitude.com' ), true ) ) {
+	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090, staging36 or live only).' );
 }
 if ( 'astra' !== get_stylesheet() ) {
 	WP_CLI::error( 'Active theme is not Astra.' );
