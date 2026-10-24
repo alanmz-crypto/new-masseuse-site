@@ -1,12 +1,13 @@
 {
-  "id": "slide-browser-1",
+  "id": "slide-browser-ff-1",
   "op": "run",
   "target": "staging36",
   "script": "research-slide/check-research-slide.mjs",
   "args": [
     "https://staging36.thaisolitude.com",
-    "/tmp/slide-shots",
-    "staging36"
+    "/tmp/slide-ff",
+    "staging36-ff",
+    "firefox"
   ],
   "tests": "auto"
 }
