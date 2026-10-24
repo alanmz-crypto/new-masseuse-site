@@ -1,6 +1,7 @@
 {
-  "id": "corp-inspect-css-x-1",
+  "id": "corp-inspect-services-2",
   "op": "inspect",
   "target": "staging37",
-  "query": "css"
+  "query": "page",
+  "arg": "services"
 }
