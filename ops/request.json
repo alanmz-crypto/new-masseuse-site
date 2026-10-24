@@ -1,7 +1,7 @@
 {
-  "id": "corp-inspect-snip1237-2",
-  "op": "inspect",
+  "id": "corp-rehearse-1",
+  "op": "rehearse",
   "target": "staging37",
-  "query": "snippet",
-  "arg": "1237"
+  "installer": "corporate/install-corporate-massage.php",
+  "args": []
 }
