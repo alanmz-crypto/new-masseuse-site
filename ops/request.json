@@ -1,6 +1,13 @@
 {
-  "id": "corp-inspect-fp-3",
-  "op": "inspect",
+  "id": "corp-chk-3",
+  "op": "run",
   "target": "staging37",
-  "query": "fingerprint"
+  "script": "corporate/check-corporate-massage.mjs",
+  "args": [
+    "https://staging37.thaisolitude.com",
+    "/tmp/corp-shots",
+    "staging37",
+    "quick"
+  ],
+  "tests": "auto"
 }
