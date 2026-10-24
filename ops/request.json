@@ -1,7 +1,8 @@
 {
-  "id": "slide-rehearse-1",
-  "op": "rehearse",
+  "id": "slide-dry-1",
+  "op": "run",
   "target": "staging36",
-  "installer": "research-slide/install-research-slide.php",
-  "args": []
+  "script": "research-slide/push-research-slide.sh",
+  "args": [],
+  "tests": "auto"
 }
