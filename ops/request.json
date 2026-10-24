@@ -1,6 +1,6 @@
 {
-  "id": "corp-inspect-fp-1",
+  "id": "corp-inspect-css-x-1",
   "op": "inspect",
   "target": "staging37",
-  "query": "fingerprint"
+  "query": "css"
 }
