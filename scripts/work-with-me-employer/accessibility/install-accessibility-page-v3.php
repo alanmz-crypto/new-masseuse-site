@@ -1,7 +1,7 @@
 <?php
 /**
  * Accessibility page, VERSION 3: add the sentence about the new collapsible research summaries (Thai Massage and Therapeutic Massage), the "no screen reader was used" limit and the new date, for ONE site at a time.
- * Ryan, 2026-10-19: "go on this: Accessibility page: its date and limits haven't been updated for the new panels". The wording is accessibility-page.html next to this file (built by build-accessibility-page.py);
+ * Ryan, 2026-10-19: "go on this: Accessibility page: its date and limits haven't been updated for the new panels". The wording is accessibility-page-v3.html next to this file (the frozen version-3 text; accessibility-page.html now holds version 4);
  * every sentence is limited to what was tested (see that file). accessibility-page-v2.html is the exact version-2 text (what is live before this update).
  *
  * What it writes: ONLY the page content of the published page with the slug "accessibility". Title, slug, the footer link and everything else stay as they are.
@@ -40,11 +40,11 @@ if ( ! in_array( $mode, array( 'preflight', 'apply', 'rollback' ), true ) ) {
 }
 
 $old = file_get_contents( __DIR__ . '/accessibility-page-v2.html' );
-$new = file_get_contents( __DIR__ . '/accessibility-page.html' );
+$new = file_get_contents( __DIR__ . '/accessibility-page-v3.html' );
 $old = false === $old ? '' : trim( $old );
 $new = false === $new ? '' : trim( $new );
 if ( '' === $old || '' === $new || $old === $new ) {
-	WP_CLI::error( 'accessibility-page-v2.html and accessibility-page.html must both exist next to the installer and differ.' );
+	WP_CLI::error( 'accessibility-page-v2.html and accessibility-page-v3.html must both exist next to the installer and differ.' );
 }
 // The OBMT forbidden terms (list in AGENTS.md): substring checks, "heal" and "we/our/us" as whole words ("health" is allowed).
 $text = html_entity_decode( wp_strip_all_tags( $new ), ENT_QUOTES, 'UTF-8' );

@@ -38,7 +38,7 @@ ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o 
 
 echo "[1] Connecting and uploading the package to ~/wwm-package-accessibility-v3 (outside every web root) ..."
 "${ssh_cmd[@]}" true 2>/dev/null || { echo "SSH login refused; check the ssh-agent holds the right key." >&2; exit 2; }
-tar -C "$here" -cf - install-accessibility-page-v3.php accessibility-page-v2.html accessibility-page.html \
+tar -C "$here" -cf - install-accessibility-page-v3.php accessibility-page-v2.html accessibility-page-v3.html \
   | "${ssh_cmd[@]}" 'rm -rf "$HOME/wwm-package-accessibility-v3" && mkdir -p "$HOME/wwm-package-accessibility-v3" && tar -xf - -C "$HOME/wwm-package-accessibility-v3"'
 
 read -r -d '' REMOTE <<'EOS' || true
