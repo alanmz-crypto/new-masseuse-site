@@ -1,5 +1,5 @@
 {
-  "id": "corp-rehearse-4",
+  "id": "corp-rehearse-5",
   "op": "rehearse",
   "target": "staging37",
   "installer": "corporate/install-corporate-massage.php",
