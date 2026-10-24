@@ -1,7 +1,7 @@
 {
-  "id": "rehearse-check-2",
-  "op": "rehearse",
+  "id": "inspect-deep-tissue-1",
+  "op": "inspect",
   "target": "staging36",
-  "installer": "thai/install-image-crop.php",
-  "args": []
+  "query": "page",
+  "arg": "deep-tissue-massage"
 }
