@@ -19,15 +19,22 @@ to be on. The request format and examples are in `ops/README.md`; the rules a cl
 
 ## Your one-time steps (about 10 minutes, on this computer)
 
-1. **Push and merge.** `! git push https://github.com/alanmz-crypto/new-masseuse-site.git feat/2026-10-24-cloud-ops`, then merge
+Steps 1-4 were done on 2026-10-24 (PR #21 merged, key imported, first runs passed: inspect, backup with its encrypted copy opened on this
+computer, a rehearsal streamed from staging36). Shell commands below are typed after switching the prompt to shell mode (type `!` first).
+
+1. **Push and merge.** `git push https://github.com/alanmz-crypto/new-masseuse-site.git feat/2026-10-24-cloud-ops`, then merge
    the pull request into `main` (the workflows start by hand only once they are on `main`). Wait for its **Gates** check to pass first.
-2. **Make the GitHub key and store the secrets:** `! scripts/ci/setup-github-secrets.sh`. It prints a public key (one line, `ssh-ed25519 ...`).
+2. **Make the GitHub key and store the secrets:** `scripts/ci/setup-github-secrets.sh`. It prints a public key (one line, `ssh-ed25519 ...`).
 3. **Switch it on in SiteGround:** Site Tools > Devs > SSH Keys Manager > Import. Name: `github-actions`; paste the public key.
 4. **First run (a phone is fine):** GitHub > Actions > **Site ops** > Run workflow > branch `main` > request:
    `{"id":"first-check","op":"inspect","target":"staging36","query":"plugins"}`. Expect **RESULT: PASS** with the plugin list.
-   "SSH to SiteGround: REFUSED" means step 3 is not done yet.
-5. **Claude cloud:** at claude.ai/code connect GitHub and allow the Claude GitHub App on `new-masseuse-site`. In the cloud environment pick
-   network access **Custom**, tick "include the default list", and add `thaisolitude.com` and `*.thaisolitude.com`. No secrets go there.
+   "SSH to SiteGround: REFUSED" means step 3 is not done yet. (Each id runs once: use a new id for another run.)
+5. **Claude cloud: give cloud sessions this repository.** Easiest: type `/web-setup` in Claude Code on this computer; it sends your
+   existing GitHub login (`gh`) to your Claude account, so cloud sessions can clone and push any repository that login can, and it makes a
+   **Default** cloud environment. (The other way: at claude.ai/code connect GitHub and allow the Claude GitHub App on `new-masseuse-site`.)
+   The Default environment's network setting ("Trusted": GitHub, package registries, Docker Hub) is enough, because all SiteGround work
+   goes through GitHub Actions; add `thaisolitude.com` and `*.thaisolitude.com` under **Custom** only if you want Claude to fetch pages
+   directly. No secrets go into the cloud environment.
 
 ## Day to day, from the phone
 
