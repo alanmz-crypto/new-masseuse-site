@@ -1,10 +1,12 @@
 {
-  "id": "slide-apply-2",
+  "id": "slide-browser-1",
   "op": "run",
   "target": "staging36",
-  "script": "research-slide/push-research-slide.sh",
+  "script": "research-slide/check-research-slide.mjs",
   "args": [
-    "--apply"
+    "https://staging36.thaisolitude.com",
+    "/tmp/slide-shots",
+    "staging36"
   ],
   "tests": "auto"
 }
