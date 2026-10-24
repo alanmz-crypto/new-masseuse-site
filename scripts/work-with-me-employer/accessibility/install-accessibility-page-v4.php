@@ -8,7 +8,8 @@
  * It only accepts a page that still holds EXACTLY version 3 (or already holds version 4); anything else stops the run. It also REFUSES unless the Thai Massage, Therapeutic Massage and Deep Tissue Massage pages
  * on that site really carry their research sections (the heading "What the Research Says About ... Massage"), so the page can never describe panels that are not there.
  *
- * Allow-list: localhost:8090 and staging36 ONLY. Live is deliberately not in it; it is added only on Ryan's own go.
+ * Allow-list: localhost:8090, staging36 and live. Live was added on Ryan's go ("Prepare the Accessibility update for live", 2026-10-24) after the page was rehearsed, applied, rolled back exactly, re-applied and
+ * checked on staging36 (contrast, audit, post-change test); Ryan merges the pull request and starts the live run himself.
  *
  * Modes (first WP-CLI argument; run with --user=1):  <mode> [FILE]
  *   preflight    read-only: old = the page holds exactly version 3 (ready); new = already version 4; CHANGED = anything else (stop)
@@ -23,8 +24,8 @@ if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) ) {
 
 $home = untrailingslashit( home_url() );
 $host = (string) wp_parse_url( $home, PHP_URL_HOST ) . ( wp_parse_url( $home, PHP_URL_PORT ) ? ':' . wp_parse_url( $home, PHP_URL_PORT ) : '' );
-if ( ! in_array( $host, array( 'localhost:8090', 'staging36.thaisolitude.com' ), true ) ) {
-	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090 or staging36 only).' );
+if ( ! in_array( $host, array( 'localhost:8090', 'staging36.thaisolitude.com', 'thaisolitude.com' ), true ) ) {
+	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090, staging36 or live only).' );
 }
 if ( 'astra' !== get_stylesheet() ) {
 	WP_CLI::error( 'Active theme is not Astra.' );
