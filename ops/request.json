@@ -1,8 +1,6 @@
 {
-  "id": "live-dry-a11y-v4-1",
-  "op": "run",
-  "target": "live",
-  "script": "accessibility/push-accessibility-page-v4.sh",
-  "args": [],
-  "tests": "auto"
+  "id": "corp-inspect-fp-1",
+  "op": "inspect",
+  "target": "staging37",
+  "query": "fingerprint"
 }
