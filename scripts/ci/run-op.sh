@@ -84,7 +84,11 @@ jq -e '(.args // []) | type == "array"' "$req" >/dev/null || refuse "args must b
 case "$op" in run|rehearse|inspect|backup) ;; *) refuse "op must be run, rehearse, inspect or backup" ;; esac
 case "$target" in ''|live|staging[0-9]|staging[0-9][0-9]) ;; *) refuse "target must be live or stagingNN" ;; esac
 case "${tests:-auto}" in auto|none) ;; *) refuse "tests must be auto or none" ;; esac
-for a in "${args[@]}"; do
+# One pair of matching quotes around an argument is shell quoting copied along with it (AGENTS.md writes rollbacks as
+# --rollback '$HOME/private-backups/x.json'): take it off, then check. Quotes anywhere else are still refused.
+for i in "${!args[@]}"; do
+  a=${args[$i]}
+  if [ "${#a}" -ge 2 ] && { [[ "$a" == \'*\' ]] || [[ "$a" == \"*\" ]]; }; then a=${a:1:${#a}-2}; args[i]=$a; fi
   [[ "$a" =~ ^[A-Za-z0-9_.,:=@/\$+-]{1,200}$ ]] && [[ "$a" != *..* ]] || refuse "argument '$a' has characters outside the allowed set"
 done
 write=0; for a in "${args[@]}"; do case "$a" in --apply|--rollback) write=1 ;; esac; done
