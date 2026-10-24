@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-24 19:27 UTC  **PASS**  `a11y-v4-rehearse-1`  [reports/2026-10-24/192744-a11y-v4-rehearse-1.md](reports/2026-10-24/192744-a11y-v4-rehearse-1.md)  (run 40125241330)
 - 2026-10-24 19:11 UTC  **FAIL**  `live-check-deep-chromium-1`  [reports/2026-10-24/191137-live-check-deep-chromium-1.md](reports/2026-10-24/191137-live-check-deep-chromium-1.md)  (run 40123974166)
 - 2026-10-24 19:08 UTC  **PASS**  `live-check-postchange-1`  [reports/2026-10-24/190849-live-check-postchange-1.md](reports/2026-10-24/190849-live-check-postchange-1.md)  (run 40123695792)
 - 2026-10-24 18:52 UTC  **PASS**  `live-deep-tissue-and-slide-1`  [reports/2026-10-24/185221-live-deep-tissue-and-slide-1.md](reports/2026-10-24/185221-live-deep-tissue-and-slide-1.md)  (run 40122526720)
