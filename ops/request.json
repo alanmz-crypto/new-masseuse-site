@@ -1,9 +1,11 @@
 {
-  "id": "live-check-postchange-1",
+  "id": "live-check-deep-chromium-1",
   "op": "run",
   "target": "live",
-  "script": "post-change-test.sh",
+  "script": "deep-tissue/check-deep-tissue-evidence.mjs",
   "args": [
+    "https://thaisolitude.com",
+    "/tmp/live-dt",
     "live"
   ],
   "tests": "auto"
