@@ -2,7 +2,7 @@
 // image alt text, landmarks, zoom allowed, small click targets, side-scrolling at 320 px, keyboard order, visible focus, focus hidden behind something, accordion by keyboard.
 //   node a11y-audit.mjs <base-url> [out.json]       e.g. node a11y-audit.mjs https://staging33.thaisolitude.com
 //   TS_THEME=dark node a11y-audit.mjs <base-url> [out.json]   the same audit with the dark mode switched on (once the dark/light button from theme/ is installed)
-//   TS_PAGES=/thai-massage/ node a11y-audit.mjs <base-url> [out.json]   only the named page(s), comma-separated (a one-page change needs far less traffic than the whole site)
+//   TS_PAGES=/thai-massage/ node a11y-audit.mjs <base-url> [out.json]   only the named page(s), comma-separated (or: node a11y-audit.mjs <base-url> <out.json> /thai-massage/,/about/ [dark]) (a one-page change needs far less traffic than the whole site)
 // It only loads public pages like a visitor (10 pages x 3 window sizes); it changes nothing. Keep traffic low: SiteGround blocks addresses that send bursts (HTTP 202 = INVALID).
 // An automated pass finds only part of what WCAG asks for (roughly a third of the criteria can be tested by a machine): a clean result means "no automatically detectable problems",
 // never "conforms". The accessibility statement must say what was actually done.
@@ -13,18 +13,18 @@ import fs from 'fs';
 import os from 'os';
 const require = createRequire(process.env.TS_PLAYWRIGHT_ROOT || '/home/lauer/Projects/SubProjects/Mirror/package.json');
 const { chromium } = require('playwright');
-const [base, outFile] = process.argv.slice(2);
+const [base, outFile, pagesArg, themeArg] = process.argv.slice(2);   // the 3rd and 4th arguments do what TS_PAGES and TS_THEME do, for a run that cannot set an environment variable (a GitHub Actions request)
 if (!base) { console.error('usage: node a11y-audit.mjs <base-url> [out.json]'); process.exit(1); }
 const AXE = os.homedir() + '/.cache/ts-axe/node_modules/axe-core/axe.min.js';
 if (!fs.existsSync(AXE)) { console.error('axe-core is not installed in ~/.cache/ts-axe (see the install line at the top of this file)'); process.exit(2); }
-const pages = process.env.TS_PAGES ? process.env.TS_PAGES.split(',') : ['/', '/about/', '/services/', '/thai-massage/', '/therapeutic-massage/', '/deep-tissue-massage/', '/work-with-me/', '/contact/', '/privacy-policy/', '/accessibility/'];   // TS_PAGES=/thai-massage/ audits only the named page(s): keeps traffic to SiteGround low after a one-page change
+const pages = (process.env.TS_PAGES || pagesArg) ? (process.env.TS_PAGES || pagesArg).split(',') : ['/', '/about/', '/services/', '/thai-massage/', '/therapeutic-massage/', '/deep-tissue-massage/', '/work-with-me/', '/contact/', '/privacy-policy/', '/accessibility/'];   // TS_PAGES=/thai-massage/ audits only the named page(s): keeps traffic to SiteGround low after a one-page change
 const views = [{ n: 'desktop', w: 1280, h: 900, dpr: 1 }, { n: 'phone', w: 390, h: 844, dpr: 2, mobile: true }, { n: 'reflow320', w: 320, h: 640, dpr: 1, mobile: true }];
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 const result = [];
 const b = await chromium.launch();
 for (const v of views) {
   const ctx = await b.newContext({ viewport: { width: v.w, height: v.h }, deviceScaleFactor: v.dpr, isMobile: !!v.mobile, hasTouch: !!v.mobile });
-  if (process.env.TS_THEME === 'dark') { await ctx.addInitScript(() => { try { localStorage.setItem('ts-theme', 'dark'); } catch (e) { /* ignore */ } }); }   // TS_THEME=dark: audit the dark mode (the header button's saved choice)
+  if (process.env.TS_THEME === 'dark' || themeArg === 'dark') { await ctx.addInitScript(() => { try { localStorage.setItem('ts-theme', 'dark'); } catch (e) { /* ignore */ } }); }   // TS_THEME=dark: audit the dark mode (the header button's saved choice)
   for (const p of pages) {
     const page = await ctx.newPage();
     const r0 = await page.goto(base + p, { waitUntil: 'networkidle', timeout: 90000 });
