@@ -1,0 +1,10 @@
+{
+  "id": "live-deep-tissue-plain-words",
+  "op": "run",
+  "target": "live",
+  "script": "deep-tissue/push-deep-tissue-copy.sh",
+  "args": [
+    "--apply"
+  ],
+  "tests": "auto"
+}

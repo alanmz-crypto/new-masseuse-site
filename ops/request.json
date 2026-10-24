@@ -1,7 +1,8 @@
 {
-  "id": "rehearse-check-2",
-  "op": "rehearse",
-  "target": "staging36",
-  "installer": "thai/install-image-crop.php",
-  "args": []
+  "id": "deep-tissue-live-dry-1",
+  "op": "run",
+  "target": "live",
+  "script": "deep-tissue/push-deep-tissue-copy.sh",
+  "args": [],
+  "tests": "auto"
 }
