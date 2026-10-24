@@ -1,13 +1,8 @@
 {
-  "id": "slide-browser-ff-1",
+  "id": "live-dry-deep-evidence-1",
   "op": "run",
-  "target": "staging36",
-  "script": "research-slide/check-research-slide.mjs",
-  "args": [
-    "https://staging36.thaisolitude.com",
-    "/tmp/slide-ff",
-    "staging36-ff",
-    "firefox"
-  ],
+  "target": "live",
+  "script": "deep-tissue/push-deep-tissue-evidence.sh",
+  "args": [],
   "tests": "auto"
 }
