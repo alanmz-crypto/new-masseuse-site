@@ -54,13 +54,16 @@ IMAGES = [
     ('5975b480', 'Illustration of a massage therapist working with a client on a bright green background.'),
 ]
 
+# One verbatim title contains "we" (Koren and Kalichman 2018: "What are we talking about?"), a word the site never uses, even in a title (wording_tiers.py tier 1). It is written with an ellipsis, and the note says so.
+SOURCES_NOTE = 'Each number above links to the source. Titles are quoted as published, except one that is shortened with an ellipsis because it contains a word this site does not use.'
+
 # ---- source registry: key -> (url, authors, title (verbatim), venue and year). New for this page first, then the ones shared with the Therapeutic page. ----------------
 PM = 'https://pubmed.ncbi.nlm.nih.gov/%s/'
 SRC = {
  'bingolbali': (PM % '36645811', 'Bingölbali Ö, Taşkaya C, Alkan H, Altındağ Ö.', 'The effectiveness of deep tissue massage on pain, trigger point, disability, range of motion and quality of life in individuals with myofascial pain syndrome', 'Somatosens Mot Res, 2024.'),
  'skillgate': (PM % '31655314', 'Skillgate E, Pico-Espinosa OJ, Côté P, Jensen I, Viklund P, Bottai M, Holm LW.', 'Effectiveness of deep tissue massage therapy, and supervised strengthening and stretching exercises for subacute or persistent disabling neck pain. The Stockholm Neck (STONE) randomized controlled trial', 'Musculoskelet Sci Pract, 2020.'),
  'picoespinosa': (PM % '31989965', 'Pico-Espinosa OJ, Aboagye E, Côté P, Peterson A, Holm LW, Jensen I, Skillgate E.', 'Deep tissue massage, strengthening and stretching exercises, and a combination of both compared with advice to stay active for subacute or persistent non-specific neck pain: A cost-effectiveness analysis of the Stockholm Neck trial (STONE)', 'Musculoskelet Sci Pract, 2020.'),
- 'koren': (PM % '29861215', 'Koren Y, Kalichman L.', 'Deep tissue massage: What are we talking about?', 'J Bodyw Mov Ther, 2018.'),
+ 'koren': (PM % '29861215', 'Koren Y, Kalichman L.', 'Deep tissue massage: What are … talking about?', 'J Bodyw Mov Ther, 2018.'),
  'arsovski': (PM % '40510040', 'Arsovski D.', 'Deep Tissue Massage Therapy: Effects on Muscle Recovery and Performance in Athletes', 'Int J Ther Massage Bodywork, 2025.'),
  'zheng': (PM % '23427384', 'Zheng Z, Wang J, Gao Q, Hou J, Ma L, Jiang C, Chen G.', 'Therapeutic evaluation of lumbar tender point deep massage for chronic non-specific low back pain', 'J Tradit Chin Med, 2012.'),
  'romanowski': (PM % '22744541', 'Romanowski M, Romanowska J, Grześkowiak M.', 'A comparison of the effects of deep tissue massage and therapeutic massage on chronic low back pain', 'Stud Health Technol Inform, 2012.'),
@@ -233,7 +236,7 @@ def build():
         url, authors, title, venue = SRC[key]
         items.append('<!-- wp:list-item -->\n<li><cite class="ts-source">%s <a href="%s">%s</a>. %s</cite></li>\n<!-- /wp:list-item -->' % (esc(authors), url, esc(title), esc(venue)))
     sources_list = '<!-- wp:list {"ordered":true,"style":{"typography":{"fontWeight":"400"}}} -->\n<ol class="wp-block-list" style="font-weight:400">%s</ol>\n<!-- /wp:list -->' % '\n\n'.join(items)
-    panels.append(details('Sources', False, [para('Each number above links to the source. Titles are quoted as published.', plain=True), sources_list]))
+    panels.append(details('Sources', False, [para(SOURCES_NOTE, plain=True), sources_list]))
 
     # The stored page ends with the last block and NO newline (read from the database), so the appended text starts with the blank line that separates blocks.
     sections = '\n\n' + '\n\n'.join([
