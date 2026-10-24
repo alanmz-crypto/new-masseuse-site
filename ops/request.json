@@ -1,10 +1,10 @@
 {
-  "id": "corp-apply-1",
+  "id": "corp-check-1",
   "op": "run",
   "target": "staging37",
   "script": "corporate/push-corporate-massage.sh",
   "args": [
-    "--apply"
+    "--check"
   ],
   "tests": "auto"
 }
