@@ -1,8 +1,12 @@
 {
-  "id": "live-dry-a11y-v4-1",
+  "id": "live-check-deep-chromium-2",
   "op": "run",
   "target": "live",
-  "script": "accessibility/push-accessibility-page-v4.sh",
-  "args": [],
+  "script": "deep-tissue/check-deep-tissue-evidence.mjs",
+  "args": [
+    "https://thaisolitude.com",
+    "/tmp/live-dt",
+    "live"
+  ],
   "tests": "auto"
 }
