@@ -1,11 +1,10 @@
 {
-  "id": "a11y-v4-rollback-1",
+  "id": "a11y-v4-apply-2",
   "op": "run",
   "target": "staging36",
   "script": "accessibility/push-accessibility-page-v4.sh",
   "args": [
-    "--rollback",
-    "$HOME/private-backups/accessibility-page-v4-before-20261024-193144.json"
+    "--apply"
   ],
   "tests": "none"
 }
