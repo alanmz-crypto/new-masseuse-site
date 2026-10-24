@@ -1,0 +1,6 @@
+{
+  "id": "first-check-2",
+  "op": "inspect",
+  "target": "staging36",
+  "query": "plugins"
+}
