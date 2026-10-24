@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-24 06:43 UTC  **PASS**  `dt-inspect-1`  [reports/2026-10-24/064312-dt-inspect-1.md](reports/2026-10-24/064312-dt-inspect-1.md)  (run 40071287309)
 - 2026-10-24 06:07 UTC  **PASS**  `inspect-20261024-060637`  [reports/2026-10-24/060708-inspect-20261024-060637.md](reports/2026-10-24/060708-inspect-20261024-060637.md)  (run 40068897402)
 - 2026-10-24 06:06 UTC  **FAIL**  `inspect-20261024-060558`  [reports/2026-10-24/060617-inspect-20261024-060558.md](reports/2026-10-24/060617-inspect-20261024-060558.md)  (run 40068856403)
 - 2026-10-24 05:43 UTC  **INVALID**  `rehearse-check-2`  [reports/2026-10-24/054308-rehearse-check-2.md](reports/2026-10-24/054308-rehearse-check-2.md)  (run 40067257507)
