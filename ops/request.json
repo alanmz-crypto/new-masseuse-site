@@ -1,10 +1,7 @@
 {
-  "id": "corp-apply-2",
-  "op": "run",
+  "id": "corp-inspect-services-4",
+  "op": "inspect",
   "target": "staging37",
-  "script": "corporate/push-corporate-massage.sh",
-  "args": [
-    "--apply"
-  ],
-  "tests": "none"
+  "query": "page",
+  "arg": "services"
 }
