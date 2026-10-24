@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-24 22:06 UTC  **FAIL**  `corp-rehearse-1`  [reports/2026-10-24/220648-corp-rehearse-1.md](reports/2026-10-24/220648-corp-rehearse-1.md)  (run 40137038288)
 - 2026-10-24 21:36 UTC  **PASS**  `corp-inspect-snip1237-2`  [reports/2026-10-24/213635-corp-inspect-snip1237-2.md](reports/2026-10-24/213635-corp-inspect-snip1237-2.md)  (run 40134951540)
 - 2026-10-24 21:36 UTC  **PASS**  `corp-inspect-snip1232-2`  [reports/2026-10-24/213608-corp-inspect-snip1232-2.md](reports/2026-10-24/213608-corp-inspect-snip1232-2.md)  (run 40134921423)
 - 2026-10-24 21:35 UTC  **PASS**  `corp-inspect-services-2`  [reports/2026-10-24/213526-corp-inspect-services-2.md](reports/2026-10-24/213526-corp-inspect-services-2.md)  (run 40134869113)
