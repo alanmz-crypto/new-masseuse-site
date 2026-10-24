@@ -103,9 +103,14 @@ else
   refuse "unknown lane '$lane'"
 fi
 
-# a request id runs once (the report on ops-log is the record)
-if git -C "$root" fetch -q --depth=1 origin ops-log 2>/dev/null && git -C "$root" ls-tree -r --name-only FETCH_HEAD -- reports 2>/dev/null | grep -q -- "-$id\.md$"; then
-  refuse "request id '$id' has already run (its report is on the ops-log branch); give the request a new id to run it again"
+# a request id runs once (the report on ops-log is the record). A report that says "refused:" means the request was
+# stopped by these checks before anything ran, so it does not use the id up (2026-10-24: a mistyped live confirmation
+# blocked the live request's own id).
+if git -C "$root" fetch -q --depth=1 origin ops-log 2>/dev/null; then
+  while IFS= read -r p; do
+    git -C "$root" show "FETCH_HEAD:$p" 2>/dev/null | grep -q 'RESULT: INVALID\*\* - refused:' && continue
+    refuse "request id '$id' has already run ($p on the ops-log branch); give the request a new id to run it again"
+  done < <(git -C "$root" ls-tree -r --name-only FETCH_HEAD -- reports 2>/dev/null | grep -- "-$id\.md$")
 fi
 
 need_browsers() { "$here/install-test-tools.sh" --browsers >/dev/null || finish 2 "could not install the browser test tools"; export TS_PLAYWRIGHT_ROOT="$HOME/.cache/ts-playwright/package.json"; }
