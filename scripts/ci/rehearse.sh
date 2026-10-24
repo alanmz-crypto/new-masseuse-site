@@ -214,9 +214,9 @@ if [ -z "$snap" ]; then echo "  no before-snapshot was written to WWM_BACKUP_DIR
   fp C; cmp -s "$out/A.content" "$out/C.content"; check "after rollback every fingerprint equals the baseline (A)" $?
   cmp -s "$out/A.content" "$out/C.content" || diff "$out/A.content" "$out/C.content" | grep '^[<>]' | cut -f1-2 | sed 's/^/    still different: /' | head -20
   inst_run re-apply apply; check "apply again after the rollback" $?
-  # A change that CREATES posts (a page, a snippet) gets new database ids when it is applied again after a rollback (2026-10-24, Corporate & Group Massage): compare with the id numbers of snippet and SEO rows set aside; their content hashes still compare.
-  idn() { sed -E 's/^snippet\t[0-9]+\t/snippet\t#\t/; s/^seo\t[0-9]+:/seo\t#:/' "$1"; }
-  fp D; cmp -s <(idn "$out/B.content") <(idn "$out/D.content"); check "re-applied state equals the first applied state (B; the ids of re-created snippets and SEO rows set aside)" $?
+  # A change that CREATES posts (a page, a snippet) gets new database ids when it is applied again after a rollback (2026-10-24, Corporate & Group Massage): compare with the id numbers of snippet and SEO rows set aside (and WPCode's own snippet-list cache option, whose content lists those ids); the snippets' and pages' content hashes still compare.
+  idn() { sed -E '/^option\twpcode_snippets\t/d; s/^snippet\t[0-9]+\t/snippet\t#\t/; s/^seo\t[0-9]+:/seo\t#:/' "$1"; }
+  fp D; cmp -s <(idn "$out/B.content") <(idn "$out/D.content"); check "re-applied state equals the first applied state (B; ids of re-created snippets and SEO rows set aside)" $?
 fi
 
 echo; echo "[4] the 10 pages after the change, and PHP errors"
