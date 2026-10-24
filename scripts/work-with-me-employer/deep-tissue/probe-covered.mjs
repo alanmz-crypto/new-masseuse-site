@@ -12,7 +12,8 @@ const seen = new Set();
 for (let i = 0; i < 90; i++) {
   await page.keyboard.press('Tab');
   await page.waitForTimeout(450);
-  const s = await page.evaluate(() => {
+  let s = null;
+  try { s = await page.evaluate(() => {
     const e = document.activeElement; if (!e || e === document.body) return null;
     const r = e.getBoundingClientRect();
     const cx = Math.min(Math.max(r.left + r.width / 2, 1), innerWidth - 2), cy = Math.min(Math.max(r.top + r.height / 2, 1), innerHeight - 2);
@@ -20,7 +21,7 @@ for (let i = 0; i < 90; i++) {
     const cov = !!top && !(e === top || e.contains(top) || top.contains(e));
     const d = n => n ? n.tagName + (n.id ? '#' + n.id : '') + '.' + String(n.className).split(' ').slice(0, 3).join('.') + ' pos=' + getComputedStyle(n).position : null;
     return { id: (e.textContent || '').trim().slice(0, 24) + '@' + Math.round(r.top + scrollY), cov, rectTop: Math.round(r.top), rectBottom: Math.round(r.bottom), vh: innerHeight, left: Math.round(r.left), right: Math.round(r.right), el: d(e), over: cov ? d(top) : null, overRect: cov ? JSON.stringify(top.getBoundingClientRect()) : null };
-  });
+  }); } catch (e) { console.log('step ' + i + ': ' + String(e).split('\n')[0]); await page.waitForLoadState('networkidle').catch(() => {}); continue; }
   if (!s) continue; if (seen.has(s.id)) break; seen.add(s.id);
   if (s.cov) console.log('COVERED', JSON.stringify(s));
 }
