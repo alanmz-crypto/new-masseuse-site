@@ -1,8 +1,10 @@
 {
-  "id": "deep-evidence-dry-1",
+  "id": "deep-evidence-apply-1",
   "op": "run",
   "target": "staging36",
   "script": "deep-tissue/push-deep-tissue-evidence.sh",
-  "args": [],
+  "args": [
+    "--apply"
+  ],
   "tests": "auto"
 }
