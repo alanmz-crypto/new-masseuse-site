@@ -3,7 +3,7 @@
 //        BROWSER=firefox to use Firefox instead of Chromium.
 // Per width (1280 / 390 / 320) in LIGHT and DARK: HTTP 200, no side-scroll, one heading of each name, the 7 FAQ questions once each, the 5 research panels (first open, the others closed),
 // every panel opens and closes with the mouse AND with Enter/Space on the keyboard, numbered markers 1..N once each in first-use order with N Sources entries, no console errors, screenshots.
-// Exit 1 if any check fails.
+// Exit 1 if any check fails. Exit 2 (INVALID) if the bot challenge answers.
 import { createRequire } from 'module';
 import fs from 'fs';
 import path from 'path';
@@ -29,6 +29,7 @@ for (const theme of ['light', 'dark']) {
     page.on('pageerror', e => errors.push(String(e)));
     page.on('console', m => { if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) errors.push(m.text()); });
     const resp = await page.goto(base + '/thai-massage/', { waitUntil: 'networkidle' });
+    if (resp && resp.status() === 202) { console.log('INVALID: the SiteGround bot challenge (HTTP 202) answered instead of the page; nothing was tested. Run it once more later, not in a loop.'); await browser.close(); process.exit(2); }
     check(`${tag}: HTTP 200`, resp && resp.status() === 200, resp && resp.status());
     const dark = await page.evaluate(() => document.documentElement.getAttribute('data-ts-theme'));
     if (theme === 'dark') check(`${tag}: dark mode is on`, dark === 'dark', dark);

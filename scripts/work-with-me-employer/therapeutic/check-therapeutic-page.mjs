@@ -17,6 +17,7 @@ for (const [w, h, v] of [[1280, 900, 'desktop'], [390, 844, 'phone'], [320, 700,
   const ctx = await b.newContext({ viewport: { width: w, height: h }, reducedMotion: 'reduce' });
   const p = await ctx.newPage();
   const resp = await p.goto(base + '/therapeutic-massage/', { waitUntil: 'networkidle', timeout: 60000 });
+  if (resp && resp.status() === 202) { console.log('INVALID: the SiteGround bot challenge (HTTP 202) answered instead of the page; nothing was tested. Run it once more later, not in a loop.'); await b.close(); process.exit(2); }
   await p.addStyleTag({ content: '*,*::before,*::after{animation:none!important;transition:none!important}' });
   const info = await p.evaluate(() => {
     const txt = el => el ? el.textContent.replace(/\s+/g, ' ').trim() : null;

@@ -1,7 +1,7 @@
 // Contrast of every text element in the "What the Research Says" section (heading to the end of the page: intro, all panels opened, Sources) on the Thai, Therapeutic and Deep Tissue pages,
 // in the LIGHT and the DARK version, at 1280 and 390 px (read-only; public requests only). WCAG 2.x ratio of the computed text colour against the effective background (alpha layers composited down the ancestors).
 // An element on a gradient or an image background is listed as "not measurable" (never counted as a pass). AA needs 4.5:1, or 3:1 for large text (24 px, or 18.66 px bold).
-// Usage: node check-research-contrast.mjs <base-url> [firefox]      Exit 1 if any measured element is below AA or nothing was measured.
+// Usage: node check-research-contrast.mjs <base-url> [firefox]      Exit 1 if any measured element is below AA or nothing was measured. Exit 2 (INVALID) if the bot challenge answers.
 import { createRequire } from 'module';
 const require = createRequire(process.env.TS_PLAYWRIGHT_ROOT || '/home/lauer/Projects/SubProjects/Mirror/package.json');
 const pw = require('playwright');
@@ -20,6 +20,7 @@ for (const theme of ['light', 'dark']) {
       if (theme === 'dark') await ctx.addInitScript(() => { try { localStorage.setItem('ts-theme', 'dark'); } catch (e) {} });
       const page = await ctx.newPage();
       const resp = await page.goto(base + p, { waitUntil: 'networkidle' });
+      if (resp && resp.status() === 202) { console.log('INVALID: the SiteGround bot challenge (HTTP 202) answered instead of the page; nothing was tested. Run it once more later, not in a loop.'); await browser.close(); process.exit(2); }
       if (!resp || resp.status() !== 200) { check(`${tag}: HTTP 200`, false, resp && resp.status()); await ctx.close(); continue; }
       await page.evaluate(() => document.querySelectorAll('details.wp-block-details').forEach(d => { d.open = true; }));
       await page.waitForTimeout(500);

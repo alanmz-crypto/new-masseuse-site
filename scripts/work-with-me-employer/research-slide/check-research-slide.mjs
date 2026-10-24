@@ -3,7 +3,7 @@
 //        BROWSER=firefox (or a 4th argument 'firefox') to use Firefox instead of Chromium.
 // For the Thai, Therapeutic and Deep Tissue pages at 1280 and 390 px: a panel's height is sampled while it opens and shuts. Where the browser supports the animation (::details-content and interpolate-size) the height must
 // pass through in-between values and end at the natural height / the closed height; with reduced motion requested it must jump at once; where the browser cannot animate, the panel must still open and close (reported as INFO).
-// Also: closed panels hide their links (not focusable), no side-scroll with every panel open, no script errors. Exit 1 if any check fails.
+// Also: closed panels hide their links (not focusable), no side-scroll with every panel open, no script errors. Exit 1 if any check fails. Exit 2 (INVALID) if the bot challenge answers.
 import { createRequire } from 'module';
 import fs from 'fs';
 import path from 'path';
@@ -32,6 +32,7 @@ for (const reduced of [false, true]) {
       page.on('pageerror', e => errors.push(String(e)));
       page.on('console', m => { if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) errors.push(m.text()); });
       const resp = await page.goto(base + p, { waitUntil: 'networkidle' });
+      if (resp && resp.status() === 202) { console.log('INVALID: the SiteGround bot challenge (HTTP 202) answered instead of the page; nothing was tested. Run it once more later, not in a loop.'); await browser.close(); process.exit(2); }
       check(`${tag}: HTTP 200`, resp && resp.status() === 200, resp && resp.status());
       const supported = await page.evaluate(() => CSS.supports('selector(::details-content)') && CSS.supports('interpolate-size', 'allow-keywords'));
       const n = await page.evaluate(() => document.querySelectorAll('details.wp-block-details').length);
