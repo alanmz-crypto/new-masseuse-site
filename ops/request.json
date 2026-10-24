@@ -1,10 +1,10 @@
 {
-  "id": "corp-all-1",
+  "id": "corp-pct-1",
   "op": "run",
   "target": "staging37",
-  "script": "check-all.sh",
+  "script": "post-change-test.sh",
   "args": [
-    "https://staging37.thaisolitude.com"
+    "staging37"
   ],
   "tests": "auto"
 }
