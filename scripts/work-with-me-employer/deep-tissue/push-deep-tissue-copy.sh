@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Deep Tissue Massage page: say the research sentence's study population in plain words, on staging36 ONLY (S_TARGET=staging36; the default). Live is deliberately not allowed; it is added only on Ryan's go.
+# Deep Tissue Massage page: say the research sentence's study population in plain words, on staging36 or live (S_TARGET=staging36|live; default staging36). Live was enabled on Ryan's go ("Send to live", 2026-10-24); Ryan merges the PR and starts the live run himself.
 # Ryan, 2026-10-24: approved the plain-words wording for the sentence that names "myofascial pain syndrome".
 #
 #   ./push-deep-tissue-copy.sh                    dry run: connect, locate the site, upload the package, preflight (read-only on the site)
@@ -30,7 +30,7 @@ case "${1:-}" in
   *) echo "Usage: $0 [--apply | --rollback FILE]" >&2; exit 1 ;;
 esac
 target="${S_TARGET:-staging36}"
-case "$target" in staging36) ;; *) echo "S_TARGET must be staging36." >&2; exit 1 ;; esac
+case "$target" in staging36|live) ;; *) echo "S_TARGET must be staging36 or live." >&2; exit 1 ;; esac
 echo "Target site: $target   mode: $mode"
 ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 "$user@$host")
 
@@ -43,7 +43,7 @@ read -r -d '' REMOTE <<'EOS' || true
 set -euo pipefail
 wp() { command wp --skip-plugins=sg-security "$@"; }   # SiteGround Security 1.6.9 + PHP 8.5 makes EVERY wp exit 0 on live (shutdown-handler bug); skipping that one plugin keeps exit codes true. See AGENTS.md and check-wp-exit-codes.sh.
 phase=$1; target=$2; snap=${3:-}
-case "$target" in staging36) want="staging36.thaisolitude.com" ;; *) echo "Remote refused: target must be staging36, got '$target'." >&2; exit 1 ;; esac
+case "$target" in staging36) want="staging36.thaisolitude.com" ;; live) want="thaisolitude.com" ;; *) echo "Remote refused: target must be staging36 or live, got '$target'." >&2; exit 1 ;; esac
 command -v wp >/dev/null || { echo "wp-cli not found on the server" >&2; exit 1; }
 doc=""
 cfgs=$(mktemp); trap 'rm -f "$cfgs"' EXIT

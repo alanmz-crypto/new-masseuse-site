@@ -11,7 +11,8 @@
  * instruction or changed, so edits made elsewhere in the meantime survive. The guard demands the old text to occur EXACTLY once and the new text zero times (ready), or the
  * new text exactly once and the old zero times (applied), and the word "myofascial" to occur once (ready) or never (applied); anything else stops the run.
  *
- * Allow-list: localhost:8090 and staging36 ONLY. Live is deliberately not in it; it is added only on Ryan's go, as in the earlier enable-live patches.
+ * Allow-list: localhost:8090, staging36 and live. Live was added on Ryan's go ("Send to live", 2026-10-24) after the change was rehearsed, applied, rolled back byte-identically and re-applied on staging36;
+ * Ryan merges the pull request and starts the live run himself.
  *
  * Modes (first WP-CLI argument; run with --user=1):  <mode> [FILE]
  *   preflight    read-only: ready = the old text is there once; applied = the new text is there once; CHANGED = anything else (stop)
@@ -26,8 +27,8 @@ if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) ) {
 
 $home = untrailingslashit( home_url() );
 $host = (string) wp_parse_url( $home, PHP_URL_HOST ) . ( wp_parse_url( $home, PHP_URL_PORT ) ? ':' . wp_parse_url( $home, PHP_URL_PORT ) : '' );
-if ( ! in_array( $host, array( 'localhost:8090', 'staging36.thaisolitude.com' ), true ) ) {
-	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090 or staging36 only).' );
+if ( ! in_array( $host, array( 'localhost:8090', 'staging36.thaisolitude.com', 'thaisolitude.com' ), true ) ) {
+	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090, staging36 or live only).' );
 }
 if ( 'astra' !== get_stylesheet() ) {
 	WP_CLI::error( 'Active theme is not Astra.' );
