@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-24 17:12 UTC  **PASS**  `slide-apply-1`  [reports/2026-10-24/171252-slide-apply-1.md](reports/2026-10-24/171252-slide-apply-1.md)  (run 40114819056)
 - 2026-10-24 17:08 UTC  **PASS**  `slide-dry-1`  [reports/2026-10-24/170849-slide-dry-1.md](reports/2026-10-24/170849-slide-dry-1.md)  (run 40114756922)
 - 2026-10-24 17:07 UTC  **PASS**  `slide-rehearse-1`  [reports/2026-10-24/170731-slide-rehearse-1.md](reports/2026-10-24/170731-slide-rehearse-1.md)  (run 40114579432)
 - 2026-10-24 16:52 UTC  **PASS**  `deep-evidence-probe-2`  [reports/2026-10-24/165247-deep-evidence-probe-2.md](reports/2026-10-24/165247-deep-evidence-probe-2.md)  (run 40113483943)
