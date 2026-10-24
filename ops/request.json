@@ -1,10 +1,11 @@
 {
-  "id": "slide-apply-1",
+  "id": "slide-rollback-1",
   "op": "run",
   "target": "staging36",
   "script": "research-slide/push-research-slide.sh",
   "args": [
-    "--apply"
+    "--rollback",
+    "$HOME/private-backups/research-slide-before-20261024-170947.json"
   ],
   "tests": "auto"
 }
