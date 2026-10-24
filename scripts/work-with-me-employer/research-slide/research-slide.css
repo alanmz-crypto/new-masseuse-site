@@ -1,0 +1,21 @@
+/* ts-research-slide:start (2026-10-24, Ryan: "keep the 'what research says' area like the other slide open sections on all these pages") */
+/* The collapsible research panels on the Thai, Therapeutic and Deep Tissue pages are native "details" sections, which snap open and shut. These rules make the panel's content slide open and
+   shut over a third of a second, like the FAQ and About accordions. Browsers that cannot animate it (no ::details-content or interpolate-size) simply open and close at once, as before;
+   a visitor who asks for reduced motion gets no animation. The closed panels look exactly as they did. */
+.wp-block-details {
+  interpolate-size: allow-keywords;
+}
+.wp-block-details::details-content {
+  block-size: 0;
+  overflow: hidden;
+  transition: block-size 0.35s ease, content-visibility 0.35s allow-discrete;
+}
+.wp-block-details[open]::details-content {
+  block-size: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  .wp-block-details::details-content {
+    transition: none;
+  }
+}
+/* ts-research-slide:end */
