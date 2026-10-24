@@ -1,12 +1,13 @@
 {
-  "id": "corp-chk-2",
+  "id": "corp-chk-ff-1",
   "op": "run",
   "target": "staging37",
   "script": "corporate/check-corporate-massage.mjs",
   "args": [
     "https://staging37.thaisolitude.com",
     "/tmp/corp-shots",
-    "staging37",
+    "staging37-ff",
+    "firefox",
     "quick"
   ],
   "tests": "auto"
