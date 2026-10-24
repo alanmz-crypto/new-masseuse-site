@@ -1,8 +1,10 @@
 {
-  "id": "slide-dry-1",
+  "id": "slide-apply-1",
   "op": "run",
   "target": "staging36",
   "script": "research-slide/push-research-slide.sh",
-  "args": [],
+  "args": [
+    "--apply"
+  ],
   "tests": "auto"
 }
