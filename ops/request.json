@@ -1,10 +1,7 @@
 {
-  "id": "deep-evidence-probe-2",
-  "op": "run",
+  "id": "slide-rehearse-1",
+  "op": "rehearse",
   "target": "staging36",
-  "script": "deep-tissue/probe-covered.mjs",
-  "args": [
-    "https://staging36.thaisolitude.com"
-  ],
-  "tests": "auto"
+  "installer": "research-slide/install-research-slide.php",
+  "args": []
 }
