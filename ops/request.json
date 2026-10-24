@@ -1,11 +1,10 @@
 {
-  "id": "deep-evidence-rollback-1",
+  "id": "deep-evidence-apply-2",
   "op": "run",
   "target": "staging36",
   "script": "deep-tissue/push-deep-tissue-evidence.sh",
   "args": [
-    "--rollback",
-    "$HOME/private-backups/deep-tissue-evidence-before-20261024-162727.json"
+    "--apply"
   ],
   "tests": "auto"
 }
