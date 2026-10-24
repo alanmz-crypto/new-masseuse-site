@@ -1,7 +1,10 @@
 {
-  "id": "a11y-v4-rehearse-1",
-  "op": "rehearse",
+  "id": "a11y-contrast-1",
+  "op": "run",
   "target": "staging36",
-  "installer": "accessibility/install-accessibility-page-v4.php",
-  "args": []
+  "script": "accessibility/check-research-contrast.mjs",
+  "args": [
+    "https://staging36.thaisolitude.com"
+  ],
+  "tests": "auto"
 }
