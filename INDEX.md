@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-24 07:01 UTC  **PASS**  `deep-tissue-rollback-2`  [reports/2026-10-24/070142-deep-tissue-rollback-2.md](reports/2026-10-24/070142-deep-tissue-rollback-2.md)  (run 40072325350)
 - 2026-10-24 06:58 UTC  **INVALID**  `deep-tissue-rollback-1`  [reports/2026-10-24/065837-deep-tissue-rollback-1.md](reports/2026-10-24/065837-deep-tissue-rollback-1.md)  (run 40072294810)
 - 2026-10-24 06:57 UTC  **PASS**  `deep-tissue-apply-1`  [reports/2026-10-24/065754-deep-tissue-apply-1.md](reports/2026-10-24/065754-deep-tissue-apply-1.md)  (run 40072035421)
 - 2026-10-24 06:53 UTC  **PASS**  `deep-tissue-dry-1`  [reports/2026-10-24/065350-deep-tissue-dry-1.md](reports/2026-10-24/065350-deep-tissue-dry-1.md)  (run 40071982800)
