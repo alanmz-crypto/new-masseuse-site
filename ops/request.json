@@ -1,6 +1,7 @@
 {
-  "id": "corp-inspect-fp-2",
+  "id": "corp-inspect-services-3",
   "op": "inspect",
   "target": "staging37",
-  "query": "fingerprint"
+  "query": "page",
+  "arg": "services"
 }
