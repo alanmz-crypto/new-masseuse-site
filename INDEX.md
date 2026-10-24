@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-24 16:36 UTC  **PASS**  `deep-evidence-rollback-1`  [reports/2026-10-24/163639-deep-evidence-rollback-1.md](reports/2026-10-24/163639-deep-evidence-rollback-1.md)  (run 40112124717)
 - 2026-10-24 16:33 UTC  **FAIL**  `deep-evidence-browser-1`  [reports/2026-10-24/163307-deep-evidence-browser-1.md](reports/2026-10-24/163307-deep-evidence-browser-1.md)  (run 40111949146)
 - 2026-10-24 16:30 UTC  **PASS**  `deep-evidence-apply-1`  [reports/2026-10-24/163035-deep-evidence-apply-1.md](reports/2026-10-24/163035-deep-evidence-apply-1.md)  (run 40111602617)
 - 2026-10-24 16:26 UTC  **PASS**  `deep-evidence-dry-1`  [reports/2026-10-24/162628-deep-evidence-dry-1.md](reports/2026-10-24/162628-deep-evidence-dry-1.md)  (run 40111538957)
