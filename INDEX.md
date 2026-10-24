@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-24 19:51 UTC  **PASS**  `deep-evidence-probe-3`  [reports/2026-10-24/195112-deep-evidence-probe-3.md](reports/2026-10-24/195112-deep-evidence-probe-3.md)  (run 40127066494)
 - 2026-10-24 19:49 UTC  **PASS**  `a11y-audit-v4-1`  [reports/2026-10-24/194928-a11y-audit-v4-1.md](reports/2026-10-24/194928-a11y-audit-v4-1.md)  (run 40126657272)
 - 2026-10-24 19:44 UTC  **PASS**  `a11y-contrast-3`  [reports/2026-10-24/194406-a11y-contrast-3.md](reports/2026-10-24/194406-a11y-contrast-3.md)  (run 40126520833)
 - 2026-10-24 19:36 UTC  **FAIL**  `a11y-contrast-2`  [reports/2026-10-24/193619-a11y-contrast-2.md](reports/2026-10-24/193619-a11y-contrast-2.md)  (run 40125935320)
