@@ -1,6 +1,6 @@
 // Rendered check of the Deep Tissue Massage page after install-deep-tissue-evidence.php (read-only; public requests only).
 // Usage: node check-deep-tissue-evidence.mjs <base-url> <out-dir> [label]        e.g. node check-deep-tissue-evidence.mjs https://staging36.thaisolitude.com ~/.cache/wwm-scratch/deep-shots staging36
-//        BROWSER=firefox to use Firefox instead of Chromium.
+//        BROWSER=firefox (or a 4th argument 'firefox') to use Firefox instead of Chromium.
 // Per width (1280 / 390 / 320) in LIGHT and DARK: HTTP 200, no side-scroll, the research heading and the FAQ heading once, the 6 FAQ questions once each in order with no links inside answers, the 5 research panels
 // (first open, the others closed), every panel opens and closes with the mouse AND with Enter/Space, numbered markers 1..N once each in first-use order with 33 Sources entries, the new body paragraph (the three old
 // sentences gone), the three pictures with tooltip equal to the alt text and no "by Butsaba" tooltip, "myofascial" only in a verbatim source title, no console errors, screenshots. Exit 1 if any check fails.
@@ -19,8 +19,9 @@ const PANELS = ['Reviews, and What They Say About Limits', 'Neck, Shoulders and 
 const OLD_SENTENCES = ['Trials in specific musculoskeletal conditions suggest deep tissue massage', 'A randomized trial in athletes linked repeated deep tissue massage', 'Research suggests deep tissue massage added to conventional rehabilitation may reduce pain intensity'];
 let fails = 0;
 const check = (name, ok, detail = '') => { console.log((ok ? 'PASS ' : 'FAIL ') + name + (detail !== '' ? '  [' + detail + ']' : '')); if (!ok) fails++; };
-const engine = process.env.BROWSER === 'firefox' ? pw.firefox : pw.chromium;
-const browser = await engine.launch(process.env.BROWSER === 'firefox' ? {} : { executablePath: '/usr/bin/chromium', args: ['--no-sandbox'] });
+const useFirefox = process.env.BROWSER === 'firefox' || process.argv[5] === 'firefox';   // the 4th argument works where an environment variable cannot be passed (a GitHub Actions request)
+const engine = useFirefox ? pw.firefox : pw.chromium;
+const browser = await engine.launch(useFirefox ? {} : { executablePath: '/usr/bin/chromium', args: ['--no-sandbox'] });
 for (const theme of ['light', 'dark']) {
   for (const width of [1280, 390, 320]) {
     const tag = `${theme}-${width}`;
