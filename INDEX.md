@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-24 19:31 UTC  **PASS**  `a11y-v4-apply-1`  [reports/2026-10-24/193155-a11y-v4-apply-1.md](reports/2026-10-24/193155-a11y-v4-apply-1.md)  (run 40125666992)
 - 2026-10-24 19:30 UTC  **PASS**  `a11y-v4-dry-1`  [reports/2026-10-24/193056-a11y-v4-dry-1.md](reports/2026-10-24/193056-a11y-v4-dry-1.md)  (run 40125605361)
 - 2026-10-24 19:29 UTC  **FAIL**  `a11y-contrast-1`  [reports/2026-10-24/192956-a11y-contrast-1.md](reports/2026-10-24/192956-a11y-contrast-1.md)  (run 40125443470)
 - 2026-10-24 19:27 UTC  **PASS**  `a11y-v4-rehearse-1`  [reports/2026-10-24/192744-a11y-v4-rehearse-1.md](reports/2026-10-24/192744-a11y-v4-rehearse-1.md)  (run 40125241330)
