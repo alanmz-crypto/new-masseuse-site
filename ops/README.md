@@ -23,7 +23,7 @@ the same report on the run's summary page. `scripts/ci/request.sh wait <id>` fet
 | `op` | `run`, `rehearse`, `inspect` or `backup` (below). |
 | `target` | `staging36` (the working copy), another `stagingNN`, or `live`. For `run` it is also passed as `S_TARGET`. |
 | `script` | `run` only: a path under `scripts/work-with-me-employer/` (`.sh`, `.py`, `.mjs`), or `check-all.sh`. |
-| `args` | Array of arguments for the script. `--apply` / `--rollback FILE` make it a **write**: allowed only for `push-*.sh`, and on `live` only in the live lane. |
+| `args` | Array of arguments for the script. `--apply` / `--rollback FILE` make it a **write**: allowed only for `push-*.sh`, and on `live` only in the live lane. One pair of matching quotes around an argument is taken off first, so a rollback copied from AGENTS.md as `'$HOME/private-backups/x.json'` works as written; any other quote is refused. |
 | `tests` | `auto` (default): after a write, run `post-change-test.sh <target>` and `prove-restore.sh <target>`. `none` skips them. |
 | `installer` | `rehearse` only: an `install-*.php` under `scripts/work-with-me-employer/`. |
 | `query`, `arg` | `inspect` only: see below. |
