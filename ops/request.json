@@ -1,10 +1,12 @@
 {
-  "id": "deep-evidence-apply-1",
+  "id": "deep-evidence-browser-1",
   "op": "run",
   "target": "staging36",
-  "script": "deep-tissue/push-deep-tissue-evidence.sh",
+  "script": "deep-tissue/check-deep-tissue-evidence.mjs",
   "args": [
-    "--apply"
+    "https://staging36.thaisolitude.com",
+    "/tmp/ds-shots",
+    "staging36"
   ],
   "tests": "auto"
 }
