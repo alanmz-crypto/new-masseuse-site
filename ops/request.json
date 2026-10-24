@@ -1,12 +1,7 @@
 {
-  "id": "live-check-deep-chromium-1",
-  "op": "run",
-  "target": "live",
-  "script": "deep-tissue/check-deep-tissue-evidence.mjs",
-  "args": [
-    "https://thaisolitude.com",
-    "/tmp/live-dt",
-    "live"
-  ],
-  "tests": "auto"
+  "id": "a11y-v4-rehearse-1",
+  "op": "rehearse",
+  "target": "staging36",
+  "installer": "accessibility/install-accessibility-page-v4.php",
+  "args": []
 }
