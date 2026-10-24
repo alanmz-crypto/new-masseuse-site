@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-24 22:14 UTC  **FAIL**  `corp-apply-1`  [reports/2026-10-24/221459-corp-apply-1.md](reports/2026-10-24/221459-corp-apply-1.md)  (run 40137685098)
 - 2026-10-24 22:13 UTC  **PASS**  `corp-dry-1`  [reports/2026-10-24/221359-corp-dry-1.md](reports/2026-10-24/221359-corp-dry-1.md)  (run 40137628490)
 - 2026-10-24 22:13 UTC  **PASS**  `corp-rehearse-3`  [reports/2026-10-24/221313-corp-rehearse-3.md](reports/2026-10-24/221313-corp-rehearse-3.md)  (run 40137505891)
 - 2026-10-24 22:10 UTC  **FAIL**  `corp-rehearse-2`  [reports/2026-10-24/221004-corp-rehearse-2.md](reports/2026-10-24/221004-corp-rehearse-2.md)  (run 40137279178)
