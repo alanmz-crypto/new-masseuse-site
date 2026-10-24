@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-24 16:25 UTC  **PASS**  `deep-evidence-rehearse-2`  [reports/2026-10-24/162537-deep-evidence-rehearse-2.md](reports/2026-10-24/162537-deep-evidence-rehearse-2.md)  (run 40111383371)
 - 2026-10-24 16:22 UTC  **FAIL**  `deep-evidence-rehearse-1`  [reports/2026-10-24/162254-deep-evidence-rehearse-1.md](reports/2026-10-24/162254-deep-evidence-rehearse-1.md)  (run 40111162097)
 - 2026-10-24 16:15 UTC  **PASS**  `inspect-deep-tissue-2`  [reports/2026-10-24/161530-inspect-deep-tissue-2.md](reports/2026-10-24/161530-inspect-deep-tissue-2.md)  (run 40110671946)
 - 2026-10-24 15:31 UTC  **PASS**  `live-deep-tissue-words-2`  [reports/2026-10-24/153106-live-deep-tissue-words-2.md](reports/2026-10-24/153106-live-deep-tissue-words-2.md)  (run 40107050916)
