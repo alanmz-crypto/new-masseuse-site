@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-24 22:21 UTC  **FAIL**  `corp-prove-1`  [reports/2026-10-24/222150-corp-prove-1.md](reports/2026-10-24/222150-corp-prove-1.md)  (run 40138213292)
 - 2026-10-24 22:20 UTC  **FAIL**  `corp-pct-1`  [reports/2026-10-24/222034-corp-pct-1.md](reports/2026-10-24/222034-corp-pct-1.md)  (run 40138054949)
 - 2026-10-24 22:18 UTC  **PASS**  `corp-all-1`  [reports/2026-10-24/221827-corp-all-1.md](reports/2026-10-24/221827-corp-all-1.md)  (run 40137924589)
 - 2026-10-24 22:15 UTC  **PASS**  `corp-check-1`  [reports/2026-10-24/221554-corp-check-1.md](reports/2026-10-24/221554-corp-check-1.md)  (run 40137772744)
