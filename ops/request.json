@@ -1,7 +1,8 @@
 {
-  "id": "deep-tissue-rehearse-1",
-  "op": "rehearse",
+  "id": "deep-tissue-dry-1",
+  "op": "run",
   "target": "staging36",
-  "installer": "deep-tissue/install-deep-tissue-copy.php",
-  "args": []
+  "script": "deep-tissue/push-deep-tissue-copy.sh",
+  "args": [],
+  "tests": "auto"
 }
