@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-24 23:45 UTC  **FAIL**  `corp-chk-3`  [reports/2026-10-24/234521-corp-chk-3.md](reports/2026-10-24/234521-corp-chk-3.md)  (run 40143925569)
 - 2026-10-24 23:43 UTC  **PASS**  `corp-inspect-fp-3`  [reports/2026-10-24/234318-corp-inspect-fp-3.md](reports/2026-10-24/234318-corp-inspect-fp-3.md)  (run 40143858895)
 - 2026-10-24 23:42 UTC  **PASS**  `corp-inspect-services-4`  [reports/2026-10-24/234236-corp-inspect-services-4.md](reports/2026-10-24/234236-corp-inspect-services-4.md)  (run 40143811400)
 - 2026-10-24 23:41 UTC  **PASS**  `corp-apply-2`  [reports/2026-10-24/234147-corp-apply-2.md](reports/2026-10-24/234147-corp-apply-2.md)  (run 40143726026)
