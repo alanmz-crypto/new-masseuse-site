@@ -11,7 +11,7 @@
 // (reserve space with CSS aspect-ratio). Raw HTML blocks (core/html) accept anything. Spectra (uagb) blocks are validated by its plugin.
 import { createRequire } from 'module';
 import fs from 'fs';
-const require = createRequire('/home/lauer/Projects/SubProjects/Mirror/package.json');
+const require = createRequire(process.env.TS_PLAYWRIGHT_ROOT || '/home/lauer/Projects/SubProjects/Mirror/package.json');
 const { chromium } = require('playwright');
 const pw = fs.readFileSync('/home/lauer/.cache/wwm-scratch/.tmpadmin', 'utf8').trim();
 const base = process.argv[2] || 'http://localhost:8090';

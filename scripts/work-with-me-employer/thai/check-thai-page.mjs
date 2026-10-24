@@ -7,7 +7,7 @@
 import { createRequire } from 'module';
 import fs from 'fs';
 import path from 'path';
-const require = createRequire('/home/lauer/Projects/SubProjects/Mirror/package.json');
+const require = createRequire(process.env.TS_PLAYWRIGHT_ROOT || '/home/lauer/Projects/SubProjects/Mirror/package.json');
 const pw = require('playwright');
 const base = (process.argv[2] || 'http://localhost:8090').replace(/\/$/, '');
 const out = process.argv[3] || '/tmp/thai-shots';

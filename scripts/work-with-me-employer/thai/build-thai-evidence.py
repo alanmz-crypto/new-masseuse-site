@@ -14,11 +14,11 @@ WHAT IS ADDED (nothing already on the page is moved or reworded, apart from one 
   2. "Questions About Thai Massage": a Spectra FAQ accordion like the Therapeutic page's, 7 questions. ANSWERS CARRY NO LINKS: Spectra wraps a whole question and its answer in role="tab",
      so a link inside an answer is an axe "nested-interactive" failure (the known For Practices item). Facts: mat (Ryan), 60 or 90 minutes (Ryan), no travel to clients (Ryan); everything else restates the page.
   3. "What the Research Says About Thai Massage": an intro and five native WordPress "details" panels (keyboard- and screen-reader-native, links allowed inside): reviews and limits; back pain; neck, shoulders,
-     arms and feet; stress, energy and recovery; Sources. 25 numbered sources, numbered in reading order by the registry below so the markers and the list cannot drift apart.
+     arms and feet; stress, energy and recovery; Sources. 31 numbered sources, numbered in reading order by the registry below so the markers and the list cannot drift apart.
 EVERY SENTENCE was checked against the paper's own abstract (Europe PMC / Cochrane / NCCIH / UNESCO pages, 2026-10-19). Studies of Thai massage as a treatment for a disease (headache disorders, knee
 osteoarthritis against ibuprofen, cerebral palsy, autism, stroke, cancer, urinary symptoms, constipation, bone density, immunity) are NOT used: that would make the page read as promising to treat illness
 (OAR 334-010-0025(2)(c) and (4); 334-040-0010(7)). Unfavourable and mixed results ARE used, so the summary stays honest.
-Left out on purpose: Yoopat 2015 (30 office workers; its abstract does not say whether the difference was between techniques or from before to after).
+Yoopat 2015 (30 office workers) is now quoted in the authors' own words, because its abstract is ambiguous about what was compared (the audit of 2026-10-19: a null shoulder-strength result belongs on the page).
 
 DIAGNOSIS VOCABULARY (OAR 334-010-0025(2)(c): massage does not include making a medical diagnosis; the footer says she does not diagnose): study populations are described in plain words in the prose
 ("shoulder-blade pain", "tender spots in the muscles"), not by clinical label (scapulocostal syndrome, myofascial, trigger points). The Sources panel quotes titles exactly as published.
@@ -70,6 +70,12 @@ SRC = {
     'sripongngam_jmat': (PM % '26387408', 'Sripongngam T, Eungpinichpong W, et al.', 'Psychological Stress Can Be Decreased by Traditional Thai Massage', 'J Med Assoc Thai, 2015.'),
     'bennett': (PM % '27210845', 'Bennett S, Bennett MJ, Chatchawan U, et al.', 'Acute effects of traditional Thai massage on cortisol levels, arterial blood pressure and stress perception in academic stress condition: A single blind randomised controlled trial', 'J Bodyw Mov Ther, 2016.'),
     'macsween': (PM % '30100318', 'MacSween A, Lorrimer S, van Schaik P, Holmes M, van Wersch A.', 'A randomised crossover trial comparing Thai and Swedish massage for fatigue and depleted energy', 'J Bodyw Mov Ther, 2018.'),
+    'yin': (PM % '25197310', 'Yin P, Gao N, Wu J, Litscher G, Xu S.', 'Adverse events of massage therapy in pain-related conditions: a systematic review', 'Evid Based Complement Alternat Med, 2014.'),
+    'ernst': (PM % '12777645', 'Ernst E.', 'The safety of massage therapy', 'Rheumatology (Oxford), 2003.'),
+    'hematoma': (PM % '30691861', 'Vanichkulbodee A, Issaragrisil S, Inboriboon PC.', 'Massage-induced spinal epidural hematoma presenting with delayed paraplegia', 'Am J Emerg Med, 2019.'),
+    'wiwanitkit': (PM % '26865746', 'Wiwanitkit V.', 'Thai traditional massage: Issues causing possible adverse effects', 'Anc Sci Life, 2015.'),
+    'hongsuwan': (PM % '25729203', 'Hongsuwan C, Eungpinichpong W, Chatchawan U, Yamauchi J.', 'Effects of Thai massage on physical fitness in soccer players', 'J Phys Ther Sci, 2015.'),
+    'yoopat': (PM % '25892379', 'Yoopat P, Maes C, Poriau S, Vanwonterghem K.', 'Thai traditional massage: efficiency-assessment of three traditional massage methods on office workers: an explorative study', 'J Bodyw Mov Ther, 2015.'),
     'buttagat2024g': (PM % '38796061', 'Buttagat V, Kluayhomthong S, Areeudomwong P.', 'The influence of traditional Thai massage on recovery from gastrocnemius muscle fatigue: A single-blind randomised controlled trial', 'Complement Ther Med, 2024.'),
 }
 
@@ -94,50 +100,72 @@ FAQ = [
 ]
 
 RES_INTRO = ('Research on traditional Thai massage is still limited. Most studies are small, many compare Thai massage with another approach rather than with no massage, and most follow people for '
-             'only a few weeks. The summaries below describe what the studies reported. They are general information, not medical advice or a promise of any result, and people respond differently.')
+             'only a few weeks. The summaries below describe what the studies reported. They are general information, not medical advice or a promise of any result, and people respond differently. '
+             'This section covers studies of massage for pain, movement, stress, energy and recovery; studies of massage used for specific medical conditions are not summarized here. '
+             'Each part starts with what the studies found in massage’s favor, then gives the results that were weaker, mixed or negative, and ends on what is encouraging: I included the studies I found '
+             'with disappointing results, not only the favorable ones.')
 
+# Ryan, 2026-10-19 ("make sure I didn't miss any discouraging or poor results ... so we can sandwich the discouraging results between two assertive positive claims", then "you can sandwich with the method you
+# used on the Therapeutic page"): every panel now runs positive findings, then the weaker, mixed and negative ones IN FULL, then a positive close. Every claim on each side is sourced and hedged as its source hedges it.
+# New in this version (found by the audit): a safety review, one Thai-massage case report of a serious injury and one commentary, a trial with a null shoulder-strength result, and a favorable soccer-player trial.
 PANELS = [
     ('Reviews, and What They Say About Limits', True, [
-        'A 2015 systematic review of six studies of traditional Thai massage in people with long-lasting pain found that every study reported less pain after a course of sessions. The review noted that the reduction '
-        'appeared to last for up to 15 weeks, and its authors said more research is needed to learn how Thai massage compares with control conditions over the longer term.{keeratitanont}',
-        'A 2012 review of six studies of Swedish and Thai massage for low-back pain reported that the two appeared to be about equally helpful, and noted that weaknesses in the studies mean more direct comparisons are needed.{netchanok}',
-        'Reviews of massage in general are cautious, too. A 2015 Cochrane review of 25 trials with 3,096 people with low-back pain found some short-term benefits, but the studies were small and of low quality, '
-        'and the review’s authors said they had “very little confidence” in the results.{cochrane_lbp} A 2024 Cochrane review of 33 studies with 1,994 people with neck pain found that massage probably made little or no '
-        'difference compared with a placebo massage after about 12 weeks (low-certainty evidence), although a subgroup analysis favored higher doses of eight or more sessions of at least 30 minutes over four weeks.{cochrane_neck}',
-        'The U.S. National Center for Complementary and Integrative Health notes that the risk of harm from massage appears to be low, although rare serious side effects such as a blood clot, nerve injury or bone '
-        'fracture have been reported, and it advises against using massage to put off seeing a health care provider about a medical problem.{nccih}',
+        'A 2015 systematic review of six studies of traditional Thai massage in people with long-lasting pain found that every study reported less pain after a course of sessions, with the reduction '
+        'appearing to last for up to 15 weeks.{keeratitanont} A 2012 review of six studies of Swedish and Thai massage for low-back pain reported that the two appeared to be about equally helpful.{netchanok}',
+        'The reviews also say what they could not show. The 2015 review’s authors said more research is needed to learn how Thai massage compares with control conditions over the longer term, and the 2012 review '
+        'noted that weaknesses in the studies mean more direct comparisons are needed. Reviews of massage in general are cautious, too. A 2015 Cochrane review of 25 trials with 3,096 people with low-back pain found '
+        'some short-term benefits, but the studies were small and of low quality, and its authors said they had “very little confidence” in the results.{cochrane_lbp} A 2024 Cochrane review of 33 studies with '
+        '1,994 people with neck pain found that massage probably made little or no difference compared with a placebo massage after about 12 weeks (low-certainty evidence).{cochrane_neck}',
+        'That neck review also found that higher doses, meaning eight or more sessions of at least 30 minutes over four weeks, favored massage in a subgroup analysis, which suggests that regular sessions may matter.{cochrane_neck}',
+        'Massage is generally described as low risk, and where serious problems on record can be traced to who gave the massage, they are mostly tied to people who were not trained massage therapists. The U.S. '
+        'National Center for Complementary and Integrative Health notes that the risk of harm appears to be low, although rare serious side effects such as a blood clot, nerve injury or bone fracture have been '
+        'reported.{nccih} A 2014 review of 40 published reports found 138 adverse events over 11 years, mainly disc herniation, soft-tissue injury, nerve problems, spinal cord injury and tears in the neck arteries, '
+        'with spinal manipulation inside a massage repeatedly linked to the serious ones. Massage therapists were the practitioners in only 8 of the 138 events (5.8 percent) and chiropractors in 33 (23.9 percent); '
+        'the rest (70.3 percent) involved unregistered people or other health professionals, and the authors concluded that massage by nonprofessionals and forceful techniques is often associated with adverse '
+        'events.{yin} A 2003 review of published case reports likewise found that most serious events followed unusual techniques or massage by laypeople rather than by massage therapists, and concluded that serious '
+        'events are probably true rarities.{ernst} For Thai massage specifically, a 2019 case report described a 20-year-old man who developed bleeding around the spinal cord (a spinal epidural hematoma) with '
+        'delayed leg weakness three days after a Thai massage given by a layperson, a friend, and who needed emergency surgery.{hematoma} A 2015 commentary also discussed a patient who had a heart attack around '
+        'the time of a Thai massage and the possible adverse effects of Thai massage.{wiwanitkit} The U.S. center also advises against using massage to put off seeing a health care provider about a medical '
+        'problem. Taken together, in the reports that say who gave the massage, trained massage therapists were rarely involved: the serious injuries were mostly linked to people who were not massage therapists, '
+        'including laypeople and unregistered practitioners, and to forceful or unusual techniques. Serious events are rare: I ask about your health, medications and recent injuries before each session, and I set '
+        'the pressure and the range of each stretch by what is comfortable for you.',
     ]),
     ('Back Pain', False, [
-        'Several small trials have compared Thai massage with another approach for low-back pain. In a hospital trial in Bangkok, 120 adults had Thai massage or joint mobilization twice a week for four weeks, and both '
-        'groups improved by similar amounts on pain and everyday-activity scores. The trial had no comparison group that received neither, so it cannot show how much of the change was due to the sessions themselves.{juntakarn} '
-        'In 140 older adults, Thai massage alone and Thai massage with an herbal compress led to similar improvements over 15 weeks, so the compress added no clear benefit.{laosee} In another trial of 140 adults, adding '
-        'acupuncture to court-type Thai massage made no clear difference after one month, and both groups reported less pain and more movement.{siriyong}',
-        'An earlier trial that compared Thai and Swedish massage for back pain with tender spots in the muscles found that pain fell by more than half in both groups after three weeks and stayed lower for up to a month, '
-        'with no significant difference between them.{chatchawan} A preliminary trial of 18 military personnel with back pain found less pain after both Thai massage and acupuncture, with one pain-questionnaire '
-        'score lower after acupuncture.{kumnerddee}',
-        'Trials that used a sham (inactive) device or rest as the comparison also reported differences. In 50 adults with upper-back pain, one 30-minute session of Thai massage was followed by larger reductions in pain, '
-        'muscle tension and muscle activity than a sham device.{buttagat2016} In 36 adults with back pain, one 30-minute session was followed by lower self-reported pain, anxiety and muscle tension and better flexibility '
-        'than resting on a bed.{buttagat2011}',
+        'Two trials with a comparison that was not another massage reported clear differences. In 50 adults with upper-back pain, one 30-minute session of Thai massage was followed by larger reductions in pain, '
+        'muscle tension and muscle activity than a sham device.{buttagat2016} In 36 adults with back pain, one 30-minute session was followed by lower self-reported pain, anxiety and muscle tension and better '
+        'flexibility than resting on a bed.{buttagat2011}',
+        'Trials that compared Thai massage with another approach found similar results rather than a winner. In a hospital trial in Bangkok, 120 adults had Thai massage or joint mobilization twice a week for four '
+        'weeks, and both groups improved by similar amounts on pain and everyday-activity scores. The trial had no comparison group that received neither, so it cannot show how much of the change was due to the '
+        'sessions themselves.{juntakarn} In 140 older adults, Thai massage alone and Thai massage with an herbal compress led to similar improvements over 15 weeks, so the compress added no clear benefit.{laosee} '
+        'In another trial of 140 adults, adding acupuncture to court-type Thai massage made no clear difference after one month, and both groups reported less pain and more movement.{siriyong} A preliminary trial '
+        'of 18 military personnel with back pain found less pain after both Thai massage and acupuncture, with one pain-questionnaire score lower after acupuncture.{kumnerddee}',
+        'An earlier trial that compared Thai and Swedish massage for back pain with tender spots in the muscles found that pain fell by more than half in both groups after three weeks and stayed lower for up to a '
+        'month, with no significant difference between them.{chatchawan}',
     ]),
     ('Neck, Shoulders, Arms and Feet', False, [
-        'In 45 adults with neck pain, eight sessions of Thai massage or of a muscle energy technique over two weeks were each followed by more improvement in pain and neck movement than in a control group, with no clear '
-        'difference between the two techniques.{buttagat2021}',
-        'Two trials compared Thai massage with exercise for shoulder pain. In 78 adults with shoulder-blade pain, four weeks of Thai massage or Thai boxing exercise both reduced pain, and Thai '
-        'massage did better on several measures, including pain and neck movement, at the end of the program and at one month.{areeudomwong} In 46 adults with upper-shoulder pain, court-type Thai massage and a Thai hermit '
-        'exercise routine both improved neck movement and pain, and the massage group reported a clearer reduction in pain.{boonruab} A pilot trial of 20 people with shoulder-blade pain found lower pain and muscle tension '
-        'after Thai massage than after a physical-therapy package of ultrasound and a hot pack.{buttagat2012}',
-        'In 62 young adults with tender spots in the forearm muscles, nine short sessions of Thai massage were followed by greater improvement in pain, tenderness and wrist movement than sham ultrasound.{buttagat2024w}',
-        'Not every comparison favored Thai massage. In 60 people with heel pain, both Thai massage and ultrasound were followed by less pain, but ultrasound with stretching produced larger gains in pain and ankle '
-        'movement.{somphai} In 48 adults with a forward head posture, a four-week program that combined Thai massage with shoulder-blade exercises and chest mobilization improved head position and neck movement more than '
-        'lying at rest. Because three approaches were combined, the trial cannot show what Thai massage added by itself.{fhp}',
+        'In 45 adults with neck pain, eight sessions of Thai massage or of a muscle energy technique over two weeks were each followed by more improvement in pain and neck movement than in a control group.{buttagat2021} '
+        'In 78 adults with shoulder-blade pain, four weeks of Thai massage or Thai boxing exercise both reduced pain, and Thai massage did better on several measures, including pain and neck movement, at the end of '
+        'the program and at one month.{areeudomwong} In 46 adults with upper-shoulder pain, court-type Thai massage and a Thai hermit exercise routine both improved neck movement and pain, and the massage group '
+        'reported a clearer reduction in pain.{boonruab} In 62 young adults with tender spots in the forearm muscles, nine short sessions of Thai massage were followed by greater improvement in pain, tenderness '
+        'and wrist movement than sham ultrasound.{buttagat2024w}',
+        'Not every comparison favored Thai massage. In the neck trial there was no clear difference between Thai massage and the muscle energy technique. In 60 people with heel pain, both Thai massage and ultrasound '
+        'were followed by less pain, but ultrasound with stretching produced larger gains in pain and ankle movement.{somphai} In 48 adults with a forward head posture, a four-week program that combined Thai '
+        'massage with shoulder-blade exercises and chest mobilization improved head position and neck movement more than lying at rest. Because three approaches were combined, the trial cannot show what Thai '
+        'massage added by itself.{fhp} In 30 healthy female office workers who each tried three styles of Thai massage, the authors reported that “strength in shoulders was not significantly different, but some '
+        'forearm fatigue was decreased significantly among the three massage techniques.”{yoopat}',
+        'A pilot trial of 20 people with shoulder-blade pain found lower pain and muscle tension after Thai massage than after a physical-therapy package of ultrasound and a hot pack.{buttagat2012}',
     ]),
     ('Stress, Energy and Recovery', False, [
-        'Two small trials in healthy adults first raised stress with a mental-arithmetic test and then gave either one hour of Thai massage or one hour of rest. In both trials, stress measures fell after massage and after '
-        'rest. In one trial (29 people, each trying both), one marker, salivary amylase, fell more after Thai massage; in the other (30 people), no measure differed between the groups.{sripongngam_msm}{sripongngam_jmat}',
-        'In 36 physiotherapy students under academic stress, saliva cortisol and heart rate fell after one Thai massage session and in a control group, with no significant difference in cortisol between the groups.{bennett}',
-        'In a small crossover trial, 20 adults who felt tired or low on energy had three weekly sessions of Thai massage and three of Swedish massage. Both were reported to support well-being, with Thai massage described as '
-        'more energizing and Swedish massage as having the larger effect on relaxation and sleep.{macsween}',
-        'In 54 healthy adults whose calf muscles were tired by heel-raise exercise, 30 minutes of Thai massage was followed by faster recovery on muscle measures than 30 minutes of mostly rest.{buttagat2024g}',
+        'In 54 healthy adults whose calf muscles were tired by heel-raise exercise, 30 minutes of Thai massage was followed by faster recovery on muscle measures than 30 minutes of mostly rest.{buttagat2024g} '
+        'In 34 soccer players who were given Thai massage or rest, all seven fitness tests (sit-and-reach, hand grip strength, agility, a 50-meter sprint, sit-ups, push-ups and a test of aerobic fitness) improved '
+        'in the massage group, compared with two in the rest group.{hongsuwan}',
+        'The results on stress are mixed. Two small trials in healthy adults first raised stress with a mental-arithmetic test and then gave either one hour of Thai massage or one hour of rest. In both trials, '
+        'stress measures fell after massage and after rest. In one trial (29 people, each trying both), one marker, salivary amylase, fell more after Thai massage; in the other (30 people), no measure differed '
+        'between the groups.{sripongngam_msm}{sripongngam_jmat} In 36 physiotherapy students under academic stress, saliva cortisol and heart rate fell after one Thai massage session and in a control group, with '
+        'no significant difference in cortisol between the groups.{bennett} In a small crossover trial, 20 adults who felt tired or low on energy had three weekly sessions of Thai massage and three of Swedish '
+        'massage, and Swedish massage was described as having the larger effect on relaxation and sleep.{macsween}',
+        'Even so, the results point the same encouraging way on the outcomes that matter to many people: a marker of stress, salivary amylase, fell more after Thai massage than after rest in one trial,{sripongngam_msm} '
+        'and in the trial of tired adults Thai massage was described as the more energizing of the two styles.{macsween}',
     ]),
 ]
 

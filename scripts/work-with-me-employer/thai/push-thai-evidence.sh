@@ -37,7 +37,7 @@ ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o 
 
 echo "[1] Connecting and uploading the package to ~/wwm-package-thai-evidence (outside every web root) ..."
 "${ssh_cmd[@]}" true 2>/dev/null || { echo "SSH login refused; check the ssh-agent holds the right key." >&2; exit 2; }
-tar -C "$here" -cf - install-thai-evidence.php thai-evidence-content.php \
+tar -C "$here" -cf - install-thai-evidence.php thai-evidence-content.php thai-evidence-content-v1.php \
   | "${ssh_cmd[@]}" 'rm -rf "$HOME/wwm-package-thai-evidence" && mkdir -p "$HOME/wwm-package-thai-evidence" && tar -xf - -C "$HOME/wwm-package-thai-evidence"'
 
 read -r -d '' REMOTE <<'EOS' || true
@@ -91,7 +91,7 @@ case "$phase" in
     chk "FAQ: no travel to clients" 1 "$(count 'I do not currently travel to clients.')"
     chk "research heading (no duplicate)" 1 "$(count 'What the Research Says About Thai Massage')"
     chk "five collapsible panels" 5 "$(count '<details class="wp-block-details')"
-    chk "25 source entries" 25 "$(count '<cite class="ts-source">')"
+    chk "31 source entries" 31 "$(count '<cite class="ts-source">')"
     chk "old text gone (the old end of the section)" 0 "$(count 'a blend of both.</p>')"
     chk "safety sentence still there once" 1 "$(count 'means you should see a doctor before massage.')"
     chk "images unchanged (3 on the page body plus none new)" 3 "$(grep -o 'wp-content/uploads/2026/06/ComfyUI_01044_.webp\|wp-content/uploads/2026/06/mcdZCAyR9U1OAhvDYTI4I_206e1effba9046e2a30ec4af77b77463.webp\|wp-content/uploads/2026/06/yCn9FkO5cUOtHrjOvXn2V_2409a2f00dd34934aa54ff6447f34c40-1.webp' "$tmp" | sort -u | wc -l)"

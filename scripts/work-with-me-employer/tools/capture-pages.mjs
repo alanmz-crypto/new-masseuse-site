@@ -3,7 +3,7 @@
 // Playwright is taken from the Mirror project (the same install the earlier restyle checks used).
 import { createRequire } from 'module';
 import fs from 'fs';
-const require = createRequire('/home/lauer/Projects/SubProjects/Mirror/package.json');
+const require = createRequire(process.env.TS_PLAYWRIGHT_ROOT || '/home/lauer/Projects/SubProjects/Mirror/package.json');
 const { chromium } = require('playwright');
 const [base, out] = process.argv.slice(2);
 if (!base || !out) { console.error('usage: node capture-pages.mjs <base-url> <output-dir>'); process.exit(1); }

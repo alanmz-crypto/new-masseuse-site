@@ -1,0 +1,66 @@
+# Server work on the SiteGround sites that is NOT a live write: staging writes (push scripts with --apply/--rollback on a stagingNN copy),
+# rehearsals on a throwaway copy, read-only inspection and tests of any site (live included), and on-demand backups.
+# Started by a push that changes ops/request.json (scripts/ci/request.sh does that from a cloud session), or by hand:
+# Actions > Site ops > Run workflow (paste a request, or leave it empty to use ops/request.json of the chosen branch).
+# Live writes are refused here (scripts/ci/run-op.sh); they go through site-live.yml from main only.
+# Every write first takes a DB export on the server and keeps a verified, encrypted copy off the server (sync-server-backups.sh + offsite-store.sh).
+name: Site ops
+
+on:
+  push:
+    branches-ignore: [main, ops-log]
+    paths: ['ops/request.json']
+  workflow_dispatch:
+    inputs:
+      request:
+        description: 'Request JSON (format: ops/README.md). Leave empty to use ops/request.json from the branch chosen above.'
+        required: false
+        default: ''
+
+permissions:
+  contents: write   # the encrypted off-site backups (draft releases) and the report (ops-log branch)
+
+concurrency:
+  group: site-ops   # one SiteGround operation at a time, shared with site-live.yml
+  cancel-in-progress: false
+
+jobs:
+  op:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    environment: staging   # holds the SiteGround secrets for this lane (Settings > Environments)
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Request
+        env:
+          REQUEST_INPUT: ${{ inputs.request }}
+        run: scripts/ci/prepare-request.sh ops
+      - name: Tools
+        run: scripts/ci/install-base-tools.sh
+      - name: SiteGround access
+        env:
+          SG_HOST: ${{ secrets.SG_HOST }}
+          SG_PORT: ${{ secrets.SG_PORT }}
+          SG_USER: ${{ secrets.SG_USER }}
+          SG_SSH_KEY: ${{ secrets.SG_SSH_KEY }}
+          SG_KNOWN_HOSTS: ${{ secrets.SG_KNOWN_HOSTS }}
+        run: scripts/ci/setup-ssh.sh
+      - name: Run the request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: scripts/ci/run-op.sh "$RUNNER_TEMP/request.json" ops "$RUNNER_TEMP/report.md"
+      - name: Publish the report
+        if: always()
+        run: scripts/ci/publish-report.sh "$RUNNER_TEMP/report.md" "$RUNNER_TEMP/request.json"
+      - name: Keep logs and screenshots
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: site-ops-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/ops-out
+            /home/runner/.cache/ts-post-change
+          retention-days: 30
+          if-no-files-found: ignore
+
+# ref: ../../scripts/ci/run-op.sh — the rules each request must pass; ../../ops/README.md — the request format; ../../CLOUD-SETUP.md — the secrets

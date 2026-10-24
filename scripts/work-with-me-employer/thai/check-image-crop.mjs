@@ -2,7 +2,7 @@
 // Added 2026-10-19 (Ryan: "the pictures need to be cropped closer to their original square shape"). At ten widths (320-1280 px) every picture's visible frame must have the picture's own proportions
 // (512 x 460, within 1%), i.e. no part of the picture cut off, each image loaded, no side-scroll. Run it against a site WITHOUT thai/image-crop.css to see the problem (up to 50% cut off). Exit 1 on failure.
 import { createRequire } from 'module';
-const require = createRequire('/home/lauer/Projects/SubProjects/Mirror/package.json');
+const require = createRequire(process.env.TS_PLAYWRIGHT_ROOT || '/home/lauer/Projects/SubProjects/Mirror/package.json');
 const { chromium, firefox } = require('playwright');
 const isFF = process.env.BROWSER === 'firefox';   // BROWSER=firefox node check-image-crop.mjs <url>: a second engine
 const [base, theme] = process.argv.slice(2);

@@ -8,7 +8,7 @@
  *   1. "What Is Thai Massage?": one paragraph is added at the end (UNESCO 2019 listing, numbered source [1]; her training, which the About page already states). The old text is anchored to its own
  *      closing sentence and occurs exactly once.
  *   2. Two sections are APPENDED after the last block on the page, so nothing above moves: "Questions About Thai Massage" (Spectra FAQ, link-free answers) and "What the Research Says About Thai Massage"
- *      (an intro and five native "details" panels; 25 numbered sources; the last panel lists them with their titles quoted as published).
+ *      (an intro and five native "details" panels; 31 numbered sources; the last panel lists them with their titles quoted as published).
  * What it writes: the page's own post_content in the posts table (no files, no MU-plugin, no theme or CSS change). Images, headings above, the safety paragraph and the four steps are not touched.
  * The guard: ready = the heritage anchor occurs once, the new sections are absent and the page still ENDS with the reviewed tail; applied = the new heritage text once and the sections once at the end;
  * anything else (a half-applied or hand-edited page, a block id already used by another post) stops the run.
@@ -60,6 +60,15 @@ foreach ( array( 'uagb/faq', 'uagb/faq-child', 'core/paragraph', 'core/details',
 }
 
 $data = require __DIR__ . '/thai-evidence-content.php';
+// A version-1 research section (before the "sandwich" update in ../evidence-update/) may still be on this page, on live until that update is applied there: then work against that content, so preflight and rollback
+// still match what is really on the page. A page without it (or with the new text) uses the current content above.
+if ( is_file( __DIR__ . '/thai-evidence-content-v1.php' ) ) {
+	$v1    = require __DIR__ . '/thai-evidence-content-v1.php';
+	$probe = get_posts( array( 'post_type' => 'page', 'name' => 'thai-massage', 'post_status' => 'publish', 'numberposts' => -1, 'suppress_filters' => true ) );
+	if ( 1 === count( $probe ) && 1 === substr_count( (string) $probe[0]->post_content, $v1['sections'] ) && 0 === substr_count( (string) $probe[0]->post_content, $data['sections'] ) ) {
+		$data = $v1;
+	}
+}
 $slug = 'thai-massage';
 $her_old = $data['heritage_old'];
 $her_new = $data['heritage_new'];

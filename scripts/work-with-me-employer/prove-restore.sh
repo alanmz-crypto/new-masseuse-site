@@ -2,7 +2,7 @@
 # Prove that a DB export really restores: import the newest local copy of a site's export into a THROWAWAY database on this computer,
 # run identical fingerprint queries against the restored copy and against the real site (read-only), and compare.
 #
-#   ./prove-restore.sh <target> [export.sql]       target: live staging24 staging25 staging26 staging27 staging30 staging31 staging32 staging33 staging34
+#   ./prove-restore.sh <target> [export.sql]       target: live staging24 staging25 staging26 staging27 staging30 staging31 staging32 staging33 staging34 staging36
 #
 # Uses the off-server copy made by sync-server-backups.sh (run that first). Compares: exact row counts of every table, a hash of every
 # published page (the site's own address normalised), the Additional CSS, every SureRank SEO field, and the key settings.
@@ -18,8 +18,8 @@ dest="${TS_SERVER_BACKUPS:-$HOME/WordPress/thai-solitude-server-backups}"
 target="${1:-}"
 case "$target" in
   live) want="thaisolitude.com" ;;
-  staging24|staging25|staging26|staging27|staging30|staging31|staging32|staging33|staging34) want="$target.thaisolitude.com" ;;
-  *) echo "Usage: $0 <live|staging24|staging25|staging26|staging27|staging30|staging31|staging32|staging33|staging34> [export.sql]" >&2; exit 1 ;;
+  staging24|staging25|staging26|staging27|staging30|staging31|staging32|staging33|staging34|staging36) want="$target.thaisolitude.com" ;;
+  *) echo "Usage: $0 <live|staging24|staging25|staging26|staging27|staging30|staging31|staging32|staging33|staging34|staging36> [export.sql]" >&2; exit 1 ;;
 esac
 sql="${2:-$(find "$dest" -maxdepth 1 -name "${target}-before-*.sql" -printf '%T@ %p\n' 2>/dev/null | sort -rn | head -1 | cut -d' ' -f2-)}"
 [ -n "$sql" ] && [ -s "$sql" ] || { echo "No export for $target in $dest (run sync-server-backups.sh first)." >&2; exit 1; }

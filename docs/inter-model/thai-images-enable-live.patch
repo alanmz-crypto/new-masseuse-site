@@ -1,0 +1,52 @@
+--- a/scripts/work-with-me-employer/thai/install-thai-images.php
++++ b/scripts/work-with-me-employer/thai/install-thai-images.php
+@@ -17,7 +17,8 @@
+  * The guard: ready = the three blocks are found once each, hold their old media ids and urls; applied = they hold the new ones; anything else stops. The two source files are checked against their sha256.
+  * Rollback: puts the three blocks back exactly (the page returns byte-for-byte when nothing else was edited) and deletes ONLY the media items this apply imported, and only if nothing else references them.
+  *
+- * Allow-list: localhost:8090 and staging34. Live is added only after Ryan's explicit go (an agent adding a live host is refused by the auto-mode classifier: hand him a tested patch).
++ * Allow-list: localhost:8090, staging34 and live. Live was added by Ryan's go ("finish one and two" = the image swap on live, 2026-10-19) after the change was applied, checked and rollback-proven on localhost and
++ * staging34; he applies it himself (the auto-mode classifier refuses an agent adding a live host).
+  *
+  * Modes (first WP-CLI argument; run with --user=1):  <mode> [FILE]
+  *   preflight    read-only: ready / applied / CHANGED (stop)
+@@ -32,8 +33,8 @@
+ 
+ $home = untrailingslashit( home_url() );
+ $host = (string) wp_parse_url( $home, PHP_URL_HOST ) . ( wp_parse_url( $home, PHP_URL_PORT ) ? ':' . wp_parse_url( $home, PHP_URL_PORT ) : '' );
+-if ( ! in_array( $host, array( 'localhost:8090', 'staging34.thaisolitude.com' ), true ) ) {
+-	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090 or staging34 only).' );
++if ( ! in_array( $host, array( 'localhost:8090', 'staging34.thaisolitude.com', 'thaisolitude.com' ), true ) ) {
++	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090, staging34 or live only).' );
+ }
+ if ( 'astra' !== get_stylesheet() ) {
+ 	WP_CLI::error( 'Active theme is not Astra.' );
+--- a/scripts/work-with-me-employer/thai/push-thai-images.sh
++++ b/scripts/work-with-me-employer/thai/push-thai-images.sh
+@@ -1,6 +1,6 @@
+ #!/usr/bin/env bash
+-# Thai Massage page: swap its three illustrations, on staging34 (S_TARGET=staging34; default). Live is NOT enabled: it needs Ryan's explicit go, and the live host is added to install-thai-images.php
+-# only then (the auto-mode classifier refuses an agent adding a live host: hand him a tested patch).
++# Thai Massage page: swap its three illustrations, on staging34 or live (S_TARGET=staging34|live; default staging34). Live was enabled by Ryan's go ("finish one and two", 2026-10-19);
++# the live host was added to install-thai-images.php by Ryan (the auto-mode classifier refuses an agent adding a live host); he runs the live --apply himself.
+ # Ryan, 2026-10-19: "take the image that matches Thai Massage on the services page and apply it to the first image on the thai massage page. then replace the next two images with these
+ # thai_massage_immage.webp thai_massage_immage_magenta.webp".
+ #
+@@ -33,7 +33,7 @@
+   *) echo "Usage: $0 [--apply | --rollback FILE]" >&2; exit 1 ;;
+ esac
+ target="${S_TARGET:-staging34}"
+-case "$target" in staging34) ;; *) echo "S_TARGET must be staging34 (live is not enabled for this change)." >&2; exit 1 ;; esac
++case "$target" in staging34|live) ;; *) echo "S_TARGET must be staging34 or live." >&2; exit 1 ;; esac
+ echo "Target site: $target   mode: $mode"
+ ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 "$user@$host")
+ 
+@@ -46,7 +46,7 @@
+ set -euo pipefail
+ wp() { command wp --skip-plugins=sg-security "$@"; }   # SiteGround Security 1.6.9 + PHP 8.5 makes EVERY wp exit 0 on live (shutdown-handler bug); skipping that one plugin keeps exit codes true. See AGENTS.md and check-wp-exit-codes.sh.
+ phase=$1; target=$2; snap=${3:-}
+-case "$target" in staging34) want="staging34.thaisolitude.com" ;; *) echo "Remote refused: target must be staging34, got '$target'." >&2; exit 1 ;; esac
++case "$target" in staging34) want="staging34.thaisolitude.com" ;; live) want="thaisolitude.com" ;; *) echo "Remote refused: target must be staging34 or live, got '$target'." >&2; exit 1 ;; esac
+ command -v wp >/dev/null || { echo "wp-cli not found on the server" >&2; exit 1; }
+ doc=""
+ cfgs=$(mktemp); trap 'rm -f "$cfgs"' EXIT

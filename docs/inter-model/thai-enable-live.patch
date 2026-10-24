@@ -1,0 +1,102 @@
+--- a/scripts/work-with-me-employer/thai/install-thai-evidence.php
++++ b/scripts/work-with-me-employer/thai/install-thai-evidence.php
+@@ -22,7 +22,7 @@
+  * COMPLIANCE: the research sentences were checked against each paper's own abstract (2026-10-19). Studies of Thai massage as a treatment for a disease are deliberately not used (OAR 334-010-0025(2)(c) and (4);
+  * 334-040-0010(7)). See the builder's header and AGENTS.md. This is a check against the published rules, not legal advice or a Board ruling.
+  *
+- * Allow-list: localhost:8090 and staging33 only. Live is added only after Ryan's explicit go (an agent adding a live host is refused by the auto-mode classifier; hand him a tested patch, as for the Therapeutic page).
++ * Allow-list: localhost:8090, staging33 and live. Live was added by Ryan's go ("push it live", 2026-10-19) after the change was applied, checked and rollback-proven on localhost and staging33; he applies it himself (the auto-mode classifier refuses an agent adding a live host).
+  *
+  * Modes (first WP-CLI argument; run with --user=1):  <mode> [FILE]
+  *   preflight    read-only: ready / applied / CHANGED (stop)
+@@ -37,8 +37,8 @@
+ 
+ $home = untrailingslashit( home_url() );
+ $host = (string) wp_parse_url( $home, PHP_URL_HOST ) . ( wp_parse_url( $home, PHP_URL_PORT ) ? ':' . wp_parse_url( $home, PHP_URL_PORT ) : '' );
+-if ( ! in_array( $host, array( 'localhost:8090', 'staging33.thaisolitude.com' ), true ) ) {
+-	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090 or staging33 only).' );
++if ( ! in_array( $host, array( 'localhost:8090', 'staging33.thaisolitude.com', 'thaisolitude.com' ), true ) ) {
++	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090, staging33 or live only).' );
+ }
+ if ( 'astra' !== get_stylesheet() ) {
+ 	WP_CLI::error( 'Active theme is not Astra.' );
+--- a/scripts/work-with-me-employer/thai/install-thai-meta.php
++++ b/scripts/work-with-me-employer/thai/install-thai-meta.php
+@@ -15,7 +15,7 @@
+  * Rollback is exact: the snapshot holds every SureRank row the page had (raw stored values), and rollback puts exactly those back and removes any row the apply added.
+  * The new wording is checked against the site's whole banned-word list (no research exemption applies to meta fields), the claim verbs and we/our/us, and the length limits.
+  *
+- * Allow-list: localhost:8090 and staging33 only. Live is added only after Ryan's explicit go (an agent adding a live host is refused by the auto-mode classifier: hand him a tested patch).
++ * Allow-list: localhost:8090, staging33 and live. Live was added by Ryan's go ("push it live", 2026-10-19) after the change was applied, checked and rollback-proven on localhost and staging33; he applies it himself (the auto-mode classifier refuses an agent adding a live host).
+  *
+  * Modes (first WP-CLI argument; run with --user=1):  <mode> [FILE]
+  *   preflight    read-only: ready / applied / CHANGED (stop)
+@@ -30,8 +30,8 @@
+ 
+ $home = untrailingslashit( home_url() );
+ $host = (string) wp_parse_url( $home, PHP_URL_HOST ) . ( wp_parse_url( $home, PHP_URL_PORT ) ? ':' . wp_parse_url( $home, PHP_URL_PORT ) : '' );
+-if ( ! in_array( $host, array( 'localhost:8090', 'staging33.thaisolitude.com' ), true ) ) {
+-	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090 or staging33 only).' );
++if ( ! in_array( $host, array( 'localhost:8090', 'staging33.thaisolitude.com', 'thaisolitude.com' ), true ) ) {
++	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090, staging33 or live only).' );
+ }
+ if ( 'astra' !== get_stylesheet() ) {
+ 	WP_CLI::error( 'Active theme is not Astra.' );
+--- a/scripts/work-with-me-employer/thai/push-thai-evidence.sh
++++ b/scripts/work-with-me-employer/thai/push-thai-evidence.sh
+@@ -1,6 +1,6 @@
+ #!/usr/bin/env bash
+-# Thai Massage page: heritage paragraph, generic FAQ and cited research section, on staging33 (S_TARGET=staging33; default). Live is NOT enabled: it needs Ryan's explicit go, and the live host
+-# is added to install-thai-evidence.php only then (the auto-mode classifier refuses an agent adding a live host: hand him a tested patch, as for the Therapeutic page).
++# Thai Massage page: heritage paragraph, generic FAQ and cited research section, on staging33 or live (S_TARGET=staging33|live; default staging33). Live was enabled by Ryan's go ("push it live", 2026-10-19); the live host
++# was added to the installer by Ryan (the auto-mode classifier refuses an agent adding a live host); he runs the live --apply himself.
+ # Ryan, 2026-10-19: "add all the evidence you can ... no new images ... keep the FAQ generic ... she uses a mat, 60 and 90 min, no travel to clients", after docs/inter-model/thai-massage-page-enhancement-plan.md.
+ #
+ #   ./push-thai-evidence.sh                    dry run: connect, locate the site, upload the package, preflight (read-only on the site)
+@@ -31,7 +31,7 @@
+   *) echo "Usage: $0 [--apply | --rollback FILE]" >&2; exit 1 ;;
+ esac
+ target="${S_TARGET:-staging33}"
+-case "$target" in staging33) ;; *) echo "S_TARGET must be staging33 (live is not enabled for this change)." >&2; exit 1 ;; esac
++case "$target" in staging33|live) ;; *) echo "S_TARGET must be staging33 or live." >&2; exit 1 ;; esac
+ echo "Target site: $target   mode: $mode"
+ ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 "$user@$host")
+ 
+@@ -44,7 +44,7 @@
+ set -euo pipefail
+ wp() { command wp --skip-plugins=sg-security "$@"; }   # SiteGround Security 1.6.9 + PHP 8.5 makes EVERY wp exit 0 on live (shutdown-handler bug); skipping that one plugin keeps exit codes true. See AGENTS.md and check-wp-exit-codes.sh.
+ phase=$1; target=$2; snap=${3:-}
+-case "$target" in staging33) want="staging33.thaisolitude.com" ;; *) echo "Remote refused: target must be staging33, got '$target'." >&2; exit 1 ;; esac
++case "$target" in staging33) want="staging33.thaisolitude.com" ;; live) want="thaisolitude.com" ;; *) echo "Remote refused: target must be staging33 or live, got '$target'." >&2; exit 1 ;; esac
+ command -v wp >/dev/null || { echo "wp-cli not found on the server" >&2; exit 1; }
+ doc=""
+ cfgs=$(mktemp); trap 'rm -f "$cfgs"' EXIT
+--- a/scripts/work-with-me-employer/thai/push-thai-meta.sh
++++ b/scripts/work-with-me-employer/thai/push-thai-meta.sh
+@@ -1,6 +1,6 @@
+ #!/usr/bin/env bash
+-# Thai Massage page: SEO title and meta description, on staging33 (S_TARGET=staging33; default). Live is NOT enabled: it needs Ryan's explicit go, and the live host is added to install-thai-meta.php
+-# only then (the auto-mode classifier refuses an agent adding a live host: hand him a tested patch, as for the Therapeutic page).
++# Thai Massage page: SEO title and meta description, on staging33 or live (S_TARGET=staging33|live; default staging33). Live was enabled by Ryan's go ("push it live", 2026-10-19):
++# the live host was added to install-thai-meta.php by Ryan (the auto-mode classifier refuses an agent adding a live host); he runs the live --apply himself.
+ # Ryan, 2026-10-19: "I like yours. Go with that meta." (after he asked what a meta description is and saw the before/after).
+ #
+ #   ./push-thai-meta.sh                    dry run: connect, locate the site, upload the package, preflight (read-only on the site)
+@@ -31,7 +31,7 @@
+   *) echo "Usage: $0 [--apply | --rollback FILE]" >&2; exit 1 ;;
+ esac
+ target="${S_TARGET:-staging33}"
+-case "$target" in staging33) ;; *) echo "S_TARGET must be staging33 (live is not enabled for this change)." >&2; exit 1 ;; esac
++case "$target" in staging33|live) ;; *) echo "S_TARGET must be staging33 or live." >&2; exit 1 ;; esac
+ echo "Target site: $target   mode: $mode"
+ ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 "$user@$host")
+ 
+@@ -44,7 +44,7 @@
+ set -euo pipefail
+ wp() { command wp --skip-plugins=sg-security "$@"; }   # SiteGround Security 1.6.9 + PHP 8.5 makes EVERY wp exit 0 on live (shutdown-handler bug); skipping that one plugin keeps exit codes true. See AGENTS.md and check-wp-exit-codes.sh.
+ phase=$1; target=$2; snap=${3:-}
+-case "$target" in staging33) want="staging33.thaisolitude.com" ;; *) echo "Remote refused: target must be staging33, got '$target'." >&2; exit 1 ;; esac
++case "$target" in staging33) want="staging33.thaisolitude.com" ;; live) want="thaisolitude.com" ;; *) echo "Remote refused: target must be staging33 or live, got '$target'." >&2; exit 1 ;; esac
+ command -v wp >/dev/null || { echo "wp-cli not found on the server" >&2; exit 1; }
+ doc=""
+ cfgs=$(mktemp); trap 'rm -f "$cfgs"' EXIT

@@ -9,7 +9,7 @@
 // Playwright is taken from the Mirror project, as the other tools here do.
 import { createRequire } from 'module';
 import fs from 'fs';
-const require = createRequire('/home/lauer/Projects/SubProjects/Mirror/package.json');
+const require = createRequire(process.env.TS_PLAYWRIGHT_ROOT || '/home/lauer/Projects/SubProjects/Mirror/package.json');
 const pw = require('playwright');
 const engine = ((process.argv.find((a) => a.startsWith('--browser=')) || '--browser=chromium').split('=')[1]);
 if (!pw[engine]) { console.error('unknown --browser=' + engine + ' (chromium, firefox or webkit)'); process.exit(1); }

@@ -11,7 +11,7 @@
 import { createRequire } from 'module';
 import fs from 'fs';
 import os from 'os';
-const require = createRequire('/home/lauer/Projects/SubProjects/Mirror/package.json');
+const require = createRequire(process.env.TS_PLAYWRIGHT_ROOT || '/home/lauer/Projects/SubProjects/Mirror/package.json');
 const { chromium } = require('playwright');
 const [base, outFile] = process.argv.slice(2);
 if (!base) { console.error('usage: node a11y-audit.mjs <base-url> [out.json]'); process.exit(1); }

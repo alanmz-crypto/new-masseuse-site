@@ -38,7 +38,7 @@ ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o 
 
 echo "[1] Connecting and uploading the package to ~/wwm-package-therapeutic-evidence (outside every web root) ..."
 "${ssh_cmd[@]}" true 2>/dev/null || { echo "SSH login refused; check the ssh-agent holds the right key." >&2; exit 2; }
-tar -C "$here" -cf - install-therapeutic-evidence.php therapeutic-evidence-content.php \
+tar -C "$here" -cf - install-therapeutic-evidence.php therapeutic-evidence-content.php therapeutic-evidence-content-v1.php \
   | "${ssh_cmd[@]}" 'rm -rf "$HOME/wwm-package-therapeutic-evidence" && mkdir -p "$HOME/wwm-package-therapeutic-evidence" && tar -xf - -C "$HOME/wwm-package-therapeutic-evidence"'
 
 read -r -d '' REMOTE <<'EOS' || true
@@ -86,7 +86,7 @@ case "$phase" in
     }
     chk "research heading (no duplicate)" 1 "$(count 'What the Research Says About Therapeutic Massage')"
     chk "five collapsible panels" 5 "$(count '<details class="wp-block-details')"
-    chk "25 source entries" 25 "$(count '<cite class="ts-source">')"
+    chk "30 source entries" 30 "$(count '<cite class="ts-source">')"
     chk "FAQ: difference from deep tissue" 1 "$(count 'How Is Therapeutic Massage Different From Deep Tissue Massage?')"
     chk "FAQ: changing the pressure" 1 "$(count 'Can I Change the Pressure During a Session?')"
     chk "FAQ: where sessions take place" 1 "$(count 'Where Do Sessions Take Place?')"
