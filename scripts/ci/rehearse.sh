@@ -95,7 +95,7 @@ echo "$info" | sed 's/^/  source /'
 
 echo "[1] streaming the database and the files (read-only on the server) ..."
 remote db > "$work/db.sql.gz" || invalid "database export failed"
-[ "$(gzip -dc "$work/db.sql.gz" | head -c 4096 | wc -c)" -gt 1000 ] || invalid "the database export is empty"
+[ "$(gzip -dc "$work/db.sql.gz" 2>/dev/null | head -c 4096 | wc -c)" -gt 1000 ] || invalid "the database export is empty"
 remote files "$uploads" | tar -C "$pub" -xf - || invalid "file copy failed"
 [ -f "$pub/wp-includes/version.php" ] || invalid "the file copy has no WordPress core"
 chmod -R a+rwX "$pub"
@@ -142,9 +142,11 @@ done
 [ "$ready" = 1 ] || invalid "the database never became ready"
 gzip -dc "$work/db.sql.gz" | sed 's/utf8mb4_0900_ai_ci/utf8mb4_unicode_ci/g' | dc exec -T db mariadb -uroot -prehearsal --default-character-set=utf8mb4 wp \
   || invalid "the database import failed"
-wpc() { dc run --rm -T --no-deps wpcli wp --skip-plugins=sg-security "$@"; }   # SiteGround Security + PHP 8.5 would make every exit status 0 (AGENTS.md)
-wpdb() { dc run --rm -T --no-deps wpcli wp --skip-plugins --skip-themes "$@"; }   # database-only commands: load no plugin or theme
-dc run --rm -T --no-deps wpcli wp config create --dbname=wp --dbuser=wp --dbpass=wp --dbhost=db --dbprefix="$prefix" --skip-check --force --extra-php >/dev/null <<'PHP' || invalid "wp config create failed"
+# --entrypoint wp: the image's own entrypoint guesses whether to put "wp" in front (it runs `wp help "$1"`), and with a real site in place
+# it guessed wrong on a GitHub runner ("'wp' is not a registered wp command"), so name WP-CLI directly.
+wpc() { dc run --rm -T --no-deps --entrypoint wp wpcli --skip-plugins=sg-security "$@"; }   # SiteGround Security + PHP 8.5 would make every exit status 0 (AGENTS.md)
+wpdb() { dc run --rm -T --no-deps --entrypoint wp wpcli --skip-plugins --skip-themes "$@"; }   # database-only commands: load no plugin or theme
+dc run --rm -T --no-deps --entrypoint wp wpcli config create --dbname=wp --dbuser=wp --dbpass=wp --dbhost=db --dbprefix="$prefix" --skip-check --force --extra-php >/dev/null <<'PHP' || invalid "wp config create failed"
 define( 'WP_ENVIRONMENT_TYPE', 'local' );
 define( 'DISABLE_WP_CRON', true );
 define( 'FS_METHOD', 'direct' );
