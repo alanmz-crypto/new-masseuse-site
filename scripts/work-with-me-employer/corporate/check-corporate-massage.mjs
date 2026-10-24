@@ -1,6 +1,7 @@
 // Rendered check of the Corporate & Group Massage additions after install-corporate-massage.php (read-only; public requests only).
-// Usage: node check-corporate-massage.mjs <base-url> <out-dir> [label] [firefox]    e.g. node check-corporate-massage.mjs https://staging37.thaisolitude.com ~/.cache/wwm-scratch/corp-shots staging37
-//        BROWSER=firefox (or a 4th argument 'firefox') to use Firefox instead of Chromium.
+// Usage: node check-corporate-massage.mjs <base-url> <out-dir> [label] [firefox] [quick]    e.g. node check-corporate-massage.mjs https://staging37.thaisolitude.com ~/.cache/wwm-scratch/corp-shots staging37
+//        BROWSER=firefox (or the argument 'firefox') uses Firefox instead of Chromium. The argument 'quick' makes about 30 page loads instead of about 90 (light mode at 1280 and 390 px, dark only for the page at 1280):
+//        for a real site, which answers bursts of requests with SiteGround's bot challenge. The full run is for localhost.
 // What it proves (light and dark, 1280 / 820 / 390 / 320 px as stated per check):
 //   THE PAGE      HTTP 200, one h1, the section headings in order without a skipped level, 7 FAQ questions with no links in the answers (the first open, one open at a time, click and keyboard),
 //                 no side-scroll, no script errors, no picture, no we/our/us, every internal link answers 200, both quote buttons carry the SAME mailto: link whose subject and body prompts decode correctly,
@@ -31,7 +32,8 @@ const PROMPTS = ['Organization:', 'Contact name and phone:', 'Event date', 'Even
 let fails = 0;
 const check = (name, ok, detail = '') => { console.log((ok ? 'PASS ' : 'FAIL ') + name + (detail !== '' ? '  [' + detail + ']' : '')); if (!ok) fails++; };
 const info = (name, detail = '') => console.log('INFO ' + name + (detail !== '' ? '  [' + detail + ']' : ''));
-const useFirefox = process.env.BROWSER === 'firefox' || process.argv[5] === 'firefox';
+const useFirefox = process.env.BROWSER === 'firefox' || process.argv.includes('firefox');
+const quick = process.argv.includes('quick');
 const engine = useFirefox ? pw.firefox : pw.chromium;
 const browser = await engine.launch(useFirefox ? {} : { executablePath: '/usr/bin/chromium', args: ['--no-sandbox'] });
 let challenged = false;
@@ -52,8 +54,9 @@ const newCtx = async (width, theme) => {
 
 // ---- THE PAGE ------------------------------------------------------------------------------------------------------------------------------------------
 let mailtoHref = '';
-for (const theme of ['light', 'dark']) {
-  for (const width of [1280, 820, 390, 320]) {
+const PAGE_VIEWS = quick ? [['light', 1280], ['light', 390], ['dark', 1280]] : ['light', 'dark'].flatMap(t => [1280, 820, 390, 320].map(w => [t, w]));
+for (const [theme, width] of PAGE_VIEWS) {
+  {
     const tag = `page ${theme}-${width}`;
     const ctx = await newCtx(width, theme);
     const errors = [];
@@ -132,10 +135,11 @@ for (const theme of ['light', 'dark']) {
 }
 
 // ---- THE STRIP -----------------------------------------------------------------------------------------------------------------------------------------
-for (const theme of ['light', 'dark']) {
-  for (const width of [1280, 390]) {
+const STRIP_VIEWS = quick ? [['light', 1280], ['light', 390]] : ['light', 'dark'].flatMap(t => [1280, 390].map(w => [t, w]));
+for (const [theme, width] of STRIP_VIEWS) {
+  {
     const ctx = await newCtx(width, theme);
-    for (const p of [...BAND_PAGES, ...NO_BAND]) {
+    for (const p of [...BAND_PAGES, ...NO_BAND].filter(p => !quick || width === 1280 || ['/about/', '/services/', '/', '/work-with-me/'].includes(p))) {
       const errors = [];
       const { page, resp } = await open(ctx, p, errors);
       if (challenged) { console.log('INVALID: SiteGround answered the bot challenge (HTTP 202); nothing was tested.'); await browser.close(); process.exit(2); }
@@ -178,7 +182,7 @@ for (const theme of ['light', 'dark']) {
 }
 
 // ---- SERVICES AND MENU ---------------------------------------------------------------------------------------------------------------------------------
-for (const width of [1280, 820, 390]) {
+for (const width of quick ? [1280, 390] : [1280, 820, 390]) {
   const ctx = await newCtx(width, 'light');
   const errors = [];
   const { page } = await open(ctx, '/services/', errors);
