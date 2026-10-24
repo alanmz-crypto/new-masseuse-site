@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-24 21:36 UTC  **PASS**  `corp-inspect-snip1232-2`  [reports/2026-10-24/213608-corp-inspect-snip1232-2.md](reports/2026-10-24/213608-corp-inspect-snip1232-2.md)  (run 40134921423)
 - 2026-10-24 21:35 UTC  **PASS**  `corp-inspect-services-2`  [reports/2026-10-24/213526-corp-inspect-services-2.md](reports/2026-10-24/213526-corp-inspect-services-2.md)  (run 40134869113)
 - 2026-10-24 21:27 UTC  **PASS**  `corp-inspect-css-x-1`  [reports/2026-10-24/212750-corp-inspect-css-x-1.md](reports/2026-10-24/212750-corp-inspect-css-x-1.md)  (run 40134292738)
 - 2026-10-24 21:22 UTC  **PASS**  `corp-inspect-fp-1`  [reports/2026-10-24/212200-corp-inspect-fp-1.md](reports/2026-10-24/212200-corp-inspect-fp-1.md)  (run 40133863656)
