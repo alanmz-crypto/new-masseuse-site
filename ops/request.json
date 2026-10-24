@@ -1,14 +1,10 @@
 {
-  "id": "corp-chk-ff-1",
+  "id": "corp-contrast-2",
   "op": "run",
   "target": "staging37",
-  "script": "corporate/check-corporate-massage.mjs",
+  "script": "corporate/check-corporate-contrast.mjs",
   "args": [
-    "https://staging37.thaisolitude.com",
-    "/tmp/corp-shots",
-    "staging37-ff",
-    "firefox",
-    "quick"
+    "https://staging37.thaisolitude.com"
   ],
   "tests": "auto"
 }
