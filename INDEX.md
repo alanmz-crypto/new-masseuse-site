@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-24 22:49 UTC  **PASS**  `corp-edge-1`  [reports/2026-10-24/224936-corp-edge-1.md](reports/2026-10-24/224936-corp-edge-1.md)  (run 40140178907)
 - 2026-10-24 22:23 UTC  **PASS**  `corp-inspect-services-3`  [reports/2026-10-24/222348-corp-inspect-services-3.md](reports/2026-10-24/222348-corp-inspect-services-3.md)  (run 40138347495)
 - 2026-10-24 22:23 UTC  **PASS**  `corp-inspect-fp-2`  [reports/2026-10-24/222309-corp-inspect-fp-2.md](reports/2026-10-24/222309-corp-inspect-fp-2.md)  (run 40138306299)
 - 2026-10-24 22:21 UTC  **FAIL**  `corp-prove-1`  [reports/2026-10-24/222150-corp-prove-1.md](reports/2026-10-24/222150-corp-prove-1.md)  (run 40138213292)
