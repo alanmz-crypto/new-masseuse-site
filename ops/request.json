@@ -1,10 +1,10 @@
 {
-  "id": "deep-evidence-probe-4",
+  "id": "a11y-v4-postchange-1",
   "op": "run",
   "target": "staging36",
-  "script": "deep-tissue/probe-covered.mjs",
+  "script": "post-change-test.sh",
   "args": [
-    "https://staging36.thaisolitude.com"
+    "staging36"
   ],
   "tests": "auto"
 }
