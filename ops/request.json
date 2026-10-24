@@ -1,8 +1,8 @@
 {
-  "id": "a11y-contrast-3",
+  "id": "a11y-audit-v4-1",
   "op": "run",
   "target": "staging36",
-  "script": "accessibility/check-research-contrast.mjs",
+  "script": "tools/a11y-audit.mjs",
   "args": [
     "https://staging36.thaisolitude.com"
   ],
