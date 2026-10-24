@@ -62,7 +62,20 @@ expect("Therapeutic: 'we' is refused in its source titles", bool(wt.check(page2(
 expect("Therapeutic: no exemption if the heading is missing", bool(wt.check(page2("", "The trial measured chronic pain.", "").replace(H2, "Something else"))["before"]))
 both = '<main><h2>%s</h2><p>ok</p><h2>%s</h2><p>chronic</p></main>' % (H, H2)
 expect("two DIFFERENT approved headings on one page disable the exemption (a word placed after them is refused)", bool(wt.check(both)["before"]) and not wt.check(both)["found"])
-expect("an unapproved heading ('...About Deep Tissue Massage') gives no exemption", bool(wt.check('<main><h2>What the Research Says About Deep Tissue Massage</h2><p>chronic</p></main>')["before"]))
+expect("an unapproved heading ('...About Swedish Massage') gives no exemption", bool(wt.check('<main><h2>What the Research Says About Swedish Massage</h2><p>chronic</p></main>')["before"]))
+# ---- the Deep Tissue Massage heading (2026-10-24) works the same way
+H3 = "What the Research Says About Deep Tissue Massage"
+def page3(before="", research="", cites=""):
+    return page(before, research, cites).replace(H, H3)
+expect("the Deep Tissue heading is one of the approved headings", H3 in wt.RESEARCH_HEADINGS)
+expect("Deep Tissue: 'chronic' is accepted inside its research section", not wt.check(page3("", "The trial measured chronic pain in 40 people.", ""))["research"] and wt.check(page3("", "The trial measured chronic pain in 40 people.", ""))["found"])
+expect("Deep Tissue: 'chronic' is refused before its research section", bool(wt.check(page3("People with chronic problems come to me.", "", ""))["before"]))
+expect("Deep Tissue: 'chronic' in a verbatim title is accepted", not wt.check(page3("", "", "Smith J. A study of chronic pain. J Test, 2015."))["cites"])
+expect("Deep Tissue: claim verbs are refused inside its research section", bool(wt.check(page3("", "Massage can treat it.", ""))["research"]))
+expect("Deep Tissue: 'we' is refused in its source titles", bool(wt.check(page3("", "", "Smith J. We came. J Test, 2015."))["cites"]))
+expect("Deep Tissue: no exemption if the heading is missing", bool(wt.check(page3("", "The trial measured chronic pain.", "").replace(H3, "Something else"))["before"]))
+both3 = '<main><h2>%s</h2><p>ok</p><h2>%s</h2><p>chronic</p></main>' % (H2, H3)
+expect("Therapeutic + Deep Tissue headings together disable the exemption", bool(wt.check(both3)["before"]) and not wt.check(both3)["found"])
 expect("the old list is unchanged for the Services and Therapeutic pages (BAD still has all 25 evidence/voice/heal patterns)", len(wt.BAD) == 1 + len(wt.EVIDENCE) + len(wt.VOICE) and len(wt.EVIDENCE) == 25)
 
 print("\nRESULT: " + ("all cases right" if not fails else "%d case(s) WRONG" % fails))

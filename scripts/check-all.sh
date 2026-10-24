@@ -12,7 +12,7 @@
 #          structured-data installer: its snippet output and exact-bytes guard, tested offline against stubbed WordPress functions
 #          headers installer: the old and new security-headers snippet run in a header-capturing harness (logged in/out, https/http)
 #          posture check self-test: a mock site, then the same site broken one way at a time; every break must be caught
-#          wording tiers self-test (the banned-word list and its research-section exemption) and the Thai and Therapeutic evidence builders' --check
+#          wording tiers self-test (the banned-word list and its research-section exemption) and the Thai, Therapeutic and Deep Tissue evidence builders' --check
 #          with a URL: verify-home.py and verify-client-pages.py, and (for thaisolitude.com hosts) posture-check.py
 # Not a gate: verify-rendered.py (the older whole-site check; run it by hand: python3 work-with-me-employer/verify-rendered.py URL).
 # shellcheck disable=SC2329  # the gate functions below are called indirectly through `gate`
@@ -83,6 +83,7 @@ gate "wording tiers self-test (deliberate breaks, mutation-checked)" python3 -I 
 # the generated Thai content must be what the builder produces (a hand edit or a stale build is caught here)
 gate "Thai evidence content matches its builder" python3 -I -B "$here/work-with-me-employer/thai/build-thai-evidence.py" --check
 gate "Therapeutic evidence content matches its builder" python3 -I -B "$here/work-with-me-employer/therapeutic/build-therapeutic-evidence.py" --check
+gate "Deep Tissue evidence content matches its builder" python3 -I -B "$here/work-with-me-employer/deep-tissue/build-deep-tissue-evidence.py" --check
 gate "Accessibility page text matches its builder" python3 -I -B "$here/work-with-me-employer/accessibility/build-accessibility-page.py" --check
 gate "Sandwich update content matches its builders" python3 -I -B "$here/work-with-me-employer/evidence-update/build-sandwich-update.py" --check
 

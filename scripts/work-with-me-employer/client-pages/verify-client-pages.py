@@ -204,6 +204,64 @@ if thai_title == THAI_TITLE or thai_desc == THAI_DESC:
 else:
     print("INFO Thai Massage meta is still the auto-built one (not set yet): " + str(thai_desc))
 
+# ---- Deep Tissue Massage: research section, FAQ and honest body paragraph (Ryan, 2026-10-24; deep-tissue/install-deep-tissue-evidence.php; plan in docs/inter-model/deep-tissue-massage-page-enhancement-plan.md) ----------
+# The wording check always runs (full list outside the research section, tiers inside it); the strict structure checks run only on a site that has the section (staging36 first, live later on Ryan's go).
+dtp, code = get("/deep-tissue-massage/")
+check("Deep Tissue Massage returns 200", code == 200, code)
+dmain = re.search(r"<main.*?</main>", dtp, re.S)
+mh_dt = dmain.group(0) if dmain else ""
+dt = text_of(mh_dt)
+check("Deep Tissue Massage body found", bool(dt))
+res_dt = wt.check(mh_dt)
+check("Deep Tissue Massage: no restricted wording outside the research section", not res_dt["before"], res_dt["before"])
+check("Deep Tissue Massage research section: no claim verbs, no we/our/us/studio", not res_dt["research"], res_dt["research"])
+check("Deep Tissue Massage source titles: no we/our/us/studio", not res_dt["cites"], res_dt["cites"])
+for old in ["Deep tissue massage uses slow, deliberate pressure on muscles that stay tight. I begin by asking about your goals and how much pressure you like, then check in as I work. Deep pressure is never required: you can ask me to lighten up at any time, and I will.",
+            "Before your session, tell me about any health conditions, medications, pregnancy, recent injury or surgery."]:
+    check("Deep Tissue Massage: existing wording kept: %r" % old[:48], dt.count(old) == 1)
+check("Deep Tissue Massage: licence number in the footer", "LMT-29905" in dtp)
+if not res_dt["found"]:
+    print("INFO Deep Tissue Massage: the evidence section is not on this site yet (the wording check above ran with the full list)")
+else:
+    check("Deep Tissue Massage: the FAQ heading once", dt.count("Questions About Deep Tissue Massage") == 1)
+    for qq in ["Does Deep Tissue Massage Have to Hurt?", "How Is Deep Tissue Massage Different From Therapeutic Massage?", "Can I Choose Where You Focus?", "What Should I Tell You Before a Session?",
+               "Where Do Sessions Take Place?", "How Do I Book a Session?"]:
+        check("Deep Tissue Massage: FAQ question %r appears once" % qq, dt.count(qq) == 1)
+    for sentence in ["Sessions take place in Mt. Tabor, Portland. I do not currently travel to clients.", "Use the Contact page to reach me by phone or email, and tell me what you would like. I will reply to arrange a time.",
+                     "No. Deep pressure is never required."]:
+        check("Deep Tissue Massage: %r once" % sentence[:56], dt.count(sentence) == 1)
+    check("Deep Tissue Massage: the page's safety sentence is on the page twice (page text and FAQ answer)", dt.count("New numbness, weakness, unexplained swelling or radiating pain means you should see a doctor before massage.") == 2)
+    check("Deep Tissue Massage: no links inside FAQ answers (axe nested-interactive)", not re.search(r'uagb-faq-content[^>]*>(?:(?!</div>).)*<a ', mh_dt, re.S))
+    check("Deep Tissue Massage: the new body paragraph once, the three old sentences gone", dt.count("Research on deep tissue massage is limited and mixed.") == 1 and "Trials in specific musculoskeletal conditions suggest deep tissue massage" not in dt
+          and "A randomized trial in athletes linked repeated deep tissue massage" not in dt and "Research suggests deep tissue massage added to conventional rehabilitation may reduce pain intensity" not in dt)
+    check("Deep Tissue Massage: 'myofascial' appears once, inside a verbatim source title", len(re.findall("myofascial", mh_dt, re.I)) == 1 and "myofascial" in " ".join(wt.CITE.findall(mh_dt)).lower())
+    dsumm = [wt.text(x) for x in re.findall(r"<summary>(.*?)</summary>", mh_dt, re.S)]
+    check("Deep Tissue Massage: the five research panels in order", dsumm == ["Reviews, and What They Say About Limits", "Neck, Shoulders and Back", "Exercise, Soreness and Recovery", "Relaxation and the Role of Pressure", "Sources"], dsumm)
+    ddet = re.findall(r"<details[^>]*>", mh_dt)
+    check("Deep Tissue Massage: first panel open, the other four closed", [" open" in d for d in ddet] == [True, False, False, False, False], len(ddet))
+    dlinks = re.findall(r'<a [^>]*href="(https://[^"]+)"[^>]*>\[(\d+)\]</a>', mh_dt)
+    dorder = []
+    for _, n in dlinks:
+        if int(n) not in dorder:
+            dorder.append(int(n))
+    check("Deep Tissue Massage: numbered markers run 1..N in order of first use", bool(dorder) and dorder == list(range(1, len(dorder) + 1)), dorder[-3:])
+    dmap = {}
+    for u, n in dlinks:
+        dmap.setdefault(n, set()).add(u)
+    check("Deep Tissue Massage: every number points to exactly one source", all(len(v) == 1 for v in dmap.values()))
+    check("Deep Tissue Massage: as many Sources entries as numbers (33)", len(re.findall(r'<cite class="ts-source">', mh_dt)) == len(dorder) == 33, len(dorder))
+    dhosts = {re.match(r"https://([^/]+)/", u).group(1) for u, _ in dlinks if re.match(r"https://([^/]+)/", u)}
+    check("Deep Tissue Massage: sources are only PubMed, doi.org, Cochrane or NCCIH", dhosts <= {"pubmed.ncbi.nlm.nih.gov", "doi.org", "www.cochrane.org", "www.nccih.nih.gov"}, sorted(dhosts))
+    check("Deep Tissue Massage: scope note and 'included the disappointing results' sentence once each", dt.count("studies of massage used for specific medical conditions are not summarized here") == 1 and dt.count("I included the studies I found with disappointing results, not only the favorable ones.") == 1)
+    check("Deep Tissue Massage: the safety paragraph names force and who gave the massage, and closes on the practice, once each", dt.count("probably as a result of the forceful application of massage therapy") == 1 and dt.count("by an unlicensed therapist") == 1
+          and dt.count("Massage therapists were the practitioners in only 8 of the 138 events") == 1 and dt.count("they were mostly linked to people who were not massage therapists and to forceful or unusual techniques") == 1
+          and dt.count("Deep pressure is never required: before your session I ask you to tell me about health conditions") == 1)
+    check("Deep Tissue Massage: the discouraging results are there (12-month null, not cost-effective, little or no difference vs placebo massage, calf stiffness unchanged, blood lactate unchanged)", "but not at later follow-ups" in dt and "not cost-effective" in dt
+          and "probably makes little or no difference to pain, function or quality of life" in dt and "produced no change in calf muscle stiffness or ankle movement" in dt and "did not change blood lactate levels" in dt)
+    check("Deep Tissue Massage: the athletes trial is in the research section with its limits stated", dt.count("describes no comparison group, and it measured outcomes with both objective and subjective assessments") == 1)
+    dalts = re.findall(r'<img [^>]*?alt="([^"]*)"[^>]*?title="([^"]*)"', mh_dt)
+    check("Deep Tissue Massage: three pictures, tooltip equal to the alt text, none saying 'by Butsaba'", len(dalts) == 3 and all(a1 and a1 == t1 for a1, t1 in dalts) and "by Butsaba" not in mh_dt, len(dalts))
+
 # ---- Therapeutic Massage and Deep Tissue Massage: meta title and description (Ryan, 2026-10-19: "finish one and two then go to three") -----------------------------------------
 # Strict checks only where the change is in (services-meta/install-service-meta.php); the wording check always runs on whatever meta the page has.
 SERVICE_META = [
