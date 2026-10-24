@@ -25,10 +25,12 @@ set -euo pipefail
 wp() { command wp --skip-plugins=sg-security "$@"; }   # true exit codes on live under PHP 8.5 (see AGENTS.md)
 want=$1; target=$2
 doc=""
+cfgs=$(mktemp); trap 'rm -f "$cfgs"' EXIT   # a file, not < <(...): the SiteGround shell has no /dev/fd for process substitution
+find "$HOME/www" -maxdepth 4 -name wp-config.php 2>/dev/null > "$cfgs"
 while IFS= read -r cfg; do
   d=$(dirname "$cfg"); h=$(wp --path="$d" option get home 2>/dev/null || true); hh=${h#http://}; hh=${hh#https://}; hh=${hh%/}
   if [ "$hh" = "$want" ]; then [ -z "$doc" ] || { echo "More than one install reports $want; refusing to guess." >&2; exit 1; }; doc=$d; fi
-done < <(find "$HOME/www" -maxdepth 4 -name wp-config.php 2>/dev/null)
+done < "$cfgs"
 [ -n "$doc" ] || { echo "No WordPress install under ~/www reports home host $want." >&2; exit 1; }
 mkdir -p "$HOME/private-backups"; chmod 700 "$HOME/private-backups"
 dump="$HOME/private-backups/${target}-manual-$(date +%Y%m%d-%H%M%S).sql"

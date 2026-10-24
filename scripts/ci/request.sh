@@ -18,6 +18,7 @@
 set -euo pipefail
 
 root=$(git rev-parse --show-toplevel)
+push_to="${TS_PUSH_REMOTE:-origin}"   # on Ryan's computer origin pushes over SSH (passphrase): TS_PUSH_REMOTE=https://github.com/alanmz-crypto/new-masseuse-site.git
 cmd="${1:-}"; [ -n "$cmd" ] && shift || true
 id=""; target=""; script=""; installer=""; query=""; qarg=""; args_s=""; tests="auto"; source_site="staging36"; uploads=0; wait=1
 
@@ -98,7 +99,7 @@ if [ "$cmd" = live ]; then
   printf '%s\n' "$json" | jq . > "$root/ops/live-request.json"
   git -C "$root" add ops/live-request.json
   git -C "$root" commit -q -m "ops: prepare live request $id ($script ${args_s})" -- ops/live-request.json
-  git -C "$root" push -q origin "HEAD:refs/heads/$branch"
+  git -C "$root" push -q "$push_to" "HEAD:refs/heads/$branch"
   cat <<TXT
 Prepared live request '$id' on branch $branch (ops/live-request.json):
 $(jq . "$root/ops/live-request.json")
@@ -114,7 +115,7 @@ fi
 printf '%s\n' "$json" | jq . > "$root/ops/request.json"
 git -C "$root" add ops/request.json
 git -C "$root" commit -q -m "ops: $id ($cmd ${target:-$source_site} ${script}${installer}${query:+ $query $qarg} ${args_s})" -- ops/request.json
-git -C "$root" push -q origin "HEAD:refs/heads/$branch"
+git -C "$root" push -q "$push_to" "HEAD:refs/heads/$branch"
 echo "requested '$id' (pushed $branch at $(git -C "$root" rev-parse --short HEAD)); the push starts the Site ops workflow"
 [ "$wait" = 1 ] || exit 0
 wait_for "$id" 45
