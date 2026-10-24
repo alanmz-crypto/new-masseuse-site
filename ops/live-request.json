@@ -1,5 +1,5 @@
 {
-  "id": "live-deep-tissue-plain-words",
+  "id": "live-deep-tissue-words-2",
   "op": "run",
   "target": "live",
   "script": "deep-tissue/push-deep-tissue-copy.sh",
