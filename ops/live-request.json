@@ -1,8 +1,8 @@
 {
-  "id": "live-deep-tissue-words-2",
+  "id": "live-deep-tissue-and-slide-1",
   "op": "run",
   "target": "live",
-  "script": "deep-tissue/push-deep-tissue-copy.sh",
+  "script": "deep-tissue/push-deep-tissue-and-slide.sh",
   "args": [
     "--apply"
   ],
