@@ -1,5 +1,5 @@
 {
-  "id": "deep-evidence-rehearse-1",
+  "id": "deep-evidence-rehearse-2",
   "op": "rehearse",
   "target": "staging36",
   "installer": "deep-tissue/install-deep-tissue-evidence.php",
