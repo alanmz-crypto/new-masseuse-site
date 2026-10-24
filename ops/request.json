@@ -1,8 +1,10 @@
 {
-  "id": "deep-tissue-dry-1",
+  "id": "deep-tissue-apply-1",
   "op": "run",
   "target": "staging36",
   "script": "deep-tissue/push-deep-tissue-copy.sh",
-  "args": [],
+  "args": [
+    "--apply"
+  ],
   "tests": "auto"
 }
