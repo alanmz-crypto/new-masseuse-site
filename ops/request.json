@@ -1,8 +1,10 @@
 {
-  "id": "corp-dry-2",
+  "id": "corp-apply-2",
   "op": "run",
   "target": "staging37",
   "script": "corporate/push-corporate-massage.sh",
-  "args": [],
-  "tests": "auto"
+  "args": [
+    "--apply"
+  ],
+  "tests": "none"
 }
