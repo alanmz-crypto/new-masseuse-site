@@ -1,11 +1,7 @@
 {
-  "id": "corp-rollback-v1",
-  "op": "run",
+  "id": "corp-rehearse-4",
+  "op": "rehearse",
   "target": "staging37",
-  "script": "corporate/push-corporate-massage.sh",
-  "args": [
-    "--rollback",
-    "$HOME/private-backups/corporate-massage-before-20261024-221448.json"
-  ],
-  "tests": "none"
+  "installer": "corporate/install-corporate-massage.php",
+  "args": []
 }
