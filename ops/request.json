@@ -1,5 +1,5 @@
 {
-  "id": "a11y-contrast-2",
+  "id": "a11y-contrast-3",
   "op": "run",
   "target": "staging36",
   "script": "accessibility/check-research-contrast.mjs",
