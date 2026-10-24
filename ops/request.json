@@ -1,10 +1,11 @@
 {
-  "id": "corp-contrast-2",
+  "id": "corp-rollback-v1",
   "op": "run",
   "target": "staging37",
-  "script": "corporate/check-corporate-contrast.mjs",
+  "script": "corporate/push-corporate-massage.sh",
   "args": [
-    "https://staging37.thaisolitude.com"
+    "--rollback",
+    "$HOME/private-backups/corporate-massage-before-20261024-221448.json"
   ],
-  "tests": "auto"
+  "tests": "none"
 }
