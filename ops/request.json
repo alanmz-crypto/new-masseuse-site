@@ -1,6 +1,5 @@
 {
-  "id": "first-check-2",
-  "op": "inspect",
-  "target": "staging36",
-  "query": "plugins"
+  "id": "backup-check-1",
+  "op": "backup",
+  "target": "staging36"
 }
