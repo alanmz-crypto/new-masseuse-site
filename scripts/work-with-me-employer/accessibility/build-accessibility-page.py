@@ -19,6 +19,11 @@ dark), one sentence under "Known limitations" (no screen reader was used in this
 before this update; the v3 installer refuses any other starting point). What was run for it (2026-10-19): the full audit tools/a11y-audit.mjs (10 pages x 3 sizes, light AND dark, on staging34, a copy of live),
 thai/check-thai-page.mjs and therapeutic/check-therapeutic-evidence.mjs in Chromium AND Firefox (click, Enter and Space on the panels, no side-scroll at 1280/390/320, light and dark), and a contrast measurement of
 every text element in the new sections (lowest 9.13:1 light, 11.36:1 dark). No screen reader was used.
+VERSION 4 (2026-10-24, Ryan: "Add the Deep Tissue line to the Accessibility page"): the Deep Tissue Massage page now carries the same collapsible research summaries. Changed: the two sentences that name the pages
+(under "What has been checked" and under "Known limitations") now name the Thai Massage, Therapeutic Massage and Deep Tissue Massage pages, and the date. accessibility-page-v3.html is the exact version-3 text (what is
+live before this update; the v4 installer refuses any other starting point). What was run for it (2026-10-24, staging36, a copy of live): deep-tissue/check-deep-tissue-evidence.mjs in Chromium AND Firefox (click, Enter and
+Space on the panels, no side-scroll at 1280/390/320, light and dark), tools/a11y-audit.mjs (axe: 0 violations on the Deep Tissue page), and accessibility/check-research-contrast.mjs (every text element of the research
+sections on the three pages, light and dark; the lowest ratio is in the report). No screen reader was used.
 EVERY SENTENCE MUST STAY TRUE. What was actually done on 2026-10-17 (tools/a11y-audit.mjs on staging32, a copy of live): axe-core 4.13.0 with the WCAG 2.0/2.1/2.2 A and AA rules on the
 9 pages at 1280, 390 and 320 px wide (the accordion panels opened one by one); keyboard Tab-through of every page; the footer row's text contrast measured from pixels (11.9:1 or better);
 page language, titles, one h1 per page, landmarks, a "Skip to content" link, alt text on every image, zoom not blocked and no side-scrolling at 320 px all verified. It was NOT a full
@@ -41,18 +46,18 @@ CHECKED = ['In October 2026 the site was tested with an automated accessibility 
            'Every page has a “Skip to content” link, one main heading, and text descriptions for its images, and the pages can be zoomed in without side-scrolling.',
            'A button in the header switches the site between light and dark colors. Your choice is saved in your browser, and the button can be used with a keyboard. '
            'Text contrast and keyboard focus were checked in both the light and the dark version.',
-           'The collapsible research summaries on the Thai Massage and Therapeutic Massage pages open and close with a mouse or with the Enter and Space keys, '
+           'The collapsible research summaries on the Thai Massage, Therapeutic Massage and Deep Tissue Massage pages open and close with a mouse or with the Enter and Space keys, '
            'and their text contrast was checked in both the light and the dark version.']
 
 LIMITS = ['The map on the Contact page is provided by Google, so how it works with assistive technology is up to Google, and it keeps its own light colors in dark mode. The email address and phone number on that page are also available as text.',
           'On the For Practices page, two links inside the expandable sections may not be announced clearly by screen readers.',
-          'No screen reader was used in this testing. That includes the research summaries on the Thai Massage and Therapeutic Massage pages, which are standard collapsible sections built into the browser '
+          'No screen reader was used in this testing. That includes the research summaries on the Thai Massage, Therapeutic Massage and Deep Tissue Massage pages, which are standard collapsible sections built into the browser '
           'and were tested with a mouse and a keyboard.']
 
 FEEDBACK = ('If you encounter a barrier or have difficulty using any part of the website, please contact Butsaba at '
             '<a href="mailto:butsabad@gmail.com">butsabad@gmail.com</a> or by phone using the number on the Contact page. '
             'If possible, include the page or feature you were using and what happened. I’ll review your feedback and work to address the issue.')
-UPDATED = 'Last updated: October 19, 2026.'
+UPDATED = 'Last updated: October 24, 2026.'
 
 
 def para(text):
