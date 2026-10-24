@@ -6,6 +6,7 @@
 #   ./push-corporate-massage.sh --apply            export the DB -> preflight -> COPY the export to this computer and verify it -> apply -> purge cache -> check the public pages
 #                                                -> copy the new before-snapshot to this computer. Stops before applying if the copy cannot be verified.
 #   ./push-corporate-massage.sh --rollback FILE    take everything out again, from a corporate-massage-before-*.json snapshot on the server
+#   ./push-corporate-massage.sh --check            read-only: the public checks of the --apply run, on a site that already has the change
 # What it changes is described at the top of install-corporate-massage.php (everything is ADDED; no existing text, block, setting or CSS rule is edited).
 # The backup is part of the apply and cannot be skipped. After a push, test the site: scripts/work-with-me-employer/post-change-test.sh <target>.
 # Access: credentials file + ssh-agent. The SSH account also holds live, so every write is conditional
@@ -26,8 +27,9 @@ mode=dry; snap=""
 case "${1:-}" in
   "") ;;
   --apply) mode=apply ;;
+  --check) mode=check ;;
   --rollback) mode=rollback; snap="${2:-}"; [ -n "$snap" ] || { echo "--rollback needs the snapshot file path on the server" >&2; exit 1; } ;;
-  *) echo "Usage: $0 [--apply | --rollback FILE]" >&2; exit 1 ;;
+  *) echo "Usage: $0 [--apply | --check | --rollback FILE]" >&2; exit 1 ;;
 esac
 target="${S_TARGET:-staging37}"
 case "$target" in staging37) ;; *) echo "S_TARGET must be staging37 (live is not enabled for this change)." >&2; exit 1 ;; esac
@@ -100,8 +102,11 @@ case "$phase" in
     need home '>Corporate Massage</a>' 3
     fetch wwm /work-with-me/
     need wwm "$band" 0
-    for extra in personal-automation privacy terms; do
-      if wp --path="$doc" post list --post_type=page --name="$extra" --field=ID 2>/dev/null | grep -q .; then fetch "x-$extra" "/$extra/"; need "x-$extra" "$band" 0; fi
+    for extra in personal-automation privacy terms; do   # unrelated pages on this install: they may redirect (staging37: /privacy/ answers 301); only an answering page is checked for a strip
+      if wp --path="$doc" post list --post_type=page --name="$extra" --field=ID 2>/dev/null | grep -q .; then
+        code=$(curl -s -o "$tmp/x-$extra.html" -w '%{http_code}' --max-time 30 "https://$want/$extra/" || true); echo "  $code /$extra/ (unrelated page)"
+        [ "$code" != 200 ] || need "x-$extra" "$band" 0
+      fi
     done
     echo "public check: the page, the Services row and tile, the menu link (header, phone menu, footer), the strip on the 8 client pages, and no strip on Home, Work With Me, the new page itself or the unrelated pages" ;;
   rollback) snap=${snap/#\$HOME/$HOME}; run rollback "$snap"; purge ;;
@@ -112,6 +117,7 @@ remote() { "${ssh_cmd[@]}" bash -s -- "$@" <<<"$REMOTE"; }
 
 case "$mode" in
   dry) echo "[2] Preflight (read-only):"; remote preflight "$target"; echo "Dry run only. Re-run with --apply to write." ;;
+  check) echo "[2] Public checks (read-only):"; remote verify "$target" ;;
   apply)
     echo "[2] Backup on the server + preflight:"; remote prepare "$target"
     echo "[3] Copying the backup to this computer and verifying it (stops here if it cannot be verified):"; "$here/../sync-server-backups.sh"
