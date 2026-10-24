@@ -1,10 +1,10 @@
 {
-  "id": "corp-check-1",
+  "id": "corp-all-1",
   "op": "run",
   "target": "staging37",
-  "script": "corporate/push-corporate-massage.sh",
+  "script": "check-all.sh",
   "args": [
-    "--check"
+    "https://staging37.thaisolitude.com"
   ],
   "tests": "auto"
 }
