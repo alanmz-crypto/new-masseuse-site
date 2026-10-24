@@ -36,10 +36,10 @@ case "$target" in staging36) ;; *) echo "S_TARGET must be staging36 (live is not
 echo "Target site: $target   mode: $mode"
 ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 "$user@$host")
 
-echo "[1] Connecting and uploading the package to ~/wwm-package-accessibility-v3 (outside every web root) ..."
+echo "[1] Connecting and uploading the package to ~/wwm-package-accessibility-v4 (outside every web root) ..."
 "${ssh_cmd[@]}" true 2>/dev/null || { echo "SSH login refused; check the ssh-agent holds the right key." >&2; exit 2; }
 tar -C "$here" -cf - install-accessibility-page-v4.php accessibility-page-v3.html accessibility-page.html \
-  | "${ssh_cmd[@]}" 'rm -rf "$HOME/wwm-package-accessibility-v3" && mkdir -p "$HOME/wwm-package-accessibility-v3" && tar -xf - -C "$HOME/wwm-package-accessibility-v3"'
+  | "${ssh_cmd[@]}" 'rm -rf "$HOME/wwm-package-accessibility-v4" && mkdir -p "$HOME/wwm-package-accessibility-v4" && tar -xf - -C "$HOME/wwm-package-accessibility-v4"'
 
 read -r -d '' REMOTE <<'EOS' || true
 set -euo pipefail
@@ -63,7 +63,7 @@ done < "$cfgs"
 echo "$target is ${doc#"$HOME"/}"
 mkdir -p "$HOME/private-backups"; chmod 700 "$HOME/private-backups"
 export WWM_BACKUP_DIR="$HOME/private-backups"
-run() { local m=$1; shift; wp --path="$doc" --user=1 eval-file "$HOME/wwm-package-accessibility-v3/install-accessibility-page-v4.php" "$m" "$@"; }
+run() { local m=$1; shift; wp --path="$doc" --user=1 eval-file "$HOME/wwm-package-accessibility-v4/install-accessibility-page-v4.php" "$m" "$@"; }
 purge() { wp --path="$doc" --user=1 sg purge >/dev/null 2>&1 && echo "SiteGround cache purged" || echo "(sg purge unavailable; purge the cache in Site Tools if a page looks stale)"; }
 case "$phase" in
   preflight) run preflight ;;
@@ -95,7 +95,7 @@ case "$mode" in
     echo "[2] Backup on the server + preflight:"; remote prepare "$target"
     echo "[3] Copying the backup to this computer and verifying it (stops here if it cannot be verified):"; "$here/../sync-server-backups.sh"
     echo "[4] Applying:"; remote apply "$target"
-    echo "[4b] Does the public page show version 3?"; remote verify "$target"
+    echo "[4b] Does the public page show version 4?"; remote verify "$target"
     echo "[5] Copying the new before-snapshot to this computer:"; "$here/../sync-server-backups.sh" ;;
   rollback) echo "[2] Rolling back:"; remote rollback "$target" "$snap" ;;
 esac
