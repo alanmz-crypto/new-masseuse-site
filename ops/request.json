@@ -1,7 +1,8 @@
 {
-  "id": "corp-rehearse-3",
-  "op": "rehearse",
+  "id": "corp-dry-1",
+  "op": "run",
   "target": "staging37",
-  "installer": "corporate/install-corporate-massage.php",
-  "args": []
+  "script": "corporate/push-corporate-massage.sh",
+  "args": [],
+  "tests": "auto"
 }
