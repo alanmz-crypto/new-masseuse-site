@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-24 20:06 UTC  **INVALID**  `live-deep-tissue-and-slide-1`  [reports/2026-10-24/200643-live-deep-tissue-and-slide-1.md](reports/2026-10-24/200643-live-deep-tissue-and-slide-1.md)  (run 40128308862)
 - 2026-10-24 20:01 UTC  **PASS**  `live-dry-a11y-v4-1`  [reports/2026-10-24/200113-live-dry-a11y-v4-1.md](reports/2026-10-24/200113-live-dry-a11y-v4-1.md)  (run 40127876546)
 - 2026-10-24 19:56 UTC  **FAIL**  `a11y-v4-postchange-1`  [reports/2026-10-24/195651-a11y-v4-postchange-1.md](reports/2026-10-24/195651-a11y-v4-postchange-1.md)  (run 40127364527)
 - 2026-10-24 19:53 UTC  **PASS**  `deep-evidence-probe-4`  [reports/2026-10-24/195313-deep-evidence-probe-4.md](reports/2026-10-24/195313-deep-evidence-probe-4.md)  (run 40127207125)
