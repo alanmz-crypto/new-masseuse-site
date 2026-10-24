@@ -1,8 +1,10 @@
 {
-  "id": "a11y-v4-dry-1",
+  "id": "a11y-v4-apply-1",
   "op": "run",
   "target": "staging36",
   "script": "accessibility/push-accessibility-page-v4.sh",
-  "args": [],
-  "tests": "auto"
+  "args": [
+    "--apply"
+  ],
+  "tests": "none"
 }
