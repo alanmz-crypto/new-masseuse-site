@@ -1,10 +1,11 @@
 {
-  "id": "deep-tissue-apply-1",
+  "id": "deep-tissue-rollback-1",
   "op": "run",
   "target": "staging36",
   "script": "deep-tissue/push-deep-tissue-copy.sh",
   "args": [
-    "--apply"
+    "--rollback",
+    "'$HOME/private-backups/deep-tissue-copy-before-20261024-065451.json'"
   ],
   "tests": "auto"
 }
