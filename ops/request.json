@@ -1,7 +1,10 @@
 {
-  "id": "corp-inspect-services-3",
-  "op": "inspect",
+  "id": "corp-edge-1",
+  "op": "run",
   "target": "staging37",
-  "query": "page",
-  "arg": "services"
+  "script": "posture/edge-check.sh",
+  "args": [
+    "https://staging37.thaisolitude.com"
+  ],
+  "tests": "auto"
 }
