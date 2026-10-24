@@ -1,10 +1,10 @@
 {
-  "id": "a11y-v4-apply-2",
+  "id": "a11y-contrast-2",
   "op": "run",
   "target": "staging36",
-  "script": "accessibility/push-accessibility-page-v4.sh",
+  "script": "accessibility/check-research-contrast.mjs",
   "args": [
-    "--apply"
+    "https://staging36.thaisolitude.com"
   ],
-  "tests": "none"
+  "tests": "auto"
 }
