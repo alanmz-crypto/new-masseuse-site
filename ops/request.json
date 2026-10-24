@@ -1,8 +1,8 @@
 {
-  "id": "corp-pct-1",
+  "id": "corp-prove-1",
   "op": "run",
   "target": "staging37",
-  "script": "post-change-test.sh",
+  "script": "prove-restore.sh",
   "args": [
     "staging37"
   ],
