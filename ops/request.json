@@ -1,10 +1,6 @@
 {
-  "id": "corp-prove-1",
-  "op": "run",
+  "id": "corp-inspect-fp-2",
+  "op": "inspect",
   "target": "staging37",
-  "script": "prove-restore.sh",
-  "args": [
-    "staging37"
-  ],
-  "tests": "auto"
+  "query": "fingerprint"
 }
