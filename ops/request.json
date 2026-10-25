@@ -1,7 +1,8 @@
 {
-  "id": "cp-home-seo",
-  "op": "inspect",
+  "id": "strip-flip-test-20261025",
+  "op": "run",
   "target": "live",
-  "query": "seo",
-  "arg": "home"
+  "script": "availability/push-strip-flip.sh",
+  "args": [],
+  "tests": "none"
 }
