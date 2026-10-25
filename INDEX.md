@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-25 01:25 UTC  **PASS**  `av-apply-1`  [reports/2026-10-25/012505-av-apply-1.md](reports/2026-10-25/012505-av-apply-1.md)  (run 40150498622)
 - 2026-10-25 01:23 UTC  **PASS**  `av-dry-1`  [reports/2026-10-25/012359-av-dry-1.md](reports/2026-10-25/012359-av-dry-1.md)  (run 40150451891)
 - 2026-10-25 01:23 UTC  **PASS**  `av-rehearse-2`  [reports/2026-10-25/012312-av-rehearse-2.md](reports/2026-10-25/012312-av-rehearse-2.md)  (run 40150327005)
 - 2026-10-25 01:20 UTC  **FAIL**  `av-rehearse-1`  [reports/2026-10-25/012049-av-rehearse-1.md](reports/2026-10-25/012049-av-rehearse-1.md)  (run 40150169024)
