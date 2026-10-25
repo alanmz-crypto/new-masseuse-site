@@ -1,11 +1,12 @@
 {
-  "id": "hc-chk-38-ff",
+  "id": "hc-a11y-38-light",
   "op": "run",
   "target": "staging38",
-  "script": "home-card/check-home-corporate-card.mjs",
+  "script": "tools/a11y-audit.mjs",
   "args": [
     "https://staging38.thaisolitude.com",
-    "firefox"
+    "/tmp/a11y-hc-light.json",
+    "/"
   ],
   "tests": "none"
 }
