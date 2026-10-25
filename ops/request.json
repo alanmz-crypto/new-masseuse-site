@@ -1,10 +1,13 @@
 {
-  "id": "av-verify-1",
+  "id": "hc-a11y-38-dark-2",
   "op": "run",
   "target": "staging38",
-  "script": "client-pages/verify-client-pages.py",
+  "script": "tools/a11y-audit.mjs",
   "args": [
-    "https://staging38.thaisolitude.com"
+    "https://staging38.thaisolitude.com",
+    "/tmp/a11y-hc-dark.json",
+    "/",
+    "dark"
   ],
-  "tests": "auto"
+  "tests": "none"
 }

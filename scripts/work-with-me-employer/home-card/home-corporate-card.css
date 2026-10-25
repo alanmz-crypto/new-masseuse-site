@@ -1,0 +1,23 @@
+/* ts-home-corp:start (2026-10-25, Home: the Corporate and Group Massage card at the top of "The Massage I Offer") */
+/* The same picture-frame rules the three existing cards have (a 6:5 frame, rounded, picture cropped to fill it; compact and centred when Spectra stacks the rows), for the new card's block id only. No colours, fonts or images of its own; nothing existing is edited. */
+body.home .wp-block-uagb-container.uagb-block-e7a31c58 > figure.wp-block-image {
+    width: 100%;
+    margin: 0;
+    overflow: hidden;
+    border-radius: 16px;
+}
+body.home .wp-block-uagb-container.uagb-block-e7a31c58 > figure.wp-block-image img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 6 / 5;
+    object-fit: cover;
+}
+@media (max-width: 1024px) {
+  body.home .wp-block-uagb-container.uagb-block-e7a31c58 > figure.wp-block-image {
+    max-width: 320px;
+    margin-inline: auto;
+    justify-self: center;
+  }
+}
+/* ts-home-corp:end */

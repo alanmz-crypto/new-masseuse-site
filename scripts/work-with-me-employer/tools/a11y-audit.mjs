@@ -151,6 +151,9 @@ for (const r of result) {
   if (r.kb.covered.length) console.log('     focus covered: ' + r.kb.covered.slice(0, 5).join('; '));
   if (r.accordion) console.log(`     accordion by keyboard: Enter ${r.accordion.enterWorks ? 'works' : 'DOES NOT toggle'}, Space ${r.accordion.spaceWorks ? 'works' : 'DOES NOT toggle'} (${r.accordion.before} -> ${r.accordion.enter} -> ${r.accordion.space})`);
 }
+// a page view that SiteGround's bot challenge (HTTP 202) or an error answered was not measured: the audit is then incomplete and must not read as a pass (exit 2 = INVALID, like the other read-only tools)
+const unmeasured = result.filter((r) => r.invalid).length;
+if (unmeasured) { console.log(`\nINVALID: ${unmeasured} of ${result.length} page views were not measured (SiteGround's bot challenge, HTTP 202, or an error); this audit is incomplete and proves nothing about those pages. Run it again later.`); process.exit(2); }
 process.exit(0);
 
 // ref: ./capture-pages.mjs, ./perf-images.mjs — same Playwright setup and page list; ../post-change-test.sh — the after-change battery this complements

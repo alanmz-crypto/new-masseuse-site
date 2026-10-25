@@ -85,6 +85,7 @@ gate "Thai evidence content matches its builder" python3 -I -B "$here/work-with-
 gate "Therapeutic evidence content matches its builder" python3 -I -B "$here/work-with-me-employer/therapeutic/build-therapeutic-evidence.py" --check
 gate "Deep Tissue evidence content matches its builder" python3 -I -B "$here/work-with-me-employer/deep-tissue/build-deep-tissue-evidence.py" --check
 gate "Accessibility page text matches its builder" python3 -I -B "$here/work-with-me-employer/accessibility/build-accessibility-page.py" --check
+gate "Home corporate card content and CSS match their builder" python3 -I -B "$here/work-with-me-employer/home-card/build-home-corporate-card.py" --check
 gate "Sandwich update content matches its builders" python3 -I -B "$here/work-with-me-employer/evidence-update/build-sandwich-update.py" --check
 gate "Corporate massage content matches its builder" python3 -I -B "$here/work-with-me-employer/corporate/build-corporate-massage.py" --check
 gate "Availability update content matches its builder" python3 -I -B "$here/work-with-me-employer/availability/build-availability-update.py" --check
