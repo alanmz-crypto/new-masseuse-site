@@ -1,10 +1,10 @@
 {
-  "id": "hc-apply-38",
+  "id": "hc-chk-38",
   "op": "run",
   "target": "staging38",
-  "script": "home-card/push-home-corporate-card.sh",
+  "script": "home-card/check-home-corporate-card.mjs",
   "args": [
-    "--apply"
+    "https://staging38.thaisolitude.com"
   ],
   "tests": "none"
 }
