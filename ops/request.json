@@ -1,8 +1,6 @@
 {
-  "id": "corp-live-dry-1",
-  "op": "run",
-  "target": "live",
-  "script": "corporate/push-corporate-massage.sh",
-  "args": [],
-  "tests": "auto"
+  "id": "av-fp-38",
+  "op": "inspect",
+  "target": "staging38",
+  "query": "fingerprint"
 }
