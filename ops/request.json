@@ -1,13 +1,10 @@
 {
-  "id": "av-chk-ff-1",
+  "id": "av-verify-1",
   "op": "run",
   "target": "staging38",
-  "script": "availability/check-availability-update.mjs",
+  "script": "client-pages/verify-client-pages.py",
   "args": [
-    "https://staging38.thaisolitude.com",
-    "/tmp/av-shots",
-    "staging38-ff",
-    "firefox"
+    "https://staging38.thaisolitude.com"
   ],
   "tests": "auto"
 }
