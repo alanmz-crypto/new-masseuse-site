@@ -1,7 +1,6 @@
 {
-  "id": "av-after-corporate-massage-portland",
+  "id": "av-fp-38-after",
   "op": "inspect",
   "target": "staging38",
-  "query": "page",
-  "arg": "corporate-massage-portland"
+  "query": "fingerprint"
 }
