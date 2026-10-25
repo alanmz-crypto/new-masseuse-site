@@ -1,7 +1,7 @@
 {
-  "id": "av-after-thai-massage",
+  "id": "av-after-therapeutic-massage",
   "op": "inspect",
   "target": "staging38",
   "query": "page",
-  "arg": "thai-massage"
+  "arg": "therapeutic-massage"
 }
