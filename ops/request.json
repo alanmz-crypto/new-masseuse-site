@@ -1,12 +1,13 @@
 {
-  "id": "hc-a11y-38-light-2",
+  "id": "hc-a11y-38-dark-2",
   "op": "run",
   "target": "staging38",
   "script": "tools/a11y-audit.mjs",
   "args": [
     "https://staging38.thaisolitude.com",
-    "/tmp/a11y-hc-light.json",
-    "/"
+    "/tmp/a11y-hc-dark.json",
+    "/",
+    "dark"
   ],
   "tests": "none"
 }
