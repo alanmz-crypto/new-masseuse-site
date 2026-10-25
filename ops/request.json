@@ -1,7 +1,8 @@
 {
-  "id": "rate-rehearse-1",
-  "op": "rehearse",
+  "id": "rate-dry-38",
+  "op": "run",
   "target": "staging38",
-  "installer": "corporate/install-corporate-rate.php",
-  "args": []
+  "script": "corporate/push-corporate-rate.sh",
+  "args": [],
+  "tests": "none"
 }
