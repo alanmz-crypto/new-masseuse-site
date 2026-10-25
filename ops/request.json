@@ -1,12 +1,13 @@
 {
-  "id": "corp-live-chk-1",
+  "id": "corp-live-chk-ff-1",
   "op": "run",
   "target": "live",
   "script": "corporate/check-corporate-massage.mjs",
   "args": [
     "https://thaisolitude.com",
     "/tmp/corp-shots",
-    "live",
+    "live-ff",
+    "firefox",
     "quick"
   ],
   "tests": "auto"
