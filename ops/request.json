@@ -1,6 +1,8 @@
 {
-  "id": "av-fp-38",
-  "op": "inspect",
+  "id": "av-scan-38",
+  "op": "run",
   "target": "staging38",
-  "query": "fingerprint"
+  "script": "availability/scan-availability.sh",
+  "args": [],
+  "tests": "auto"
 }
