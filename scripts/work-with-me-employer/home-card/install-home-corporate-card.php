@@ -12,7 +12,8 @@
  * The old anchor (list wrapper + the Therapeutic card's opening) must occur EXACTLY ONCE (ready) or the whole new card in front of it exactly once (applied); anything else stops the run, so edits made to the
  * page in the meantime survive and are never overwritten. The CSS block is added only if the site's own frame rules that it mirrors are there.
  *
- * Allow-list: localhost:8090 and staging38. Live is NOT allowed: it is added only on Ryan's explicit go after staging38 is reviewed, and he starts the live run himself.
+ * Allow-list: localhost:8090, staging38 and live. Live was added on Ryan's go ("go", 2026-10-25) after the change was rehearsed on a copy of staging38, applied on staging38 and checked there in a real browser
+ * (Chromium and Firefox, 1280/820/390 px, light and dark); Ryan merges the pull request and starts the live run himself.
  *
  * Modes (first WP-CLI argument; run with --user=1):  <mode> [FILE]
  *   preflight    read-only: ready = the anchor is there once, the card and the CSS block are not; applied = the card is there once in front of the anchor and the CSS block is there once; CHANGED = anything else (stop)
@@ -27,8 +28,8 @@ if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) ) {
 
 $home = untrailingslashit( home_url() );
 $host = (string) wp_parse_url( $home, PHP_URL_HOST ) . ( wp_parse_url( $home, PHP_URL_PORT ) ? ':' . wp_parse_url( $home, PHP_URL_PORT ) : '' );
-if ( ! in_array( $host, array( 'localhost:8090', 'staging38.thaisolitude.com' ), true ) ) {
-	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090 or staging38 only).' );
+if ( ! in_array( $host, array( 'localhost:8090', 'staging38.thaisolitude.com', 'thaisolitude.com' ), true ) ) {
+	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090, staging38 or live only).' );
 }
 if ( 'astra' !== get_stylesheet() ) {
 	WP_CLI::error( 'Active theme is not Astra.' );
