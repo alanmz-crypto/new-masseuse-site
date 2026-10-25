@@ -1,7 +1,7 @@
 {
-  "id": "flip-chk-38",
+  "id": "flip-chk-live",
   "op": "run",
-  "target": "staging38",
+  "target": "live",
   "script": "availability/push-strip-flip.sh",
   "args": [],
   "tests": "none"
