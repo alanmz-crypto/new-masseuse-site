@@ -1,10 +1,7 @@
 {
-  "id": "av-apply-1",
-  "op": "run",
+  "id": "av-after-work-with-me",
+  "op": "inspect",
   "target": "staging38",
-  "script": "availability/push-availability-update.sh",
-  "args": [
-    "--apply"
-  ],
-  "tests": "none"
+  "query": "page",
+  "arg": "work-with-me"
 }
