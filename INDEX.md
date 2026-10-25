@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-25 15:36 UTC  **PASS**  `contact-meta-apply-38`  [reports/2026-10-25/153641-contact-meta-apply-38.md](reports/2026-10-25/153641-contact-meta-apply-38.md)  (run 40207466472)
 - 2026-10-25 15:32 UTC  **PASS**  `contact-meta-dry-38`  [reports/2026-10-25/153236-contact-meta-dry-38.md](reports/2026-10-25/153236-contact-meta-dry-38.md)  (run 40207403558)
 - 2026-10-25 15:31 UTC  **PASS**  `contact-meta-rehearse-1`  [reports/2026-10-25/153142-contact-meta-rehearse-1.md](reports/2026-10-25/153142-contact-meta-rehearse-1.md)  (run 40207243851)
 - 2026-10-25 15:24 UTC  **PASS**  `cp-thai-seo`  [reports/2026-10-25/152446-cp-thai-seo.md](reports/2026-10-25/152446-cp-thai-seo.md)  (run 40206781816)
