@@ -1,7 +1,7 @@
 {
-  "id": "cp-about",
+  "id": "cp-contact-seo",
   "op": "inspect",
   "target": "live",
-  "query": "page",
-  "arg": "about"
+  "query": "seo",
+  "arg": "contact"
 }
