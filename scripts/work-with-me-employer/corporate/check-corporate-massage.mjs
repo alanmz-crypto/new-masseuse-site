@@ -24,8 +24,8 @@ const H2 = ['Chair Massage for Employee Appreciation', 'Table Massage at Suitabl
   'Questions About Corporate Massage', 'Let’s Plan Your Team’s Massage Event'];
 const FAQ = ['What kinds of events do you serve?', 'Do you offer individual home visits?', 'How many employees can receive massage in three hours?', 'Can you do table massage?', 'What does it cost?',
   'What does the host need to provide?', 'How do I reserve a date?'];
-const BAND_PAGES = ['/about/', '/services/', '/contact/', '/privacy-policy/', '/accessibility/', '/thai-massage/', '/therapeutic-massage/', '/deep-tissue-massage/'];
-const NO_BAND = ['/', '/work-with-me/', SLUG, '/personal-automation/', '/privacy/', '/terms/'];   // the last three are unrelated pages on this install: skipped when the site does not have them
+const BAND_PAGES_V1 = ['/about/', '/services/', '/contact/', '/privacy-policy/', '/accessibility/', '/thai-massage/', '/therapeutic-massage/', '/deep-tissue-massage/'];
+const NO_BAND_ALL = ['/', '/work-with-me/', SLUG, '/personal-automation/', '/privacy/', '/terms/'];   // the last three are unrelated pages on this install: skipped when the site does not have them
 const SERVICE_LINKS = ['/therapeutic-massage/', '/deep-tissue-massage/', '/thai-massage/', SLUG];
 const MENU = ['Home', 'About', 'Services', 'Corporate Massage', 'For Practices', 'Contact'];
 const PROMPTS = ['Organization:', 'Contact name and phone:', 'Event date', 'Event location', 'Approximate number of participants:', 'Service hours requested', 'Massage type'];
@@ -37,6 +37,21 @@ const quick = process.argv.includes('quick');
 const engine = useFirefox ? pw.firefox : pw.chromium;
 const browser = await engine.launch(useFirefox ? {} : { executablePath: '/usr/bin/chromium', args: ['--no-sandbox'] });
 let challenged = false;
+// The strip's wording changed on 2026-10-25 (availability update: "Currently booking corporate & group massage only" / from 2026-11-01 "Now accepting ...", and Home gets it too).
+// This checker recognises both wordings: which one a site has is read from its About page.
+const NEW_STRIP = await (async () => {
+  try {
+    const c = await browser.newContext();
+    const r = await c.request.get(base + '/about/');
+    const html = await r.text();
+    await c.close();
+    return /Currently booking corporate &amp; group massage only\.|Now accepting corporate &amp; group massage bookings\./.test(html);
+  } catch (e) { return false; }
+})();
+
+const BAND_PAGES = NEW_STRIP ? ['/', ...BAND_PAGES_V1] : BAND_PAGES_V1;
+const NO_BAND = NEW_STRIP ? NO_BAND_ALL.filter(p => p !== '/') : NO_BAND_ALL;
+console.log('INFO strip wording on this site: ' + (NEW_STRIP ? 'the availability notice (Home included)' : 'the first wording (Home excluded)'));
 
 async function open(ctx, p, errors) {
   const page = await ctx.newPage();
@@ -44,6 +59,7 @@ async function open(ctx, p, errors) {
   page.on('console', m => { if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) errors.push(m.text()); });
   const resp = await page.goto(base + p, { waitUntil: 'networkidle' });
   if (resp && resp.status() === 202 && (resp.headers()['sg-captcha'] || '').length) { challenged = true; }
+  if (/Robot Challenge/i.test(await page.title().catch(() => ''))) { challenged = true; }   // Firefox is served the challenge as a normal page (2026-10-25: "Robot Challenge Screen", no status)
   return { page, resp };
 }
 const newCtx = async (width, theme) => {
@@ -157,9 +173,14 @@ for (const [theme, width] of STRIP_VIEWS) {
       });
       if (BAND_PAGES.includes(p)) {
         check(`${tag}: exactly one strip, directly under the header`, b.n === 1 && b.gap !== null && Math.abs(b.gap) <= 2, `n=${b.n} gap=${b.gap}`);
-        check(`${tag}: the strip is compact (${width === 1280 ? '<= 90' : '<= 150'} px tall)`, b.h > 0 && b.h <= (width === 1280 ? 90 : 150), b.h);
+        check(`${tag}: the strip is compact (${width === 1280 ? '<= 100' : '<= 170'} px tall)`, b.h > 0 && b.h <= (width === 1280 ? 100 : 170), b.h);
         check(`${tag}: the strip links to the corporate page`, b.href.replace(base, '').endsWith(SLUG), b.href);
-        check(`${tag}: the strip's words are the approved ones`, b.text.includes('Bring massage to your team.') && b.text.includes('On-site chair massage for employee appreciation days and workplace events. Table massage may be available at suitable host venues.') && b.text.includes('Explore Corporate Massage'), b.text.slice(0, 80));
+        if (NEW_STRIP) {
+          check(`${tag}: the strip's words are the approved availability notice`, (b.text.includes('Currently booking corporate & group massage only.') || b.text.includes('Now accepting corporate & group massage bookings.'))
+            && b.text.includes('Individual appointments at a dedicated Thai Solitude location are planned for summer 2027.') && b.text.includes('Explore Corporate & Group Massage') && !/studio/i.test(b.text), b.text.slice(0, 80));
+        } else {
+          check(`${tag}: the strip's words are the approved ones`, b.text.includes('Bring massage to your team.') && b.text.includes('On-site chair massage for employee appreciation days and workplace events. Table massage may be available at suitable host venues.') && b.text.includes('Explore Corporate Massage'), b.text.slice(0, 80));
+        }
         check(`${tag}: no side-scroll`, b.scroll <= 0, b.scroll);
         if (width === 1280 && theme === 'light' && p === '/about/') {
           shot: {
