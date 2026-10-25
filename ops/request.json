@@ -1,9 +1,8 @@
 {
-  "id": "hc-rehearse-1",
-  "op": "rehearse",
+  "id": "hc-dry-38",
+  "op": "run",
   "target": "staging38",
-  "installer": "home-card/install-home-corporate-card.php",
-  "args": [
-    "--with-uploads"
-  ]
+  "script": "home-card/push-home-corporate-card.sh",
+  "args": [],
+  "tests": "none"
 }
