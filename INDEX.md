@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-25 15:24 UTC  **PASS**  `cp-thai-seo`  [reports/2026-10-25/152446-cp-thai-seo.md](reports/2026-10-25/152446-cp-thai-seo.md)  (run 40206781816)
 - 2026-10-25 15:24 UTC  **PASS**  `cp-home`  [reports/2026-10-25/152424-cp-home.md](reports/2026-10-25/152424-cp-home.md)  (run 40206750373)
 - 2026-10-25 15:24 UTC  **PASS**  `cp-contact-seo`  [reports/2026-10-25/152401-cp-contact-seo.md](reports/2026-10-25/152401-cp-contact-seo.md)  (run 40206721475)
 - 2026-10-25 15:23 UTC  **PASS**  `cp-about`  [reports/2026-10-25/152337-cp-about.md](reports/2026-10-25/152337-cp-about.md)  (run 40206692848)
