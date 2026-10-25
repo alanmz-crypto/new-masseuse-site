@@ -1,13 +1,10 @@
 {
-  "id": "corp-chk-3",
+  "id": "corp-edge-2",
   "op": "run",
   "target": "staging37",
-  "script": "corporate/check-corporate-massage.mjs",
+  "script": "posture/edge-check.sh",
   "args": [
-    "https://staging37.thaisolitude.com",
-    "/tmp/corp-shots",
-    "staging37",
-    "quick"
+    "https://staging37.thaisolitude.com"
   ],
   "tests": "auto"
 }
