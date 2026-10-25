@@ -13,7 +13,7 @@
  * Rollback is exact: the snapshot holds every SureRank row the page had (raw stored values), and rollback puts exactly those back and removes any row the apply added.
  * The new wording is checked against the site's whole banned-word list (no research exemption applies to meta fields), the claim verbs and we/our/us, and the length limits.
  *
- * Allow-list: localhost:8090 and staging38. Live is added only on Ryan's go after staging38 has been applied and checked; he starts the live run himself.
+ * Allow-list: localhost:8090, staging38 and live. Live was added after staging38 was applied, checked and proven (2026-10-25: pixel-identical to live, restore proof moved only this page's SEO row); Ryan starts the live run himself.
  *
  * Modes (first WP-CLI argument; run with --user=1):  <mode> [FILE]
  *   preflight    read-only: ready / applied / CHANGED (stop)
@@ -28,8 +28,8 @@ if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) ) {
 
 $home = untrailingslashit( home_url() );
 $host = (string) wp_parse_url( $home, PHP_URL_HOST ) . ( wp_parse_url( $home, PHP_URL_PORT ) ? ':' . wp_parse_url( $home, PHP_URL_PORT ) : '' );
-if ( ! in_array( $host, array( 'localhost:8090', 'staging38.thaisolitude.com' ), true ) ) {
-	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090 or staging38 only).' );
+if ( ! in_array( $host, array( 'localhost:8090', 'staging38.thaisolitude.com', 'thaisolitude.com' ), true ) ) {
+	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090, staging38 or live only).' );
 }
 if ( 'astra' !== get_stylesheet() ) {
 	WP_CLI::error( 'Active theme is not Astra.' );
