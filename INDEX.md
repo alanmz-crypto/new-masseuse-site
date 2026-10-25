@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-25 05:00 UTC  **PASS**  `rate-live-dry-1`  [reports/2026-10-25/050055-rate-live-dry-1.md](reports/2026-10-25/050055-rate-live-dry-1.md)  (run 40163948767)
 - 2026-10-25 05:00 UTC  **PASS**  `rate-apply-38`  [reports/2026-10-25/050003-rate-apply-38.md](reports/2026-10-25/050003-rate-apply-38.md)  (run 40163875088)
 - 2026-10-25 04:59 UTC  **PASS**  `rate-dry-38`  [reports/2026-10-25/045901-rate-dry-38.md](reports/2026-10-25/045901-rate-dry-38.md)  (run 40163772938)
 - 2026-10-25 04:58 UTC  **PASS**  `hc-live-chk-ff-1`  [reports/2026-10-25/045838-hc-live-chk-ff-1.md](reports/2026-10-25/045838-hc-live-chk-ff-1.md)  (run 40163718024)
