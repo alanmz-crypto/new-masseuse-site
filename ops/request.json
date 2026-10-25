@@ -1,12 +1,6 @@
 {
-  "id": "corp-live-chk-ff-2",
-  "op": "run",
+  "id": "fp-live-after-rate",
+  "op": "inspect",
   "target": "live",
-  "script": "corporate/check-corporate-massage.mjs",
-  "args": [
-    "https://thaisolitude.com",
-    "firefox",
-    "quick"
-  ],
-  "tests": "none"
+  "query": "fingerprint"
 }
