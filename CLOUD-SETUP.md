@@ -15,12 +15,27 @@ to be on. The request format and examples are in `ops/README.md`; the rules a cl
   on this computer only. Copy that one line into your password manager now**: without it the off-site copies cannot be read.
 - Tested here: request checks (16 refusal cases), the backup copy (6 cases against a simulated server), the encrypted off-site copy
   against GitHub itself (stored, read back, decrypted identical; test files deleted afterwards), the rehearsal on a copy of localhost
-  (passed, named exactly what the change touches), all gates. **Not yet tested: anything that needs the SiteGround key** (steps 2-4).
+  (passed, named exactly what the change touches), all gates. Everything that needs the SiteGround key was tested for real afterwards (below).
+
+## In use since 2026-10-24
+
+The whole routine works from the phone: cloud sessions rehearsed, applied on staging and prepared live changes, and you started them (the
+Deep Tissue wording, the Deep Tissue research section + FAQ + slide-open panels and Accessibility page v4 on 2026-10-24; the corporate-massage
+changes on 2026-10-25). What the first days taught:
+
+- **Merge first, then start the live run.** "Site ops (LIVE)" reads `ops/live-request.json` from `main`, so the pull request must be merged
+  before the run starts, and the confirmation must be the id in that file. A mistyped or early start is refused, changes nothing and leaves
+  the id usable.
+- **The bot challenge reaches GitHub's runners too.** A check that SiteGround answers with HTTP 202 is reported INVALID (nothing was tested):
+  run it once more later, once, or accept the staging results (your call).
+- **On this computer, `git fetch origin` before trusting "ahead/behind".** Pushes over HTTPS do not move the local `origin/main`.
+- **Several sessions may share this computer's checkout.** Each works in its own `git worktree` (a scratch folder) and never switches,
+  stashes or commits another session's files in the shared folder.
 
 ## Your one-time steps (about 10 minutes, on this computer)
 
-Steps 1-4 were done on 2026-10-24 (PR #21 merged, key imported, first runs passed: inspect, backup with its encrypted copy opened on this
-computer, a rehearsal streamed from staging36). Shell commands below are typed after switching the prompt to shell mode (type `!` first).
+All five steps were done on 2026-10-24 (PR #21 merged, key imported, first runs passed: inspect, backup with its encrypted copy opened on this
+computer, a rehearsal streamed from staging36; step 5 through the Claude GitHub App). Shell commands below are typed after switching the prompt to shell mode (type `!` first).
 
 1. **Push and merge.** `git push https://github.com/alanmz-crypto/new-masseuse-site.git feat/2026-10-24-cloud-ops`, then merge
    the pull request into `main` (the workflows start by hand only once they are on `main`). Wait for its **Gates** check to pass first.
