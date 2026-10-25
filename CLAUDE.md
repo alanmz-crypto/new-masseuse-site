@@ -9,6 +9,9 @@ are also loaded as memory). This file adds how Ryan likes to work, and how to wo
 - Plain language. When you name a PR, commit, page ID or file, say in a few words what it is and why it matters now; never lead with bare ids.
 - End every reply with a TL;DR (one sentence for short replies; a `## TL;DR` with 2-4 bullets for long ones).
 - Use they/them for anyone whose pronouns you have not been told.
+- **Open items:** read `.claude/project-memory/open-items.md` first in every session and keep it true (update it in the same pull request as any change that closes, opens or moves an item). Ryan is often on his phone only: give links and tap-by-tap steps.
+- End each finished phase with four lines, then the TL;DR: `I finished:` (plain words), `Next step:` (his exact steps if it is a merge or a live run), `Next lane:` (who), `See my work:` (ONE click: a pull request diff URL or a single file). Stamp `Arc: none (ad-hoc)` for routine site work.
+- **PR steward** (Ryan granted it on 2026-10-25): for every pull request you open, say what it is, check the Gates check is green and nothing conflicts, answer comments, give Ryan the merge steps, and keep the notes true after it merges. Never merge, force-push or push to `main`.
 - Keep going on reversible work. **Stop and warn first** before anything hard to undo: deleting anything, any write to live
   thaisolitude.com, anything without a fresh DB export and a tested rollback, pushing or merging to `main`, messages to other people.
 - Live is Ryan's: he decides each live change and starts it himself. Bots and crawlers are welcome; harden only against malicious behaviour.
