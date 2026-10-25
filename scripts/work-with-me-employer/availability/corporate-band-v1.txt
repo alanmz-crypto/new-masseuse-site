@@ -1,0 +1,16 @@
+// Corporate & Group Massage announcement strip under the header (Ryan 2026-10-24). Shown only on the client-facing pages listed here (NOT Home, NOT Work With Me, NOT the corporate page itself,
+// and not the unrelated pages on this install). Remove this snippet and the ts-corp block in Additional CSS to take it away.
+add_action( 'astra_header_after', function () {
+	if ( is_admin() || ! is_page( array( 'about', 'services', 'contact', 'privacy-policy', 'accessibility', 'thai-massage', 'therapeutic-massage', 'deep-tissue-massage' ) ) ) {
+		return;
+	}
+	$target = get_page_by_path( 'corporate-massage-portland' );
+	if ( ! $target || 'publish' !== $target->post_status || is_page( $target->ID ) ) {
+		return;
+	}
+	echo '<div class="ts-corp-band"><div class="ts-corp-band__inner">'
+		. '<p class="ts-corp-band__label">Corporate &amp; Group Massage &middot; Portland</p>'
+		. '<p class="ts-corp-band__text"><strong>Bring massage to your team.</strong> On-site chair massage for employee appreciation days and workplace events. Table massage may be available at suitable host venues.</p>'
+		. '<a class="ts-corp-band__link" href="' . esc_url( get_permalink( $target ) ) . '">Explore Corporate Massage</a>'
+		. '</div></div>' . "\n";
+} );

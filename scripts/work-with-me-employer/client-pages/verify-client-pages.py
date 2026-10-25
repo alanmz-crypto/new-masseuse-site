@@ -38,6 +38,20 @@ wt = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(wt)
 BAD = wt.BAD   # unchanged for Services and Therapeutic Massage; the Thai Massage research section uses the three tiers in wording_tiers.py (Ryan, 2026-10-19)
 
+# The two FAQ answers on the Thai, Therapeutic and Deep Tissue pages that implied individual bookings now were corrected on 2026-10-25 (availability/install-availability-update.php; Ryan's Work With Me and availability plan).
+# A site that does not have that update yet still has the old answers: either wording is accepted, exactly one of them, once.
+OLD_WHERE = "Sessions take place in Mt. Tabor, Portland. I do not currently travel to clients."
+NEW_WHERE = ("Right now I offer corporate and group massage only, at suitable Portland venues, with bookings beginning November 1, 2026. "
+             "Individual appointments at a dedicated Thai Solitude location are planned for summer 2027. I do not offer individual house calls.")
+OLD_BOOK = "Use the Contact page to reach me by phone or email, and tell me what you would like. I will reply to arrange a time."
+NEW_BOOK = ("Corporate and group massage bookings begin November 1, 2026. The Corporate and Group Massage page explains how to request a quote. "
+            "Individual appointments are planned for summer 2027.")
+
+
+def either(t, old, new):
+    return t.count(old) + t.count(new) == 1
+
+
 # ---- Services -------------------------------------------------------------------------------------------------------------
 svc, code = get("/services/")
 check("Services returns 200", code == 200, code)
@@ -89,10 +103,11 @@ else:
                "Is Therapeutic Massage Appropriate If I Have No Specific Complaint?", "Can I Ask You to Focus on My Neck and Shoulders?", "How Is Therapeutic Massage Different From Deep Tissue Massage?",
                "Can I Change the Pressure During a Session?", "Where Do Sessions Take Place?", "How Do I Book a Session?"]:
         check("Therapeutic Massage: FAQ question %r appears once" % qq, tt.count(qq) == 1)
-    for sentence in ["Yes. You can ask for lighter pressure, a different focus, or a pause at any time, and I will adjust.", "Sessions take place in Mt. Tabor, Portland. I do not currently travel to clients.",
-                     "Use the Contact page to reach me by phone or email, and tell me what you would like. I will reply to arrange a time.",
+    for sentence in ["Yes. You can ask for lighter pressure, a different focus, or a pause at any time, and I will adjust.",
                      "Deep tissue massage uses focused strokes and sustained pressure on areas that stay tight."]:
         check("Therapeutic Massage: %r once" % sentence[:56], tt.count(sentence) == 1)
+    check("Therapeutic Massage: the 'Where Do Sessions Take Place?' answer is the old or the corrected text, once", either(tt, OLD_WHERE, NEW_WHERE))
+    check("Therapeutic Massage: the 'How Do I Book a Session?' answer is the old or the corrected text, once", either(tt, OLD_BOOK, NEW_BOOK))
     check("Therapeutic Massage: no links inside FAQ answers (axe nested-interactive)", not re.search(r'uagb-faq-content[^>]*>(?:(?!</div>).)*<a ', mh_th, re.S))
     check("Therapeutic Massage: the reworded neck and shoulder sentence once, the old one gone", tt.count("Research on massage for neck and shoulder pain is mixed.") == 1 and "Research suggests massage may be helpful for some people with neck or shoulder pain" not in tt)
     check("Therapeutic Massage: an encouraging sentence before the 'mixed' one (pace and pressure) and one after it (the review's dose subgroup), once each", tt.count("and I adapt the pace and pressure to what suits you.") == 1
@@ -151,9 +166,11 @@ if res["found"]:
     for q in ["What Should I Wear to a Thai Massage?", "What Will I Lie On?", "How Long Is a Session?", "Do I Need to Be Flexible?", "Where Do Sessions Take Place?",
               "How Is Thai Massage Different From Your Other Services?", "How Do I Book a Session?", "Questions About Thai Massage"]:
         check("Thai Massage: %r appears once" % q, tt.count(q) == 1)
-    for sentence in ["Sessions are 60 or 90 minutes.", "Thai massage is done on a mat.", "I do not currently travel to clients.", "I trained in traditional Thai bodywork at Still Light Center.",
+    for sentence in ["Sessions are 60 or 90 minutes.", "Thai massage is done on a mat.", "I trained in traditional Thai bodywork at Still Light Center.",
                      "in 2019 UNESCO added Nuad Thai, traditional Thai massage,"]:
         check("Thai Massage: %r once" % sentence, tt.count(sentence) == 1)
+    check("Thai Massage: the 'Where Do Sessions Take Place?' answer is the old or the corrected text, once", either(tt, OLD_WHERE, NEW_WHERE))
+    check("Thai Massage: the 'How Do I Book a Session?' answer is the old or the corrected text, once", either(tt, OLD_BOOK, NEW_BOOK))
     check("Thai Massage: no links inside FAQ answers (axe nested-interactive)", not re.search(r'uagb-faq-content[^>]*>(?:(?!</div>).)*<a ', tmh, re.S))
     summ = [wt.text(x) for x in re.findall(r"<summary>(.*?)</summary>", tmh, re.S)]
     check("Thai Massage: the five research panels in order", summ == ["Reviews, and What They Say About Limits", "Back Pain", "Neck, Shoulders, Arms and Feet", "Stress, Energy and Recovery", "Sources"], summ)
@@ -227,9 +244,10 @@ else:
     for qq in ["Does Deep Tissue Massage Have to Hurt?", "How Is Deep Tissue Massage Different From Therapeutic Massage?", "Can I Choose Where You Focus?", "What Should I Tell You Before a Session?",
                "Where Do Sessions Take Place?", "How Do I Book a Session?"]:
         check("Deep Tissue Massage: FAQ question %r appears once" % qq, dt.count(qq) == 1)
-    for sentence in ["Sessions take place in Mt. Tabor, Portland. I do not currently travel to clients.", "Use the Contact page to reach me by phone or email, and tell me what you would like. I will reply to arrange a time.",
-                     "No. Deep pressure is never required."]:
+    for sentence in ["No. Deep pressure is never required."]:
         check("Deep Tissue Massage: %r once" % sentence[:56], dt.count(sentence) == 1)
+    check("Deep Tissue Massage: the 'Where Do Sessions Take Place?' answer is the old or the corrected text, once", either(dt, OLD_WHERE, NEW_WHERE))
+    check("Deep Tissue Massage: the 'How Do I Book a Session?' answer is the old or the corrected text, once", either(dt, OLD_BOOK, NEW_BOOK))
     check("Deep Tissue Massage: the page's safety sentence is on the page twice (page text and FAQ answer)", dt.count("New numbness, weakness, unexplained swelling or radiating pain means you should see a doctor before massage.") == 2)
     check("Deep Tissue Massage: no links inside FAQ answers (axe nested-interactive)", not re.search(r'uagb-faq-content[^>]*>(?:(?!</div>).)*<a ', mh_dt, re.S))
     check("Deep Tissue Massage: the new body paragraph once, the three old sentences gone", dt.count("Research on deep tissue massage is limited and mixed.") == 1 and "Trials in specific musculoskeletal conditions suggest deep tissue massage" not in dt
@@ -324,6 +342,45 @@ else:
         check("Services: the existing descriptions are unchanged", all(s in svt for s in ("Thai massage is my specialty.", "Therapeutic massage gives steady attention", "Deep tissue massage uses focused strokes", "Every session begins with a conversation about what you want")))
     else:
         print("INFO Services: the Corporate & Group Massage row is not there yet")
+
+# ---- Work With Me and availability (Ryan, 2026-10-25; availability/install-availability-update.php) --------------------------------------------------------------------------------
+# Strict checks only on a site that has the update (the Work With Me sentence is there); on any site the things the plan says to KEEP are checked.
+SCHED = "I schedule corporate bookings around my work commitments and only offer times when I am available."
+wwm_page, wwm_code = get("/work-with-me/")
+check("Work With Me returns 200", wwm_code == 200, wwm_code)
+wm = text_of(wwm_page)
+for keep in ["Start — From November 1 · open for days, evenings and weekends", "Interviews — By phone or video call now, in person from November 1", "Oregon license lookup", "Email me about an LMT position", "View résumé (PDF)"]:
+    check("Work With Me: kept as it was: %r" % keep[:48], keep in wm)
+check("Work With Me: the repeated résumé links are all still there (3)", wwm_page.count("Butsaba_Dusrai_LMT_Resume_License.pdf") >= 3, wwm_page.count("Butsaba_Dusrai_LMT_Resume_License.pdf"))
+check("Work With Me: no 'Relocating from Chicago' wording", "Relocating" not in wm and "relocating" not in wm)
+check("Work With Me: no announcement strip (it is an employment page)", '<div class="ts-corp-band">' not in wwm_page)
+home_page, _ = get("/")
+check("The 'For Practices' menu label is unchanged", ">For Practices</a>" in home_page)
+if SCHED in wm:
+    check("Work With Me: the independent-practice sentence is there once", wm.count(SCHED) == 1)
+    check("Work With Me: the 'For clients' paragraph says corporate bookings begin November 1 and individual appointments are planned for summer 2027",
+          wm.count("Corporate and group massage bookings begin November 1, 2026; individual appointments at a dedicated Thai Solitude location are planned for summer 2027.") == 1)
+    for label, path in (("Home", "/"), ("About", "/about/"), ("Services", "/services/"), ("Contact", "/contact/"), ("Thai Massage", "/thai-massage/"), ("Therapeutic Massage", "/therapeutic-massage/"), ("Deep Tissue Massage", "/deep-tissue-massage/")):
+        pg, c = get(path)
+        check("%s: returns 200 and holds exactly one availability strip" % label, c == 200 and pg.count('<div class="ts-corp-band">') == 1, c)
+        bt = text_of(re.search(r'<div class="ts-corp-band">.*?</div></div>', pg, re.S).group(0)) if '<div class="ts-corp-band">' in pg else ""
+        check("%s: the strip names the availability, links to the corporate page and avoids the house-list words" % label,
+              ("Currently booking corporate & group massage only." in bt or "Now accepting corporate & group massage bookings." in bt) and "summer 2027" in bt and "/corporate-massage-portland/" in pg
+              and not wt.hits(bt, wt.VOICE + wt.CLAIMS + wt.EVIDENCE), bt[:60])
+    for label, path in (("Thai Massage", "/thai-massage/"), ("Therapeutic Massage", "/therapeutic-massage/"), ("Deep Tissue Massage", "/deep-tissue-massage/")):
+        pg, _ = get(path)
+        ptxt = text_of(pg)
+        if "How Do I Book a Session?" in ptxt:   # a copy that predates the page's FAQ (an old localhost) has nothing to correct
+            check("%s: both corrected FAQ answers are there once and the old ones are gone" % label, ptxt.count(NEW_WHERE) == 1 and ptxt.count(NEW_BOOK) == 1 and OLD_WHERE not in ptxt and OLD_BOOK not in ptxt)
+        else:
+            print("INFO %s: this copy has no FAQ yet (nothing to correct)" % label)
+    cp, _ = get("/corporate-massage-portland/")
+    ctxt = text_of(cp)
+    check("Corporate page: states that bookings begin November 1, 2026, and that events are scheduled around her work commitments",
+          ctxt.count("Corporate and group massage bookings begin November 1, 2026. Arranged through an organization or venue at a shared location.") == 1 and ctxt.count(SCHED) == 1)
+    check("Corporate page: no strip on the page itself", '<div class="ts-corp-band">' not in cp)
+else:
+    print("INFO Work With Me and availability: the update is not on this site yet (the parts the plan says to keep were checked above)")
 
 print("\nRESULT: " + ("all checks passed" if not fails else f"{fails} check(s) FAILED"))
 sys.exit(1 if fails else 0)

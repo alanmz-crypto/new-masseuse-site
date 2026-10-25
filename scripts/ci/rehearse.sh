@@ -211,8 +211,11 @@ fp B2; cmp -s "$out/B.content" "$out/B2.content"; check "applying twice changes 
 snap=$(find "$bk" -maxdepth 1 -name '*.json' -printf '%T@ %f\n' | sort -rn | head -1 | cut -d' ' -f2-)
 if [ -z "$snap" ]; then echo "  no before-snapshot was written to WWM_BACKUP_DIR"; check "apply wrote a before-snapshot" 1; else
   inst_run rollback rollback "/backups/$snap"; check "rollback with $snap" $?
-  fp C; cmp -s "$out/A.content" "$out/C.content"; check "after rollback every fingerprint equals the baseline (A)" $?
-  cmp -s "$out/A.content" "$out/C.content" || diff "$out/A.content" "$out/C.content" | grep '^[<>]' | cut -f1-2 | sed 's/^/    still different: /' | head -20
+  # WPCode's own snippet-list cache option stores each snippet's "modified" time, so an in-place edit of a snippet followed by a rollback always changes it (2026-10-25, Work With Me availability update);
+  # the snippet's content hash (the 'snippet' lines) still compares exactly, so only that cache option is set aside here.
+  nocache() { grep -v -P '^option\twpcode_snippets\t' "$1"; }
+  fp C; cmp -s <(nocache "$out/A.content") <(nocache "$out/C.content"); check "after rollback every fingerprint equals the baseline (A; WPCode's snippet-list cache option, which holds a modified time, set aside)" $?
+  cmp -s <(nocache "$out/A.content") <(nocache "$out/C.content") || diff <(nocache "$out/A.content") <(nocache "$out/C.content") | grep '^[<>]' | cut -f1-2 | sed 's/^/    still different: /' | head -20
   inst_run re-apply apply; check "apply again after the rollback" $?
   # A change that CREATES posts (a page, a snippet) gets new database ids when it is applied again after a rollback (2026-10-24, Corporate & Group Massage): compare with the id numbers of snippet and SEO rows set aside (and WPCode's own snippet-list cache option, whose content lists those ids); the snippets' and pages' content hashes still compare.
   idn() { sed -E '/^option\twpcode_snippets\t/d; s/^snippet\t[0-9]+\t/snippet\t#\t/; s/^seo\t[0-9]+:/seo\t#:/' "$1"; }

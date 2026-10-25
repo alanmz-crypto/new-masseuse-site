@@ -87,6 +87,7 @@ gate "Deep Tissue evidence content matches its builder" python3 -I -B "$here/wor
 gate "Accessibility page text matches its builder" python3 -I -B "$here/work-with-me-employer/accessibility/build-accessibility-page.py" --check
 gate "Sandwich update content matches its builders" python3 -I -B "$here/work-with-me-employer/evidence-update/build-sandwich-update.py" --check
 gate "Corporate massage content matches its builder" python3 -I -B "$here/work-with-me-employer/corporate/build-corporate-massage.py" --check
+gate "Availability update content matches its builder" python3 -I -B "$here/work-with-me-employer/availability/build-availability-update.py" --check
 
 # ---- rendered pages (read-only) ------------------------------------------------------------------------------------------------------
 if [ -n "${1:-}" ] && ! edge_msg=$("$here/work-with-me-employer/posture/edge-check.sh" "$1" 2>&1); then

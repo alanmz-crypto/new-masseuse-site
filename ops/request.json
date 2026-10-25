@@ -1,8 +1,10 @@
 {
-  "id": "corp-live-dry-1",
+  "id": "av-verify-1",
   "op": "run",
-  "target": "live",
-  "script": "corporate/push-corporate-massage.sh",
-  "args": [],
+  "target": "staging38",
+  "script": "client-pages/verify-client-pages.py",
+  "args": [
+    "https://staging38.thaisolitude.com"
+  ],
   "tests": "auto"
 }
