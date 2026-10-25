@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-25 02:17 UTC  **PASS**  `hc-rehearse-1`  [reports/2026-10-25/021706-hc-rehearse-1.md](reports/2026-10-25/021706-hc-rehearse-1.md)  (run 40153779997)
 - 2026-10-25 02:01 UTC  **PASS**  `hm-home-38`  [reports/2026-10-25/020101-hm-home-38.md](reports/2026-10-25/020101-hm-home-38.md)  (run 40152808654)
 - 2026-10-25 01:36 UTC  **PASS**  `av-verify-1`  [reports/2026-10-25/013611-av-verify-1.md](reports/2026-10-25/013611-av-verify-1.md)  (run 40151255399)
 - 2026-10-25 01:35 UTC  **PASS**  `av-chk-ff-1`  [reports/2026-10-25/013523-av-chk-ff-1.md](reports/2026-10-25/013523-av-chk-ff-1.md)  (run 40151125923)
