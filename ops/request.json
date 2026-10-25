@@ -1,8 +1,7 @@
 {
-  "id": "contact-meta-dry-live",
-  "op": "run",
+  "id": "cp-home-seo",
+  "op": "inspect",
   "target": "live",
-  "script": "contact-meta/push-contact-meta.sh",
-  "args": [],
-  "tests": "none"
+  "query": "seo",
+  "arg": "home"
 }
