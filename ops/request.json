@@ -1,8 +1,10 @@
 {
-  "id": "contact-meta-dry-38",
+  "id": "contact-meta-apply-38",
   "op": "run",
   "target": "staging38",
   "script": "contact-meta/push-contact-meta.sh",
-  "args": [],
-  "tests": "none"
+  "args": [
+    "--apply"
+  ],
+  "tests": "auto"
 }
