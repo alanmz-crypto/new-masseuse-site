@@ -1,6 +1,7 @@
 {
-  "id": "av-fp-staging38",
-  "op": "inspect",
+  "id": "rate-rehearse-1",
+  "op": "rehearse",
   "target": "staging38",
-  "query": "fingerprint"
+  "installer": "corporate/install-corporate-rate.php",
+  "args": []
 }
