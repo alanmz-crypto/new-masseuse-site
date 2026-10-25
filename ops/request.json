@@ -1,7 +1,11 @@
 {
-  "id": "hm-home-38-after",
-  "op": "inspect",
+  "id": "hc-chk-38-q",
+  "op": "run",
   "target": "staging38",
-  "query": "page",
-  "arg": "home"
+  "script": "home-card/check-home-corporate-card.mjs",
+  "args": [
+    "https://staging38.thaisolitude.com",
+    "quick"
+  ],
+  "tests": "none"
 }
