@@ -1,8 +1,13 @@
 {
-  "id": "hc-live-dry-1",
+  "id": "hc-a11y-38-dark-3",
   "op": "run",
-  "target": "live",
-  "script": "home-card/push-home-corporate-card.sh",
-  "args": [],
+  "target": "staging38",
+  "script": "tools/a11y-audit.mjs",
+  "args": [
+    "https://staging38.thaisolitude.com",
+    "/tmp/a11y-hc-dark.json",
+    "/",
+    "dark"
+  ],
   "tests": "none"
 }
