@@ -1,8 +1,10 @@
 {
-  "id": "hc-dry-38",
+  "id": "hc-apply-38",
   "op": "run",
   "target": "staging38",
   "script": "home-card/push-home-corporate-card.sh",
-  "args": [],
+  "args": [
+    "--apply"
+  ],
   "tests": "none"
 }
