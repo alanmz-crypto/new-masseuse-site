@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-25 04:45 UTC  **PASS**  `live-availability-update-1`  [reports/2026-10-25/044501-live-availability-update-1.md](reports/2026-10-25/044501-live-availability-update-1.md)  (run 40162802261)
 - 2026-10-25 04:37 UTC  **PASS**  `av-fp-staging38`  [reports/2026-10-25/043750-av-fp-staging38.md](reports/2026-10-25/043750-av-fp-staging38.md)  (run 40162564628)
 - 2026-10-25 04:37 UTC  **PASS**  `av-fp-live`  [reports/2026-10-25/043725-av-fp-live.md](reports/2026-10-25/043725-av-fp-live.md)  (run 40162540621)
 - 2026-10-25 04:36 UTC  **PASS**  `av-live-dry-1`  [reports/2026-10-25/043651-av-live-dry-1.md](reports/2026-10-25/043651-av-live-dry-1.md)  (run 40162504932)
