@@ -1,8 +1,10 @@
 {
-  "id": "rate-dry-38",
+  "id": "rate-apply-38",
   "op": "run",
   "target": "staging38",
   "script": "corporate/push-corporate-rate.sh",
-  "args": [],
+  "args": [
+    "--apply"
+  ],
   "tests": "none"
 }
