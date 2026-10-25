@@ -10,6 +10,8 @@ GitHub-only SiteGround key and can start the practice images. This folder is how
 
 Results: every run commits a report to the **ops-log** branch (`reports/YYYY-MM-DD/HHMMSS-<id>.md`, newest first in `INDEX.md`) and shows
 the same report on the run's summary page. `scripts/ci/request.sh wait <id>` fetches it. Screenshots and full logs are the run's artifact.
+A read-only tool that exits 2 (its "INVALID: nothing was tested", usually SiteGround's bot challenge answering HTTP 202) is reported
+**INVALID**, not FAIL: run it once more later, once. A write that stops with exit 2 is still a FAIL.
 
 ## Request format
 

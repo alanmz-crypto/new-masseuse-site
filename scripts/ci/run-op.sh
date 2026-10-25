@@ -137,6 +137,9 @@ case "$op" in
       *.mjs) runner=(node "$path") ;;
     esac
     step "$base ${args[*]:-}(S_TARGET=$target)" main "${runner[@]}" "${args[@]}"; rc=$?
+    # exit 2 from a read-only tool is the scripts' "INVALID: nothing was tested" (most often SiteGround's bot challenge, HTTP 202); a write that
+    # stops with 2 stays a FAIL, because a write that did not finish cleanly must never read as harmless
+    if [ "$rc" -eq 2 ] && [ "$write" = 0 ]; then finish 2 "$base could not test (exit 2, see its output; usually the SiteGround bot challenge): nothing was tested, run it once more later"; fi
     if [ "$rc" -ne 0 ]; then finish 1 "$base failed (exit $rc)"; fi
     if [ "$write" = 1 ] && [ "${tests:-auto}" = auto ]; then
       need_browsers
