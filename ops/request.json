@@ -1,6 +1,12 @@
 {
-  "id": "av-fp-38-after",
-  "op": "inspect",
+  "id": "av-chk-1",
+  "op": "run",
   "target": "staging38",
-  "query": "fingerprint"
+  "script": "availability/check-availability-update.mjs",
+  "args": [
+    "https://staging38.thaisolitude.com",
+    "/tmp/av-shots",
+    "staging38"
+  ],
+  "tests": "auto"
 }
