@@ -1,5 +1,5 @@
 {
-  "id": "av-rehearse-1",
+  "id": "av-rehearse-2",
   "op": "rehearse",
   "target": "staging38",
   "installer": "availability/install-availability-update.php",
