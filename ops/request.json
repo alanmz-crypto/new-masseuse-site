@@ -1,5 +1,5 @@
 {
-  "id": "av-scan-38",
+  "id": "av-scan-38b",
   "op": "run",
   "target": "staging38",
   "script": "availability/scan-availability.sh",
