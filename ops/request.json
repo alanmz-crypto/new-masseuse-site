@@ -1,6 +1,7 @@
 {
-  "id": "fp-38-after-rate",
+  "id": "pg-live-after-rate",
   "op": "inspect",
-  "target": "staging38",
-  "query": "fingerprint"
+  "target": "live",
+  "query": "page",
+  "arg": "corporate-massage-portland"
 }
