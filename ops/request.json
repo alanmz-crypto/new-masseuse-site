@@ -1,8 +1,7 @@
 {
-  "id": "av-scan-38b",
-  "op": "run",
+  "id": "av-rehearse-1",
+  "op": "rehearse",
   "target": "staging38",
-  "script": "availability/scan-availability.sh",
-  "args": [],
-  "tests": "auto"
+  "installer": "availability/install-availability-update.php",
+  "args": []
 }
