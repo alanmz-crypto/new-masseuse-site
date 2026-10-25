@@ -1,8 +1,10 @@
 {
-  "id": "av-dry-1",
+  "id": "av-apply-1",
   "op": "run",
   "target": "staging38",
   "script": "availability/push-availability-update.sh",
-  "args": [],
-  "tests": "auto"
+  "args": [
+    "--apply"
+  ],
+  "tests": "none"
 }
