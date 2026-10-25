@@ -16,7 +16,8 @@
  *   5. ONE marked block "ts-corp" appended to Additional CSS (the strip, the page, the Services picture).
  * Source of every string: build-corporate-massage.py -> corporate-massage-content.php (generated; never edit by hand); the CSS block: corporate-massage.css.
  *
- * Allow-list: localhost:8090 and staging37. Live is NOT allowed: it is added only on Ryan's explicit go, after staging37 is reviewed, and he starts the live run himself.
+ * Allow-list: localhost:8090, staging37 and live. Live was added on Ryan's go ("This looks good, it can be pushed to live", 2026-10-24) after the change was rehearsed on a copy of staging37, applied on staging37, rolled back
+ * exactly (version 1) and applied again (version 2); Ryan merges the pull request and starts the live run himself.
  *
  * Modes (first WP-CLI argument; run with --user=1):  <mode> [FILE]
  *   preflight    read-only: ready = none of the six parts is there; applied = all six are there exactly as written; CHANGED = anything else (stop)
@@ -31,8 +32,8 @@ if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) ) {
 
 $home = untrailingslashit( home_url() );
 $host = (string) wp_parse_url( $home, PHP_URL_HOST ) . ( wp_parse_url( $home, PHP_URL_PORT ) ? ':' . wp_parse_url( $home, PHP_URL_PORT ) : '' );
-if ( ! in_array( $host, array( 'localhost:8090', 'staging37.thaisolitude.com' ), true ) ) {
-	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090 or staging37 only).' );
+if ( ! in_array( $host, array( 'localhost:8090', 'staging37.thaisolitude.com', 'thaisolitude.com' ), true ) ) {
+	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090, staging37 or live only).' );
 }
 if ( 'astra' !== get_stylesheet() ) {
 	WP_CLI::error( 'Active theme is not Astra.' );
