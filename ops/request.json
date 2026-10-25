@@ -1,6 +1,6 @@
 {
-  "id": "av-fp2-live",
+  "id": "av-fp2-staging38",
   "op": "inspect",
-  "target": "live",
+  "target": "staging38",
   "query": "fingerprint"
 }
