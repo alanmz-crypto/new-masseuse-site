@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-25 15:54 UTC  **PASS**  `live-contact-meta-1`  [reports/2026-10-25/155429-live-contact-meta-1.md](reports/2026-10-25/155429-live-contact-meta-1.md)  (run 40208829594)
 - 2026-10-25 15:42 UTC  **INVALID**  `live-corporate-rate-1`  [reports/2026-10-25/154257-live-corporate-rate-1.md](reports/2026-10-25/154257-live-corporate-rate-1.md)  (run 40208230832)
 - 2026-10-25 15:39 UTC  **PASS**  `cp-home-seo`  [reports/2026-10-25/153921-cp-home-seo.md](reports/2026-10-25/153921-cp-home-seo.md)  (run 40207940427)
 - 2026-10-25 15:38 UTC  **PASS**  `contact-meta-dry-live`  [reports/2026-10-25/153810-contact-meta-dry-live.md](reports/2026-10-25/153810-contact-meta-dry-live.md)  (run 40207846054)
