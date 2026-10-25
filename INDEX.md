@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-25 04:00 UTC  **PASS**  `hc-a11y-38-dark-3`  [reports/2026-10-25/040046-hc-a11y-38-dark-3.md](reports/2026-10-25/040046-hc-a11y-38-dark-3.md)  (run 40160240020)
 - 2026-10-25 03:54 UTC  **PASS**  `hc-live-dry-1`  [reports/2026-10-25/035449-hc-live-dry-1.md](reports/2026-10-25/035449-hc-live-dry-1.md)  (run 40159921648)
 - 2026-10-25 03:47 UTC  **INVALID**  `hc-a11y-38-dark-2`  [reports/2026-10-25/034708-hc-a11y-38-dark-2.md](reports/2026-10-25/034708-hc-a11y-38-dark-2.md)  (run 40159421821)
 - 2026-10-25 03:37 UTC  **PASS**  `hc-a11y-38-light-2`  [reports/2026-10-25/033749-hc-a11y-38-light-2.md](reports/2026-10-25/033749-hc-a11y-38-light-2.md)  (run 40158846314)
