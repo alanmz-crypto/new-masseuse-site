@@ -11,7 +11,7 @@
  * NOTHING ELSE changes: every old text must occur EXACTLY ONCE (ready) or every new text exactly once (applied); anything else stops the run, so edits made elsewhere in the meantime survive and are never overwritten.
  * The strip is PHP code that runs on every page it appears on, so its syntax is checked in memory (the PHP tokenizer) BEFORE anything is written.
  *
- * Allow-list: localhost:8090 and staging38. Live is NOT allowed: it is added only on Ryan's explicit go after staging38 is reviewed, and he starts the live run himself.
+ * Allow-list: localhost:8090, staging38 and live. Live was added on Ryan's go ("continue so we can push live", 2026-10-25) after the update was applied and reviewed on staging38; Ryan merges the pull request and starts the live run himself.
  *
  * Modes (first WP-CLI argument; run with --user=1):  <mode> [FILE]
  *   preflight    read-only: ready = every old text is there once and the snippet holds the old code; applied = every new text is there once and the snippet holds the new code; CHANGED = anything else (stop)
@@ -26,8 +26,8 @@ if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) ) {
 
 $home = untrailingslashit( home_url() );
 $host = (string) wp_parse_url( $home, PHP_URL_HOST ) . ( wp_parse_url( $home, PHP_URL_PORT ) ? ':' . wp_parse_url( $home, PHP_URL_PORT ) : '' );
-if ( ! in_array( $host, array( 'localhost:8090', 'staging38.thaisolitude.com' ), true ) ) {
-	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090 or staging38 only).' );
+if ( ! in_array( $host, array( 'localhost:8090', 'staging38.thaisolitude.com', 'thaisolitude.com' ), true ) ) {
+	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090, staging38 or live only).' );
 }
 if ( 'astra' !== get_stylesheet() ) {
 	WP_CLI::error( 'Active theme is not Astra.' );

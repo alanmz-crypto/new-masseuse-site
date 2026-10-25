@@ -1,10 +1,6 @@
 {
-  "id": "corp-live-contrast-2",
-  "op": "run",
-  "target": "live",
-  "script": "corporate/check-corporate-contrast.mjs",
-  "args": [
-    "https://thaisolitude.com"
-  ],
-  "tests": "none"
+  "id": "av-fp-staging38",
+  "op": "inspect",
+  "target": "staging38",
+  "query": "fingerprint"
 }

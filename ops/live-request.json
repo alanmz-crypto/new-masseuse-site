@@ -1,8 +1,8 @@
 {
-  "id": "live-home-corporate-card-1",
+  "id": "live-availability-update-1",
   "op": "run",
   "target": "live",
-  "script": "home-card/push-home-corporate-card.sh",
+  "script": "availability/push-availability-update.sh",
   "args": [
     "--apply"
   ],
