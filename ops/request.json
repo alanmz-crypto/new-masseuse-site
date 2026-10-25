@@ -1,10 +1,7 @@
 {
-  "id": "corp-live-contrast-2",
-  "op": "run",
+  "id": "hm-home-live-after",
+  "op": "inspect",
   "target": "live",
-  "script": "corporate/check-corporate-contrast.mjs",
-  "args": [
-    "https://thaisolitude.com"
-  ],
-  "tests": "none"
+  "query": "page",
+  "arg": "home"
 }
