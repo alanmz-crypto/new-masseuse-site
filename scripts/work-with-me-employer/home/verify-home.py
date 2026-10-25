@@ -51,7 +51,9 @@ story = "I started Thai Solitude in Chicago in 2024, and I have worked in a busy
 about, _ = get("/about/")
 check("Home 'Learn About' paragraph carries the Chicago-to-Portland story and her language, once", text_of(page).count(story) == 1 and 'class="uagb-ifb-desc">I’m Butsaba Dusrai, an Oregon Licensed Massage Therapist' in page)
 check("the story matches About's facts (Chicago 2024; busy Chicago practice with hotel guests and business travelers; bringing it to Portland)", all(k in text_of(about) for k in ("started Thai Solitude in Chicago in 2024", "a busy Chicago massage practice, where my clients included hotel guests and business travelers", "Now I am bringing Thai Solitude to Portland")))
-check("no move date, countdown or opening date added on Home", not re.search(r"November|relocat|arriv|coming soon", text_of(page), re.I))
+# the announcement strip under the header (WPCode snippet "CorporateBand") is Ryan's 2026-10-25 availability plan: it carries "November 1, 2026" on Home on purpose, so it is left out of this check; every other word on Home is still checked
+page_without_strip = re.sub(r'<div class="ts-corp-band">.*?</div></div>', "", page, flags=re.S)
+check("no move date, countdown or opening date added on Home (the approved corporate strip is not counted)", not re.search(r"November|relocat|arriv|coming soon", text_of(page_without_strip), re.I))
 
 title = html.unescape(re.search(r"<title>(.*?)</title>", page, re.S).group(1))
 check("page title", title == "Thai Solitude | Thai & Therapeutic Massage, Mt. Tabor, Portland", title)
