@@ -1,8 +1,8 @@
 {
-  "id": "hc-live-chk-ff-1",
+  "id": "corp-live-chk-ff-2",
   "op": "run",
   "target": "live",
-  "script": "home-card/check-home-corporate-card.mjs",
+  "script": "corporate/check-corporate-massage.mjs",
   "args": [
     "https://thaisolitude.com",
     "firefox",
