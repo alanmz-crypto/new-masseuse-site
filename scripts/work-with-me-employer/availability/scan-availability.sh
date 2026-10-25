@@ -51,6 +51,8 @@ $terms = array(
   "sessions begin/start" => "/sessions?\s+(will\s+)?(begin|start)|(begin|start)(s|ing)?\s+(in\s+)?(november|nov)/i",
   "Mt. Tabor"          => "/mt\.?\s*tabor/i",
   "available/availability" => "/availab/i",
+  "book/reserve"       => "/\bbook(ing|ed|s)?\b|\breserv(e|ation)/i",
+  "reach me / arrange a time / text" => "/reach\s+me|arrange\s+a\s+time|text\s*\(?312|call\s+or\s+text|get\s+in\s+touch/i",
 );
 $decode = function ( $s ) { return preg_replace_callback( "/\\\\u([0-9a-fA-F]{4})/", function ( $m ) { return html_entity_decode( "&#x" . $m[1] . ";", ENT_QUOTES, "UTF-8" ); }, (string) $s ); };
 $hits = 0;
