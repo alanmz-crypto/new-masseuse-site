@@ -1,10 +1,7 @@
 {
-  "id": "flip-apply-38",
-  "op": "run",
-  "target": "staging38",
-  "script": "availability/push-strip-flip.sh",
-  "args": [
-    "--apply"
-  ],
-  "tests": "none"
+  "id": "cp-home-seo",
+  "op": "inspect",
+  "target": "live",
+  "query": "seo",
+  "arg": "home"
 }
