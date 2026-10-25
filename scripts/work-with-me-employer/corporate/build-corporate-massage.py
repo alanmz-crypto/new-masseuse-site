@@ -87,7 +87,7 @@ FAQ = [
     ('Can you do table massage?',
      'Table massage may be possible at a suitable host venue with an appropriate private room. I will talk through the setting and the arrangement with you first.'),
     ('What does it cost?',
-     'The proposed corporate rate is $130 per service hour. A written quote confirms the total and what is included.'),
+     'The proposed corporate rate is $100 per service hour. A written quote confirms the total and what is included.'),
     ('What does the host need to provide?',
      'Tell me what space is available and what the venue requires. I will go over setup and scheduling with you before the event.'),
     ('How do I reserve a date?',
@@ -184,7 +184,7 @@ def build_page():
         eyebrow('Booking and price'),
         h(2, 'Plan the Time That Works for Your Team'),
         group('ts-corp__rate', [
-            p('<strong>$130</strong> per service hour', 'ts-corp__rate-line'),
+            p('<strong>$100</strong> per service hour', 'ts-corp__rate-line'),
             p('Proposed corporate rate. What the billed time includes is confirmed in your written quote.', 'ts-corp__rate-note'),
         ]),
         columns('ts-corp__blocks', [
