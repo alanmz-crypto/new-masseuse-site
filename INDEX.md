@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-25 14:52 UTC  **PASS**  `pg-38-after-rate`  [reports/2026-10-25/145231-pg-38-after-rate.md](reports/2026-10-25/145231-pg-38-after-rate.md)  (run 40204248197)
 - 2026-10-25 14:51 UTC  **PASS**  `pg-live-after-rate`  [reports/2026-10-25/145147-pg-live-after-rate.md](reports/2026-10-25/145147-pg-live-after-rate.md)  (run 40204192087)
 - 2026-10-25 14:50 UTC  **PASS**  `fp-38-after-rate`  [reports/2026-10-25/145055-fp-38-after-rate.md](reports/2026-10-25/145055-fp-38-after-rate.md)  (run 40204122591)
 - 2026-10-25 14:50 UTC  **PASS**  `fp-live-after-rate`  [reports/2026-10-25/145012-fp-live-after-rate.md](reports/2026-10-25/145012-fp-live-after-rate.md)  (run 40204062073)
