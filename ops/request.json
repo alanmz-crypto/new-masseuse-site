@@ -1,7 +1,7 @@
 {
-  "id": "av-corp-live",
+  "id": "av-corp-staging38",
   "op": "inspect",
-  "target": "live",
+  "target": "staging38",
   "query": "page",
   "arg": "corporate-massage-portland"
 }
