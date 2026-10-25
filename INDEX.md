@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-25 01:20 UTC  **FAIL**  `av-rehearse-1`  [reports/2026-10-25/012049-av-rehearse-1.md](reports/2026-10-25/012049-av-rehearse-1.md)  (run 40150169024)
 - 2026-10-25 01:04 UTC  **PASS**  `av-scan-38b`  [reports/2026-10-25/010412-av-scan-38b.md](reports/2026-10-25/010412-av-scan-38b.md)  (run 40149146558)
 - 2026-10-25 01:02 UTC  **PASS**  `av-scan-38`  [reports/2026-10-25/010208-av-scan-38.md](reports/2026-10-25/010208-av-scan-38.md)  (run 40149002195)
 - 2026-10-25 00:58 UTC  **PASS**  `av-fp-38`  [reports/2026-10-25/005846-av-fp-38.md](reports/2026-10-25/005846-av-fp-38.md)  (run 40148768975)
