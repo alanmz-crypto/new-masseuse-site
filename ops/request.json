@@ -1,8 +1,10 @@
 {
-  "id": "rate-live-dry-1",
+  "id": "flip-apply-38",
   "op": "run",
-  "target": "live",
-  "script": "corporate/push-corporate-rate.sh",
-  "args": [],
+  "target": "staging38",
+  "script": "availability/push-strip-flip.sh",
+  "args": [
+    "--apply"
+  ],
   "tests": "none"
 }
