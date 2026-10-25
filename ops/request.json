@@ -1,7 +1,9 @@
 {
-  "id": "hm-home-38",
-  "op": "inspect",
+  "id": "hc-rehearse-1",
+  "op": "rehearse",
   "target": "staging38",
-  "query": "page",
-  "arg": "home"
+  "installer": "home-card/install-home-corporate-card.php",
+  "args": [
+    "--with-uploads"
+  ]
 }
