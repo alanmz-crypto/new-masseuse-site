@@ -1,7 +1,7 @@
 {
-  "id": "cp-home",
+  "id": "cp-thai-seo",
   "op": "inspect",
   "target": "live",
-  "query": "page",
-  "arg": "home"
+  "query": "seo",
+  "arg": "thai-massage"
 }
