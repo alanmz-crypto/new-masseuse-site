@@ -1,8 +1,8 @@
 {
-  "id": "live-dry-a11y-v4-1",
+  "id": "corp-live-dry-1",
   "op": "run",
   "target": "live",
-  "script": "accessibility/push-accessibility-page-v4.sh",
+  "script": "corporate/push-corporate-massage.sh",
   "args": [],
   "tests": "auto"
 }
