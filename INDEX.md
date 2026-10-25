@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-25 02:21 UTC  **INVALID**  `hc-chk-38`  [reports/2026-10-25/022102-hc-chk-38.md](reports/2026-10-25/022102-hc-chk-38.md)  (run 40154019829)
 - 2026-10-25 02:19 UTC  **PASS**  `hc-apply-38`  [reports/2026-10-25/021913-hc-apply-38.md](reports/2026-10-25/021913-hc-apply-38.md)  (run 40153945635)
 - 2026-10-25 02:17 UTC  **PASS**  `hc-dry-38`  [reports/2026-10-25/021757-hc-dry-38.md](reports/2026-10-25/021757-hc-dry-38.md)  (run 40153897068)
 - 2026-10-25 02:17 UTC  **PASS**  `hc-rehearse-1`  [reports/2026-10-25/021706-hc-rehearse-1.md](reports/2026-10-25/021706-hc-rehearse-1.md)  (run 40153779997)
