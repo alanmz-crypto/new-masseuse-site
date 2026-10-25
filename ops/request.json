@@ -1,12 +1,13 @@
 {
-  "id": "av-chk-1",
+  "id": "av-chk-ff-1",
   "op": "run",
   "target": "staging38",
   "script": "availability/check-availability-update.mjs",
   "args": [
     "https://staging38.thaisolitude.com",
     "/tmp/av-shots",
-    "staging38"
+    "staging38-ff",
+    "firefox"
   ],
   "tests": "auto"
 }
