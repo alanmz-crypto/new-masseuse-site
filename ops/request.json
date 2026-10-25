@@ -1,11 +1,10 @@
 {
-  "id": "hc-chk-38-q",
+  "id": "hc-chk-38-full",
   "op": "run",
   "target": "staging38",
   "script": "home-card/check-home-corporate-card.mjs",
   "args": [
-    "https://staging38.thaisolitude.com",
-    "quick"
+    "https://staging38.thaisolitude.com"
   ],
   "tests": "none"
 }
