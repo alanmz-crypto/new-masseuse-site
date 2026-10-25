@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-25 15:23 UTC  **PASS**  `cp-about`  [reports/2026-10-25/152337-cp-about.md](reports/2026-10-25/152337-cp-about.md)  (run 40206692848)
 - 2026-10-25 15:10 UTC  **FAIL**  `flip-apply-38`  [reports/2026-10-25/151008-flip-apply-38.md](reports/2026-10-25/151008-flip-apply-38.md)  (run 40205625844)
 - 2026-10-25 15:09 UTC  **PASS**  `flip-chk-live`  [reports/2026-10-25/150911-flip-chk-live.md](reports/2026-10-25/150911-flip-chk-live.md)  (run 40205547251)
 - 2026-10-25 15:08 UTC  **PASS**  `flip-chk-38`  [reports/2026-10-25/150819-flip-chk-38.md](reports/2026-10-25/150819-flip-chk-38.md)  (run 40205477026)
