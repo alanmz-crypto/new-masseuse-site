@@ -1,10 +1,11 @@
 {
-  "id": "hc-live-chk-1",
+  "id": "hc-live-chk-ff-1",
   "op": "run",
   "target": "live",
   "script": "home-card/check-home-corporate-card.mjs",
   "args": [
     "https://thaisolitude.com",
+    "firefox",
     "quick"
   ],
   "tests": "none"
