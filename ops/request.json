@@ -1,8 +1,10 @@
 {
-  "id": "flip-chk-live",
+  "id": "flip-apply-38",
   "op": "run",
-  "target": "live",
+  "target": "staging38",
   "script": "availability/push-strip-flip.sh",
-  "args": [],
+  "args": [
+    "--apply"
+  ],
   "tests": "none"
 }
