@@ -1,8 +1,6 @@
 {
-  "id": "av-live-dry-1",
-  "op": "run",
+  "id": "av-fp-live",
+  "op": "inspect",
   "target": "live",
-  "script": "availability/push-availability-update.sh",
-  "args": [],
-  "tests": "none"
+  "query": "fingerprint"
 }
