@@ -1,8 +1,7 @@
 {
-  "id": "corp-live-dry-1",
-  "op": "run",
-  "target": "live",
-  "script": "corporate/push-corporate-massage.sh",
-  "args": [],
-  "tests": "auto"
+  "id": "hm-home-38",
+  "op": "inspect",
+  "target": "staging38",
+  "query": "page",
+  "arg": "home"
 }
