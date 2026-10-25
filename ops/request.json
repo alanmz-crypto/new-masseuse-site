@@ -1,10 +1,11 @@
 {
-  "id": "corp-live-contrast-2",
+  "id": "hc-live-chk-1",
   "op": "run",
   "target": "live",
-  "script": "corporate/check-corporate-contrast.mjs",
+  "script": "home-card/check-home-corporate-card.mjs",
   "args": [
-    "https://thaisolitude.com"
+    "https://thaisolitude.com",
+    "quick"
   ],
   "tests": "none"
 }
