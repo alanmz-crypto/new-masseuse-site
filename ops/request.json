@@ -1,13 +1,10 @@
 {
-  "id": "hc-a11y-38-dark-3",
+  "id": "corp-live-contrast-2",
   "op": "run",
-  "target": "staging38",
-  "script": "tools/a11y-audit.mjs",
+  "target": "live",
+  "script": "corporate/check-corporate-contrast.mjs",
   "args": [
-    "https://staging38.thaisolitude.com",
-    "/tmp/a11y-hc-dark.json",
-    "/",
-    "dark"
+    "https://thaisolitude.com"
   ],
   "tests": "none"
 }
