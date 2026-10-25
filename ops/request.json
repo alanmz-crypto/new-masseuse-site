@@ -1,7 +1,8 @@
 {
-  "id": "contact-meta-rehearse-1",
-  "op": "rehearse",
+  "id": "contact-meta-dry-38",
+  "op": "run",
   "target": "staging38",
-  "installer": "contact-meta/install-contact-meta.php",
-  "args": []
+  "script": "contact-meta/push-contact-meta.sh",
+  "args": [],
+  "tests": "none"
 }
