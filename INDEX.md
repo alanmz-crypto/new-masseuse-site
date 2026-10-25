@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-25 00:36 UTC  **PASS**  `live-corporate-massage-1`  [reports/2026-10-25/003613-live-corporate-massage-1.md](reports/2026-10-25/003613-live-corporate-massage-1.md)  (run 40147102456)
 - 2026-10-25 00:27 UTC  **PASS**  `corp-live-dry-1`  [reports/2026-10-25/002708-corp-live-dry-1.md](reports/2026-10-25/002708-corp-live-dry-1.md)  (run 40146710467)
 - 2026-10-25 00:16 UTC  **FAIL**  `corp-edge-2`  [reports/2026-10-25/001626-corp-edge-2.md](reports/2026-10-25/001626-corp-edge-2.md)  (run 40146035307)
 - 2026-10-24 23:45 UTC  **FAIL**  `corp-chk-3`  [reports/2026-10-24/234521-corp-chk-3.md](reports/2026-10-24/234521-corp-chk-3.md)  (run 40143925569)
