@@ -1,7 +1,8 @@
 {
-  "id": "av-rehearse-2",
-  "op": "rehearse",
+  "id": "av-dry-1",
+  "op": "run",
   "target": "staging38",
-  "installer": "availability/install-availability-update.php",
-  "args": []
+  "script": "availability/push-availability-update.sh",
+  "args": [],
+  "tests": "auto"
 }
