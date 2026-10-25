@@ -1,6 +1,6 @@
 {
-  "id": "fp-live-after-rate",
+  "id": "fp-38-after-rate",
   "op": "inspect",
-  "target": "live",
+  "target": "staging38",
   "query": "fingerprint"
 }
