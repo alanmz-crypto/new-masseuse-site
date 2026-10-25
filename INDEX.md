@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-25 04:31 UTC  **PASS**  `live-home-corporate-card-1`  [reports/2026-10-25/043146-live-home-corporate-card-1.md](reports/2026-10-25/043146-live-home-corporate-card-1.md)  (run 40162072141)
 - 2026-10-25 04:26 UTC  **INVALID**  `live-home-corporate-card-1`  [reports/2026-10-25/042649-live-home-corporate-card-1.md](reports/2026-10-25/042649-live-home-corporate-card-1.md)  (run 40161890914)
 - 2026-10-25 04:12 UTC  **PASS**  `corp-live-contrast-2`  [reports/2026-10-25/041249-corp-live-contrast-2.md](reports/2026-10-25/041249-corp-live-contrast-2.md)  (run 40160954394)
 - 2026-10-25 04:00 UTC  **PASS**  `hc-a11y-38-dark-3`  [reports/2026-10-25/040046-hc-a11y-38-dark-3.md](reports/2026-10-25/040046-hc-a11y-38-dark-3.md)  (run 40160240020)
