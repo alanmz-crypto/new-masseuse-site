@@ -1,10 +1,7 @@
 {
-  "id": "flip-apply-38",
-  "op": "run",
+  "id": "contact-meta-rehearse-1",
+  "op": "rehearse",
   "target": "staging38",
-  "script": "availability/push-strip-flip.sh",
-  "args": [
-    "--apply"
-  ],
-  "tests": "none"
+  "installer": "contact-meta/install-contact-meta.php",
+  "args": []
 }
