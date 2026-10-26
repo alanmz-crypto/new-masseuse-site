@@ -32,7 +32,8 @@ becomes:
 5. Live: **never start it.** Show Ryan the exact change and wait for his go. Then make the enable-live change (live host in the
    installer's allow-list and the push script's targets, as in the earlier `docs/inter-model/*-enable-live.patch` files), run a live
    dry run (`request.sh run --target live --script ...`, read-only), and `request.sh live --script ... --args "--apply"`; open a pull
-   request and give Ryan the two steps it prints (merge; then Actions > "Site ops (LIVE)" > Run workflow on main > confirm with the id).
+   request (in a cloud session `gh pr create` fails: GraphQL is blocked and its token is invalid; use the GitHub tool
+   `mcp__github__create_pull_request` or REST, else push and share the `pull/new/<branch>` link) and give Ryan the two steps it prints (merge; then Actions > "Site ops (LIVE)" > Run workflow on main > confirm with the id).
 6. Read every report (`request.sh wait <id>`; reports live on the `ops-log` branch). A report that says INVALID proves nothing.
 
 Long waits: run `request.sh` with a long timeout or in the background; it polls the ops-log branch until the report appears.
