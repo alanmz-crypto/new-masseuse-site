@@ -5,6 +5,7 @@ Butsaba's Gmail address and Ryan's home IP masked. The computer's copy is the or
 matter for its task, and when it learns something durable (a decision of Ryan's, a hard-won rule) it adds or updates an entry
 here in the same style and commits it, so the next session and the computer can pick it up. Index:
 
+- [**OPEN ITEMS - start here**](open-items.md) — 2026-10-25: everything still open, sorted: happens by itself (2026-11-01 strip flip + cloud check), Ryan from the phone (dated steps and links), needs a computer (age backup key, credentials rotation), decisions waiting on Ryan, needs Butsaba, rules for a phone cloud session
 - [Ryan browses with Dark Reader](ryan-browses-with-dark-reader.md) — Chrome + Dark Reader on all sites + KDE dark; "dark mode" bugs are usually Dark Reader
 - [Dark Reader white-flash causes](darkreader-white-flash-causes.md) — !important light colors and @import in inline CSS; fix pattern + test harness location
 - [No MU-plugins rule](no-mu-plugins-rule.md) — design must live in Additional CSS/options/page content so a SiteGround push carries it; whole site, rehearse on localhost first
