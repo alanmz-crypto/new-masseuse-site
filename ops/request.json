@@ -1,7 +1,8 @@
 {
-  "id": "onpage-portland-rehearse-1",
-  "op": "rehearse",
+  "id": "onpage-portland-dry-38",
+  "op": "run",
   "target": "staging38",
-  "installer": "onpage-portland/install-onpage-portland.php",
-  "args": []
+  "script": "onpage-portland/push-onpage-portland.sh",
+  "args": [],
+  "tests": "auto"
 }
