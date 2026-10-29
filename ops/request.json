@@ -1,7 +1,10 @@
 {
-  "id": "cp-home-seo",
-  "op": "inspect",
-  "target": "live",
-  "query": "seo",
-  "arg": "home"
+  "id": "portland-gates-38",
+  "op": "run",
+  "target": "staging38",
+  "script": "check-all.sh",
+  "args": [
+    "https://staging38.thaisolitude.com"
+  ],
+  "tests": "none"
 }
