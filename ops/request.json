@@ -1,7 +1,7 @@
 {
-  "id": "contact-inspect-38",
-  "op": "inspect",
+  "id": "contact-address-rehearse-1",
+  "op": "rehearse",
   "target": "staging38",
-  "query": "page",
-  "arg": "contact"
+  "installer": "contact-address/install-contact-address.php",
+  "args": []
 }
