@@ -1,7 +1,7 @@
 {
-  "id": "onpage-inspect-thai-massage",
+  "id": "onpage-inspect-deep-tissue-massage",
   "op": "inspect",
   "target": "staging38",
   "query": "page",
-  "arg": "thai-massage"
+  "arg": "deep-tissue-massage"
 }
