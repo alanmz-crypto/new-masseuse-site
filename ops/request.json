@@ -1,7 +1,7 @@
 {
-  "id": "onpage-inspect-deep-tissue-massage",
-  "op": "inspect",
+  "id": "onpage-portland-rehearse-1",
+  "op": "rehearse",
   "target": "staging38",
-  "query": "page",
-  "arg": "deep-tissue-massage"
+  "installer": "onpage-portland/install-onpage-portland.php",
+  "args": []
 }
