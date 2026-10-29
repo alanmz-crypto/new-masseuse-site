@@ -1,10 +1,10 @@
 {
-  "id": "portland-meta-apply-38",
+  "id": "portland-gates-38",
   "op": "run",
   "target": "staging38",
-  "script": "portland-meta/push-portland-meta.sh",
+  "script": "check-all.sh",
   "args": [
-    "--apply"
+    "https://staging38.thaisolitude.com"
   ],
-  "tests": "auto"
+  "tests": "none"
 }
