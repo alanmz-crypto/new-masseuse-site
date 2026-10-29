@@ -1,7 +1,8 @@
 {
-  "id": "portland-meta-rehearse-1",
-  "op": "rehearse",
+  "id": "portland-meta-dry-38",
+  "op": "run",
   "target": "staging38",
-  "installer": "portland-meta/install-portland-meta.php",
-  "args": []
+  "script": "portland-meta/push-portland-meta.sh",
+  "args": [],
+  "tests": "auto"
 }
