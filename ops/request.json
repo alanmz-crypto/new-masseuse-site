@@ -1,8 +1,10 @@
 {
-  "id": "portland-meta-dry-38",
+  "id": "portland-meta-apply-38",
   "op": "run",
   "target": "staging38",
   "script": "portland-meta/push-portland-meta.sh",
-  "args": [],
+  "args": [
+    "--apply"
+  ],
   "tests": "auto"
 }
