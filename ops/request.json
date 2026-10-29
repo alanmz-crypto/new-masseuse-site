@@ -1,8 +1,10 @@
 {
-  "id": "contact-address-dry-38",
+  "id": "contact-address-apply-38",
   "op": "run",
   "target": "staging38",
   "script": "contact-address/push-contact-address.sh",
-  "args": [],
+  "args": [
+    "--apply"
+  ],
   "tests": "auto"
 }
