@@ -56,10 +56,16 @@ page_without_strip = re.sub(r'<div class="ts-corp-band">.*?</div></div>', "", pa
 check("no move date, countdown or opening date added on Home (the approved corporate strip is not counted)", not re.search(r"November|relocat|arriv|coming soon", text_of(page_without_strip), re.I))
 
 title = html.unescape(re.search(r"<title>(.*?)</title>", page, re.S).group(1))
-check("page title", title == "Thai Solitude | Thai & Therapeutic Massage, Mt. Tabor, Portland", title)
+OLD_TITLE = "Thai Solitude | Thai & Therapeutic Massage, Mt. Tabor, Portland"
+NEW_TITLE = "Thai Solitude | Thai & Therapeutic Massage in Portland, OR"   # portland-meta (Ryan, 2026-10-29); a site not changed yet still shows OLD_TITLE
+check("page title (the approved one: before or after portland-meta)", title in (OLD_TITLE, NEW_TITLE), title)
+if title == OLD_TITLE:
+    print("INFO Home title and description still say Mt. Tabor (portland-meta/install-portland-meta.php has not been applied here)")
 og = re.search(r'<meta[^>]+property="og:title"[^>]*content="([^"]*)"', page)
 check("og:title follows the title", bool(og) and html.unescape(og.group(1)) == title)
-new_desc = "Personalized Thai, therapeutic and deep tissue massage in Mt. Tabor, Portland. Ease tension and unwind. Ask about a session with Butsaba Dusrai, LMT."
+OLD_DESC = "Personalized Thai, therapeutic and deep tissue massage in Mt. Tabor, Portland. Ease tension and unwind. Ask about a session with Butsaba Dusrai, LMT."
+NEW_DESC = "Personalized Thai, therapeutic and deep tissue massage in Portland. Ease tension and unwind. Ask about corporate and group massage with Butsaba Dusrai, LMT."
+new_desc = OLD_DESC if title == OLD_TITLE else NEW_DESC   # the description must match the same state as the title
 def meta_of(attr, name):
     mm = re.search(r'<meta[^>]+%s="%s"[^>]*content="([^"]*)"' % (attr, re.escape(name)), page)
     return html.unescape(mm.group(1)) if mm else None

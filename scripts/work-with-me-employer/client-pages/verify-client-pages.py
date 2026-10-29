@@ -204,14 +204,19 @@ for old in ["You stay fully clothed, so wear something loose and comfortable.", 
 check("Thai Massage: the three jump links are intact", all(('href="#%s"' % a) in thm for a in ("ts-what-it-is", "ts-common-reasons", "ts-what-to-expect")))
 check("Thai Massage: licence number in the footer", "LMT-29905" in thm)
 # Meta title and description (Ryan, 2026-10-19: "I like yours. Go with that meta."). Strict checks only where the change is in; the wording check always runs on whatever meta the page has.
-THAI_TITLE = "Thai Massage in Mt. Tabor | Butsaba Dusrai, Oregon LMT"
-THAI_DESC = "Fully clothed Thai massage in Mt. Tabor, Portland with Butsaba Dusrai, LMT: rhythmic compression, gentle rocking and assisted stretching at your pace."
+# portland-meta (Ryan, 2026-10-29) changed "Mt. Tabor" to "Portland"; a site not changed yet still holds the OLD pair, which stays approved until it is.
+THAI_TITLE_OLD = "Thai Massage in Mt. Tabor | Butsaba Dusrai, Oregon LMT"
+THAI_DESC_OLD = "Fully clothed Thai massage in Mt. Tabor, Portland with Butsaba Dusrai, LMT: rhythmic compression, gentle rocking and assisted stretching at your pace."
+THAI_TITLE = "Thai Massage in Portland | Butsaba Dusrai, Oregon LMT"
+THAI_DESC = "Fully clothed Thai massage in Portland with Butsaba Dusrai, LMT: rhythmic compression, gentle rocking and assisted stretching at your pace."
 tt_m = re.search(r"<title>(.*?)</title>", thm, re.S)
 thai_title = html.unescape(tt_m.group(1)).strip() if tt_m else ""
 thai_desc = meta(thm, "name", "description")
 head_all = " ".join(filter(None, [thai_title, thai_desc, meta(thm, "property", "og:description"), meta(thm, "name", "twitter:description")]))
 bad_head = wt.hits(head_all, wt.VOICE + wt.CLAIMS + wt.EVIDENCE)
 check("Thai Massage title, meta/og/twitter descriptions carry no restricted wording", not bad_head, bad_head)
+if thai_title == THAI_TITLE_OLD and thai_desc == THAI_DESC_OLD:
+    THAI_TITLE, THAI_DESC = THAI_TITLE_OLD, THAI_DESC_OLD
 if thai_title == THAI_TITLE or thai_desc == THAI_DESC:
     check("Thai Massage title is the approved one", thai_title == THAI_TITLE, thai_title)
     check("Thai Massage meta description is the approved one", thai_desc == THAI_DESC, thai_desc)
@@ -282,13 +287,16 @@ else:
 
 # ---- Therapeutic Massage and Deep Tissue Massage: meta title and description (Ryan, 2026-10-19: "finish one and two then go to three") -----------------------------------------
 # Strict checks only where the change is in (services-meta/install-service-meta.php); the wording check always runs on whatever meta the page has.
+# portland-meta (Ryan, 2026-10-29) changed "Mt. Tabor, Portland" to "Portland" in both descriptions; a site not changed yet still holds the old one (the fifth value), which stays approved until it is.
 SERVICE_META = [
     ("Therapeutic Massage", "/therapeutic-massage/", "Therapeutic Massage | Butsaba Dusrai, Oregon LMT",
+     "Therapeutic massage in Portland with Butsaba Dusrai, LMT: focused work where you ask for it, with pressure and pace adjusted as you go.",
      "Therapeutic massage in Mt. Tabor, Portland with Butsaba Dusrai, LMT: focused work where you ask for it, with pressure and pace adjusted as you go."),
     ("Deep Tissue Massage", "/deep-tissue-massage/", "Deep Tissue Massage | Butsaba Dusrai, Oregon LMT",
+     "Deep tissue massage in Portland with Butsaba Dusrai, LMT: slow, deliberate pressure on tight muscles, lightened whenever you ask.",
      "Deep tissue massage in Mt. Tabor, Portland with Butsaba Dusrai, LMT: slow, deliberate pressure on tight muscles, lightened whenever you ask."),
 ]
-for label, path, want_title, want_desc in SERVICE_META:
+for label, path, want_title, want_desc, old_desc in SERVICE_META:
     pg, pcode = get(path)
     check("%s page returns 200 (meta check)" % label, pcode == 200, pcode)
     m_t = re.search(r"<title>(.*?)</title>", pg, re.S)
@@ -297,6 +305,8 @@ for label, path, want_title, want_desc in SERVICE_META:
     head_text = " ".join(filter(None, [got_title, got_desc, meta(pg, "property", "og:description"), meta(pg, "name", "twitter:description")]))
     bad_h = wt.hits(head_text, wt.VOICE + wt.CLAIMS + wt.EVIDENCE)
     check("%s title, meta/og/twitter descriptions carry no restricted wording" % label, not bad_h, bad_h)
+    if got_desc == old_desc:
+        want_desc = old_desc
     if got_title == want_title or got_desc == want_desc:
         check("%s title is the approved one" % label, got_title == want_title, got_title)
         check("%s meta description is the approved one" % label, got_desc == want_desc, got_desc)
