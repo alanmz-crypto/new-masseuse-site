@@ -1,7 +1,8 @@
 {
-  "id": "contact-address-rehearse-1",
-  "op": "rehearse",
+  "id": "contact-address-dry-38",
+  "op": "run",
   "target": "staging38",
-  "installer": "contact-address/install-contact-address.php",
-  "args": []
+  "script": "contact-address/push-contact-address.sh",
+  "args": [],
+  "tests": "auto"
 }
