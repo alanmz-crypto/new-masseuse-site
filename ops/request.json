@@ -1,8 +1,10 @@
 {
-  "id": "onpage-portland-dry-38",
+  "id": "onpage-portland-apply-38",
   "op": "run",
   "target": "staging38",
   "script": "onpage-portland/push-onpage-portland.sh",
-  "args": [],
+  "args": [
+    "--apply"
+  ],
   "tests": "auto"
 }
