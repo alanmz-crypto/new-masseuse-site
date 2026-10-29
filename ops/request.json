@@ -1,10 +1,7 @@
 {
-  "id": "portland-gates-38",
-  "op": "run",
+  "id": "contact-inspect-38",
+  "op": "inspect",
   "target": "staging38",
-  "script": "check-all.sh",
-  "args": [
-    "https://staging38.thaisolitude.com"
-  ],
-  "tests": "none"
+  "query": "page",
+  "arg": "contact"
 }
