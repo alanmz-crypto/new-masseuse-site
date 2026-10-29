@@ -1,7 +1,7 @@
 {
-  "id": "onpage-inspect-home",
+  "id": "onpage-inspect-thai-massage",
   "op": "inspect",
   "target": "staging38",
   "query": "page",
-  "arg": "home"
+  "arg": "thai-massage"
 }
