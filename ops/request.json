@@ -1,7 +1,7 @@
 {
-  "id": "cp-home-seo",
-  "op": "inspect",
-  "target": "live",
-  "query": "seo",
-  "arg": "home"
+  "id": "portland-meta-rehearse-1",
+  "op": "rehearse",
+  "target": "staging38",
+  "installer": "portland-meta/install-portland-meta.php",
+  "args": []
 }
