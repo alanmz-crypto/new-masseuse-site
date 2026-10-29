@@ -1,10 +1,7 @@
 {
-  "id": "contact-address-apply-38",
-  "op": "run",
+  "id": "onpage-inspect-home",
+  "op": "inspect",
   "target": "staging38",
-  "script": "contact-address/push-contact-address.sh",
-  "args": [
-    "--apply"
-  ],
-  "tests": "auto"
+  "query": "page",
+  "arg": "home"
 }
