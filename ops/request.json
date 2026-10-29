@@ -1,10 +1,10 @@
 {
-  "id": "portland-gates-38",
+  "id": "contact-address-apply-38",
   "op": "run",
   "target": "staging38",
-  "script": "check-all.sh",
+  "script": "contact-address/push-contact-address.sh",
   "args": [
-    "https://staging38.thaisolitude.com"
+    "--apply"
   ],
-  "tests": "none"
+  "tests": "auto"
 }
