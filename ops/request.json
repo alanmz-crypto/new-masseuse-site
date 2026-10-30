@@ -1,8 +1,7 @@
 {
-  "id": "portland-live-dry-1",
-  "op": "run",
-  "target": "live",
-  "script": "portland-live/push-portland-live.sh",
-  "args": [],
-  "tests": "auto"
+  "id": "booking-date-rehearse-1",
+  "op": "rehearse",
+  "target": "staging38",
+  "installer": "booking-date/install-booking-date.php",
+  "args": []
 }
