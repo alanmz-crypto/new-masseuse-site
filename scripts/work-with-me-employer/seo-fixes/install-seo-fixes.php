@@ -236,11 +236,11 @@ if ( 'applied' !== $state ) {
 	WP_CLI::success( 'Nothing to roll back: the pages do not hold exactly the applied state. ' . $report );
 	return;
 }
-$restore_rows( (int) $snap['svc_id'], $snap['svc_rows'] );
-$restore_rows( (int) $snap['corp_id'], $snap['corp_rows'] );
 $bf0  = isset( $snap['before']['corp_c'] ) ? $snap['before']['corp_c'] : 'ready';
 $back = ( 'ready' === $bf0 ) ? str_replace( $anchor_new, $anchor_old, (string) $now['corp_page']->post_content ) : (string) $now['corp_page']->post_content;   // take out only the inserted picture block; other edits stay
-wp_update_post( array( 'ID' => (int) $snap['corp_id'], 'post_content' => wp_slash( $back ) ) );
+wp_update_post( array( 'ID' => (int) $snap['corp_id'], 'post_content' => wp_slash( $back ) ) );   // content first: saving a page can rewrite its SEO rows, so the rows are put back after it
+$restore_rows( (int) $snap['svc_id'], $snap['svc_rows'] );
+$restore_rows( (int) $snap['corp_id'], $snap['corp_rows'] );
 $check = $read();
 $bf = isset( $snap['before'] ) && is_array( $snap['before'] ) ? $snap['before'] : array( 'svc' => 'ready', 'corp' => 'ready', 'corp_c' => 'ready' );   // what each part was before that apply
 if ( $check['svc'] !== $bf['svc'] || $check['corp'] !== $bf['corp'] || $check['corp_c'] !== $bf['corp_c'] || $check['corp_hash'] !== ( $snap['corp_content_sha256'] ?? '' ) || $check['svc_rows'] !== $snap['svc_rows'] || $check['corp_rows'] !== $snap['corp_rows'] ) {
