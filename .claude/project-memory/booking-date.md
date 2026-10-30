@@ -16,3 +16,4 @@ Ryan, 2026-10-30: "Change booking begins to Nov 14th. Everywhere." Also: the Abo
 **Staging38 rollback:** `request.sh run --target staging38 --script booking-date/push-booking-date.sh --args '--rollback $HOME/private-backups/booking-date-before-20261030-151511.json' --no-tests`.
 **Deadline:** live must carry this before 2026-11-01 00:00 Pacific or the strip flips on the old date. LIVE is not enabled for a run yet: needs Ryan's go, the live dry run, and his own "Site ops (LIVE)" run.
 **Not editable by an agent:** the one-time strip check routine (created over the API); Ryan edits its date (see [[open-items]] section A) and the Nov 1 calendar event.
+**LIVE PREPARED 2026-10-30 (Ryan: "Merged. Go live"):** live dry run `booking-date-dry-live` PASS (8 replacements ready + strip ready); request `live-booking-date-nov14` waits for Ryan to merge its PR and run "Site ops (LIVE)" on main. Must be done before 2026-11-01 00:00 Pacific.
