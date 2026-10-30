@@ -62,7 +62,10 @@ def either(t, old, new):
 svc, code = get("/services/")
 check("Services returns 200", code == 200, code)
 new_title = "Massage Services | Butsaba Dusrai, Oregon LMT"
-new_desc = "Thai, therapeutic and deep tissue massage with Butsaba Dusrai, LMT, in Mt. Tabor, Portland. Every session starts with your goals."
+# seo-fixes (Ryan, 2026-10-30: "fix Services"): the description says "in Portland"; a site not changed yet still has the approved "in Mt. Tabor, Portland" wording. Either one, and the social copies must match it.
+SVC_DESC_OLD = "Thai, therapeutic and deep tissue massage with Butsaba Dusrai, LMT, in Mt. Tabor, Portland. Every session starts with your goals."
+SVC_DESC_NEW = "Thai, therapeutic and deep tissue massage with Butsaba Dusrai, LMT, in Portland. Every session starts with your goals."
+new_desc = SVC_DESC_NEW if meta(svc, "name", "description") == SVC_DESC_NEW else SVC_DESC_OLD
 t = re.search(r"<title>(.*?)</title>", svc, re.S)
 title = html.unescape(t.group(1)) if t else ""
 check("Services title", title == new_title, title)

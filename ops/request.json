@@ -1,8 +1,10 @@
 {
-  "id": "booking-date-dry-live",
+  "id": "run-20261030-204423",
   "op": "run",
-  "target": "live",
-  "script": "booking-date/push-booking-date.sh",
-  "args": [],
+  "target": "staging38",
+  "script": "seo-fixes/push-seo-fixes.sh",
+  "args": [
+    "--apply"
+  ],
   "tests": "auto"
 }
