@@ -89,6 +89,7 @@ gate "Home corporate card content and CSS match their builder" python3 -I -B "$h
 gate "Sandwich update content matches its builders" python3 -I -B "$here/work-with-me-employer/evidence-update/build-sandwich-update.py" --check
 gate "Corporate massage content matches its builder" python3 -I -B "$here/work-with-me-employer/corporate/build-corporate-massage.py" --check
 gate "Availability update content matches its builder" python3 -I -B "$here/work-with-me-employer/availability/build-availability-update.py" --check
+gate "Booking date content matches its builder" python3 -I -B "$here/work-with-me-employer/booking-date/build-booking-date.py" --check
 
 # ---- rendered pages (read-only) ------------------------------------------------------------------------------------------------------
 if [ -n "${1:-}" ] && ! edge_msg=$("$here/work-with-me-employer/posture/edge-check.sh" "$1" 2>&1); then

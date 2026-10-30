@@ -1,8 +1,10 @@
 {
-  "id": "portland-live-dry-1",
+  "id": "booking-date-apply-38",
   "op": "run",
-  "target": "live",
-  "script": "portland-live/push-portland-live.sh",
-  "args": [],
+  "target": "staging38",
+  "script": "booking-date/push-booking-date.sh",
+  "args": [
+    "--apply"
+  ],
   "tests": "auto"
 }

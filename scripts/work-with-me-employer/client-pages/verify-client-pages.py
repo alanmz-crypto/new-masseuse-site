@@ -41,11 +41,17 @@ BAD = wt.BAD   # unchanged for Services and Therapeutic Massage; the Thai Massag
 # The two FAQ answers on the Thai, Therapeutic and Deep Tissue pages that implied individual bookings now were corrected on 2026-10-25 (availability/install-availability-update.php; Ryan's Work With Me and availability plan).
 # A site that does not have that update yet still has the old answers: either wording is accepted, exactly one of them, once.
 OLD_WHERE = "Sessions take place in Mt. Tabor, Portland. I do not currently travel to clients."
-NEW_WHERE = ("Right now I offer corporate and group massage only, at suitable Portland venues, with bookings beginning November 1, 2026. "
-             "Individual appointments at a dedicated Thai Solitude location are planned for summer 2027. I do not offer individual house calls.")
+# Booking date (Ryan, 2026-10-30: "Change booking begins to Nov 14th. Everywhere."; booking-date/install-booking-date.php): a site not changed yet says November 1, 2026, a changed one November 14, 2026.
+# BOOK_DATE is read from the Work With Me page here; every other page on the same site must then say the same date.
+BOOK_DATE = "November 1, 2026"
+if "Corporate and group massage bookings begin November 14, 2026;" in re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", get("/work-with-me/")[0]))):
+    BOOK_DATE = "November 14, 2026"
+NEW_WHERE_T = ("Right now I offer corporate and group massage only, at suitable Portland venues, with bookings beginning {d}. "
+               "Individual appointments at a dedicated Thai Solitude location are planned for summer 2027. I do not offer individual house calls.")
 OLD_BOOK = "Use the Contact page to reach me by phone or email, and tell me what you would like. I will reply to arrange a time."
-NEW_BOOK = ("Corporate and group massage bookings begin November 1, 2026. The Corporate and Group Massage page explains how to request a quote. "
-            "Individual appointments are planned for summer 2027.")
+NEW_BOOK_T = ("Corporate and group massage bookings begin {d}. The Corporate and Group Massage page explains how to request a quote. "
+              "Individual appointments are planned for summer 2027.")
+NEW_WHERE, NEW_BOOK = NEW_WHERE_T.format(d=BOOK_DATE), NEW_BOOK_T.format(d=BOOK_DATE)
 
 
 def either(t, old, new):
@@ -367,9 +373,10 @@ check("Work With Me: no announcement strip (it is an employment page)", '<div cl
 home_page, _ = get("/")
 check("The 'For Practices' menu label is unchanged", ">For Practices</a>" in home_page)
 if SCHED in wm:
+    print("INFO booking date on this site: " + BOOK_DATE)
     check("Work With Me: the independent-practice sentence is there once", wm.count(SCHED) == 1)
-    check("Work With Me: the 'For clients' paragraph says corporate bookings begin November 1 and individual appointments are planned for summer 2027",
-          wm.count("Corporate and group massage bookings begin November 1, 2026; individual appointments at a dedicated Thai Solitude location are planned for summer 2027.") == 1)
+    check("Work With Me: the 'For clients' paragraph says corporate bookings begin %s and individual appointments are planned for summer 2027" % BOOK_DATE,
+          wm.count("Corporate and group massage bookings begin " + BOOK_DATE + "; individual appointments at a dedicated Thai Solitude location are planned for summer 2027.") == 1)
     for label, path in (("Home", "/"), ("About", "/about/"), ("Services", "/services/"), ("Contact", "/contact/"), ("Thai Massage", "/thai-massage/"), ("Therapeutic Massage", "/therapeutic-massage/"), ("Deep Tissue Massage", "/deep-tissue-massage/")):
         pg, c = get(path)
         check("%s: returns 200 and holds exactly one availability strip" % label, c == 200 and pg.count('<div class="ts-corp-band">') == 1, c)
@@ -386,8 +393,8 @@ if SCHED in wm:
             print("INFO %s: this copy has no FAQ yet (nothing to correct)" % label)
     cp, _ = get("/corporate-massage-portland/")
     ctxt = text_of(cp)
-    check("Corporate page: states that bookings begin November 1, 2026, and that events are scheduled around her work commitments",
-          ctxt.count("Corporate and group massage bookings begin November 1, 2026. Arranged through an organization or venue at a shared location.") == 1 and ctxt.count(SCHED) == 1)
+    check("Corporate page: states that bookings begin %s, and that events are scheduled around her work commitments" % BOOK_DATE,
+          ctxt.count("Corporate and group massage bookings begin " + BOOK_DATE + ". Arranged through an organization or venue at a shared location.") == 1 and ctxt.count(SCHED) == 1)
     check("Corporate page: no strip on the page itself", '<div class="ts-corp-band">' not in cp)
 else:
     print("INFO Work With Me and availability: the update is not on this site yet (the parts the plan says to keep were checked above)")

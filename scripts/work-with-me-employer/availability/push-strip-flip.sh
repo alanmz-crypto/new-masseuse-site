@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Announcement strip: on 2026-11-01 00:00 Pacific the strip (WPCode snippet "CorporateBand") switches itself from "Currently booking corporate & group massage only." to
+# Announcement strip: on 2026-11-14 00:00 Pacific the strip (WPCode snippet "CorporateBand") switches itself from "Currently booking corporate & group massage only." to
 # "Now accepting corporate & group massage bookings." This tool checks, from the server itself, that all nine pages show the wording that matches the current time, and
 # (--apply) purges the site cache so that they do. It changes NO content, NO database row and NO file; the only write is SiteGround's cache purge.
-# Ryan, 2026-10-25: handle the purge on 2026-11-01 with your own judgement. He starts the live run himself (Actions > "Site ops (LIVE)").
+# Ryan, 2026-10-25: handle the purge on 2026-11-14 with your own judgement. He starts the live run himself (Actions > "Site ops (LIVE)").
 #
 #   ./push-strip-flip.sh                 read-only: the date check, the site's cache settings, and the strip wording of each of the nine pages (fetched from the server). Fails if a page shows the wrong wording for now.
 #   ./push-strip-flip.sh --check         the same (read-only), for use after the flip or on a schedule
@@ -54,14 +54,14 @@ done < "$cfgs"
 [ -n "$doc" ] || { echo "No WordPress install under ~/www reports home host $want; nothing changed." >&2; exit 1; }
 echo "$target is ${doc#"$HOME"/}"
 
-now=$(date +%s); open=$(TZ=America/Los_Angeles date -d '2026-11-01 00:00:00' +%s)
+now=$(date +%s); open=$(TZ=America/Los_Angeles date -d '2026-11-14 00:00:00' +%s)
 if [ "$now" -ge "$open" ]; then state=open; else state=closed; fi
 OPEN='Now accepting corporate &amp; group massage bookings\.'
 CLOSED='Currently booking corporate &amp; group massage only\.'
 if [ "$state" = open ]; then want_txt=$OPEN; other_txt=$CLOSED; else want_txt=$CLOSED; other_txt=$OPEN; fi
 
 report() {
-  echo "time now (UTC) $(date -u '+%Y-%m-%d %H:%M:%S'); flip time 2026-11-01 00:00 Pacific = $(date -u -d "@$open" '+%Y-%m-%d %H:%M:%S') UTC; the strip should say: $state"
+  echo "time now (UTC) $(date -u '+%Y-%m-%d %H:%M:%S'); flip time 2026-11-14 00:00 Pacific = $(date -u -d "@$open" '+%Y-%m-%d %H:%M:%S') UTC; the strip should say: $state"
   echo "SiteGround cache settings of this site (informational):"
   for o in siteground_optimizer_enable_cache siteground_optimizer_file_caching siteground_optimizer_autoflush_cache siteground_optimizer_enable_memcached; do
     echo "  $o = $(wp --path="$doc" option get "$o" 2>/dev/null || echo '(not set)')"
@@ -89,7 +89,7 @@ report() {
 case "$phase" in
   check) report ;;
   apply)
-    if [ "$state" != open ]; then echo "It is before the flip time: the strip still correctly says 'closed' and a purge would change nothing. Run this again after 2026-11-01 00:00 Pacific." >&2; exit 1; fi
+    if [ "$state" != open ]; then echo "It is before the flip time: the strip still correctly says 'closed' and a purge would change nothing. Run this again after 2026-11-14 00:00 Pacific." >&2; exit 1; fi
     echo "Purging the SiteGround cache ..."
     wp --path="$doc" --user=1 sg purge || { echo "sg purge failed; purge the cache in Site Tools (Speed > Caching) and run --check." >&2; exit 1; }
     echo "SiteGround cache purged"

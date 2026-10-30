@@ -20,10 +20,13 @@ let fails = 0;
 const check = (name, ok, detail = '') => { console.log((ok ? 'PASS ' : 'FAIL ') + name + (detail !== '' ? '  [' + detail + ']' : '')); if (!ok) fails++; };
 const info = (name, detail = '') => console.log('INFO ' + name + (detail !== '' ? '  [' + detail + ']' : ''));
 const SCHED = 'I schedule corporate bookings around my work commitments and only offer times when I am available.';
-const WWM_CLIENTS = 'Corporate and group massage bookings begin November 1, 2026; individual appointments at a dedicated Thai Solitude location are planned for summer 2027.';
-const NEW_WHERE = 'Right now I offer corporate and group massage only, at suitable Portland venues, with bookings beginning November 1, 2026. Individual appointments at a dedicated Thai Solitude location are planned for summer 2027. I do not offer individual house calls.';
-const NEW_BOOK = 'Corporate and group massage bookings begin November 1, 2026. The Corporate and Group Massage page explains how to request a quote. Individual appointments are planned for summer 2027.';
-const open_after = Date.now() >= Date.UTC(2026, 10, 1, 7, 0, 0);   // 2026-11-01 00:00 Pacific (PDT, UTC-7)
+// Booking date (Ryan, 2026-10-30; booking-date/install-booking-date.php): a site not changed yet says November 1, 2026, a changed one November 14, 2026. Read from the Work With Me page; every other page must then agree.
+let BOOK_DATE = 'November 1, 2026';
+try { const r = await fetch(base + '/work-with-me/'); if ((await r.text()).replace(/\s+/g, ' ').includes('Corporate and group massage bookings begin November 14, 2026;')) BOOK_DATE = 'November 14, 2026'; } catch (e) { /* keep the default */ }
+const WWM_CLIENTS = `Corporate and group massage bookings begin ${BOOK_DATE}; individual appointments at a dedicated Thai Solitude location are planned for summer 2027.`;
+const NEW_WHERE = `Right now I offer corporate and group massage only, at suitable Portland venues, with bookings beginning ${BOOK_DATE}. Individual appointments at a dedicated Thai Solitude location are planned for summer 2027. I do not offer individual house calls.`;
+const NEW_BOOK = `Corporate and group massage bookings begin ${BOOK_DATE}. The Corporate and Group Massage page explains how to request a quote. Individual appointments are planned for summer 2027.`;
+const open_after = Date.now() >= (BOOK_DATE === 'November 14, 2026' ? Date.UTC(2026, 10, 14, 8, 0, 0) : Date.UTC(2026, 10, 1, 7, 0, 0));   // 2026-11-14 00:00 Pacific (PST, UTC-8) or, before booking-date, 2026-11-01 00:00 Pacific (PDT, UTC-7)
 let challenged = false;
 const errorsAll = [];
 
@@ -91,7 +94,7 @@ for (const width of [1280, 390]) {
   });
   check(`${tag}: no announcement strip (it is an employment page)`, w.band === 0, w.band);
   check(`${tag}: the Availability section carries the independent-practice sentence once`, w.avail.split(SCHED).length === 2 && w.avail.includes('Thai Solitude is my independent practice.'), w.avail.length);
-  check(`${tag}: the "For clients" section carries the November 1 and summer 2027 sentence once`, w.clients.split(WWM_CLIENTS).length === 2, w.clients.length);
+  check(`${tag}: the "For clients" section carries the booking-date and summer 2027 sentence once`, w.clients.split(WWM_CLIENTS).length === 2, w.clients.length);
   check(`${tag}: kept: the employment start and interview dates`, w.t.includes('Start — From November 1 · open for days, evenings and weekends') && w.t.includes('Interviews — By phone or video call now, in person from November 1'));
   check(`${tag}: kept: the repeated résumé links (3) and the Oregon license lookup`, w.resume >= 3 && w.license, `${w.resume} links`);
   check(`${tag}: no "Relocating from Chicago" wording`, !/relocat/i.test(w.t));
@@ -131,7 +134,7 @@ for (const p of ['/thai-massage/', '/therapeutic-massage/', '/deep-tissue-massag
   if (challenged) await bail();
   check('corporate page: HTTP 200', resp && resp.status() === 200, resp && resp.status());
   const c = await page.evaluate(() => ({ t: document.querySelector('.ts-corp').innerText.replace(/\s+/g, ' '), band: document.querySelectorAll('.ts-corp-band').length, faq: [...document.querySelectorAll('.uagb-faq-content')].map(e => e.textContent.replace(/\s+/g, ' ').trim()).join(' | ') }));
-  check('corporate page: the hero says bookings begin November 1, 2026', c.t.includes('Corporate and group massage bookings begin November 1, 2026. Arranged through an organization or venue at a shared location. I do not make individual home visits.'));
+  check('corporate page: the hero says bookings begin ' + BOOK_DATE, c.t.includes('Corporate and group massage bookings begin ' + BOOK_DATE + '. Arranged through an organization or venue at a shared location. I do not make individual home visits.'));
   check('corporate page: the reservation answer says events are scheduled around her work commitments', c.faq.includes('A date is not confirmed until availability, the arrangement, the price and any agreed booking terms have been confirmed. ' + SCHED));
   check('corporate page: no strip on the page itself', c.band === 0, c.band);
   await ctx.close();
