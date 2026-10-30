@@ -1,9 +1,8 @@
 {
-  "id": "rehearse-20261030-204144",
-  "op": "rehearse",
+  "id": "run-20261030-204334",
+  "op": "run",
   "target": "staging38",
-  "installer": "seo-fixes/install-seo-fixes.php",
-  "args": [
-    "--with-uploads"
-  ]
+  "script": "seo-fixes/push-seo-fixes.sh",
+  "args": [],
+  "tests": "auto"
 }
