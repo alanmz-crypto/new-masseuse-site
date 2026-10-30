@@ -1,10 +1,7 @@
 {
-  "id": "seo-fixes-restore-38",
-  "op": "run",
+  "id": "corp-page-38",
+  "op": "inspect",
   "target": "staging38",
-  "script": "prove-restore.sh",
-  "args": [
-    "staging38"
-  ],
-  "tests": "auto"
+  "query": "page",
+  "arg": "corporate-massage-portland"
 }
