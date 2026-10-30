@@ -1,10 +1,8 @@
 {
-  "id": "booking-date-apply-38",
+  "id": "booking-date-dry-live",
   "op": "run",
-  "target": "staging38",
+  "target": "live",
   "script": "booking-date/push-booking-date.sh",
-  "args": [
-    "--apply"
-  ],
+  "args": [],
   "tests": "auto"
 }
