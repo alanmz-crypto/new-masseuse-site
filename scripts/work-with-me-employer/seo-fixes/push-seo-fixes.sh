@@ -93,9 +93,11 @@ case "$phase" in
     chk "Corporate: title unchanged" 1 "$(count corp '<title>Corporate Chair Massage in Portland, OR | Thai Solitude</title>')"
     chk "Corporate: no strip on the page itself" 0 "$(count corp 'class="ts-corp-band"')"
     chk "Corporate: bookings date unchanged on the page" 1 "$(count corp 'bookings begin November')"
-    echo "  info img tags on the corporate page: $(count corp '<img ') (was 3 in the first try because a featured image is also drawn on the page; the scan before says how many it must stay at)"
+    chk "Corporate: the picture is on the page exactly once, with alt text" 1 "$(count corp 'alt="Illustration of a massage therapist giving a shoulder massage')"
+    n=$({ grep -o '<img [^>]*corporate-group-massage[^>]*>' "$tmp/corp.html" || true; } | wc -l); chk "Corporate: exactly one img tag draws the corporate illustration" 1 "$n"
+    echo "  info img tags on the corporate page: $(count corp '<img ') (was 2 before this change; now 3 = the new one)"
     [ "$fail" = 0 ] || { echo "The public pages do not show what was applied (cache?); use --rollback if it persists." >&2; exit 1; }
-    echo "public check: Services says Portland; the Corporate page has one share picture and its body is unchanged; everything else on both is unchanged" ;;
+    echo "public check: Services says Portland; the Corporate page has one share picture and the same picture once on the page with alt text; everything else on both is unchanged" ;;
   rollback) snap=${snap/#\$HOME/$HOME}; run rollback "$snap"; purge ;;
   *) echo "unknown phase" >&2; exit 1 ;;
 esac
