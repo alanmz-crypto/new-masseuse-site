@@ -1,6 +1,6 @@
 ---
 name: seo-fixes
-description: Ryan 2026-10-30 pre-indexing SEO scan - Services description says Portland; Corporate page gets its share picture (existing corporate illustration, set once in SureRank); the read-only seo-scan tools; state (staging38 applied; live pending Ryan's go)
+description: Ryan 2026-10-30 pre-indexing SEO scan - Services description says Portland; Corporate page gets its share picture (existing corporate illustration, set once in SureRank) AND the same picture once on the page with alt text (Ryan: "Yes, add it", overriding the old picture-free rule of corporate/build-corporate-massage.py); the read-only seo-scan tools; state (staging38 applied; live pending Ryan's go)
 metadata:
   type: project
 ---
@@ -12,3 +12,5 @@ Before asking Google Search Console to reindex (after the Nov 14 booking-date ch
 
 **State: APPLIED on staging38 (2026-10-30 20:0x UTC, `seo-fixes-apply-38b`; rehearsals PASS `seo-fixes-rehearse-3`; the first version was applied and rolled back for real on staging38, `seo-fixes-rollback-38`).** Public checks ok (Services says Portland, 0 Mt. Tabor; Corporate: one og:image = corporate illustration, Twitter follows, 2 img tags, title/date unchanged). `check-all.sh` against staging38: ALL GATES PASSED (`seo-fixes-gates-38c`); post-change test: 20 of 20 pixel-identical, structured data identical, no PHP errors. Export `staging38-before-seo-fixes-20261030-200211.sql` (and a second one for the retry), snapshot from the second apply on the server (`seo-fixes-before-*.json`, off-site copies verified). The restore proof (prove-restore.sh) was NOT run as a separate step (the apply chain stopped at an over-strict check of mine, since fixed; the exact rollback was exercised for real instead).
 **LIVE is not enabled and not started:** Ryan looks, says go; then the live host is added to installer and push script, a live dry run, and his own "Site ops (LIVE)" run.
+
+**Update 2026-10-30 (on-page picture):** `install-seo-fixes.php` now has a third part: one exact insertion of a core image block (relative URL, 520px wide, rounded, alt = the approved Home/Services alt text) between the hero group and the `ts-corp__glance` cards. States per part ready/applied/CHANGED; a mix is `partial` (staging38 had the first two). Rollback restores page content first, then SureRank rows (saving a page rewrites its rows). Rehearsal PASS on a copy of staging38; applied on staging38 (img tags 2 -> 3, exactly one draws the illustration); gates and 20 pixel views pass. Live still not enabled. Note: `corporate/build-corporate-massage.py` and its gate describe the page without the picture; a later rebuild from that builder would drop the block unless the builder is updated first.
