@@ -1,8 +1,8 @@
 {
-  "id": "seo-scan-38-after",
+  "id": "surerank-keys-38",
   "op": "run",
   "target": "staging38",
-  "script": "seo-scan/scan-seo.sh",
+  "script": "seo-scan/plugin-keys.sh",
   "args": [],
   "tests": "none"
 }
