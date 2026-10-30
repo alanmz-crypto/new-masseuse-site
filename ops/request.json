@@ -1,8 +1,10 @@
 {
-  "id": "seo-fixes-dry-38b",
+  "id": "seo-fixes-apply-38b",
   "op": "run",
   "target": "staging38",
   "script": "seo-fixes/push-seo-fixes.sh",
-  "args": [],
+  "args": [
+    "--apply"
+  ],
   "tests": "auto"
 }
