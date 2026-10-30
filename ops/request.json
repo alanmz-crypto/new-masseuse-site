@@ -1,7 +1,9 @@
 {
-  "id": "corp-page-38",
-  "op": "inspect",
+  "id": "rehearse-20261030-203709",
+  "op": "rehearse",
   "target": "staging38",
-  "query": "page",
-  "arg": "corporate-massage-portland"
+  "installer": "scripts/work-with-me-employer/seo-fixes/install-seo-fixes.php",
+  "args": [
+    "--with-uploads"
+  ]
 }
