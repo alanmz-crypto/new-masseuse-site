@@ -1,7 +1,7 @@
 {
-  "id": "seo-thai-live-1",
-  "op": "inspect",
-  "target": "live",
-  "query": "seo",
-  "arg": "thai-massage"
+  "id": "seo-fixes-rehearse-1",
+  "op": "rehearse",
+  "target": "staging38",
+  "installer": "seo-fixes/install-seo-fixes.php",
+  "args": []
 }
