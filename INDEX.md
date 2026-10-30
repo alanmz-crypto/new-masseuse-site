@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-30 20:08 UTC  **FAIL**  `seo-fixes-apply-38b`  [reports/2026-10-30/200855-seo-fixes-apply-38b.md](reports/2026-10-30/200855-seo-fixes-apply-38b.md)  (run 41120875804)
 - 2026-10-30 20:08 UTC  **PASS**  `seo-fixes-dry-38b`  [reports/2026-10-30/200811-seo-fixes-dry-38b.md](reports/2026-10-30/200811-seo-fixes-dry-38b.md)  (run 41120825828)
 - 2026-10-30 20:07 UTC  **PASS**  `seo-fixes-rehearse-3`  [reports/2026-10-30/200742-seo-fixes-rehearse-3.md](reports/2026-10-30/200742-seo-fixes-rehearse-3.md)  (run 41120621638)
 - 2026-10-30 20:05 UTC  **PASS**  `seo-fixes-rollback-38`  [reports/2026-10-30/200541-seo-fixes-rollback-38.md](reports/2026-10-30/200541-seo-fixes-rollback-38.md)  (run 41120483370)
