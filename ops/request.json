@@ -1,8 +1,10 @@
 {
-  "id": "booking-date-dry-live",
+  "id": "booking-date-check-live-1",
   "op": "run",
   "target": "live",
   "script": "booking-date/push-booking-date.sh",
-  "args": [],
-  "tests": "auto"
+  "args": [
+    "--check"
+  ],
+  "tests": "none"
 }
