@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-30 15:30 UTC  **PASS**  `booking-date-dry-live`  [reports/2026-10-30/153000-booking-date-dry-live.md](reports/2026-10-30/153000-booking-date-dry-live.md)  (run 41081195290)
 - 2026-10-30 15:18 UTC  **PASS**  `booking-date-apply-38`  [reports/2026-10-30/151838-booking-date-apply-38.md](reports/2026-10-30/151838-booking-date-apply-38.md)  (run 41078880142)
 - 2026-10-30 15:14 UTC  **PASS**  `booking-date-dry-38`  [reports/2026-10-30/151408-booking-date-dry-38.md](reports/2026-10-30/151408-booking-date-dry-38.md)  (run 41078751398)
 - 2026-10-30 15:13 UTC  **PASS**  `booking-date-rehearse-1`  [reports/2026-10-30/151322-booking-date-rehearse-1.md](reports/2026-10-30/151322-booking-date-rehearse-1.md)  (run 41078410764)
