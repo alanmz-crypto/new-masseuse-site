@@ -1,9 +1,8 @@
 {
-  "id": "seo-fixes-rehearse-3",
-  "op": "rehearse",
+  "id": "seo-fixes-dry-38b",
+  "op": "run",
   "target": "staging38",
-  "installer": "seo-fixes/install-seo-fixes.php",
-  "args": [
-    "--with-uploads"
-  ]
+  "script": "seo-fixes/push-seo-fixes.sh",
+  "args": [],
+  "tests": "auto"
 }
