@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-30 17:59 UTC  **PASS**  `seo-snippet-1023-1`  [reports/2026-10-30/175929-seo-snippet-1023-1.md](reports/2026-10-30/175929-seo-snippet-1023-1.md)  (run 41102940246)
 - 2026-10-30 17:58 UTC  **PASS**  `seo-snippets-live-1`  [reports/2026-10-30/175856-seo-snippets-live-1.md](reports/2026-10-30/175856-seo-snippets-live-1.md)  (run 41102866625)
 - 2026-10-30 17:52 UTC  **PASS**  `seo-scan-live-2`  [reports/2026-10-30/175220-seo-scan-live-2.md](reports/2026-10-30/175220-seo-scan-live-2.md)  (run 41100698075)
 - 2026-10-30 17:39 UTC  **FAIL**  `seo-scan-live-1`  [reports/2026-10-30/173902-seo-scan-live-1.md](reports/2026-10-30/173902-seo-scan-live-1.md)  (run 41100543250)
