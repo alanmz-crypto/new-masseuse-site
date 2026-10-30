@@ -1,6 +1,8 @@
 {
-  "id": "seo-scan-live-1",
-  "op": "inspect",
+  "id": "seo-scan-live-2",
+  "op": "run",
   "target": "live",
-  "query": "seo"
+  "script": "seo-scan/scan-seo.sh",
+  "args": [],
+  "tests": "none"
 }
