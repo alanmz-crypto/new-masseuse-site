@@ -244,7 +244,7 @@ wp_update_post( array( 'ID' => (int) $snap['corp_id'], 'post_content' => wp_slas
 $check = $read();
 $bf = isset( $snap['before'] ) && is_array( $snap['before'] ) ? $snap['before'] : array( 'svc' => 'ready', 'corp' => 'ready', 'corp_c' => 'ready' );   // what each part was before that apply
 if ( $check['svc'] !== $bf['svc'] || $check['corp'] !== $bf['corp'] || $check['corp_c'] !== $bf['corp_c'] || $check['corp_hash'] !== ( $snap['corp_content_sha256'] ?? '' ) || $check['svc_rows'] !== $snap['svc_rows'] || $check['corp_rows'] !== $snap['corp_rows'] ) {
-	WP_CLI::error( 'Rollback did not return to the old state (now: ' . $check['state'] . '); stop and inspect.' );
+	WP_CLI::error( 'Rollback did not return to the old state (now: ' . $check['state'] . '; parts now ' . $check['svc'] . '/' . $check['corp'] . '/' . $check['corp_c'] . ' vs before ' . $bf['svc'] . '/' . $bf['corp'] . '/' . $bf['corp_c'] . '; content same as before: ' . ( $check['corp_hash'] === ( $snap['corp_content_sha256'] ?? '' ) ? 'yes' : 'NO' ) . '; Services rows same: ' . ( $check['svc_rows'] === $snap['svc_rows'] ? 'yes' : 'NO' ) . '; Corporate rows same: ' . ( $check['corp_rows'] === $snap['corp_rows'] ? 'yes' : 'NO' ) . '); stop and inspect.' );
 }
 WP_CLI::success( 'Rollback done: both pages have exactly their old SureRank rows again and the corporate page content is byte-identical to before.' );
 
