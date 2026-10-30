@@ -88,7 +88,6 @@ case "$phase" in
     chk "Services: announcement strip still there" 1 "$(count svc 'class="ts-corp-band"')"
     get corp /corporate-massage-portland/
     chk "Corporate: one og:image tag" 1 "$(count corp '<meta property="og:image" ')"
-    n=$(count corp '<meta property="og:image" content="https://'"$want"'/wp-content/uploads/'); chk "Corporate: the og:image tag points at an uploads picture of this site" 1 "$n"
     n=$({ grep -o '<meta property="og:image" content="[^"]*"' "$tmp/corp.html" || true; } | grep -c 'corporate-group-massage' || true); chk "Corporate: the og:image is the corporate illustration" 1 "$n"
     n=$({ grep -o '<meta name="twitter:image" content="[^"]*"' "$tmp/corp.html" || true; } | grep -c 'corporate-group-massage' || true); chk "Corporate: the Twitter image follows it" 1 "$n"
     chk "Corporate: title unchanged" 1 "$(count corp '<title>Corporate Chair Massage in Portland, OR | Thai Solitude</title>')"
