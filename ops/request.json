@@ -1,8 +1,10 @@
 {
-  "id": "run-20261030-204334",
+  "id": "run-20261030-204423",
   "op": "run",
   "target": "staging38",
   "script": "seo-fixes/push-seo-fixes.sh",
-  "args": [],
+  "args": [
+    "--apply"
+  ],
   "tests": "auto"
 }
