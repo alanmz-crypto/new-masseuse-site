@@ -1,9 +1,8 @@
 {
-  "id": "seo-fixes-rehearse-2",
-  "op": "rehearse",
+  "id": "seo-scan-38-before",
+  "op": "run",
   "target": "staging38",
-  "installer": "seo-fixes/install-seo-fixes.php",
-  "args": [
-    "--with-uploads"
-  ]
+  "script": "seo-scan/scan-seo.sh",
+  "args": [],
+  "tests": "none"
 }
