@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-30 17:52 UTC  **PASS**  `seo-scan-live-2`  [reports/2026-10-30/175220-seo-scan-live-2.md](reports/2026-10-30/175220-seo-scan-live-2.md)  (run 41100698075)
 - 2026-10-30 17:39 UTC  **FAIL**  `seo-scan-live-1`  [reports/2026-10-30/173902-seo-scan-live-1.md](reports/2026-10-30/173902-seo-scan-live-1.md)  (run 41100543250)
 - 2026-10-30 17:22 UTC  **PASS**  `booking-date-check-live-1`  [reports/2026-10-30/172225-booking-date-check-live-1.md](reports/2026-10-30/172225-booking-date-check-live-1.md)  (run 41098183118)
 - 2026-10-30 15:44 UTC  **PASS**  `live-booking-date-nov14`  [reports/2026-10-30/154421-live-booking-date-nov14.md](reports/2026-10-30/154421-live-booking-date-nov14.md)  (run 41083174644)
