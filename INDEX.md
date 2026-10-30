@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-30 20:39 UTC  **FAIL**  `rehearse-20261030-203736`  [reports/2026-10-30/203904-rehearse-20261030-203736.md](reports/2026-10-30/203904-rehearse-20261030-203736.md)  (run 41124726790)
 - 2026-10-30 20:37 UTC  **INVALID**  `rehearse-20261030-203709`  [reports/2026-10-30/203727-rehearse-20261030-203709.md](reports/2026-10-30/203727-rehearse-20261030-203709.md)  (run 41124674054)
 - 2026-10-30 20:34 UTC  **PASS**  `corp-page-38`  [reports/2026-10-30/203418-corp-page-38.md](reports/2026-10-30/203418-corp-page-38.md)  (run 41124218620)
 - 2026-10-30 20:19 UTC  **FAIL**  `seo-fixes-restore-38`  [reports/2026-10-30/201922-seo-fixes-restore-38.md](reports/2026-10-30/201922-seo-fixes-restore-38.md)  (run 41122195224)
