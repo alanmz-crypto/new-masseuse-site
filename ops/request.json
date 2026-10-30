@@ -1,11 +1,9 @@
 {
-  "id": "seo-fixes-rollback-38",
-  "op": "run",
+  "id": "seo-fixes-rehearse-3",
+  "op": "rehearse",
   "target": "staging38",
-  "script": "seo-fixes/push-seo-fixes.sh",
+  "installer": "seo-fixes/install-seo-fixes.php",
   "args": [
-    "--rollback",
-    "$HOME/private-backups/seo-fixes-before-20261030-200226.json"
-  ],
-  "tests": "none"
+    "--with-uploads"
+  ]
 }
