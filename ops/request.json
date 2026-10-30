@@ -1,8 +1,7 @@
 {
-  "id": "booking-date-dry-live",
-  "op": "run",
+  "id": "seo-corp-live-1",
+  "op": "inspect",
   "target": "live",
-  "script": "booking-date/push-booking-date.sh",
-  "args": [],
-  "tests": "auto"
+  "query": "seo",
+  "arg": "corporate-massage-portland"
 }
