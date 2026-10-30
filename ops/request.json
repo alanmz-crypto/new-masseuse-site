@@ -1,10 +1,10 @@
 {
-  "id": "seo-fixes-test-38",
+  "id": "seo-fixes-gates-38",
   "op": "run",
   "target": "staging38",
-  "script": "post-change-test.sh",
+  "script": "check-all.sh",
   "args": [
-    "staging38"
+    "https://staging38.thaisolitude.com"
   ],
   "tests": "auto"
 }
