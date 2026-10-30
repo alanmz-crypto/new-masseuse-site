@@ -1,8 +1,11 @@
 {
-  "id": "surerank-keys-38",
+  "id": "seo-fixes-rollback-38",
   "op": "run",
   "target": "staging38",
-  "script": "seo-scan/plugin-keys.sh",
-  "args": [],
+  "script": "seo-fixes/push-seo-fixes.sh",
+  "args": [
+    "--rollback",
+    "$HOME/private-backups/seo-fixes-before-20261030-200226.json"
+  ],
   "tests": "none"
 }
