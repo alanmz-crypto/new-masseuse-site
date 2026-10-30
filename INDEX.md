@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-30 20:04 UTC  **PASS**  `surerank-keys-38`  [reports/2026-10-30/200442-surerank-keys-38.md](reports/2026-10-30/200442-surerank-keys-38.md)  (run 41120364088)
 - 2026-10-30 20:03 UTC  **PASS**  `seo-scan-38-after`  [reports/2026-10-30/200326-seo-scan-38-after.md](reports/2026-10-30/200326-seo-scan-38-after.md)  (run 41120183333)
 - 2026-10-30 20:02 UTC  **FAIL**  `seo-fixes-apply-38`  [reports/2026-10-30/200234-seo-fixes-apply-38.md](reports/2026-10-30/200234-seo-fixes-apply-38.md)  (run 41120018518)
 - 2026-10-30 20:01 UTC  **PASS**  `seo-scan-38-before`  [reports/2026-10-30/200122-seo-scan-38-before.md](reports/2026-10-30/200122-seo-scan-38-before.md)  (run 41119907318)
