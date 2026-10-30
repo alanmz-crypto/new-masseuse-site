@@ -8,9 +8,9 @@
  *        AFTER   Thai, therapeutic and deep tissue massage with Butsaba Dusrai, LMT, in Portland. Every session starts with your goals.
  *      (the same change item 1 of the Portland reconcile made on Home, Thai, Therapeutic and Deep Tissue; the social tags follow the description.)
  *   2. Corporate & Group Massage page: it has no share image (Open Graph / Twitter image). It gets the picture the Home page already uses for the link to it, corporate-group-massage.webp, which is ALREADY in the
- *      media library: found by file name, its bytes checked against the reviewed sha256, exactly one match or stop; NO second copy is imported. It is attached as the page's featured image (the way the other pages get
- *      theirs), once. Nothing in the page's content changes.
- * NOTHING ELSE changes. ready = Services holds exactly the old description and the corporate page has no featured image; applied = the new description and that picture as the featured image; anything else stops.
+ *      media library: found by file name, its bytes checked against the reviewed sha256, exactly one match or stop; NO second copy is imported. It is set as the page's SHARE picture in SureRank's own social
+ *      settings (facebook_image_url / facebook_image_id; Twitter follows Facebook), once. It is NOT made the page's featured image, because that would also draw it on the page itself. Nothing in the page's content changes.
+ * NOTHING ELSE changes. ready = Services holds exactly the old description and the corporate page has no share picture and no featured image; applied = the new description and that picture as the share picture; anything else stops.
  * Page content is hashed before and after and must be identical.
  *
  * Allow-list: localhost:8090 and staging38 only. Live is added only after staging38 is applied, checked and proven AND Ryan says go; he starts the live run himself.
@@ -18,7 +18,7 @@
  * Modes (first WP-CLI argument; run with --user=1):  <mode> [FILE]
  *   preflight    read-only: ready / applied / CHANGED (stop)
  *   apply        snapshot, write, read back; put everything back if any read-back differs
- *   rollback     FILE = the before-snapshot: put the Services SureRank rows back exactly and remove the corporate featured image again
+ *   rollback     FILE = the before-snapshot: put the SureRank rows of both pages back exactly
  * apply and rollback need WWM_BACKUP_DIR (an existing, writable absolute directory outside the web root).
  */
 
@@ -90,7 +90,7 @@ if ( ! $pic ) {
 }
 
 $read = function () use ( $get_page, $svc_slug, $corp_slug, $svc_title, $svc_old, $svc_new, $pic ) {
-	$r   = array( 'svc' => 'CHANGED', 'corp' => 'CHANGED', 'svc_page' => null, 'corp_page' => null, 'svc_rows' => array(), 'svc_hash' => '', 'corp_hash' => '', 'corp_thumb_rows' => array() );
+	$r   = array( 'svc' => 'CHANGED', 'corp' => 'CHANGED', 'svc_page' => null, 'corp_page' => null, 'svc_rows' => array(), 'svc_hash' => '', 'corp_hash' => '', 'corp_rows' => array() );
 	$svc = $get_page( $svc_slug );
 	if ( $svc ) {
 		$r['svc_page'] = $svc;
@@ -107,14 +107,23 @@ $read = function () use ( $get_page, $svc_slug, $corp_slug, $svc_title, $svc_old
 	}
 	$corp = $get_page( $corp_slug );
 	if ( $corp ) {
-		$r['corp_page']       = $corp;
-		$r['corp_hash']       = hash( 'sha256', (string) $corp->post_content );
-		$r['corp_thumb_rows'] = get_post_meta( $corp->ID, '_thumbnail_id' );
-		$rows                 = $r['corp_thumb_rows'];
-		if ( 0 === count( $rows ) ) {
-			$r['corp'] = 'ready';
-		} elseif ( 1 === count( $rows ) && (int) $rows[0] === (int) $pic->ID ) {
-			$r['corp'] = 'applied';
+		$r['corp_page'] = $corp;
+		$r['corp_hash'] = hash( 'sha256', (string) $corp->post_content );
+		foreach ( get_post_meta( $corp->ID ) as $k => $v ) {
+			if ( 0 === strpos( $k, 'surerank' ) ) {
+				$r['corp_rows'][ $k ] = $v;
+			}
+		}
+		$thumb = get_post_meta( $corp->ID, '_thumbnail_id' );
+		$soc   = get_post_meta( $corp->ID, 'surerank_settings_social', true );
+		$url   = is_array( $soc ) ? (string) ( $soc['facebook_image_url'] ?? '' ) : '';
+		$id    = is_array( $soc ) ? (int) ( $soc['facebook_image_id'] ?? 0 ) : 0;
+		if ( 0 === count( $thumb ) ) {   // the picture must never become the featured image (it would be drawn on the page)
+			if ( '' === $url && 0 === $id ) {
+				$r['corp'] = 'ready';
+			} elseif ( $url === (string) wp_get_attachment_url( $pic->ID ) && $id === (int) $pic->ID ) {
+				$r['corp'] = 'applied';
+			}
 		}
 	}
 	$r['state'] = ( 'ready' === $r['svc'] && 'ready' === $r['corp'] ) ? 'ready' : ( ( 'applied' === $r['svc'] && 'applied' === $r['corp'] ) ? 'applied' : 'CHANGED' );
@@ -160,28 +169,30 @@ if ( 'apply' === $mode ) {
 	}
 	$file = rtrim( $backup_dir, '/' ) . '/seo-fixes-before-' . gmdate( 'Ymd-His' ) . '.json';
 	$snap = array( 'created' => gmdate( 'c' ), 'home' => $home, 'svc_id' => (int) $now['svc_page']->ID, 'svc_rows' => $now['svc_rows'], 'svc_content_sha256' => $now['svc_hash'],
-		'corp_id' => (int) $now['corp_page']->ID, 'corp_content_sha256' => $now['corp_hash'], 'pic_id' => (int) $pic->ID );
+		'corp_id' => (int) $now['corp_page']->ID, 'corp_rows' => $now['corp_rows'], 'corp_content_sha256' => $now['corp_hash'], 'pic_id' => (int) $pic->ID );
 	if ( false === file_put_contents( $file, wp_json_encode( $snap ) ) || filesize( $file ) < 40 ) {
 		WP_CLI::error( 'Could not write the before-snapshot; nothing was changed.' );
 	}
 	chmod( $file, 0600 );
 	\SureRank\Inc\API\Post::update_post_meta_common( (int) $now['svc_page']->ID, array( 'page_title' => $svc_title, 'page_description' => $svc_new ) );
-	add_post_meta( (int) $now['corp_page']->ID, '_thumbnail_id', (int) $pic->ID, true );
+	$cg = get_post_meta( (int) $now['corp_page']->ID, 'surerank_settings_general', true );
+	\SureRank\Inc\API\Post::update_post_meta_common( (int) $now['corp_page']->ID, array( 'page_title' => (string) ( $cg['page_title'] ?? '' ), 'page_description' => (string) ( $cg['page_description'] ?? '' ),
+		'facebook_image_url' => (string) wp_get_attachment_url( $pic->ID ), 'facebook_image_id' => (int) $pic->ID ) );
 	$after = $read();
 	if ( 'applied' !== $after['state'] || $after['svc_hash'] !== $now['svc_hash'] || $after['corp_hash'] !== $now['corp_hash'] ) {
 		$restore_rows( (int) $snap['svc_id'], $now['svc_rows'] );
-		delete_post_meta( (int) $snap['corp_id'], '_thumbnail_id' );
+		$restore_rows( (int) $snap['corp_id'], $now['corp_rows'] );
 		$check = $read();
 		WP_CLI::error( 'Read-back differed from what was written (state ' . $after['state'] . '); everything was put back (state now: ' . $check['state'] . ', Services rows identical to before: ' . ( $check['svc_rows'] === $now['svc_rows'] ? 'yes' : 'NO' ) . ').' );
 	}
-	WP_CLI::success( 'Services description now says "in Portland"; the corporate page has its share picture (media #' . $pic->ID . ', attached once, no copy made). Before-snapshot: ' . $file );
+	WP_CLI::success( 'Services description now says "in Portland"; the corporate page has its share picture (media #' . $pic->ID . ', set once in SureRank, no copy made, not drawn on the page). Before-snapshot: ' . $file );
 	return;
 }
 
 // ---- rollback FILE ---------------------------------------------------------------------------------------------------------------
 $file = isset( $args[1] ) ? (string) $args[1] : '';
 $snap = $file && is_file( $file ) ? json_decode( (string) file_get_contents( $file ), true ) : null;
-if ( ! is_array( $snap ) || ( $snap['home'] ?? '' ) !== $home || empty( $snap['svc_id'] ) || ! isset( $snap['svc_rows'] ) || empty( $snap['corp_id'] )
+if ( ! is_array( $snap ) || ( $snap['home'] ?? '' ) !== $home || empty( $snap['svc_id'] ) || ! isset( $snap['svc_rows'] ) || ! isset( $snap['corp_rows'] ) || empty( $snap['corp_id'] )
 	|| (int) $snap['svc_id'] !== (int) $now['svc_page']->ID || (int) $snap['corp_id'] !== (int) $now['corp_page']->ID ) {
 	WP_CLI::error( 'Snapshot is missing, incomplete (the apply may not have finished), from another site, or does not match these pages.' );
 }
@@ -190,11 +201,11 @@ if ( 'applied' !== $state ) {
 	return;
 }
 $restore_rows( (int) $snap['svc_id'], $snap['svc_rows'] );
-delete_post_meta( (int) $snap['corp_id'], '_thumbnail_id', (int) $pic->ID );   // only the picture this installer attached
+$restore_rows( (int) $snap['corp_id'], $snap['corp_rows'] );
 $check = $read();
-if ( 'ready' !== $check['state'] || $check['svc_rows'] !== $snap['svc_rows'] ) {
+if ( 'ready' !== $check['state'] || $check['svc_rows'] !== $snap['svc_rows'] || $check['corp_rows'] !== $snap['corp_rows'] ) {
 	WP_CLI::error( 'Rollback did not return to the old state (now: ' . $check['state'] . '); stop and inspect.' );
 }
-WP_CLI::success( 'Rollback done: Services has exactly its old SureRank rows and the corporate page has no featured image again.' );
+WP_CLI::success( 'Rollback done: both pages have exactly their old SureRank rows again.' );
 
 // ref: ../portland-meta/install-portland-meta.php — the SureRank title/description installer this is reduced from (same guard, snapshot and rollback); ../home-card/install-home-corporate-card.php — the "already in the media library" finder for the corporate picture

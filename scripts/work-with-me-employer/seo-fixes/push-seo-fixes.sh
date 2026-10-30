@@ -6,7 +6,7 @@
 #   ./push-seo-fixes.sh                    dry run: connect, locate the site, upload the package, preflight (read-only on the site)
 #   ./push-seo-fixes.sh --apply            export the DB -> preflight -> COPY the export off the server and verify it -> apply -> purge cache -> check the public Services and Corporate pages
 #                                            -> copy the new before-snapshot off the server. Stops before applying if the copy cannot be verified.
-#   ./push-seo-fixes.sh --rollback FILE    put the old Services description back and remove the corporate featured image, from a seo-fixes-before-*.json snapshot on the server (other edits made since are kept)
+#   ./push-seo-fixes.sh --rollback FILE    put the old Services description back and put the Corporate page's SureRank rows back, from a seo-fixes-before-*.json snapshot on the server (other edits made since are kept)
 # What it changes is described at the top of install-seo-fixes.php (the Services SureRank description and the Corporate page's featured image; no page content).
 # The backup is part of the apply and cannot be skipped. After a push, test the site: scripts/work-with-me-employer/post-change-test.sh staging38.
 # Access: credentials file + ssh-agent. The SSH account also holds live, so every write is conditional
@@ -88,13 +88,15 @@ case "$phase" in
     chk "Services: announcement strip still there" 1 "$(count svc 'class="ts-corp-band"')"
     get corp /corporate-massage-portland/
     chk "Corporate: one og:image tag" 1 "$(count corp '<meta property="og:image" ')"
-    chk "Corporate: og:image is the corporate illustration" 1 "$(count corp 'corporate-group-massage')"
+    n=$(count corp '<meta property="og:image" content="https://'"$want"'/wp-content/uploads/'); chk "Corporate: the og:image tag points at an uploads picture of this site" 1 "$n"
+    n=$({ grep -o '<meta property="og:image" content="[^"]*"' "$tmp/corp.html" || true; } | grep -c 'corporate-group-massage' || true); chk "Corporate: the og:image is the corporate illustration" 1 "$n"
+    n=$({ grep -o '<meta name="twitter:image" content="[^"]*"' "$tmp/corp.html" || true; } | grep -c 'corporate-group-massage' || true); chk "Corporate: the Twitter image follows it" 1 "$n"
     chk "Corporate: title unchanged" 1 "$(count corp '<title>Corporate Chair Massage in Portland, OR | Thai Solitude</title>')"
     chk "Corporate: no strip on the page itself" 0 "$(count corp 'class="ts-corp-band"')"
     chk "Corporate: bookings date unchanged on the page" 1 "$(count corp 'bookings begin November')"
-    echo "  info img tags on the corporate page: $(count corp '<img ') (compare with the scan before: the picture must not appear in the page body)"
+    echo "  info img tags on the corporate page: $(count corp '<img ') (was 3 in the first try because a featured image is also drawn on the page; the scan before says how many it must stay at)"
     [ "$fail" = 0 ] || { echo "The public pages do not show what was applied (cache?); use --rollback if it persists." >&2; exit 1; }
-    echo "public check: Services says Portland; the Corporate page has one share picture; everything else on both is unchanged" ;;
+    echo "public check: Services says Portland; the Corporate page has one share picture and its body is unchanged; everything else on both is unchanged" ;;
   rollback) snap=${snap/#\$HOME/$HOME}; run rollback "$snap"; purge ;;
   *) echo "unknown phase" >&2; exit 1 ;;
 esac
