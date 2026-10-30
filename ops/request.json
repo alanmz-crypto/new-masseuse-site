@@ -1,8 +1,8 @@
 {
-  "id": "rehearse-20261030-203709",
+  "id": "rehearse-20261030-203736",
   "op": "rehearse",
   "target": "staging38",
-  "installer": "scripts/work-with-me-employer/seo-fixes/install-seo-fixes.php",
+  "installer": "seo-fixes/install-seo-fixes.php",
   "args": [
     "--with-uploads"
   ]
