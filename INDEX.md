@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-30 15:14 UTC  **PASS**  `booking-date-dry-38`  [reports/2026-10-30/151408-booking-date-dry-38.md](reports/2026-10-30/151408-booking-date-dry-38.md)  (run 41078751398)
 - 2026-10-30 15:13 UTC  **PASS**  `booking-date-rehearse-1`  [reports/2026-10-30/151322-booking-date-rehearse-1.md](reports/2026-10-30/151322-booking-date-rehearse-1.md)  (run 41078410764)
 - 2026-10-30 14:55 UTC  **PASS**  `live-portland-items-1-3`  [reports/2026-10-30/145528-live-portland-items-1-3.md](reports/2026-10-30/145528-live-portland-items-1-3.md)  (run 41075214422)
 - 2026-10-30 14:48 UTC  **INVALID**  `live-portland-items-1-3`  [reports/2026-10-30/144835-live-portland-items-1-3.md](reports/2026-10-30/144835-live-portland-items-1-3.md)  (run 41074887145)
