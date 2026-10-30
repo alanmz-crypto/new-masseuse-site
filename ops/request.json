@@ -1,7 +1,9 @@
 {
-  "id": "seo-fixes-rehearse-1",
+  "id": "seo-fixes-rehearse-2",
   "op": "rehearse",
   "target": "staging38",
   "installer": "seo-fixes/install-seo-fixes.php",
-  "args": []
+  "args": [
+    "--with-uploads"
+  ]
 }
