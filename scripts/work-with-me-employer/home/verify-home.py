@@ -37,7 +37,9 @@ check("exactly one H1, wording unchanged", len(re.findall(r"<h1[ >]", page)) == 
 trust = re.findall(r'<p class="ts-home-trust[^"]*">(.*?)</p>', hero, re.S)
 check("licence line appears once in the hero", len(trust) == 1, len(trust))
 t = trust[0] if trust else ""
-check("licence line wording: Oregon License LMT-29905 (verify) · Mt. Tabor, Portland", text_of(t) == "Oregon License LMT-29905 ( verify ) · Mt. Tabor, Portland" or text_of(t).replace(" )", ")").replace("( ", "(") == "Oregon License LMT-29905 (verify) · Mt. Tabor, Portland", text_of(t))
+# onpage-portland (Ryan, 2026-10-29) changed "Mt. Tabor, Portland" to "Portland, OR" here; a site not changed yet still shows the old wording, which stays approved until it is.
+_trust_text = text_of(t).replace(" )", ")").replace("( ", "(")
+check("licence line wording: Oregon License LMT-29905 (verify) · Portland, OR (or, before onpage-portland, · Mt. Tabor, Portland)", _trust_text in ("Oregon License LMT-29905 (verify) · Mt. Tabor, Portland", "Oregon License LMT-29905 (verify) · Portland, OR"), text_of(t))
 check("verify link goes to the Oregon licence lookup", 'href="https://public.orlicensing.oregon.gov/OBMTPublic/LPRBrowser.aspx"' in t)
 check("licence line sits between the H1 and the lead text", 0 <= hero.find("<h1") < hero.find("ts-home-trust") < hero.find("Thai and therapeutic massage that starts with"))
 
