@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-30 15:44 UTC  **PASS**  `live-booking-date-nov14`  [reports/2026-10-30/154421-live-booking-date-nov14.md](reports/2026-10-30/154421-live-booking-date-nov14.md)  (run 41083174644)
 - 2026-10-30 15:41 UTC  **INVALID**  `live-booking-date-nov14`  [reports/2026-10-30/154123-live-booking-date-nov14.md](reports/2026-10-30/154123-live-booking-date-nov14.md)  (run 41082972922)
 - 2026-10-30 15:38 UTC  **INVALID**  `live-booking-date-nov14`  [reports/2026-10-30/153855-live-booking-date-nov14.md](reports/2026-10-30/153855-live-booking-date-nov14.md)  (run 41082604190)
 - 2026-10-30 15:30 UTC  **PASS**  `booking-date-dry-live`  [reports/2026-10-30/153000-booking-date-dry-live.md](reports/2026-10-30/153000-booking-date-dry-live.md)  (run 41081195290)
