@@ -1,6 +1,7 @@
 {
-  "id": "seo-snippets-live-1",
+  "id": "seo-snippet-1023-1",
   "op": "inspect",
   "target": "live",
-  "query": "snippets"
+  "query": "snippet",
+  "arg": "1023"
 }
