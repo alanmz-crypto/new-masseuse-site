@@ -1,8 +1,8 @@
 {
-  "id": "seo-fixes-dry-38",
+  "id": "seo-scan-38-before",
   "op": "run",
   "target": "staging38",
-  "script": "seo-fixes/push-seo-fixes.sh",
+  "script": "seo-scan/scan-seo.sh",
   "args": [],
-  "tests": "auto"
+  "tests": "none"
 }
