@@ -1,7 +1,7 @@
 {
-  "id": "seo-corp-live-1",
+  "id": "seo-services-live-1",
   "op": "inspect",
   "target": "live",
   "query": "seo",
-  "arg": "corporate-massage-portland"
+  "arg": "services"
 }
