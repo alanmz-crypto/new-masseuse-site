@@ -1,8 +1,8 @@
 {
-  "id": "live-contact-meta-1",
+  "id": "live-portland-items-1-3",
   "op": "run",
   "target": "live",
-  "script": "contact-meta/push-contact-meta.sh",
+  "script": "portland-live/push-portland-live.sh",
   "args": [
     "--apply"
   ],
