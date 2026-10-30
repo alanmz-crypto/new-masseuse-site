@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-30 19:59 UTC  **PASS**  `seo-fixes-rehearse-2`  [reports/2026-10-30/195942-seo-fixes-rehearse-2.md](reports/2026-10-30/195942-seo-fixes-rehearse-2.md)  (run 41119486527)
 - 2026-10-30 19:57 UTC  **FAIL**  `seo-fixes-rehearse-1`  [reports/2026-10-30/195727-seo-fixes-rehearse-1.md](reports/2026-10-30/195727-seo-fixes-rehearse-1.md)  (run 41119246516)
 - 2026-10-30 19:53 UTC  **PASS**  `seo-thai-live-1`  [reports/2026-10-30/195346-seo-thai-live-1.md](reports/2026-10-30/195346-seo-thai-live-1.md)  (run 41118905059)
 - 2026-10-30 19:52 UTC  **PASS**  `seo-services-live-1`  [reports/2026-10-30/195253-seo-services-live-1.md](reports/2026-10-30/195253-seo-services-live-1.md)  (run 41118792974)
