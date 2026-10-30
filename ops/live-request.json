@@ -1,8 +1,8 @@
 {
-  "id": "live-booking-date-nov14",
+  "id": "live-20261030-210629",
   "op": "run",
   "target": "live",
-  "script": "booking-date/push-booking-date.sh",
+  "script": "seo-fixes/push-seo-fixes.sh",
   "args": [
     "--apply"
   ],
