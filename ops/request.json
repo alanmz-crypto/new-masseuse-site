@@ -1,10 +1,8 @@
 {
-  "id": "seo-fixes-apply-38",
+  "id": "seo-scan-38-after",
   "op": "run",
   "target": "staging38",
-  "script": "seo-fixes/push-seo-fixes.sh",
-  "args": [
-    "--apply"
-  ],
-  "tests": "auto"
+  "script": "seo-scan/scan-seo.sh",
+  "args": [],
+  "tests": "none"
 }
