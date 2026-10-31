@@ -1,10 +1,11 @@
 {
-  "id": "chair-apply-38-v2b",
+  "id": "chair-chk-38-v2b",
   "op": "run",
   "target": "staging38",
-  "script": "chair-massage/push-chair-massage.sh",
+  "script": "chair-massage/check-chair-massage.mjs",
   "args": [
-    "--apply"
+    "https://staging38.thaisolitude.com",
+    "inline"
   ],
-  "tests": "auto"
+  "tests": "none"
 }
