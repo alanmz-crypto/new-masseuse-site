@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-31 06:57 UTC  **PASS**  `chair-rollback-38-v1`  [reports/2026-10-31/065759-chair-rollback-38-v1.md](reports/2026-10-31/065759-chair-rollback-38-v1.md)  (run 41178654176)
 - 2026-10-31 05:18 UTC  **FAIL**  `chair-gates-38c`  [reports/2026-10-31/051841-chair-gates-38c.md](reports/2026-10-31/051841-chair-gates-38c.md)  (run 41172027526)
 - 2026-10-31 05:16 UTC  **PASS**  `chair-chk-38b`  [reports/2026-10-31/051653-chair-chk-38b.md](reports/2026-10-31/051653-chair-chk-38b.md)  (run 41171863512)
 - 2026-10-31 05:14 UTC  **FAIL**  `chair-chk-38`  [reports/2026-10-31/051407-chair-chk-38.md](reports/2026-10-31/051407-chair-chk-38.md)  (run 41171668813)
