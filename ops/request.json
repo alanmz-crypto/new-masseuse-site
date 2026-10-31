@@ -1,9 +1,8 @@
 {
-  "id": "chair-rehearse-3",
-  "op": "rehearse",
+  "id": "chair-dry-38",
+  "op": "run",
   "target": "staging38",
-  "installer": "chair-massage/install-chair-massage.php",
-  "args": [
-    "--with-uploads"
-  ]
+  "script": "chair-massage/push-chair-massage.sh",
+  "args": [],
+  "tests": "auto"
 }
