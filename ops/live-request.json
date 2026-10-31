@@ -1,8 +1,8 @@
 {
-  "id": "live-20261030-210629",
+  "id": "live-chair-massage-1",
   "op": "run",
   "target": "live",
-  "script": "seo-fixes/push-seo-fixes.sh",
+  "script": "chair-massage/push-chair-massage.sh",
   "args": [
     "--apply"
   ],
