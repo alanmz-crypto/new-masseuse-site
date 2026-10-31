@@ -1,11 +1,9 @@
 {
-  "id": "chair-rollback-38-v1",
-  "op": "run",
+  "id": "chair-rehearse-v2-1",
+  "op": "rehearse",
   "target": "staging38",
-  "script": "chair-massage/push-chair-massage.sh",
+  "installer": "chair-massage/install-chair-massage.php",
   "args": [
-    "--rollback",
-    "$HOME/private-backups/chair-massage-before-20261031-050339.json"
-  ],
-  "tests": "none"
+    "--with-uploads"
+  ]
 }
