@@ -1,5 +1,5 @@
 {
-  "id": "chair-rehearse-1",
+  "id": "chair-rehearse-2",
   "op": "rehearse",
   "target": "staging38",
   "installer": "chair-massage/install-chair-massage.php",
