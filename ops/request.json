@@ -1,8 +1,10 @@
 {
-  "id": "site-dump-live-1",
+  "id": "site-shots-live-1",
   "op": "run",
   "target": "live",
-  "script": "seo-scan/dump-site.sh",
-  "args": [],
+  "script": "tools/shots-inline.mjs",
+  "args": [
+    "https://thaisolitude.com"
+  ],
   "tests": "auto"
 }
