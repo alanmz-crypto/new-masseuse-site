@@ -1,11 +1,11 @@
 {
-  "id": "chair-chk-38-v2",
+  "id": "chair-rollback-38-v2",
   "op": "run",
   "target": "staging38",
-  "script": "chair-massage/check-chair-massage.mjs",
+  "script": "chair-massage/push-chair-massage.sh",
   "args": [
-    "https://staging38.thaisolitude.com",
-    "inline"
+    "--rollback",
+    "$HOME/private-backups/chair-massage-before-20261031-070533.json"
   ],
   "tests": "none"
 }
