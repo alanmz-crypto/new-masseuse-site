@@ -17,7 +17,8 @@
  *      syntax-checked in memory with the PHP tokenizer BEFORE anything is written.
  * The five parts are all-or-nothing: apply puts everything back (reverse order) if any read-back differs; rollback takes all five out again from the before-snapshot.
  *
- * Allow-list: localhost:8090 and staging38 ONLY. Live is NOT enabled: that is a separate commit on Ryan's go, and he merges the pull request and starts the live run himself.
+ * Allow-list: localhost:8090, staging38 and live. Live was enabled on Ryan's go ("Go live", 2026-10-31 01:00 Pacific) after version 2 was rehearsed on a copy of staging38, applied on staging38 and checked
+ * (post-change test, restore proof, 73/73 browser checks); Ryan merges the pull request and starts the live run himself.
  *
  * Modes (first WP-CLI argument; run with --user=1):  <mode> [FILE]
  *   preflight    read-only: ready = none of the five parts is there and both snippets hold their frozen code; applied = all five exactly as written; CHANGED = anything else (stop)
@@ -32,8 +33,8 @@ if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) ) {
 
 $home = untrailingslashit( home_url() );
 $host = (string) wp_parse_url( $home, PHP_URL_HOST ) . ( wp_parse_url( $home, PHP_URL_PORT ) ? ':' . wp_parse_url( $home, PHP_URL_PORT ) : '' );
-if ( ! in_array( $host, array( 'localhost:8090', 'staging38.thaisolitude.com' ), true ) ) {
-	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090 or staging38 only; live needs its own enable commit on Ryan\'s go).' );
+if ( ! in_array( $host, array( 'localhost:8090', 'staging38.thaisolitude.com', 'thaisolitude.com' ), true ) ) {
+	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090, staging38 or live only).' );
 }
 if ( 'astra' !== get_stylesheet() ) {
 	WP_CLI::error( 'Active theme is not Astra.' );
