@@ -1,11 +1,8 @@
 {
-  "id": "chair-chk-38-v2b",
+  "id": "chair-dry-live-1",
   "op": "run",
-  "target": "staging38",
-  "script": "chair-massage/check-chair-massage.mjs",
-  "args": [
-    "https://staging38.thaisolitude.com",
-    "inline"
-  ],
+  "target": "live",
+  "script": "chair-massage/push-chair-massage.sh",
+  "args": [],
   "tests": "none"
 }
