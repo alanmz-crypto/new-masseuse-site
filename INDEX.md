@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-31 12:49 UTC  **PASS**  `site-shots-live-1`  [reports/2026-10-31/124940-site-shots-live-1.md](reports/2026-10-31/124940-site-shots-live-1.md)  (run 41202654289)
 - 2026-10-31 12:47 UTC  **PASS**  `site-dump-live-1`  [reports/2026-10-31/124734-site-dump-live-1.md](reports/2026-10-31/124734-site-dump-live-1.md)  (run 41202573196)
 - 2026-10-31 11:40 UTC  **PASS**  `chair-live-chk-1`  [reports/2026-10-31/114043-chair-live-chk-1.md](reports/2026-10-31/114043-chair-live-chk-1.md)  (run 41197729404)
 - 2026-10-31 11:27 UTC  **PASS**  `live-chair-massage-1`  [reports/2026-10-31/112741-live-chair-massage-1.md](reports/2026-10-31/112741-live-chair-massage-1.md)  (run 41196684922)
