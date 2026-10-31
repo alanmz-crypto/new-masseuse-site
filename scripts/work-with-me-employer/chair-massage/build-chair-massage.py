@@ -309,7 +309,7 @@ def build_page():
             section_row(3, 'Who Can Benefit From Chair Massage?', WHO, cite, last=True)]
     # the FAQ under its own centered heading, full width, as on the Thai and Deep Tissue pages (there is no picture column to sit beside)
     faq_row = ('<!-- wp:uagb/container %s -->\n<div class="wp-block-uagb-container uagb-block-%s">%s\n\n%s</div>\n<!-- /wp:uagb/container -->') % (
-        A_TEXT_ROW_LAST % ID['row4'], ID['row4'], centered_heading('faqhead', 'Questions About Chair Massage'), faq_block())
+        A_TEXT_ROW_LAST % ID['row4'], ID['row4'], centered_heading('faqhead', 'Questions About Chair Massage', bottom=True), faq_block())   # bottom=True: the Thai/Deep Tissue FAQ heading's padding under the title
     main = ('<!-- wp:uagb/container %s -->\n<div class="wp-block-uagb-container uagb-block-%s alignfull uagb-is-root-container"><div class="uagb-container-inner-blocks-wrap">%s\n\n%s</div></div>\n<!-- /wp:uagb/container -->') % (
         A_MAIN_WRAP % ID['main'], ID['main'], '\n\n'.join(rows + [faq_row]), centered_heading('expect', 'What To Expect During Your Appointment'))
     content = '\n\n'.join([hero, main, para(esc(EXPECT_INTRO)), steps_block(), research(cite)]) + '\n'
