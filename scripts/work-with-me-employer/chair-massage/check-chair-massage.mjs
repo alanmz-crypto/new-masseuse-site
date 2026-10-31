@@ -1,15 +1,16 @@
 // Browser check of the Chair Massage change (read-only; public requests only): the new page in the light and the dark version at 1280 and 390 px (title, H1, strip, jump links and their
 // targets, the five pictures loaded, the FAQ by click and by keyboard, the research panels, 32 sources, footer licence, no console errors = no CSP violation), the Services row before the
 // Corporate & Group row with its picture loaded, and full-page screenshots of both pages for review. About 8 page loads.
-// Usage: node check-chair-massage.mjs <base-url> [outdir] [firefox]      outdir defaults to $RUNNER_TEMP/ops-out/chair-shots (kept as the run's artifact in GitHub Actions) or /tmp/chair-shots.
+// Usage: node check-chair-massage.mjs <base-url> [outdir] [firefox] [inline]      outdir defaults to $RUNNER_TEMP/ops-out/chair-shots (kept as the run's artifact in GitHub Actions) or /tmp/chair-shots.
 // Exit 1 if a check fails; exit 2 = SiteGround's bot challenge answered (INVALID, nothing was tested; run once more later).
 import { createRequire } from 'module';
 import fs from 'fs';
 const require = createRequire(process.env.TS_PLAYWRIGHT_ROOT || '/home/lauer/Projects/SubProjects/Mirror/package.json');
 const pw = require('playwright');
 const base = (process.argv[2] || 'http://localhost:8090').replace(/\/$/, '');
-const out = (process.argv[3] && process.argv[3] !== 'firefox') ? process.argv[3] : ((process.env.RUNNER_TEMP ? process.env.RUNNER_TEMP + '/ops-out' : '/tmp') + '/chair-shots');
+const out = (process.argv[3] && process.argv[3] !== 'firefox' && process.argv[3] !== 'inline') ? process.argv[3] : ((process.env.RUNNER_TEMP ? process.env.RUNNER_TEMP + '/ops-out' : '/tmp') + '/chair-shots');
 const useFirefox = process.env.BROWSER === 'firefox' || process.argv.includes('firefox');
+const inline = process.argv.includes('inline');   // also print three screenshots as base64 JPEG lines (for a session that cannot download the run's artifact)
 fs.mkdirSync(out, { recursive: true });
 const engine = useFirefox ? pw.firefox : pw.chromium;
 const browser = await engine.launch(useFirefox ? {} : { executablePath: '/usr/bin/chromium', args: ['--no-sandbox'] });
@@ -89,12 +90,16 @@ for (const theme of ['light', 'dark']) {
     check(`${tag}: second research panel opens on click`, await det2.evaluate(d => d.open && d.querySelector('p').getClientRects().length > 0));
     // jump link scrolls
     await page.locator('nav.ts-jump a').nth(3).click();
-    await page.waitForTimeout(400);
-    check(`${tag}: jump link scrolls to its target`, await page.evaluate(() => { const el = document.getElementById('ts-what-to-expect'); const b = el.getBoundingClientRect(); return b.top >= -5 && b.top < innerHeight; }));
+    await page.waitForTimeout(1500);   // the theme scrolls to an anchor with its own animation
+    check(`${tag}: jump link scrolls to its target`, await page.evaluate(() => { const el = document.getElementById('ts-what-to-expect'); const b = el.getBoundingClientRect(); return b.top >= -10 && b.top < innerHeight * 0.6; }), await page.evaluate(() => Math.round(document.getElementById('ts-what-to-expect').getBoundingClientRect().top)));
     await page.evaluate(() => scrollTo(0, 0));
     await page.waitForTimeout(300);
     check(`${tag}: no console errors (no CSP violations)`, errors.length === 0, errors.slice(0, 2).join(' | '));
     await page.screenshot({ path: `${out}/chair-${theme}-${width}.png`, fullPage: true });
+    if (inline && ((theme === 'light' && width === 1280) || (theme === 'dark' && width === 390))) {
+      const jpg = await page.screenshot({ type: 'jpeg', quality: theme === 'light' ? 35 : 50, fullPage: true });
+      console.log(`INLINE chair-${theme}-${width}.jpg base64:${jpg.toString('base64')}`);
+    }
     await ctx.close();
   }
   if (challenged) break;
@@ -122,6 +127,7 @@ if (!challenged) {
     await page.evaluate(y => scrollTo(0, Math.max(0, y - 40)), s.top);
     await page.waitForTimeout(300);
     await page.screenshot({ path: `${out}/services-row-light-1280.png` });
+    if (inline) { const jpg = await page.screenshot({ type: 'jpeg', quality: 55 }); console.log(`INLINE services-row-light-1280.jpg base64:${jpg.toString('base64')}`); }
   }
   await ctx.close();
 }
