@@ -1,10 +1,10 @@
 {
-  "id": "chair-check-38",
+  "id": "chair-gates-38",
   "op": "run",
   "target": "staging38",
-  "script": "chair-massage/push-chair-massage.sh",
+  "script": "check-all.sh",
   "args": [
-    "--check"
+    "https://staging38.thaisolitude.com"
   ],
   "tests": "none"
 }
