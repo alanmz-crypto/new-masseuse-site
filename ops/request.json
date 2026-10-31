@@ -1,6 +1,9 @@
 {
-  "id": "chair-insp-snips-38",
-  "op": "inspect",
+  "id": "chair-rehearse-1",
+  "op": "rehearse",
   "target": "staging38",
-  "query": "snippets"
+  "installer": "chair-massage/install-chair-massage.php",
+  "args": [
+    "--with-uploads"
+  ]
 }
