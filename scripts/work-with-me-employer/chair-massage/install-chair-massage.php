@@ -90,7 +90,9 @@ if ( 0 !== substr_count( (string) $data['row'], $anchor ) || 1 !== substr_count(
 	WP_CLI::error( 'Internal error: the Services row is not what was reviewed.' );
 }
 foreach ( array( array( 'band_old', 'band_new' ), array( 'jump_old', 'jump_new' ) ) as $pair ) {
-	if ( $data[ $pair[0] ] === $data[ $pair[1] ] || false === strpos( (string) $data[ $pair[1] ], (string) $data[ $pair[0] ] ) ) {
+	// the new text is the old list with 'chair-massage' added and nothing else: the two must differ in exactly that
+	if ( $data[ $pair[0] ] === $data[ $pair[1] ] || false !== strpos( (string) $data[ $pair[0] ], "'chair-massage'" ) || 1 !== substr_count( (string) $data[ $pair[1] ], "'chair-massage'" )
+		|| str_replace( "'chair-massage'", '', (string) $data[ $pair[1] ] ) === (string) $data[ $pair[1] ] ) {
 		WP_CLI::error( 'Internal error: a snippet insertion is not what was reviewed (' . $pair[0] . ').' );
 	}
 }
