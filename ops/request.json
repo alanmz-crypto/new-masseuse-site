@@ -1,7 +1,6 @@
 {
-  "id": "chair-insp-svc-38",
+  "id": "chair-insp-snips-38",
   "op": "inspect",
   "target": "staging38",
-  "query": "page",
-  "arg": "services"
+  "query": "snippets"
 }
