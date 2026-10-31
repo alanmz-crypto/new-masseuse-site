@@ -14,8 +14,8 @@ section pictures; make-tints.py); the strip and the jump links = add 'chair-mass
 EVERYTHING IS ADDED (Ryan's standing rule, 2026-10-24: "you can add, don't subtract without asking"); the two snippet edits are one-line INSERTIONS into lists, by exact replacement:
   1. a NEW page /chair-massage/ built in the Therapeutic page's own block markup: every block attribute string below was copied from page 1107 as stored on staging38 on 2026-10-31
      (inspect `chair-insp-ther-38`, sha256 1e54f7ff...), only the block ids are new (8 hex characters each, refused by the installer if they already occur in any post) and the
-     editor's leftover template comments are not carried over. Pictures: {{IMG_URL_n}} / {{IMG_ID_n}} are filled in by the installer from the media library (hero = the corporate
-     illustration found by sha256; tints = imported by the installer, found again by their sha256 on a repeat run), so applying again after a rollback gives the same content;
+     editor's leftover template comments are not carried over. Pictures: {{IMG_URL_n}} is filled in by the installer from the media library (hero = the corporate illustration
+     found by sha256; tints = imported by the installer, found again by their sha256 on a repeat run); no media ids in the markup, so applying again after a rollback gives byte-identical content;
   2. a Services row (the same grid as the three service rows; the green tint; relative links) inserted before the Corporate & Group row, by its block id;
   3. 'chair-massage' appended to the CorporateBand page list and a 'chair-massage' plan line added to A11yPageJumpLinks (both snippets' current code is frozen below: the band from
      booking-date/booking-date-content.php `band_new`, the jump links from accessibility/install-jump-links.php; sha256 of both checked against staging38 on 2026-10-31);
@@ -205,8 +205,8 @@ A_STEP_CARD = '{"block_id":"%s","justifyContentDesktop":"flex-start","topPadding
 A_STEP_TEXT = '{"block_id":"%s","classMigrate":true,"headingDescToggle":true,"headingColor":"var(\\u002d\\u002dast-global-color-2)","subHeadingColor":"","headingTag":"p","headSpace":10,"subHeadSpace":0,"headFontSize":24,"headFontSizeTablet":22,"headFontSizeMobile":20,"headLineHeight":1.3000000000000000444089209850062616169452667236328125}'
 # the picture blocks: the Therapeutic page's attribute set, with the picture's own URL, id, alt and natural size; hero and section pictures differ only in the size/margin attributes
 _RADII = '"imageBoxShadowVOffset":2,"imageBoxShadowBlur":5,"imageBoxShadowSpread":-1,"customHeightSetDesktop":true,"customHeightSetTablet":true,"customHeightSetMobile":true,"imageBorderTopLeftRadius":20,"imageBorderTopRightRadius":20,"imageBorderBottomLeftRadius":20,"imageBorderBottomRightRadius":20,"imageBorderTopLeftRadiusTablet":16,"imageBorderTopRightRadiusTablet":16,"imageBorderBottomLeftRadiusTablet":16,"imageBorderBottomRightRadiusTablet":16,"imageBorderTopLeftRadiusMobile":14,"imageBorderTopRightRadiusMobile":14,"imageBorderBottomLeftRadiusMobile":14,"imageBorderBottomRightRadiusMobile":14}'
-A_IMG_HERO = ('{"block_id":"%(id)s","disableLazyLoad":true,"url":"%(url)s","urlTablet":"%(url)s","urlMobile":"%(url)s","alt":"%(alt)s","id":%(att)s,"linkDestination":"none","title":"%(alt)s","width":396,"widthTablet":260,"widthMobile":800,"height":380,"heightTablet":250,"heightMobile":300,"naturalWidth":%(w)d,"naturalHeight":%(h)d,"sizeSlug":"custom","sizeSlugTablet":"custom","sizeSlugMobile":"custom","imageTopMargin":0,"imageRightMargin":0,"imageLeftMargin":0,"imageBottomMargin":-180,"imageTopMarginTablet":0,"imageRightMarginTablet":0,"imageLeftMarginTablet":0,"imageBottomMarginTablet":-120,"imageTopMarginMobile":0,"imageRightMarginMobile":0,"imageLeftMarginMobile":0,"imageBottomMarginMobile":-80,"imageMarginLink":false,"objectFit":"cover","objectFitTablet":"cover","objectFitMobile":"cover",' + _RADII)
-A_IMG_SECTION = ('{"block_id":"%(id)s","disableLazyLoad":true,"url":"%(url)s","urlTablet":"%(url)s","urlMobile":"%(url)s","alt":"%(alt)s","id":%(att)s,"linkDestination":"none","title":"%(alt)s","width":200,"widthTablet":282,"widthMobile":800,"height":200,"heightTablet":194,"heightMobile":250,"naturalWidth":%(w)d,"naturalHeight":%(h)d,"sizeSlug":"custom","sizeSlugTablet":"custom","sizeSlugMobile":"custom","objectFit":"cover","objectFitTablet":"cover","objectFitMobile":"cover",' + _RADII)
+A_IMG_HERO = ('{"block_id":"%(id)s","disableLazyLoad":true,"url":"%(url)s","urlTablet":"%(url)s","urlMobile":"%(url)s","alt":"%(alt)s","linkDestination":"none","title":"%(alt)s","width":396,"widthTablet":260,"widthMobile":800,"height":380,"heightTablet":250,"heightMobile":300,"naturalWidth":%(w)d,"naturalHeight":%(h)d,"sizeSlug":"custom","sizeSlugTablet":"custom","sizeSlugMobile":"custom","imageTopMargin":0,"imageRightMargin":0,"imageLeftMargin":0,"imageBottomMargin":-180,"imageTopMarginTablet":0,"imageRightMarginTablet":0,"imageLeftMarginTablet":0,"imageBottomMarginTablet":-120,"imageTopMarginMobile":0,"imageRightMarginMobile":0,"imageLeftMarginMobile":0,"imageBottomMarginMobile":-80,"imageMarginLink":false,"objectFit":"cover","objectFitTablet":"cover","objectFitMobile":"cover",' + _RADII)
+A_IMG_SECTION = ('{"block_id":"%(id)s","disableLazyLoad":true,"url":"%(url)s","urlTablet":"%(url)s","urlMobile":"%(url)s","alt":"%(alt)s","linkDestination":"none","title":"%(alt)s","width":200,"widthTablet":282,"widthMobile":800,"height":200,"heightTablet":194,"heightMobile":250,"naturalWidth":%(w)d,"naturalHeight":%(h)d,"sizeSlug":"custom","sizeSlugTablet":"custom","sizeSlugMobile":"custom","objectFit":"cover","objectFitTablet":"cover","objectFitMobile":"cover",' + _RADII)
 A_PARA_400 = '{"style":{"typography":{"fontWeight":"400"}}}'
 
 # ---- block ids: one per block, derived from a name ----
@@ -236,14 +236,16 @@ def jattr(s):
 
 
 def image_block(kind, n, alt, w, h):
-    """A Spectra image block whose URL and attachment id are template markers ({{IMG_URL_n}}, {{IMG_ID_n}}); the installer fills them from the media library."""
-    url, att = '{{IMG_URL_%d}}' % n, '{{IMG_ID_%d}}' % n
-    a = (A_IMG_HERO if kind == 'hero' else A_IMG_SECTION) % {'id': ID['img%d' % n], 'url': url, 'alt': jattr(alt), 'att': att, 'w': w, 'h': h}
+    """A Spectra image block whose URL is a template marker ({{IMG_URL_n}}); the installer fills it from the media library.
+    No media id in the attributes or the img class (the corporate row and the Work With Me photo do the same): the block then depends only on the file's URL, so applying again after
+    a rollback (which deletes and re-imports the tints under new ids) gives byte-identical content, and the rehearsal's re-apply check holds."""
+    url = '{{IMG_URL_%d}}' % n
+    a = (A_IMG_HERO if kind == 'hero' else A_IMG_SECTION) % {'id': ID['img%d' % n], 'url': url, 'alt': jattr(alt), 'w': w, 'h': h}
     size = 'width="396" height="380"' if kind == 'hero' else 'width="200" height="200"'
     return ('<!-- wp:uagb/image %s -->\n'
             '<div class="wp-block-uagb-image uagb-block-%s wp-block-uagb-image--layout-default wp-block-uagb-image--effect-static wp-block-uagb-image--align-none"><figure class="wp-block-uagb-image__figure">'
-            '<img srcset="%s ,%s 780w, %s 360w" sizes="(max-width: 480px) 150px" src="%s" alt="%s" class="uag-image-%s" %s title="%s" role="img"/></figure></div>\n'
-            '<!-- /wp:uagb/image -->') % (a, ID['img%d' % n], url, url, url, url, esc(alt), att, size, esc(alt))
+            '<img srcset="%s ,%s 780w, %s 360w" sizes="(max-width: 480px) 150px" src="%s" alt="%s" %s title="%s" role="img"/></figure></div>\n'
+            '<!-- /wp:uagb/image -->') % (a, ID['img%d' % n], url, url, url, url, esc(alt), size, esc(alt))
 
 
 def section_row(n, heading, paras, cite, last=False):
@@ -320,9 +322,9 @@ ROW_ATTRS = A_ROW.replace('\\u002d\\u002d', '--')   # the Services page stores i
 
 
 def build_row():
-    a = (A_IMG_SECTION % {'id': ID['svcimg'], 'url': '{{IMG_URL_1}}', 'alt': jattr(TINTS[0][1]), 'att': '{{IMG_ID_1}}', 'w': 512, 'h': 416}).replace('\\u002d\\u002d', '--')
+    a = (A_IMG_SECTION % {'id': ID['svcimg'], 'url': '{{IMG_URL_1}}', 'alt': jattr(TINTS[0][1]), 'w': 512, 'h': 416}).replace('\\u002d\\u002d', '--')
     pic = ('<!-- wp:uagb/image %s -->\n<div class="wp-block-uagb-image uagb-block-%s wp-block-uagb-image--layout-default wp-block-uagb-image--effect-static wp-block-uagb-image--align-none"><figure class="wp-block-uagb-image__figure">'
-           '<img srcset="{{IMG_URL_1}} ,{{IMG_URL_1}} 780w, {{IMG_URL_1}} 360w" sizes="(max-width: 480px) 150px" src="{{IMG_URL_1}}" alt="%s" class="uag-image-{{IMG_ID_1}}" width="200" height="200" title="%s" role="img"/></figure></div>\n'
+           '<img srcset="{{IMG_URL_1}} ,{{IMG_URL_1}} 780w, {{IMG_URL_1}} 360w" sizes="(max-width: 480px) 150px" src="{{IMG_URL_1}}" alt="%s" width="200" height="200" title="%s" role="img"/></figure></div>\n'
            '<!-- /wp:uagb/image -->') % (a, ID['svcimg'], esc(TINTS[0][1]), esc(TINTS[0][1]))
     return ('<!-- wp:uagb/container %s -->\n<div class="wp-block-uagb-container uagb-layout-grid uagb-block-%s">%s\n\n'
             '<!-- wp:uagb/advanced-heading %s -->\n<div class="wp-block-uagb-advanced-heading uagb-block-%s"></div>\n<!-- /wp:uagb/advanced-heading -->\n\n'
@@ -370,7 +372,7 @@ def build():
     # ---- wording gate: the page as a reader sees it (markers filled with harmless values) ----
     filled = content
     for n in range(5):
-        filled = filled.replace('{{IMG_URL_%d}}' % n, '/wp-content/uploads/x%d.webp' % n).replace('{{IMG_ID_%d}}' % n, '0')
+        filled = filled.replace('{{IMG_URL_%d}}' % n, '/wp-content/uploads/x%d.webp' % n)
     faq_text = ' '.join(q + ' ' + a for q, a in FAQ)
     res = wt.check(filled + ' <p>' + html_mod.escape(faq_text) + '</p>')   # the FAQ lives in block attributes a tag-stripper cannot see: appended as text before the heading is NOT possible, so check it separately below
     res_faq = wt.hits(wt.text(html_mod.escape(faq_text)), wt.VOICE + wt.CLAIMS + wt.EVIDENCE)
