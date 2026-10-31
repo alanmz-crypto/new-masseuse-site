@@ -1,8 +1,7 @@
 {
-  "id": "run-20261030-210537",
-  "op": "run",
-  "target": "live",
-  "script": "seo-fixes/push-seo-fixes.sh",
-  "args": [],
-  "tests": "auto"
+  "id": "chair-insp-ther-38",
+  "op": "inspect",
+  "target": "staging38",
+  "query": "page",
+  "arg": "therapeutic-massage"
 }
