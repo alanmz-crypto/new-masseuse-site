@@ -1,10 +1,10 @@
 {
-  "id": "chair-apply-38",
+  "id": "chair-check-38",
   "op": "run",
   "target": "staging38",
   "script": "chair-massage/push-chair-massage.sh",
   "args": [
-    "--apply"
+    "--check"
   ],
-  "tests": "auto"
+  "tests": "none"
 }
