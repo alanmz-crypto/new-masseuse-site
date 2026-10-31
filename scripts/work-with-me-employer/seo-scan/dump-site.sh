@@ -46,8 +46,8 @@ get() { # get NAME URL [curl options]   headers to NAME.hdr, body to NAME.body, 
 echo "-- site files and sitemaps"
 get robots "https://$want/robots.txt"
 get sitemap-index "https://$want/wp-sitemap.xml"
-mapfile -t subs < <(grep -o '<loc>[^<]*</loc>' "$pub"/02-sitemap-index.body 2>/dev/null | sed 's/<[^>]*>//g')
-for s in "${subs[@]}"; do get "sitemap-$(basename "$s" .xml)" "$s"; done
+grep -o '<loc>[^<]*</loc>' "$pub"/02-sitemap-index.body 2>/dev/null | sed 's/<[^>]*>//g' > "$tmp/subs"   # a file, not <(...): the server's shell has no /dev/fd
+while IFS= read -r s; do [ -n "$s" ] && get "sitemap-$(basename "$s" .xml)" "$s"; done < "$tmp/subs"
 { echo "https://$want/"; for f in "$pub"/*-sitemap-*.body; do grep -o '<loc>[^<]*</loc>' "$f" 2>/dev/null | sed 's/<[^>]*>//g'; done; } | grep -v '\.xml$' | sort -u > "$tmp/urls"
 echo "-- $(wc -l < "$tmp/urls") pages from the sitemaps"
 while IFS= read -r u; do p=${u#https://$want}; p=${p#/}; p=${p%/}; [ -n "$p" ] || p=home
