@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-31 04:40 UTC  **PASS**  `chair-insp-snips-38`  [reports/2026-10-31/044042-chair-insp-snips-38.md](reports/2026-10-31/044042-chair-insp-snips-38.md)  (run 41169522322)
 - 2026-10-31 04:39 UTC  **PASS**  `chair-insp-svc-38`  [reports/2026-10-31/043912-chair-insp-svc-38.md](reports/2026-10-31/043912-chair-insp-svc-38.md)  (run 41169422152)
 - 2026-10-31 04:38 UTC  **PASS**  `chair-insp-ther-38`  [reports/2026-10-31/043826-chair-insp-ther-38.md](reports/2026-10-31/043826-chair-insp-ther-38.md)  (run 41169363546)
 - 2026-10-30 21:16 UTC  **PASS**  `live-20261030-210629`  [reports/2026-10-30/211606-live-20261030-210629.md](reports/2026-10-30/211606-live-20261030-210629.md)  (run 41129512671)
