@@ -1,8 +1,11 @@
 {
-  "id": "run-20261030-210537",
+  "id": "chair-chk-38-v2b",
   "op": "run",
-  "target": "live",
-  "script": "seo-fixes/push-seo-fixes.sh",
-  "args": [],
-  "tests": "auto"
+  "target": "staging38",
+  "script": "chair-massage/check-chair-massage.mjs",
+  "args": [
+    "https://staging38.thaisolitude.com",
+    "inline"
+  ],
+  "tests": "none"
 }

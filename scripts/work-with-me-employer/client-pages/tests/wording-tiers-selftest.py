@@ -76,6 +76,19 @@ expect("Deep Tissue: 'we' is refused in its source titles", bool(wt.check(page3(
 expect("Deep Tissue: no exemption if the heading is missing", bool(wt.check(page3("", "The trial measured chronic pain.", "").replace(H3, "Something else"))["before"]))
 both3 = '<main><h2>%s</h2><p>ok</p><h2>%s</h2><p>chronic</p></main>' % (H2, H3)
 expect("Therapeutic + Deep Tissue headings together disable the exemption", bool(wt.check(both3)["before"]) and not wt.check(both3)["found"])
+# ---- the Chair Massage heading (2026-10-30, the new service page) works the same way
+H4 = "What the Research Says About Chair Massage"
+def page4(before="", research="", cites=""):
+    return page(before, research, cites).replace(H, H4)
+expect("the Chair Massage heading is one of the approved headings", H4 in wt.RESEARCH_HEADINGS)
+expect("Chair Massage: 'anxiety' is accepted inside its research section", not wt.check(page4("", "Anxiety scores were lower in 38 nurses.", ""))["research"] and wt.check(page4("", "Anxiety scores were lower in 38 nurses.", ""))["found"])
+expect("Chair Massage: 'anxiety' is refused before its research section", bool(wt.check(page4("Chair massage eases anxiety.", "", ""))["before"]))
+expect("Chair Massage: 'anxiety' in a verbatim title is accepted", not wt.check(page4("", "", "Smith J. Massage therapy reduces anxiety. J Test, 1996."))["cites"])
+expect("Chair Massage: claim verbs are refused inside its research section", bool(wt.check(page4("", "Chair massage can treat it.", ""))["research"]))
+expect("Chair Massage: 'we' is refused in its source titles", bool(wt.check(page4("", "", "Smith J. We came. J Test, 2015."))["cites"]))
+expect("Chair Massage: no exemption if the heading is missing", bool(wt.check(page4("", "Anxiety scores were lower.", "").replace(H4, "Something else"))["before"]))
+both4 = '<main><h2>%s</h2><p>ok</p><h2>%s</h2><p>chronic</p></main>' % (H3, H4)
+expect("Deep Tissue + Chair Massage headings together disable the exemption", bool(wt.check(both4)["before"]) and not wt.check(both4)["found"])
 expect("the old list is unchanged for the Services and Therapeutic pages (BAD still has all 25 evidence/voice/heal patterns)", len(wt.BAD) == 1 + len(wt.EVIDENCE) + len(wt.VOICE) and len(wt.EVIDENCE) == 25)
 
 print("\nRESULT: " + ("all cases right" if not fails else "%d case(s) WRONG" % fails))

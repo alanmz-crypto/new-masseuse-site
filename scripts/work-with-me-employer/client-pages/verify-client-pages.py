@@ -402,6 +402,66 @@ if SCHED in wm:
 else:
     print("INFO Work With Me and availability: the update is not on this site yet (the parts the plan says to keep were checked above)")
 
+# ---- Chair Massage: the new service page (Ryan, 2026-10-30; chair-massage/install-chair-massage.php) ----------------------------------------------------------------------------------------
+# A site without the page gets an INFO line; a site with it gets the strict checks (wording tiers, structure, 32 sources, 11 questions, strip, jump links, pictures, Services row).
+cm, cm_code = get("/chair-massage/")
+if cm_code != 200:
+    print("INFO Chair Massage: the page is not on this site yet (chair-massage/install-chair-massage.php has not been applied here)")
+else:
+    cmain = re.search(r"<main.*?</main>", cm, re.S)
+    mh_cm = cmain.group(0) if cmain else ""
+    ct = text_of(mh_cm)
+    check("Chair Massage body found", bool(ct))
+    res_cm = wt.check(mh_cm)
+    check("Chair Massage: the research heading found once", res_cm["found"])
+    check("Chair Massage: no restricted wording outside the research section", not res_cm["before"], res_cm["before"])
+    check("Chair Massage research section: no claim verbs, no we/our/us/studio", not res_cm["research"], res_cm["research"])
+    check("Chair Massage source titles: no we/our/us/studio", not res_cm["cites"], res_cm["cites"])
+    check("Chair Massage: H1 once", cm.count(">Chair Massage in Portland</h1>") == 1)
+    check("Chair Massage: title tag", "<title>Chair Massage | Butsaba Dusrai, Oregon LMT" in cm)
+    CM_DESC = "Chair massage in Portland with Butsaba Dusrai, LMT: short, seated, fully clothed sessions for workplaces and events, with pressure adjusted as you go."
+    check("Chair Massage: meta and og descriptions", meta(cm, "name", "description") == CM_DESC and meta(cm, "property", "og:description") == CM_DESC, meta(cm, "name", "description"))
+    bad_cm = [w for w in BAD if re.search(w, " ".join(filter(None, [meta(cm, "name", "description"), meta(cm, "property", "og:title"), meta(cm, "property", "og:description")])), re.I)]
+    check("Chair Massage meta/og carry no restricted wording", not bad_cm, bad_cm)
+    for hh in ["What Is Chair Massage?", "Common Reasons Clients Choose Chair Massage", "Who Can Benefit From Chair Massage?", "Questions About Chair Massage", "What To Expect During Your Appointment", "What the Research Says About Chair Massage"]:
+        check("Chair Massage: heading %r once" % hh, ct.count(hh) == 1)
+    check("Chair Massage: the strip under the header, once", cm.count('<div class="ts-corp-band">') == 1)
+    check("Chair Massage: the jump-links row with four targets", len(re.findall(r'<nav [^>]*class="ts-jump"', cm)) == 1 and all(('href="#%s"' % a) in cm and ('id="%s"' % a) in cm for a in ("ts-what-it-is", "ts-common-reasons", "ts-who-can-benefit", "ts-what-to-expect")))
+    check("Chair Massage: the safety sentence once (in the paragraph before the steps)", ct.count("New numbness, weakness, unexplained swelling or radiating pain means you should see a doctor before massage.") == 1)
+    for qq in ["Do I Need to Undress for Chair Massage?", "How Long Is a Chair Massage?", "What Is the Massage Chair Like?", "Is Chair Massage the Same as a Mechanical Massage Chair?", "How Much Pressure Will You Use?",
+               "How Is Chair Massage Different From Your Other Sessions?", "Will I Feel the Results Right Away?", "What Does the Host Need to Provide?", "Where Do Sessions Take Place?", "How Do I Book a Session?"]:
+        check("Chair Massage: FAQ question %r appears once" % qq, ct.count(qq) == 1)
+    check("Chair Massage: eleven questions", mh_cm.count('class="uagb-question"') == 11, mh_cm.count('class="uagb-question"'))
+    check("Chair Massage: the 'Where Do Sessions Take Place?' answer says %s, once" % BOOK_DATE, ct.count("with bookings beginning %s. Individual appointments at a dedicated Thai Solitude location are planned for summer 2027. I do not offer individual house calls." % BOOK_DATE) == 1)
+    check("Chair Massage: no links inside FAQ answers (axe nested-interactive)", not re.search(r'uagb-faq-content[^>]*>(?:(?!</div>).)*<a ', mh_cm, re.S))
+    csumm = [wt.text(x) for x in re.findall(r"<summary>(.*?)</summary>", mh_cm, re.S)]
+    check("Chair Massage: the five research panels in order", csumm == ["Reviews, and What They Say About Limits", "Stress, Anxiety and Blood Pressure", "Desk Work, Muscle Discomfort and Movement", "Nurses, Hospital Staff and Carers", "Sources"], csumm)
+    cdet = re.findall(r"<details[^>]*>", mh_cm)
+    check("Chair Massage: first panel open, the other four closed", [" open" in d for d in cdet] == [True, False, False, False, False], len(cdet))
+    clinks = re.findall(r'<a [^>]*href="(https://[^"]+)"[^>]*>\[(\d+)\]</a>', mh_cm)
+    corder = []
+    for _, n in clinks:
+        if int(n) not in corder:
+            corder.append(int(n))
+    check("Chair Massage: numbered markers run 1..N in order of first use", bool(corder) and corder == list(range(1, len(corder) + 1)), corder[-3:])
+    cmap = {}
+    for u, n in clinks:
+        cmap.setdefault(n, set()).add(u)
+    check("Chair Massage: every number points to exactly one source", all(len(v) == 1 for v in cmap.values()))
+    check("Chair Massage: as many Sources entries as numbers (32)", len(re.findall(r'<cite class="ts-source">', mh_cm)) == len(corder) == 32, len(corder))
+    chosts = {re.match(r"https://([^/]+)/", u).group(1) for u, _ in clinks if re.match(r"https://([^/]+)/", u)}
+    check("Chair Massage: sources are only PubMed or NCCIH", chosts <= {"pubmed.ncbi.nlm.nih.gov", "www.nccih.nih.gov"}, sorted(chosts))
+    check("Chair Massage: scope note (no mechanical chairs, no patients) and 'disappointing results' sentence once each",
+          ct.count("studies of mechanical massage chairs, and of massage given to patients as part of their care, are not summarized here") == 1 and ct.count("I included the studies I found with disappointing results, not only the favorable ones.") == 1)
+    check("Chair Massage: the discouraging results are there (no comparison group, cortisol unchanged, no significant effects in the catheterization laboratory, yoga did more)",
+          "had no comparison group, so the lower blood pressure cannot be separated" in ct and "urinary cortisol and blood pressure did not differ significantly" in ct and "no significant effects were found on fatigue, pain, relaxation, stress or tension" in ct and "yoga did more" in ct)
+    calts = re.findall(r'<img [^>]*?alt="([^"]*)"[^>]*?title="([^"]*)"', mh_cm)
+    check("Chair Massage: one picture (Ryan's watercolor, the hero), tooltip equal to the alt text, none saying 'by Butsaba'", len(calts) == 1 and all(a1 and a1 == t1 for a1, t1 in calts) and "by Butsaba" not in mh_cm and 'chair-massage-tree.webp" alt=' in mh_cm, len(calts))
+    check("Chair Massage: licence number in the footer", "LMT-29905" in cm)
+    svc_cm, _ = get("/services/")
+    check("Services: the Chair Massage row links to the new page, once, before the corporate row", svc_cm.count('href="/chair-massage/">Chair Massage</a>') == 1 and svc_cm.find('href="/chair-massage/">Chair Massage</a>') < svc_cm.find('href="/corporate-massage-portland/">Corporate &amp; Group Massage</a>'))
+    check("Services: the watercolor appears once (the Chair Massage row)", svc_cm.count('chair-massage-tree.webp" alt=') == 1)
+
 print("\nRESULT: " + ("all checks passed" if not fails else f"{fails} check(s) FAILED"))
 sys.exit(1 if fails else 0)
 
