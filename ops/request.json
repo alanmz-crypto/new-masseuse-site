@@ -1,11 +1,8 @@
 {
-  "id": "chair-live-chk-1",
+  "id": "site-dump-live-1",
   "op": "run",
   "target": "live",
-  "script": "chair-massage/check-chair-massage.mjs",
-  "args": [
-    "https://thaisolitude.com",
-    "inline"
-  ],
-  "tests": "none"
+  "script": "seo-scan/dump-site.sh",
+  "args": [],
+  "tests": "auto"
 }
