@@ -1,10 +1,11 @@
 {
-  "id": "chair-chk-38",
+  "id": "chair-chk-38b",
   "op": "run",
   "target": "staging38",
   "script": "chair-massage/check-chair-massage.mjs",
   "args": [
-    "https://staging38.thaisolitude.com"
+    "https://staging38.thaisolitude.com",
+    "inline"
   ],
   "tests": "none"
 }
