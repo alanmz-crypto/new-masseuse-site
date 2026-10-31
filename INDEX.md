@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-31 11:40 UTC  **PASS**  `chair-live-chk-1`  [reports/2026-10-31/114043-chair-live-chk-1.md](reports/2026-10-31/114043-chair-live-chk-1.md)  (run 41197729404)
 - 2026-10-31 11:27 UTC  **PASS**  `live-chair-massage-1`  [reports/2026-10-31/112741-live-chair-massage-1.md](reports/2026-10-31/112741-live-chair-massage-1.md)  (run 41196684922)
 - 2026-10-31 08:04 UTC  **PASS**  `chair-dry-live-1`  [reports/2026-10-31/080437-chair-dry-live-1.md](reports/2026-10-31/080437-chair-dry-live-1.md)  (run 41183076424)
 - 2026-10-31 07:17 UTC  **PASS**  `chair-chk-38-v2b`  [reports/2026-10-31/071712-chair-chk-38-v2b.md](reports/2026-10-31/071712-chair-chk-38-v2b.md)  (run 41179870071)
