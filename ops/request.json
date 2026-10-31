@@ -1,10 +1,7 @@
 {
-  "id": "chair-restore-38",
-  "op": "run",
+  "id": "chair-svc-after-38",
+  "op": "inspect",
   "target": "staging38",
-  "script": "prove-restore.sh",
-  "args": [
-    "staging38"
-  ],
-  "tests": "none"
+  "query": "page",
+  "arg": "services"
 }
