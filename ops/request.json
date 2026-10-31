@@ -1,8 +1,10 @@
 {
-  "id": "chair-dry-38",
+  "id": "chair-apply-38",
   "op": "run",
   "target": "staging38",
   "script": "chair-massage/push-chair-massage.sh",
-  "args": [],
+  "args": [
+    "--apply"
+  ],
   "tests": "auto"
 }
