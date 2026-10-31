@@ -1,7 +1,7 @@
 {
-  "id": "chair-insp-ther-38",
+  "id": "chair-insp-svc-38",
   "op": "inspect",
   "target": "staging38",
   "query": "page",
-  "arg": "therapeutic-massage"
+  "arg": "services"
 }
