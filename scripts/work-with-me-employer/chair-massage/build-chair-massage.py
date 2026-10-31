@@ -8,15 +8,18 @@
 SOURCE OF THE REQUEST (Ryan, 2026-10-30, cloud session): "look at the services page and the way that all the services pages are designed, such as Thai massage or therapeutic massage
 ... recreate those pages ... this time the service is chair massage. Do all the needed research for chair massage. Use web research tools. Look for high quality information. Try to use the
 sources that you see on the other service pages. This new page should resemble those other pages: the experience should feel seamless." Then: "Don't forget your original attempt at work begins
-on staging38." His three decisions the same evening (asked, answered): pictures = his corporate illustration recoloured (hero = the copy already in the media library, four duotone tints as the
-section pictures; make-tints.py); the strip and the jump links = add 'chair-massage' to both snippets' lists; the Services page = a Chair Massage row before the Corporate & Group row.
+on staging38." His three decisions the same evening (asked, answered): the strip and the jump links = add 'chair-massage' to both snippets' lists; the Services page = a Chair Massage row
+before the Corporate & Group row; pictures = at first his corporate illustration recoloured (version 1, applied on staging38 2026-10-31 05:03 UTC and rolled back 07:0x UTC), then, 2026-10-30
+23:56 Pacific, his own watercolor of a wooden chair with a small flowering tree growing from its back: "Use this image instead of the one you created for the page. But only use it once in the
+service page and once at the top of the chair massage page." So version 2 (this file): ONE picture (images/chair-massage-tree.webp, imported once), as the hero and as the Services row picture;
+the three text sections and the FAQ carry no picture (single-column rows; the FAQ under its own centered heading, as on the Thai and Deep Tissue pages).
 
 EVERYTHING IS ADDED (Ryan's standing rule, 2026-10-24: "you can add, don't subtract without asking"); the two snippet edits are one-line INSERTIONS into lists, by exact replacement:
   1. a NEW page /chair-massage/ built in the Therapeutic page's own block markup: every block attribute string below was copied from page 1107 as stored on staging38 on 2026-10-31
      (inspect `chair-insp-ther-38`, sha256 1e54f7ff...), only the block ids are new (8 hex characters each, refused by the installer if they already occur in any post) and the
-     editor's leftover template comments are not carried over. Pictures: {{IMG_URL_n}} is filled in by the installer from the media library (hero = the corporate illustration
-     found by sha256; tints = imported by the installer, found again by their sha256 on a repeat run); no media ids in the markup, so applying again after a rollback gives byte-identical content;
-  2. a Services row (the same grid as the three service rows; the green tint; relative links) inserted before the Corporate & Group row, by its block id;
+     editor's leftover template comments are not carried over. Picture: {{IMG_URL_0}} is filled in by the installer from the media item it imports (found again by its sha256 on a repeat
+     run); no media id in the markup, so applying again after a rollback gives byte-identical content;
+  2. a Services row (the same grid as the three service rows; the same picture; relative links) inserted before the Corporate & Group row, by its block id;
   3. 'chair-massage' appended to the CorporateBand page list and a 'chair-massage' plan line added to A11yPageJumpLinks (both snippets' current code is frozen below: the band from
      booking-date/booking-date-content.php `band_new`, the jump links from accessibility/install-jump-links.php; sha256 of both checked against staging38 on 2026-10-31);
   4. SureRank title and description for the new page.
@@ -65,20 +68,15 @@ def bid(name):
     return hashlib.sha1(('ts-chair-2026-10-30:' + name).encode()).hexdigest()[:8]
 
 
-# ---- pictures: 0 = hero (already in the media library), 1-4 = the tints made by make-tints.py ---------------------------------------------------------
-HERO = {'name': 'corporate-group-massage.webp', 'sha256': '764a7ef428cbd2985156b584116f8bc196dd5c3a900e2426ff4f49f8582a747e',
-        'alt': 'Illustration of a massage therapist giving a shoulder massage to a client lying on a massage table, with plants and flowers around them.', 'w': 512, 'h': 416}
-TINTS = [('green', 'The same illustration in green tones.'), ('teal', 'The same illustration in blue and teal tones.'), ('yellow', 'The same illustration in yellow tones.'), ('red', 'The same illustration in red tones.')]
+# ---- the one picture (Ryan's watercolor, 2026-10-30): the hero and the Services row picture; nowhere else on the page --------------------------------------
+PIC_NAME = 'chair-massage-tree.webp'
+PIC_ALT = 'Watercolor of a wooden chair in a garden, with a small flowering tree growing from its back.'
 
 
-def tint_images():
-    out = []
-    for tone, alt in TINTS:
-        name = 'chair-massage-%s.webp' % tone
-        with open(os.path.join(HERE, 'images', name), 'rb') as f:
-            sha = hashlib.sha256(f.read()).hexdigest()
-        out.append({'name': name, 'sha256': sha, 'alt': alt, 'title': alt, 'w': 512, 'h': 416})
-    return out
+def picture():
+    with open(os.path.join(HERE, 'images', PIC_NAME), 'rb') as f:
+        sha = hashlib.sha256(f.read()).hexdigest()
+    return {'name': PIC_NAME, 'sha256': sha, 'alt': PIC_ALT, 'title': PIC_ALT, 'w': 1024, 'h': 1024}
 
 
 # ---- sources: the Therapeutic registry for the shared ones (so an entry cannot drift), new entries for the chair massage studies ------------------------
@@ -196,6 +194,11 @@ _GRID_COLS = ('"layout":"grid","gridColumnDesktop":[{"default":"custom","min":{"
               '"gridColumnTablet":[{"default":"custom","min":{"unit":"px","value":10},"max":{"unit":"fr","value":1},"custom":{"unit":"%%","value":40}},{"default":"custom","min":{"unit":"px","value":10},"max":{"unit":"fr","value":1},"custom":{"unit":"%%","value":7}},{"default":"custom","min":{"unit":"px","value":10},"max":{"unit":"fr","value":1},"custom":{"unit":"fr","value":1}}],"gridAlignItemsDesktop":"center","gridAlignItemsTablet":"start"}')
 A_ROW = ('{"block_id":"%s","bottomPaddingDesktop":40,"topPaddingTablet":0,"bottomPaddingTablet":40,"leftPaddingTablet":0,"rightPaddingTablet":0,"topPaddingMobile":0,"bottomPaddingMobile":30,"leftPaddingMobile":0,"rightPaddingMobile":0,"paddingLink":false,"rowGapMobile":12,"columnGapDesktop":32,"columnGapTablet":20,"containerBorderTopWidth":0,"containerBorderLeftWidth":0,"containerBorderRightWidth":0,"containerBorderBottomWidth":1,"containerBorderLink":false,"containerBorderStyle":"solid","containerBorderColor":"var(\\u002d\\u002dast-global-color-6)",' + _GRID_COLS)
 A_ROW_LAST = ('{"block_id":"%s","bottomPaddingDesktop":0,"paddingLink":false,"rowGapMobile":12,"columnGapDesktop":32,"columnGapTablet":20,"containerBorderTopWidth":0,"containerBorderLeftWidth":0,"containerBorderRightWidth":0,"containerBorderBottomWidth":0,"containerBorderLink":false,"containerBorderStyle":"none",' + _GRID_COLS)
+# Version 2 (no section pictures): the same row container (the rule underneath, the same paddings) without the picture grid, and the text block given a right padding on desktop so the
+# measure stays near the other pages' text column (about 62 characters a line) instead of running the full 1200 px; nothing on tablet and phone.
+A_TEXT_ROW = '{"block_id":"%s","bottomPaddingDesktop":40,"topPaddingTablet":0,"bottomPaddingTablet":40,"leftPaddingTablet":0,"rightPaddingTablet":0,"topPaddingMobile":0,"bottomPaddingMobile":30,"leftPaddingMobile":0,"rightPaddingMobile":0,"paddingLink":false,"containerBorderTopWidth":0,"containerBorderLeftWidth":0,"containerBorderRightWidth":0,"containerBorderBottomWidth":1,"containerBorderLink":false,"containerBorderStyle":"solid","containerBorderColor":"var(\\u002d\\u002dast-global-color-6)"}'
+A_TEXT_ROW_LAST = '{"block_id":"%s","bottomPaddingDesktop":0,"paddingLink":false,"containerBorderTopWidth":0,"containerBorderLeftWidth":0,"containerBorderRightWidth":0,"containerBorderBottomWidth":0,"containerBorderLink":false,"containerBorderStyle":"none"}'
+A_SECTION_TEXT_WIDE = '{"block_id":"%s","classMigrate":true,"headingDescToggle":true,"subHeadingColor":"","headSpace":8,"subHeadSpace":0,"blockTopPadding":0,"blockRightPadding":420,"blockBottomPadding":0,"blockLeftPadding":0,"blockTopPaddingTablet":0,"blockRightPaddingTablet":0,"blockBottomPaddingTablet":0,"blockLeftPaddingTablet":0,"blockTopPaddingMobile":0,"blockRightPaddingMobile":0,"blockBottomPaddingMobile":0,"blockLeftPaddingMobile":0}'
 A_SPACER = '{"block_id":"%s","classMigrate":true,"headingDescToggle":false,"headingColor":"var(\\u002d\\u002dast-global-color-0)","blockLeftPadding":28,"blockBottomPadding":100,"blockTopPaddingTablet":0,"blockRightPaddingTablet":0,"blockLeftPaddingTablet":0,"blockBottomPaddingTablet":0,"blockTopPaddingMobile":8,"blockRightPaddingMobile":0,"blockLeftPaddingMobile":0,"blockBottomPaddingMobile":0}'
 A_SECTION_TEXT = '{"block_id":"%s","classMigrate":true,"headingDescToggle":true,"subHeadingColor":"","headSpace":8,"subHeadSpace":0}'
 A_FAQ = '{"block_id":"%s","borderStyle":"","borderWidth":"","borderRadius":"","borderColor":"","overallBorderTopWidth":1,"overallBorderLeftWidth":1,"overallBorderRightWidth":1,"overallBorderBottomWidth":1,"overallBorderTopLeftRadius":2,"overallBorderTopRightRadius":2,"overallBorderBottomLeftRadius":2,"overallBorderBottomRightRadius":2,"overallBorderStyle":"solid","overallBorderColor":"#D2D2D2"}'
@@ -210,7 +213,7 @@ A_IMG_SECTION = ('{"block_id":"%(id)s","disableLazyLoad":true,"url":"%(url)s","u
 A_PARA_400 = '{"style":{"typography":{"fontWeight":"400"}}}'
 
 # ---- block ids: one per block, derived from a name ----
-ID = {k: bid(k) for k in ['hero', 'h1', 'img0', 'main', 'row1', 'img1', 'sp1', 'txt1', 'row2', 'img2', 'sp2', 'txt2', 'row3', 'img3', 'sp3', 'txt3', 'row4', 'img4', 'sp4', 'faq', 'expect', 'steps',
+ID = {k: bid(k) for k in ['hero', 'h1', 'img0', 'main', 'row1', 'txt1', 'row2', 'txt2', 'row3', 'txt3', 'row4', 'faqhead', 'faq', 'expect', 'steps',
                            'step1', 'steph1', 'step2', 'steph2', 'step3', 'steph3', 'step4', 'steph4', 'research', 'svcrow', 'svcimg', 'svcsp', 'svctxt'] + ['faq%d' % i for i in range(len(FAQ))]}
 assert len(set(ID.values())) == len(ID), 'block id collision'
 
@@ -249,14 +252,13 @@ def image_block(kind, n, alt, w, h):
 
 
 def section_row(n, heading, paras, cite, last=False):
-    alt = TINTS[n - 1][1]
+    """A text section without a picture (version 2): the same row container with the rule underneath, one heading block."""
     body = '<br><br>'.join(cite.mark(esc(p)) for p in paras)
-    a_row = (A_ROW_LAST if last else A_ROW) % ID['row%d' % n]
-    return ('<!-- wp:uagb/container %s -->\n<div class="wp-block-uagb-container uagb-layout-grid uagb-block-%s">%s\n\n'
-            '<!-- wp:uagb/advanced-heading %s -->\n<div class="wp-block-uagb-advanced-heading uagb-block-%s"></div>\n<!-- /wp:uagb/advanced-heading -->\n\n'
+    a_row = (A_TEXT_ROW_LAST if last else A_TEXT_ROW) % ID['row%d' % n]
+    return ('<!-- wp:uagb/container %s -->\n<div class="wp-block-uagb-container uagb-block-%s">'
             '<!-- wp:uagb/advanced-heading %s -->\n<div class="wp-block-uagb-advanced-heading uagb-block-%s"><h2 class="uagb-heading-text">%s</h2><p class="uagb-desc-text">%s</p></div>\n'
             '<!-- /wp:uagb/advanced-heading --></div>\n<!-- /wp:uagb/container -->') % (
-        a_row, ID['row%d' % n], image_block('section', n, alt, 512, 416), A_SPACER % ID['sp%d' % n], ID['sp%d' % n], A_SECTION_TEXT % ID['txt%d' % n], ID['txt%d' % n], esc(heading), body)
+        a_row, ID['row%d' % n], A_SECTION_TEXT_WIDE % ID['txt%d' % n], ID['txt%d' % n], esc(heading), body)
 
 
 def faq_block():
@@ -301,20 +303,20 @@ def build_page():
     cite = Cite()
     hero = ('<!-- wp:uagb/container %s -->\n<div class="wp-block-uagb-container uagb-layout-grid uagb-block-%s default uagb-is-root-container"><!-- wp:uagb/advanced-heading %s -->\n'
             '<div class="wp-block-uagb-advanced-heading uagb-block-%s"><h1 class="uagb-heading-text">%s</h1></div>\n<!-- /wp:uagb/advanced-heading -->\n\n%s</div>\n<!-- /wp:uagb/container -->') % (
-        A_HERO_WRAP % ID['hero'], ID['hero'], A_H1 % ID['h1'], ID['h1'], esc(H1), image_block('hero', 0, HERO['alt'], HERO['w'], HERO['h']))
+        A_HERO_WRAP % ID['hero'], ID['hero'], A_H1 % ID['h1'], ID['h1'], esc(H1), image_block('hero', 0, PIC_ALT, 1024, 1024))
     rows = [section_row(1, 'What Is Chair Massage?', WHAT_IS, cite),
             section_row(2, 'Common Reasons Clients Choose Chair Massage', COMMON, cite),
-            section_row(3, 'Who Can Benefit From Chair Massage?', WHO, cite)]
-    faq_row = ('<!-- wp:uagb/container %s -->\n<div class="wp-block-uagb-container uagb-layout-grid uagb-block-%s">%s\n\n'
-               '<!-- wp:uagb/advanced-heading %s -->\n<div class="wp-block-uagb-advanced-heading uagb-block-%s"></div>\n<!-- /wp:uagb/advanced-heading -->\n\n%s</div>\n<!-- /wp:uagb/container -->') % (
-        A_ROW_LAST % ID['row4'], ID['row4'], image_block('section', 4, TINTS[3][1], 512, 416), A_SPACER % ID['sp4'], ID['sp4'], faq_block())
+            section_row(3, 'Who Can Benefit From Chair Massage?', WHO, cite, last=True)]
+    # the FAQ under its own centered heading, full width, as on the Thai and Deep Tissue pages (there is no picture column to sit beside)
+    faq_row = ('<!-- wp:uagb/container %s -->\n<div class="wp-block-uagb-container uagb-block-%s">%s\n\n%s</div>\n<!-- /wp:uagb/container -->') % (
+        A_TEXT_ROW_LAST % ID['row4'], ID['row4'], centered_heading('faqhead', 'Questions About Chair Massage'), faq_block())
     main = ('<!-- wp:uagb/container %s -->\n<div class="wp-block-uagb-container uagb-block-%s alignfull uagb-is-root-container"><div class="uagb-container-inner-blocks-wrap">%s\n\n%s</div></div>\n<!-- /wp:uagb/container -->') % (
         A_MAIN_WRAP % ID['main'], ID['main'], '\n\n'.join(rows + [faq_row]), centered_heading('expect', 'What To Expect During Your Appointment'))
     content = '\n\n'.join([hero, main, para(esc(EXPECT_INTRO)), steps_block(), research(cite)]) + '\n'
     return content, cite
 
 
-# ---- the Services row (same grid as the three service rows; the green tint; relative links) ----
+# ---- the Services row (same grid as the three service rows; the same picture as the hero; relative links) ----
 ROW_ANCHOR = '<!-- wp:uagb/container {"block_id":"b3c7a91e"'   # the Corporate & Group row (added 2026-10-24): the Chair Massage row goes immediately before it
 ROW_DESC = ('Short, seated massage through your clothing, focused on the back, shoulders, neck, arms and hands: what I bring to employee appreciation days and workplace events, '
             'in a portable chair that fits in a quiet corner. <a href="/%s/">Learn about Chair Massage</a>' % SLUG)
@@ -322,10 +324,10 @@ ROW_ATTRS = A_ROW.replace('\\u002d\\u002d', '--')   # the Services page stores i
 
 
 def build_row():
-    a = (A_IMG_SECTION % {'id': ID['svcimg'], 'url': '{{IMG_URL_1}}', 'alt': jattr(TINTS[0][1]), 'w': 512, 'h': 416}).replace('\\u002d\\u002d', '--')
+    a = (A_IMG_SECTION % {'id': ID['svcimg'], 'url': '{{IMG_URL_0}}', 'alt': jattr(PIC_ALT), 'w': 1024, 'h': 1024}).replace('\\u002d\\u002d', '--')
     pic = ('<!-- wp:uagb/image %s -->\n<div class="wp-block-uagb-image uagb-block-%s wp-block-uagb-image--layout-default wp-block-uagb-image--effect-static wp-block-uagb-image--align-none"><figure class="wp-block-uagb-image__figure">'
-           '<img srcset="{{IMG_URL_1}} ,{{IMG_URL_1}} 780w, {{IMG_URL_1}} 360w" sizes="(max-width: 480px) 150px" src="{{IMG_URL_1}}" alt="%s" width="200" height="200" title="%s" role="img"/></figure></div>\n'
-           '<!-- /wp:uagb/image -->') % (a, ID['svcimg'], esc(TINTS[0][1]), esc(TINTS[0][1]))
+           '<img srcset="{{IMG_URL_0}} ,{{IMG_URL_0}} 780w, {{IMG_URL_0}} 360w" sizes="(max-width: 480px) 150px" src="{{IMG_URL_0}}" alt="%s" width="200" height="200" title="%s" role="img"/></figure></div>\n'
+           '<!-- /wp:uagb/image -->') % (a, ID['svcimg'], esc(PIC_ALT), esc(PIC_ALT))
     return ('<!-- wp:uagb/container %s -->\n<div class="wp-block-uagb-container uagb-layout-grid uagb-block-%s">%s\n\n'
             '<!-- wp:uagb/advanced-heading %s -->\n<div class="wp-block-uagb-advanced-heading uagb-block-%s"></div>\n<!-- /wp:uagb/advanced-heading -->\n\n'
             '<!-- wp:uagb/advanced-heading %s -->\n<div class="wp-block-uagb-advanced-heading uagb-block-%s"><h3 class="uagb-heading-text"><a href="/%s/">Chair Massage</a></h3><p class="uagb-desc-text">%s</p></div>\n'
@@ -371,12 +373,11 @@ def build():
         raise SystemExit('the A11yPageJumpLinks code is not the frozen staging38 version, or the plan list is not as expected')
     # ---- wording gate: the page as a reader sees it (markers filled with harmless values) ----
     filled = content
-    for n in range(5):
-        filled = filled.replace('{{IMG_URL_%d}}' % n, '/wp-content/uploads/x%d.webp' % n)
+    filled = filled.replace('{{IMG_URL_0}}', '/wp-content/uploads/x0.webp')
     faq_text = ' '.join(q + ' ' + a for q, a in FAQ)
     res = wt.check(filled + ' <p>' + html_mod.escape(faq_text) + '</p>')   # the FAQ lives in block attributes a tag-stripper cannot see: appended as text before the heading is NOT possible, so check it separately below
     res_faq = wt.hits(wt.text(html_mod.escape(faq_text)), wt.VOICE + wt.CLAIMS + wt.EVIDENCE)
-    res_meta = wt.hits(wt.text(' '.join([SEO_TITLE, SEO_DESC, PAGE_TITLE, H1, HERO['alt']] + [a for _, a in TINTS] + [ROW_DESC])), wt.VOICE + wt.CLAIMS + wt.EVIDENCE)
+    res_meta = wt.hits(wt.text(' '.join([SEO_TITLE, SEO_DESC, PAGE_TITLE, H1, PIC_ALT, ROW_DESC])), wt.VOICE + wt.CLAIMS + wt.EVIDENCE)
     problems = []
     if not res['found']:
         problems.append('research heading not found exactly once (wording_tiers.RESEARCH_HEADINGS must list it)')
@@ -399,7 +400,7 @@ def build():
         'slug': SLUG, 'title': PAGE_TITLE, 'h1': H1, 'seo_title': SEO_TITLE, 'seo_desc': SEO_DESC,
         'ids': sorted(ID.values()),
         'page_content': content,
-        'hero': HERO, 'images': tint_images(),
+        'images': [picture()],
         'row': build_row(), 'row_anchor': ROW_ANCHOR, 'row_id': ID['svcrow'],
         'band_title': 'CorporateBand', 'band_sha256': BAND_SHA256, 'band_old': BAND_OLD, 'band_new': BAND_NEW,
         'jump_title': 'A11yPageJumpLinks', 'jump_sha256': JUMP_SHA256, 'jump_old': JUMP_OLD, 'jump_new': JUMP_NEW,

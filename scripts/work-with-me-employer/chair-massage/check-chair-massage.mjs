@@ -1,6 +1,6 @@
 // Browser check of the Chair Massage change (read-only; public requests only): the new page in the light and the dark version at 1280 and 390 px (title, H1, strip, jump links and their
-// targets, the five pictures loaded, the FAQ by click and by keyboard, the research panels, 32 sources, footer licence, no console errors = no CSP violation), the Services row before the
-// Corporate & Group row with its picture loaded, and full-page screenshots of both pages for review. About 8 page loads.
+// targets, the one picture loaded as the hero and nowhere else, the FAQ by click and by keyboard, the research panels, 32 sources, footer licence, no console errors = no CSP violation),
+// the Services row before the Corporate & Group row with the same picture loaded, and full-page screenshots of both pages for review. About 8 page loads.
 // Usage: node check-chair-massage.mjs <base-url> [outdir] [firefox] [inline]      outdir defaults to $RUNNER_TEMP/ops-out/chair-shots (kept as the run's artifact in GitHub Actions) or /tmp/chair-shots.
 // Exit 1 if a check fails; exit 2 = SiteGround's bot challenge answered (INVALID, nothing was tested; run once more later).
 import { createRequire } from 'module';
@@ -67,8 +67,8 @@ for (const theme of ['light', 'dark']) {
     check(`${tag}: H1`, r.h1.trim() === 'Chair Massage in Portland', r.h1.trim());
     check(`${tag}: the strip under the header, once`, r.band === 1, r.band);
     check(`${tag}: jump-links row with four links, every target on the page`, r.nav === 1 && r.links.length === 4 && r.targets.every(Boolean), JSON.stringify(r.links));
-    check(`${tag}: five pictures loaded (hero + four tints), tooltip = alt text`, r.imgs.length === 5 && r.imgs.every(i => i.ok && i.alt && i.alt === i.title) && r.imgs.filter(i => /chair-massage-(green|teal|yellow|red)\.webp/.test(i.src)).length === 4 && /corporate-group-massage\.webp/.test(r.imgs[0].src), JSON.stringify(r.imgs.map(i => [i.src.split('/').pop(), i.ok])));
-    check(`${tag}: five section headings in order`, JSON.stringify(r.h2s) === JSON.stringify(['What Is Chair Massage?', 'Common Reasons Clients Choose Chair Massage', 'Who Can Benefit From Chair Massage?', 'What To Expect During Your Appointment', 'What the Research Says About Chair Massage']), JSON.stringify(r.h2s));
+    check(`${tag}: one picture on the page, the watercolor as the hero, loaded, tooltip = alt text`, r.imgs.length === 1 && r.imgs[0].ok && r.imgs[0].alt && r.imgs[0].alt === r.imgs[0].title && /chair-massage-tree\.webp/.test(r.imgs[0].src), JSON.stringify(r.imgs.map(i => [i.src.split('/').pop(), i.ok])));
+    check(`${tag}: six section headings in order`, JSON.stringify(r.h2s) === JSON.stringify(['What Is Chair Massage?', 'Common Reasons Clients Choose Chair Massage', 'Who Can Benefit From Chair Massage?', 'Questions About Chair Massage', 'What To Expect During Your Appointment', 'What the Research Says About Chair Massage']), JSON.stringify(r.h2s));
     check(`${tag}: eleven FAQ items, the first open`, r.faq === 11 && r.firstOpen, r.faq);
     check(`${tag}: five research panels, first open, in order`, r.details === 5 && JSON.stringify(r.open) === '[true,false,false,false,false]' && JSON.stringify(r.summaries) === JSON.stringify(['Reviews, and What They Say About Limits', 'Stress, Anxiety and Blood Pressure', 'Desk Work, Muscle Discomfort and Movement', 'Nurses, Hospital Staff and Carers', 'Sources']), JSON.stringify(r.summaries));
     check(`${tag}: 32 sources`, r.cites === 32, r.cites);
@@ -120,7 +120,8 @@ if (!challenged) {
     });
     const i = s.h3.indexOf('Chair Massage'), j = s.h3.indexOf('Corporate & Group Massage');
     check('/services/: the Chair Massage row sits right before the Corporate & Group row', i >= 0 && j === i + 1 && s.href === '/chair-massage/', JSON.stringify(s.h3));
-    check('/services/: the row picture (green tint) loads, square like the other service pictures', !!s.img && s.img.ok && /chair-massage-green\.webp/.test(s.img.src) && Math.abs(s.img.w - s.img.h) < 2, JSON.stringify(s.img));
+    check('/services/: the row picture (the same watercolor) loads, square like the other service pictures', !!s.img && s.img.ok && /chair-massage-tree\.webp/.test(s.img.src) && Math.abs(s.img.w - s.img.h) < 2, JSON.stringify(s.img));
+    check('/services/: the watercolor appears once on the Services page', await page.evaluate(() => document.querySelectorAll('img[src*="chair-massage-tree.webp"]').length === 1));
     check('/services/: no console errors', errors.length === 0, errors.slice(0, 2).join(' | '));
     await page.screenshot({ path: `${out}/services-light-1280.png`, fullPage: true });
     // the row itself, for review

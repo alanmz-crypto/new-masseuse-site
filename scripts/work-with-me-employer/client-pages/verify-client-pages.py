@@ -423,7 +423,7 @@ else:
     check("Chair Massage: meta and og descriptions", meta(cm, "name", "description") == CM_DESC and meta(cm, "property", "og:description") == CM_DESC, meta(cm, "name", "description"))
     bad_cm = [w for w in BAD if re.search(w, " ".join(filter(None, [meta(cm, "name", "description"), meta(cm, "property", "og:title"), meta(cm, "property", "og:description")])), re.I)]
     check("Chair Massage meta/og carry no restricted wording", not bad_cm, bad_cm)
-    for hh in ["What Is Chair Massage?", "Common Reasons Clients Choose Chair Massage", "Who Can Benefit From Chair Massage?", "What To Expect During Your Appointment", "What the Research Says About Chair Massage"]:
+    for hh in ["What Is Chair Massage?", "Common Reasons Clients Choose Chair Massage", "Who Can Benefit From Chair Massage?", "Questions About Chair Massage", "What To Expect During Your Appointment", "What the Research Says About Chair Massage"]:
         check("Chair Massage: heading %r once" % hh, ct.count(hh) == 1)
     check("Chair Massage: the strip under the header, once", cm.count('<div class="ts-corp-band">') == 1)
     check("Chair Massage: the jump-links row with four targets", len(re.findall(r'<nav [^>]*class="ts-jump"', cm)) == 1 and all(('href="#%s"' % a) in cm and ('id="%s"' % a) in cm for a in ("ts-what-it-is", "ts-common-reasons", "ts-who-can-benefit", "ts-what-to-expect")))
@@ -456,11 +456,11 @@ else:
     check("Chair Massage: the discouraging results are there (no comparison group, cortisol unchanged, no significant effects in the catheterization laboratory, yoga did more)",
           "had no comparison group, so the lower blood pressure cannot be separated" in ct and "urinary cortisol and blood pressure did not differ significantly" in ct and "no significant effects were found on fatigue, pain, relaxation, stress or tension" in ct and "yoga did more" in ct)
     calts = re.findall(r'<img [^>]*?alt="([^"]*)"[^>]*?title="([^"]*)"', mh_cm)
-    check("Chair Massage: five pictures, tooltip equal to the alt text, none saying 'by Butsaba'", len(calts) == 5 and all(a1 and a1 == t1 for a1, t1 in calts) and "by Butsaba" not in mh_cm, len(calts))
-    check("Chair Massage: four tinted pictures and the corporate illustration as the hero", len(set(re.findall(r'src="[^"]*chair-massage-[a-z]+\.webp"', mh_cm))) == 4 and 'corporate-group-massage.webp" alt=' in mh_cm)
+    check("Chair Massage: one picture (Ryan's watercolor, the hero), tooltip equal to the alt text, none saying 'by Butsaba'", len(calts) == 1 and all(a1 and a1 == t1 for a1, t1 in calts) and "by Butsaba" not in mh_cm and 'chair-massage-tree.webp" alt=' in mh_cm, len(calts))
     check("Chair Massage: licence number in the footer", "LMT-29905" in cm)
     svc_cm, _ = get("/services/")
     check("Services: the Chair Massage row links to the new page, once, before the corporate row", svc_cm.count('href="/chair-massage/">Chair Massage</a>') == 1 and svc_cm.find('href="/chair-massage/">Chair Massage</a>') < svc_cm.find('href="/corporate-massage-portland/">Corporate &amp; Group Massage</a>'))
+    check("Services: the watercolor appears once (the Chair Massage row)", svc_cm.count('chair-massage-tree.webp" alt=') == 1)
 
 print("\nRESULT: " + ("all checks passed" if not fails else f"{fails} check(s) FAILED"))
 sys.exit(1 if fails else 0)

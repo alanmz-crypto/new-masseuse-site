@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Chair Massage: ADD the new service page, its four tinted pictures, a Services row and 'chair-massage' in the strip and jump-links snippet lists, on staging38 (S_TARGET=staging38; the only target until
+# Chair Massage: ADD the new service page, its one picture, a Services row and 'chair-massage' in the strip and jump-links snippet lists, on staging38 (S_TARGET=staging38; the only target until
 # Ryan says go for live, which is a separate enable commit; he merges the pull request and starts the live run himself).
 # Ryan, 2026-10-30 (cloud session): "recreate those pages ... this time the service is chair massage ... the experience should feel seamless"; "your original attempt at work begins on staging38".
 #
@@ -38,7 +38,7 @@ ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o 
 
 echo "[1] Connecting and uploading the package to ~/wwm-package-chair-massage (outside every web root) ..."
 "${ssh_cmd[@]}" true 2>/dev/null || { echo "SSH login refused; check the ssh-agent holds the right key." >&2; exit 2; }
-tar -C "$here" -cf - install-chair-massage.php chair-massage-content.php images/chair-massage-green.webp images/chair-massage-teal.webp images/chair-massage-yellow.webp images/chair-massage-red.webp \
+tar -C "$here" -cf - install-chair-massage.php chair-massage-content.php images/chair-massage-tree.webp \
   | "${ssh_cmd[@]}" 'rm -rf "$HOME/wwm-package-chair-massage" && mkdir -p "$HOME/wwm-package-chair-massage" && tar -xf - -C "$HOME/wwm-package-chair-massage"'
 
 read -r -d '' REMOTE <<'EOS' || true
@@ -89,18 +89,19 @@ case "$phase" in
     need chair "$band" 1                                                   # the strip, as on the other service pages
     need chair 'class="ts-jump"' 1                                         # the jump-links row (the snippet writes class first, then aria-label)
     for a in ts-what-it-is ts-common-reasons ts-who-can-benefit ts-what-to-expect; do need chair "href=\"#$a\"" 1; need chair "id=\"$a\"" 1; done
+    need chair '>Questions About Chair Massage</h2>' 1
     need chair '>What the Research Says About Chair Massage</h2>' 1
     need chair '<cite class="ts-source">' 32
     need chair 'class="uagb-question"' 11
     atleast chair 'LMT-29905' 1
-    for pic in $(grep -o 'src="/wp-content/uploads/[^"]*chair-massage-[a-z]*\.webp"' "$tmp/chair.html" | sed 's/^src="//; s/"$//' | sort -u); do
-      picinfo=$(curl -s -o /dev/null -w '%{http_code} %{content_type}' --max-time 30 "https://$want$pic" || true); echo "  $picinfo $pic"
-      [ "$picinfo" = "200 image/webp" ] || { echo "CHECK FAILED: a picture does not answer 200 image/webp ($picinfo); use --rollback if it persists." >&2; return 1; }
-    done
-    [ "$(grep -o 'src="/wp-content/uploads/[^"]*chair-massage-[a-z]*\.webp"' "$tmp/chair.html" | sort -u | wc -l)" = 4 ] || { echo "CHECK FAILED: the page should show the four tinted pictures." >&2; return 1; }
-    need chair 'corporate-group-massage.webp" alt=' 1                       # the hero
+    need chair 'chair-massage-tree.webp" alt=' 1                             # the one picture, once (the hero); its srcset/src repeat the URL but only one img tag
+    need chair 'corporate-group-massage.webp' 0
+    pic=$(grep -o 'src="/wp-content/uploads/[^"]*chair-massage-tree\.webp"' "$tmp/chair.html" | head -1 | sed 's/^src="//; s/"$//')
+    picinfo=$(curl -s -o /dev/null -w '%{http_code} %{content_type}' --max-time 30 "https://$want$pic" || true); echo "  $picinfo $pic (the picture)"
+    [ "$picinfo" = "200 image/webp" ] || { echo "CHECK FAILED: the picture does not answer 200 image/webp ($picinfo); use --rollback if it persists." >&2; return 1; }
     fetch services /services/
     need services 'href="/chair-massage/">Chair Massage</a>' 1
+    need services 'chair-massage-tree.webp" alt=' 1                          # the same picture, once, on the Services row
     need services 'href="/corporate-massage-portland/">Corporate &amp; Group Massage</a>' 1
     for existing in thai-massage therapeutic-massage deep-tissue-massage; do atleast services "href=\"https://$want/$existing/\"" 1; done
     for pg in therapeutic-massage deep-tissue-massage thai-massage about; do   # the strip and the jump links still show where they did
@@ -109,7 +110,7 @@ case "$phase" in
     done
     fetch corp /corporate-massage-portland/
     need corp "$band" 0                                                    # the corporate page keeps no strip
-    echo "public check: the page (title, description, strip, jump links, research heading, 32 sources, 11 questions, hero + 4 pictures), the Services row, and the strip/jump links unchanged elsewhere" ;;
+    echo "public check: the page (title, description, strip, jump links, FAQ and research headings, 32 sources, 11 questions, the one picture as the hero), the Services row with the same picture, and the strip/jump links unchanged elsewhere" ;;
   rollback) snap=${snap/#\$HOME/$HOME}; run rollback "$snap"; purge ;;
   *) echo "unknown phase" >&2; exit 1 ;;
 esac
