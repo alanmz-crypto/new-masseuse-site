@@ -426,7 +426,7 @@ else:
     for hh in ["What Is Chair Massage?", "Common Reasons Clients Choose Chair Massage", "Who Can Benefit From Chair Massage?", "What To Expect During Your Appointment", "What the Research Says About Chair Massage"]:
         check("Chair Massage: heading %r once" % hh, ct.count(hh) == 1)
     check("Chair Massage: the strip under the header, once", cm.count('<div class="ts-corp-band">') == 1)
-    check("Chair Massage: the jump-links row with four targets", cm.count('<nav aria-label="On this page" class="ts-jump">') == 1 and all(('href="#%s"' % a) in cm and ('id="%s"' % a) in cm for a in ("ts-what-it-is", "ts-common-reasons", "ts-who-can-benefit", "ts-what-to-expect")))
+    check("Chair Massage: the jump-links row with four targets", len(re.findall(r'<nav [^>]*class="ts-jump"', cm)) == 1 and all(('href="#%s"' % a) in cm and ('id="%s"' % a) in cm for a in ("ts-what-it-is", "ts-common-reasons", "ts-who-can-benefit", "ts-what-to-expect")))
     check("Chair Massage: the safety sentence once (in the paragraph before the steps)", ct.count("New numbness, weakness, unexplained swelling or radiating pain means you should see a doctor before massage.") == 1)
     for qq in ["Do I Need to Undress for Chair Massage?", "How Long Is a Chair Massage?", "What Is the Massage Chair Like?", "Is Chair Massage the Same as a Mechanical Massage Chair?", "How Much Pressure Will You Use?",
                "How Is Chair Massage Different From Your Other Sessions?", "Will I Feel the Results Right Away?", "What Does the Host Need to Provide?", "Where Do Sessions Take Place?", "How Do I Book a Session?"]:

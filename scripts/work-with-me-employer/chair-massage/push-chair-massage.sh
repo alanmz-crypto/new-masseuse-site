@@ -87,7 +87,7 @@ case "$phase" in
     need chair '<title>Chair Massage | Butsaba Dusrai, Oregon LMT' 1
     atleast chair 'content="Chair massage in Portland with Butsaba Dusrai, LMT: short, seated, fully clothed sessions for workplaces and events, with pressure adjusted as you go."' 1
     need chair "$band" 1                                                   # the strip, as on the other service pages
-    need chair '<nav aria-label="On this page" class="ts-jump">' 1         # the jump-links row
+    need chair 'class="ts-jump"' 1                                         # the jump-links row (the snippet writes class first, then aria-label)
     for a in ts-what-it-is ts-common-reasons ts-who-can-benefit ts-what-to-expect; do need chair "href=\"#$a\"" 1; need chair "id=\"$a\"" 1; done
     need chair '>What the Research Says About Chair Massage</h2>' 1
     need chair '<cite class="ts-source">' 32
@@ -105,7 +105,7 @@ case "$phase" in
     for existing in thai-massage therapeutic-massage deep-tissue-massage; do atleast services "href=\"https://$want/$existing/\"" 1; done
     for pg in therapeutic-massage deep-tissue-massage thai-massage about; do   # the strip and the jump links still show where they did
       fetch "$pg" "/$pg/"; need "$pg" "$band" 1
-      [ "$pg" = about ] || need "$pg" '<nav aria-label="On this page" class="ts-jump">' 1
+      [ "$pg" = about ] || need "$pg" 'class="ts-jump"' 1
     done
     fetch corp /corporate-massage-portland/
     need corp "$band" 0                                                    # the corporate page keeps no strip
