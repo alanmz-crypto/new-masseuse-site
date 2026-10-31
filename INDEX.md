@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-10-31 05:14 UTC  **FAIL**  `chair-chk-38`  [reports/2026-10-31/051407-chair-chk-38.md](reports/2026-10-31/051407-chair-chk-38.md)  (run 41171668813)
 - 2026-10-31 05:10 UTC  **PASS**  `chair-svc-after-38`  [reports/2026-10-31/051007-chair-svc-after-38.md](reports/2026-10-31/051007-chair-svc-after-38.md)  (run 41171471153)
 - 2026-10-31 05:09 UTC  **FAIL**  `chair-restore-38`  [reports/2026-10-31/050911-chair-restore-38.md](reports/2026-10-31/050911-chair-restore-38.md)  (run 41171416346)
 - 2026-10-31 05:08 UTC  **FAIL**  `chair-gates-38b`  [reports/2026-10-31/050836-chair-gates-38b.md](reports/2026-10-31/050836-chair-gates-38b.md)  (run 41171333792)
