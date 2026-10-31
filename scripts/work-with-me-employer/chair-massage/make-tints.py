@@ -6,13 +6,19 @@
 
 Ryan, 2026-10-30 (cloud session): asked how to picture the page when the repo has no chair-massage illustration; he chose "Recolor your corporate illustration" (hero = the
 illustration already in the media library; the four section pictures = tints of it, like the Therapeutic page's green/teal/yellow/red variants of its own hero).
-Each tint is a duotone: the illustration's lightness mapped onto a dark-to-light ramp of one hue. Pillow only (installed on the practice and CI images); nothing is fetched.
+Each tint is a duotone: the illustration's lightness mapped onto a dark-to-light ramp of one hue. Pillow is needed to make them; where Pillow is missing (the GitHub runner), --check verifies the
+committed files by the sha256 values recorded in chair-massage-content.php instead. Nothing is fetched.
 """
 import hashlib
+import json
 import os
+import re
 import sys
 
-from PIL import Image
+try:
+    from PIL import Image
+except ImportError:   # the GitHub runner has no Pillow: --check then verifies the committed pictures against the sha256 values the builder recorded (see check_committed)
+    Image = None
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(HERE, '..', 'corporate', 'images', 'corporate-group-massage.webp')
@@ -46,8 +52,28 @@ def make(tone):
     return buf
 
 
+def check_committed():
+    """Without Pillow: each committed picture must have the sha256 that chair-massage-content.php (built from these files) records for it."""
+    s = open(os.path.join(HERE, 'chair-massage-content.php'), encoding='utf-8').read()
+    m = re.search(r"<<<'(\w+)'\n", s)
+    data = json.loads(s[m.end():s.rindex('\n' + m.group(1))])
+    want = {img['name']: img['sha256'] for img in data['images']}
+    bad = 0
+    for tone in TONES:
+        name = 'chair-massage-%s.webp' % tone
+        path = os.path.join(OUT, name)
+        ok = os.path.isfile(path) and hashlib.sha256(open(path, 'rb').read()).hexdigest() == want.get(name)
+        print(('PASS ' if ok else 'FAIL ') + name + ' (sha256 as recorded in chair-massage-content.php; Pillow not installed, so regeneration was not checked)')
+        bad += 0 if ok else 1
+    return bad
+
+
 if __name__ == '__main__':
     os.makedirs(OUT, exist_ok=True)
+    if '--check' in sys.argv and Image is None:
+        sys.exit(1 if check_committed() else 0)
+    if Image is None:
+        raise SystemExit('Pillow is needed to make the pictures: pip install pillow')
     if '--check' in sys.argv:
         import tempfile
         bad = 0
