@@ -1,8 +1,11 @@
 {
-  "id": "chair-dry-live-1",
+  "id": "chair-live-chk-1",
   "op": "run",
   "target": "live",
-  "script": "chair-massage/push-chair-massage.sh",
-  "args": [],
+  "script": "chair-massage/check-chair-massage.mjs",
+  "args": [
+    "https://thaisolitude.com",
+    "inline"
+  ],
   "tests": "none"
 }
