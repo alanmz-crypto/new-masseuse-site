@@ -1,7 +1,10 @@
 {
-  "id": "chair-svc-after-38",
-  "op": "inspect",
+  "id": "chair-chk-38",
+  "op": "run",
   "target": "staging38",
-  "query": "page",
-  "arg": "services"
+  "script": "chair-massage/check-chair-massage.mjs",
+  "args": [
+    "https://staging38.thaisolitude.com"
+  ],
+  "tests": "none"
 }
