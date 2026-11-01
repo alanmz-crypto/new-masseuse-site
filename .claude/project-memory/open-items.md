@@ -9,18 +9,29 @@ metadata:
 A phone cloud session (https://claude.ai/code, repo `alanmz-crypto/new-masseuse-site`) sees ONLY this repository: not his computer, not his global `~/.claude/CLAUDE.md`, not his local Claude memory, not convmem. Everything that must not be lost is therefore written here and in the notes this index points to.
 First message to send in a fresh phone session: **"Read .claude/project-memory/open-items.md and tell me what is due."**
 
-**2026-11-01 active review lane:** Bundle 0 is complete (Butsaba draft in
-`docs/inter-model/2026-11-01-butsaba-questions.md`, fresh staging38 dump PASS).
-Bundle A is **applied and verified on staging38**, PR #61, branch
-`codex/2026-11-01-review-bundle-a`: rehearsal/rendered gates PASS, 262 browser
-assertions PASS; exact rollback and expected pixels in [[site-review-bundle-a]].
-No live write or request. The handoff's
-recorded “fix all” approval supersedes older “nothing prepared until he picks”
-status text below for the listed changes. Butsaba questions 1, 5, 8 and 9 are answered (record below); 2, 3, 4, 6 and 7
-remain unanswered. Live is disabled, and Ryan still owns merges and live runs.
-**Bundle B is applied on staging38**, PR #63 (`codex/2026-11-01-review-bundle-b`): uploads rehearsal2, dry run, apply, rendered gates/posture, restore import and strict 12-page semantic scan PASS. Ryan approved the exact default/Home brand card on 2026-11-01; attachment 1314's PNG 1200×630 SHA and Home OG/Twitter match. Home desktop/phone captures visually reviewed: no clipped text or side-scroll. Live disabled. See [[site-review-bundle-b]] and `docs/reviews/2026-11-01-bundle-b-staging38.md`. Next independent bundle: C.
-After A, Bundle G must refresh 15 booking-date sentences (the original ten plus
-five new closing blocks), including Services; still on/after November 14 only.
+**2026-11-01 current review/release lane (supersedes older live-disabled status):**
+Ryan: “How about we ship this for the moment and you look after we are live?”
+Completed A–E are approved for ordered release preparation; Ryan still owns
+every merge and LIVE run. **A is prepared, not applied**, PR #68, request
+`live-review-a-20261101-1`. Fresh live-source rehearsal/exact rollback and actual live dry2
+PASS. Merge #68, then Actions > Site ops (LIVE) > Run workflow > main > type
+the exact ID. Tell the agent “A done” so it reads the report before preparing B.
+See [[site-review-release]] and [release proof/phone steps](../../docs/reviews/2026-11-01-review-live-release.md).
+
+A–E are applied on staging38. A/B source PRs #61/#63 are merged. C/D/E remain
+drafts #64/#65/#66; they need actual ordered live predecessor bytes/hash guards
+and fresh proof before their own release. Live's fresh rehearsal reports WP7.1.4;
+E's earlier stage source was7.1.3, so inspect/rehearse installed semantics rather
+than loosening its version guard. [Full staging proof and snapshots](https://github.com/alanmz-crypto/new-masseuse-site/blob/codex/2026-11-01-review-bundle-f/docs/reviews/2026-11-01-review-fix-status.md).
+
+**F stays paused, no option writes**, under Ryan's access rule: required admin
+HEAD returns403 while REST/login200; shipping A does not require that URL-option
+work. The intermittent robot issue and full public interactive check remain
+follow-ups; no durable host fix or support message. Staging security.txt is
+confirmed404, with owner static fallback pending. Butsaba2/3/4/6/7 remain pending;
+1/5/8/9 are recorded. G retains the November14 boundary and15 booking sentences.
+Credentials/deletions/Astra/www/menu-label and other owner tasks remain his.
+No live content, hosting control or credential was changed by preparation.
 
 ## A. Happens by itself (nothing to do)
 - **BOOKING DATE MOVED to November 14, 2026 (Ryan 2026-10-30: "Change booking begins to Nov 14th. Everywhere."; [[booking-date]]). LIVE since 2026-10-30 15:43 UTC, so the strip flips on 2026-11-14 00:00 Pacific (08:00 UTC, PST), NOT Nov 1; until it is live the text below (Nov 1) is what live does.** ~~2026-11-01 00:00 Pacific (07:00 UTC) the announcement strip flips~~ (old date): from "Currently booking corporate & group massage only." to "Now accepting corporate & group massage bookings." on nine pages. It is PHP in a WPCode snippet; the SiteGround page cache is OFF (checked 2026-10-25), so no purge is needed. See [[availability-update]].

@@ -1,6 +1,6 @@
 ---
 name: site-review-bundle-a
-description: 2026-11-01 review Bundles 0 and A — Butsaba draft, fresh staging38 dump, booking-path installer; staging only, live disabled
+description: Bundles 0/A staging verified; Ryan authorized release preparation, PR68 live request awaiting his run
 metadata:
   type: project
 ---
@@ -19,7 +19,7 @@ Decoded data stays outside git. Snippet-hash inspection
 
 Bundle A tooling: `scripts/work-with-me-employer/review-a/` (README has every
 change, the source fragments, pattern, checks and rollback command). One
-staging-only installer updates nine pages, A11yPageJumpLinks and an appended
+guarded installer updates nine pages, A11yPageJumpLinks and an appended
 CSS block, with all-or-nothing preflight and exact whole-resource rollback.
 Home, client-page, availability and builder gates move with the package.
 Rehearsal now runs the rendered Home and client-page copy gates before cleanup,
@@ -32,7 +32,8 @@ releases; roll Bundle A back before using their exact-state rollback installers
 or rebuilding a page from them. Current-state rollback is Bundle A's snapshot.
 
 State: **APPLIED and verified on staging38**, 2026-11-01 02:10–02:16 UTC.
-PR #61 has been merged (confirmed through GitHub when recording the answers below); live remains disabled for Bundle A. Final record:
+PR #61 has been merged. Ryan's later release go is recorded in [[site-review-release]];
+PR #68 prepares A's live request, with no live apply yet. Final record:
 `docs/reviews/2026-11-01-bundle-a-staging38.md` (all report links, checks,
 expected pixels, heights, exact rollback). Rehearsal 4, dry run and apply PASS;
 rendered gates and posture PASS, structured data identical, no PHP errors.
@@ -44,7 +45,12 @@ screenshots visually reviewed.
 Export `staging38-before-bundle-a-20261101-021038.sql` verified off-site before
 apply; snapshot `bundle-a-before-20261101-021051.json` also encrypted and verified.
 Exact rollback: `request.sh run --target staging38 --script review-a/push-bundle-a.sh --args '--rollback $HOME/private-backups/bundle-a-before-20261101-021051.json'`.
-No live write/request was made in this work. PR #61 is now merged, so any live-enable/request preparation requires a follow-up PR after Ryan's go; he alone merges and starts the live run.
+No live write was made. After Ryan's later go, follow-up PR #68 enables the exact
+live host and prepares `live-review-a-20261101-1`; fresh live-source rehearsal and dry2 PASS.
+The only payload portability change is one terminal LF removed from both sides
+of the Corporate mobile-quote pair; staging's applied bytes remain identical.
+He alone merges and starts the live run. See [[site-review-release]] for proof,
+phone steps and all deferred work.
 
 Lesson: WP 7.1 adds `wp-block-paragraph` and group layout classes at render time.
 Match class tokens, not entire quoted attributes; rehearsal caught new brittle
@@ -66,3 +72,6 @@ not a site apply or live go; the applied installer/package is unchanged.
 **Bundle B applied afterwards (2026-11-01):** roll B back first before this
 Bundle A exact-state rollback on staging38. B changes Home/metadata/options and
 LocalBusinessInfo; see [[site-review-bundle-b]] for its snapshot and proof.
+
+C/D/E are now also applied on staging38. Roll E→D→C→B back before A there.
+Use the actual live A snapshot after its own run, never this staging snapshot.
