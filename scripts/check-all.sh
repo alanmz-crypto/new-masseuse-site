@@ -94,6 +94,7 @@ gate "Chair Massage content matches its builder (and passes its wording gate)" p
 gate "Review Bundle A exact fragments and new wording match their builder" python3 -I -B "$here/work-with-me-employer/review-a/build-bundle-a.py" --check
 gate "Review Bundle B source values and approved wording match their builder" python3 -I -B "$here/work-with-me-employer/review-b/build-bundle-b.py" --check
 gate "Review Bundle C frozen fragments and runtime sources match their builder" python3 -I -B "$here/work-with-me-employer/review-c/build-bundle-c.py" --check
+gate "Review Bundle D frozen copy and research fragments match their builder" python3 -I -B "$here/work-with-me-employer/review-d/build-bundle-d.py" --check
 
 # ---- rendered pages (read-only) ------------------------------------------------------------------------------------------------------
 if [ -n "${1:-}" ] && ! edge_msg=$("$here/work-with-me-employer/posture/edge-check.sh" "$1" 2>&1); then

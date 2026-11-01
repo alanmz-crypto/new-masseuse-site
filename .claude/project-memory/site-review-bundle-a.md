@@ -89,3 +89,8 @@ when B applies, undo B before A's exact whole-resource rollback.
 B is now LIVE/verified (PR #69, actual snapshot bundle-b-before-20261101-163141.json).
 Undo B before A's exact whole-resource rollback; C's preparation is PR #64,
 with no C live write yet. Current proof/order in [[site-review-release]].
+
+C is now live (actual snapshot bundle-c-before-20261101-175205.json), with 1,247
+public checks passing and known security.txt 404 owner follow-up; rendered/security/
+PHP checks and Contact CSP are verified. Undo C before B/A; D is prepared in #65,
+not applied, and will need undoing first once live. See [[site-review-release]].

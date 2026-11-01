@@ -76,3 +76,8 @@ Rendered/origin/posture/site-error and import 0/intended 88→90 differences rev
 Historical staging36 schema 27/23 and pixels differ; all 20 captures exist, no aggregate
 all-pass. Full proof docs/reviews/2026-11-01-bundle-b-live.md. C is prepared in #64,
 not applied; once C applies undo C before B, and B before A. See [[site-review-release]].
+
+C is now live (actual snapshot bundle-c-before-20261101-175205.json), with 1,247
+public checks passing and known security.txt 404 owner follow-up; rendered/security/
+PHP checks and Contact CSP are verified. Undo C before B/A; D is prepared in #65,
+not applied, and will need undoing first once live. See [[site-review-release]].

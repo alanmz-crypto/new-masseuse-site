@@ -123,3 +123,14 @@ The known hosting security.txt fallback stays explicitly deferred; its strict
 private test remains. Public 404 must not be called a pass. Prepared live payload
 `security-live/security.txt` is owner-only and is not in the push tar/package.
 No hosting control, static server file/rewrite flush, credential or message change.
+
+## Actual live record (supersedes preparation above)
+
+LIVE via Ryan's PR #64/run `live-review-c-20261101-1`. Actual snapshot
+`bundle-c-before-20261101-175205.json` and fresh DB export are verified off-site.
+Origin 12 PASS; restore import 0/intended 90→92 diff/no SEO. Later post-change rendered/
+security/PHP checks and CSP 4 views/0 pass, with expected reference schema/pixels FAIL.
+Public C 1,248/1: only security.txt 404;1247 other behavior/geometry checks pass.
+[Full live proof and limits](../../../docs/reviews/2026-11-01-bundle-c-live.md).
+Static fallback remains owner-only/uninstalled; no full-suite or durable-host fix claim.
+D is next in #65; once applied undo D before C, then C before B/A.

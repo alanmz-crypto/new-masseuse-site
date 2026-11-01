@@ -155,66 +155,104 @@ PANELS = [
     ('Reviews, and What They Say About Limits', True, [
         'Reviews that rated how certain their evidence was reached a consistent point in massage’s favor: every conclusion rated moderate-certainty found massage associated with less pain, and a meta-analysis of '
         '67 randomized trials found lower pain scores after massage than after sham massage, no massage or other approaches.{mak}{crawford}',
-        'The same reviews are careful about limits. None of the conclusions in the 2024 review was rated high-certainty, and conclusions that massage was better than other active approaches were rare. An earlier '
-        'evidence map of 49 systematic reviews found that the high-quality reviews reached conclusions of low strength of evidence, because few large, rigorous studies had been done.{miake} The meta-analysis’s '
-        'authors made a strong recommendation only for the comparison with no massage and a weak one for sham massage and other approaches.{crawford} A 2015 review of 26 randomized trials with 2,565 people with '
-        'muscle and joint problems found low-to-moderate-level evidence that massage reduced pain in the short term compared with no intervention in some groups, such as people with shoulder pain, but not in '
-        'people with neck or low-back pain. Function improved in the short term for people with low-back and shoulder pain. Compared with another active approach, no clear benefit was seen.{bervoets}',
-        'Massage is generally described as low risk, and where serious problems on record can be traced to who gave the massage, they are mostly tied to people who were not trained massage therapists. The U.S. '
-        'National Center for Complementary and Integrative Health notes that the risk of harm appears to be low, although rare serious side effects such as a blood clot, nerve injury or bone fracture have been '
-        'reported.{nccih} A 2014 review of 40 published reports found 138 adverse events over 11 years, mainly disc herniation, soft-tissue injury, nerve problems, spinal cord injury and tears in the neck arteries, '
-        'with spinal manipulation inside a massage repeatedly linked to the serious ones. Massage therapists were the practitioners in only 8 of the 138 events (5.8 percent) and chiropractors in 33 (23.9 percent); '
-        'the rest (70.3 percent) involved unregistered people or other health professionals, and the authors concluded that massage by nonprofessionals and forceful techniques is often associated with adverse '
-        'events.{yin} A 2003 review of published case reports likewise found that most serious events followed unusual techniques or massage by laypeople rather than by massage therapists, and concluded that serious '
-        'events are probably true rarities.{ernst} The U.S. center also advises against using massage to put off seeing a health care provider about a medical problem. Taken together, in the reports that say who '
-        'gave the massage, trained massage therapists were rarely involved: the serious injuries were mostly linked to people who were not massage therapists, including laypeople and unregistered practitioners, and '
-        'to forceful or unusual techniques. Serious events are rare: I ask about your health, medications, pregnancy and recent injuries before each session, and you can ask for lighter pressure or a pause at any '
-        'time.',
+        (
+            'The same reviews are careful about limits. None of the conclusions in the 2024 review was rated high-certainty, and conclusions backed by '
+            'moderate- or high-certainty evidence that massage was better than other active approaches were rare. An earlier evidence map of 49 systematic '
+            'reviews found that the high-quality reviews reached conclusions of low strength of evidence, because few large, rigorous studies had been '
+            'done.{miake} The meta-analysis’s authors made a strong recommendation only for the comparison with no massage and a weak one for sham massage and'
+            ' other approaches.{crawford} A 2015 review of 26 randomized trials with 2,565 people with muscle and joint problems found low-to-moderate-level '
+            'evidence that massage reduced pain in the short term compared with no intervention in some groups, such as people with shoulder pain, but not in '
+            'people with neck or low-back pain. Function improved in the short term for people with low-back and shoulder pain. Compared with another active '
+            'approach, no clear benefit was seen.{bervoets}'
+        ),
+        (
+            'Massage is generally described as low risk, and where serious problems on record can be traced to who gave the massage, they are mostly tied to '
+            'people who were not trained massage therapists. The U.S. National Center for Complementary and Integrative Health notes that the risk of harm '
+            'appears to be low, although rare serious side effects such as a blood clot, nerve injury or bone fracture have been reported.{nccih} A 2014 '
+            'review of 40 published reports found 138 adverse events over 11 years, mainly disc herniation, soft-tissue injury, nerve problems, spinal cord '
+            'injury and tears in the neck arteries, with spinal manipulation inside a massage repeatedly linked to the serious ones. Massage therapists were '
+            'the practitioners in only 8 of the 138 events (5.8 percent) and chiropractors in 33 (23.9 percent); the rest (70.3 percent) involved unregistered'
+            ' people or other health professionals, and the authors concluded that massage by nonprofessionals and forceful techniques is often associated '
+            'with adverse events.{yin} A 2003 review of 16 case reports and four case series likewise found that most adverse effects followed exotic '
+            'techniques or massage by laypeople, with massage therapists rarely implicated, that serious effects were mostly tied to techniques other than '
+            'Swedish massage, and concluded that serious events are probably true rarities.{ernst} The U.S. center also advises against using massage to put '
+            'off seeing a health care provider about a medical problem. Taken together, in the reports that say who gave the massage, trained massage '
+            'therapists were rarely involved: the serious injuries were mostly linked to people who were not massage therapists, including laypeople and '
+            'unregistered practitioners, and to forceful or unusual techniques. Serious events are rare: I ask about your health, medications, pregnancy and '
+            'recent injuries before each session, and you can ask for lighter pressure or a pause at any time.'
+        ),
     ]),
     ('Neck, Shoulders and Back', False, [
         'Several reviews report short-term gains from massage for neck, shoulder and back pain. A 2015 Cochrane review of 25 trials found that massage was better than no intervention for low-back pain in the short '
         'term.{cochrane_lbp} A 2014 review of 20 trials found low-quality evidence that soft-tissue massage improved shoulder movement, pain and function compared with no intervention in the short term, right after '
         'the sessions ended.{vdd14} In the 2024 Cochrane review of neck pain, a subgroup analysis favored higher doses of eight or more sessions of at least 30 minutes over four weeks.{cochrane_neck}',
-        'The same reviews also report the limits. The low-back review rated the quality of the evidence low to very low, found no benefit over the long term, and its authors said they had “very little confidence” '
-        'in the results. No serious side effects were reported; the most common minor one was more pain, in 1.5 to 25 percent of people.{cochrane_lbp} The 2024 neck review of 33 studies with 1,994 people found '
-        'that, compared with a placebo massage, massage probably makes little or no difference to pain, function or quality of life at up to 12 weeks (low-certainty evidence), and adverse events were too poorly '
-        'reported to judge.{cochrane_neck} In a trial of 80 adults with shoulder pain who were all doing exercises, adding four weeks of massage gave no extra benefit for pain, disability or movement, and a small '
-        'difference in pain at 12 weeks favored exercise alone.{vdd15} In 41 people with low-back pain who were all having physiotherapy, adding real massage or a placebo massage for three weeks both reduced pain and '
-        'disability and improved mobility, and only the real-massage group improved on a quality-of-life measure.{ucurum}',
-        'Smaller studies point the same encouraging way for tight shoulder muscles. In a crossover study of 17 healthy adults, muscle activity in the upper-shoulder muscles fell by 19 percent after a short, '
-        'moderate-pressure massage of the shoulders and neck, compared with 1 percent after sitting quietly; the study measured muscle activity, not pain.{domingo} In a pilot study of 45 cardiac sonographers with '
-        'work-related muscle discomfort, weekly 30-minute massages for 10 weeks, with or without stretching, were followed by some improvement in discomfort scores compared with no intervention, and the authors '
-        'called for larger trials.{engen}',
+        (
+            (
+                'The same reviews also report the limits. The low-back review rated the quality of the evidence low to very low, found no long-term benefit over '
+                'no intervention, and its authors said they had “very little confidence” in the results. No serious side effects were reported; the most common '
+                'minor one was more pain, in 1.5 to 25 percent of people.{cochrane_lbp} The 2024 neck review of 33 studies with 1,994 people found that, compared '
+                'with a placebo massage, massage probably makes little or no difference to pain, function or quality of life at up to 12 weeks (low-certainty '
+                'evidence), and adverse events were too poorly reported to judge.{cochrane_neck} In a trial of 80 adults with shoulder pain who were all doing '
+                'exercises, adding four weeks of massage gave no extra benefit for pain, disability or movement, and a small difference in pain at 12 weeks '
+                'favored exercise alone.{vdd15} In 41 people with low-back pain who were all having physiotherapy, adding real massage or a placebo massage for '
+                'three weeks both reduced pain and disability and improved mobility, and only the real-massage group improved on a quality-of-life '
+                'measure.{ucurum}'
+            )
+        ),
+        (
+            'Smaller studies point the same encouraging way for tight shoulder muscles. In a crossover study of 17 healthy adults, muscle activity in the '
+            'upper-shoulder muscles fell by 19 percent after a short, moderate-pressure massage of the shoulders and neck, compared with 1 percent after '
+            'sitting quietly; the study measured muscle activity, not pain.{domingo} In a pilot study of 45 cardiac sonographers with work-related muscle '
+            'discomfort, weekly 30-minute chair massages for 10 weeks, with or without stretching, were followed by some improvement in discomfort scores '
+            'compared with no intervention, and the authors called for larger trials.{engen}'
+        ),
     ]),
     ('Exercise, Flexibility and Recovery', False, [
         'Of the exercise outcomes reviewed, flexibility and soreness are where massage shows benefit. A 2020 review of 29 randomized studies with 1,012 people found small improvements in flexibility and in '
         'delayed-onset muscle soreness.{davis} In 10 recreationally active women, 30 seconds of massage at the back of the thigh was followed by about a 7 percent larger hip-bend range than no massage, with no '
         'change in muscle tension or muscle activity.{huang} In 52 healthy volunteers whose grip had been tired by exercise, five minutes of forearm and hand massage was followed by better grip performance than '
         'five minutes of rest or of passive joint movement; the study was small and measured only the minutes right afterward.{brooks}',
-        'The same 2020 review found no evidence that massage improved strength, jumping, sprinting, endurance or fatigue.{davis} A 2016 review of 22 trials concluded that the effects of massage on performance '
-        'recovery are rather small and partly unclear, and its authors questioned whether the limited effects justify using massage as a recovery method in competitive athletes.{poppendieck} In 62 healthy active '
-        'students who had a 40-minute whole-body massage after hard exercise, massage was followed by lower muscle activity in a thigh muscle and a lower mood score for vigor than a sham session, which the authors '
-        'said may reflect a transient loss of muscle strength or a state of relaxation.{arroyo08} In people with sore leg muscles after exercise, manual massage, real diathermy (a heating device) and sham '
-        'diathermy produced no clinically relevant differences in pain scores right after the session, although scores on a patient-rated scale of global change did differ between the groups.{visconti}',
+        (
+            'The same 2020 review found no evidence that massage improved strength, jumping, sprinting, endurance or fatigue.{davis} A 2016 review of 22 '
+            'trials concluded that the effects of massage on performance recovery are rather small and partly unclear, and its authors questioned whether the '
+            'limited effects justify using massage as a recovery method in competitive athletes.{poppendieck} In 62 healthy active students who had a '
+            '40-minute whole-body myofascial-release massage after hard exercise, massage was followed by lower muscle activity in a thigh muscle and a lower '
+            'mood score for vigor than a sham session, which the authors said may reflect a transient loss of muscle strength or a state of '
+            'relaxation.{arroyo08} In people with sore leg muscles after exercise, manual massage, real diathermy (a heating device) and sham diathermy '
+            'produced no clinically relevant differences in pain scores right after the session, although scores on a patient-rated scale of global change did'
+            ' differ between the groups.{visconti}'
+        ),
         'Where massage has been tested for short-term recovery after intense mixed training, the effects were medium in size: the 2016 review found medium positive effects after high-intensity mixed exercise, and '
         'shorter massage (5 to 12 minutes) tended to show larger effects than longer massage.{poppendieck}',
     ]),
     ('Stress, Relaxation and Well-Being', False, [
-        'Several studies point to short-term relaxation after massage. A 2004 meta-analysis of 37 randomized studies found that a single massage was followed by lower state anxiety, blood pressure and heart '
-        'rate.{moyer04} In 60 healthy women, the two massage groups showed higher heart-rate variability than a resting group.{meier} In 118 healthy adults who first took a stressful laboratory test, most people who '
-        'had a real massage described it as relaxing (82 to 100 percent, compared with 42 percent after a sham massage).{kanitz}',
-        'The picture is mixed, though. The same 2004 meta-analysis found no lower negative mood, cortisol or less immediate pain after a single massage,{moyer04} and a 2011 review found that the effect on the stress '
-        'hormone cortisol was generally very small and in most analyses not statistically distinguishable from zero.{moyer11} In the 60 healthy women, relaxation rose and stress fell in the resting group too.{meier} '
-        'In the 118 healthy adults, a single massage of about an hour was not followed by significantly better well-being scores or cortisol levels than a sham massage.{kanitz} In 14 healthy men, a 20-minute massage '
-        'and a 20-minute reading period were each followed by a rise in the hormone oxytocin, which led the researchers to suggest that touch is not needed for that rise.{bello} In 15 healthy women, a single '
-        'two-minute manual massage was not followed by significant differences in heart-rate variability or blood pressure compared with rest or a sham, although the authors noted changes of moderate to large size '
-        'within the massage condition.{monteiro} In 38 family caregivers at a rehabilitation hospital who had either one or three massages a week for two weeks, psychological symptom scores were lower afterward in '
-        'both groups, but because everyone had massage the study cannot show how much of the change was due to the massage itself.{williams}',
-        'Courses of massage have the more encouraging results: the largest effects in the 2004 meta-analysis came after a course of sessions rather than a single one, on measures of anxiety and mood.{moyer04} In a '
-        'pilot study of 54 adults aged 60 and over, twice-weekly massage for four weeks was followed by better scores for well-being and perceived stress than guided relaxation.{sharpe} In a trial of 122 adults at an '
-        'integrative-therapy clinic in Brazil, people had eight massage sessions followed by rest, massage followed by Reiki, or no intervention. Stress fell more in the massage-plus-Reiki group than in the '
-        'no-intervention group, and the authors called for a placebo group in later trials.{kurebayashi16} The same trial’s report on stress and quality of life (101 people analyzed) found that both massage groups '
-        'did better than no intervention.{kurebayashi20}',
+        (
+            'Several studies point to short-term relaxation after massage. A 2004 meta-analysis of 37 randomized studies found that a single massage was '
+            'followed by lower state anxiety, blood pressure and heart rate.{moyer04} In 60 healthy women, the two massage groups showed higher heart-rate '
+            'variability than a resting group.{meier} In 118 healthy adults who first took a stressful laboratory test, most people who had a real rhythmical '
+            'massage described it as relaxing (82 to 100 percent, compared with 42 percent after a sham massage).{kanitz}'
+        ),
+        (
+            'The picture is mixed, though. The same 2004 meta-analysis found no lower negative mood, cortisol or less immediate pain after a single '
+            'massage,{moyer04} and a 2011 review found that the effect on the stress hormone cortisol was generally very small and in most analyses not '
+            'statistically distinguishable from zero.{moyer11} In the 60 healthy women, relaxation rose and stress fell in the resting group too.{meier} In '
+            'the 118 healthy adults, a single rhythmical massage of about an hour was not followed by significantly better well-being scores or cortisol '
+            'levels than a sham massage.{kanitz} In 14 healthy men, a 20-minute massage and a 20-minute reading period were each followed by a rise in the '
+            'hormone oxytocin, which led the researchers to suggest that touch is not needed for that rise.{bello} In 15 healthy women, a single two-minute '
+            'manual massage was not followed by significant differences in heart-rate variability or blood pressure compared with rest or a sham, although the'
+            ' authors noted changes of moderate to large size within the massage condition.{monteiro} In 38 family caregivers at a rehabilitation hospital who'
+            ' had either one or three massages a week for two weeks, psychological symptom scores were lower afterward in both groups, but because everyone '
+            'had massage the study cannot show how much of the change was due to the massage itself.{williams}'
+        ),
+        (
+            'Courses of massage have the more encouraging results: the largest effects in the 2004 meta-analysis came after a course of sessions rather than a'
+            ' single one, on measures of anxiety and mood.{moyer04} In a pilot study of 54 adults aged 60 and over, twice-weekly massage for four weeks was '
+            'followed by better scores for well-being and perceived stress than guided relaxation.{sharpe} In a trial of 122 adults at an integrative-therapy '
+            'clinic in Brazil, people had eight Anma (Japanese) massage sessions followed by rest, massage followed by Reiki, or no intervention. Stress fell '
+            'more in the massage-plus-Reiki group than in the no-intervention group, and the authors called for a placebo group in later '
+            'trials.{kurebayashi16} The same trial’s report on stress and quality of life (101 people analyzed) found that both massage groups did better than'
+            ' no intervention.{kurebayashi20}'
+        ),
     ]),
 ]
 

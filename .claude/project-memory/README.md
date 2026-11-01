@@ -1,8 +1,10 @@
 # Project memory (snapshot for cloud sessions)
 
-- [Site review Bundle C](site-review-bundle-c.md) — staging applied; PR #64 live preparation after verified A/B, fresh source/hash guards, 1,248-check exact rollback rehearsal and actual dry PASS; awaiting Ryan's own run.
+- [Site review Bundle D](site-review-bundle-d.md) — staged approved copy; PR #65 live preparation, fresh post-C source, 1,376-check exact rollback rehearsal and actual dry PASS; awaiting Ryan's own run.
 
-- [Site review release](site-review-release.md) — A/B LIVE and verified; C PR #64/request `live-review-c-20261101-1` prepared, no C apply; exact phone steps, proof and deferred owner/security.txt items.
+- [Site review Bundle C](site-review-bundle-c.md) — LIVE via Ryan's #64/run; 1,247 public assertions pass, security.txt 404 remains; CSP 4 views/0 and rendered/security/PHP checks verified, qualified reference differences and actual snapshot.
+
+- [Site review release](site-review-release.md) — A/B/C LIVE; C 1,247 passing assertions/known TXT 404, rendered/CSP/PHP verified; D PR #65/request `live-review-d-20261101-1` prepared/not applied; exact phone steps and deferred work.
 
 - [Site review Bundle B](site-review-bundle-b.md) — LIVE via Ryan's PR #69/run; strict 12-page scan zero expectations, approved card 1305/SHA/1200×630; actual live snapshot, qualified reference and restore comparisons.
 

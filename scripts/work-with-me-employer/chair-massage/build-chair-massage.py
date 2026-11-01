@@ -128,8 +128,8 @@ FAQ = [
  ('Do I Need to Undress for Chair Massage?',
   'No. You stay fully clothed, and I do not use oil. Light layers are easiest to work through; a thick coat or a bulky hood is better taken off.'),
  ('How Long Is a Chair Massage?',
-  'At corporate and group events I plan about 10 to 15 minutes per person, depending on the schedule and how many people take part. The Corporate and Group Massage page explains how the time block is planned. The studies summarized below mostly used 15-minute sessions.'),
- ('What Is the Massage Chair Like?',
+  'At corporate and group events I plan about 10 to 15 minutes per person, depending on the schedule and how many people take part. The Corporate &amp; Group Massage page explains how the time block is planned. The studies summarized below mostly used 15-minute sessions.'),
+ ('What Is the Chair Like?',
   'It is a padded folding chair that you sit on facing forward, with your knees on supports, your chest against a cushion and your face in a cradle, so your back, neck and shoulders are easy to reach. I adjust it to your height. If kneeling or leaning forward is uncomfortable, I can work with you seated upright in an ordinary chair.'),
  ('Is Chair Massage the Same as a Mechanical Massage Chair?',
   'No. A massage chair is a machine with rollers. Chair massage is hands-on work by a licensed massage therapist in a portable chair, adapted to you as you give feedback.'),
@@ -142,11 +142,11 @@ FAQ = [
  ('Will I Feel the Results Right Away?',
   'People respond differently to massage, so I can’t promise a particular result or timeline. I will ask how the session feels and adjust as I go.'),
  ('What Does the Host Need to Provide?',
-  'A quiet corner with roughly six feet by six feet of floor space, somewhere for people to wait, and a way for them to sign up for a time. I bring the chair and everything else. The Corporate and Group Massage page lists what I plan with you before the event.'),
+  'A quiet corner with roughly six feet by six feet of floor space, somewhere for people to wait, and a way for them to sign up for a time. I bring the chair and everything else. The Corporate &amp; Group Massage page lists what I plan with you before the event.'),
  ('Where Do Sessions Take Place?',
-  'Right now I offer corporate and group massage only, at suitable Portland venues, with bookings beginning November 14, 2026. Individual appointments at a dedicated Thai Solitude location are planned for summer 2027. I do not offer individual house calls.'),
+  'Right now I offer corporate and group massage only, at suitable Portland venues, with bookings beginning November 14, 2026. Individual appointments at a dedicated Thai Solitude location are planned for summer 2027. I do not offer individual home visits.'),
  ('How Do I Book a Session?',
-  'Corporate and group massage bookings begin November 14, 2026. The Corporate and Group Massage page explains how to request a quote. Individual appointments are planned for summer 2027.'),
+  'Corporate and group massage bookings begin November 14, 2026. The Corporate &amp; Group Massage page explains how to request a quote. Individual appointments are planned for summer 2027.'),
 ]
 EXPECT_INTRO = 'Before your session, tell me about any health conditions, medications, pregnancy, recent injury or surgery. I may adjust the work, or suggest you check with your clinician first. New numbness, weakness, unexplained swelling or radiating pain means you should see a doctor before massage.'
 STEPS = [
@@ -178,7 +178,7 @@ PANELS = [
   'The limits: all 19 women in the Ljubljana study received the massage, only 15 completed it, and its authors’ claim that twice-weekly sessions beat a single session rests on comparing phases within the same small group.{sisko} The 17-adult study measured muscle activity, not pain, and in the Thai study shoulder strength was not significantly different after massage.{domingo}{yoopat} In 45 cardiac sonographers randomly assigned to weekly 30-minute chair massage, massage plus stretching, or nothing for 10 weeks, discomfort scores improved somewhat in both massage groups, and the authors called for larger trials.{engen} An employer-funded program of 20-minute on-site massages for long-term care staff showed possible improvements in job satisfaction and an early reduction in pain severity, with the greatest benefit in people who already had symptoms, but no long-term effect was demonstrated.{back} None of the studies that give their length followed people for longer than ten weeks.',
   'Still, the two office-worker studies are among the better-designed chair massage studies, with randomized control groups and an objective measure of pain sensitivity,{cabak16}{cabak17} and together with the music-student study they agree that four weeks of short sessions changed how much pressure tender neck and shoulder muscles could take.{cabak16}{cabak17}{cyganska} In 29 nursing students who had both a firm and a very light seated massage, the firm one was rated better for energy, pain, stress and feeling physically tense, which is why I ask you about pressure rather than keeping it light by default.{turkeltaub}',
  ]),
- ('Nurses, Hospital Staff and Carers', False, [
+ ('Nurses, Hospital Staff and Caregivers', False, [
   'Hospitals have studied chair massage for their own staff and for visiting families. In 38 nurses offered a weekly 15-minute chair massage during work for 10 weeks, 329 of 400 appointments were used, and at 10 weeks perceived-stress scores had fallen from 17.85 to 14.92 and anxiety scores from 49.45 to 40.95, with better scores on a self-assessment scale and a symptom scale.{engen12} In the randomized trial of 60 women on oncology nursing teams in São Paulo, 15-minute chair massages twice a week for three weeks were followed by lower stress scores than no massage, with an effect size (a Cohen’s d of 1.21) that counts as large, and less interference from pain in general activity, mood, work and sleep.{desouza} In 12 hospital staff, mostly nurses, who had up to eight 15-minute Swedish massages at work, pain and tension were significantly lower, and relaxation and mood better, after massage, measured before and after each session.{katz} Evaluations of chair massage services for carers of inpatients at a cancer hospital in Manchester, England, reported better physical and emotional scores that were retained to the next day, better sleep, and feel-good scores that rose from 5 to 8 out of 10 on a transplant unit.{mackereth05}{nightingale} In a quality improvement project at an academic medical center in New Jersey, chair massage was among the brief on-site practices offered to nursing staff over 11 months, and its use rose over the period.{millspaugh}',
   'Most of these are pilot studies or service evaluations without a comparison group, so they cannot show how much of the change came from the massage itself: the 38-nurse study, the 12-staff study and the two Manchester evaluations all compared people’s scores before and after massage, with no separate control group described.{engen12}{katz}{mackereth05}{nightingale} The 2021 network meta-analysis found that massage reduced occupational stress in health care workers but that yoga did more, and the 2019 systematic review of aromatherapy and massage in nurses found that most studies reported a benefit but judged them too few and at too high a risk of bias to prove the effect.{zhang}{li} In the 11-month project, staff perceptions of self-care opportunities and of a restorative work environment did not change significantly, and staffing and scheduling limited who could take part.{millspaugh} In the cardiac catheterization laboratory study described above, weekly massages produced no statistically significant effects, although the authors’ feasibility test supported further research on fatigue, pain, relaxation and tension.{keller}',
   'The randomized oncology-nursing trial is the strongest chair massage study I found, and it is encouraging: six 15-minute sessions over three weeks were enough to show a large effect-size difference in stress between the groups.{desouza} The uptake numbers say something on their own: 329 of 400 appointments used by the nurses, 90 percent of appointments used by the catheterization laboratory staff, and 227 chair massages given to carers over two years on one transplant unit.{engen12}{keller}{nightingale}',
@@ -251,14 +251,22 @@ def image_block(kind, n, alt, w, h):
             '<!-- /wp:uagb/image -->') % (a, ID['img%d' % n], url, url, url, url, esc(alt), size, esc(alt))
 
 
+EARLY_RESEARCH_NOTE = 'These are general findings, not medical advice or a promise of any result; the full summaries, including the weaker results, are in the research section below.'
+
+
 def section_row(n, heading, paras, cite, last=False):
     """A text section without a picture (version 2): the same row container with the rule underneath, one heading block."""
     body = '<br><br>'.join(cite.mark(esc(p)) for p in paras)
     a_row = (A_TEXT_ROW_LAST if last else A_TEXT_ROW) % ID['row%d' % n]
-    return ('<!-- wp:uagb/container %s -->\n<div class="wp-block-uagb-container uagb-block-%s">'
+    block = ('<!-- wp:uagb/container %s -->\n<div class="wp-block-uagb-container uagb-block-%s">'
             '<!-- wp:uagb/advanced-heading %s -->\n<div class="wp-block-uagb-advanced-heading uagb-block-%s"><h2 class="uagb-heading-text">%s</h2><p class="uagb-desc-text">%s</p></div>\n'
             '<!-- /wp:uagb/advanced-heading --></div>\n<!-- /wp:uagb/container -->') % (
         a_row, ID['row%d' % n], A_SECTION_TEXT_WIDE % ID['txt%d' % n], ID['txt%d' % n], esc(heading), body)
+    if n == 1:
+        old = '<!-- /wp:uagb/advanced-heading -->'
+        assert block.count(old) == 1
+        block = block.replace(old, old + '\n\n' + para(esc(EARLY_RESEARCH_NOTE)))
+    return block
 
 
 def faq_block():

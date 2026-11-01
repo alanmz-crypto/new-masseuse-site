@@ -167,7 +167,7 @@ def build_page():
           'I plan sessions at about 10–15 minutes per person, depending on your schedule and how many people take part.'),
         group('ts-corp__note', [
             p('<strong>A three-hour booking can often fit around 12–15 short appointments.</strong> The final number depends on appointment length, transitions, setup and any break time, '
-              'so I will agree a realistic schedule with you before confirming the event. Please read this as a planning estimate, not a promise.'),
+              'so I will agree on a realistic schedule with you before confirming the event. Please read this as a planning estimate, not a promise.'),
         ]),
         p('Planning a five-hour block? The number of appointments depends on session length and the schedule, so I work it out with you in your quote.'),
     ], anchor='chair-massage')
@@ -200,7 +200,7 @@ def build_page():
         p('Before I confirm an event, I go over the practical details with you:'),
         ul(['Event location, access and parking', 'The time block and the number of participants', 'Where the chair massage will be set up',
             'How employees will sign up or be scheduled', 'Whether a private room is available, if table massage is of interest',
-            'Arrival, setup and pack-down timing', 'Any venue policies or paperwork you need from me']),
+            'Arrival, setup and packing-up timing', 'Any venue policies or paperwork you need from me']),
         p('I will confirm the space and setup requirements with you before the event.'),
     ])
 

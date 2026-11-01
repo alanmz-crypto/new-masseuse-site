@@ -10,33 +10,30 @@ A phone cloud session (https://claude.ai/code, repo `alanmz-crypto/new-masseuse-
 First message to send in a fresh phone session: **"Read .claude/project-memory/open-items.md and tell me what is due."**
 
 **2026-11-01 current release lane (supersedes older status):**
-A and B are LIVE and verified after Ryan's own PR #68/#69 merges and LIVE runs.
-A: 262 browser assertions/three phone captures; B: strict live 12-page scan zero
-expectation failures, approved default/Home PNG 1305/1200×630/SHA and exact schema/
-metadata/social values. Fresh exports and actual snapshots are encrypted off-site:
-A bundle-a-before-20261101-155950.json; B bundle-b-before-20261101-163141.json.
-[Actual A proof](../../docs/reviews/2026-11-01-bundle-a-live.md) /
-[actual B proof](../../docs/reviews/2026-11-01-bundle-b-live.md). Historical staging36
-reference schema/pixel failures and intended restore differences are qualified there.
+A/B/C are LIVE through Ryan's own #68/#69/#64 merges/runs. A 262 browser passes;
+B strict 12-page semantic/card verification zero expectations; C origin 12/restore
+import0/no SEO, ContactCSP 4 views/0, public C 1,247/1248 with sole security.txt 404.
+Initial C post-change INVALID 202; later once-only retry completes rendered Home/
+client/posture/PHP checks, expected old-reference schema/pixels FAIL. Do not call
+full C suite or hosting all-pass. [C actual proof](../../docs/reviews/2026-11-01-bundle-c-live.md).
+Actual C snapshot bundle-c-before-20261101-175205.json and fresh export verified
+encrypted off-site; A/B snapshots retained. No static-file/rule/support-message change.
 
-**C is prepared, not applied, in existing PR #64.** It integrates main's A/B releases
-normally. Fresh actual source/12-page+CSS hash guards, uploads rehearsal 1,248/0 with
-exact rollback/geometry/behavior and actual live dry PASS. Ryan reviews/merges #64
-only, then Actions > Site ops (LIVE) > Run workflow > main > confirm
-`live-review-c-20261101-1`. Tell agent “C done” for full report/CSP/public verification.
-[[site-review-release]] and [current proof/phone steps](../../docs/reviews/2026-11-01-review-live-release.md).
-C's actual live snapshot/IDs do not exist yet.
+**D is prepared, not applied, existing PR #65.** Main integrated normally; all 9
+actual old page hashes equal verified C state, 45 approved pairs/research unchanged.
+Fresh source/status/meta/terms/front/footer match; live-copy uploads rehearsal1376/0
+exact rollback/regulated gates PASS, actual live dry all 9 pages/snippet/footer ready.
+Ryan reviews/merges #65 only, then Actions > Site ops (LIVE) > Run workflow > main >
+confirm `live-review-d-20261101-1`. Tell agent “D done” for full origin/post-change/
+restore/public D verification before E. D live snapshot does not exist yet.
+[[site-review-release]] / [current proof/phone steps](../../docs/reviews/2026-11-01-review-live-release.md).
 
-Keep #65–#67 open. D/E still require their ordered actual live predecessor hashes/
-source/guards and proof. Fresh WP 7.1.4 differs from E's older 7.1.3; inspect source/
-rehearse rather than simply relax that guard. CLI 8.5.12 is not a web-PHP reading.
-F's admin HEAD  403 pause remains: no six-option installer/write. Hosting AntiBot
-and staging security.txt 404/owner static fallback are deferred, not passed; exact
-live static payload is prepared in review-c/security-live/security.txt, not installed.
-Public C checks must report the actual endpoint result after C's own apply.
-Butsaba 2/3/4/6/7 and length-consistency work, G's November 14 timing/15 sentences,
-and owner credentials/deletions/Astra/www/menu tasks remain separate. No support
-message, hosting control or agent merge/LIVE dispatch occurred.
+Keep #66–#67 open. E needs actual D predecessor hashes and current core/media/
+version/symlink/frame proof; never just relax older WP 7.1.3 guard. F/admin HEAD  403
+remains paused/no six-option installer or write. C security.txt404/static owner fallback,
+intermittent hosting protection, pending Butsaba 2/3/4/6/7/length consistency, G's
+November 14/15 sentences and owner credential/deletion/Astra/www/menu tasks remain.
+Agents never merge main or dispatch LIVE. No D live write occurred in preparation.
 
 ## A. Happens by itself (nothing to do)
 - **BOOKING DATE MOVED to November 14, 2026 (Ryan 2026-10-30: "Change booking begins to Nov 14th. Everywhere."; [[booking-date]]). LIVE since 2026-10-30 15:43 UTC, so the strip flips on 2026-11-14 00:00 Pacific (08:00 UTC, PST), NOT Nov 1; until it is live the text below (Nov 1) is what live does.** ~~2026-11-01 00:00 Pacific (07:00 UTC) the announcement strip flips~~ (old date): from "Currently booking corporate & group massage only." to "Now accepting corporate & group massage bookings." on nine pages. It is PHP in a WPCode snippet; the SiteGround page cache is OFF (checked 2026-10-25), so no purge is needed. See [[availability-update]].
