@@ -60,7 +60,9 @@ $counts = array(); foreach ($discussion as $r) { $key = $r["post_type"]."|".$r["
 $menus = $wpdb->get_results($wpdb->prepare("SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key=%s ORDER BY post_id, meta_id", "_menu_item_url"), ARRAY_A);
 $write("preservation.json", array("published_discussion_counts"=>$counts, "published_discussion_rows"=>count($discussion), "published_discussion_sha256"=>hash("sha256", json_encode($discussion)), "stored_menu_url_rows"=>count($menus), "stored_menu_url_sha256"=>hash("sha256", json_encode($menus))));
 $core = realpath(ABSPATH.WPINC); if (!$core) { WP_CLI::error("Public core directory unavailable."); } $core = wp_normalize_path($core);
-$relative = function ($file) use ($core) { $p = realpath($file); if (!$p) { return false; } $p = wp_normalize_path($p); return 0 === strpos($p, $core."/") ? WPINC."/".substr($p, strlen($core)+1) : false; };
+$admin_core = realpath(ABSPATH."wp-admin/includes");
+$roots = array($core=>WPINC); if ($admin_core) { $roots[wp_normalize_path($admin_core)] = "wp-admin/includes"; }
+$relative = function ($file) use ($roots) { $p = realpath($file); if (!$p) { return false; } $p = wp_normalize_path($p); foreach ($roots as $root=>$label) { if (0 === strpos($p, $root."/")) { return $label."/".substr($p,strlen($root)+1); } } return false; };
 $source = "<?php\n// Installed public core option functions; read-only excerpts.\n"; $functions = array();
 foreach (array("get_option", "update_option", "sanitize_option", "wp_determine_option_autoload_value", "_config_wp_home", "_config_wp_siteurl", "update_home_siteurl", "flush_rewrite_rules") as $name) {
     if (!function_exists($name)) { WP_CLI::error("Required public core function unavailable: ".$name); }

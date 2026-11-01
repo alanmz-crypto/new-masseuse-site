@@ -1,8 +1,10 @@
 {
-  "id": "review-f-capture-staging38-20261101",
+  "id": "review-f-capture-staging38-20261101-2",
   "op": "run",
   "target": "staging38",
   "script": "review-f/inspect-bundle-f.sh",
-  "args": [],
+  "args": [
+    "--sources-only"
+  ],
   "tests": "auto"
 }
