@@ -1,9 +1,8 @@
 {
-  "id": "review-e-rehearse-staging38-20261101-3",
-  "op": "rehearse",
+  "id": "review-e-dry-staging38-20261101",
+  "op": "run",
   "target": "staging38",
-  "installer": "review-e/install-bundle-e.php",
-  "args": [
-    "--with-uploads"
-  ]
+  "script": "review-e/push-bundle-e.sh",
+  "args": [],
+  "tests": "auto"
 }

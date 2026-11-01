@@ -36,3 +36,10 @@ The initial symlink-path filter missed emoji callbacks; fixed before choosing
 removals. Source PNG/WebP visually reviewed. Exact asset SHA in the proof file.
 Fresh origin security.txt is404; C’s WordPress route is not publicly served by
 SiteGround. Ryan-owned static-file fallback remains prepared, mailbox approved.
+
+Uploads rehearsal 3 PASS (11:40 UTC): apply/idempotent reapply/exact rollback/
+reapply, Home/client gates, no new PHP errors, C 1,248 + D 128 assertions and E’s
+complete 8-image/4-page geometry/delivery/preload/emoji suite. All frames/page
+heights are unchanged from original-image DOM; phone image captures reviewed.
+The old report grep omitted E’s numeric summary; fixed for future reports only.
+Dry/apply next; still no E staging write. Report114001-review-e-rehearse...-3.

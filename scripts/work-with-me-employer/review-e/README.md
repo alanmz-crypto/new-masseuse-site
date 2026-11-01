@@ -1,6 +1,6 @@
 # Review Bundle E (staging38 only)
 
-Prepared, not applied. [Scope/proof](../../../docs/reviews/2026-11-01-bundle-e-staging38.md).
+Prepared, not applied. Uploads rehearsal 3 PASS (exact rollback, C/D regressions and E geometry/assets/preload/emoji contract); dry run next. [Scope/proof](../../../docs/reviews/2026-11-01-bundle-e-staging38.md).
 
 `changes.json` freezes four image-only replacements on Home/Therapeutic and all ten original file identities. `build-bundle-e.py` packages those, the 21,796-byte prepared 400px WebP and both PHP runtime sources. Intrinsic image dimensions/responsive attributes are added during rendering so saved core image blocks remain compatible with the editor. Two actual Work With Me images are handled; the review’s count of three was stale.
 

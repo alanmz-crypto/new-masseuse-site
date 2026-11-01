@@ -1,6 +1,6 @@
 # Bundle E: staging38 performance
 
-**Status:** prepared; no E WordPress write. Draft PR #66 is stacked on applied D (draft PR #65). Live remains disabled. Offline gates pass; isolated uploads rehearsal is next.
+**Status:** prepared; no E WordPress write. Draft PR #66 is stacked on applied D (draft PR #65). Live remains disabled. Offline gates and isolated uploads rehearsal 3 pass; staging dry run is next.
 
 ## Verified source and changes
 
@@ -35,7 +35,11 @@ First rehearsal stopped before any apply: old image fragments needed host templa
 
 Second rehearsal exercised recovery: WordPress’s upload handler requires its file array by reference; the temporary literal caused apply to stop before an upload. Old stores were restored/read back, private temp cleaned, and no staging write occurred. The handler now receives a standard named upload array. Report: `reports/2026-11-01/113514-review-e-rehearse-staging38-20261101-2.md`.
 
-Pending: corrected isolated uploads apply/reapply/exact rollback/reapply, C+D regression suites and E image/geometry/delivery/preload/emoji browser checks; staging dry/apply/origin checks and restore proof. Public interactive checks remain pending while the hosting challenge is intermittent. No public retry loop or live action.
+Rehearsal 3 PASS: apply, no-op reapply, exact rollback, reapply, rendered regulated-copy/Home gates and no new PHP errors. C’s 1,248 and D’s 128 assertions pass, followed by the full E contract on four pages: all eight image placements at 1280/390/320 light+dark, unchanged image/figure/page geometry against original image DOM, responsive sources, delivered exact WebP, two font preloads and no emoji DOM/network output. The E child completed all four pages with exit 0; the report filter initially omitted its numeric summary, so no unsupported exact E assertion count is claimed. The filter now retains C/D/E/F summaries without changing test behavior. Report: `reports/2026-11-01/114001-review-e-rehearse-staging38-20261101-3.md`.
+
+Home Deep/Thai and Therapeutic red 390px figure captures were visually reviewed: correct canonical pictures, preserved frames, no clipping. Existing Home/Services/Work With Me geometry is unchanged. Both GitHub Gates checks for source `b080f765dc69a55c08b99857519d87a4e698ae61` pass (41302663732/41302659604).
+
+Pending: staging dry/apply/origin checks and restore proof. Public interactive checks remain pending while the hosting challenge is intermittent. No public retry loop or live action.
 
 Source reports:
 
