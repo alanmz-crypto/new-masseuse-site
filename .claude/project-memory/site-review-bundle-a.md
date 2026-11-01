@@ -32,7 +32,7 @@ releases; roll Bundle A back before using their exact-state rollback installers
 or rebuilding a page from them. Current-state rollback is Bundle A's snapshot.
 
 State: **APPLIED and verified on staging38**, 2026-11-01 02:10–02:16 UTC.
-PR #61 is the one Bundle A lane; live disabled. Final record:
+PR #61 has been merged (confirmed through GitHub when recording the answers below); live remains disabled for Bundle A. Final record:
 `docs/reviews/2026-11-01-bundle-a-staging38.md` (all report links, checks,
 expected pixels, heights, exact rollback). Rehearsal 4, dry run and apply PASS;
 rendered gates and posture PASS, structured data identical, no PHP errors.
@@ -44,8 +44,7 @@ screenshots visually reviewed.
 Export `staging38-before-bundle-a-20261101-021038.sql` verified off-site before
 apply; snapshot `bundle-a-before-20261101-021051.json` also encrypted and verified.
 Exact rollback: `request.sh run --target staging38 --script review-a/push-bundle-a.sh --args '--rollback $HOME/private-backups/bundle-a-before-20261101-021051.json'`.
-No live write/request. Ryan reviews and gives his go before the live host/request
-is added to the same PR; he alone merges and starts the live run.
+No live write/request was made in this work. PR #61 is now merged, so any live-enable/request preparation requires a follow-up PR after Ryan's go; he alone merges and starts the live run.
 
 Lesson: WP 7.1 adds `wp-block-paragraph` and group layout classes at render time.
 Match class tokens, not entire quoted attributes; rehearsal caught new brittle
@@ -54,3 +53,12 @@ assertions before staging.
 Bundle G follow-up: A adds five closing “bookings begin November 14, 2026”
 sentences. After A, its date refresh must cover **15**, not the original ten,
 including the Services closing block. Apply G only on/after November 14.
+
+
+**Partial answers, 2026-11-01:** Ryan replied `#1 20 # 5 60 and 90 #8 yes #9 yes`.
+Recorded in `docs/inter-model/2026-11-01-butsaba-questions.md` and open items:
+20-minute chair length (do not infer mandatory/usual duration or capacity);
+60/90-minute Therapeutic, Deep Tissue and Thai options; call/text permission;
+both Windy City Massage links and the reference offer may stay.
+Questions 2, 3, 4, 6 and 7 remain unanswered. This is a documentation update,
+not a site apply or live go; the applied installer/package is unchanged.

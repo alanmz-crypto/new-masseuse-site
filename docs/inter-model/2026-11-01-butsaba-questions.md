@@ -19,3 +19,29 @@ Please answer in your own words; I’ll use only what you confirm.
 
 Source: the 2026-11-01 site-review fix handoff, Bundle 0; review items 3.1–3.5,
 3.14, 8.3 and section 12. No answer is assumed.
+
+
+## Answers received from Ryan, 2026-11-01
+
+Verbatim reply: `#1 20 # 5 60 and 90 #8 yes #9 yes`.
+
+| Question | Confirmed answer |
+|---|---|
+| 1 — Chair length | 20 minutes. The question offered 10–15 minutes or up to 20; do not infer that every appointment must be 20 minutes or recalculate event capacity from this answer alone. |
+| 5 — Session lengths | 60- and 90-minute options for Therapeutic, Deep Tissue and Thai massage. |
+| 8 — Phone | Yes, clients may call and text the published number. |
+| 9 — Windy City Massage | Yes, retain both links and the offer to use them as a reference. |
+
+Still unanswered:
+
+- **2:** pregnancy at events and the intake/check-first wording.
+- **3:** table or mat, clothing and draping for each service.
+- **4:** Thai massage on a mat at corporate/group events.
+- **6:** payment methods, deposits and cancellation terms.
+- **7:** event days and times available.
+
+These are recorded confirmations, not a site apply or a live go. Any follow-up
+copy still uses fresh stored bytes, rehearsal, staging38 and exact rollback.
+The existing 10–15-minute Chair/Corporate wording needs a consistency review;
+usual appointment length, transitions/breaks and event capacity are not supplied
+by the number 20 alone. No capacity figure has been invented or changed.
