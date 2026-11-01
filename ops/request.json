@@ -1,6 +1,7 @@
 {
-  "id": "review-a-snippet-hashes-20261101",
-  "op": "inspect",
+  "id": "review-a-rehearse-20261101-1",
+  "op": "rehearse",
   "target": "staging38",
-  "query": "snippets"
+  "installer": "review-a/install-bundle-a.php",
+  "args": []
 }
