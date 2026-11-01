@@ -1,8 +1,8 @@
 {
-  "id": "live-review-d-20261101-1",
+  "id": "live-review-e-20261101-1",
   "op": "run",
   "target": "live",
-  "script": "review-d/push-bundle-d.sh",
+  "script": "review-e/push-bundle-e.sh",
   "args": [
     "--apply"
   ],

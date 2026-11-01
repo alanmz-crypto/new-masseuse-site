@@ -1,0 +1,231 @@
+{
+  "source_report": "reports/2026-11-01/110142-review-e-source-webp-staging38-20261101.md",
+  "wp_version": "7.1.3",
+  "pages": {
+    "home": {
+      "pairs": [
+        {
+          "label": "Use therapeutic page’s canonical illustration by URL; remove stale attachment ID",
+          "old": "<!-- wp:image {\"id\":1151,\"sizeSlug\":\"full\",\"linkDestination\":\"none\",\"style\":{\"border\":{\"radius\":\"16px\"}}} -->\n<figure class=\"wp-block-image size-full has-custom-border\"><img src=\"{{HTTPS}}/wp-content/uploads/2026/10/therapeutic-massage-illustration.webp\" alt=\"Illustration of a therapist giving a therapeutic massage\" class=\"wp-image-1151\" style=\"border-radius:16px\"/></figure>\n<!-- /wp:image -->",
+          "new": "<!-- wp:image {\"sizeSlug\":\"full\",\"linkDestination\":\"none\",\"style\":{\"border\":{\"radius\":\"16px\"}}} -->\n<figure class=\"wp-block-image size-full has-custom-border\"><img src=\"/wp-content/uploads/2026/06/ComfyUI_01040_curves.webp\" alt=\"Illustration of a therapist giving a therapeutic massage\" style=\"border-radius:16px\"/></figure>\n<!-- /wp:image -->",
+          "count": 1
+        },
+        {
+          "label": "Use deep-tissue page’s canonical illustration by URL; remove stale attachment ID",
+          "old": "<!-- wp:image {\"id\":1157,\"sizeSlug\":\"full\",\"linkDestination\":\"none\",\"style\":{\"border\":{\"radius\":\"16px\"}}} -->\n<figure class=\"wp-block-image size-full has-custom-border\"><img src=\"{{HTTPS}}/wp-content/uploads/2026/10/deep-tissue-massage-illustration.webp\" alt=\"Illustration of a therapist giving a deep tissue massage\" class=\"wp-image-1157\" style=\"border-radius:16px\"/></figure>\n<!-- /wp:image -->",
+          "new": "<!-- wp:image {\"sizeSlug\":\"full\",\"linkDestination\":\"none\",\"style\":{\"border\":{\"radius\":\"16px\"}}} -->\n<figure class=\"wp-block-image size-full has-custom-border\"><img src=\"/wp-content/uploads/2026/06/ComfyUI_01044_.webp\" alt=\"Illustration of a therapist giving a deep tissue massage\" style=\"border-radius:16px\"/></figure>\n<!-- /wp:image -->",
+          "count": 1
+        },
+        {
+          "label": "Use thai page’s canonical illustration by URL; remove stale attachment ID",
+          "old": "<!-- wp:image {\"id\":1155,\"sizeSlug\":\"full\",\"linkDestination\":\"none\",\"style\":{\"border\":{\"radius\":\"16px\"}}} -->\n<figure class=\"wp-block-image size-full has-custom-border\"><img src=\"{{HTTPS}}/wp-content/uploads/2026/10/thai-massage-illustration.webp\" alt=\"Illustration of a therapist giving a Thai massage\" class=\"wp-image-1155\" style=\"border-radius:16px\"/></figure>\n<!-- /wp:image -->",
+          "new": "<!-- wp:image {\"sizeSlug\":\"full\",\"linkDestination\":\"none\",\"style\":{\"border\":{\"radius\":\"16px\"}}} -->\n<figure class=\"wp-block-image size-full has-custom-border\"><img src=\"/wp-content/uploads/2026/06/00illaCNN512Curve.webp\" alt=\"Illustration of a therapist giving a Thai massage\" style=\"border-radius:16px\"/></figure>\n<!-- /wp:image -->",
+          "count": 1
+        }
+      ],
+      "hashes": {
+        "staging38.thaisolitude.com": {
+          "old": "fe10828248833a0a562a0de9c6c49b23895ba2cc6bc32fbdc9257ce066a5dd66",
+          "new": "0fddd1d7bd20f0b22b5dfc5431d455db63f0f02f4127f7030c3caab5037e1d76"
+        },
+        "localhost:8090": {
+          "old": "bc7953a5b5470e9035ed1497f1e7c79369f597c9ca96bcc60ae99f34b07fe002",
+          "new": "87fd91fbdefef76532ad146c650c441634a10a3c7dce4ba38516c83b9f6375d0"
+        },
+        "thaisolitude.com": {
+          "old": "75aef61711e7fac2fc5894eacaa26aef8514c0840bb1626d9b809bc91e9ed842",
+          "new": "a5060e297017966ba024dc59c666f8eaef5cb0ccb0b0611c44c51e36b82308ed"
+        }
+      }
+    },
+    "therapeutic-massage": {
+      "pairs": [
+        {
+          "label": "Serve the prepared 400px WebP; retain display sizing and remove stale PNG ID",
+          "old": "<!-- wp:uagb/image {\"block_id\":\"b8f7a8b9\",\"disableLazyLoad\":true,\"url\":\"{{HTTPS}}/wp-content/uploads/2026/06/m0KN9hXmTHYQo2KXHhj4c_aa9c21bbb6df4fa79691af5de41f6f48-1.png\",\"urlTablet\":\"{{HTTPS}}/wp-content/uploads/2026/06/m0KN9hXmTHYQo2KXHhj4c_aa9c21bbb6df4fa79691af5de41f6f48-1.png\",\"urlMobile\":\"{{HTTPS}}/wp-content/uploads/2026/06/m0KN9hXmTHYQo2KXHhj4c_aa9c21bbb6df4fa79691af5de41f6f48-1.png\",\"alt\":\"The same illustration in red tones.\",\"id\":1117,\"linkDestination\":\"none\",\"title\":\"The same illustration in red tones.\",\"width\":200,\"widthTablet\":282,\"widthMobile\":800,\"height\":200,\"heightTablet\":194,\"heightMobile\":250,\"naturalWidth\":500,\"naturalHeight\":340,\"sizeSlug\":\"custom\",\"sizeSlugTablet\":\"custom\",\"sizeSlugMobile\":\"custom\",\"objectFit\":\"cover\",\"objectFitTablet\":\"cover\",\"objectFitMobile\":\"cover\",\"imageBoxShadowVOffset\":2,\"imageBoxShadowBlur\":5,\"imageBoxShadowSpread\":-1,\"customHeightSetDesktop\":true,\"customHeightSetTablet\":true,\"customHeightSetMobile\":true,\"imageBorderTopLeftRadius\":20,\"imageBorderTopRightRadius\":20,\"imageBorderBottomLeftRadius\":20,\"imageBorderBottomRightRadius\":20,\"imageBorderTopLeftRadiusTablet\":16,\"imageBorderTopRightRadiusTablet\":16,\"imageBorderBottomLeftRadiusTablet\":16,\"imageBorderBottomRightRadiusTablet\":16} -->\n<div class=\"wp-block-uagb-image uagb-block-b8f7a8b9 wp-block-uagb-image--layout-default wp-block-uagb-image--effect-static wp-block-uagb-image--align-none\"><figure class=\"wp-block-uagb-image__figure\"><img srcset=\"{{HTTPS}}/wp-content/uploads/2026/06/m0KN9hXmTHYQo2KXHhj4c_aa9c21bbb6df4fa79691af5de41f6f48-1.png ,{{HTTPS}}/wp-content/uploads/2026/06/m0KN9hXmTHYQo2KXHhj4c_aa9c21bbb6df4fa79691af5de41f6f48-1.png 780w, {{HTTPS}}/wp-content/uploads/2026/06/m0KN9hXmTHYQo2KXHhj4c_aa9c21bbb6df4fa79691af5de41f6f48-1.png 360w\" sizes=\"(max-width: 480px) 150px\" src=\"{{HTTPS}}/wp-content/uploads/2026/06/m0KN9hXmTHYQo2KXHhj4c_aa9c21bbb6df4fa79691af5de41f6f48-1.png\" alt=\"The same illustration in red tones.\" class=\"uag-image-1117\" width=\"200\" height=\"200\" title=\"The same illustration in red tones.\" role=\"img\"/></figure></div>\n<!-- /wp:uagb/image -->",
+          "new": "<!-- wp:uagb/image {\"block_id\":\"b8f7a8b9\",\"disableLazyLoad\":true,\"url\":\"/wp-content/uploads/2026/11/therapeutic-red-400.webp\",\"urlTablet\":\"/wp-content/uploads/2026/11/therapeutic-red-400.webp\",\"urlMobile\":\"/wp-content/uploads/2026/11/therapeutic-red-400.webp\",\"alt\":\"The same illustration in red tones.\",\"linkDestination\":\"none\",\"title\":\"The same illustration in red tones.\",\"width\":200,\"widthTablet\":282,\"widthMobile\":800,\"height\":200,\"heightTablet\":194,\"heightMobile\":250,\"naturalWidth\":400,\"naturalHeight\":313,\"sizeSlug\":\"custom\",\"sizeSlugTablet\":\"custom\",\"sizeSlugMobile\":\"custom\",\"objectFit\":\"cover\",\"objectFitTablet\":\"cover\",\"objectFitMobile\":\"cover\",\"imageBoxShadowVOffset\":2,\"imageBoxShadowBlur\":5,\"imageBoxShadowSpread\":-1,\"customHeightSetDesktop\":true,\"customHeightSetTablet\":true,\"customHeightSetMobile\":true,\"imageBorderTopLeftRadius\":20,\"imageBorderTopRightRadius\":20,\"imageBorderBottomLeftRadius\":20,\"imageBorderBottomRightRadius\":20,\"imageBorderTopLeftRadiusTablet\":16,\"imageBorderTopRightRadiusTablet\":16,\"imageBorderBottomLeftRadiusTablet\":16,\"imageBorderBottomRightRadiusTablet\":16} -->\n<div class=\"wp-block-uagb-image uagb-block-b8f7a8b9 wp-block-uagb-image--layout-default wp-block-uagb-image--effect-static wp-block-uagb-image--align-none\"><figure class=\"wp-block-uagb-image__figure\"><img srcset=\"/wp-content/uploads/2026/11/therapeutic-red-400.webp 400w\" sizes=\"(max-width: 480px) 150px\" src=\"/wp-content/uploads/2026/11/therapeutic-red-400.webp\" alt=\"The same illustration in red tones.\" width=\"200\" height=\"200\" title=\"The same illustration in red tones.\" role=\"img\"/></figure></div>\n<!-- /wp:uagb/image -->",
+          "count": 1
+        }
+      ],
+      "hashes": {
+        "staging38.thaisolitude.com": {
+          "old": "12b867d553baca4932ad7f9c5257839d90f1b3fc4da9e0acfa9203d612fec159",
+          "new": "386d52c7bb20bd499dc6e0773dae994a74bf54c12c99eaaf9a9c412d36004af0"
+        },
+        "localhost:8090": {
+          "old": "8cee6ac6230b2f80cc07c468f1434e4130c459d2301eb92a85445e295f8535b4",
+          "new": "1e718391d9b6884302608cfdd7139650344ec4474e2945221d47adbefb50fcb8"
+        },
+        "thaisolitude.com": {
+          "old": "b2a2c91e60dba184da80feb26d688fb70cb8f2ebca54c22da39f1f1272918677",
+          "new": "2fbc7d388dc825744c38b7bd1b9d2acab973691f6dd9fd0eab480ebbd34be234"
+        }
+      }
+    }
+  },
+  "originals": {
+    "therapeutic-png": {
+      "relative_file": "2026/06/m0KN9hXmTHYQo2KXHhj4c_aa9c21bbb6df4fa79691af5de41f6f48-1.png",
+      "width": 512,
+      "height": 400,
+      "mime": "image/png",
+      "filesize": 616299,
+      "sha256": "ffbb797aee0364a4d2146ab1d82acf43916cad0b5fa0b9fa73faedf6f10ed080",
+      "attachment_expected": true,
+      "sizes": []
+    },
+    "corporate": {
+      "relative_file": "2026/10/corporate-group-massage.webp",
+      "width": 512,
+      "height": 416,
+      "mime": "image/webp",
+      "filesize": 41988,
+      "sha256": "764a7ef428cbd2985156b584116f8bc196dd5c3a900e2426ff4f49f8582a747e",
+      "attachment_expected": true,
+      "sizes": []
+    },
+    "portrait": {
+      "relative_file": "2026/09/butsaba_homepage.webp",
+      "width": 360,
+      "height": 540,
+      "mime": "image/webp",
+      "filesize": 63556,
+      "sha256": "0ad56463eb7fa8fc56122f71bcf7eef79383bfc2fd385753cb45e5255853fa59",
+      "attachment_expected": true,
+      "sizes": []
+    },
+    "thai-session-cutout": {
+      "relative_file": "2026/10/thai-massage-therapy-session-cutout.webp",
+      "width": 1254,
+      "height": 1254,
+      "mime": "image/webp",
+      "filesize": 176626,
+      "sha256": "2f2fc1b345e6bfbf5bfec7006422af17841d6b905e16489318341c188c46d545",
+      "attachment_expected": false,
+      "sizes": []
+    },
+    "home-therapeutic-target": {
+      "relative_file": "2026/06/ComfyUI_01040_curves.webp",
+      "width": 512,
+      "height": 399,
+      "mime": "image/webp",
+      "filesize": 45472,
+      "sha256": "8f10fc53f258c5153354e38a9c85b105c94d89435f398d4fba9423baf3286e94",
+      "attachment_expected": true,
+      "sizes": [
+        {
+          "relative_file": "2026/06/ComfyUI_01040_curves-300x234.webp",
+          "width": 300,
+          "height": 234,
+          "mime": "image/webp",
+          "filesize": 12646
+        },
+        {
+          "relative_file": "2026/06/ComfyUI_01040_curves-150x150.webp",
+          "width": 150,
+          "height": 150,
+          "mime": "image/webp",
+          "filesize": 5538
+        }
+      ]
+    },
+    "home-deep-tissue-target": {
+      "relative_file": "2026/06/ComfyUI_01044_.webp",
+      "width": 512,
+      "height": 287,
+      "mime": "image/webp",
+      "filesize": 30354,
+      "sha256": "c3e3109f17c16c2ea77833aab7eb3774225b00bc671a3ec06cc9eaa5541836d2",
+      "attachment_expected": true,
+      "sizes": [
+        {
+          "relative_file": "2026/06/ComfyUI_01044_-300x168.webp",
+          "width": 300,
+          "height": 168,
+          "mime": "image/webp",
+          "filesize": 9784
+        },
+        {
+          "relative_file": "2026/06/ComfyUI_01044_-150x150.webp",
+          "width": 150,
+          "height": 150,
+          "mime": "image/webp",
+          "filesize": 4804
+        }
+      ]
+    },
+    "home-thai-target": {
+      "relative_file": "2026/06/00illaCNN512Curve.webp",
+      "width": 512,
+      "height": 460,
+      "mime": "image/webp",
+      "filesize": 51784,
+      "sha256": "c8ae3fc175b92978fd4712bf169e290235962b130a65f41f825f09b2e5a19bb0",
+      "attachment_expected": true,
+      "sizes": [
+        {
+          "relative_file": "2026/06/00illaCNN512Curve-300x270.webp",
+          "width": 300,
+          "height": 270,
+          "mime": "image/webp",
+          "filesize": 15416
+        },
+        {
+          "relative_file": "2026/06/00illaCNN512Curve-150x150.webp",
+          "width": 150,
+          "height": 150,
+          "mime": "image/webp",
+          "filesize": 6720
+        }
+      ]
+    },
+    "home-therapeutic-current": {
+      "relative_file": "2026/10/therapeutic-massage-illustration.webp",
+      "width": 512,
+      "height": 399,
+      "mime": "image/webp",
+      "filesize": 45472,
+      "sha256": "8f10fc53f258c5153354e38a9c85b105c94d89435f398d4fba9423baf3286e94",
+      "attachment_expected": true,
+      "sizes": []
+    },
+    "home-deep-tissue-current": {
+      "relative_file": "2026/10/deep-tissue-massage-illustration.webp",
+      "width": 512,
+      "height": 460,
+      "mime": "image/webp",
+      "filesize": 51784,
+      "sha256": "c8ae3fc175b92978fd4712bf169e290235962b130a65f41f825f09b2e5a19bb0",
+      "attachment_expected": true,
+      "sizes": []
+    },
+    "home-thai-current": {
+      "relative_file": "2026/10/thai-massage-illustration.webp",
+      "width": 512,
+      "height": 287,
+      "mime": "image/webp",
+      "filesize": 30354,
+      "sha256": "c3e3109f17c16c2ea77833aab7eb3774225b00bc671a3ec06cc9eaa5541836d2",
+      "attachment_expected": true,
+      "sizes": []
+    }
+  },
+  "media": {
+    "name": "therapeutic-red-400.webp",
+    "source_sha256": "ffbb797aee0364a4d2146ab1d82acf43916cad0b5fa0b9fa73faedf6f10ed080",
+    "width": 400,
+    "height": 313,
+    "mime": "image/webp",
+    "quality": 82,
+    "editor": "WP_Image_Editor_GD",
+    "filesize": 21796,
+    "sha256": "e795b73e4272e90f92db59b2734be41dd06365ac8ca6f0e8aa5e02d11ee1a756",
+    "relative_file": "2026/11/therapeutic-red-400.webp"
+  },
+  "live_source_report": "reports/2026-11-01/190302-review-e-live-source-20261101.md",
+  "wp_versions": {
+    "staging38.thaisolitude.com": "7.1.3",
+    "localhost:8090": "7.1.4",
+    "thaisolitude.com": "7.1.4"
+  }
+}

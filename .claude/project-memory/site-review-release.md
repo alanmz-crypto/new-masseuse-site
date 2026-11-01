@@ -1,6 +1,6 @@
 ---
 name: site-review-release
-description: A/B/C live; C 1,247-pass/known TXT 404; D PR #65 request prepared after fresh 1,376-check rollback rehearsal/dry, E next
+description: A–D live and verified; E PR #66 prepared after exact core/source and rollback rehearsal/dry; hosting TXT/F remain open
 metadata:
   type: project
 ---
@@ -22,30 +22,31 @@ pixels FAIL. Contact CSP 41334346820 four views/zero violations. Public C 413347
 1248 assertions/1 failure: security.txt 404, hence 1,247 other assertions pass.
 No full-suite/all-pass/durable host fix claim. Proof docs/reviews/2026-11-01-bundle-c-live.md.
 
-D PREPARED, NOT APPLIED, existing PR #65 branch codex/2026-11-01-review-bundle-d.
-Normal feature merge retains current main 69d2de8a A/B/C live code/records.
-Request live-review-d-20261101-1, review-d/push-bundle-d.sh --apply, tests auto.
-Ryan reviews/merges #65 only, then Actions > Site ops (LIVE) > Run workflow > main >
-type ID. Tell agent “D done” to inspect all origin/post-change/restore sections
-and public D behavior before E. No D actual live snapshot/content write yet.
+D LIVE via Ryan’s PR #65/e357dbb and run41338572399. Origin53 PASS; restore
+import0 before/current92 with intended nine pages/sn1234/Astra footer/WPCodecache,
+no SEO/CSS diff. Initial automatic postchange INVALID202/zero tests. Focused public
+D run41338898883 passes128 assertions, nine pages/three widths/lightdark/noJSerrors.
+Snapshot bundle-d-before-20261101-185003.json and DB live-before-bundle-d-20261101-184951.sql
+(5562193B, SHA34367bb1e69d) verified encrypted offsite. Snapshot SHA c3d07cde64fe.
+Proof docs/reviews/2026-11-01-bundle-d-live.md. No durable hosting-fix claim.
 
-Fresh source 41335028870 SHA 93fae08d968060d5ae1b15af5fd42d378cd7b26e2aa9364c97c8fa71a3be4b35:
-WP 7.1.4/Astra 4.14.1, CLI 8.5.12 only (not web PHP). All 9 old page hashes equal C's
-verified applied live hashes; front 296, heart snippet code/status/meta/terms and
-footer baseline match. Approved45 pairs/9 pages/source decisions unchanged; preserve
-Corporate raw serialization with live/LOCAL hash guards; stage hash pairs retained.
-Source capture selects actual host and supports sources-only without public requests.
-Mandatory verify-bundle-d.py guard also enables exact HTTPS apex, before origin 53
-checks after apply. B metadata/C option fields are preserved by exact snapshots.
+E PREPARED, NOT APPLIED, existing PR #66, normal current-main merge preserves A–D.
+Fresh selected-live native source41339677797 confirms all nine D applied page
+hashes, front296, ten images/six derivatives, no new snippet-name collision and
+byte-identical approved WebP. Archive SHA d9fb4398b88864a4b33f92e9b540504bbecc3fc2734082b87c78423bf77f2df2.
+WP7.1.4/Astra4.14.1/CLI8.5.12 only. Emoji/hooks/core-image/three-arg media filter
+review supports strict host versions: staging7.1.3, local/apex7.1.4. Original four
+pairs, staged hashes, runtime and asset unchanged; exact live page hashes added.
+[Fresh live-copy uploads rehearsal, run 41339834933](https://github.com/alanmz-crypto/new-masseuse-site/blob/ops-log/reports/2026-11-01/190757-review-e-live-rehearse-20261101.md) **PASS: 1,664 assertions, zero failures** (C 1,248 + D 128 + E 288). The source is WP 7.1.4; isolated uploads symlink preparation, apply/no-op/exact fingerprint rollback/reapply, regulated Home/client gates and no new site PHP errors all pass. Fingerprints move only Home/Therapeutic, the two new snippets and WPCode cache (related media/post/meta/term rows). All eight image frames and page heights remain unchanged at three widths/light+dark (48 image states). Three phone previews—Home Deep/Thai and Therapeutic red—were visually reviewed.
+[Actual live read-only preflight, run 41340220974](https://github.com/alanmz-crypto/new-masseuse-site/blob/ops-log/reports/2026-11-01/190905-review-e-live-dry-20261101.md) **PASS**: Home/Therapeutic and both new snippets ready; WebP ready to import once, ten originals preserved. No content write occurred.
+Request live-review-e-20261101-1, review-e/push-bundle-e.sh --apply, testsauto.
+Ryan reviews/merges #66 only, then Actions > Site ops (LIVE) > Run workflow > main >
+type ID. Tell agent “E done” to inspect all report sections and public E behavior.
+No actual E live snapshot/IDs/write yet. Exact logical media paths/ownership-aware
+rollback retained. Current proof/phone steps docs/reviews/2026-11-01-review-live-release.md.
 
-Fresh live-copy uploads rehearsal 41335527679 PASS 1,376/0 (C 1,248 + D 128), exact
-rollback/reapply and regulated gates; Home/About phone captures reviewed.
-Actual live dry 41336033180 all parts ready PASS. Final Gates before ready status.
-Current proof/phone steps docs/reviews/2026-11-01-review-live-release.md.
-
-E draft #66 needs actual live D predecessor, fresh installed core/media source and
-symlink uploads/frame rehearsal; do not just relax older WP 7.1.3 check. F/admin 403
-remains paused, no six-option installer/write. C security.txt public 404/static owner
-fallback and hosting protection remain deferred, no server-file/rule/support message.
+F/admin403 remains paused/no six-option installer/write. C security.txt public404,
+uninstalled static owner fallback/hosting protection remain deferred; no server-file/
+rule/support message.
 Butsaba 2/3/4/6/7/length-consistency, G November 14/15 sentences and owner tasks remain.
 Reverse E→D→C→B→A with actual live snapshots, never stage snapshots.

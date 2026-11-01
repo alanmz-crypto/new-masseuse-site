@@ -64,3 +64,14 @@ post-change rendered/security/PHP checks pass, reference comparisons are expecte
 Finding stays open; no static server file/hosting controls/support message.
 F/admin, E source/version rehearsal, pending facts/G/owner tasks remain separate.
 See [[site-review-release]] and docs/reviews/2026-11-01-review-live-release.md.
+
+**LIVE (supersedes preparation/disabled wording):** Ryan merged #65 as e357dbb and
+ran live-review-d-20261101-1/run41338572399, applied18:50UTC. Origin53 PASS;
+restore import0/intended changes/noSEO/CSS diff. Initial automatic public test
+INVALID202/zero tests remains recorded. Focused public D41338898883 passes128
+assertions across nine pages/three widths/lightdark/noJSerrors. Actual snapshot
+bundle-d-before-20261101-185003.json (SHA c3d07cde64fe), DB
+live-before-bundle-d-20261101-184951.sql (5562193B/SHA34367bb1e69d), encrypted offsite
+verified. Use this actual snapshot for any separate Ryan-owned rollback; after E,
+undo E first. Proof docs/reviews/2026-11-01-bundle-d-live.md. E is the next lane;
+C’s TXT404/hosting issue remains. No agent main merge/LIVE dispatch.
