@@ -1,6 +1,6 @@
 ---
 name: site-review-bundle-a
-description: Bundles 0/A staging verified; Ryan authorized release preparation, PR68 live request awaiting his run
+description: A LIVE verified 262 after Ryan’s PR68 merge/run; exact live snapshot recorded, B prepared separately
 metadata:
   type: project
 ---
@@ -75,3 +75,13 @@ LocalBusinessInfo; see [[site-review-bundle-b]] for its snapshot and proof.
 
 C/D/E are now also applied on staging38. Roll E→D→C→B back before A there.
 Use the actual live A snapshot after its own run, never this staging snapshot.
+
+**LIVE and verified, 2026-11-01 (supersedes preparation status above):** Ryan merged
+PR #68 and ran live-review-a-20261101-1, run 41323953827. Snapshot
+bundle-a-before-20261101-155950.json; DB live-before-bundle-a-20261101-155938.sql,
+both verified encrypted off-site. Rendered/origin/posture/schema/site-error checks
+pass; import 0/intended restore differences reviewed. Historical staging36 pixels
+all differ, with no missing views; that is not an aggregate all-pass. Follow-up
+browser run 41324631068:262 PASS, three phone captures reviewed. Full live proof:
+docs/reviews/2026-11-01-bundle-a-live.md. B is prepared in PR #69, not applied;
+when B applies, undo B before A's exact whole-resource rollback.

@@ -1,44 +1,46 @@
 ---
 name: site-review-release
-description: Ryan authorized A–E release preparation; A live request PR68 ready for Ryan, no live apply; F/admin and hosting follow-ups deferred
+description: A live and verified 262; B live request PR #69 ready for Ryan; ordered C–E follow-up, F/hosting deferred
 metadata:
   type: project
 ---
 
-Ryan 2026-11-01: “How about we ship this for the moment and you look after we are live?”
-Prepare completed A–E sequentially under the existing one-bundle/one-LIVE-run rule.
-Ryan still merges and starts every live run; never dispatch LIVE or merge main.
-No live content/settings/hosting/credential write has occurred in preparation.
+Ryan's 2026-11-01 “ship this for the moment and you look after we are live” authorizes
+A–E release preparation under one bundle/one LIVE run. Ryan alone merges/runs LIVE.
+Do not merge main, force-push or dispatch LIVE.
 
-A first: PR #68, codex/2026-11-01-review-a-live, based on main after merged #63.
-Prepared request live-review-a-20261101-1, review-a/push-bundle-a.sh --apply, tests auto.
-Ryan merges #68 then Actions > Site ops (LIVE) > Run workflow > main > type ID.
-Wait for the actual report; read automatic checks and run A public checker once
-before B preparation. User can say “A done” or provide the run link.
+A LIVE: merged PR #68 as fcf68c75b8cd1099630136fc073ffbb9eae7131f; Ryan's request
+live-review-a-20261101-1/run 41323953827 applied 15:59 UTC. Rendered/origin/posture/
+schema/PHP checks pass, restore import 0/intended 88-fingerprint differences.
+Post-change command exit 1 is historical staging36's 20 pixel differences; all 20
+captures exist, not a pixel-equality pass. Follow-up live browser run 41324631068
+passes 262 assertions across nine pages/four widths/light+dark; three phone captures
+visually reviewed. Actual live snapshot bundle-a-before-20261101-155950.json,
+export live-before-bundle-a-20261101-155938.sql, both verified encrypted off-site.
+Proof: docs/reviews/2026-11-01-bundle-a-live.md.
 
-A's original 262-point staging browser pass/rollback remain. Fresh live preflight1
-refused one mobile quote anchor. Exact source proved Corporate has no terminal LF;
-remove exactly one LF from BOTH old/new fragment strings. No other plan values,
-wording, counts or snippet hashes changed. Previously applied staging output is
-byte-identical; no-LF/one-LF/two-LF roundtrips verified. New source plan/generated
-payload match; browser checker accepts exactly HTTPS staging38 or apex.
-Fresh rehearsal from live with uploads PASS: exact rollback/reapply, rendered
-copy gates and no new site PHP errors; actual live dry2 all parts ready PASS.
-Proof and report links: docs/reviews/2026-11-01-review-live-release.md.
+B PREPARED, NOT APPLIED: PR #69, branch codex/2026-11-01-review-b-live, main after A.
+Request live-review-b-20261101-1, review-b/push-bundle-b.sh --apply, tests auto.
+Ryan reviews/merges #69, then Actions > Site ops (LIVE) > Run workflow > main > ID.
+Tell agent “B done” to inspect full report/restore proof and strict live SEO scan.
+No B live write or production snapshot yet. Card/payload unchanged from approved B.
 
-Important fresh runtime: live rehearsal reports WordPress7.1.4, versus E's earlier
-stage capture7.1.3. Do not guess updated API semantics or relax E's version guard.
-Refresh installed public source and repeat relevant proof before B–E live prep.
-C/D/E need frozen live hashes for actual sequential predecessor stores (including
-Corporate's no-LF ending), not just host additions. Their verifier host guards
-also need explicit live enablement. Do not precompute from an assumed stage copy.
+Fresh selected-live settings/SureRank source PASS 41324970622, archive SHA
+eb3b76e83f2bf2973099c630091df17f357288d15708d9a83408153797b998f5.
+WP 7.1.4; reported PHP 8.5.12 is CLI only, no web version inferred. Logo SHA unchanged;
+15 directly relevant API/render files match prior source. Capture now selects the
+actual S_TARGET consistently (old plugin half hardcoded staging38) and sources-only
+skips redundant public dump. No credentials exported.
+Fresh live-source uploads rehearsal PASS 41325234903: import, apply/no-op/exact
+rollback/reapply, rendered copy gates, no new site PHP errors.
+Actual live dry PASS 41325524577: all parts ready, share-card asset absent.
+Final Gates must be green/conflict-free before ready/merge instructions.
+Full proof/phone steps: docs/reviews/2026-11-01-review-live-release.md.
 
-C–E remain staging-applied drafts; F no installer/write and still paused at actual
-admin HEAD403 under user's no-access rule. Bot challenge/final full interactivity,
-security.txt staging404/static owner fallback, Butsaba pending facts, G date and
-owner-only tasks remain explicit follow-ups. No claim of a durable bot fix.
-Stage status/proof hub:
-https://github.com/alanmz-crypto/new-masseuse-site/blob/codex/2026-11-01-review-bundle-f/docs/reviews/2026-11-01-review-fix-status.md
-
-After all applies rollback E→D→C→B→A, using each actual live snapshot. Current
-staging A rollback needs E/D/C/B undone first. Never use a staging snapshot live.
+C–E still staged drafts #64–66, with actual live predecessor hash/source guards,
+verifier host enablement and proof needed in sequence. E's prior source WP 7.1.3
+differs; inspect current public source/rehearse, never merely relax its guard.
+F/admin 403 remains paused; hosting issue/security.txt staging 404 owner fallback,
+pending Butsaba facts, G date and owner tasks remain deferred. No durable bot fix.
+After all releases rollback E→D→C→B→A with actual live snapshots; on staging38
+A likewise needs later touching bundles undone first. Never use stage snapshot live.

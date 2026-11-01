@@ -1,53 +1,52 @@
-# Review release: A first, then B–E
+# Review release: A live, B ready for Ryan
 
-**Prepared, not applied.** Ryan's next action is to merge [release PR #68](https://github.com/alanmz-crypto/new-masseuse-site/pull/68) and personally start its LIVE workflow. No live content, database setting, hosting control or credential has been changed by this release preparation.
+**A is live and verified. B is prepared, not applied.** Review and merge [B release PR #69](https://github.com/alanmz-crypto/new-masseuse-site/pull/69), then personally start its LIVE workflow. Keep staging drafts #64–#67 open.
 
-## Authorization and scope
+Ryan, 2026-11-01: “How about we ship this for the moment and you look after we are live?” This authorizes preparing completed A–E in the handoff's order, one bundle/one live run. Ryan still owns every merge and LIVE run. F's access-dependent option work and hosting protection remain deferred; G and pending service facts retain their boundaries.
 
-Ryan, 2026-11-01: “How about we ship this for the moment and you look after we are live?”
+## A completed
 
-This is the go to prepare the completed A–E review changes for release, keeping the handoff's one bundle/one live run and Ryan-owned merge/run boundaries. A is first. B–E need their own ordered preparation and proof after each preceding live result; they are not enabled by this request. The original no-access rule continues for dependent work: **F is paused**, because its required admin verification returns 403. The hosting challenge, static security.txt delivery and unanswered service facts remain follow-ups; G retains the handoff's November 14 boundary.
+Ryan merged release PR #68 and started `live-review-a-20261101-1`. A applied at 15:59 UTC; the follow-up public browser run passed 262 assertions at 16:08. Nine changed origin pages, rendered Home/client/posture gates, structured-data parse/comparison and site PHP logs pass. Backup import succeeds with intended differences; the pixel checker differs against historical staging36, with all 20 views captured. Three phone captures were visually reviewed.
 
-A adds the approved booking next steps and internal links on nine pages, fixes Home card destinations, reorders Services and adds the Corporate mobile quote shortcuts and Contact corporate card. Existing form, phone, mail and service facts stay intact. The footer widget addition remains deferred.
+[Complete A live proof and exact rollback](2026-11-01-bundle-a-live.md). Actual private live snapshot: `bundle-a-before-20261101-155950.json`; export `live-before-bundle-a-20261101-155938.sql`, both verified encrypted off-site. No agent merge or LIVE dispatch.
 
-## Evidence before the live request
+## B scope and fresh proof
+
+B releases the previously reviewed search titles/descriptions, linked global Person/LocalBusiness information, tagline, Corporate HTTPS social image, Home's “by arrangement” wording, and the approved default/Home 1200×630 share card. Ryan's card approval remains **“Yes, use this card.”** No B payload, image or metadata proposal changed during live preparation; only exact host guards and the read-only source selector changed.
+
+Approved PNG: 110,373 bytes, SHA256 `7b769b1a2b82b2cb3ef2bf11a5e6ba65f271b963952fdfe1041c53b6ade5319d`. Existing images remain intact. Pages/snippet/media use slug/title/URL/hash lookup, not staging attachment IDs.
 
 | Check | Result |
 | --- | --- |
-| Original staging38 rehearsal and browser proof | PASS, including 262 browser assertions; [full staging record](2026-11-01-bundle-a-staging38.md) |
-| Exact live corporate source | Read-only capture; 17,902 bytes, SHA256 f5a3a8f364730c4ee8295ff374efdd63730c1e0b59498dff6cdcc1871ea8241d |
-| Portable terminal-newline anchor | Only one final LF removed from old/new mobile-quote fragments; staging applied output is byte-identical; live no-LF/one-LF/two-LF roundtrips pass |
-| Fresh rehearsal from live, with uploads | [PASS](https://github.com/alanmz-crypto/new-masseuse-site/blob/ops-log/reports/2026-11-01/152945-review-a-live-rehearse-20261101.md): apply, repeat apply, exact fingerprint rollback, reapply, pages 200, rendered Home/client copy gates, no new site PHP errors |
-| Actual live preflight after rehearsal | [PASS](https://github.com/alanmz-crypto/new-masseuse-site/blob/ops-log/reports/2026-11-01/153137-review-a-live-dry-20261101-2.md): all 23 page fragments, jump snippet and CSS ready; no content write |
-| Code checks | Gates passed for the rehearsed code; rechecked on the final request/documentation commit |
+| Original staging38 B proof | [PASS](2026-11-01-bundle-b-staging38.md): uploads rehearsal2, dry/apply, rendered checks, restore import, strict 12-page semantic scan and approved card |
+| Fresh selected-live source | [PASS, run 41324970622](https://github.com/alanmz-crypto/new-masseuse-site/blob/ops-log/reports/2026-11-01/161110-review-b-live-source-20261101.md): WordPress 7.1.4, unchanged logo SHA, installed SureRank source/settings |
+| Source compatibility | All 15 directly relevant saver/defaults/cache/schema/image/social-render files are byte-identical to the earlier capture; no B API adaptation needed |
+| Fresh uploads rehearsal from live | [PASS, run 41325234903](https://github.com/alanmz-crypto/new-masseuse-site/blob/ops-log/reports/2026-11-01/161516-review-b-live-rehearse-20261101.md): media import, apply/no-op, exact fingerprint rollback/reapply, pages 200, regulated Home/client gates, no new site PHP errors |
+| Actual live preflight | [PASS, run 41325524577](https://github.com/alanmz-crypto/new-masseuse-site/blob/ops-log/reports/2026-11-01/161722-review-b-live-dry-20261101.md): every metadata/schema/social/option/snippet/Home part ready; approved media absent and ready for one import |
+| Code checks | Gates pass on rehearsed code; final request/documentation commit is checked before this PR is marked ready |
 
-The first [live preflight](https://github.com/alanmz-crypto/new-masseuse-site/blob/ops-log/reports/2026-11-01/152210-review-a-live-dry-20261101.md) safely refused the mobile insertion because live lacks staging's terminal LF. The [source read](https://github.com/alanmz-crypto/new-masseuse-site/blob/ops-log/reports/2026-11-01/152401-review-a-live-corporate-source-20261101.md) confirmed the difference. The source plan and generated payload now remove exactly one LF from BOTH sides of that pair; all wording, links, replacement counts and snippet hashes remain unchanged. The original LF stays outside the replacement on staging, preserving its previously verified result. No global whitespace normalization or relaxed drift acceptance was added.
+Source archive SHA256 `eb3b76e83f2bf2973099c630091df17f357288d15708d9a83408153797b998f5`. The capture originally hardcoded staging38 for the plugin half; it now consistently selects the exact requested host and supports `--sources-only`, avoiding a redundant public dump. No credentials/config are exported. Its reported PHP 8.5.12 is **CLI**, not a web-PHP reading. No core/plugin/runtime was changed by the agent.
 
-The live-source rehearsal reports WordPress **7.1.4**, whereas E's earlier staging source was captured on 7.1.3. This is a read-only observation, not an agent update. A has passed on the fresh live copy. Before B–E release preparation, refresh installed source/requirements; E's explicit version guard must not be broadened without matching source inspection and rehearsal.
+Localhost's HTTP rehearsal makes Corporate's HTTP→HTTPS social URL a neutral row. The real live preflight validates both actual stored URLs; strict live scan after Ryan's apply must confirm HTTPS and the approved PNG/default/Home tags.
 
-## Exact phone steps
+## Phone steps for B
 
-1. Open [release PR #68](https://github.com/alanmz-crypto/new-masseuse-site/pull/68), confirm **Gates** is green and there are no conflicts, then tap **Merge pull request → Confirm merge**.
-2. Open [Site ops (LIVE)](https://github.com/alanmz-crypto/new-masseuse-site/actions/workflows/site-live.yml). Tap **Run workflow**, select branch **main**, type exactly `live-review-a-20261101-1` in the confirmation field, then tap **Run workflow**.
-3. When it finishes, tell this session **“A done”** or send the run link. The agent reads the full report before B is prepared. If the run fails, stop there; do not retry a used ID or treat partial verification as a successful release.
+1. Review [PR #69](https://github.com/alanmz-crypto/new-masseuse-site/pull/69). With Gates green and no conflicts, tap **Merge pull request → Confirm merge**.
+2. Open [Site ops (LIVE)](https://github.com/alanmz-crypto/new-masseuse-site/actions/workflows/site-live.yml). Tap **Run workflow**, branch **main**, enter exactly `live-review-b-20261101-1`, then tap **Run workflow**.
+3. Tell this session **“B done”** or send the run link. The agent reads the full apply/post-change/restore sections and runs the strict live semantic scan before C preparation. If the run fails, stop and share its link; never retry a used ID.
 
-The prepared request is `ops/live-request.json`: `review-a/push-bundle-a.sh --apply`, target live, tests auto. Preparing or merging it does not apply content; only Ryan's confirmed LIVE workflow does.
+The request in `ops/live-request.json` runs only `review-b/push-bundle-b.sh --apply`, target live, tests auto. Preparing or merging it does not apply content. The agent has made no B live write or LIVE dispatch.
 
-## Backup, rollback and post-release checks
+## Backup, rollback and follow-up
 
-The push takes a fresh live DB export and verifies its encrypted off-site copy **before** applying. The installer writes a private before-snapshot with exact prior whole stores, rejects changed anchors/mixed state, reads back writes and restores resources on save failure. The real live snapshot filename is only known after Ryan's run; never substitute staging's snapshot.
+The push takes a fresh DB export and verifies an encrypted off-site copy before applying. B snapshots exact page content/SureRank rows, options, snippet and any new media's post/meta/files. Rollback refuses drift, restores page content before exact metadata, then removes only this run's unchanged newly created attachment; pre-existing identical assets remain owned by their original context. The actual B live snapshot name is unknown until Ryan's run and must be recorded afterward.
 
-After the run, read both automatic post-change and restore-import sections, verify the intended page/snippet/CSS differences, and run the live-enabled A browser checker once. Expected reference pixels may differ because the reference copy predates these releases. A bot challenge is INVALID verification, never a pass; stop at its first appearance and retain the uncompleted check as an explicit follow-up.
+If needed later, prepare a separate Ryan-owned LIVE rollback request with that actual live B snapshot. Once B is applied, roll it back before A. After all releases, reverse order is E→D→C→B→A. Never use a staging snapshot on live.
 
-If rollback is needed, prepare a separate Ryan-owned LIVE request for `review-a/push-bundle-a.sh --rollback $HOME/private-backups/<actual-live-snapshot>`, with a fresh export/off-site copy and exact guards. Do not roll A back through later bundle edits. After all bundles, reverse order is E → D → C → B → A.
+Automatic reference pixels/schema can differ from old staging36. Inspect those differences and actual rendered/entity/card assertions; an overall write PASS does not turn an INVALID browser test into a pass. Stop at a hosting challenge without spoofing or retry loops. A's successful run does not establish a durable hosting fix.
 
-## Next releases and deferred work
+C/D/E remain staging-applied drafts #64/#65/#66. Each needs fresh actual live predecessor hashes, exact live host/verifier guards, rehearsal and dry-run before its release. Their old hash maps cannot simply be reused by adding an allowed host. Refresh E's WordPress-version requirement against installed source; do not guess or weaken it.
 
-- B follows verified A; it includes the already-approved default/Home share card.
-- C, D and E remain staging-applied drafts (#64, #65, #66). Refresh each actual live predecessor's bytes, prepare its live hashes/host guards, rehearse and dry-run, then give Ryan that bundle's merge/run steps. C/D/E are not portable by host-allow-list changes alone. C/D/E origin/browser verifiers also need the exact live base enabled.
-- The final whole-site public interactive suite remains incomplete. D/E's successful staging public captures do not establish a durable AntiBot fix. No hosting support message has been sent or security control changed.
-- Staging security.txt is confirmed 404 through SiteGround; C's virtual route passing Apache rehearsal does not prove live delivery. The static fallback remains Ryan's lane under the handoff.
-- F's six WordPress option changes have not run. Keep it paused until its admin verification is accessible. This release does not require changing admin access or URL options.
-- Butsaba questions 2/3/4/6/7 remain pending; confirmed session-length consistency is separate. G and all owner-only work retain their existing boundaries.
+F remains paused at admin HEAD 403; no six-option installer/write. Staging security.txt is confirmed 404 with owner static fallback pending. Butsaba 2/3/4/6/7, confirmed-length consistency, G's November 14 boundary and owner-only tasks remain separate. No hosting-control/support-message, credential or existing-resource deletion occurred.
 
-[Complete staging status, snapshots and follow-up evidence](https://github.com/alanmz-crypto/new-masseuse-site/blob/codex/2026-11-01-review-bundle-f/docs/reviews/2026-11-01-review-fix-status.md).
+[Full staging status and snapshots](https://github.com/alanmz-crypto/new-masseuse-site/blob/codex/2026-11-01-review-bundle-f/docs/reviews/2026-11-01-review-fix-status.md).

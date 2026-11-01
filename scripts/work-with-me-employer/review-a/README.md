@@ -99,3 +99,14 @@ Bundle A, rather than the original ten. The Services page is now also in scope
 for that after-November-14 refresh.
 
 Verified on staging38, 2026-11-01: see `docs/reviews/2026-11-01-bundle-a-staging38.md` for all evidence and the exact staging rollback snapshot. Live is prepared, not applied; its actual snapshot will be recorded only after Ryan's own run. Roll E/D/C/B back first before A on current staging38.
+
+## Live record (supersedes preparation status above)
+
+Ryan merged PR #68 and ran `live-review-a-20261101-1` on 2026-11-01.
+A is LIVE: rendered/origin/posture/schema and backup-import checks pass; follow-up
+public browser verification passes 262 assertions, with three phone captures reviewed.
+Historical staging36 pixel differences remain documented, not called a pass.
+Actual live snapshot `bundle-a-before-20261101-155950.json` and DB export
+`live-before-bundle-a-20261101-155938.sql` are verified encrypted off-site.
+[Full live proof](../../../docs/reviews/2026-11-01-bundle-a-live.md).
+B is next in PR #69; its later apply must be undone before A's exact rollback.
