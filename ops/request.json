@@ -1,11 +1,10 @@
 {
-  "id": "review-c-baseline-staging38-20261101",
+  "id": "review-c-css-source-staging38-20261101",
   "op": "run",
   "target": "staging38",
-  "script": "review-c/check-bundle-c.mjs",
+  "script": "review-c/inspect-bundle-c.sh",
   "args": [
-    "https://staging38.thaisolitude.com",
-    "baseline"
+    "--sources-only"
   ],
   "tests": "auto"
 }

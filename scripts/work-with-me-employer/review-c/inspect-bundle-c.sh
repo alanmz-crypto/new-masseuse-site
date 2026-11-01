@@ -14,7 +14,7 @@ host=$(field Host); port=$(field Port); user=$(field User); user="${user%%@*}"
 ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 "$user@$host")
 "${ssh_cmd[@]}" true 2>/dev/null || { echo "SSH login refused; check the ssh-agent holds the right key." >&2; exit 2; }
 
-bash "$here/../seo-scan/dump-site.sh"
+if [ "${1:-}" != --sources-only ]; then bash "$here/../seo-scan/dump-site.sh"; fi
 
 read -r -d '' REMOTE <<'EOS' || true
 set -euo pipefail
@@ -52,7 +52,7 @@ done
 # Generated per-page CSS is public; copy it for typography parity analysis.
 if [ -d "$doc/wp-content/uploads/uag-plugin/assets" ]; then
   mkdir -p "$scratch/data/source/generated-css"
-  find "$doc/wp-content/uploads/uag-plugin/assets" -maxdepth 1 -name "*.css" -type f -exec cp {} "$scratch/data/source/generated-css/" \;
+  find "$doc/wp-content/uploads/uag-plugin/assets" -maxdepth 3 -name "*.css" -type f -exec cp {} "$scratch/data/source/generated-css/" \;
 fi
 tar czf "$scratch/data.tgz" -C "$scratch/data" .
 echo "BUNDLEC-SHA256 $(sha256sum "$scratch/data.tgz" | cut -d' ' -f1)"
