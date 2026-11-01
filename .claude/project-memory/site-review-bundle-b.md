@@ -52,3 +52,7 @@ A or earlier exact-state installers on B's resources.
 Live disabled. No live request. PR #63 is merged; live-enable/request preparation now needs a follow-up PR
 after Ryan's explicit live go. He alone merges/runs live. Next
 independent lane: Bundle C; remaining five Butsaba answers stay pending.
+
+**Bundle C is now applied on staging38:** roll C back before B/A on affected
+stores. C's public browser verification is blocked by the host challenge, but
+its exact snapshot is recorded in [[site-review-bundle-c]].

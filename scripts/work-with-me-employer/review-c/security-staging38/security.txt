@@ -1,0 +1,3 @@
+Contact: mailto:butsabad@gmail.com
+Expires: 2027-10-31T23:59:59Z
+Canonical: https://staging38.thaisolitude.com/.well-known/security.txt

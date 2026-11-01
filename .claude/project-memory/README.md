@@ -1,6 +1,6 @@
 # Project memory (snapshot for cloud sessions)
 
-- [Site review Bundle C](site-review-bundle-c.md) — 2026-11-01: fresh stored bytes/source and typography baseline captured; markup/accessibility package built; rehearsal/staging pending; live disabled.
+- [Site review Bundle C](site-review-bundle-c.md) — 2026-11-01: applied on staging38; rehearsal2 (1,248 checks), rollback/rendered gates/CSP PASS; public full browser INVALID due host challenge; support request prepared; live disabled.
 - [Site review Bundle B](site-review-bundle-b.md) — 2026-11-01: search/sharing applied on staging38; rehearsal2/12-page semantic scan/rendered gates PASS; approved default/Home card; exact rollback recorded; live disabled.
 
 - [Site review Bundle A](site-review-bundle-a.md) — 2026-11-01: Bundle 0 draft and fresh staging38 capture complete; Bundle A applied/verified on staging38 (262 browser assertions, rollback proven); PR #61, live disabled.

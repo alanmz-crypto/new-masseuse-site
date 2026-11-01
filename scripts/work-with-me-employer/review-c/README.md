@@ -74,3 +74,27 @@ installs browser dependencies, and the throwaway rehearsal runs this gate with
 uploads before cleanup. It checks headings against the measured baseline, FAQ
 keyboard/mouse/ARIA, focus, map, strips, spacing, utilities, Chair native panels
 and light/dark contrast. No staging write until that gate and rendered copy pass.
+
+
+## Current staging state
+
+Applied on staging38 at 09:45 UTC. Rehearsal 2 passes 1,248 assertions and exact
+rollback/re-apply. Dry/apply, off-site backup, rendered gates/posture, restore
+import and focused Contact CSP in Chromium/Firefox PASS. The final whole-site
+public browser attempt is INVALID at its first page (robot challenge), so it
+proved no assertion. PR #64 stays draft pending final verification. Source proof,
+report links and exact rollback: `docs/reviews/2026-11-01-bundle-c-staging38.md`.
+
+Snapshot `bundle-c-before-20261101-094545.json`; export
+`staging38-before-bundle-c-20261101-094534.sql`. C must be rolled back before B/A
+on affected stores. No live or hosting-protection change was made.
+
+Ryan has requested help resolving the host challenge. Supported support route:
+`docs/inter-model/2026-11-01-siteground-antibot-support.md`. No authenticated
+SiteGround admin/support session is connected. No support message sent.
+
+The security.txt PHP fallback passes Apache rehearsal, but its public SiteGround
+GET delivery remains unverified. Earlier HEAD was nginx 404/93 bytes; a static
+owner upload may be needed. Prepared approved staging payload:
+`security-staging38/security.txt`; no server file has been written. Do not alter
+the applied snippet directly and invalidate its exact rollback snapshot.

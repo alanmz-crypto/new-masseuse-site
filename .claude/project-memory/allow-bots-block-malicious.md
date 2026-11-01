@@ -10,3 +10,10 @@ Ryan, 2026-10-17: "I don't have a problem with bots on my site. I allow it. just
 **Why:** he wants the site discoverable by search engines and AI crawlers; the goal of security work is stopping attacks, not reducing automated visitors.
 
 **How to apply:** Don't add robots.txt disallows for AI/search crawlers, user-agent blocks, or blanket "bot protection" recommendations. Aim hardening at malicious behavior: login brute force, xmlrpc abuse, scanners probing for backups/config/.git/.env, user enumeration, injection, exposed files. `posture-check.py` already matches this (live robots must stay crawlable with the sitemap). SiteGround's own 202 `sg-captcha` challenge is a host-side rate limit that I did not set and must not change (no site-tools write commands); it only matters for how fast my own tests may run, see [[siteground-bot-challenge]]. Attack-surface items on the list (#4 public users list, #5 cleanup, #6 login/REST limits) should be framed as malicious-actor defenses.
+
+
+2026-11-01 clarification: Ryan now explicitly asks for help getting rid of the
+robot block. Investigate/remedy the staging38 false positive through supported
+hosting controls or SiteGround support; the older no-host-change note above is
+not a reason to re-ask for a staging-scoped remedy. Confirm any production or
+account-wide scope before proceeding. No such setting change has been made.

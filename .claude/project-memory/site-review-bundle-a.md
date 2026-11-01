@@ -66,3 +66,7 @@ not a site apply or live go; the applied installer/package is unchanged.
 **Bundle B applied afterwards (2026-11-01):** roll B back first before this
 Bundle A exact-state rollback on staging38. B changes Home/metadata/options and
 LocalBusinessInfo; see [[site-review-bundle-b]] for its snapshot and proof.
+
+**Bundle C is now applied on staging38:** roll C back before B/A on affected
+stores. C's public browser verification is blocked by the host challenge, but
+its exact snapshot is recorded in [[site-review-bundle-c]].
