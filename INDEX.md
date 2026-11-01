@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-01 02:14 UTC  **PASS**  `review-a-apply-staging38-20261101`  [reports/2026-11-01/021434-review-a-apply-staging38-20261101.md](reports/2026-11-01/021434-review-a-apply-staging38-20261101.md)  (run 41264068801)
 - 2026-11-01 02:09 UTC  **PASS**  `review-a-dry-staging38-20261101`  [reports/2026-11-01/020953-review-a-dry-staging38-20261101.md](reports/2026-11-01/020953-review-a-dry-staging38-20261101.md)  (run 41264011612)
 - 2026-11-01 02:09 UTC  **PASS**  `review-a-rehearse-20261101-4`  [reports/2026-11-01/020921-review-a-rehearse-20261101-4.md](reports/2026-11-01/020921-review-a-rehearse-20261101-4.md)  (run 41263906225)
 - 2026-11-01 02:07 UTC  **FAIL**  `review-a-rehearse-20261101-3`  [reports/2026-11-01/020712-review-a-rehearse-20261101-3.md](reports/2026-11-01/020712-review-a-rehearse-20261101-3.md)  (run 41263764588)
