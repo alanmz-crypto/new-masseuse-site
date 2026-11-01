@@ -1,9 +1,8 @@
 {
-  "id": "review-a-live-rehearse-20261101",
-  "op": "rehearse",
+  "id": "review-a-live-dry-20261101-2",
+  "op": "run",
   "target": "live",
-  "installer": "review-a/install-bundle-a.php",
-  "args": [
-    "--with-uploads"
-  ]
+  "script": "review-a/push-bundle-a.sh",
+  "args": [],
+  "tests": "auto"
 }
