@@ -74,7 +74,8 @@ foreach ( $data['new_snippets'] as $title => $cfg ) {
 	if ( ! $found ) { $state = 'ready'; }
 	elseif ( count( $found ) === 1 ) {
 		$p = $found[0]; $id = (int) $p->ID;
-		if ( 'publish' === $p->post_status && $p->post_content === $cfg['code'] && $terms( $id ) === array( 'wpcode_type' => array( 'php' ), 'wpcode_location' => array( 'everywhere' ) ) && '1' === (string) get_post_meta( $id, '_wpcode_auto_insert', true ) && '10' === (string) get_post_meta( $id, '_wpcode_priority', true ) ) { $state = 'applied'; $created[ $title ] = $id; }
+		$expected_meta = $cfg['meta']; ksort( $expected_meta );
+		if ( $all_meta( $id ) === $expected_meta && 'publish' === $p->post_status && $p->post_content === $cfg['code'] && $terms( $id ) === array( 'wpcode_type' => array( 'php' ), 'wpcode_location' => array( 'everywhere' ) ) && '1' === (string) get_post_meta( $id, '_wpcode_auto_insert', true ) && '10' === (string) get_post_meta( $id, '_wpcode_priority', true ) ) { $state = 'applied'; $created[ $title ] = $id; }
 	}
 	$report( 'new snippet ' . $title, $state );
 }
@@ -123,7 +124,7 @@ try {
 	$astra['blog-meta'] = $data['astra_blog_meta_new']; update_option( 'astra-settings', $astra );
 	$restore_rows( $old['page_rows'] );
 	foreach ( $data['new_snippets'] as $title => $cfg ) {
-		$snippet = new WPCode_Snippet( array( 'title' => $title, 'code' => $cfg['code'], 'code_type' => 'php', 'location' => 'everywhere', 'auto_insert' => 1, 'priority' => 10, 'active' => true, 'note' => 'Created 2026-11-01 by review-c/install-bundle-c.php; rollback guarded by its exact snapshot.' ) );
+		$snippet = new WPCode_Snippet( array( 'title' => $title, 'code' => $cfg['code'], 'code_type' => 'php', 'location' => 'everywhere', 'auto_insert' => 1, 'priority' => 10, 'active' => true, 'note' => $cfg['note'] ) );
 		$id = $snippet->save(); if ( ! $id ) { throw new \RuntimeException( 'Could not create snippet: ' . $title ); }
 		$created[ $title ] = (int) $id;
 		$snap['created_ids'] = $created; $snap['created_posts'] = $capture_created( $created ); $save( $file, $snap );
@@ -134,7 +135,7 @@ try {
 	$refresh(); $new = $capture();
 	foreach ( $new['resources'] as $key => $r ) { if ( $r['content'] !== $resources[ $key ]['new'] ) { throw new \RuntimeException( 'Unexpected saved content: ' . $key ); } }
 	if ( $new['page_rows'] !== $old['page_rows'] || $new['snippet_settings'] !== $old['snippet_settings'] || $new['astra'] !== $astra ) { throw new \RuntimeException( 'Metadata or option read-back differs.' ); }
-	foreach ( $created as $title => $id ) { if ( 'publish' !== get_post_status( $id ) || get_post_field( 'post_content', $id ) !== $data['new_snippets'][ $title ]['code'] || $terms( $id ) !== array( 'wpcode_type' => array( 'php' ), 'wpcode_location' => array( 'everywhere' ) ) || '1' !== (string) get_post_meta( $id, '_wpcode_auto_insert', true ) || '10' !== (string) get_post_meta( $id, '_wpcode_priority', true ) ) { throw new \RuntimeException( 'New snippet settings/read-back differ.' ); } }
+	foreach ( $created as $title => $id ) { $expected_meta = $data['new_snippets'][ $title ]['meta']; ksort( $expected_meta ); if ( $all_meta( $id ) !== $expected_meta || 'publish' !== get_post_status( $id ) || get_post_field( 'post_content', $id ) !== $data['new_snippets'][ $title ]['code'] || $terms( $id ) !== array( 'wpcode_type' => array( 'php' ), 'wpcode_location' => array( 'everywhere' ) ) || '1' !== (string) get_post_meta( $id, '_wpcode_auto_insert', true ) || '10' !== (string) get_post_meta( $id, '_wpcode_priority', true ) ) { throw new \RuntimeException( 'New snippet settings/read-back differ.' ); } }
 	$snap['created_posts'] = $capture_created( $created ); $snap['new'] = $new; $snap['new_sha256'] = hash( 'sha256', wp_json_encode( $new ) ); $snap['complete'] = true; $save( $file, $snap );
 } catch ( \Throwable $e ) {
 	try { $restore( $old ); if ( $capture() !== $old ) { throw new \RuntimeException( 'Restored stores differ.' ); } if ( $created ) { $delete_created( $created, $snap['created_posts'] ); } $refresh(); }

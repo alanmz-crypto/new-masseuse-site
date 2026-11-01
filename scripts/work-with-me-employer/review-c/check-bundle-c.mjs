@@ -17,13 +17,15 @@ const paths = baseline ? headings : ['/', '/about/', '/services/', '/thai-massag
 let checks = 0, fails = 0, invalid = false;
 const check = (label, ok, detail = '') => { checks++; if (!ok) fails++; console.log(`${ok ? 'PASS' : 'FAIL'} ${label}${detail ? ' ' + detail : ''}`); };
 const runtime = preview ? readFileSync(new URL('./accessibility-runtime.php', import.meta.url), 'utf8') : '';
-const style = preview ? runtime.match(/<style id="ts-accessibility-runtime-css">([\s\S]*?)<\/style>/)?.[1] : '';
+const style = preview ? readFileSync(new URL('./faq-runtime.css', import.meta.url), 'utf8') : '';
 const postApply = !baseline && !preview;
 const contract = postApply ? (await import('./bundle-c-contract.mjs')).createContract(JSON.parse(readFileSync(new URL('./heading-baseline.json', import.meta.url), 'utf8')), check, base) : null;
 const script = preview ? runtime.match(/<script id="ts-accessibility-runtime">([\s\S]*?)<\/script>/)?.[1] : '';
 if (preview && (!style || !script)) throw new Error('Reviewed runtime style/script not found');
 const browser = await chromium.launch();
 const context = await browser.newContext({ viewport: { width: 1280, height: 900 }, reducedMotion: 'reduce' });
+context.setDefaultTimeout(10000);
+context.setDefaultNavigationTimeout(60000);
 const geometry = page => page.evaluate(() => ({
   height: document.documentElement.scrollHeight,
   items: [...document.querySelectorAll('.uagb-faq-item')].map(item => {
@@ -34,6 +36,8 @@ const geometry = page => page.evaluate(() => ({
 const equalGeometry = (a, b) => a.height === b.height && a.items.length === b.items.length && a.items.every((item, i) => item.every((box, j) => box.every((n, k) => Math.abs(n - b.items[i][j][k]) < 0.1)));
 try {
   for (const path of paths) {
+    const started = Date.now();
+    console.log('INFO Bundle C page start ' + path);
     const page = await context.newPage();
     const errors = [];
     page.on('pageerror', e => errors.push(String(e)));
@@ -46,7 +50,10 @@ try {
     }
     check(path + ' HTTP 200', response?.status() === 200);
     await page.addStyleTag({ content: '*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}' });
-    await page.evaluate(async () => { await document.fonts.ready; for (let y = 0; y < document.body.scrollHeight; y += innerHeight) { scrollTo(0, y); await new Promise(r => setTimeout(r, 60)); } scrollTo(0, 0); });
+    const fontsReady = await page.evaluate(() => Promise.race([document.fonts.ready.then(() => true), new Promise(resolve => setTimeout(() => resolve(false), 15000))]));
+    check(path + ' fonts finish loading within 15 seconds', fontsReady);
+    const scrolled = await page.evaluate(async () => { let y = 0, steps = 0; for (; y < document.body.scrollHeight && steps < 100; y += innerHeight, steps++) { scrollTo(0, y); await new Promise(r => setTimeout(r, 60)); } scrollTo(0, 0); return y >= document.body.scrollHeight; });
+    check(path + ' finite full-page lazy-load scroll', scrolled);
     await page.waitForTimeout(150);
     if (baseline) {
       for (const width of [1280, 390]) {
@@ -60,6 +67,7 @@ try {
       }
       check(path + ' no browser errors', errors.length === 0, errors.join('; '));
       await page.close();
+      console.log('INFO Bundle C page done ' + path + ' ms=' + (Date.now() - started));
       continue;
     }
     const before = {};
@@ -153,6 +161,7 @@ try {
     }
     check(path + ' no browser errors', errors.length === 0, errors.join('; '));
     await page.close();
+    console.log('INFO Bundle C page done ' + path + ' ms=' + (Date.now() - started));
   }
   if (contract && !invalid) { invalid = await contract.endpoints(context); if (!invalid) contract.finish(); }
 } finally { await context.close(); await browser.close(); }

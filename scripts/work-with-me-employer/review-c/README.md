@@ -23,6 +23,9 @@ headings and 3 Corporate card headings, not the handoff's stale 16/19 count.
 Services Chair/Corporate titles are already H3. Every target's words/IDs remain.
 Add hidden Services H2 “Massage services” and the Therapeutic FAQ H2.
 
+Native FAQ button styles are in the marked Additional CSS block, following the
+house storage rule; the footer snippet contains only behavior.
+
 One installer covers all 12 affected pages, two frozen active snippets, CSS,
 Astra's blog-meta array and two new WPCode snippets. It preserves page SureRank
 rows and snapshots the whole Astra option and existing snippet settings. Any

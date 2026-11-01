@@ -57,11 +57,14 @@ for (const [width, dark] of [[1280, false], [390, false], [1280, true]]) {
     const link = el && el.querySelector('a');
     return { n: document.querySelectorAll('.ts-corp-band').length, text: el ? el.innerText.replace(/\s+/g, ' ').trim() : '', href: link ? link.getAttribute('href') : '', h: el ? Math.round(el.getBoundingClientRect().height) : 0,
       gap: el && hdr ? Math.round(el.getBoundingClientRect().top - hdr.getBoundingClientRect().bottom) : null, scroll: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      compact: !!el?.querySelector('.ts-corp-band__mobile') && getComputedStyle(el.querySelector('.ts-corp-band__mobile')).display !== 'none',
       forPractices: [...document.querySelectorAll('.menu-link')].some(a => a.textContent.trim() === 'For Practices') };
   });
   check(`${tag}: exactly one strip, directly under the header`, h.n === 1 && h.gap !== null && Math.abs(h.gap) <= 2, `n=${h.n} gap=${h.gap}`);
-  const wantHead = open_after ? 'Now accepting corporate & group massage bookings.' : 'Currently booking corporate & group massage only.';
-  const otherHead = open_after ? 'Currently booking corporate & group massage only.' : 'Now accepting corporate & group massage bookings.';
+  const closedHead = h.compact ? `Corporate & group massage bookings begin ${BOOK_DATE}.` : 'Currently booking corporate & group massage only.';
+  const openHead = 'Now accepting corporate & group massage bookings.';
+  const wantHead = open_after ? openHead : closedHead;
+  const otherHead = open_after ? closedHead : openHead;
   check(`${tag}: the headline is one of the two approved ones`, h.text.includes(wantHead) || h.text.includes(otherHead), h.text.slice(0, 60));
   if (!h.text.includes(wantHead) && h.text.includes(otherHead)) info(`${tag}: shows the other headline than today's date calls for (a cached page; purge the site cache after 2026-11-01)`);
   check(`${tag}: it names the summer 2027 plan as a plan, the corporate link, and never says "studio"`, h.text.includes('planned for summer 2027') && h.text.includes('Explore Corporate & Group Massage') && !/studio/i.test(h.text) && !/guarantee/i.test(h.text), h.text.slice(-70));

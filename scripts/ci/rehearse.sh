@@ -248,8 +248,10 @@ tail -n 2 "$out/client-gates.log"
 extra="$wwm/$(dirname "$inst")/check-rehearsal.mjs"
 if [ -f "$extra" ]; then
   echo; echo "[4c] package browser checks on the applied throwaway copy"
-  node "$extra" http://localhost:8090 > "$out/package-browser.log" 2>&1
-  check "package browser checks" $?
+  timeout 600 node "$extra" http://localhost:8090 > "$out/package-browser.log" 2>&1
+  package_browser_rc=$?
+  check "package browser checks" "$package_browser_rc"
+  [ "$package_browser_rc" -eq 0 ] || tail -n 30 "$out/package-browser.log"
   grep -E '^(FAIL|INVALID|Bundle C:|CONTRAST|LAYOUT|MIN_CONTRAST|HEADING|HEIGHT|INFO)' "$out/package-browser.log" || true
 fi
 

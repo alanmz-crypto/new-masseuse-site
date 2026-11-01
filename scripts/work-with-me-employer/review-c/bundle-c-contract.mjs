@@ -168,6 +168,9 @@ export function createContract(baselines, check, base) {
       ['security', '/.well-known/security.txt'],
     ];
     const parserPage = await context.newPage();
+    // DOMParser can discover image/frame URLs even in inert HTML. These three
+    // endpoint checks need only markup; block any accidental resource fetch.
+    await parserPage.route('**/*', route => route.abort());
     try {
       for (const [kind, path] of endpoints) {
         const response = await context.request.get(base + path, { timeout: 40000 });

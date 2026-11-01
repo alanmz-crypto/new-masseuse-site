@@ -10,17 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) { return; }
 add_action( 'wp_footer', static function () {
 	if ( is_admin() || is_feed() ) { return; }
 	?>
-<style id="ts-accessibility-runtime-css">
-.entry-content .wp-block-uagb-faq button.ts-faq-disclosure{
-  appearance:none;display:flex;align-items:center;width:100%;min-width:0;min-height:0;
-  margin:0;padding:0;border:0;border-radius:0;background:transparent!important;
-  color:inherit!important;font:inherit;line-height:inherit;text-align:inherit;
-  text-transform:none;letter-spacing:inherit;box-shadow:none;cursor:pointer;
-}
-.entry-content .wp-block-uagb-faq button.ts-faq-disclosure:focus-visible{
-  outline:3px solid var(--ts-accent-deep);outline-offset:3px;
-}
-</style>
 <script id="ts-accessibility-runtime">
 (function(){
   'use strict';

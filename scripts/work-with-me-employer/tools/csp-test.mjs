@@ -13,18 +13,20 @@ const require = createRequire(process.env.TS_PLAYWRIGHT_ROOT || '/home/lauer/Pro
 const pw = require('playwright');
 const engine = ((process.argv.find((a) => a.startsWith('--browser=')) || '--browser=chromium').split('=')[1]);
 if (!pw[engine]) { console.error('unknown --browser=' + engine + ' (chromium, firefox or webkit)'); process.exit(1); }
-const [base, mode, shotDir] = process.argv.slice(2).filter((a) => !a.startsWith('--browser='));
+const selectedPages = process.argv.find(a => a.startsWith('--pages='));
+const [base, mode, shotDir] = process.argv.slice(2).filter((a) => !a.startsWith('--browser=') && !a.startsWith('--pages='));
 if (!base || !mode) { console.error('usage: node csp-test.mjs <base-url> --discover | --check | "<policy>" [screenshot-dir]'); process.exit(1); }
 const discover = mode === '--discover';
 const check = mode === '--check';
-const pages = ['/', '/about/', '/services/', '/thai-massage/', '/therapeutic-massage/', '/deep-tissue-massage/', '/work-with-me/', '/contact/'];
+const pages = selectedPages ? selectedPages.slice('--pages='.length).split(',') : ['/', '/about/', '/services/', '/thai-massage/', '/therapeutic-massage/', '/deep-tissue-massage/', '/work-with-me/', '/contact/'];
+if (!pages.length || pages.some(p => !/^\/(?:[a-z0-9-]+\/)?$/.test(p))) throw new Error('Invalid page subset');
 const views = [[1280, 900, 'd'], [390, 844, 'm']];
 if (shotDir) fs.mkdirSync(shotDir, { recursive: true });
 const b = await pw[engine].launch();
 const origins = {}, viol = {}, realCsp = {}, inline = { scripts: 0, styles: 0, styleAttrs: 0, handlers: 0, jsHrefs: 0, iframes: 0, forms: 0, evalLike: 0 };
-let bad = 0;
+let bad = 0, challenged = false;
 const bump = (o, k) => { o[k] = (o[k] || 0) + 1; };
-for (const [w, h, v] of views) {
+viewLoop: for (const [w, h, v] of views) {
   const ctx = await b.newContext({ viewport: { width: w, height: h }, reducedMotion: 'reduce', deviceScaleFactor: 1 });
   if (!discover && !check) {
     await ctx.route('**/*', async (route) => {
@@ -41,6 +43,7 @@ for (const [w, h, v] of views) {
     page.on('request', (r) => { try { bump(origins, r.resourceType() + ' <- ' + new URL(r.url()).origin); } catch (e) { /* data: urls */ } });
     try {
       const r = await page.goto(base + p, { waitUntil: 'networkidle', timeout: 60000 });
+      if (r.status() === 202 || /Robot Challenge/i.test(await page.title())) { challenged = true; await page.close(); await ctx.close(); break viewLoop; }
       if (r.status() !== 200) { console.log('status', r.status(), p); bad++; }
       bump(realCsp, r.headers()['content-security-policy'] || '(none)');
       await page.addStyleTag({ content: '*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}' }).catch(() => {});
@@ -67,21 +70,23 @@ for (const [w, h, v] of views) {
   await ctx.close();
 }
 await b.close();
+if (challenged) { console.log('INVALID: SiteGround bot challenge; nothing was concluded'); process.exit(2); }
+const totalViews = pages.length * views.length;
 const top = (o) => Object.entries(o).sort((a, b) => b[1] - a[1]);
 if (discover) {
-  console.log('== what the 8 pages load (resource type <- origin; request counts over 16 page-views) ==');
+  console.log('== what the ' + pages.length + ' pages load (resource type <- origin; request counts over ' + totalViews + ' page-views) ==');
   for (const [k, n] of top(origins)) console.log('  ' + String(n).padStart(5) + '  ' + k);
-  console.log('\n== inline code on the 8 desktop page-views (totals) ==');
+  console.log('\n== inline code on the ' + pages.length + ' desktop page-views (totals) ==');
   console.log('  ' + Object.entries(inline).filter(([k]) => k !== 'evalLike').map(([k, n]) => k + ' ' + n).join(' | '));
 } else {
   const n = Object.values(viol).reduce((a, c) => a + c, 0);
   if (check) {
-    console.log('Content-Security-Policy header the SERVER really sent, over 16 page-views (' + engine + '):');
+    console.log('Content-Security-Policy header the SERVER really sent, over ' + totalViews + ' page-views (' + engine + '):');
     for (const [k, c] of top(realCsp)) console.log('  ' + String(c).padStart(3) + ' x ' + (k === '(none)' ? '(no header)' : k.slice(0, 120) + (k.length > 120 ? ' ...' : '')));
   } else console.log('policy: ' + mode.slice(0, 160) + (mode.length > 160 ? ' ...' : ''));
-  console.log('violations across 16 page-views: ' + n + (bad ? ' | load problems: ' + bad : ''));
+  console.log('violations across ' + totalViews + ' page-views: ' + n + (bad ? ' | load problems: ' + bad : ''));
   for (const [k, c] of top(viol).slice(0, 15)) console.log('  ' + String(c).padStart(4) + ' x ' + k);
 }
-process.exit(bad ? 1 : 0);
+process.exit(bad || (!discover && Object.keys(viol).length) ? 1 : 0);
 
 // ref: ../post-change-test.sh — the pixel comparison tools it uses live beside this file; compare-shots.py compares two screenshot sets
