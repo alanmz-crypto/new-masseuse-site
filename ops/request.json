@@ -1,11 +1,11 @@
 {
-  "id": "chair-live-chk-1",
+  "id": "review-a-browser-staging38-20261101",
   "op": "run",
-  "target": "live",
-  "script": "chair-massage/check-chair-massage.mjs",
+  "target": "staging38",
+  "script": "review-a/check-bundle-a.mjs",
   "args": [
-    "https://thaisolitude.com",
+    "https://staging38.thaisolitude.com",
     "inline"
   ],
-  "tests": "none"
+  "tests": "auto"
 }

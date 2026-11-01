@@ -1,5 +1,7 @@
 # Project memory (snapshot for cloud sessions)
 
+- [Site review Bundle A](site-review-bundle-a.md) — 2026-11-01: Bundle 0 draft and fresh staging38 capture complete; Bundle A applied/verified on staging38 (262 browser assertions, rollback proven); PR #61, live disabled.
+
 A copy of the notes Claude keeps on Ryan's computer for this project, taken 2026-10-24 with the SSH username, the login email,
 Butsaba's Gmail address and Ryan's home IP masked. The computer's copy is the original. A cloud session reads the entries that
 matter for its task, and when it learns something durable (a decision of Ryan's, a hard-won rule) it adds or updates an entry
@@ -47,3 +49,4 @@ here in the same style and commits it, so the next session and the computer can 
 - [Portland SEO wording](portland-meta.md) — 2026-10-29 (Ryan: "We are in Portland and ready to start... corporate and groups. Reconcile the website"; item 1, wording accepted): Home/Thai/Therapeutic/Deep Tissue "in Mt. Tabor" SEO titles and descriptions become Portland; exact before/after, guard, rollback; prepared on a branch, staging38 first, NOT live; the next items are listed
 - [Chair Massage service page](chair-massage-page.md) — 2026-10-30 (Ryan: recreate the service-page treatment for chair massage, seamless with Thai/Therapeutic; staging38 first): his decisions (his own watercolor as the one picture, slug in both snippets, Services row), what is added, tooling, rollback, state (version 2 on staging38); live needs his go
 - [Contact page description](contact-meta.md) — 2026-10-25 (Ryan: "Change to corporate wording"): Contact SEO description now says corporate and group massage; LIVE and VERIFIED 15:50 UTC (and staging38); before/after, guard, exact rollback; what he chose to leave (Mt. Tabor titles, About story)
+- [Site review 2026-10-31](site-review-2026-10-31.md) — Ryan: "find things we missed"; read-only review of live from a server-side dump + screenshots; report `docs/reviews/2026-10-31-site-review.md` (top ten, themes, lanes); two new read-only tools (`seo-scan/dump-site.sh`, `tools/shots-inline.mjs`); nothing prepared or changed yet

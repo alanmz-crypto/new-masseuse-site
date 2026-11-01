@@ -3,6 +3,7 @@
 Usage: python3 verify-home.py [base_url]     e.g. http://localhost:8090
 Reads rendered HTML with curl; changes nothing."""
 import html, re, subprocess, sys
+from html.parser import HTMLParser
 
 BASE = (sys.argv[1] if len(sys.argv) > 1 else "http://localhost:8090").rstrip("/")
 fails = 0
@@ -26,6 +27,57 @@ def text_of(fragment):
     return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", fragment))).strip()
 
 
+HOME_CTAS = (
+    ("b9ecca73", ("contact/", "Ask about a session"), ("/contact/", "Ask about a session")),
+    ("36c16d4d", ("about/", "About Thai Solitude"), ("/about/", "About Thai Solitude")),
+    ("2c16c927", ("services/", "Services"), ("/therapeutic-massage/", "Therapeutic massage")),
+    ("591505c6", ("services/", "Services"), ("/deep-tissue-massage/", "Deep tissue massage")),
+    ("416130fd", ("services/", "Services"), ("/thai-massage/", "Thai massage")),
+)
+
+
+def home_ctas(source):
+    """Read each CTA within its own block, without counting menus or jump links."""
+    class CTAParser(HTMLParser):
+        def __init__(self):
+            super().__init__()
+            self.depth, self.active, self.anchor = 0, [], None
+            self.links = {block_id: [] for block_id, _, _ in HOME_CTAS}
+            self.counts = dict.fromkeys(self.links, 0)
+
+        def handle_starttag(self, tag, attrs):
+            attrs = dict(attrs)
+            if tag == "div":
+                self.depth += 1
+                classes = attrs.get("class", "").split()
+                for block_id in self.links:
+                    if "uagb-block-" + block_id in classes:
+                        self.counts[block_id] += 1
+                        self.active.append((block_id, self.depth))
+            if tag == "a" and self.active:
+                self.anchor = [attrs.get("href"), []]
+                self.links[self.active[-1][0]].append(self.anchor)
+
+        def handle_endtag(self, tag):
+            if tag == "a":
+                self.anchor = None
+            if tag == "div":
+                self.active = [(block_id, depth) for block_id, depth in self.active if depth != self.depth]
+                self.depth -= 1
+
+        def handle_data(self, data):
+            if self.anchor is not None:
+                self.anchor[1].append(data)
+
+    parser = CTAParser()
+    parser.feed(source)
+    return tuple(
+        (parser.links[block_id][0][0], re.sub(r"\s+", " ", "".join(parser.links[block_id][0][1])).strip())
+        if parser.counts[block_id] == 1 and len(parser.links[block_id]) == 1 else None
+        for block_id, _, _ in HOME_CTAS
+    )
+
+
 page, code = get("/")
 check("Home returns 200", code == 200, code)
 m = re.search(r'<div class="wp-block-uagb-container[^"]*uagb-block-e9f89e50[^"]*".*?(?=<div class="wp-block-uagb-container[^"]*uagb-block-c194462d)', page, re.S)
@@ -43,7 +95,11 @@ check("licence line wording: Oregon License LMT-29905 (verify) · Portland, OR (
 check("verify link goes to the Oregon licence lookup", 'href="https://public.orlicensing.oregon.gov/OBMTPublic/LPRBrowser.aspx"' in t)
 check("licence line sits between the H1 and the lead text", 0 <= hero.find("<h1") < hero.find("ts-home-trust") < hero.find("Thai and therapeutic massage that starts with"))
 
-check("hero button says 'Ask about a session' and still goes to contact/", bool(re.search(r'<a href="contact/"[^>]*class="uagb-infobox-cta-link[^"]*"[^>]*><span class="uagb-inline-editing">Ask about a session</span>', hero)))
+cta_links = home_ctas(page)
+old_ctas = tuple(old for _, old, _ in HOME_CTAS)
+new_ctas = tuple(new for _, _, new in HOME_CTAS)
+check("Home contact, About and service-card buttons use one complete approved state (before or after Bundle A)", cta_links in (old_ctas, new_ctas), cta_links)
+check("hero button says 'Ask about a session' and goes to the same approved Contact target", bool(re.search(r'<a href="%s"[^>]*class="uagb-infobox-cta-link[^"]*"[^>]*><span class="uagb-inline-editing">Ask about a session</span>' % re.escape("/contact/" if cta_links == new_ctas else "contact/"), hero)))
 check("no 'Get in Touch' left in the page body (header copies are menu settings)", "Get in Touch" not in hero)
 
 check("no hiring band on Home (tried and dropped at Ryan's request, 2026-10-16)", "ts-home-employers" not in page and "Hiring a massage therapist" not in page)

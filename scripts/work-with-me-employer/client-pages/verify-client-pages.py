@@ -61,6 +61,7 @@ def either(t, old, new):
 # ---- Services -------------------------------------------------------------------------------------------------------------
 svc, code = get("/services/")
 check("Services returns 200", code == 200, code)
+BUNDLE_A = bool(re.search(r'<div class="[^"]*\bts-review-next\b', svc))
 new_title = "Massage Services | Butsaba Dusrai, Oregon LMT"
 # seo-fixes (Ryan, 2026-10-30: "fix Services"): the description says "in Portland"; a site not changed yet still has the approved "in Mt. Tabor, Portland" wording. Either one, and the social copies must match it.
 SVC_DESC_OLD = "Thai, therapeutic and deep tissue massage with Butsaba Dusrai, LMT, in Mt. Tabor, Portland. Every session starts with your goals."
@@ -433,7 +434,9 @@ else:
         check("Chair Massage: FAQ question %r appears once" % qq, ct.count(qq) == 1)
     check("Chair Massage: eleven questions", mh_cm.count('class="uagb-question"') == 11, mh_cm.count('class="uagb-question"'))
     check("Chair Massage: the 'Where Do Sessions Take Place?' answer says %s, once" % BOOK_DATE, ct.count("with bookings beginning %s. Individual appointments at a dedicated Thai Solitude location are planned for summer 2027. I do not offer individual house calls." % BOOK_DATE) == 1)
-    check("Chair Massage: no links inside FAQ answers (axe nested-interactive)", not re.search(r'uagb-faq-content[^>]*>(?:(?!</div>).)*<a ', mh_cm, re.S))
+    faq_links = re.findall(r'uagb-faq-content[^>]*>(?:(?!</div>).)*?<a ([^>]+)>(.*?)</a>', mh_cm, re.S)
+    check("Chair Massage: only the three approved Corporate FAQ links after Bundle A; no links before it",
+          (len(faq_links) == 3 and all('href="/corporate-massage-portland/"' in attrs and text_of(label) == 'Corporate and Group Massage page' for attrs, label in faq_links)) if BUNDLE_A else not faq_links, faq_links)
     csumm = [wt.text(x) for x in re.findall(r"<summary>(.*?)</summary>", mh_cm, re.S)]
     check("Chair Massage: the five research panels in order", csumm == ["Reviews, and What They Say About Limits", "Stress, Anxiety and Blood Pressure", "Desk Work, Muscle Discomfort and Movement", "Nurses, Hospital Staff and Carers", "Sources"], csumm)
     cdet = re.findall(r"<details[^>]*>", mh_cm)
@@ -461,6 +464,40 @@ else:
     svc_cm, _ = get("/services/")
     check("Services: the Chair Massage row links to the new page, once, before the corporate row", svc_cm.count('href="/chair-massage/">Chair Massage</a>') == 1 and svc_cm.find('href="/chair-massage/">Chair Massage</a>') < svc_cm.find('href="/corporate-massage-portland/">Corporate &amp; Group Massage</a>'))
     check("Services: the watercolor appears once (the Chair Massage row)", svc_cm.count('chair-massage-tree.webp" alt=') == 1)
+
+# Bundle A is one release: once Services carries it, verify every new path.
+# Before it is applied, retain the historical-site gates above.
+if BUNDLE_A:
+    offers = {"thai-massage": "Thai massage", "therapeutic-massage": "Therapeutic massage", "deep-tissue-massage": "Deep tissue massage", "chair-massage": "Chair massage", "corporate-massage-portland": "Corporate & group massage"}
+    service_pages = {"thai-massage": thm, "therapeutic-massage": th, "deep-tissue-massage": dtp, "chair-massage": cm}
+    for slug, body in {**service_pages, "services": svc}.items():
+        main_body = re.search(r"<main.*?</main>", body, re.S)
+        body = main_body[0] if main_body else ""
+        check(f"Bundle A {slug}: one closing Next step with the agreed date and both buttons",
+              len(re.findall(r'<div class="[^"]*\bts-review-next\b', body)) == 1
+              and f'Corporate and group massage bookings begin {BOOK_DATE}.' in body
+              and '>Request a corporate massage quote</a>' in body and '>Ask a question</a>' in body
+              and 'href="/corporate-massage-portland/"' in body and 'href="/contact/"' in body)
+        if slug != "services":
+            other = re.findall(r'<p\b[^>]*class="[^"]*\bts-review-other\b[^"]*"[^>]*>(.*?)</p>', body, re.S)
+            expected = {f"/{s}/" for s in offers if s != slug}
+            positions = (body.find('ts-review-other'), body.find('What the Research Says'), body.rfind('ts-source'), body.find('ts-review-next'))
+            check(f"Bundle A {slug}: other four services before research; Next step after Sources",
+                  len(other) == 1 and set(re.findall(r'href="([^"]+)"', other[0])) == expected
+                  and 0 <= positions[0] < positions[1] and 0 <= positions[2] < positions[3],
+                  {'links': re.findall(r'href="([^"]+)"', other[0]) if other else [], 'positions': positions})
+    order = [svc.find('uagb-block-' + bid + '"') for bid in ("8bb921f3", "b3c7a91e", "1f6539c9", "4e23bf70", "75fb60e4")]
+    check("Bundle A Services: Chair, Corporate, Therapeutic, Deep Tissue, Thai row order", min(order) >= 0 and order == sorted(order))
+    check("Bundle A Services: availability sentence present once", text_of(svc).count("Right now I offer corporate and group massage only, at suitable Portland venues; individual appointments at a dedicated Thai Solitude location are planned for summer 2027.") == 1)
+    jump = re.search(r'<nav[^>]+class="ts-jump".*?</nav>', svc, re.S)
+    check("Bundle A Services: four jumps find their targets", bool(jump) and all(f'href="#{anchor}"' in jump[0] and f'id="{anchor}"' in svc for anchor in ("ts-corporate-group", "ts-chair-massage", "ts-thai-massage", "ts-what-to-expect")))
+    about_a, _ = get("/about/")
+    contact_a, _ = get("/contact/")
+    check("Bundle A About: closing licence and three paths", bool(re.search(r'<p\b[^>]*class="[^"]*\bts-review-license\b', about_a)) and 'LMT-29905' in about_a and all(f'href="{p}"' in about_a for p in ("/services/", "/corporate-massage-portland/", "/contact/")))
+    check("Bundle A Contact: corporate card, quote email and jump target", bool(re.search(r'<div class="[^"]*\bts-review-contact\b', contact_a)) and 'id="corporate-quote"' in contact_a and 'href="#corporate-quote"' in contact_a and '>Corporate quote</a>' in contact_a and 'subject=Corporate%20massage%20quote%20request' in contact_a)
+    check("Bundle A Corporate: Chair link and mobile shortcuts", 'href="/chair-massage/"' in cp_page and 'class="ts-corp__sticky"' in cp_page and '>Request a quote</a>' in cp_page and '>Email butsabad@gmail.com</a>' in cp_page)
+else:
+    print("INFO Review Bundle A has not been applied here")
 
 print("\nRESULT: " + ("all checks passed" if not fails else f"{fails} check(s) FAILED"))
 sys.exit(1 if fails else 0)
