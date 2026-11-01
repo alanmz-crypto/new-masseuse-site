@@ -24,7 +24,7 @@ ANCHOR = '<!-- wp:uagb/container {"block_id":"db0b5e62"'      # the Therapeutic 
 WRAPPER = '<div class="wp-block-uagb-container uagb-block-883307ab">'   # the section's card list: the Therapeutic card is its FIRST child, so "wrapper + anchor" pins the insertion to the very top of the list
 OLD_TO_NEW_IDS = {'db0b5e62': 'e7a31c58', '67ff30b9': '2b94d0f6', '6241311c': '8c05a7e1', '505b8d31': '3f6e92b4', 'd4e81e9b': 'a1d47c09', '2c16c927': '5e8b30d7'}
 TITLE = 'Corporate &amp; Group Massage'
-DESC = 'On-site chair massage for employee appreciation days and workplace events, with table massage at suitable host venues.'
+DESC = 'On-site chair massage for employee appreciation days and workplace events, with table massage by arrangement at suitable host venues.'
 LABEL = 'Corporate'      # one word like the neighbours' "Services": the longer "Corporate Massage" wraps onto two lines in the narrow button column at desktop width
 LINK = '/corporate-massage-portland/'
 IMG_ALT = 'Illustration of a massage therapist giving a shoulder massage to a client lying on a massage table, with plants and flowers around them.'   # the same text as the Services row picture

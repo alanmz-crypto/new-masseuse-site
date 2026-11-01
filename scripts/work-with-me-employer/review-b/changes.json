@@ -1,0 +1,1078 @@
+{
+  "source": "review-b-capture-staging38-20261101",
+  "dump_sha256": "dcbb4b86e99db5139d70b145bed025af620b4059cfbf157229dc335d295a5f9c",
+  "global_old": {
+    "separator": "-",
+    "page_title": "%title% - %site_name%",
+    "auto_generate_description": true,
+    "page_description": "%content%",
+    "auto_description": "",
+    "fallback_image": "",
+    "auto_generated_og_image": "",
+    "canonical_url": "",
+    "focus_keyword": "",
+    "home_page_title": "%site_name% - %tagline%",
+    "home_page_description": "%tagline%",
+    "home_page_facebook_image_url": "",
+    "home_page_facebook_title": "",
+    "home_page_facebook_description": "",
+    "home_page_twitter_image_url": "",
+    "home_page_twitter_title": "",
+    "home_page_twitter_description": "",
+    "home_page_robots": {
+      "general": []
+    },
+    "index_home_page_paginated_pages": true,
+    "open_graph_tags": true,
+    "facebook_meta_tags": true,
+    "twitter_meta_tags": true,
+    "oembeded_scripts": true,
+    "oembeded_og_title": true,
+    "oembeded_social_images": true,
+    "oembeded_remove_author_name": true,
+    "facebook_page_url": "",
+    "facebook_author_fallback": "",
+    "twitter_card_type": "summary_large_image",
+    "twitter_same_as_facebook": true,
+    "twitter_profile_username": "",
+    "twitter_profile_fallback": "",
+    "enable_page_level_seo": true,
+    "enable_google_console": true,
+    "enable_schemas": true,
+    "enable_migration": true,
+    "author_archive": false,
+    "date_archive": false,
+    "noindex_paginated_pages": false,
+    "paginated_link_relationships": [
+      "homepage",
+      "pages",
+      "archives"
+    ],
+    "addlink_to_source_below_feed_entries": true,
+    "remove_global_comments_feed": false,
+    "remove_post_authors_feed": false,
+    "remove_post_types_feed": false,
+    "remove_category_feed": false,
+    "remove_tag_feeds": false,
+    "remove_custom_taxonomy_feeds": false,
+    "remove_search_results_feed": false,
+    "remove_atom_rdf_feeds": false,
+    "enable_xml_sitemap": false,
+    "enable_xml_image_sitemap": true,
+    "no_index": [
+      "post_format",
+      "attachment",
+      "author",
+      "date",
+      "search"
+    ],
+    "no_follow": [],
+    "no_archive": [],
+    "redirect_attachment_pages_to_post_parent": true,
+    "auto_set_image_title": true,
+    "auto_set_image_alt": true,
+    "enable_woocommerce_integration": true,
+    "enable_angie_integration": true,
+    "schemas": {
+      "dd49ca5d-55d7-4f0a-8278-d37c46012a99": {
+        "title": "WebSite",
+        "type": "WebSite",
+        "show_on": {
+          "rules": [
+            "basic-global"
+          ],
+          "specific": [],
+          "specificText": []
+        },
+        "fields": {
+          "@id": "%site.url%#%id%",
+          "schema_name": "WebSite",
+          "name": "%site.title%",
+          "author": "%schemas.person%",
+          "copyrightHolder": "%schemas.person%",
+          "description": "%site.description%",
+          "url": "%site.url%",
+          "potentialAction": "%schemas.searchaction%",
+          "publisher": "%schemas.organization%",
+          "thumbnailUrl": "%site.logo%"
+        }
+      },
+      "a30d6540-213d-4e98-a9e9-b482c292f547": {
+        "title": "WebPage",
+        "type": "WebPage",
+        "show_on": {
+          "rules": [
+            "basic-global"
+          ],
+          "specific": [],
+          "specificText": []
+        },
+        "fields": {
+          "@id": "%current.url%#%id%",
+          "schema_name": "WebPage",
+          "@type": "WebPage",
+          "name": "%current.title%",
+          "author": "%schemas.person%",
+          "inLanguage": "%site.language%",
+          "url": "%current.url%",
+          "breadcrumb": "%schemas.breadcrumblist%",
+          "contributor": "%schemas.person%",
+          "copyrightHolder": "%schemas.person%",
+          "datePublished": "%post.created_date%",
+          "dateModified": "%post.modified_date%",
+          "description": "",
+          "isPartOf": "%schemas.website%",
+          "publisher": "%schemas.organization%",
+          "thumbnailUrl": "%post.thumbnail%",
+          "mainEntity": ""
+        }
+      },
+      "32eb489e-b9c3-4aba-be46-1968f1fc2588": {
+        "title": "Organization",
+        "type": "Organization",
+        "show_on": {
+          "rules": [
+            "basic-global"
+          ],
+          "specific": [],
+          "specificText": []
+        },
+        "fields": {
+          "@id": "%site.url%#%id%",
+          "schemaDocs": "",
+          "schema_name": "Organization",
+          "@type": "Organization",
+          "name": "Thai Solitude",
+          "email": "butsabad@gmail.com",
+          "faxNumber": "",
+          "founder": [
+            {
+              "@type": "Person",
+              "name": "Butsaba Dusrai"
+            }
+          ],
+          "foundingDate": "",
+          "keywords": "",
+          "logo": "{{HTTPS}}/wp-content/uploads/2026/06/cropped-000LogoCubesPx256.webp",
+          "sameAs": [],
+          "slogan": "%site.description%",
+          "telephone": "(312) 539-4328",
+          "url": "{{HTTPS}}",
+          "knowsLanguage": "Thai, English"
+        }
+      },
+      "a138904b-a2ae-46b3-a328-4fc65e6b68ce": {
+        "title": "BreadcrumbList",
+        "type": "BreadcrumbList",
+        "show_on": {
+          "rules": [
+            "basic-global"
+          ],
+          "specific": [],
+          "specificText": []
+        },
+        "not_show_on": {
+          "rules": [
+            "special-front"
+          ],
+          "specific": [],
+          "specificText": []
+        },
+        "fields": {
+          "schema_name": "BreadcrumbList",
+          "name": "BreadcrumbList",
+          "@id": "%current.url%#%id%",
+          "@type": "BreadcrumbList",
+          "itemListElement": "%current.breadcrumbs%"
+        }
+      },
+      "3ca5b3ef-e910-4650-b879-904f94c4fb89": {
+        "title": "Article",
+        "type": "Article",
+        "show_on": {
+          "rules": [
+            "post|all"
+          ],
+          "specific": [],
+          "specificText": []
+        },
+        "fields": {
+          "googleDocs": "",
+          "schema_name": "Article",
+          "@id": "%current.url%#%id%",
+          "@type": "Article",
+          "name": "%post.title%",
+          "url": "%post.url%",
+          "headline": "%post.title%",
+          "description": "%post.excerpt%",
+          "datePublished": "%post.date%",
+          "dateModified": "%post.modified_date%",
+          "commentCount": "%post.comment_count%",
+          "wordCount": "%post.word_count%",
+          "keywords": "%post.tags%",
+          "articleSection": "%post.categories%",
+          "author": "%schemas.person%",
+          "image": [
+            "%post.thumbnail%"
+          ],
+          "hasPart": [
+            {
+              "@type": "WebPageElement",
+              "isAccessibleForFree": "true",
+              "cssSelector": ""
+            }
+          ],
+          "isPartOf": "%schemas.webpage%",
+          "mainEntityOfPage": "%schemas.webpage%",
+          "publisher": "%schemas.organization%",
+          "mainEntity": ""
+        }
+      },
+      "f7e85241-8913-40a8-88ba-3c5f946f29e1": {
+        "title": "SearchAction",
+        "type": "SearchAction",
+        "show_on": {
+          "rules": [
+            "basic-global"
+          ],
+          "specific": [],
+          "specificText": []
+        },
+        "fields": {
+          "schema_name": "SearchAction",
+          "@id": "%site.url%#%id%",
+          "target": "%site.search_url%",
+          "query-input": "required name=search_term_string"
+        }
+      },
+      "54a5ccff-2409-4077-aa33-92654aa88ed9": {
+        "title": "Person",
+        "type": "Person",
+        "show_on": {
+          "rules": [
+            "post|all"
+          ],
+          "specific": [],
+          "specificText": []
+        },
+        "fields": {
+          "schemaDocs": "",
+          "schema_name": "Person",
+          "@id": "%current.url%#%id%",
+          "name": "Thai Solitude",
+          "url": "%author.posts_url%",
+          "givenName": "%author.first_name%",
+          "familyName": "%author.last_name%",
+          "brand": "%site.title%",
+          "mainEntityOfPage": "",
+          "description": "%author.description%",
+          "email": "",
+          "image": "{{HTTPS}}/wp-content/uploads/2026/06/cropped-000LogoCubesPx256.webp",
+          "telephone": "",
+          "sameAs": ""
+        }
+      }
+    },
+    "social_profiles": {
+      "instagram": "https://www.instagram.com/",
+      "facebook": ""
+    }
+  },
+  "global_new": {
+    "separator": "-",
+    "page_title": "%title% - %site_name%",
+    "auto_generate_description": true,
+    "page_description": "%content%",
+    "auto_description": "",
+    "fallback_image": "",
+    "auto_generated_og_image": "",
+    "canonical_url": "",
+    "focus_keyword": "",
+    "home_page_title": "%site_name% - %tagline%",
+    "home_page_description": "%tagline%",
+    "home_page_facebook_image_url": "",
+    "home_page_facebook_title": "",
+    "home_page_facebook_description": "",
+    "home_page_twitter_image_url": "",
+    "home_page_twitter_title": "",
+    "home_page_twitter_description": "",
+    "home_page_robots": {
+      "general": []
+    },
+    "index_home_page_paginated_pages": true,
+    "open_graph_tags": true,
+    "facebook_meta_tags": true,
+    "twitter_meta_tags": true,
+    "oembeded_scripts": true,
+    "oembeded_og_title": true,
+    "oembeded_social_images": true,
+    "oembeded_remove_author_name": true,
+    "facebook_page_url": "",
+    "facebook_author_fallback": "",
+    "twitter_card_type": "summary_large_image",
+    "twitter_same_as_facebook": true,
+    "twitter_profile_username": "",
+    "twitter_profile_fallback": "",
+    "enable_page_level_seo": true,
+    "enable_google_console": true,
+    "enable_schemas": true,
+    "enable_migration": true,
+    "author_archive": false,
+    "date_archive": false,
+    "noindex_paginated_pages": false,
+    "paginated_link_relationships": [
+      "homepage",
+      "pages",
+      "archives"
+    ],
+    "addlink_to_source_below_feed_entries": true,
+    "remove_global_comments_feed": false,
+    "remove_post_authors_feed": false,
+    "remove_post_types_feed": false,
+    "remove_category_feed": false,
+    "remove_tag_feeds": false,
+    "remove_custom_taxonomy_feeds": false,
+    "remove_search_results_feed": false,
+    "remove_atom_rdf_feeds": false,
+    "enable_xml_sitemap": false,
+    "enable_xml_image_sitemap": true,
+    "no_index": [
+      "post_format",
+      "attachment",
+      "author",
+      "date",
+      "search"
+    ],
+    "no_follow": [],
+    "no_archive": [],
+    "redirect_attachment_pages_to_post_parent": true,
+    "auto_set_image_title": true,
+    "auto_set_image_alt": true,
+    "enable_woocommerce_integration": true,
+    "enable_angie_integration": true,
+    "schemas": {
+      "dd49ca5d-55d7-4f0a-8278-d37c46012a99": {
+        "title": "WebSite",
+        "type": "WebSite",
+        "show_on": {
+          "rules": [
+            "basic-global"
+          ],
+          "specific": [],
+          "specificText": []
+        },
+        "fields": {
+          "@id": "%site.url%#%id%",
+          "schema_name": "WebSite",
+          "name": "%site.title%",
+          "author": "%schemas.person%",
+          "copyrightHolder": "%schemas.person%",
+          "description": "%site.description%",
+          "url": "%site.url%",
+          "potentialAction": "%schemas.searchaction%",
+          "publisher": "%schemas.organization%",
+          "thumbnailUrl": "%site.logo%"
+        }
+      },
+      "a30d6540-213d-4e98-a9e9-b482c292f547": {
+        "title": "WebPage",
+        "type": "WebPage",
+        "show_on": {
+          "rules": [
+            "basic-global"
+          ],
+          "specific": [],
+          "specificText": []
+        },
+        "fields": {
+          "@id": "%current.url%#%id%",
+          "schema_name": "WebPage",
+          "@type": "WebPage",
+          "name": "%current.title%",
+          "author": "%schemas.person%",
+          "inLanguage": "%site.language%",
+          "url": "%current.url%",
+          "breadcrumb": "%schemas.breadcrumblist%",
+          "contributor": "%schemas.person%",
+          "copyrightHolder": "%schemas.person%",
+          "datePublished": "%post.created_date%",
+          "dateModified": "%post.modified_date%",
+          "description": "",
+          "isPartOf": "%schemas.website%",
+          "publisher": "%schemas.organization%",
+          "thumbnailUrl": "%post.thumbnail%",
+          "mainEntity": ""
+        }
+      },
+      "32eb489e-b9c3-4aba-be46-1968f1fc2588": {
+        "title": "Organization",
+        "type": "Organization",
+        "show_on": {
+          "rules": [
+            "basic-global"
+          ],
+          "specific": [],
+          "specificText": []
+        },
+        "fields": {
+          "@id": "%site.url%#%id%",
+          "schemaDocs": "",
+          "schema_name": "Organization",
+          "@type": "Organization",
+          "name": "Thai Solitude",
+          "email": "butsabad@gmail.com",
+          "faxNumber": "",
+          "founder": [
+            {
+              "@type": "Person",
+              "name": "Butsaba Dusrai"
+            }
+          ],
+          "foundingDate": "",
+          "keywords": "",
+          "logo": "{{HTTPS}}/wp-content/uploads/2026/06/cropped-000LogoCubesPx256.webp",
+          "sameAs": [],
+          "slogan": "%site.description%",
+          "telephone": "(312) 539-4328",
+          "url": "{{HTTPS}}",
+          "knowsLanguage": "Thai, English"
+        }
+      },
+      "a138904b-a2ae-46b3-a328-4fc65e6b68ce": {
+        "title": "BreadcrumbList",
+        "type": "BreadcrumbList",
+        "show_on": {
+          "rules": [
+            "basic-global"
+          ],
+          "specific": [],
+          "specificText": []
+        },
+        "not_show_on": {
+          "rules": [
+            "special-front"
+          ],
+          "specific": [],
+          "specificText": []
+        },
+        "fields": {
+          "schema_name": "BreadcrumbList",
+          "name": "BreadcrumbList",
+          "@id": "%current.url%#%id%",
+          "@type": "BreadcrumbList",
+          "itemListElement": "%current.breadcrumbs%"
+        }
+      },
+      "3ca5b3ef-e910-4650-b879-904f94c4fb89": {
+        "title": "Article",
+        "type": "Article",
+        "show_on": {
+          "rules": [
+            "post|all"
+          ],
+          "specific": [],
+          "specificText": []
+        },
+        "fields": {
+          "googleDocs": "",
+          "schema_name": "Article",
+          "@id": "%current.url%#%id%",
+          "@type": "Article",
+          "name": "%post.title%",
+          "url": "%post.url%",
+          "headline": "%post.title%",
+          "description": "%post.excerpt%",
+          "datePublished": "%post.date%",
+          "dateModified": "%post.modified_date%",
+          "commentCount": "%post.comment_count%",
+          "wordCount": "%post.word_count%",
+          "keywords": "%post.tags%",
+          "articleSection": "%post.categories%",
+          "author": "%schemas.person%",
+          "image": [
+            "%post.thumbnail%"
+          ],
+          "hasPart": [
+            {
+              "@type": "WebPageElement",
+              "isAccessibleForFree": "true",
+              "cssSelector": ""
+            }
+          ],
+          "isPartOf": "%schemas.webpage%",
+          "mainEntityOfPage": "%schemas.webpage%",
+          "publisher": "%schemas.organization%",
+          "mainEntity": ""
+        }
+      },
+      "f7e85241-8913-40a8-88ba-3c5f946f29e1": {
+        "title": "SearchAction",
+        "type": "SearchAction",
+        "show_on": {
+          "rules": [
+            "basic-global"
+          ],
+          "specific": [],
+          "specificText": []
+        },
+        "fields": {
+          "schema_name": "SearchAction",
+          "@id": "%site.url%#%id%",
+          "target": "%site.search_url%",
+          "query-input": "required name=search_term_string"
+        }
+      },
+      "54a5ccff-2409-4077-aa33-92654aa88ed9": {
+        "title": "Person",
+        "type": "Person",
+        "show_on": {
+          "rules": [
+            "basic-global"
+          ],
+          "specific": [],
+          "specificText": []
+        },
+        "fields": {
+          "schemaDocs": "",
+          "schema_name": "Person",
+          "@id": "%site.url%#%id%",
+          "name": "Butsaba Dusrai",
+          "url": "%site.url%about/",
+          "givenName": "%author.first_name%",
+          "familyName": "%author.last_name%",
+          "brand": "%site.title%",
+          "mainEntityOfPage": "",
+          "description": "%author.description%",
+          "email": "",
+          "image": "%site.url%wp-content/uploads/2026/09/cropped-cropped-butsaba_avatar-1.webp",
+          "telephone": "",
+          "sameAs": "",
+          "jobTitle": "Licensed Massage Therapist"
+        }
+      }
+    },
+    "social_profiles": {
+      "instagram": "https://www.instagram.com/",
+      "facebook": ""
+    }
+  },
+  "general": [
+    {
+      "slug": "therapeutic-massage",
+      "old_general": {
+        "page_title": "Therapeutic Massage | Butsaba Dusrai, Oregon LMT",
+        "page_description": "Therapeutic massage in Portland with Butsaba Dusrai, LMT: focused work where you ask for it, with pressure and pace adjusted as you go."
+      },
+      "patch": {
+        "page_title": "Therapeutic Massage in Portland | Butsaba Dusrai, LMT"
+      }
+    },
+    {
+      "slug": "deep-tissue-massage",
+      "old_general": {
+        "page_title": "Deep Tissue Massage | Butsaba Dusrai, Oregon LMT",
+        "page_description": "Deep tissue massage in Portland with Butsaba Dusrai, LMT: slow, deliberate pressure on tight muscles, lightened whenever you ask."
+      },
+      "patch": {
+        "page_title": "Deep Tissue Massage in Portland | Butsaba Dusrai, LMT"
+      }
+    },
+    {
+      "slug": "chair-massage",
+      "old_general": {
+        "page_title": "Chair Massage | Butsaba Dusrai, Oregon LMT",
+        "page_description": "Chair massage in Portland with Butsaba Dusrai, LMT: short, seated, fully clothed sessions for workplaces and events, with pressure adjusted as you go."
+      },
+      "patch": {
+        "page_title": "Chair Massage in Portland | Butsaba Dusrai, Oregon LMT"
+      }
+    },
+    {
+      "slug": "corporate-massage-portland",
+      "old_general": {
+        "page_title": "Corporate Chair Massage in Portland, OR | Thai Solitude",
+        "page_description": "On-site chair massage for employee appreciation days and workplace events in Portland, with table massage at suitable host venues. Request a quote."
+      },
+      "patch": {
+        "page_title": "Corporate & Group Massage in Portland, OR | Thai Solitude",
+        "page_description": "On-site chair massage for employee appreciation days and workplace events in Portland, with table massage by arrangement at suitable host venues. Request a quote."
+      }
+    },
+    {
+      "slug": "privacy-policy",
+      "old_general": "",
+      "patch": {
+        "page_title": "Privacy Policy | Thai Solitude",
+        "page_description": "How Thai Solitude handles your information online and as a client of Butsaba Dusrai, LMT: no forms, no tracking, nothing sold or shared for marketing."
+      }
+    },
+    {
+      "slug": "accessibility",
+      "old_general": "",
+      "patch": {
+        "page_title": "Accessibility | Thai Solitude",
+        "page_description": "What has been checked on thaisolitude.com for accessibility (WCAG 2.2 A and AA, October 2026), its known limitations, and how to report a barrier."
+      }
+    },
+    {
+      "slug": "services",
+      "old_general": {
+        "page_title": "Massage Services | Butsaba Dusrai, Oregon LMT",
+        "page_description": "Thai, therapeutic and deep tissue massage with Butsaba Dusrai, LMT, in Portland. Every session starts with your goals."
+      },
+      "patch": {
+        "page_description": "Thai, therapeutic, deep tissue and chair massage in Portland with Butsaba Dusrai, LMT, plus corporate and group events. Every session starts with your goals."
+      }
+    }
+  ],
+  "schemas": [
+    {
+      "slug": "about",
+      "old": {
+        "schemas": {
+          "dd49ca5d-55d7-4f0a-8278-d37c46012a99": {
+            "title": "WebSite",
+            "type": "WebSite",
+            "show_on": {
+              "rules": [
+                "basic-global"
+              ],
+              "specific": [],
+              "specificText": []
+            },
+            "fields": {
+              "@id": "%site.url%#%id%",
+              "schema_name": "WebSite",
+              "name": "%site.title%",
+              "author": "%schemas.person%",
+              "copyrightHolder": "%schemas.person%",
+              "description": "%site.description%",
+              "url": "%site.url%",
+              "potentialAction": "%schemas.searchaction%",
+              "publisher": "%schemas.organization%",
+              "thumbnailUrl": "%site.logo%"
+            }
+          },
+          "a30d6540-213d-4e98-a9e9-b482c292f547": {
+            "title": "WebPage",
+            "type": "AboutPage",
+            "show_on": {
+              "rules": [
+                "basic-global"
+              ],
+              "specific": [],
+              "specificText": []
+            },
+            "fields": {
+              "@id": "%current.url%#%id%",
+              "schema_name": "WebPage",
+              "@type": "AboutPage",
+              "name": "%current.title%",
+              "author": "%schemas.person%",
+              "inLanguage": "%site.language%",
+              "url": "%current.url%",
+              "breadcrumb": "%schemas.breadcrumblist%",
+              "contributor": "%schemas.person%",
+              "copyrightHolder": "%schemas.person%",
+              "datePublished": "%post.created_date%",
+              "dateModified": "%post.modified_date%",
+              "description": "",
+              "isPartOf": "%schemas.website%",
+              "publisher": "%schemas.organization%",
+              "thumbnailUrl": "%post.thumbnail%",
+              "mainEntity": ""
+            }
+          },
+          "32eb489e-b9c3-4aba-be46-1968f1fc2588": {
+            "title": "Organization",
+            "type": "Organization",
+            "show_on": {
+              "rules": [
+                "basic-global"
+              ],
+              "specific": [],
+              "specificText": []
+            },
+            "fields": {
+              "@id": "%site.url%#%id%",
+              "schemaDocs": "",
+              "schema_name": "Organization",
+              "@type": "Organization",
+              "name": "Thai Solitude",
+              "email": "butsabad@gmail.com",
+              "faxNumber": "",
+              "founder": [
+                {
+                  "@type": "Person",
+                  "name": "Butsaba Dusrai"
+                }
+              ],
+              "foundingDate": "",
+              "keywords": "",
+              "logo": "{{HTTPS}}/wp-content/uploads/2026/06/cropped-000LogoCubesPx256.webp",
+              "sameAs": [],
+              "slogan": "%site.description%",
+              "telephone": "",
+              "url": "{{HTTPS}}"
+            }
+          },
+          "f7e85241-8913-40a8-88ba-3c5f946f29e1": {
+            "title": "SearchAction",
+            "type": "SearchAction",
+            "show_on": {
+              "rules": [
+                "basic-global"
+              ],
+              "specific": [],
+              "specificText": []
+            },
+            "fields": {
+              "schema_name": "SearchAction",
+              "@id": "%site.url%#%id%",
+              "target": "%site.search_url%",
+              "query-input": "required name=search_term_string"
+            }
+          }
+        }
+      },
+      "new": {
+        "schemas": {
+          "dd49ca5d-55d7-4f0a-8278-d37c46012a99": {
+            "title": "WebSite",
+            "type": "WebSite",
+            "show_on": {
+              "rules": [
+                "basic-global"
+              ],
+              "specific": [],
+              "specificText": []
+            },
+            "fields": {
+              "@id": "%site.url%#%id%",
+              "schema_name": "WebSite",
+              "name": "%site.title%",
+              "author": "%schemas.person%",
+              "copyrightHolder": "%schemas.person%",
+              "description": "%site.description%",
+              "url": "%site.url%",
+              "potentialAction": "%schemas.searchaction%",
+              "publisher": "%schemas.organization%",
+              "thumbnailUrl": "%site.logo%"
+            }
+          },
+          "a30d6540-213d-4e98-a9e9-b482c292f547": {
+            "title": "WebPage",
+            "type": "AboutPage",
+            "show_on": {
+              "rules": [
+                "basic-global"
+              ],
+              "specific": [],
+              "specificText": []
+            },
+            "fields": {
+              "@id": "%current.url%#%id%",
+              "schema_name": "WebPage",
+              "@type": "AboutPage",
+              "name": "%current.title%",
+              "author": "%schemas.person%",
+              "inLanguage": "%site.language%",
+              "url": "%current.url%",
+              "breadcrumb": "%schemas.breadcrumblist%",
+              "contributor": "%schemas.person%",
+              "copyrightHolder": "%schemas.person%",
+              "datePublished": "%post.created_date%",
+              "dateModified": "%post.modified_date%",
+              "description": "",
+              "isPartOf": "%schemas.website%",
+              "publisher": "%schemas.organization%",
+              "thumbnailUrl": "%post.thumbnail%",
+              "mainEntity": ""
+            }
+          },
+          "32eb489e-b9c3-4aba-be46-1968f1fc2588": {
+            "title": "Organization",
+            "type": "Organization",
+            "show_on": {
+              "rules": [
+                "basic-global"
+              ],
+              "specific": [],
+              "specificText": []
+            },
+            "fields": {
+              "@id": "%site.url%#%id%",
+              "schemaDocs": "",
+              "schema_name": "Organization",
+              "@type": "Organization",
+              "name": "Thai Solitude",
+              "email": "butsabad@gmail.com",
+              "faxNumber": "",
+              "founder": [
+                {
+                  "@type": "Person",
+                  "name": "Butsaba Dusrai"
+                }
+              ],
+              "foundingDate": "",
+              "keywords": "",
+              "logo": "{{HTTPS}}/wp-content/uploads/2026/06/cropped-000LogoCubesPx256.webp",
+              "sameAs": [],
+              "slogan": "%site.description%",
+              "telephone": "(312) 539-4328",
+              "url": "{{HTTPS}}",
+              "knowsLanguage": "Thai, English"
+            }
+          },
+          "f7e85241-8913-40a8-88ba-3c5f946f29e1": {
+            "title": "SearchAction",
+            "type": "SearchAction",
+            "show_on": {
+              "rules": [
+                "basic-global"
+              ],
+              "specific": [],
+              "specificText": []
+            },
+            "fields": {
+              "schema_name": "SearchAction",
+              "@id": "%site.url%#%id%",
+              "target": "%site.search_url%",
+              "query-input": "required name=search_term_string"
+            }
+          }
+        }
+      }
+    },
+    {
+      "slug": "contact",
+      "old": {
+        "schemas": {
+          "dd49ca5d-55d7-4f0a-8278-d37c46012a99": {
+            "title": "WebSite",
+            "type": "WebSite",
+            "show_on": {
+              "rules": [
+                "basic-global"
+              ],
+              "specific": [],
+              "specificText": []
+            },
+            "fields": {
+              "@id": "%site.url%#%id%",
+              "schema_name": "WebSite",
+              "name": "%site.title%",
+              "author": "%schemas.person%",
+              "copyrightHolder": "%schemas.person%",
+              "description": "%site.description%",
+              "url": "%site.url%",
+              "potentialAction": "%schemas.searchaction%",
+              "publisher": "%schemas.organization%",
+              "thumbnailUrl": "%site.logo%"
+            }
+          },
+          "a30d6540-213d-4e98-a9e9-b482c292f547": {
+            "title": "WebPage",
+            "type": "ContactPage",
+            "show_on": {
+              "rules": [
+                "basic-global"
+              ],
+              "specific": [],
+              "specificText": []
+            },
+            "fields": {
+              "@id": "%current.url%#%id%",
+              "schema_name": "WebPage",
+              "@type": "ContactPage",
+              "name": "%current.title%",
+              "author": "%schemas.person%",
+              "inLanguage": "%site.language%",
+              "url": "%current.url%",
+              "breadcrumb": "%schemas.breadcrumblist%",
+              "contributor": "%schemas.person%",
+              "copyrightHolder": "%schemas.person%",
+              "datePublished": "%post.created_date%",
+              "dateModified": "%post.modified_date%",
+              "description": "",
+              "isPartOf": "%schemas.website%",
+              "publisher": "%schemas.organization%",
+              "thumbnailUrl": "%post.thumbnail%",
+              "mainEntity": ""
+            }
+          },
+          "32eb489e-b9c3-4aba-be46-1968f1fc2588": {
+            "title": "Organization",
+            "type": "Organization",
+            "show_on": {
+              "rules": [
+                "basic-global"
+              ],
+              "specific": [],
+              "specificText": []
+            },
+            "fields": {
+              "@id": "%site.url%#%id%",
+              "schemaDocs": "",
+              "schema_name": "Organization",
+              "@type": "Organization",
+              "name": "Thai Solitude",
+              "email": "butsabad@gmail.com",
+              "faxNumber": "",
+              "founder": [
+                {
+                  "@type": "Person",
+                  "name": "Butsaba Dusrai"
+                }
+              ],
+              "foundingDate": "",
+              "keywords": "",
+              "logo": "{{HTTPS}}/wp-content/uploads/2026/06/cropped-000LogoCubesPx256.webp",
+              "sameAs": [],
+              "slogan": "%site.description%",
+              "telephone": "",
+              "url": "{{HTTPS}}"
+            }
+          },
+          "f7e85241-8913-40a8-88ba-3c5f946f29e1": {
+            "title": "SearchAction",
+            "type": "SearchAction",
+            "show_on": {
+              "rules": [
+                "basic-global"
+              ],
+              "specific": [],
+              "specificText": []
+            },
+            "fields": {
+              "schema_name": "SearchAction",
+              "@id": "%site.url%#%id%",
+              "target": "%site.search_url%",
+              "query-input": "required name=search_term_string"
+            }
+          }
+        }
+      },
+      "new": {
+        "schemas": {
+          "dd49ca5d-55d7-4f0a-8278-d37c46012a99": {
+            "title": "WebSite",
+            "type": "WebSite",
+            "show_on": {
+              "rules": [
+                "basic-global"
+              ],
+              "specific": [],
+              "specificText": []
+            },
+            "fields": {
+              "@id": "%site.url%#%id%",
+              "schema_name": "WebSite",
+              "name": "%site.title%",
+              "author": "%schemas.person%",
+              "copyrightHolder": "%schemas.person%",
+              "description": "%site.description%",
+              "url": "%site.url%",
+              "potentialAction": "%schemas.searchaction%",
+              "publisher": "%schemas.organization%",
+              "thumbnailUrl": "%site.logo%"
+            }
+          },
+          "a30d6540-213d-4e98-a9e9-b482c292f547": {
+            "title": "WebPage",
+            "type": "ContactPage",
+            "show_on": {
+              "rules": [
+                "basic-global"
+              ],
+              "specific": [],
+              "specificText": []
+            },
+            "fields": {
+              "@id": "%current.url%#%id%",
+              "schema_name": "WebPage",
+              "@type": "ContactPage",
+              "name": "%current.title%",
+              "author": "%schemas.person%",
+              "inLanguage": "%site.language%",
+              "url": "%current.url%",
+              "breadcrumb": "%schemas.breadcrumblist%",
+              "contributor": "%schemas.person%",
+              "copyrightHolder": "%schemas.person%",
+              "datePublished": "%post.created_date%",
+              "dateModified": "%post.modified_date%",
+              "description": "",
+              "isPartOf": "%schemas.website%",
+              "publisher": "%schemas.organization%",
+              "thumbnailUrl": "%post.thumbnail%",
+              "mainEntity": ""
+            }
+          },
+          "32eb489e-b9c3-4aba-be46-1968f1fc2588": {
+            "title": "Organization",
+            "type": "Organization",
+            "show_on": {
+              "rules": [
+                "basic-global"
+              ],
+              "specific": [],
+              "specificText": []
+            },
+            "fields": {
+              "@id": "%site.url%#%id%",
+              "schemaDocs": "",
+              "schema_name": "Organization",
+              "@type": "Organization",
+              "name": "Thai Solitude",
+              "email": "butsabad@gmail.com",
+              "faxNumber": "",
+              "founder": [
+                {
+                  "@type": "Person",
+                  "name": "Butsaba Dusrai"
+                }
+              ],
+              "foundingDate": "",
+              "keywords": "",
+              "logo": "{{HTTPS}}/wp-content/uploads/2026/06/cropped-000LogoCubesPx256.webp",
+              "sameAs": [],
+              "slogan": "%site.description%",
+              "telephone": "(312) 539-4328",
+              "url": "{{HTTPS}}",
+              "knowsLanguage": "Thai, English"
+            }
+          },
+          "f7e85241-8913-40a8-88ba-3c5f946f29e1": {
+            "title": "SearchAction",
+            "type": "SearchAction",
+            "show_on": {
+              "rules": [
+                "basic-global"
+              ],
+              "specific": [],
+              "specificText": []
+            },
+            "fields": {
+              "schema_name": "SearchAction",
+              "@id": "%site.url%#%id%",
+              "target": "%site.search_url%",
+              "query-input": "required name=search_term_string"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "social_old_url": "{{HTTP}}/wp-content/uploads/2026/10/corporate-group-massage.webp",
+  "social_new_url": "{{HTTPS}}/wp-content/uploads/2026/10/corporate-group-massage.webp",
+  "tagline_old": "Professional Deep Tissue and Thai Massage",
+  "tagline_new": "Thai, Therapeutic and Deep Tissue Massage with Butsaba Dusrai, LMT",
+  "snippet_title": "LocalBusinessInfo",
+  "snippet_old": "add_action( 'wp_head', function () {\n\t$home = untrailingslashit( set_url_scheme( home_url( '/' ), 'https' ) );\n\t$data = array(\n\t\t'@context'  => 'https://schema.org',\n\t\t'@type'     => 'LocalBusiness',\n\t\t'@id'       => $home . '/#localbusiness',\n\t\t'name'      => 'Thai Solitude',\n\t\t'telephone' => '+1-312-539-4328',\n\t\t'address'   => array(\n\t\t\t'@type'           => 'PostalAddress',\n\t\t\t'addressLocality' => 'Portland',\n\t\t\t'addressRegion'   => 'OR',\n\t\t\t'postalCode'      => '97213',\n\t\t\t'addressCountry'  => 'US',\n\t\t),\n\t\t'url'       => $home,\n\t);\n\techo '<script type=\"application/ld+json\">' . wp_json_encode( $data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) . '</script>';\n} );\n",
+  "snippet_new": "add_action( 'wp_head', function () {\n    $home = untrailingslashit( set_url_scheme( home_url( '/' ), 'https' ) );\n    if ( 'localhost' === wp_parse_url( $home, PHP_URL_HOST ) ) {\n        $home = untrailingslashit( home_url( '/' ) ); // isolated HTTP rehearsal\n    }\n    $data = array(\n        '@context' => 'https://schema.org',\n        '@type' => 'LocalBusiness',\n        '@id' => $home . '/#localbusiness',\n        'name' => 'Thai Solitude',\n        'telephone' => '+1-312-539-4328',\n        'email' => 'butsabad@gmail.com',\n        'image' => $home . '/wp-content/uploads/2026/09/cropped-cropped-butsaba_avatar-1.webp',\n        'logo' => $home . '/wp-content/uploads/2026/09/cropped-cropped-butsaba_avatar-1.webp',\n        'description' => 'Thai, therapeutic, deep tissue and chair massage in Portland with Butsaba Dusrai, LMT, plus corporate and group events. Every session starts with your goals.',\n        'areaServed' => array( '@type' => 'City', 'name' => 'Portland' ),\n        'founder' => array( '@id' => $home . '/#person' ),\n        'address' => array(\n            '@type' => 'PostalAddress',\n            'addressLocality' => 'Portland',\n            'addressRegion' => 'OR',\n            'addressCountry' => 'US',\n        ),\n        'url' => $home,\n    );\n    echo '<script type=\"application/ld+json\">' . wp_json_encode( $data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) . '</script>';\n} );\n",
+  "home_old": "with table massage at suitable host venues.",
+  "home_new": "with table massage by arrangement at suitable host venues.",
+  "logo_path": "/wp-content/uploads/2026/09/cropped-cropped-butsaba_avatar-1.webp",
+  "snippet_old_sha256": "9cc63d278e5e5812899a6f0e0bf24a81e44f46f764b0a7b003d4e0e8faa8354e",
+  "snippet_new_sha256": "ddb3d9639f0a58c1038082f62943650f086282974cc9197882983d8b99d0d72b"
+}
