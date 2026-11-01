@@ -1,7 +1,7 @@
 <?php
 /**
  * Site review Bundle A: booking paths and internal links, authorized by the
- * 2026-11-01 handoff. ONE site: localhost:8090 or staging38 ONLY. Live is disabled.
+ * 2026-11-01 handoff. Localhost, staging38, and live after Ryan's release go.
  *
  * Exact reviewed replacements on nine pages, the frozen A11yPageJumpLinks
  * snippet, and one appended Additional CSS block. No new plugin or site files,
@@ -20,8 +20,8 @@ if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) ) {
 }
 $home = untrailingslashit( home_url() );
 $host = (string) wp_parse_url( $home, PHP_URL_HOST ) . ( wp_parse_url( $home, PHP_URL_PORT ) ? ':' . wp_parse_url( $home, PHP_URL_PORT ) : '' );
-if ( ! in_array( $host, array( 'localhost:8090', 'staging38.thaisolitude.com' ), true ) ) {
-	WP_CLI::error( 'Refusing target ' . $home . ': localhost:8090 or staging38 only; live is disabled.' );
+if ( ! in_array( $host, array( 'localhost:8090', 'staging38.thaisolitude.com', 'thaisolitude.com' ), true ) ) {
+	WP_CLI::error( 'Refusing target ' . $home . ': localhost:8090, staging38 or thaisolitude.com only.' );
 }
 if ( 'astra' !== get_stylesheet() || ! current_user_can( 'manage_options' ) || ! current_user_can( 'unfiltered_html' ) || ! current_user_can( 'edit_css' ) ) {
 	WP_CLI::error( 'Requires Astra and an administrator (--user=1) with unfiltered_html and edit_css.' );
