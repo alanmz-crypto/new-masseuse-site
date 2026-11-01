@@ -27,6 +27,7 @@ sections on the three pages, light and dark; the lowest ratio is in the report).
 VERSION 5 (2026-11-01, site-review Bundle C): add Chair Massage to both research-page lists, identify its research summaries and Sources panel, and update the date.
 The Chair panels must be included in mouse, Enter/Space keyboard and light/dark text-contrast checks before the installer is applied.
 accessibility-page-v4.html preserves the exact version-4 builder output. No screen reader or conformance claim is added; all known limitations remain.
+Bundle D (2026-11-01): first-person feedback contact wording only; v5 facts, date and limitations are preserved.
 EVERY SENTENCE MUST STAY TRUE. What was actually done on 2026-10-17 (tools/a11y-audit.mjs on staging32, a copy of live): axe-core 4.13.0 with the WCAG 2.0/2.1/2.2 A and AA rules on the
 9 pages at 1280, 390 and 320 px wide (the accordion panels opened one by one); keyboard Tab-through of every page; the footer row's text contrast measured from pixels (11.9:1 or better);
 page language, titles, one h1 per page, landmarks, a "Skip to content" link, alt text on every image, zoom not blocked and no side-scrolling at 320 px all verified. It was NOT a full
@@ -58,7 +59,7 @@ LIMITS = ['The map on the Contact page is provided by Google, so how it works wi
           'No screen reader was used in this testing. That includes the research summaries on the Thai Massage, Therapeutic Massage, Deep Tissue Massage and Chair Massage pages, which are standard collapsible sections built into the browser '
           'and were tested with a mouse and a keyboard.']
 
-FEEDBACK = ('If you encounter a barrier or have difficulty using any part of the website, please contact Butsaba at '
+FEEDBACK = ('If you encounter a barrier or have difficulty using any part of the website, please contact me at '
             '<a href="mailto:butsabad@gmail.com">butsabad@gmail.com</a> or by phone using the number on the Contact page. '
             'If possible, include the page or feature you were using and what happened. I’ll review your feedback and work to address the issue.')
 UPDATED = 'Last updated: November 1, 2026.'

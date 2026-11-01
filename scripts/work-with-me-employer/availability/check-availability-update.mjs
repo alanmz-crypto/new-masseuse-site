@@ -1,7 +1,7 @@
 // Rendered check of the Work With Me and availability update (read-only; public requests only). Usage: node check-availability-update.mjs <base-url> <out-dir> [label] [firefox]
 //   BROWSER=firefox (or the argument 'firefox') uses Firefox. About 14 page loads: SiteGround answers bursts with its bot challenge, so this is deliberately small.
 // What it proves, at 1280 and 390 px unless stated: the availability strip on Home (light and dark at 1280) with the right headline for today's date and its link to the corporate page; Work With Me holds the two new sentences,
-// keeps what the plan says to keep (the "For Practices" label, the November 1 employment dates, the repeated résumé links, the Oregon license lookup) and has NO strip and no "Relocating" wording; the corrected FAQ answers on the Thai, Therapeutic
+// keeps what the plan says to keep (the "For Practices" label, one complete before/after Bundle D employment state, the repeated résumé links, the Oregon license lookup) and has NO strip and no "Relocating" wording; the corrected FAQ answers on the Thai, Therapeutic
 // and Deep Tissue pages read exactly as approved when their questions are opened; the corporate page states the November 1 date and the scheduling sentence; no side-scroll; no script errors.
 // Exit codes: 0 all passed, 1 a check failed, 2 INVALID (SiteGround's bot challenge: nothing was tested; try once more later, not in a loop).
 import { createRequire } from 'module';
@@ -26,6 +26,16 @@ try { const r = await fetch(base + '/work-with-me/'); if ((await r.text()).repla
 const WWM_CLIENTS = `Corporate and group massage bookings begin ${BOOK_DATE}; individual appointments at a dedicated Thai Solitude location are planned for summer 2027.`;
 const NEW_WHERE = `Right now I offer corporate and group massage only, at suitable Portland venues, with bookings beginning ${BOOK_DATE}. Individual appointments at a dedicated Thai Solitude location are planned for summer 2027. I do not offer individual house calls.`;
 const NEW_BOOK = `Corporate and group massage bookings begin ${BOOK_DATE}. The Corporate and Group Massage page explains how to request a quote. Individual appointments are planned for summer 2027.`;
+const EMPLOYMENT_VARIANTS = {
+  before: ['Start — From November 1 · open for days, evenings and weekends', 'Interviews — By phone or video call now, in person from November 1'],
+  after: ['Start — Available now · days, evenings and weekends', 'Interviews — By phone, video call or in person'],
+};
+const FAQ_VARIANTS = {
+  before: [NEW_WHERE, NEW_BOOK],
+  after: [NEW_WHERE.replace('individual house calls', 'individual home visits'), NEW_BOOK.replace('The Corporate and Group Massage page', 'The Corporate & Group Massage page')],
+};
+const variantOf = (actual, variants) => Object.keys(variants).find(state => JSON.stringify(actual) === JSON.stringify(variants[state]));
+const bundleDStates = [];
 const open_after = Date.now() >= (BOOK_DATE === 'November 14, 2026' ? Date.UTC(2026, 10, 14, 8, 0, 0) : Date.UTC(2026, 10, 1, 7, 0, 0));   // 2026-11-14 00:00 Pacific (PST, UTC-8) or, before booking-date, 2026-11-01 00:00 Pacific (PDT, UTC-7)
 let challenged = false;
 const errorsAll = [];
@@ -92,13 +102,16 @@ for (const width of [1280, 390]) {
     const t = document.querySelector('main, .entry-content, body').innerText.replace(/\s+/g, ' ');
     const avail = document.getElementById('availability'); const clients = document.getElementById('for-clients');
     return { t, band: document.querySelectorAll('.ts-corp-band').length, avail: avail ? avail.innerText.replace(/\s+/g, ' ') : '', clients: clients ? clients.innerText.replace(/\s+/g, ' ') : '',
+      employment: [...document.querySelectorAll('li')].map(el => el.innerText.replace(/\s+/g, ' ').trim()).filter(text => /^(Start|Interviews) — /.test(text)),
       resume: [...document.querySelectorAll('a')].filter(a => /Butsaba_Dusrai_LMT_Resume_License\.pdf/.test(a.getAttribute('href') || '')).length,
       license: [...document.querySelectorAll('a')].some(a => /orlicensing\.oregon\.gov/.test(a.getAttribute('href') || '')), scroll: document.documentElement.scrollWidth - document.documentElement.clientWidth };
   });
   check(`${tag}: no announcement strip (it is an employment page)`, w.band === 0, w.band);
   check(`${tag}: the Availability section carries the independent-practice sentence once`, w.avail.split(SCHED).length === 2 && w.avail.includes('Thai Solitude is my independent practice.'), w.avail.length);
   check(`${tag}: the "For clients" section carries the booking-date and summer 2027 sentence once`, w.clients.split(WWM_CLIENTS).length === 2, w.clients.length);
-  check(`${tag}: kept: the employment start and interview dates`, w.t.includes('Start — From November 1 · open for days, evenings and weekends') && w.t.includes('Interviews — By phone or video call now, in person from November 1'));
+  const employmentState = variantOf(w.employment, EMPLOYMENT_VARIANTS);
+  check(`${tag}: the employment start and interview lines use one complete approved state (before or after Bundle D)`, !!employmentState, w.employment.join(' | '));
+  if (employmentState) bundleDStates.push(employmentState);
   check(`${tag}: kept: the repeated résumé links (3) and the Oregon license lookup`, w.resume >= 3 && w.license, `${w.resume} links`);
   check(`${tag}: no "Relocating from Chicago" wording`, !/relocat/i.test(w.t));
   check(`${tag}: no side-scroll`, w.scroll <= 0, w.scroll);
@@ -113,7 +126,8 @@ for (const p of ['/thai-massage/', '/therapeutic-massage/', '/deep-tissue-massag
   if (challenged) await bail();
   const tag = `${p.replace(/\//g, '')}`;
   check(`${tag}: HTTP 200`, resp && resp.status() === 200, resp && resp.status());
-  for (const [q, want] of [['Where Do Sessions Take Place?', NEW_WHERE], ['How Do I Book a Session?', NEW_BOOK]]) {
+  const answers = [];
+  for (const [index, q] of ['Where Do Sessions Take Place?', 'How Do I Book a Session?'].entries()) {
     const btn = page.locator('.uagb-faq-questions-button', { hasText: q }).first();
     if (!(await btn.count())) {
       if (/localhost/.test(base)) { info(`${tag}: this local copy predates the page's FAQ: skipped`); continue; }   // an old localhost only; on any real site a missing FAQ is a failure
@@ -122,7 +136,13 @@ for (const p of ['/thai-massage/', '/therapeutic-massage/', '/deep-tissue-massag
     await btn.scrollIntoViewIfNeeded(); await btn.click(); await page.waitForTimeout(450);
     const ans = await page.evaluate(qq => { const w = [...document.querySelectorAll('.uagb-faq-child__outer-wrap')].find(e => e.querySelector('.uagb-question') && e.querySelector('.uagb-question').textContent.trim() === qq);
       return w ? { active: w.classList.contains('uagb-faq-item-active'), text: (w.querySelector('.uagb-faq-content') || {}).textContent.replace(/\s+/g, ' ').trim() } : null; }, q);
-    check(`${tag}: "${q}" opens and reads exactly as approved`, !!ans && ans.active && ans.text === want, ans ? ans.text.slice(0, 50) : 'not found');
+    answers.push(ans ? ans.text : null);
+    check(`${tag}: "${q}" opens and reads exactly as approved`, !!ans && ans.active && Object.values(FAQ_VARIANTS).some(pair => ans.text === pair[index]), ans ? ans.text.slice(0, 50) : 'not found');
+  }
+  if (answers.length || !/localhost/.test(base)) {
+    const faqState = variantOf(answers, FAQ_VARIANTS);
+    check(`${tag}: both FAQ answers use one complete approved state (before or after Bundle D)`, !!faqState, faqState || 'mixed or unapproved answers');
+    if (faqState) bundleDStates.push(faqState);
   }
   const strip = await page.evaluate(() => document.querySelectorAll('.ts-corp-band').length);
   check(`${tag}: one availability strip`, strip === 1, strip);
@@ -134,6 +154,7 @@ for (const p of ['/thai-massage/', '/therapeutic-massage/', '/deep-tissue-massag
   if (p === '/thai-massage/') await page.screenshot({ path: path.join(out, `${label}-thai-faq.png`), clip: { x: 0, y: 0, width: 1280, height: 700 } });
   await ctx.close();
 }
+check('employment lines and modality FAQ answers agree on one complete Bundle D state', bundleDStates.length > 0 && new Set(bundleDStates).size === 1, [...new Set(bundleDStates)].join(', '));
 
 // ---- THE CORPORATE PAGE ----------------------------------------------------------------------------------------------------------------------------------
 {

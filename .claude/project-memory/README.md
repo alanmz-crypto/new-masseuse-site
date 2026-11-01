@@ -1,5 +1,7 @@
 # Project memory (snapshot for cloud sessions)
 
+- [Site review Bundle D](site-review-bundle-d.md) — 2026-11-01: prepared wording/research corrections; draft PR #65 stacked on C; rehearsal pending; public browser blocked; live disabled.
+
 - [Site review Bundle C](site-review-bundle-c.md) — 2026-11-01: applied on staging38; rehearsal2 (1,248 checks), rollback/rendered gates/CSP PASS; public full browser INVALID due host challenge; support request prepared; live disabled.
 - [Site review Bundle B](site-review-bundle-b.md) — 2026-11-01: search/sharing applied on staging38; rehearsal2/12-page semantic scan/rendered gates PASS; approved default/Home card; exact rollback recorded; live disabled.
 

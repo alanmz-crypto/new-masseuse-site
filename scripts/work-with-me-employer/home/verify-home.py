@@ -4,6 +4,13 @@ Usage: python3 verify-home.py [base_url]     e.g. http://localhost:8090
 Reads rendered HTML with curl; changes nothing."""
 import html, re, subprocess, sys
 from html.parser import HTMLParser
+from importlib.util import module_from_spec, spec_from_file_location
+from pathlib import Path
+
+_tiers_spec = spec_from_file_location("wording_tiers", Path(__file__).resolve().parents[1] / "client-pages" / "wording_tiers.py")
+_tiers = module_from_spec(_tiers_spec)
+_tiers_spec.loader.exec_module(_tiers)
+BAD = _tiers.BAD
 
 BASE = (sys.argv[1] if len(sys.argv) > 1 else "http://localhost:8090").rstrip("/")
 fails = 0
@@ -23,7 +30,8 @@ def check(name, ok, detail=""):
 
 
 def text_of(fragment):
-    fragment = re.sub(r"<(script|style)[^>]*>.*?</\1>", "", fragment, flags=re.S)
+    fragment = re.sub(r"<!--.*?-->", "", fragment, flags=re.S)
+    fragment = re.sub(r"<(script|style)\b[^>]*>.*?</\1\s*>", "", fragment, flags=re.S | re.I)
     return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", fragment))).strip()
 
 
@@ -88,6 +96,10 @@ def home_ctas(source):
 
 page, code = get("/")
 check("Home returns 200", code == 200, code)
+main = re.search(r"<main\b[^>]*>(.*?)</main\s*>", page, re.S | re.I)
+home_main = main.group(1) if main else ""
+home_text = text_of(home_main)
+check("Home main body found for the whole-page wording check", bool(main))
 m = re.search(r'<div class="wp-block-uagb-container[^"]*uagb-block-e9f89e50[^"]*".*?(?=<div class="wp-block-uagb-container[^"]*uagb-block-c194462d)', page, re.S)
 hero = m.group(0) if m else ""
 check("hero container found, followed by the next section", bool(hero))
@@ -111,12 +123,36 @@ check("hero button says 'Ask about a session' and goes to the same approved Cont
 check("no 'Get in Touch' left in the page body (header copies are menu settings)", "Get in Touch" not in hero)
 
 check("no hiring band on Home (tried and dropped at Ryan's request, 2026-10-16)", "ts-home-employers" not in page and "Hiring a massage therapist" not in page)
-bt = ""
 
-story = "I started Thai Solitude in Chicago in 2024, and I have worked in a busy Chicago massage practice where my clients included hotel guests and business travelers. Now I am bringing Thai Solitude to Portland. I am a native Thai speaker and fluent in English."
+portland_now = "Thai Solitude is now in Portland, where I offer corporate and group massage; individual appointments at a dedicated location are planned for summer 2027."
+home_history = "I started Thai Solitude in Chicago in 2024, and I have worked in a busy Chicago massage practice where my clients included hotel guests and business travelers. "
+about_history = "I began working in massage in 2020 and started Thai Solitude in Chicago in 2024. I have also worked in a busy Chicago massage practice, where my clients included hotel guests and business travelers. "
+stories = {
+    "before": (home_history + "Now I am bringing Thai Solitude to Portland. I am a native Thai speaker and fluent in English.",
+               about_history + "Now I am bringing Thai Solitude to Portland, and I look forward to welcoming clients here."),
+    "after": (home_history + portland_now + " I am a native Thai speaker and fluent in English.",
+              about_history + portland_now),
+}
 about, _ = get("/about/")
-check("Home 'Learn About' paragraph carries the Chicago-to-Portland story and her language, once", text_of(page).count(story) == 1 and 'class="uagb-ifb-desc">I’m Butsaba Dusrai, an Oregon Licensed Massage Therapist' in page)
-check("the story matches About's facts (Chicago 2024; busy Chicago practice with hotel guests and business travelers; bringing it to Portland)", all(k in text_of(about) for k in ("started Thai Solitude in Chicago in 2024", "a busy Chicago massage practice, where my clients included hotel guests and business travelers", "Now I am bringing Thai Solitude to Portland")))
+about_text = text_of(about)
+story_states = [state for state, (home_story, about_story) in stories.items()
+                if home_text.count(home_story) == 1 and about_text.count(about_story) == 1
+                and all(home_text.count(other_home) == 0 and about_text.count(other_about) == 0
+                        for other_state, (other_home, other_about) in stories.items() if other_state != state)]
+check("Home and About carry one complete matching story state (before or after Bundle D), preserving the Chicago history and language", len(story_states) == 1 and 'class="uagb-ifb-desc">I’m Butsaba Dusrai, an Oregon Licensed Massage Therapist' in page, story_states)
+chip_matches = re.finditer(r'<(?P<tag>div|a)\b[^>]*class="[^"]*\buagb-block-9f9aa93f\b[^"]*"[^>]*>(?P<body>.*?)</(?P=tag)\s*>', home_main, re.S)
+chips = [match.group("body") for match in chip_matches]
+chip_labels = [text_of(label) for chip in chips for label in re.findall(r'<span\b[^>]*class="[^"]*\buagb-icon-list__label\b[^"]*"[^>]*>(.*?)</span>', chip, re.S)]
+if story_states == ["after"] or "Ease" in chip_labels:
+    check("Bundle D Home: the original heart chip says Ease and Relief is absent from the main body", len(chips) == 1 and chip_labels == ["Ease"] and not re.search(r"\brelief\b", home_text, re.I), chip_labels)
+heart_links = []
+for heart in re.finditer(r'<a\b(?P<attrs>[^>]*class="[^"]*\bts-heart-link\b[^"]*"[^>]*)>(?P<body>.*?)</a\s*>', home_main, re.S):
+    href = re.search(r'\bhref="([^"]*)"', heart.group("attrs"))
+    aria = re.search(r'\baria-label="([^"]*)"', heart.group("attrs"))
+    heart_links.append((text_of(heart.group("body")), html.unescape(href[1]).removeprefix(BASE) if href else None, html.unescape(aria[1]) if aria else None))
+heart_labels = ["Personalized", "Ease" if story_states == ["after"] or "Ease" in chip_labels else "Relief", "Mobility", "Balance", "Comfort", "Relaxation"]
+expected_hearts = [(label, "/services/#ts-your-session" if index == 0 else "/services/#ts-therapeutic-massage", label + (": Your Session" if index == 0 else ": Therapeutic massage")) for index, label in enumerate(heart_labels)]
+check("all six heart links preserve their Services destinations and matching accessible labels", heart_links == expected_hearts, heart_links)
 # the announcement strip under the header (WPCode snippet "CorporateBand") is Ryan's 2026-10-25 availability plan: it carries "November 1, 2026" on Home on purpose, so it is left out of this check; every other word on Home is still checked
 page_without_strip = re.sub(r'<div\b[^>]*class="[^"]*\bts-corp-band\b[^"]*"[^>]*>.*?</div>\s*</div>', "", page, flags=re.S)
 check("no move date, countdown or opening date added on Home (the approved corporate strip is not counted)", not re.search(r"November|relocat|arriv|coming soon", text_of(page_without_strip), re.I))
@@ -163,12 +199,8 @@ check("footer: visible email address, linked", 'href="mailto:butsabad@gmail.com"
 check("footer: 'Résumé & experience' links to /work-with-me/", bool(re.search(r'<a href="/work-with-me/">Résumé &amp; experience</a>', ft)))
 check("footer: licence line and medical-care disclaimer still present", "LMT-29905" in text_of(ft) and re.search(r"medical", text_of(ft), re.I) is not None, text_of(ft)[:140])
 
-new_copy = " ".join([bt, story, text_of(t), "Ask about a session", "For Practices", title, new_desc, "butsabad@gmail.com Résumé & experience"])
-bad = [p for p in (r"\bheal", r"\bproof\b", r"\bmeasurable\b", r"\beffective", r"pain relief", r"relieve pain", r"pain management", r"\bsciatica\b", r"\bheadaches?\b", r"\bchronic\b",
-                   r"\badhesions?\b", r"\bcorrective\b", r"\baccelerat", r"restore balance", r"nervous system", r"\bcirculation\b", r"\banxiety\b", r"\bcancer\b",
-                   r"\bneurological\b", r"\bdisabilit", r"\bprevention\b", r"\blasting\b", r"long-term wellness", r"overall health", r"real results", r"\bstudio\b",
-                   r"\b(we|our|us)\b") if re.search(p, new_copy, re.I)]
-check("no restricted OBMT wording in any new copy", not bad, bad)
+bad = [p for p in BAD if re.search(p, home_text, re.I)]
+check("no shared restricted wording anywhere in the Home main body", not bad, bad)
 
 robots, _ = get("/robots.txt")
 print("INFO robots.txt first rules: " + " | ".join(robots.splitlines()[:3]))

@@ -127,22 +127,36 @@ PANELS = [
   'Reviews of massage in general, not only deep tissue massage, reached a consistent point in massage’s favor: every conclusion rated moderate-certainty found massage associated with less pain, and a meta-analysis of '
   '67 randomized trials found lower pain scores after massage than after sham massage, no massage or other approaches.{mak}{crawford} A 2018 review of the research on deep tissue massage itself reported that favorable outcomes '
   'may result in people with pain and in people with decreased range of motion.{koren}',
-  'The same reviews are careful about limits. None of the conclusions in the 2024 review was rated high-certainty, and conclusions that massage was better than other active approaches were rare.{mak} An earlier '
-  'evidence map of 49 systematic reviews found that the high-quality reviews reached conclusions of low strength of evidence, because few large, rigorous studies had been done.{miake} The meta-analysis’s '
-  'authors made a strong recommendation only for the comparison with no massage and a weak one for sham massage and other approaches.{crawford} The 2018 review of deep tissue massage found that the techniques and protocols '
-  'used in published studies differed so much that it was difficult to draw any clear conclusions, and its authors asked for future research to use a common definition and common comparison groups.{koren}',
-  'Massage is generally described as low risk, but deep pressure deserves a plain account of the rare serious events on record. The U.S. National Center for Complementary and Integrative Health notes that the risk of harm '
-  'appears to be low, although rare serious side effects such as a blood clot, nerve injury or bone fracture have been reported.{nccih} The 2018 review of deep tissue massage found several rare serious adverse events '
-  'related to it, probably as a result of the forceful application of massage therapy.{koren} Published case reports describe a blocked artery to part of a kidney in a healthy man about four hours after a deep tissue massage '
-  'for low back pain given by an unlicensed therapist,{truong} a blood clot in a neck vein after a deep tissue massage focused on the neck,{sanborn} a blood clot in a vein after vigorous deep tissue massage in a previously healthy '
-  '67-year-old man, whose authors suggested that vigorous massage of the legs be considered a possible risk factor for such clots, especially in older adults,{crump} and an injury to a nerve that left a shoulder muscle weak '
-  'after deep tissue massage.{aksoy} Single case reports show that something happened, not how often. A 2014 review of 40 published reports of massage found 138 adverse events over 11 years, mainly disc herniation, soft-tissue injury, '
-  'nerve problems, spinal cord injury and tears in the neck arteries, with spinal manipulation inside a massage repeatedly linked to the serious ones. Massage therapists were the practitioners in only 8 of the 138 events (5.8 percent) '
-  'and chiropractors in 33 (23.9 percent); the rest (70.3 percent) involved unregistered people or other health professionals, and the authors concluded that massage by nonprofessionals and forceful techniques is often associated '
-  'with adverse events.{yin} A 2003 review of published case reports likewise found that most serious events followed unusual techniques or massage by laypeople rather than by massage therapists, and concluded that serious '
-  'events are probably true rarities.{ernst} The U.S. center also advises against using massage to put off seeing a health care provider about a medical problem. Taken together, serious events are rare and, where the reports say who '
-  'gave the massage, they were mostly linked to people who were not massage therapists and to forceful or unusual techniques. Deep pressure is never required: before your session I ask you to tell me about health conditions, '
-  'medications, pregnancy and recent injury or surgery, and you can ask for lighter pressure or a pause at any time.',
+  (
+      'The same reviews are careful about limits. None of the conclusions in the 2024 review was rated high-certainty, and conclusions backed by '
+      'moderate- or high-certainty evidence that massage was better than other active approaches were rare.{mak} An earlier evidence map of 49 '
+      'systematic reviews found that the high-quality reviews reached conclusions of low strength of evidence, because few large, rigorous studies had '
+      'been done.{miake} The meta-analysis’s authors made a strong recommendation only for the comparison with no massage and a weak one for sham '
+      'massage and other approaches.{crawford} The 2018 review of deep tissue massage found that the techniques and protocols used in published studies '
+      'differed so much that it was difficult to draw any clear conclusions, and its authors asked for future research to use a common definition and '
+      'common comparison groups.{koren}'
+  ),
+  (
+      'Massage is generally described as low risk, but deep pressure deserves a plain account of the rare serious events on record. The U.S. National '
+      'Center for Complementary and Integrative Health notes that the risk of harm appears to be low, although rare serious side effects such as a blood'
+      ' clot, nerve injury or bone fracture have been reported.{nccih} The 2018 review of deep tissue massage found several rare serious adverse events '
+      'related to it, probably as a result of the forceful application of massage therapy.{koren} Published case reports describe a blocked artery to '
+      'part of a kidney in a healthy man about four hours after a deep tissue massage for low back pain given by an unlicensed therapist,{truong} a '
+      'blood clot in a neck vein after a deep tissue massage focused on the neck,{sanborn} a blood clot in a vein after vigorous deep tissue massage in '
+      'a previously healthy 67-year-old man, whose authors suggested that vigorous massage of the legs be considered a possible risk factor for such '
+      'clots, especially in older adults,{crump} and an injury to a nerve that left a shoulder muscle weak after deep tissue massage.{aksoy} Single case'
+      ' reports show that something happened, not how often. A 2014 review of 40 published reports of massage found 138 adverse events over 11 years, '
+      'mainly disc herniation, soft-tissue injury, nerve problems, spinal cord injury and tears in the neck arteries, with spinal manipulation inside a '
+      'massage repeatedly linked to the serious ones. Massage therapists were the practitioners in only 8 of the 138 events (5.8 percent) and '
+      'chiropractors in 33 (23.9 percent); the rest (70.3 percent) involved unregistered people or other health professionals, and the authors concluded'
+      ' that massage by nonprofessionals and forceful techniques is often associated with adverse events.{yin} A 2003 review of 16 case reports and four'
+      ' case series likewise found that most adverse effects followed exotic techniques or massage by laypeople, with massage therapists rarely '
+      'implicated, that serious effects were mostly tied to techniques other than Swedish massage, and concluded that serious events are probably true '
+      'rarities.{ernst} The U.S. center also advises against using massage to put off seeing a health care provider about a medical problem. Taken '
+      'together, serious events are rare and, where the reports say who gave the massage, they were mostly linked to people who were not massage '
+      'therapists and to forceful or unusual techniques. Deep pressure is never required: before your session I ask you to tell me about health '
+      'conditions, medications, pregnancy and recent injury or surgery, and you can ask for lighter pressure or a pause at any time.'
+  ),
  ]),
  ('Neck, Shoulders and Back', False, [
   'Several trials of deep tissue massage report short-term gains for neck and back pain. In 80 adults with neck pain linked to tender spots in the muscles, one group had 12 sessions of deep tissue massage on top of electrical '
@@ -152,22 +166,34 @@ PANELS = [
   'improved pain and disability scores, and deep tissue massage did better on one disability score and on pain.{romanowski} In 40 office workers with chronic low back pain, four 45-minute deep tissue massage sessions over two weeks were '
   'followed by better lower-back movement and lower pain ratings in the massage group, while the group given no therapy showed no significant changes.{wendt} A 2015 Cochrane review of 25 trials found that massage was better than no '
   'intervention for low-back pain in the short term.{cochrane_lbp}',
-  'The larger and more carefully designed studies are more cautious. In the Stockholm Neck trial of 619 adults with ongoing neck pain, deep tissue massage led to a higher chance of improvement in pain than advice to stay active in the '
-  'short term but not at later follow-ups, and at 12 months none of the therapies tested was more effective than advice for pain intensity or for pain-related disability.{skillgate} A cost analysis of the same trial found that massage '
-  'and the combined therapy cost more and were less beneficial than advice, that differences in health-related quality of life were minimal, and its authors concluded that massage and the combined therapy are not cost-effective.{picoespinosa} '
-  'The 2024 Cochrane review of massage for neck pain, which included 33 studies with 1,994 people, found that, compared with a placebo massage, massage probably makes little or no difference to pain, function or quality of life at up to '
-  '12 weeks (low-certainty evidence), and adverse events were too poorly reported to judge.{cochrane_neck} The 2015 Cochrane review of low-back pain rated the quality of the evidence low to very low, found no benefit over the long term, '
-  'and its authors said they had “very little confidence” in the results.{cochrane_lbp} In 59 adults with chronic low back pain who had two weeks of deep tissue massage with or without a nonsteroidal anti-inflammatory drug, pain and function '
-  'improved in both groups with no difference between them; because everyone had massage, the trial cannot show how much of the change was due to the massage itself.{majchrzycki} In the office-worker trial, the two groups differed '
-  'significantly in only one lower-back movement, and the authors said larger studies and an assessment of long-term effects are needed.{wendt} The small trial of 26 older adults ended by saying that further research is needed.{romanowski}',
+  (
+      'The larger and more carefully designed studies are more cautious. In the Stockholm Neck trial of 619 adults with ongoing neck pain, deep tissue '
+      'massage led to a higher chance of improvement in pain than advice to stay active in the short term but not at later follow-ups, and at 12 months '
+      'none of the therapies tested was more effective than advice for pain intensity or for pain-related disability.{skillgate} A cost analysis of the '
+      'same trial found that massage and the combined therapy cost more and were less beneficial than advice, that differences in health-related quality'
+      ' of life were minimal, and its authors concluded that massage and the combined therapy are not cost-effective.{picoespinosa} The 2024 Cochrane '
+      'review of massage for neck pain, which included 33 studies with 1,994 people, found that, compared with a placebo massage, massage probably makes'
+      ' little or no difference to pain, function or quality of life at up to 12 weeks (low-certainty evidence), and adverse events were too poorly '
+      'reported to judge.{cochrane_neck} The 2015 Cochrane review of low-back pain rated the quality of the evidence low to very low, found no long-term'
+      ' benefit over no treatment, and its authors said they had “very little confidence” in the results.{cochrane_lbp} In 59 adults with chronic low '
+      'back pain who had two weeks of deep tissue massage with or without a nonsteroidal anti-inflammatory drug, pain and function improved in both '
+      'groups with no difference between them; because everyone had massage, the trial cannot show how much of the change was due to the massage '
+      'itself.{majchrzycki} In the office-worker trial, the two groups differed significantly in only one lower-back movement, and the authors said '
+      'larger studies and an assessment of long-term effects are needed.{wendt} The small trial of 26 older adults ended by saying that further research'
+      ' is needed.{romanowski}'
+  ),
   'Still, people in the Stockholm Neck trial who had massage, exercise or both were more likely than those given advice to say they had recovered, at every follow-up through one year.{skillgate} A subgroup analysis in the 2024 Cochrane '
   'review favored higher doses (eight or more sessions of at least 30 minutes over four weeks), which suggests that regular sessions may matter.{cochrane_neck}',
  ]),
  ('Exercise, Soreness and Recovery', False, [
-  'Deep massage has shown benefit in a laboratory model of muscle soreness: in a double-blinded randomized trial in volunteers whose forearm muscles were made sore with exercise, deep tissue massage reduced pain during a muscle stretch '
-  '(about a 48 percent reversal of the soreness), and both deep massage and light touch reduced sensitivity to pressure compared with a group that had no massage.{freylaw} A 2020 review of 29 randomized studies with 1,012 people found '
-  'small improvements in flexibility and in delayed-onset muscle soreness after sports massage.{davis} A 2025 trial of 150 athletes who received bi-weekly 40-minute deep tissue massage for 8 weeks reported the greatest performance '
-  'improvement in team and strength athletes, better recovery outcomes with bi-weekly sessions, and more flexibility with longer sessions.{arsovski}',
+  (
+      'Deep massage has shown benefit in a laboratory model of muscle soreness: in a double-blinded randomized trial in volunteers whose forearm muscles'
+      ' were made sore with exercise, deep tissue massage reduced pain during a muscle stretch (about a 48 percent reversal of the soreness), and both '
+      'deep massage and light touch reduced sensitivity to pressure compared with a group that had no massage.{freylaw} A 2020 review of 29 randomized '
+      'studies with 1,012 people found small improvements in flexibility and in delayed-onset muscle soreness after sports massage.{davis} A 2025 trial '
+      'of 150 athletes described 40-minute deep tissue massage twice a week for 8 weeks and reported the greatest performance improvement in team and '
+      'strength athletes.{arsovski}'
+  ),
   'Several studies found little or nothing. In the soreness trial, resting pain did not differ between the groups.{freylaw} In 29 healthy volunteers, ten minutes of deep massage to the calf produced no change in calf muscle stiffness or ankle movement, and the authors concluded that using massage to increase tissue '
   'flexibility before activity is not justified.{thomson} In 9 people who did a hard cycling effort, deep massage, superficial massage and stretching did not change blood lactate levels compared with passive rest, and the authors concluded that '
   'the pressure used did not play a significant role.{ce} In 19 competitive swimmers aged 12 to 20, deep massage and superficial (light-touch) massage between training sessions had no effect on sprint or functional performance, and the swimmers reported '

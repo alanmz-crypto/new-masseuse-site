@@ -1,8 +1,9 @@
 {
-  "id": "review-d-capture-staging38-20261101",
-  "op": "run",
+  "id": "review-d-rehearse-staging38-20261101-1",
+  "op": "rehearse",
   "target": "staging38",
-  "script": "review-d/inspect-bundle-d.sh",
-  "args": [],
-  "tests": "auto"
+  "installer": "review-d/install-bundle-d.php",
+  "args": [
+    "--with-uploads"
+  ]
 }

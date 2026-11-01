@@ -1,0 +1,266 @@
+{
+  "home": {
+    "texts": [
+      {
+        "label": "Relief chip visible span",
+        "text": "Ease",
+        "count": 1
+      },
+      {
+        "label": "Portland present-tense sentence",
+        "text": "Thai Solitude is now in Portland, where I offer corporate and group massage; individual appointments at a dedicated location are planned for summer 2027.",
+        "count": 1
+      }
+    ],
+    "links": []
+  },
+  "about": {
+    "texts": [
+      {
+        "label": "Portland present-tense sentence",
+        "text": "Thai Solitude is now in Portland, where I offer corporate and group massage; individual appointments at a dedicated location are planned for summer 2027.",
+        "count": 1
+      },
+      {
+        "label": "Named service list",
+        "text": "I also offer therapeutic, deep tissue and chair massage.",
+        "count": 1
+      }
+    ],
+    "links": []
+  },
+  "work-with-me": {
+    "texts": [
+      {
+        "label": "Employment start availability",
+        "text": "Start — Available now · days, evenings and weekends",
+        "count": 1
+      },
+      {
+        "label": "Interview availability",
+        "text": "Interviews — By phone, video call or in person",
+        "count": 1
+      }
+    ],
+    "links": [
+      {
+        "href": "https://cpr.heart.org/en/courses/basic-life-support-course-options",
+        "count": 1
+      }
+    ]
+  },
+  "chair-massage": {
+    "texts": [
+      {
+        "label": "Portable-chair FAQ title",
+        "text": "What Is the Chair Like?",
+        "count": 1
+      },
+      {
+        "label": "Individual home-visits wording",
+        "text": "I do not offer individual home visits.",
+        "count": 1
+      },
+      {
+        "label": "Corporate FAQ link labels; preserve all three links",
+        "text": "Corporate & Group Massage page",
+        "count": 3
+      },
+      {
+        "label": "Caregivers panel heading",
+        "text": "Nurses, Hospital Staff and Caregivers",
+        "count": 1
+      },
+      {
+        "label": "Review3.13 research framing: new sibling paragraph after first research overview",
+        "text": "What Is Chair Massage? Chair massage is a short massage you receive sitting up, fully clothed, in a padded portable chair that supports your chest, arms and head as you lean forward. I work through your clothing without oil, mostly on the back, shoulders, neck, arms and hands. A session usually lasts 10 to 20 minutes. The chair folds up and fits in a quiet corner, which is why chair massage is what I bring to employee appreciation days and workplace events. Most research on chair massage comes from small studies in workplaces and hospitals, usually with 15-minute sessions. In 52 employees, a 15-minute chair massage at work was followed by lower blood pressure, although the study had no comparison group. [1] In 38 nurses offered a weekly 15-minute chair massage for 10 weeks, perceived-stress scores were lower at the end. [2] In a randomized trial of 60 women on oncology nursing teams, 15-minute chair massages twice a week for three weeks were followed by lower stress scores, and less interference from pain in daily life, than no massage. [3] Studies of office workers given short chair massages over a month report less neck and back discomfort, [4] [5] and one found a higher tolerance for pressure on tender muscle points. [5] These studies are small and short. I summarize them, including the weaker results, in the research section below. Chair massage is hands-on work by a licensed massage therapist, adapted to you as you give feedback. It is not a mechanical massage chair, and studies of those devices are not included here. These are general findings, not medical advice or a promise of any result; the full summaries, including the weaker results, are in the research section below.",
+        "count": 1
+      }
+    ],
+    "links": []
+  },
+  "thai-massage": {
+    "texts": [
+      {
+        "label": "Individual home-visits wording",
+        "text": "I do not offer individual home visits.",
+        "count": 1
+      },
+      {
+        "label": "Corporate FAQ pointer",
+        "text": "The Corporate & Group Massage page",
+        "count": 1
+      },
+      {
+        "label": "Ernst 2003: adverse effects and serious effects are distinct",
+        "text": "A 2003 review of 16 case reports and four case series likewise found that most adverse effects followed exotic techniques or massage by laypeople, with massage therapists rarely implicated, that serious effects were mostly tied to techniques other than Swedish massage, and concluded that serious events are probably true rarities.",
+        "count": 1
+      },
+      {
+        "label": "Normalize complete research citations",
+        "text": "Cochrane Database Syst Rev, 2015.",
+        "count": 1
+      },
+      {
+        "label": "Normalize complete research citations",
+        "text": "Cochrane Database Syst Rev, 2024 (searches to October 2023).",
+        "count": 1
+      },
+      {
+        "label": "Normalize complete research citations",
+        "text": "Gross AR, Lee H, Ezzo J, Chacko N, Gelley G, Forget M, Morien A, Graham N, Santaguida PL, Rice M, Dixon C.",
+        "count": 1
+      },
+      {
+        "label": "Normalize complete research citations",
+        "text": "Sripongngam T, Eungpinichpong W, Sirivongs D, Kanpittaya J, Tangvoraphonkchai K, Chanaboon S.",
+        "count": 1
+      },
+      {
+        "label": "Normalize complete research citations",
+        "text": "Bennett S, Bennett MJ, Chatchawan U, Jenjaiwit P, Pantumethakul R, Kunhasura S, Eungpinichpong W.",
+        "count": 1
+      }
+    ],
+    "links": [
+      {
+        "href": "https://pubmed.ncbi.nlm.nih.gov/26329399/",
+        "count": 2
+      },
+      {
+        "href": "https://pubmed.ncbi.nlm.nih.gov/38415786/",
+        "count": 3
+      }
+    ]
+  },
+  "therapeutic-massage": {
+    "texts": [
+      {
+        "label": "Individual home-visits wording",
+        "text": "I do not offer individual home visits.",
+        "count": 1
+      },
+      {
+        "label": "Corporate FAQ pointer",
+        "text": "The Corporate & Group Massage page",
+        "count": 1
+      },
+      {
+        "label": "Review3.13 research framing: new sibling paragraph after first research overview",
+        "text": "What Is Therapeutic Massage? Therapeutic massage combines focused work with time to relax. I start with what brought you in. You can ask me to stay with one area, such as your neck and shoulders, or to work more broadly, and the plan can change as you give me feedback. Research suggests that massage therapy may help reduce pain in some conditions and may improve certain movement-related outcomes in studied pain populations. [1] [2] Studies of sports massage have found small improvements in flexibility and exercise-related muscle soreness. [3] Brief massage has been studied for short-term relaxation. [4] Regular massage was associated with improved well-being in a small four-week study of older adults. [5] Some studies have looked at massage in family caregivers. [6] Research has also examined massage in relation to stress and quality-of-life measures in specific adult groups. [7] [8] [5] These are general findings, not medical advice or a promise of any result; the full summaries, including the weaker results, are in the research section below.",
+        "count": 1
+      },
+      {
+        "label": "Ernst 2003: adverse effects and serious effects are distinct",
+        "text": "A 2003 review of 16 case reports and four case series likewise found that most adverse effects followed exotic techniques or massage by laypeople, with massage therapists rarely implicated, that serious effects were mostly tied to techniques other than Swedish massage, and concluded that serious events are probably true rarities.",
+        "count": 1
+      },
+      {
+        "label": "Mak 2024: restore the evidence-certainty qualifier",
+        "text": "conclusions backed by moderate- or high-certainty evidence that massage was better than other active approaches were rare.",
+        "count": 1
+      },
+      {
+        "label": "Cochrane 2015: specify the long-term comparator",
+        "text": "found no long-term benefit over no treatment",
+        "count": 1
+      },
+      {
+        "label": "Identify the studied massage style",
+        "text": "weekly 30-minute chair massages",
+        "count": 1
+      },
+      {
+        "label": "Identify the studied massage style",
+        "text": "eight Anma (Japanese) massage sessions",
+        "count": 1
+      },
+      {
+        "label": "Identify the studied massage style",
+        "text": "a single rhythmical massage of about an hour",
+        "count": 1
+      },
+      {
+        "label": "Identify the studied massage style",
+        "text": "a 40-minute whole-body myofascial-release massage",
+        "count": 1
+      },
+      {
+        "label": "Identify the studied massage style",
+        "text": "had a real rhythmical massage",
+        "count": 1
+      }
+    ],
+    "links": []
+  },
+  "deep-tissue-massage": {
+    "texts": [
+      {
+        "label": "Individual home-visits wording",
+        "text": "I do not offer individual home visits.",
+        "count": 1
+      },
+      {
+        "label": "Corporate FAQ pointer",
+        "text": "The Corporate & Group Massage page",
+        "count": 1
+      },
+      {
+        "label": "Remove duplicate health-notice sentence only in FAQ da3bd1d7",
+        "text": "What Should I Tell You Before a Session? Tell me about any health conditions, medications, pregnancy, recent injury or surgery. I may adjust the work, or suggest you check with your clinician first.",
+        "count": 1
+      },
+      {
+        "label": "Review3.13 research framing: new sibling paragraph after first research overview",
+        "text": "What Is Deep Tissue Massage? Deep tissue massage uses slow, deliberate pressure on muscles that stay tight. I begin by asking about your goals and how much pressure you like, then check in as I work. Deep pressure is never required: you can ask me to lighten up at any time, and I will. Research on deep tissue massage is limited and mixed. In a trial of 80 adults with neck pain linked to tender spots in the muscles, adding deep tissue massage to conventional rehabilitation was followed by more improvement in pain, quality-of-life scores and most neck movements than rehabilitation alone. [1] A larger trial of 619 adults with ongoing neck pain found that deep tissue massage led to more improvement in pain than advice to stay active in the short term but not by 12 months, and a review of the research found that studies differ too much in what they call deep tissue massage and how they do it to draw clear conclusions. [2] [3] People given massage, exercise or both in that larger trial were also more likely than those given advice to say they had recovered, at every follow-up through one year. [2] These are general findings, not medical advice or a promise of any result; the full summaries, including the weaker results, are in the research section below.",
+        "count": 1
+      },
+      {
+        "label": "Ernst 2003: adverse effects and serious effects are distinct",
+        "text": "A 2003 review of 16 case reports and four case series likewise found that most adverse effects followed exotic techniques or massage by laypeople, with massage therapists rarely implicated, that serious effects were mostly tied to techniques other than Swedish massage, and concluded that serious events are probably true rarities.",
+        "count": 1
+      },
+      {
+        "label": "Mak 2024: restore the evidence-certainty qualifier",
+        "text": "conclusions backed by moderate- or high-certainty evidence that massage was better than other active approaches were rare.",
+        "count": 1
+      },
+      {
+        "label": "Cochrane 2015: specify the long-term comparator",
+        "text": "found no long-term benefit over no treatment",
+        "count": 1
+      },
+      {
+        "label": "Arsovski 2025: twice a week; omit conflicting abstract comparisons",
+        "text": "A 2025 trial of 150 athletes described 40-minute deep tissue massage twice a week for 8 weeks and reported the greatest performance improvement in team and strength athletes.",
+        "count": 1
+      }
+    ],
+    "links": []
+  },
+  "corporate-massage-portland": {
+    "texts": [
+      {
+        "label": "Agreement grammar",
+        "text": "agree on a realistic schedule",
+        "count": 1
+      },
+      {
+        "label": "US packing-up wording",
+        "text": "setup and packing-up timing",
+        "count": 1
+      }
+    ],
+    "links": []
+  },
+  "accessibility": {
+    "texts": [
+      {
+        "label": "First-person feedback wording",
+        "text": "please contact me at",
+        "count": 1
+      }
+    ],
+    "links": []
+  }
+}

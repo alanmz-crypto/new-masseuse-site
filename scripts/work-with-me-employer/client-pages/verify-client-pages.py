@@ -54,6 +54,11 @@ wt = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(wt)
 BAD = wt.BAD   # unchanged for Services and Therapeutic Massage; the Thai Massage research section uses the three tiers in wording_tiers.py (Ryan, 2026-10-19)
 
+# One early Chair read selects Bundle D's wording coherently across all pages.
+# The same response is reused by the detailed Chair checks below.
+cm, cm_code = get("/chair-massage/")
+BUNDLE_D = cm_code == 200 and "What Is the Chair Like?" in text_of(cm)
+
 # The two FAQ answers on the Thai, Therapeutic and Deep Tissue pages that implied individual bookings now were corrected on 2026-10-25 (availability/install-availability-update.php; Ryan's Work With Me and availability plan).
 # A site that does not have that update yet still has the old answers: either wording is accepted, exactly one of them, once.
 OLD_WHERE = "Sessions take place in Mt. Tabor, Portland. I do not currently travel to clients."
@@ -67,11 +72,14 @@ NEW_WHERE_T = ("Right now I offer corporate and group massage only, at suitable 
 OLD_BOOK = "Use the Contact page to reach me by phone or email, and tell me what you would like. I will reply to arrange a time."
 NEW_BOOK_T = ("Corporate and group massage bookings begin {d}. The Corporate and Group Massage page explains how to request a quote. "
               "Individual appointments are planned for summer 2027.")
+if BUNDLE_D:
+    NEW_WHERE_T = NEW_WHERE_T.replace("individual house calls", "individual home visits")
+    NEW_BOOK_T = NEW_BOOK_T.replace("The Corporate and Group Massage page", "The Corporate & Group Massage page")
 NEW_WHERE, NEW_BOOK = NEW_WHERE_T.format(d=BOOK_DATE), NEW_BOOK_T.format(d=BOOK_DATE)
 
 
 def either(t, old, new):
-    return t.count(old) + t.count(new) == 1
+    return t.count(new) == 1 and old not in t if BUNDLE_D else t.count(old) + t.count(new) == 1
 
 
 # ---- Services -------------------------------------------------------------------------------------------------------------
@@ -284,7 +292,10 @@ else:
         check("Deep Tissue Massage: %r once" % sentence[:56], dt.count(sentence) == 1)
     check("Deep Tissue Massage: the 'Where Do Sessions Take Place?' answer is the old or the corrected text, once", either(dt, OLD_WHERE, NEW_WHERE))
     check("Deep Tissue Massage: the 'How Do I Book a Session?' answer is the old or the corrected text, once", either(dt, OLD_BOOK, NEW_BOOK))
-    check("Deep Tissue Massage: the page's safety sentence is on the page twice (page text and FAQ answer)", dt.count("New numbness, weakness, unexplained swelling or radiating pain means you should see a doctor before massage.") == 2)
+    safety = "New numbness, weakness, unexplained swelling or radiating pain means you should see a doctor before massage."
+    check("Deep Tissue Massage: safety sentence once after Bundle D, otherwise twice (page text and FAQ answer)", dt.count(safety) == (1 if BUNDLE_D else 2))
+    if BUNDLE_D:
+        check("Bundle D Deep Tissue: the retained safety notice precedes the FAQ", 0 <= dt.find(safety) < dt.find("Questions About Deep Tissue Massage"))
     check("Deep Tissue Massage: no links inside FAQ answers (axe nested-interactive)", not re.search(r'uagb-faq-content[^>]*>(?:(?!</div>).)*<a ', mh_dt, re.S))
     check("Deep Tissue Massage: the new body paragraph once, the three old sentences gone", dt.count("Research on deep tissue massage is limited and mixed.") == 1 and "Trials in specific musculoskeletal conditions suggest deep tissue massage" not in dt
           and "A randomized trial in athletes linked repeated deep tissue massage" not in dt and "Research suggests deep tissue massage added to conventional rehabilitation may reduce pain intensity" not in dt)
@@ -392,7 +403,9 @@ SCHED = "I schedule corporate bookings around my work commitments and only offer
 wwm_page, wwm_code = get("/work-with-me/")
 check("Work With Me returns 200", wwm_code == 200, wwm_code)
 wm = text_of(wwm_page)
-for keep in ["Start — From November 1 · open for days, evenings and weekends", "Interviews — By phone or video call now, in person from November 1", "Oregon license lookup", "Email me about an LMT position", "View résumé (PDF)"]:
+employment_start = "Start — Available now · days, evenings and weekends" if BUNDLE_D else "Start — From November 1 · open for days, evenings and weekends"
+interviews = "Interviews — By phone, video call or in person" if BUNDLE_D else "Interviews — By phone or video call now, in person from November 1"
+for keep in [employment_start, interviews, "Oregon license lookup", "Email me about an LMT position", "View résumé (PDF)"]:
     check("Work With Me: kept as it was: %r" % keep[:48], keep in wm)
 check("Work With Me: the repeated résumé links are all still there (3)", wwm_page.count("Butsaba_Dusrai_LMT_Resume_License.pdf") >= 3, wwm_page.count("Butsaba_Dusrai_LMT_Resume_License.pdf"))
 check("Work With Me: no 'Relocating from Chicago' wording", "Relocating" not in wm and "relocating" not in wm)
@@ -428,7 +441,7 @@ else:
 
 # ---- Chair Massage: the new service page (Ryan, 2026-10-30; chair-massage/install-chair-massage.php) ----------------------------------------------------------------------------------------
 # A site without the page gets an INFO line; a site with it gets the strict checks (wording tiers, structure, 32 sources, 11 questions, strip, jump links, pictures, Services row).
-cm, cm_code = get("/chair-massage/")
+# cm / cm_code were fetched once above to select Bundle D's coherent wording.
 if cm_code != 200:
     print("INFO Chair Massage: the page is not on this site yet (chair-massage/install-chair-massage.php has not been applied here)")
 else:
@@ -454,16 +467,19 @@ else:
     check("Chair Massage: the strip under the header, once", len(strip_tags(cm)) == 1)
     check("Chair Massage: the jump-links row with four targets", len(re.findall(r'<nav [^>]*class="ts-jump"', cm)) == 1 and all(('href="#%s"' % a) in cm and ('id="%s"' % a) in cm for a in ("ts-what-it-is", "ts-common-reasons", "ts-who-can-benefit", "ts-what-to-expect")))
     check("Chair Massage: the safety sentence once (in the paragraph before the steps)", ct.count("New numbness, weakness, unexplained swelling or radiating pain means you should see a doctor before massage.") == 1)
-    for qq in ["Do I Need to Undress for Chair Massage?", "How Long Is a Chair Massage?", "What Is the Massage Chair Like?", "Is Chair Massage the Same as a Mechanical Massage Chair?", "How Much Pressure Will You Use?",
+    chair_question = "What Is the Chair Like?" if BUNDLE_D else "What Is the Massage Chair Like?"
+    for qq in ["Do I Need to Undress for Chair Massage?", "How Long Is a Chair Massage?", chair_question, "Is Chair Massage the Same as a Mechanical Massage Chair?", "How Much Pressure Will You Use?",
                "How Is Chair Massage Different From Your Other Sessions?", "Will I Feel the Results Right Away?", "What Does the Host Need to Provide?", "Where Do Sessions Take Place?", "How Do I Book a Session?"]:
         check("Chair Massage: FAQ question %r appears once" % qq, ct.count(qq) == 1)
     check("Chair Massage: eleven questions", mh_cm.count('class="uagb-question"') == 11, mh_cm.count('class="uagb-question"'))
-    check("Chair Massage: the 'Where Do Sessions Take Place?' answer says %s, once" % BOOK_DATE, ct.count("with bookings beginning %s. Individual appointments at a dedicated Thai Solitude location are planned for summer 2027. I do not offer individual house calls." % BOOK_DATE) == 1)
+    check("Chair Massage: the full 'Where Do Sessions Take Place?' answer says %s, once" % BOOK_DATE, ct.count(NEW_WHERE) == 1)
+    check("Chair Massage: the full 'How Do I Book a Session?' answer is present once", ct.count(NEW_BOOK) == 1)
     faq_links = re.findall(r'uagb-faq-content[^>]*>(?:(?!</div>).)*?<a ([^>]+)>(.*?)</a>', mh_cm, re.S)
     check("Chair Massage: only the three approved Corporate FAQ links after Bundle A; no links before it",
-          (len(faq_links) == 3 and all('href="/corporate-massage-portland/"' in attrs and text_of(label) == 'Corporate and Group Massage page' for attrs, label in faq_links)) if BUNDLE_A else not faq_links, faq_links)
+          (len(faq_links) == 3 and all('href="/corporate-massage-portland/"' in attrs and text_of(label) == ('Corporate & Group Massage page' if BUNDLE_D else 'Corporate and Group Massage page') for attrs, label in faq_links)) if BUNDLE_A else not faq_links, faq_links)
     csumm = [wt.text(x) for x in re.findall(r"<summary>(.*?)</summary>", mh_cm, re.S)]
-    check("Chair Massage: the five research panels in order", csumm == ["Reviews, and What They Say About Limits", "Stress, Anxiety and Blood Pressure", "Desk Work, Muscle Discomfort and Movement", "Nurses, Hospital Staff and Carers", "Sources"], csumm)
+    caregivers_heading = "Nurses, Hospital Staff and Caregivers" if BUNDLE_D else "Nurses, Hospital Staff and Carers"
+    check("Chair Massage: the five research panels in order", csumm == ["Reviews, and What They Say About Limits", "Stress, Anxiety and Blood Pressure", "Desk Work, Muscle Discomfort and Movement", caregivers_heading, "Sources"], csumm)
     cdet = re.findall(r"<details[^>]*>", mh_cm)
     check("Chair Massage: first panel open, the other four closed", [" open" in d for d in cdet] == [True, False, False, False, False], len(cdet))
     clinks = re.findall(r'<a [^>]*href="(https://[^"]+)"[^>]*>\[(\d+)\]</a>', mh_cm)
@@ -538,6 +554,27 @@ if BUNDLE_B:
         check(f"Bundle B {label}: explicit approved title and description", bool(got_title) and html.unescape(got_title[1]).strip() == want_title and meta(pg, "name", "description") == want_desc)
         check(f"Bundle B {label}: matching og/twitter titles and descriptions", all(meta(pg, a, n) == v for a, n, v in (("property", "og:title", want_title), ("name", "twitter:title", want_title), ("property", "og:description", want_desc), ("name", "twitter:description", want_desc))))
         check(f"Bundle B {label}: title <= 60 and description <= 160", len(want_title) <= 60 and len(want_desc) <= 160, f"{len(want_title)}/{len(want_desc)}")
+
+if BUNDLE_D:
+    modality_pages = {"thai-massage": thm, "therapeutic-massage": th, "deep-tissue-massage": dtp, "chair-massage": cm}
+    for slug, pg in modality_pages.items():
+        body_text = text_of(pg)
+        check(f"Bundle D {slug}: full availability and booking answers appear once", body_text.count(NEW_WHERE) == 1 and body_text.count(NEW_BOOK) == 1)
+        check(f"Bundle D {slug}: old house-call and Corporate-pointer wording gone", "I do not offer individual house calls." not in body_text and "Corporate and Group Massage page" not in body_text)
+    ernst_sentence = "A 2003 review of 16 case reports and four case series likewise found that most adverse effects followed exotic techniques or massage by laypeople, with massage therapists rarely implicated, that serious effects were mostly tied to techniques other than Swedish massage, and concluded that serious events are probably true rarities."
+    for slug in ("thai-massage", "therapeutic-massage", "deep-tissue-massage"):
+        body_text = text_of(modality_pages[slug])
+        check(f"Bundle D {slug}: Ernst review distinguishes adverse and serious effects", body_text.count(ernst_sentence) == 1 and "most serious events followed unusual techniques" not in body_text)
+    mak_qualifier = "conclusions backed by moderate- or high-certainty evidence that massage was better than other active approaches were rare."
+    for slug in ("therapeutic-massage", "deep-tissue-massage"):
+        body_text = text_of(modality_pages[slug])
+        check(f"Bundle D {slug}: Mak active-comparator qualifier retained", body_text.count(mak_qualifier) == 1 and "conclusions that massage was better than other active approaches were rare." not in body_text)
+        check(f"Bundle D {slug}: Cochrane long-term statement names no-treatment comparator", body_text.count("found no long-term benefit over no treatment") == 1 and "found no benefit over the long term" not in body_text)
+    research_note = "These are general findings, not medical advice or a promise of any result; the full summaries, including the weaker results, are in the research section below."
+    for slug in ("therapeutic-massage", "deep-tissue-massage", "chair-massage"):
+        body_text = text_of(modality_pages[slug])
+        check(f"Bundle D {slug}: general-findings note appears once before full research section", body_text.count(research_note) == 1 and 0 <= body_text.find(research_note) < body_text.find("What the Research Says About"))
+    check("Bundle D Work With Me: employment wording and AHA course link updated together", employment_start in wm and interviews in wm and 'href="https://cpr.heart.org/en/courses/basic-life-support-course-options"' in wwm_page and 'href="https://www.heart.org/"' not in wwm_page)
 
 if BUNDLE_C:
     about_c, about_code = get("/about/")

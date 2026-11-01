@@ -49,8 +49,8 @@ SRC = {
     'unesco': ('https://ich.unesco.org/en/RL/nuad-thai-traditional-thai-massage-01384', 'UNESCO Intangible Cultural Heritage.', 'Nuad Thai, traditional Thai massage', 'Representative List of the Intangible Cultural Heritage of Humanity, inscribed 2019.'),
     'keeratitanont': (PM % '25682523', 'Keeratitanont K, Jensen MP, Chatchawan U, Auvichayapat P.', 'The efficacy of traditional Thai massage for the treatment of chronic pain: A systematic review', 'Complement Ther Clin Pract, 2015.'),
     'netchanok': (PM % '23059437', 'Netchanok S, Wendy M, Marie C, Siobhan O.', 'The effectiveness of Swedish massage and traditional Thai massage in treating chronic low back pain: a review of the literature', 'Complement Ther Clin Pract, 2012.'),
-    'cochrane_lbp': ('https://www.cochrane.org/evidence/CD001929_massage-low-back-pain', 'Furlan AD, Giraldo M, Baskwill A, Irvin E, Imamura M.', 'Massage for low-back pain', 'Cochrane Database of Systematic Reviews, 2015, issue 9, CD001929.'),
-    'cochrane_neck': ('https://www.cochrane.org/evidence/CD004871_massage-neck-pain', 'Cochrane.', 'Massage for neck pain', 'Cochrane evidence summary, 2024, CD004871 (searches to October 2023).'),
+    'cochrane_lbp': ('https://pubmed.ncbi.nlm.nih.gov/26329399/', 'Furlan AD, Giraldo M, Baskwill A, Irvin E, Imamura M.', 'Massage for low-back pain', 'Cochrane Database Syst Rev, 2015.'),
+    'cochrane_neck': ('https://pubmed.ncbi.nlm.nih.gov/38415786/', 'Gross AR, Lee H, Ezzo J, Chacko N, Gelley G, Forget M, Morien A, Graham N, Santaguida PL, Rice M, Dixon C.', 'Massage for neck pain', 'Cochrane Database Syst Rev, 2024 (searches to October 2023).'),
     'nccih': ('https://www.nccih.nih.gov/health/massage-therapy-what-you-need-to-know', 'National Center for Complementary and Integrative Health (NIH).', 'Massage Therapy: What You Need To Know', 'Last updated May 2019.'),
     'juntakarn': (PM % '28690703', 'Juntakarn C, Prasartritha T, Petrakard P.', 'The Effectiveness of Thai Massage and Joint Mobilization', 'Int J Ther Massage Bodywork, 2017.'),
     'laosee': (PM % '31987237', 'Laosee O, Sritoomma N, Wamontree P, Rattanapan C, Sitthi-Amorn C.', 'The effectiveness of traditional Thai massage versus massage with herbal compress among elderly patients with low back pain: A randomised controlled trial', 'Complement Ther Med, 2020.'),
@@ -67,8 +67,8 @@ SRC = {
     'somphai': (PM % '39905464', 'Somphai S, Sucharit W, Peungsuwan P, Roberts N, Chatchawan U.', 'Randomised control trial to compare the efficacy of traditional Thai massage and ultrasound therapy for treating plantar heel pain', 'BMC Complement Med Ther, 2025.'),
     'fhp': (PM % '37605282', 'Buttagat V, Kluayhomthong S, Areeudomwong P.', 'Effects of the combination of traditional Thai massage, scapular stabilization exercise, and chest mobilization in subjects with forward head posture: a single-blinded randomized clinical trial', 'Chiropr Man Therap, 2023.'),
     'sripongngam_msm': (PM % '26436433', 'Sripongngam T, Eungpinichpong W, Sirivongs D, Kanpittaya J, Tangvoraphonkchai K, Chanaboon S.', 'Immediate Effects of Traditional Thai Massage on Psychological Stress as Indicated by Salivary Alpha-Amylase Levels in Healthy Persons', 'Med Sci Monit Basic Res, 2015.'),
-    'sripongngam_jmat': (PM % '26387408', 'Sripongngam T, Eungpinichpong W, et al.', 'Psychological Stress Can Be Decreased by Traditional Thai Massage', 'J Med Assoc Thai, 2015.'),
-    'bennett': (PM % '27210845', 'Bennett S, Bennett MJ, Chatchawan U, et al.', 'Acute effects of traditional Thai massage on cortisol levels, arterial blood pressure and stress perception in academic stress condition: A single blind randomised controlled trial', 'J Bodyw Mov Ther, 2016.'),
+    'sripongngam_jmat': (PM % '26387408', 'Sripongngam T, Eungpinichpong W, Sirivongs D, Kanpittaya J, Tangvoraphonkchai K, Chanaboon S.', 'Psychological Stress Can Be Decreased by Traditional Thai Massage', 'J Med Assoc Thai, 2015.'),
+    'bennett': (PM % '27210845', 'Bennett S, Bennett MJ, Chatchawan U, Jenjaiwit P, Pantumethakul R, Kunhasura S, Eungpinichpong W.', 'Acute effects of traditional Thai massage on cortisol levels, arterial blood pressure and stress perception in academic stress condition: A single blind randomised controlled trial', 'J Bodyw Mov Ther, 2016.'),
     'macsween': (PM % '30100318', 'MacSween A, Lorrimer S, van Schaik P, Holmes M, van Wersch A.', 'A randomised crossover trial comparing Thai and Swedish massage for fatigue and depleted energy', 'J Bodyw Mov Ther, 2018.'),
     'yin': (PM % '25197310', 'Yin P, Gao N, Wu J, Litscher G, Xu S.', 'Adverse events of massage therapy in pain-related conditions: a systematic review', 'Evid Based Complement Alternat Med, 2014.'),
     'ernst': (PM % '12777645', 'Ernst E.', 'The safety of massage therapy', 'Rheumatology (Oxford), 2003.'),
@@ -117,18 +117,25 @@ PANELS = [
         'some short-term benefits, but the studies were small and of low quality, and its authors said they had “very little confidence” in the results.{cochrane_lbp} A 2024 Cochrane review of 33 studies with '
         '1,994 people with neck pain found that massage probably made little or no difference compared with a placebo massage after about 12 weeks (low-certainty evidence).{cochrane_neck}',
         'That neck review also found that higher doses, meaning eight or more sessions of at least 30 minutes over four weeks, favored massage in a subgroup analysis, which suggests that regular sessions may matter.{cochrane_neck}',
-        'Massage is generally described as low risk, and where serious problems on record can be traced to who gave the massage, they are mostly tied to people who were not trained massage therapists. The U.S. '
-        'National Center for Complementary and Integrative Health notes that the risk of harm appears to be low, although rare serious side effects such as a blood clot, nerve injury or bone fracture have been '
-        'reported.{nccih} A 2014 review of 40 published reports found 138 adverse events over 11 years, mainly disc herniation, soft-tissue injury, nerve problems, spinal cord injury and tears in the neck arteries, '
-        'with spinal manipulation inside a massage repeatedly linked to the serious ones. Massage therapists were the practitioners in only 8 of the 138 events (5.8 percent) and chiropractors in 33 (23.9 percent); '
-        'the rest (70.3 percent) involved unregistered people or other health professionals, and the authors concluded that massage by nonprofessionals and forceful techniques is often associated with adverse '
-        'events.{yin} A 2003 review of published case reports likewise found that most serious events followed unusual techniques or massage by laypeople rather than by massage therapists, and concluded that serious '
-        'events are probably true rarities.{ernst} For Thai massage specifically, a 2019 case report described a 20-year-old man who developed bleeding around the spinal cord (a spinal epidural hematoma) with '
-        'delayed leg weakness three days after a Thai massage given by a layperson, a friend, and who needed emergency surgery.{hematoma} A 2015 commentary also discussed a patient who had a heart attack around '
-        'the time of a Thai massage and the possible adverse effects of Thai massage.{wiwanitkit} The U.S. center also advises against using massage to put off seeing a health care provider about a medical '
-        'problem. Taken together, in the reports that say who gave the massage, trained massage therapists were rarely involved: the serious injuries were mostly linked to people who were not massage therapists, '
-        'including laypeople and unregistered practitioners, and to forceful or unusual techniques. Serious events are rare: I ask about your health, medications and recent injuries before each session, and I set '
-        'the pressure and the range of each stretch by what is comfortable for you.',
+        (
+            'Massage is generally described as low risk, and where serious problems on record can be traced to who gave the massage, they are mostly tied to '
+            'people who were not trained massage therapists. The U.S. National Center for Complementary and Integrative Health notes that the risk of harm '
+            'appears to be low, although rare serious side effects such as a blood clot, nerve injury or bone fracture have been reported.{nccih} A 2014 '
+            'review of 40 published reports found 138 adverse events over 11 years, mainly disc herniation, soft-tissue injury, nerve problems, spinal cord '
+            'injury and tears in the neck arteries, with spinal manipulation inside a massage repeatedly linked to the serious ones. Massage therapists were '
+            'the practitioners in only 8 of the 138 events (5.8 percent) and chiropractors in 33 (23.9 percent); the rest (70.3 percent) involved unregistered'
+            ' people or other health professionals, and the authors concluded that massage by nonprofessionals and forceful techniques is often associated '
+            'with adverse events.{yin} A 2003 review of 16 case reports and four case series likewise found that most adverse effects followed exotic '
+            'techniques or massage by laypeople, with massage therapists rarely implicated, that serious effects were mostly tied to techniques other than '
+            'Swedish massage, and concluded that serious events are probably true rarities.{ernst} For Thai massage specifically, a 2019 case report described'
+            ' a 20-year-old man who developed bleeding around the spinal cord (a spinal epidural hematoma) with delayed leg weakness three days after a Thai '
+            'massage given by a layperson, a friend, and who needed emergency surgery.{hematoma} A 2015 commentary also discussed a patient who had a heart '
+            'attack around the time of a Thai massage and the possible adverse effects of Thai massage.{wiwanitkit} The U.S. center also advises against using'
+            ' massage to put off seeing a health care provider about a medical problem. Taken together, in the reports that say who gave the massage, trained '
+            'massage therapists were rarely involved: the serious injuries were mostly linked to people who were not massage therapists, including laypeople '
+            'and unregistered practitioners, and to forceful or unusual techniques. Serious events are rare: I ask about your health, medications and recent '
+            'injuries before each session, and I set the pressure and the range of each stretch by what is comfortable for you.'
+        ),
     ]),
     ('Back Pain', False, [
         'Two trials with a comparison that was not another massage reported clear differences. In 50 adults with upper-back pain, one 30-minute session of Thai massage was followed by larger reductions in pain, '
