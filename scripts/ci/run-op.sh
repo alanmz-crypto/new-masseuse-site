@@ -150,6 +150,10 @@ case "$op" in
     finish 0 "$base succeeded" ;;
   rehearse)
     [ -n "$installer" ] || refuse "rehearse needs an installer"
+    [[ "$installer" =~ ^([a-z0-9_-]+/)*install-[a-z0-9-]+\.php$ ]] || refuse "invalid installer path"
+    # A package may opt in to browser verification before the throwaway copy is
+    # removed. No site operation or allow-list changes; dependencies only.
+    if [ -f "$wwm/$(dirname "$installer")/check-rehearsal.mjs" ]; then need_browsers; fi
     up=(); for a in "${args[@]}"; do [ "$a" = --with-uploads ] && up=(--with-uploads); done
     step "rehearsal of $installer on a throwaway copy of ${target:-staging36}" main bash "$here/rehearse.sh" "${target:-staging36}" "$installer" "${up[@]}"; rc=$?
     [ "$rc" -eq 0 ] && finish 0 "rehearsal passed"; [ "$rc" -eq 2 ] && finish 2 "rehearsal could not be set up"; finish 1 "rehearsal failed" ;;

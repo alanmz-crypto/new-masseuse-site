@@ -1,8 +1,8 @@
 {
-  "id": "review-b-live-dry-20261101",
+  "id": "review-c-live-dry-20261101",
   "op": "run",
   "target": "live",
-  "script": "review-b/push-bundle-b.sh",
+  "script": "review-c/push-bundle-c.sh",
   "args": [],
   "tests": "auto"
 }

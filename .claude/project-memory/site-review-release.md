@@ -1,46 +1,51 @@
 ---
 name: site-review-release
-description: A live and verified 262; B live request PR #69 ready for Ryan; ordered C–E follow-up, F/hosting deferred
+description: A/B live verified; C PR #64 live request prepared after fresh1248-assertion rehearsal and dry; D/E next, F/hosting deferred
 metadata:
   type: project
 ---
 
-Ryan's 2026-11-01 “ship this for the moment and you look after we are live” authorizes
-A–E release preparation under one bundle/one LIVE run. Ryan alone merges/runs LIVE.
-Do not merge main, force-push or dispatch LIVE.
+Ryan authorized completed A–E release preparation on 2026-11-01 (“ship this for
+the moment and you look after we are live”). One bundle/one LIVE run; he alone
+reviews/merges and dispatches LIVE. Agents never merge main, force-push or start LIVE.
 
-A LIVE: merged PR #68 as fcf68c75b8cd1099630136fc073ffbb9eae7131f; Ryan's request
-live-review-a-20261101-1/run 41323953827 applied 15:59 UTC. Rendered/origin/posture/
-schema/PHP checks pass, restore import 0/intended 88-fingerprint differences.
-Post-change command exit 1 is historical staging36's 20 pixel differences; all 20
-captures exist, not a pixel-equality pass. Follow-up live browser run 41324631068
-passes 262 assertions across nine pages/four widths/light+dark; three phone captures
-visually reviewed. Actual live snapshot bundle-a-before-20261101-155950.json,
-export live-before-bundle-a-20261101-155938.sql, both verified encrypted off-site.
-Proof: docs/reviews/2026-11-01-bundle-a-live.md.
+A LIVE via PR #68/run 41323953827, verified 262 browser assertions; actual snapshot
+bundle-a-before-20261101-155950.json. Proof docs/reviews/2026-11-01-bundle-a-live.md.
+B LIVE via PR #69/run 41326724484; strictscan 41329251788 all 12 pages 200, zero expectation
+failures, approved default/Home PNG 1305/1200×630/SHA MATCH, exact entity/meta/social.
+Actual B snapshot bundle-b-before-20261101-163141.json; DB
+live-before-bundle-b-20261101-163126.sql, both encrypted/off-site verified.
+Proof docs/reviews/2026-11-01-bundle-b-live.md. Historical staging36 schema/pixel
+differences and intended restore command exit 3/import 0 are qualified there.
 
-B PREPARED, NOT APPLIED: PR #69, branch codex/2026-11-01-review-b-live, main after A.
-Request live-review-b-20261101-1, review-b/push-bundle-b.sh --apply, tests auto.
-Ryan reviews/merges #69, then Actions > Site ops (LIVE) > Run workflow > main > ID.
-Tell agent “B done” to inspect full report/restore proof and strict live SEO scan.
-No B live write or production snapshot yet. Card/payload unchanged from approved B.
+C PREPARED, NOT APPLIED, existing PR #64, branch codex/2026-11-01-review-bundle-c.
+Normal feature merge integrates current main dc4011e1 without regressing A/B.
+Request live-review-c-20261101-1, review-c/push-bundle-c.sh --apply, tests auto.
+Ryan reviews/merges #64 only, then Actions > Site ops (LIVE) > Run workflow > main >
+type ID. Tell agent “C done” for full report/CSP/public-contract review before D.
+No C production snapshot/IDs or live write yet.
 
-Fresh selected-live settings/SureRank source PASS 41324970622, archive SHA
-eb3b76e83f2bf2973099c630091df17f357288d15708d9a83408153797b998f5.
-WP 7.1.4; reported PHP 8.5.12 is CLI only, no web version inferred. Logo SHA unchanged;
-15 directly relevant API/render files match prior source. Capture now selects the
-actual S_TARGET consistently (old plugin half hardcoded staging38) and sources-only
-skips redundant public dump. No credentials exported.
-Fresh live-source uploads rehearsal PASS 41325234903: import, apply/no-op/exact
-rollback/reapply, rendered copy gates, no new site PHP errors.
-Actual live dry PASS 41325524577: all parts ready, share-card asset absent.
-Final Gates must be green/conflict-free before ready/merge instructions.
-Full proof/phone steps: docs/reviews/2026-11-01-review-live-release.md.
+Fresh C capture 41329640631 SHA c95a7e7eb61311840b8423036bfa5b7534c2dedc2e1e97181597343095310126:
+WP 7.1.4/Astra 4.14.1, CLI 8.5.12 only (not web PHP). Privacy 1227/Access 1230 match CSS.
+Existing snippet code/meta/terms and blog-meta unchanged; new titles absent.
+Fourteen FAQ/Astra source files identical; generated active CSS unchanged except
+About host substitutions; live Chair  1293 CSS equals staged Chair  1302.
+Eleven raw pages/CSS match stage after host mapping. Corporate HTML tokens and
+block attributes match, but whitespace/keyorder/EOF differ. Preserve exact raw bytes;
+freeze live old/new hashes, update LOCAL Corporate profile to actual source;
+keep stage hash pairs and all transformation/runtime/CSS/snippet payloads unchanged.
+Fresh uploads rehearsal 41330272579 PASS 1,248/0, exact rollback/reapply, geometry/
+ARIA/keyboard/focus/map/strip/utilities and regulated gates; no new site PHP errors.
+Actual live dry 41330864816 all parts ready PASS. Final Gates before ready status.
+Full plan/phone proof docs/reviews/2026-11-01-review-live-release.md.
 
-C–E still staged drafts #64–66, with actual live predecessor hash/source guards,
-verifier host enablement and proof needed in sequence. E's prior source WP 7.1.3
-differs; inspect current public source/rehearse, never merely relax its guard.
-F/admin 403 remains paused; hosting issue/security.txt staging 404 owner fallback,
-pending Butsaba facts, G date and owner tasks remain deferred. No durable bot fix.
-After all releases rollback E→D→C→B→A with actual live snapshots; on staging38
-A likewise needs later touching bundles undone first. Never use stage snapshot live.
+C virtual security.txt strict private test passes; staging hosting delivery 404 remains
+owner fallback deferred. Public contract must report actual endpoint after C, never
+claim 404 passes. Tracked security-live/security.txt prepared, NOT uploaded by push.
+Contact CSP/full public interactivity require checks after own apply; stop at first
+challenge, no durable host fix claim. No hosting controls/static files/support message.
+
+D/E staged drafts #65/#66 need each actual live predecessor, source/hash/host/verifier
+guards, rehearsal/dry. F/admin HEAD  403 remains paused, no six-option write/installer.
+Butsaba 2/3/4/6/7/length-consistency, G November 14/15 sentences and all owner tasks
+remain deferred. Rollback E→D→C→B→A using actual live snapshots; never stage snapshot.

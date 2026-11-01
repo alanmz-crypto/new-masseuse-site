@@ -66,3 +66,13 @@ not applied; Ryan reviews/merges #69 then personally runs LIVE on main. After �
 read all automatic checks/restore differences and strict live 12-page semantic scan.
 Actual live snapshot is not yet known. See docs/reviews/2026-11-01-review-live-release.md.
 C/D/E are already applied on staging38; roll E/D/C back before B there.
+
+**LIVE and verified, 2026-11-01 (supersedes preparation status above):** Ryan merged
+PR #69 and ran live-review-b-20261101-1/run 41326724484. Snapshot
+bundle-b-before-20261101-163141.json; DB live-before-bundle-b-20261101-163126.sql,
+both encrypted off-site verified. Strict live scan 41329251788:12 pages 200, zero
+expectation failures; approved PNG 1305/1200×630/SHA MATCH, meta/entity/social exact.
+Rendered/origin/posture/site-error and import 0/intended 88→90 differences reviewed.
+Historical staging36 schema 27/23 and pixels differ; all 20 captures exist, no aggregate
+all-pass. Full proof docs/reviews/2026-11-01-bundle-b-live.md. C is prepared in #64,
+not applied; once C applies undo C before B, and B before A. See [[site-review-release]].

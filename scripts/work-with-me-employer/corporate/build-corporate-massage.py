@@ -155,9 +155,9 @@ def build_page():
     ])
 
     glance = columns('ts-corp__glance', [
-        [p('Chair massage for teams', 'ts-corp__card-title'), p('Short appointments for employee appreciation days and workplace events.')],
-        [p('Three- or five-hour booking blocks', 'ts-corp__card-title'), p('Plan around the time your organization can set aside.')],
-        [p('Table massage by arrangement', 'ts-corp__card-title'), p('Considered when the host can provide a suitable private room and the details are agreed in advance.')],
+        ['<h3 class="ts-corp__card-title">Chair massage for teams</h3>', p('Short appointments for employee appreciation days and workplace events.')],
+        ['<h3 class="ts-corp__card-title">Three- or five-hour booking blocks</h3>', p('Plan around the time your organization can set aside.')],
+        ['<h3 class="ts-corp__card-title">Table massage by arrangement</h3>', p('Considered when the host can provide a suitable private room and the details are agreed in advance.')],
     ])
 
     chair = group('ts-corp__section', [

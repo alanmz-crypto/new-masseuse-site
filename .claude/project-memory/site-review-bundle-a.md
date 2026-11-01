@@ -85,3 +85,7 @@ all differ, with no missing views; that is not an aggregate all-pass. Follow-up
 browser run 41324631068:262 PASS, three phone captures reviewed. Full live proof:
 docs/reviews/2026-11-01-bundle-a-live.md. B is prepared in PR #69, not applied;
 when B applies, undo B before A's exact whole-resource rollback.
+
+B is now LIVE/verified (PR #69, actual snapshot bundle-b-before-20261101-163141.json).
+Undo B before A's exact whole-resource rollback; C's preparation is PR #64,
+with no C live write yet. Current proof/order in [[site-review-release]].
