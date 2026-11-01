@@ -23,3 +23,13 @@ Ryan, 2026-10-30 (cloud session): "look at the services page and the way that al
 **Open for Ryan (nothing guessed):** a Home page card for chair massage (not added; the corporate card already says "On-site chair massage"); a menu item (not added; Services covers it); whether Butsaba wants the 10-20 minute and six-by-six-feet figures changed; the Accessibility page line naming the new page's research panels (as was done for Deep Tissue); the watercolor's source PNG (1254 px) is not in the repo, only the 1024 px webp made from it.
 
 **2026-11-01, staging38 only:** Review Bundle A ([[site-review-bundle-a]], PR #61) changes the Chair page, Services order and jump snippet. Its exact snapshot is now the current rollback. Roll A back first before using this older installer's exact-state rollback on staging38. Live's original chair state/rollback is unchanged.
+
+2026-11-01 Bundle D is applied on staging38 (draft PR #65): the portable-chair
+question, Corporate FAQ labels, home-visits wording, Caregivers panel label and
+additive general-findings paragraph are updated. The builder/generated file
+change together; original service facts and research findings remain. The old
+exact-state Chair installer rollback is retired while D is present. Roll D back
+before C/B/A and before using the historical Chair snapshot/installers. Exact D
+snapshot `bundle-d-before-20261101-104506.json`; see [[site-review-bundle-d]].
+Live is unchanged. Pending Butsaba facts and confirmed session-length consistency
+work are separate; do not infer usual/mandatory length or capacity from “20.”
