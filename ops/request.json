@@ -1,10 +1,10 @@
 {
-  "id": "review-d-apply-staging38-20261101",
+  "id": "review-c-live-csp-20261101",
   "op": "run",
-  "target": "staging38",
-  "script": "review-d/push-bundle-d.sh",
+  "target": "live",
+  "script": "review-c/check-csp.mjs",
   "args": [
-    "--apply"
+    "https://thaisolitude.com"
   ],
   "tests": "auto"
 }
