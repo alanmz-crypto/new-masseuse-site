@@ -1,8 +1,6 @@
 {
-  "id": "review-a-dump-staging38-20261101",
-  "op": "run",
+  "id": "review-a-snippet-hashes-20261101",
+  "op": "inspect",
   "target": "staging38",
-  "script": "seo-scan/dump-site.sh",
-  "args": [],
-  "tests": "auto"
+  "query": "snippets"
 }
