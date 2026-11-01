@@ -1,8 +1,7 @@
 {
-  "id": "review-a-live-dry-20261101",
-  "op": "run",
+  "id": "review-a-live-corporate-source-20261101",
+  "op": "inspect",
   "target": "live",
-  "script": "review-a/push-bundle-a.sh",
-  "args": [],
-  "tests": "auto"
+  "query": "page",
+  "arg": "corporate-massage-portland"
 }
