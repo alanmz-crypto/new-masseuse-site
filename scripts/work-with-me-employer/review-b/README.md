@@ -51,3 +51,15 @@ Sequence: code gates; commit package; rehearsal from staging38; staging dry run;
 apply (fresh export + verified encrypted off-site copy first); automatic tests
 and restore proof; semantic scan/browser verification. Live only on Ryan's go
 and through his own run. No live request is prepared by this package.
+
+## Staging evidence
+
+Applied 2026-11-01 08:46 UTC on staging38. Uploads rehearsal2, dry run, apply,
+rendered gates/posture and strict 12-page semantic scan PASS. Approved card is
+attachment 1314; SHA256 and 1200×630 dimensions match; Home OG/Twitter and the
+global fallback reference it. Backup restored successfully; expected A/B
+entity/pixel differences versus live are recorded, not suppressed. Snapshot
+`bundle-b-before-20261101-084613.json`; export
+`staging38-before-bundle-b-20261101-084559.sql`, both verified encrypted off-site.
+Full evidence/rollback: `docs/reviews/2026-11-01-bundle-b-staging38.md`.
+PR #63. Live remains disabled.
