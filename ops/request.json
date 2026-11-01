@@ -1,8 +1,11 @@
 {
-  "id": "review-c-capture-staging38-20261101",
+  "id": "review-c-baseline-staging38-20261101",
   "op": "run",
   "target": "staging38",
-  "script": "review-c/inspect-bundle-c.sh",
-  "args": [],
+  "script": "review-c/check-bundle-c.mjs",
+  "args": [
+    "https://staging38.thaisolitude.com",
+    "baseline"
+  ],
   "tests": "auto"
 }
