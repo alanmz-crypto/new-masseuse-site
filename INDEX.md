@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-01 08:51 UTC  **PASS**  `review-b-seo-staging38-20261101`  [reports/2026-11-01/085100-review-b-seo-staging38-20261101.md](reports/2026-11-01/085100-review-b-seo-staging38-20261101.md)  (run 41290538959)
 - 2026-11-01 08:50 UTC  **PASS**  `review-b-apply-staging38-20261101`  [reports/2026-11-01/085012-review-b-apply-staging38-20261101.md](reports/2026-11-01/085012-review-b-apply-staging38-20261101.md)  (run 41290196062)
 - 2026-11-01 08:44 UTC  **PASS**  `review-b-dry-staging38-20261101`  [reports/2026-11-01/084435-review-b-dry-staging38-20261101.md](reports/2026-11-01/084435-review-b-dry-staging38-20261101.md)  (run 41290092298)
 - 2026-11-01 08:43 UTC  **PASS**  `review-b-rehearse-staging38-20261101-2`  [reports/2026-11-01/084347-review-b-rehearse-staging38-20261101-2.md](reports/2026-11-01/084347-review-b-rehearse-staging38-20261101-2.md)  (run 41289969039)
