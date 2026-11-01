@@ -1,10 +1,16 @@
 #!/usr/bin/env bash
-# Read-only Bundle B capture: fresh staging38 dump, approved non-secret SureRank
+# Read-only Bundle B capture: selected staging38/live dump, non-secret SureRank
 # settings, existing published logo/fonts and public plugin schema implementation.
 # No site writes; archive files are temporary and remain outside the web root.
 # shellcheck disable=SC2016  # the single-quoted commands below are meant to expand on the server, not here
 set -euo pipefail
 here=$(cd "$(dirname "$0")" && pwd)
+target="${S_TARGET:-staging38}"
+case "$target" in
+  staging38) want="staging38.thaisolitude.com" ;;
+  live) want="thaisolitude.com" ;;
+  *) echo "S_TARGET must be staging38 or live." >&2; exit 1 ;;
+esac
 creds="${S26_CREDS:-$here/../../../remote_execution.txt}"
 [ -f "$creds" ] || { echo "Missing credentials file: $creds" >&2; exit 1; }
 field() { sed -n "s/^$1:[[:space:]]*//p" "$creds" | head -1; }
@@ -14,7 +20,11 @@ host=$(field Host); port=$(field Port); user=$(field User); user="${user%%@*}"
 ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 "$user@$host")
 "${ssh_cmd[@]}" true 2>/dev/null || { echo "SSH login refused; check the ssh-agent holds the right key." >&2; exit 2; }
 
-bash "$here/../seo-scan/dump-site.sh"
+case "${1:-}" in
+  "") bash "$here/../seo-scan/dump-site.sh" ;;
+  --sources-only) ;; # no public page requests; settings/logo/public source only
+  *) echo "Usage: $0 [--sources-only]" >&2; exit 1 ;;
+esac
 
 read -r -d '' REMOTE <<'EOS' || true
 set -euo pipefail
@@ -29,7 +39,7 @@ mkdir -p "$scratch/data/assets" "$scratch/data/plugin"
 export TS_B_EXPORT="$scratch/data"
 wp --path="$doc" eval '
 $out = getenv("TS_B_EXPORT");
-$meta = array("surerank_settings" => get_option("surerank_settings"), "blogdescription" => get_option("blogdescription"), "custom_logo" => get_theme_mod("custom_logo"));
+$meta = array("wordpress" => get_bloginfo("version"), "php" => PHP_VERSION, "surerank_settings" => get_option("surerank_settings"), "blogdescription" => get_option("blogdescription"), "custom_logo" => get_theme_mod("custom_logo"));
 $id = (int) $meta["custom_logo"];
 $meta["logo_url"] = wp_get_attachment_url($id);
 $meta["logo_meta"] = wp_get_attachment_metadata($id);
@@ -57,4 +67,4 @@ echo BUNDLEB-BEGIN
 base64 -w0 "$scratch/data.tgz" | fold -w 200000
 echo; echo BUNDLEB-END
 EOS
-"${ssh_cmd[@]}" bash -s -- staging38.thaisolitude.com <<<"$REMOTE"
+"${ssh_cmd[@]}" bash -s -- "$want" <<<"$REMOTE"

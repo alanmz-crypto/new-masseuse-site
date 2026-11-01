@@ -9,18 +9,41 @@ metadata:
 A phone cloud session (https://claude.ai/code, repo `alanmz-crypto/new-masseuse-site`) sees ONLY this repository: not his computer, not his global `~/.claude/CLAUDE.md`, not his local Claude memory, not convmem. Everything that must not be lost is therefore written here and in the notes this index points to.
 First message to send in a fresh phone session: **"Read .claude/project-memory/open-items.md and tell me what is due."**
 
-**2026-11-01 active review lane:** Bundle 0 is complete (Butsaba draft in
-`docs/inter-model/2026-11-01-butsaba-questions.md`, fresh staging38 dump PASS).
-Bundle A is **applied and verified on staging38**, PR #61, branch
-`codex/2026-11-01-review-bundle-a`: rehearsal/rendered gates PASS, 262 browser
-assertions PASS; exact rollback and expected pixels in [[site-review-bundle-a]].
-No live write or request. The handoff's
-recorded “fix all” approval supersedes older “nothing prepared until he picks”
-status text below for the listed changes. Butsaba questions 1, 5, 8 and 9 are answered (record below); 2, 3, 4, 6 and 7
-remain unanswered. Live is disabled, and Ryan still owns merges and live runs.
-**Bundle B is applied on staging38 and PR #63 is merged** (confirmed 2026-11-01), PR #63 (`codex/2026-11-01-review-bundle-b`): uploads rehearsal2, dry run, apply, rendered gates/posture, restore import and strict 12-page semantic scan PASS. Ryan approved the exact default/Home brand card on 2026-11-01; attachment 1314's PNG 1200×630 SHA and Home OG/Twitter match. Home desktop/phone captures visually reviewed: no clipped text or side-scroll. Live disabled. See [[site-review-bundle-b]] and `docs/reviews/2026-11-01-bundle-b-staging38.md`. **Bundle C is applied on staging38**, draft PR #64: rehearsal2 (1,248 assertions/exact rollback), dry/apply, rendered gates/posture, restore import and Contact CSP in both browsers PASS. Final whole-site public browser attempt is INVALID at its first page (hosting robot challenge; zero assertions). Ryan asked for help removing that block; the verified support route and ready message are in `docs/inter-model/2026-11-01-siteground-antibot-support.md`. No SiteGround admin/support session is connected, and no host setting/message/live change was made. security.txt public delivery is still unverified; Ryan approved its mailbox. See [[site-review-bundle-c]].
-After A, Bundle G must refresh 15 booking-date sentences (the original ten plus
-five new closing blocks), including Services; still on/after November 14 only.
+**2026-11-01 current review/release lane (supersedes older status):**
+**B has now applied live via Ryan's own PR #69/run41326724484.** The strict scan
+run41329251788 passes all12 pages with zero expectations failing; approved default/
+Home card and linked Person/LocalBusiness match. C preparation remains draft #64,
+which now integrates main without regressing the A/B live code or records. No C
+live write. Full B proof and updated next-run steps are being recorded in this PR.
+Older B-preparation wording below is historical.
+
+A is **LIVE and verified** after Ryan merged #68 and ran live-review-a-20261101-1.
+Origin/rendered/posture/schema/site-error checks pass; backup import 0/intended
+differences reviewed. Historical staging36 pixel differences are documented,
+not a pixel pass; all 20 views exist. Follow-up live browser: 262 PASS and three
+phone captures reviewed. [Actual live proof/snapshot](../../docs/reviews/2026-11-01-bundle-a-live.md).
+
+**B is prepared, not applied, PR #69.** Under Ryan's A–E release go, he reviews/
+merges #69 then starts Actions > Site ops (LIVE) > Run workflow > main > type
+`live-review-b-20261101-1`. Fresh actual-live SureRank source, uploads rehearsal/exact
+rollback and live dry run PASS. Approved card/payload unchanged. Tell agent
+“B done” after the run for full report/semantic verification before C preparation.
+[[site-review-release]] and [phone steps/proof](../../docs/reviews/2026-11-01-review-live-release.md).
+
+C/D/E remain staging-applied drafts #64/#65/#66; do not merge them yet.
+Their ordered live predecessor hashes/host/verifier guards and fresh proof remain.
+Fresh live WP 7.1.4 differs from E's earlier 7.1.3; inspect installed source/rehearse,
+never merely relax its version guard. Fresh PHP 8.5.12 reading is CLI, not web.
+[Complete staging proof and snapshots](https://github.com/alanmz-crypto/new-masseuse-site/blob/codex/2026-11-01-review-bundle-f/docs/reviews/2026-11-01-review-fix-status.md).
+
+F is paused: required admin HEAD 403, REST/login 200; no option installer/write.
+The intermittent hosting issue/final later-bundle interactive checks and staging
+security.txt 404 owner static fallback remain follow-ups, with no durable bot fix,
+support message or hosting-control change. Butsaba 2/3/4/6/7 remain pending; 1/5/8/9
+are recorded, confirmed-length consistency separate. G retains November 14 timing/
+15 date sentences. Credentials/deletions/Astra/www/menu-label and owner tasks stay his.
+Agents never merge main or start LIVE. After each own run, inspect actual proof
+before the next bundle. No B live write occurred during preparation.
 
 ## A. Happens by itself (nothing to do)
 - **BOOKING DATE MOVED to November 14, 2026 (Ryan 2026-10-30: "Change booking begins to Nov 14th. Everywhere."; [[booking-date]]). LIVE since 2026-10-30 15:43 UTC, so the strip flips on 2026-11-14 00:00 Pacific (08:00 UTC, PST), NOT Nov 1; until it is live the text below (Nov 1) is what live does.** ~~2026-11-01 00:00 Pacific (07:00 UTC) the announcement strip flips~~ (old date): from "Currently booking corporate & group massage only." to "Now accepting corporate & group massage bookings." on nine pages. It is PHP in a WPCode snippet; the SiteGround page cache is OFF (checked 2026-10-25), so no purge is needed. See [[availability-update]].
@@ -43,7 +66,7 @@ five new closing blocks), including Services; still on/after November 14 only.
 
 ## D. Decisions waiting on Ryan (no deadline; nothing guessed)
 - **Wording that goes stale after 2026-11-14 (date and pages corrected 2026-10-31):** the FAQ pairs on the Thai, Therapeutic, Deep Tissue and Chair pages ("...with bookings beginning November 14, 2026." and "Corporate and group massage bookings begin November 14, 2026."), the corporate hero line and the Work With Me "For clients" block: ten sentences that read as future once the strip says "Now accepting". Proposal: one installer run on or after the 14th swaps them to "since November 14, 2026" / "are open (since November 14, 2026)", staging38 first ([[site-review-2026-10-31]] item 3.7). Needs his OK (his rule: never reword established copy without asking).
-- **Site review 2026-10-31 ([[site-review-2026-10-31]]; report `docs/reviews/2026-10-31-site-review.md`):** ten decisions for Ryan at the top of the report (closing call-to-action blocks on the five long pages; Chair <-> Corporate links and a corporate card on Contact; Home card buttons to their own pages; the "Relief" chip; WordPress Address http -> https; the Services availability sentence; four search titles plus Privacy/Accessibility rows; after Nov 14 the past-tense wording and the page cache; the Nov 7 credentials work and four deletions). The handoff records approval for its listed staging edits. Bundle 0 and A are complete on staging38, not live (PR #61); B is applied and verified on staging38 (PR #63 merged); C is applied, with public browser verification blocked by the host challenge (draft PR #64). D–F remain; G waits until November 14. The Butsaba draft now records Ryan's answers to 1, 5, 8 and 9; 2, 3, 4, 6 and 7 remain unanswered. The agent has sent no message.
+- **Site review 2026-10-31 ([[site-review-2026-10-31]]; report `docs/reviews/2026-10-31-site-review.md`):** ten decisions for Ryan at the top of the report (closing call-to-action blocks on the five long pages; Chair <-> Corporate links and a corporate card on Contact; Home card buttons to their own pages; the "Relief" chip; WordPress Address http -> https; the Services availability sentence; four search titles plus Privacy/Accessibility rows; after Nov 14 the past-tense wording and the page cache; the Nov 7 credentials work and four deletions). The handoff records approval for its listed staging edits. Bundle 0 and A are complete on staging38, not live (PR #61); B is also applied and verified on staging38 (PR #63); C–F remain, G waits until November 14. The Butsaba draft now records Ryan's answers to 1, 5, 8 and 9; 2, 3, 4, 6 and 7 remain unanswered. The agent has sent no message.
 - **"Mt. Tabor" to Portland (Ryan 2026-10-29: "We are in Portland and ready to start Thai Solitude for corporate and groups. Reconcile the website to that."; one item at a time):** item 1 SEO titles/descriptions of Home, Thai, Therapeutic, Deep Tissue = MERGED (PR #47), applied on staging38, NOT live ([[portland-meta]]); item 2 Contact Address line = MERGED (PR #48), applied on staging38, NOT live; Ryan: "Skip the map" ([[contact-address]]); item 3 Home licence line + Thai H1 + Deep Tissue H1 = on branch `feat/2026-10-29-onpage-portland`, staging38 first, NOT live ([[onpage-portland]]). STILL to do, one at a time: the map (left as is), About "From Chicago to Portland", "For Practices" rename, the "bookings begin November 1, 2026" wording after Nov 1. **LIVE since 2026-10-30 (run `live-portland-items-1-3`, all checks ok; see the three notes).**
 - **About page section "From Chicago to Portland"** ("...started Thai Solitude in Chicago in 2024... Now I am bringing Thai Solitude to Portland..."): LEFT for now. It is Butsaba's own history; the availability plan says not to keep relocation wording. Offer: draft a Portland-only version for side-by-side review, apply nothing until he approves.
 - **Home button "Ask about a session"**: left (an inquiry link; the Contact page opens with the corporate-only strip).

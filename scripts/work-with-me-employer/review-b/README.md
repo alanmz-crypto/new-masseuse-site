@@ -1,6 +1,7 @@
 # Review Bundle B — search and sharing
 
-Staging38 only; live disabled. The 2026-11-01 handoff authorizes the listed
+Staging38 applied/verified; live preparation PR #69 is ready for Ryan's own run,
+not applied. The 2026-11-01 handoff authorizes the listed
 metadata/wording edits. The five unanswered Butsaba questions are independent
 and remain pending. The four supplied answers are recorded, not applied here.
 
@@ -50,7 +51,9 @@ sequence and take backups. Requests run once; all reports are read on ops-log.
 Sequence: code gates; commit package; rehearsal from staging38; staging dry run;
 apply (fresh export + verified encrypted off-site copy first); automatic tests
 and restore proof; semantic scan/browser verification. Live only on Ryan's go
-and through his own run. No live request is prepared by this package.
+and through his own run. His later A–E go authorizes the prepared request
+`live-review-b-20261101-1` in PR #69; fresh live-source uploads rehearsal and
+actual live dry run pass. [Release proof/phone steps](../../../docs/reviews/2026-11-01-review-live-release.md).
 
 ## Staging evidence
 
@@ -62,4 +65,7 @@ entity/pixel differences versus live are recorded, not suppressed. Snapshot
 `bundle-b-before-20261101-084613.json`; export
 `staging38-before-bundle-b-20261101-084559.sql`, both verified encrypted off-site.
 Full evidence/rollback: `docs/reviews/2026-11-01-bundle-b-staging38.md`.
-PR #63. Live remains disabled.
+PR #63 is merged. Follow-up live preparation is PR #69, not an apply.
+The selected-host source capture supports `--sources-only`; it no longer combines
+a live dump with staging plugin source. Installed SureRank's relevant APIs/rendering
+match the reviewed source; the original B payload/card and exact rollback remain.
