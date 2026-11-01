@@ -5,7 +5,7 @@ import { createRequire } from 'module';
 const require = createRequire(process.env.TS_PLAYWRIGHT_ROOT || '/home/lauer/Projects/SubProjects/Mirror/package.json');
 const { chromium } = require('playwright');
 const base = (process.argv[2] || '').replace(/\/$/, '');
-if (!/^https:\/\/staging38\.thaisolitude\.com$/.test(base)) throw new Error('staging38 only');
+if (!/^https:\/\/(?:staging38\.)?thaisolitude\.com$/.test(base)) throw new Error('staging38 or live only');
 const inline = process.argv.includes('inline');
 const browser = await chromium.launch();
 let fails = 0;

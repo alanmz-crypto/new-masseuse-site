@@ -1,7 +1,9 @@
 {
-  "id": "review-a-live-corporate-source-20261101",
-  "op": "inspect",
+  "id": "review-a-live-rehearse-20261101",
+  "op": "rehearse",
   "target": "live",
-  "query": "page",
-  "arg": "corporate-massage-portland"
+  "installer": "review-a/install-bundle-a.php",
+  "args": [
+    "--with-uploads"
+  ]
 }
