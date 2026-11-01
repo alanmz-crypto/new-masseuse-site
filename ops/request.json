@@ -1,7 +1,7 @@
 {
-  "id": "site-dump-live-2",
+  "id": "review-a-dump-staging38-20261101",
   "op": "run",
-  "target": "live",
+  "target": "staging38",
   "script": "seo-scan/dump-site.sh",
   "args": [],
   "tests": "auto"
