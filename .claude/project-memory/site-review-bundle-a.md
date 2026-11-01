@@ -70,3 +70,6 @@ LocalBusinessInfo; see [[site-review-bundle-b]] for its snapshot and proof.
 **Bundle C is now applied on staging38:** roll C back before B/A on affected
 stores. C's public browser verification is blocked by the host challenge, but
 its exact snapshot is recorded in [[site-review-bundle-c]].
+
+Bundle D is now applied on staging38 (draft PR #65). Roll D back before C/B/A;
+its exact snapshot and proof are in [[site-review-bundle-d]]. Live unchanged.

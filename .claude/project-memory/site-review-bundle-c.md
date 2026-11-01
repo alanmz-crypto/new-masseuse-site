@@ -66,3 +66,6 @@ staging. Full Astra option, page SureRank rows and active-snippet settings are
 snapshotted/restored; only Astra blog-meta is changed. Page/CSS hashes are fixed
 per allowedhost, and every replacement count is exact. No metadata/copy from B
 is regressed. Butsaba questions 2/3/4/6/7 remain pending.
+
+Bundle D is now applied on staging38 (draft PR #65). Roll D back before C/B/A;
+its exact snapshot and proof are in [[site-review-bundle-d]]. Live unchanged.

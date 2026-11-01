@@ -6,7 +6,7 @@ metadata:
 ---
 
 Draft PR #65, branch `codex/2026-11-01-review-bundle-d`, base C draft PR #64.
-Prepared; isolated uploads rehearsal2 PASS (1,376 browser assertions, regulated-copy gates, apply/reapply/exact rollback/reapply). Dry run next; no D staging write yet. Live is
+APPLIED on staging38, 2026-11-01 10:45 UTC. Isolated uploads rehearsal2 PASS (1,376 browser assertions, regulated-copy gates, apply/reapply/exact rollback/reapply). Dry/apply, 53 origin assertions, rendered Home/client/posture gates and restore import PASS. No new site PHP errors. The runner captured 20 public screenshot views successfully; expected A–D pixel differences and unchanged B schema differences remain. This does not establish a durable AntiBot fix; final full interactive public verification is still pending. Live is
 disabled and no live request exists. Fresh origin dump/raw-store capture PASS;
 all 12 page hashes match applied C. Required research sources were accessible.
 
@@ -36,3 +36,12 @@ separate. Five answers remain pending; November 14 future booking wording stays
 until G. Site-wide serial commas, Title Case and number styles are declined.
 No public retry loop while the host challenge remains; origin checks and
 isolated browser checks are available. security.txt delivery remains pending.
+
+Applied snapshot `bundle-d-before-20261101-104506.json`; DB export
+`staging38-before-bundle-d-20261101-104452.sql` (6,569,440 bytes). Both verified
+and encrypted off-site. Exact rollback:
+`request.sh run --target staging38 --script review-d/push-bundle-d.sh --args '--rollback $HOME/private-backups/bundle-d-before-20261101-104506.json'`.
+Report `reports/2026-11-01/104934-review-d-apply-staging38-20261101.md`.
+No SureRank rows changed; C’s `blog-meta:[]` and runtime features are preserved.
+The final Cochrane comparator uses “no intervention” to satisfy shared wording
+rules; the complete author list occurs twice because two Thai papers share it.

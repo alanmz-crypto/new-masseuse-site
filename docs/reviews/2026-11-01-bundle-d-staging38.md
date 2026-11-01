@@ -1,8 +1,8 @@
 # Bundle D: staging38 wording and research fidelity
 
-**Status:** isolated rehearsal PASS; staging dry run pending, not yet applied. Live is disabled. Public whole-site browser verification remains blocked by SiteGround’s robot challenge. No public retry loop.
+**Status:** APPLIED on staging38, 2026-11-01 10:45 UTC. Draft PR #65 is stacked on C draft PR #64. Live remains disabled and unchanged. Final whole-site interactive public verification remains pending because of SiteGround’s intermittent robot challenge. The post-D runner’s rendered gates and 20 public screenshot views succeeded; that does not prove a durable hosting fix. No extra public retry loop.
 
-Stacked on Bundle C, draft PR #64; Bundle B PR #63 is merged. All nine fresh stored page hashes match the applied C state. Source capture PASS: `reports/2026-11-01/102012-review-d-capture-staging38-20261101.md`.
+Stacked on Bundle C, draft PR #64; Bundle B PR #63 is merged. The pre-D capture’s nine affected page hashes matched applied C. Source capture PASS: `reports/2026-11-01/102012-review-d-capture-staging38-20261101.md`.
 
 ## Scope and review
 
@@ -52,9 +52,56 @@ Site-wide serial commas, Title Case, number/range-style changes, the italic font
 - Independent review PASS: all 45 sequential replacement counts, all nine complete old/new page hashes for both hosts, every generated preview, block-attribute JSON and balanced WordPress block nesting. Frozen snippet hashes and footer source match the fresh stores.
 - First rehearsal: apply/reapply/exact rollback/reapply PASS; C browser regression 1,248/1,248 PASS. Two regulated-copy checks rejected the review’s “no treatment” phrase; use the source-faithful “no intervention” to preserve the shared house rules. One D assertion incorrectly expected a verified author list once; two different Thai papers share that complete list, so the correct rendered count is two. No staging write. Report: `reports/2026-11-01/103530-review-d-rehearse-staging38-20261101-1.md`.
 - Home/About 390 px paragraph captures from that isolated run visually reviewed: full text present, no clipping or side-scroll.
-- Corrected isolated uploads rehearsal PASS: 1,376 browser assertions (C 1,248 + D 128), regulated-copy/Home gates, apply, idempotent repeat apply, exact rollback and reapply; no new PHP errors. Report: `reports/2026-11-01/104227-review-d-rehearse-staging38-20261101-2.md`. Staging dry run is next. Origin rendered copy check, staging dry run/apply with verified encrypted off-site DB/snapshot backup, rendered gates and restore proof remain pending. No pass is claimed for a challenged public browser request.
+- Corrected isolated uploads rehearsal PASS: 1,376 browser assertions (C 1,248 + D 128), regulated-copy/Home gates, apply, idempotent repeat apply, exact rollback and reapply; no new PHP errors. Report: `reports/2026-11-01/104227-review-d-rehearse-staging38-20261101-2.md`.
+
+### Applied staging proof
+
+| Check | Result |
+| --- | --- |
+| Staging dry run | PASS; all nine pages, snippet and footer ready |
+| Fresh DB/off-site backup | PASS; exported before apply, encrypted and read back identically before writing |
+| Exact apply/read-back | PASS; page/snippet fields, SureRank rows and whole Astra result verified |
+| Origin rendered copy/link/licence | PASS: 53 assertions, zero failures |
+| Rendered Home/client/posture gates | PASS on staging38 |
+| Public page status | All 12 checked routes HTTP 200 |
+| Site PHP log | No errors, warnings or deprecations from site code |
+| Restore proof | Import exit 0; only the intended nine pages, heart snippet, Astra option, related rows and WPCode cache differ; no SEO/SureRank rows differ |
+| Public screenshot capture | 20/20 candidate and reference views captured, zero missing/problems |
+| Reference comparisons | Expected differences: all 20 pixel views (A–D still absent on live); schema 27 vs 23 unchanged from B, no parse errors |
+| Final whole-site interactive public suite | Still pending; isolated C+D suite passed, no durable AntiBot fix claimed |
+
+Reports:
+
+- Capture: `reports/2026-11-01/102012-review-d-capture-staging38-20261101.md`.
+- Rehearsal2: `reports/2026-11-01/104227-review-d-rehearse-staging38-20261101-2.md`.
+- Dry: `reports/2026-11-01/104330-review-d-dry-staging38-20261101.md`.
+- Apply/restore: `reports/2026-11-01/104934-review-d-apply-staging38-20261101.md` ([run 41298800180](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/41298800180)).
+
+Export `staging38-before-bundle-d-20261101-104452.sql` is 6,569,440 bytes, plaintext SHA prefix `f21339cdc9c2`; exact snapshot `bundle-d-before-20261101-104506.json`, plaintext SHA prefix `c5e685d1b41e`. Both are verified encrypted off-site in draft release `offsite-2026-11`. Snapshot is outside every web root and copied off-site before origin checks.
+
+Exact rollback (fresh DB/off-site copy first, unchanged stores required):
+
+```sh
+scripts/ci/request.sh run --target staging38 --script review-d/push-bundle-d.sh --args '--rollback $HOME/private-backups/bundle-d-before-20261101-104506.json'
+```
 
 Rollback D before C, then B, then A. Older Chair/Corporate/research exact-state installers cannot run against D’s edited content; restore through the bundle snapshots in reverse order first. The historical Chair installer rollback stays retired while D is present.
+
+## Measured height changes in isolated rehearsal
+
+Compared with C’s applied rehearsal, at identical fonts/viewports. All 26 heading metrics and 147 FAQ geometry comparisons still pass; all widths have no side-scroll. Longer research copy and the three framing paragraphs account for the expected growth.
+
+| Page | 1280 px | 390 px | 320 px |
+| --- | ---: | ---: | ---: |
+| Home | +54 px | +81 px | +82 px |
+| About | +27 px | +54 px | +81 px |
+| Work With Me | +0 px | +0 px | -44 px |
+| Chair | +52 px | +134 px | +162 px |
+| Thai | +27 px | +54 px | +82 px |
+| Therapeutic | +135 px | +255 px | +282 px |
+| Deep Tissue | +107 px | +228 px | +282 px |
+| Corporate | +0 px | +0 px | +0 px |
+| Accessibility | +0 px | -2 px | +0 px |
 
 ## Remaining lanes
 

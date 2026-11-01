@@ -1,6 +1,6 @@
 # Review Bundle D (staging38 only)
 
-Exact approved copy/research corrections. [Scope, before/after and proof](../../../docs/reviews/2026-11-01-bundle-d-staging38.md).
+Applied on staging38 only, 2026-11-01 10:45 UTC. Rehearsal2, 53 origin assertions, rendered gates and restore import PASS. Exact approved copy/research corrections. [Scope, before/after and proof](../../../docs/reviews/2026-11-01-bundle-d-staging38.md).
 
 - `changes.json` freezes 45 exact pairs on 9 pages, the heart-link snippet and footer scalar; `build-bundle-d.py` packages it with staging/isolated-localhost hashes.
 - `install-bundle-d.php` preflights every resource, snapshots full stores outside ABSPATH, preserves SureRank rows, changes only reviewed content/footer, and guards exact rollback. No production host. No new/deleted posts/snippets/files/media.

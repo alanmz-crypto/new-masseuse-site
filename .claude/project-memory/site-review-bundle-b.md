@@ -56,3 +56,6 @@ independent lane: Bundle C; remaining five Butsaba answers stay pending.
 **Bundle C is now applied on staging38:** roll C back before B/A on affected
 stores. C's public browser verification is blocked by the host challenge, but
 its exact snapshot is recorded in [[site-review-bundle-c]].
+
+Bundle D is now applied on staging38 (draft PR #65). Roll D back before C/B/A;
+its exact snapshot and proof are in [[site-review-bundle-d]]. Live unchanged.
