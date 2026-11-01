@@ -77,6 +77,7 @@ Historical staging36 schema 27/23 and pixels differ; all 20 captures exist, no a
 all-pass. Full proof docs/reviews/2026-11-01-bundle-b-live.md. C is prepared in #64,
 not applied; once C applies undo C before B, and B before A. See [[site-review-release]].
 
-D is already applied on staging38; its live preparation is draft #65 after C's
-own live apply and verification. D's current-main integration preserves A/B/C
-live code and records. Undo D/later touching bundles before earlier exact rollbacks.
+C is now live (actual snapshot bundle-c-before-20261101-175205.json), with 1,247
+public checks passing and known security.txt 404 owner follow-up; rendered/security/
+PHP checks and Contact CSP are verified. Undo C before B/A; D is prepared in #65,
+not applied, and will need undoing first once live. See [[site-review-release]].

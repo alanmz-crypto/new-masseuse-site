@@ -73,7 +73,7 @@ by normal feature merge; no A/B code/card portability or live records regress.
 Fresh exact live stores/source PASS 41329640631;14 relevant implementation files
 match; scoped Privacy 1227/Accessibility 1230 and snippet settings/terms verified.
 Payload unchanged: freeze exact live 12-page/CSS hashes; Corporate's differing
-serialization is preserved and its LOCAL profile refreshed, stage hashpairs retained.
+serialization is preserved and its LOCAL profile refreshed, stage hash pairs retained.
 Fresh live-copy uploads rehearsal PASS 41330272579:1248 assertions, 0 failures,
 exact fingerprint rollback/reapply, all 26 heading metrics, 147 FAQ geometry comparisons,
 Chair contrast 9.133/ 11.365 and both-theme behavior. Two FAQ captures visually reviewed.
@@ -88,6 +88,14 @@ D/E are already on staging38; roll E/D back before C there. Roll C back before B
 on live once applied; later touching bundles must be undone first. No hosting-
 control change, message, credential work, existing-resource deletion or agent LIVE run.
 
-D is already applied on staging38; its live preparation is draft #65 after C's
-own live apply and verification. D's current-main integration preserves A/B/C
-live code and records. Undo D/later touching bundles before earlier exact rollbacks.
+**LIVE, 2026-11-01 (supersedes preparation status):** Ryan's PR #64/run 41333582236
+applied C; snapshot bundle-c-before-20261101-175205.json and DB
+live-before-bundle-c-20261101-175150.sql verified encrypted off-site. New snippets
+SiteReviewAccessibility1320/SiteReviewUtilities1321. Origin 12 PASS; restore import 0
+90→92 intended fingerprints, no SEO drift. Initial publicpostchangeINVALID 202;
+one later retry 41336383029 completes rendered Home/client/posture/PHP checks,
+expected schema 27/23 and old-reference pixels fail. CSP41334346820 four views/0.
+Public C 41334743122:1,248 assertions/1 failure security.txt 404, other 1,247 pass.
+Do not call full suite all-pass or hosting fixed. Static payload owner-only/uninstalled.
+Actual proof docs/reviews/2026-11-01-bundle-c-live.md. D prepared in #65, not applied;
+once D applies, undo it before C. No agent main merge/LIVE dispatch.
