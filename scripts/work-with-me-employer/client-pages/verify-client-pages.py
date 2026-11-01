@@ -66,7 +66,11 @@ new_title = "Massage Services | Butsaba Dusrai, Oregon LMT"
 # seo-fixes (Ryan, 2026-10-30: "fix Services"): the description says "in Portland"; a site not changed yet still has the approved "in Mt. Tabor, Portland" wording. Either one, and the social copies must match it.
 SVC_DESC_OLD = "Thai, therapeutic and deep tissue massage with Butsaba Dusrai, LMT, in Mt. Tabor, Portland. Every session starts with your goals."
 SVC_DESC_NEW = "Thai, therapeutic and deep tissue massage with Butsaba Dusrai, LMT, in Portland. Every session starts with your goals."
-new_desc = SVC_DESC_NEW if meta(svc, "name", "description") == SVC_DESC_NEW else SVC_DESC_OLD
+SVC_DESC_BUNDLE_B = "Thai, therapeutic, deep tissue and chair massage in Portland with Butsaba Dusrai, LMT, plus corporate and group events. Every session starts with your goals."
+# Bundle B is one release: its Services description selects the same title and
+# description state on every changed page; mixed old/new metadata must fail.
+BUNDLE_B = meta(svc, "name", "description") == SVC_DESC_BUNDLE_B
+new_desc = SVC_DESC_BUNDLE_B if BUNDLE_B else (SVC_DESC_NEW if meta(svc, "name", "description") == SVC_DESC_NEW else SVC_DESC_OLD)
 t = re.search(r"<title>(.*?)</title>", svc, re.S)
 title = html.unescape(t.group(1)) if t else ""
 check("Services title", title == new_title, title)
@@ -297,16 +301,17 @@ else:
 
 # ---- Therapeutic Massage and Deep Tissue Massage: meta title and description (Ryan, 2026-10-19: "finish one and two then go to three") -----------------------------------------
 # Strict checks only where the change is in (services-meta/install-service-meta.php); the wording check always runs on whatever meta the page has.
-# portland-meta (Ryan, 2026-10-29) changed "Mt. Tabor, Portland" to "Portland" in both descriptions; a site not changed yet still holds the old one (the fifth value), which stays approved until it is.
+# portland-meta (Ryan, 2026-10-29) changed "Mt. Tabor, Portland" to "Portland" in both descriptions; a site not changed yet still holds the old one (the last value), which stays approved until Bundle B. Bundle B adds the Portland titles and keeps the Portland descriptions.
 SERVICE_META = [
-    ("Therapeutic Massage", "/therapeutic-massage/", "Therapeutic Massage | Butsaba Dusrai, Oregon LMT",
+    ("Therapeutic Massage", "/therapeutic-massage/", "Therapeutic Massage | Butsaba Dusrai, Oregon LMT", "Therapeutic Massage in Portland | Butsaba Dusrai, LMT",
      "Therapeutic massage in Portland with Butsaba Dusrai, LMT: focused work where you ask for it, with pressure and pace adjusted as you go.",
      "Therapeutic massage in Mt. Tabor, Portland with Butsaba Dusrai, LMT: focused work where you ask for it, with pressure and pace adjusted as you go."),
-    ("Deep Tissue Massage", "/deep-tissue-massage/", "Deep Tissue Massage | Butsaba Dusrai, Oregon LMT",
+    ("Deep Tissue Massage", "/deep-tissue-massage/", "Deep Tissue Massage | Butsaba Dusrai, Oregon LMT", "Deep Tissue Massage in Portland | Butsaba Dusrai, LMT",
      "Deep tissue massage in Portland with Butsaba Dusrai, LMT: slow, deliberate pressure on tight muscles, lightened whenever you ask.",
      "Deep tissue massage in Mt. Tabor, Portland with Butsaba Dusrai, LMT: slow, deliberate pressure on tight muscles, lightened whenever you ask."),
 ]
-for label, path, want_title, want_desc, old_desc in SERVICE_META:
+for label, path, old_title, bundle_b_title, want_desc, old_desc in SERVICE_META:
+    want_title = bundle_b_title if BUNDLE_B else old_title
     pg, pcode = get(path)
     check("%s page returns 200 (meta check)" % label, pcode == 200, pcode)
     m_t = re.search(r"<title>(.*?)</title>", pg, re.S)
@@ -315,9 +320,9 @@ for label, path, want_title, want_desc, old_desc in SERVICE_META:
     head_text = " ".join(filter(None, [got_title, got_desc, meta(pg, "property", "og:description"), meta(pg, "name", "twitter:description")]))
     bad_h = wt.hits(head_text, wt.VOICE + wt.CLAIMS + wt.EVIDENCE)
     check("%s title, meta/og/twitter descriptions carry no restricted wording" % label, not bad_h, bad_h)
-    if got_desc == old_desc:
+    if not BUNDLE_B and got_desc == old_desc:
         want_desc = old_desc
-    if got_title == want_title or got_desc == want_desc:
+    if BUNDLE_B or got_title in (old_title, bundle_b_title) or got_desc == want_desc:
         check("%s title is the approved one" % label, got_title == want_title, got_title)
         check("%s meta description is the approved one" % label, got_desc == want_desc, got_desc)
         check("%s og and twitter title and description follow" % label, all(meta(pg, a, n) == v for a, n, v in (("property", "og:title", want_title), ("name", "twitter:title", want_title), ("property", "og:description", want_desc), ("name", "twitter:description", want_desc))))
@@ -339,13 +344,14 @@ else:
     check("Corporate & Group Massage body found", bool(ct))
     res_cp = wt.check(cmh)
     check("Corporate & Group Massage: no restricted wording anywhere on the page (no research section: the full list applies)", not res_cp["before"] and not res_cp["research"] and not res_cp["cites"], res_cp)
-    CP_TITLE = "Corporate Chair Massage in Portland, OR | Thai Solitude"
-    CP_DESC = "On-site chair massage for employee appreciation days and workplace events in Portland, with table massage at suitable host venues. Request a quote."
+    CP_TITLE = "Corporate & Group Massage in Portland, OR | Thai Solitude" if BUNDLE_B else "Corporate Chair Massage in Portland, OR | Thai Solitude"
+    CP_DESC_BUNDLE_B = "On-site chair massage for employee appreciation days and workplace events in Portland, with table massage by arrangement at suitable host venues. Request a quote."
+    CP_DESC = CP_DESC_BUNDLE_B if BUNDLE_B else "On-site chair massage for employee appreciation days and workplace events in Portland, with table massage at suitable host venues. Request a quote."
     m_ct = re.search(r"<title>(.*?)</title>", cp_page, re.S)
     got_ct = html.unescape(m_ct.group(1)).strip() if m_ct else ""
     check("Corporate & Group Massage title and meta description are the approved ones", got_ct == CP_TITLE and meta(cp_page, "name", "description") == CP_DESC, got_ct)
     check("Corporate & Group Massage og and twitter title and description follow", all(meta(cp_page, a, n) == v for a, n, v in (("property", "og:title", CP_TITLE), ("name", "twitter:title", CP_TITLE), ("property", "og:description", CP_DESC), ("name", "twitter:description", CP_DESC))))
-    check("Corporate & Group Massage description fits one snippet (<= 160) and the title one line (<= 60)", len(CP_DESC) <= 160 and len(CP_TITLE) <= 60, "%d/%d" % (len(CP_DESC), len(CP_TITLE)))
+    check("Corporate & Group Massage description <= 160 (or the exact approved 162-character Bundle B copy) and title <= 60", (len(CP_DESC) <= 160 or (BUNDLE_B and CP_DESC == CP_DESC_BUNDLE_B and len(CP_DESC) == 162)) and len(CP_TITLE) <= 60, "%d/%d" % (len(CP_DESC), len(CP_TITLE)))
     check("Corporate & Group Massage: one h1", len(re.findall(r"<h1[ >]", cmh)) == 1)
     check("Corporate & Group Massage: licence number in the footer", "LMT-29905" in cp_page)
     check("Corporate & Group Massage: both quote buttons carry the same mailto link with a subject and a body", len(set(re.findall(r'href="(mailto:butsabad@gmail\.com\?subject=Corporate%20massage%20quote%20request&amp;body=[^"]+)"', cmh))) == 1 and len(re.findall(r'>Request a Corporate Massage Quote</a>', cmh)) == 2)
@@ -419,9 +425,11 @@ else:
     check("Chair Massage research section: no claim verbs, no we/our/us/studio", not res_cm["research"], res_cm["research"])
     check("Chair Massage source titles: no we/our/us/studio", not res_cm["cites"], res_cm["cites"])
     check("Chair Massage: H1 once", cm.count(">Chair Massage in Portland</h1>") == 1)
-    check("Chair Massage: title tag", "<title>Chair Massage | Butsaba Dusrai, Oregon LMT" in cm)
+    CM_TITLE = "Chair Massage in Portland | Butsaba Dusrai, Oregon LMT" if BUNDLE_B else "Chair Massage | Butsaba Dusrai, Oregon LMT"
+    cm_title = re.search(r"<title>(.*?)</title>", cm, re.S)
+    check("Chair Massage: title tag", bool(cm_title) and html.unescape(cm_title[1]).strip() == CM_TITLE, html.unescape(cm_title[1]).strip() if cm_title else "")
     CM_DESC = "Chair massage in Portland with Butsaba Dusrai, LMT: short, seated, fully clothed sessions for workplaces and events, with pressure adjusted as you go."
-    check("Chair Massage: meta and og descriptions", meta(cm, "name", "description") == CM_DESC and meta(cm, "property", "og:description") == CM_DESC, meta(cm, "name", "description"))
+    check("Chair Massage: meta description and matching og/twitter titles and descriptions", meta(cm, "name", "description") == CM_DESC and all(meta(cm, a, n) == v for a, n, v in (("property", "og:title", CM_TITLE), ("name", "twitter:title", CM_TITLE), ("property", "og:description", CM_DESC), ("name", "twitter:description", CM_DESC))), meta(cm, "name", "description"))
     bad_cm = [w for w in BAD if re.search(w, " ".join(filter(None, [meta(cm, "name", "description"), meta(cm, "property", "og:title"), meta(cm, "property", "og:description")])), re.I)]
     check("Chair Massage meta/og carry no restricted wording", not bad_cm, bad_cm)
     for hh in ["What Is Chair Massage?", "Common Reasons Clients Choose Chair Massage", "Who Can Benefit From Chair Massage?", "Questions About Chair Massage", "What To Expect During Your Appointment", "What the Research Says About Chair Massage"]:
@@ -498,6 +506,21 @@ if BUNDLE_A:
     check("Bundle A Corporate: Chair link and mobile shortcuts", 'href="/chair-massage/"' in cp_page and 'class="ts-corp__sticky"' in cp_page and '>Request a quote</a>' in cp_page and '>Email butsabad@gmail.com</a>' in cp_page)
 else:
     print("INFO Review Bundle A has not been applied here")
+
+# Privacy and Accessibility gain explicit metadata in Bundle B. Before that
+# release their approved auto-generated metadata remains outside these checks.
+if BUNDLE_B:
+    policy_meta = (
+        ("Privacy Policy", "/privacy-policy/", "Privacy Policy | Thai Solitude", "How Thai Solitude handles your information online and as a client of Butsaba Dusrai, LMT: no forms, no tracking, nothing sold or shared for marketing."),
+        ("Accessibility", "/accessibility/", "Accessibility | Thai Solitude", "What has been checked on thaisolitude.com for accessibility (WCAG 2.2 A and AA, October 2026), its known limitations, and how to report a barrier."),
+    )
+    for label, path, want_title, want_desc in policy_meta:
+        pg, pcode = get(path)
+        check(f"Bundle B {label}: page returns 200", pcode == 200, pcode)
+        got_title = re.search(r"<title>(.*?)</title>", pg, re.S)
+        check(f"Bundle B {label}: explicit approved title and description", bool(got_title) and html.unescape(got_title[1]).strip() == want_title and meta(pg, "name", "description") == want_desc)
+        check(f"Bundle B {label}: matching og/twitter titles and descriptions", all(meta(pg, a, n) == v for a, n, v in (("property", "og:title", want_title), ("name", "twitter:title", want_title), ("property", "og:description", want_desc), ("name", "twitter:description", want_desc))))
+        check(f"Bundle B {label}: title <= 60 and description <= 160", len(want_title) <= 60 and len(want_desc) <= 160, f"{len(want_title)}/{len(want_desc)}")
 
 print("\nRESULT: " + ("all checks passed" if not fails else f"{fails} check(s) FAILED"))
 sys.exit(1 if fails else 0)

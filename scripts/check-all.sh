@@ -92,6 +92,7 @@ gate "Availability update content matches its builder" python3 -I -B "$here/work
 gate "Booking date content matches its builder" python3 -I -B "$here/work-with-me-employer/booking-date/build-booking-date.py" --check
 gate "Chair Massage content matches its builder (and passes its wording gate)" python3 -I -B "$here/work-with-me-employer/chair-massage/build-chair-massage.py" --check
 gate "Review Bundle A exact fragments and new wording match their builder" python3 -I -B "$here/work-with-me-employer/review-a/build-bundle-a.py" --check
+gate "Review Bundle B source values and approved wording match their builder" python3 -I -B "$here/work-with-me-employer/review-b/build-bundle-b.py" --check
 
 # ---- rendered pages (read-only) ------------------------------------------------------------------------------------------------------
 if [ -n "${1:-}" ] && ! edge_msg=$("$here/work-with-me-employer/posture/edge-check.sh" "$1" 2>&1); then

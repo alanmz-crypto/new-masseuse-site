@@ -1,5 +1,7 @@
 # Project memory (snapshot for cloud sessions)
 
+- [Site review Bundle B](site-review-bundle-b.md) — 2026-11-01: search/sharing applied on staging38; rehearsal2/12-page semantic scan/rendered gates PASS; approved default/Home card; exact rollback recorded; live disabled.
+
 - [Site review Bundle A](site-review-bundle-a.md) — 2026-11-01: Bundle 0 draft and fresh staging38 capture complete; Bundle A applied/verified on staging38 (262 browser assertions, rollback proven); PR #61, live disabled.
 
 A copy of the notes Claude keeps on Ryan's computer for this project, taken 2026-10-24 with the SSH username, the login email,

@@ -62,3 +62,7 @@ Recorded in `docs/inter-model/2026-11-01-butsaba-questions.md` and open items:
 both Windy City Massage links and the reference offer may stay.
 Questions 2, 3, 4, 6 and 7 remain unanswered. This is a documentation update,
 not a site apply or live go; the applied installer/package is unchanged.
+
+**Bundle B applied afterwards (2026-11-01):** roll B back first before this
+Bundle A exact-state rollback on staging38. B changes Home/metadata/options and
+LocalBusinessInfo; see [[site-review-bundle-b]] for its snapshot and proof.
