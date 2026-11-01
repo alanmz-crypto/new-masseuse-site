@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-01 15:22 UTC  **FAIL**  `review-a-live-dry-20261101`  [reports/2026-11-01/152210-review-a-live-dry-20261101.md](reports/2026-11-01/152210-review-a-live-dry-20261101.md)  (run 41320830774)
 - 2026-11-01 12:27 UTC  **INVALID**  `review-f-capture-staging38-20261101-2`  [reports/2026-11-01/122715-review-f-capture-staging38-20261101-2.md](reports/2026-11-01/122715-review-f-capture-staging38-20261101-2.md)  (run 41306536331)
 - 2026-11-01 12:21 UTC  **FAIL**  `review-f-capture-staging38-20261101`  [reports/2026-11-01/122117-review-f-capture-staging38-20261101.md](reports/2026-11-01/122117-review-f-capture-staging38-20261101.md)  (run 41305966153)
 - 2026-11-01 12:05 UTC  **PASS**  `review-e-apply-staging38-20261101-2`  [reports/2026-11-01/120532-review-e-apply-staging38-20261101-2.md](reports/2026-11-01/120532-review-e-apply-staging38-20261101-2.md)  (run 41304509089)
