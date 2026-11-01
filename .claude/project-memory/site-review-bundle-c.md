@@ -67,12 +67,35 @@ snapshotted/restored; only Astra blog-meta is changed. Page/CSS hashes are fixed
 per allowedhost, and every replacement count is exact. No metadata/copy from B
 is regressed. Butsaba questions 2/3/4/6/7 remain pending.
 
-Bundle D is now applied on staging38 (draft PR #65). Roll D back before C/B/A;
-its exact snapshot and proof are in [[site-review-bundle-d]]. Live unchanged.
+**LIVE PREPARATION, 2026-11-01 (supersedes disabled status above):** A/B are now
+live and verified through Ryan's own runs. Existing PR #64 integrates current main
+by normal feature merge; no A/B code/card portability or live records regress.
+Fresh exact live stores/source PASS 41329640631;14 relevant implementation files
+match; scoped Privacy 1227/Accessibility 1230 and snippet settings/terms verified.
+Payload unchanged: freeze exact live 12-page/CSS hashes; Corporate's differing
+serialization is preserved and its LOCAL profile refreshed, stage hash pairs retained.
+Fresh live-copy uploads rehearsal PASS 41330272579:1248 assertions, 0 failures,
+exact fingerprint rollback/reapply, all 26 heading metrics, 147 FAQ geometry comparisons,
+Chair contrast 9.133/ 11.365 and both-theme behavior. Two FAQ captures visually reviewed.
+Actual live dry PASS 41330864816 all parts ready. Request live-review-c-20261101-1 prepared,
+not applied. Ryan reviews/merges #64 then personally runs LIVE on main; no snapshot/
+live snippet IDs until that run. After “C done”, read all proofs, Contact CSP and
+public contract. Strict security.txt private test passes, but public hosting
+stage 404/owner static fallback remains deferred and must be reported accurately;
+prepared security-live/security.txt is not pushed to server. Never call 404 a pass.
+See [[site-review-release]] / docs/reviews/2026-11-01-review-live-release.md.
+D/E are already on staging38; roll E/D back before C there. Roll C back before B/A
+on live once applied; later touching bundles must be undone first. No hosting-
+control change, message, credential work, existing-resource deletion or agent LIVE run.
 
-Fresh E origin capture (2026-11-01 10:54 UTC) confirms security.txt returns 404.
-The virtual route is not being served by SiteGround; the prepared static payload
-remains a Ryan-owned fallback under the handoff. No server file was written.
-
-Bundle E is applied on staging38 (draft PR #66). Roll E back before D/C/B/A;
-active snapshot/proof in [[site-review-bundle-e]]. Live remains unchanged.
+**LIVE, 2026-11-01 (supersedes preparation status):** Ryan's PR #64/run 41333582236
+applied C; snapshot bundle-c-before-20261101-175205.json and DB
+live-before-bundle-c-20261101-175150.sql verified encrypted off-site. New snippets
+SiteReviewAccessibility1320/SiteReviewUtilities1321. Origin 12 PASS; restore import 0
+90→92 intended fingerprints, no SEO drift. Initial publicpostchangeINVALID 202;
+one later retry 41336383029 completes rendered Home/client/posture/PHP checks,
+expected schema 27/23 and old-reference pixels fail. CSP41334346820 four views/0.
+Public C 41334743122:1,248 assertions/1 failure security.txt 404, other 1,247 pass.
+Do not call full suite all-pass or hosting fixed. Static payload owner-only/uninstalled.
+Actual proof docs/reviews/2026-11-01-bundle-c-live.md. D prepared in #65, not applied;
+once D applies, undo it before C. No agent main merge/LIVE dispatch.

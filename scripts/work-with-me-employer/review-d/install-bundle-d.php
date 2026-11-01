@@ -1,15 +1,15 @@
 <?php
 /**
- * Approved Bundle D copy corrections on staging38 / isolated localhost only.
+ * Approved Bundle D copy corrections on localhost, staging38 or authorized live.
  * Exact frozen page fragments, A11yHeartLinks, one Astra footer HTML field.
- * No new posts, files, snippets or metadata changes. No live target.
+ * No new posts, files, snippets or metadata changes. Ryan owns the live run.
  * All-or-nothing preflight; private exact snapshots; rollback refuses drift.
  * Push verifies a fresh database export off-site before apply or rollback.
  */
 if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) ) { exit( 'Run with WP-CLI.' ); }
 $home = untrailingslashit( home_url() );
 $host = (string) wp_parse_url( $home, PHP_URL_HOST ) . ( wp_parse_url( $home, PHP_URL_PORT ) ? ':' . wp_parse_url( $home, PHP_URL_PORT ) : '' );
-if ( ! in_array( $host, array( 'localhost:8090', 'staging38.thaisolitude.com' ), true ) ) { WP_CLI::error( 'Refusing target: staging38/isolated localhost only. Live disabled.' ); }
+if ( ! in_array( $host, array( 'localhost:8090', 'staging38.thaisolitude.com', 'thaisolitude.com' ), true ) ) { WP_CLI::error( 'Refusing target: localhost, staging38 or thaisolitude.com only.' ); }
 if ( 'astra' !== get_stylesheet() || ! current_user_can( 'manage_options' ) || ! current_user_can( 'unfiltered_html' ) || ! current_user_can( 'edit_css' ) || ! function_exists( 'wpcode' ) || ! class_exists( 'WPCode_Snippet' ) ) { WP_CLI::error( 'Requires Astra, WPCode and administrator --user=1.' ); }
 $args = isset( $args ) && is_array( $args ) ? $args : array();
 $mode = $args[0] ?? 'preflight';

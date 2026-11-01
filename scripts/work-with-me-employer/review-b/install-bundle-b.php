@@ -2,7 +2,7 @@
 /**
  * Review Bundle B: search metadata, linked Person/LocalBusiness, tagline and
  * Home's table-by-arrangement wording. Approved by the 2026-11-01 handoff.
- * Staging38 / isolated localhost ONLY. Ryan approved the share card in chat:
+ * Localhost, staging38, and live after Ryan's release go. Approved share card:
  * "Yes, use this card" (2026-11-01). Import once by hash and assign default/Home.
  * No existing image is removed. Rollback removes only this run's new attachment.
  *
@@ -13,8 +13,8 @@
 if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) ) { exit( 'Run with WP-CLI.' ); }
 $home = untrailingslashit( home_url() );
 $host = (string) wp_parse_url( $home, PHP_URL_HOST ) . ( wp_parse_url( $home, PHP_URL_PORT ) ? ':' . wp_parse_url( $home, PHP_URL_PORT ) : '' );
-if ( ! in_array( $host, array( 'localhost:8090', 'staging38.thaisolitude.com' ), true ) ) {
-	WP_CLI::error( 'Refusing target: localhost:8090 and staging38 only. Live disabled.' );
+if ( ! in_array( $host, array( 'localhost:8090', 'staging38.thaisolitude.com', 'thaisolitude.com' ), true ) ) {
+	WP_CLI::error( 'Refusing target: localhost:8090, staging38 and thaisolitude.com only.' );
 }
 if ( 'astra' !== get_stylesheet() || ! current_user_can( 'manage_options' ) || ! current_user_can( 'unfiltered_html' ) || ! function_exists( 'wpcode' ) || ! class_exists( '\SureRank\Inc\API\Post' ) ) {
 	WP_CLI::error( 'Requires Astra, WPCode, SureRank and administrator --user=1.' );

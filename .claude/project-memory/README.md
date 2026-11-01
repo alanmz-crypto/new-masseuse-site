@@ -1,13 +1,14 @@
 # Project memory (snapshot for cloud sessions)
 
-- [Site review Bundle E](site-review-bundle-e.md) — performance applied on staging38, draft PR #66 stacked on D; symlink rehearsal (1,664 checks), 26 origin checks, rendered gates/restore import PASS; 96.46% smaller WebP; final interactive check pending, live disabled.
+- [Site review Bundle D](site-review-bundle-d.md) — staged approved copy; PR #65 live preparation, fresh post-C source, 1,376-check exact rollback rehearsal and actual dry PASS; awaiting Ryan's own run.
 
-- [Site review Bundle D](site-review-bundle-d.md) — 2026-11-01: wording/research applied on staging38; draft PR #65 stacked on C; rehearsal2 (1,376 checks), 53 origin checks, rendered gates and restore import PASS; final public interactive check pending; live disabled.
+- [Site review Bundle C](site-review-bundle-c.md) — LIVE via Ryan's #64/run; 1,247 public assertions pass, security.txt 404 remains; CSP 4 views/0 and rendered/security/PHP checks verified, qualified reference differences and actual snapshot.
 
-- [Site review Bundle C](site-review-bundle-c.md) — 2026-11-01: applied on staging38; rehearsal2 (1,248 checks), rollback/rendered gates/CSP PASS; public full browser INVALID due host challenge; support request prepared; live disabled.
-- [Site review Bundle B](site-review-bundle-b.md) — 2026-11-01: search/sharing applied on staging38; rehearsal2/12-page semantic scan/rendered gates PASS; approved default/Home card; exact rollback recorded; live disabled.
+- [Site review release](site-review-release.md) — A/B/C LIVE; C 1,247 passing assertions/known TXT 404, rendered/CSP/PHP verified; D PR #65/request `live-review-d-20261101-1` prepared/not applied; exact phone steps and deferred work.
 
-- [Site review Bundle A](site-review-bundle-a.md) — 2026-11-01: Bundle 0 draft and fresh staging38 capture complete; Bundle A applied/verified on staging38 (262 browser assertions, rollback proven); PR #61, live disabled.
+- [Site review Bundle B](site-review-bundle-b.md) — LIVE via Ryan's PR #69/run; strict 12-page scan zero expectations, approved card 1305/SHA/1200×630; actual live snapshot, qualified reference and restore comparisons.
+
+- [Site review Bundle A](site-review-bundle-a.md) — LIVE via Ryan's PR #68/run; 262 live browser checks, origin/rendered/restore proof, exact live snapshot; historical reference pixel differences documented.
 
 A copy of the notes Claude keeps on Ryan's computer for this project, taken 2026-10-24 with the SSH username, the login email,
 Butsaba's Gmail address and Ryan's home IP masked. The computer's copy is the original. A cloud session reads the entries that

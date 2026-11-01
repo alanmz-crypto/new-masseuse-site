@@ -46,5 +46,21 @@ No SureRank rows changed; C’s `blog-meta:[]` and runtime features are preserve
 The final Cochrane comparator uses “no intervention” to satisfy shared wording
 rules; the complete author list occurs twice because two Thai papers share it.
 
-Bundle E is applied on staging38 (draft PR #66). Roll E back before D/C/B/A;
-active snapshot/proof in [[site-review-bundle-e]]. Live remains unchanged.
+**LIVE PREPARATION (supersedes disabled status):** current-main integration keeps
+A/B/C live guards/source fixes/card/records; no forced update/main merge.
+Fresh source 41335028870 verifies every D old page hash equals C's applied live
+hash, plus front 296/heart snippet code/status/meta/terms/footer. Freeze live hashes,
+refresh LOCAL Corporate serialization profile, keep stage hashes and approved 45
+pairs/research/framing/citations unchanged. No source whitespace normalization.
+Fresh live-copy uploads rehearsal 41335527679 passes1376/0 (C 1,248 + D 128), exact
+fingerprint rollback/reapply, regulated gates/no new site PHP errors; Home/About
+phone captures reviewed. Actual dry 41336033180 all 9 pages/snippet/footer readyPASS.
+Request live-review-d-20261101-1 prepared, not applied, PR #65. Mandatory origin-verifier
+and public checker guards enable exact apex with installer/push; origin 53 after own
+apply. Ryan reviews/merges #65 then personally runs LIVE main. After “D done”, review
+all reports/public D checks before E. Actual live snapshot not known yet.
+C public1247/1248 has only known security.txt 404; focused CSP 4 views/0 and later
+post-change rendered/security/PHP checks pass, reference comparisons are expected.
+Finding stays open; no static server file/hosting controls/support message.
+F/admin, E source/version rehearsal, pending facts/G/owner tasks remain separate.
+See [[site-review-release]] and docs/reviews/2026-11-01-review-live-release.md.

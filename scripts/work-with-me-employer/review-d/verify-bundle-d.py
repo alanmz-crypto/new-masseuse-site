@@ -8,8 +8,8 @@ import subprocess
 import sys
 
 base = sys.argv[1].rstrip('/')
-if base not in ('http://localhost:8090', 'https://staging38.thaisolitude.com'):
-    sys.exit('staging38 or isolated localhost only')
+if base not in ('http://localhost:8090', 'https://staging38.thaisolitude.com', 'https://thaisolitude.com'):
+    sys.exit('staging38, live or isolated localhost only')
 checks = json.loads(Path(__file__).with_name('checks.json').read_text())
 failures = 0
 total = 0

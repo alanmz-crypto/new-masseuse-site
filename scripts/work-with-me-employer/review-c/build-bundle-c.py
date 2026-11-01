@@ -17,7 +17,7 @@ def build():
     for page in data['pages'].values():
         for pair in page['pairs']:
             assert pair['old'] and pair['new'] and pair['old'] != pair['new'] and pair['count'] > 0
-        assert set(page['hashes']) == {'localhost:8090', 'staging38.thaisolitude.com'}
+        assert set(page['hashes']) == {'localhost:8090', 'staging38.thaisolitude.com', 'thaisolitude.com'}
     for cfg in data['snippets'].values():
         for kind in ['old', 'new']:
             assert hashlib.sha256(cfg[kind].encode()).hexdigest() == cfg[kind + '_sha256']
