@@ -25,7 +25,7 @@ Reports on `ops-log`:
 - [Rehearsal](https://github.com/alanmz-crypto/new-masseuse-site/blob/ops-log/reports/2026-11-01/020921-review-a-rehearse-20261101-4.md)
 - [Dry run](https://github.com/alanmz-crypto/new-masseuse-site/blob/ops-log/reports/2026-11-01/020953-review-a-dry-staging38-20261101.md)
 - [Apply, post-change tests and restore proof](https://github.com/alanmz-crypto/new-masseuse-site/blob/ops-log/reports/2026-11-01/021434-review-a-apply-staging38-20261101.md)
-- [Browser checks and inline screenshots](https://github.com/alanmz-crypto/new-masseuse-site/blob/ops-log/reports/2026-11-01/021615-review-a-browser-staging38-20261101.md)
+- [Browser checks and inline screenshots](https://github.com/alanmz-crypto/new-masseuse-site/blob/ops-log/reports/2026-11-01/021616-review-a-browser-staging38-20261101.md)
 
 The phone screenshots of the Thai closing block, Contact corporate card and
 Corporate sticky bar were decoded and visually reviewed. No clipped text or
