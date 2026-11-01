@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-01 10:54 UTC  **PASS**  `review-e-capture-staging38-20261101`  [reports/2026-11-01/105430-review-e-capture-staging38-20261101.md](reports/2026-11-01/105430-review-e-capture-staging38-20261101.md)  (run 41299411992)
 - 2026-11-01 10:49 UTC  **PASS**  `review-d-apply-staging38-20261101`  [reports/2026-11-01/104934-review-d-apply-staging38-20261101.md](reports/2026-11-01/104934-review-d-apply-staging38-20261101.md)  (run 41298800180)
 - 2026-11-01 10:43 UTC  **PASS**  `review-d-dry-staging38-20261101`  [reports/2026-11-01/104330-review-d-dry-staging38-20261101.md](reports/2026-11-01/104330-review-d-dry-staging38-20261101.md)  (run 41298704992)
 - 2026-11-01 10:42 UTC  **PASS**  `review-d-rehearse-staging38-20261101-2`  [reports/2026-11-01/104227-review-d-rehearse-staging38-20261101-2.md](reports/2026-11-01/104227-review-d-rehearse-staging38-20261101-2.md)  (run 41298400841)
