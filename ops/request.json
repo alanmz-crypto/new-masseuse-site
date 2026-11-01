@@ -1,9 +1,8 @@
 {
-  "id": "review-c-rehearse-staging38-20261101-2",
-  "op": "rehearse",
+  "id": "review-c-dry-staging38-20261101",
+  "op": "run",
   "target": "staging38",
-  "installer": "review-c/install-bundle-c.php",
-  "args": [
-    "--with-uploads"
-  ]
+  "script": "review-c/push-bundle-c.sh",
+  "args": [],
+  "tests": "auto"
 }
