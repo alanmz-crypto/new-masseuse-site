@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 const require = createRequire(process.env.TS_PLAYWRIGHT_ROOT || '/home/lauer/Projects/SubProjects/Mirror/package.json');
 const { chromium } = require('playwright');
 const base = (process.argv[2] || '').replace(/\/$/, '');
-if (!/^(https:\/\/staging38\.thaisolitude\.com|http:\/\/localhost:8090)$/.test(base)) throw new Error('staging38 or isolated localhost only');
+if (!/^(https:\/\/(?:staging38\.)?thaisolitude\.com|http:\/\/localhost:8090)$/.test(base)) throw new Error('staging38, live or isolated localhost only');
 const expected = JSON.parse(readFileSync(new URL('./checks.json', import.meta.url), 'utf8'));
 const browser = await chromium.launch();
 const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 }, reducedMotion: 'reduce' });
