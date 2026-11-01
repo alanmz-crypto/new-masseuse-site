@@ -1,8 +1,10 @@
 {
-  "id": "review-b-live-semantic-20261101",
+  "id": "review-c-live-source-20261101",
   "op": "run",
   "target": "live",
-  "script": "seo-scan/scan-seo.sh",
-  "args": [],
+  "script": "review-c/inspect-bundle-c.sh",
+  "args": [
+    "--sources-only"
+  ],
   "tests": "auto"
 }
