@@ -1,6 +1,7 @@
 # Review Bundle C — markup, accessibility and utilities
 
-Staging38 first; live disabled. Authorization: listed changes in the
+Staging38 applied/verified; live preparation is ready in PR #64, not applied.
+Authorization: Ryan's A–E release go plus the listed changes in the
 2026-11-01 handoff/review. Ryan separately approved `butsabad@gmail.com` for
 security.txt. No service facts, credentials, theme updates or existing-content
 deletions. PR #63 (Bundle B) is merged; this branch continues from its merge.
@@ -98,3 +99,27 @@ GET delivery remains unverified. Earlier HEAD was nginx 404/93 bytes; a static
 owner upload may be needed. Prepared approved staging payload:
 `security-staging38/security.txt`; no server file has been written. Do not alter
 the applied snippet directly and invalidate its exact rollback snapshot.
+
+## Live preparation (supersedes earlier disabled/draft status)
+
+A/B are live/verified. This branch integrates current main normally and retains
+A/B's approved code/card/records. C's transformations/runtime/CSS/snippets remain
+unchanged. Fresh live stores freeze exact old/new page/CSS hashes; stage hashes
+remain. Corporate differs only in whitespace/block JSON key order/terminal LF;
+HTML tokens and block attributes match, and exact live bytes are preserved.
+The isolated LOCAL Corporate profile follows that captured live serialization.
+
+Fresh source WP 7.1.4/Astra 4.14.1: all 14 relevant FAQ/Astra source files match;
+active generated styles match except hostname substitutions. Privacy 1227/Access 1230
+and both existing snippet code/meta/terms are verified; two new titles absent.
+Fresh uploads rehearsal from live PASS:1,248 assertions, 0 failures; exact rollback/
+reapply, heading/FAQ geometry, keyboard/ARIA/focus/map/strip/utilities and both themes.
+Actual live dry PASS, all parts ready. No C apply/live snapshot yet.
+
+Ryan reviews/merges #64 then starts Site ops (LIVE) from main, confirming
+`live-review-c-20261101-1`. [Full proof and exact phone steps](../../../docs/reviews/2026-11-01-review-live-release.md).
+After run: report review, Contact CSP both browsers, public C contract before D.
+The known hosting security.txt fallback stays explicitly deferred; its strict
+private test remains. Public 404 must not be called a pass. Prepared live payload
+`security-live/security.txt` is owner-only and is not in the push tar/package.
+No hosting control, static server file/rewrite flush, credential or message change.

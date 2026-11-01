@@ -69,3 +69,13 @@ PR #63 is merged. Follow-up live preparation is PR #69, not an apply.
 The selected-host source capture supports `--sources-only`; it no longer combines
 a live dump with staging plugin source. Installed SureRank's relevant APIs/rendering
 match the reviewed source; the original B payload/card and exact rollback remain.
+
+## Live record (supersedes preparation status above)
+
+LIVE through Ryan's PR #69/run `live-review-b-20261101-1` on 2026-11-01.
+Strict live 12-page scan passes with zero expectation failures; approved card is
+attachment 1305, PNG 1200×630 and exact SHA, HTTPS default/Home/social values.
+Actual snapshot `bundle-b-before-20261101-163141.json` and fresh export
+`live-before-bundle-b-20261101-163126.sql` are verified encrypted off-site.
+[Full live proof](../../../docs/reviews/2026-11-01-bundle-b-live.md). C/later touching
+bundles must be undone before B, then B before A. C is next in PR #64.

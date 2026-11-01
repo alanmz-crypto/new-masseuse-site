@@ -1,10 +1,10 @@
 # Project memory (snapshot for cloud sessions)
 
-- [Site review Bundle C](site-review-bundle-c.md) — staging applied; existing draft #64 now integrates main's verified A/B live releases for C preparation. No C live write.
+- [Site review Bundle C](site-review-bundle-c.md) — staging applied; PR #64 live preparation after verified A/B, fresh source/hash guards, 1,248-check exact rollback rehearsal and actual dry PASS; awaiting Ryan's own run.
 
-- [Site review release](site-review-release.md) — A LIVE/verified 262; B PR #69/request `live-review-b-20261101-1` prepared, not applied; fresh live-source/uploads rehearsal/dry PASS; exact phone steps and deferred work.
+- [Site review release](site-review-release.md) — A/B LIVE and verified; C PR #64/request `live-review-c-20261101-1` prepared, no C apply; exact phone steps, proof and deferred owner/security.txt items.
 
-- [Site review Bundle B](site-review-bundle-b.md) — staging verified; PR #69 live preparation after verified A, exact approved card unchanged; fresh live source/rehearsal/dry PASS; awaiting Ryan's own run.
+- [Site review Bundle B](site-review-bundle-b.md) — LIVE via Ryan's PR #69/run; strict 12-page scan zero expectations, approved card 1305/SHA/1200×630; actual live snapshot, qualified reference and restore comparisons.
 
 - [Site review Bundle A](site-review-bundle-a.md) — LIVE via Ryan's PR #68/run; 262 live browser checks, origin/rendered/restore proof, exact live snapshot; historical reference pixel differences documented.
 

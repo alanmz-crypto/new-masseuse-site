@@ -66,3 +66,24 @@ staging. Full Astra option, page SureRank rows and active-snippet settings are
 snapshotted/restored; only Astra blog-meta is changed. Page/CSS hashes are fixed
 per allowedhost, and every replacement count is exact. No metadata/copy from B
 is regressed. Butsaba questions 2/3/4/6/7 remain pending.
+
+**LIVE PREPARATION, 2026-11-01 (supersedes disabled status above):** A/B are now
+live and verified through Ryan's own runs. Existing PR #64 integrates current main
+by normal feature merge; no A/B code/card portability or live records regress.
+Fresh exact live stores/source PASS 41329640631;14 relevant implementation files
+match; scoped Privacy 1227/Accessibility 1230 and snippet settings/terms verified.
+Payload unchanged: freeze exact live 12-page/CSS hashes; Corporate's differing
+serialization is preserved and its LOCAL profile refreshed, stage hashpairs retained.
+Fresh live-copy uploads rehearsal PASS 41330272579:1248 assertions, 0 failures,
+exact fingerprint rollback/reapply, all 26 heading metrics, 147 FAQ geometry comparisons,
+Chair contrast 9.133/ 11.365 and both-theme behavior. Two FAQ captures visually reviewed.
+Actual live dry PASS 41330864816 all parts ready. Request live-review-c-20261101-1 prepared,
+not applied. Ryan reviews/merges #64 then personally runs LIVE on main; no snapshot/
+live snippet IDs until that run. After “C done”, read all proofs, Contact CSP and
+public contract. Strict security.txt private test passes, but public hosting
+stage 404/owner static fallback remains deferred and must be reported accurately;
+prepared security-live/security.txt is not pushed to server. Never call 404 a pass.
+See [[site-review-release]] / docs/reviews/2026-11-01-review-live-release.md.
+D/E are already on staging38; roll E/D back before C there. Roll C back before B/A
+on live once applied; later touching bundles must be undone first. No hosting-
+control change, message, credential work, existing-resource deletion or agent LIVE run.
