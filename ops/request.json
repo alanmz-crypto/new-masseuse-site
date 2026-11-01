@@ -1,10 +1,10 @@
 {
-  "id": "review-e-apply-staging38-20261101-2",
+  "id": "review-f-capture-staging38-20261101-2",
   "op": "run",
   "target": "staging38",
-  "script": "review-e/push-bundle-e.sh",
+  "script": "review-f/inspect-bundle-f.sh",
   "args": [
-    "--apply"
+    "--sources-only"
   ],
   "tests": "auto"
 }

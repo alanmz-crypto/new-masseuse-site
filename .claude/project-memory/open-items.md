@@ -38,6 +38,12 @@ metadata issue; active snapshot 120216 and proof in [[site-review-bundle-e]].
 Public captures passed from this runner, but final interactive verification and
 durable AntiBot resolution remain pending. security.txt is confirmed 404 on the
 origin; its static fallback remains Ryan-owned. F remains; G after November 14.
+**F is paused, not applied**, draft PR #67: all six raw option values, overrides
+and public core semantics are captured, but the required /wp-admin/ verification
+returns 403 from nginx. REST/login-form access is 200; no authentication attempted.
+Ryan’s explicit stop-for-access rule applies: no F settings/code deployment until
+an authorized admin-verification route is available. [Current status/access and
+merge order](../../docs/reviews/2026-11-01-review-fix-status.md), [[site-review-bundle-f]].
 
 ## A. Happens by itself (nothing to do)
 - **BOOKING DATE MOVED to November 14, 2026 (Ryan 2026-10-30: "Change booking begins to Nov 14th. Everywhere."; [[booking-date]]). LIVE since 2026-10-30 15:43 UTC, so the strip flips on 2026-11-14 00:00 Pacific (08:00 UTC, PST), NOT Nov 1; until it is live the text below (Nov 1) is what live does.** ~~2026-11-01 00:00 Pacific (07:00 UTC) the announcement strip flips~~ (old date): from "Currently booking corporate & group massage only." to "Now accepting corporate & group massage bookings." on nine pages. It is PHP in a WPCode snippet; the SiteGround page cache is OFF (checked 2026-10-25), so no purge is needed. See [[availability-update]].
