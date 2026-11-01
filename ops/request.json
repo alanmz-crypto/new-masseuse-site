@@ -1,10 +1,11 @@
 {
-  "id": "review-a-apply-staging38-20261101",
+  "id": "review-a-browser-staging38-20261101",
   "op": "run",
   "target": "staging38",
-  "script": "review-a/push-bundle-a.sh",
+  "script": "review-a/check-bundle-a.mjs",
   "args": [
-    "--apply"
+    "https://staging38.thaisolitude.com",
+    "inline"
   ],
   "tests": "auto"
 }
