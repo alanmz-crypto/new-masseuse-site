@@ -1,8 +1,10 @@
 {
-  "id": "review-e-live-dry-20261101",
+  "id": "review-e-live-verify-20261101",
   "op": "run",
   "target": "live",
-  "script": "review-e/push-bundle-e.sh",
-  "args": [],
+  "script": "review-e/check-live-result.mjs",
+  "args": [
+    "https://thaisolitude.com"
+  ],
   "tests": "auto"
 }
