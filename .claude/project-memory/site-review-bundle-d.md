@@ -45,3 +45,6 @@ Report `reports/2026-11-01/104934-review-d-apply-staging38-20261101.md`.
 No SureRank rows changed; C’s `blog-meta:[]` and runtime features are preserved.
 The final Cochrane comparator uses “no intervention” to satisfy shared wording
 rules; the complete author list occurs twice because two Thai papers share it.
+
+Bundle E is applied on staging38 (draft PR #66). Roll E back before D/C/B/A;
+active snapshot/proof in [[site-review-bundle-e]]. Live remains unchanged.

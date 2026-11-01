@@ -59,3 +59,6 @@ its exact snapshot is recorded in [[site-review-bundle-c]].
 
 Bundle D is now applied on staging38 (draft PR #65). Roll D back before C/B/A;
 its exact snapshot and proof are in [[site-review-bundle-d]]. Live unchanged.
+
+Bundle E is applied on staging38 (draft PR #66). Roll E back before D/C/B/A;
+active snapshot/proof in [[site-review-bundle-e]]. Live remains unchanged.

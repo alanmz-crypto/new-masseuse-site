@@ -1,6 +1,6 @@
 # Bundle E: staging38 performance
 
-**Status:** prepared; no E changes remain applied after the first staging attempt recovered. Draft PR #66 is stacked on applied D (draft PR #65). Live remains disabled. Offline gates and isolated uploads rehearsal 3 pass; staging dry run is next.
+**Status:** APPLIED on staging38, 2026-11-01 12:02 UTC. Draft PR #66 is stacked on applied D (draft PR #65). Live remains disabled and unchanged. Symlinked-uploads rehearsal 4 (1,664 browser assertions), dry2/apply2, 26 origin assertions, rendered Home/client/posture gates and restore import PASS. Final full interactive public verification and the hosting/static security.txt lanes remain pending.
 
 ## Verified source and changes
 
@@ -39,7 +39,7 @@ Rehearsal 3 PASS: apply, no-op reapply, exact rollback, reapply, rendered regula
 
 Home Deep/Thai and Therapeutic red 390px figure captures were visually reviewed: correct canonical pictures, preserved frames, no clipping. Existing Home/Services/Work With Me geometry is unchanged. Both GitHub Gates checks for source `b080f765dc69a55c08b99857519d87a4e698ae61` pass (41302663732/41302659604).
 
-Pending: staging dry/apply/origin checks and restore proof. Public interactive checks remain pending while the hosting challenge is intermittent. No public retry loop or live action.
+Staging dry/apply/origin checks and restore proof completed below. Public interactive checks remain pending while the hosting challenge is intermittent. No public retry loop or live action.
 
 Source reports:
 
@@ -83,3 +83,34 @@ exact rollback, reapply, regulated-copy gates and no new PHP errors pass.
 C 1,248 + D 128 + E 288 = 1,664 browser assertions pass. All 8 reviewed placements
 retain geometry across three widths/light+dark; delivered WebP bytes,
 responsive images, preloads and emoji absence pass. Fresh dry run before retry.
+
+## Applied staging proof
+
+| Check | Result |
+| --- | --- |
+| Host-matching symlink rehearsal 4 | PASS: 1,664 browser assertions, apply/reapply/exact rollback/reapply, regulated-copy gates |
+| Fresh dry2/apply2 | PASS: all resources ready, verified DB off-site before writing |
+| Origin image/font/emoji checks | PASS: 26 assertions; exact 21,796-byte WebP response with correct MIME/SHA |
+| Rendered Home/client/posture gates | PASS |
+| Page status/capture | All 12 checked routes 200; all 20 screenshot views captured, zero missing/problems |
+| Site PHP log | No errors, warnings or deprecations from site code |
+| Restore proof | Import exit 0; intended Home/Therapeutic, two new snippets, new-media/related rows and WPCode cache only; no SEO rows differ |
+| Reference comparisons | Expected A–E pixel differences on all 20 views; B schema 27 vs 23 unchanged, no parse errors |
+
+Active exact snapshot: `bundle-e-before-20261101-120216.json` (plaintext SHA prefix `2965d5b777b2`). Export: `staging38-before-bundle-e-20261101-120203.sql`, 6,713,520 bytes (plaintext SHA prefix `f8324db828f6`). Both verified encrypted off-site, including read-back; the earlier failed snapshot was also copied off-site before retry. The first incomplete snapshot is diagnostic only and must not be used for rollback.
+
+Runtime snippets 1342/1343 are SiteReviewPerformance/SiteReviewEmoji. The one new attachment is resolved by the exact public file path and SHA; no attachment ID is stored in the page blocks. All ten original files and existing responsive files remain unchanged. Staging screenshot heights match post-D; E’s intended image changes are confined to existing frames.
+
+Reports:
+
+- Symlink rehearsal 4: `reports/2026-11-01/115850-review-e-rehearse-staging38-20261101-4.md`.
+- Dry2: `reports/2026-11-01/120020-review-e-dry-staging38-20261101-2.md`.
+- Apply2/restore: `reports/2026-11-01/120532-review-e-apply-staging38-20261101-2.md` ([run 41304509089](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/41304509089)).
+
+Exact rollback (fresh DB/off-site copy first, drift refused):
+
+```sh
+scripts/ci/request.sh run --target staging38 --script review-e/push-bundle-e.sh --args '--rollback $HOME/private-backups/bundle-e-before-20261101-120216.json'
+```
+
+Roll E back before D/C/B/A and before older exact-state installers on its resources. Public captures succeeded from this runner; no durable AntiBot fix or final full interactive pass is claimed. security.txt still needs the handoff’s Ryan-owned static fallback; no server file was written.

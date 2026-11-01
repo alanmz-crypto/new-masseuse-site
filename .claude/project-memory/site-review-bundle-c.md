@@ -73,3 +73,6 @@ its exact snapshot and proof are in [[site-review-bundle-d]]. Live unchanged.
 Fresh E origin capture (2026-11-01 10:54 UTC) confirms security.txt returns 404.
 The virtual route is not being served by SiteGround; the prepared static payload
 remains a Ryan-owned fallback under the handoff. No server file was written.
+
+Bundle E is applied on staging38 (draft PR #66). Roll E back before D/C/B/A;
+active snapshot/proof in [[site-review-bundle-e]]. Live remains unchanged.
