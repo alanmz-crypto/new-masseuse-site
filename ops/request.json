@@ -1,10 +1,9 @@
 {
-  "id": "review-e-source-webp-staging38-20261101",
-  "op": "run",
+  "id": "review-e-rehearse-staging38-20261101-1",
+  "op": "rehearse",
   "target": "staging38",
-  "script": "review-e/inspect-bundle-e.sh",
+  "installer": "review-e/install-bundle-e.php",
   "args": [
-    "--sources-only"
-  ],
-  "tests": "auto"
+    "--with-uploads"
+  ]
 }

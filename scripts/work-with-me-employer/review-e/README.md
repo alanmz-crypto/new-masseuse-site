@@ -1,11 +1,11 @@
 # Review Bundle E (staging38 only)
 
-Preparation: large PNG conversion, reuse existing Home card images, measured
-image dimensions, two font preloads and WordPress emoji removal.
+Prepared, not applied. [Scope/proof](../../../docs/reviews/2026-11-01-bundle-e-staging38.md).
 
-`inspect-bundle-e.sh` captures fresh native stores, the seven known original
-image files’ dimensions/MIME/size/SHA and installed public WordPress core emoji
-hooks/source. It changes no WordPress stores or files and emits no EXIF.
-Actual source supersedes the review’s stale Work With Me image count.
+`changes.json` freezes four image-only replacements on Home/Therapeutic and all ten original file identities. `build-bundle-e.py` packages those, the 21,796-byte prepared 400px WebP and both PHP runtime sources. Intrinsic image dimensions/responsive attributes are added during rendering so saved core image blocks remain compatible with the editor. Two actual Work With Me images are handled; the review’s count of three was stale.
 
-No installer or E staging write yet. D is already applied; live remains disabled.
+`install-bundle-e.php` has whole-store guards, exact snapshots, SureRank preservation, and ownership-aware media/snippet cleanup. It records uploaded bytes before attachment insertion, then immediately records every created ID and full state. It preserves all original images and any reused unowned asset. `push-bundle-e.sh` defaults to read-only preflight and verifies a fresh DB off-site before any apply/rollback; it copies the completed snapshot off-site before origin checks.
+
+`check-rehearsal.mjs` runs C, D and E browser contracts on the isolated applied copy, stopping on any failure/INVALID. E measures geometry against frozen original image DOM at three widths/light+dark, verifies image responses/bytes/dimensions/srcsets, preloads and emoji absence. `verify-bundle-e.py` checks rendered origin output and delivered WebP bytes after staging apply.
+
+No live target/request. No public retry loop. Rehearse with uploads, dry run, apply with verified backup, read all reports. Exact E snapshot must be rolled back before D/C/B/A.

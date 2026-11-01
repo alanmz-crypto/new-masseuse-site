@@ -1,6 +1,6 @@
 # Project memory (snapshot for cloud sessions)
 
-- [Site review Bundle E](site-review-bundle-e.md) — preparing performance fixes on staging38; fresh image/core metadata capture next; no E site write, live disabled.
+- [Site review Bundle E](site-review-bundle-e.md) — performance prepared, draft PR #66 stacked on D; verified source, 96.46% smaller WebP and offline gates PASS; rehearsal next, no E site write; live disabled.
 
 - [Site review Bundle D](site-review-bundle-d.md) — 2026-11-01: wording/research applied on staging38; draft PR #65 stacked on C; rehearsal2 (1,376 checks), 53 origin checks, rendered gates and restore import PASS; final public interactive check pending; live disabled.
 

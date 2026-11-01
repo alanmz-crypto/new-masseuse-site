@@ -69,3 +69,7 @@ is regressed. Butsaba questions 2/3/4/6/7 remain pending.
 
 Bundle D is now applied on staging38 (draft PR #65). Roll D back before C/B/A;
 its exact snapshot and proof are in [[site-review-bundle-d]]. Live unchanged.
+
+Fresh E origin capture (2026-11-01 10:54 UTC) confirms security.txt returns 404.
+The virtual route is not being served by SiteGround; the prepared static payload
+remains a Ryan-owned fallback under the handoff. No server file was written.
