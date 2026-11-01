@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-01 02:07 UTC  **FAIL**  `review-a-rehearse-20261101-3`  [reports/2026-11-01/020712-review-a-rehearse-20261101-3.md](reports/2026-11-01/020712-review-a-rehearse-20261101-3.md)  (run 41263764588)
 - 2026-11-01 02:05 UTC  **FAIL**  `review-a-rehearse-20261101-2`  [reports/2026-11-01/020510-review-a-rehearse-20261101-2.md](reports/2026-11-01/020510-review-a-rehearse-20261101-2.md)  (run 41263617096)
 - 2026-11-01 02:02 UTC  **FAIL**  `review-a-rehearse-20261101-1`  [reports/2026-11-01/020224-review-a-rehearse-20261101-1.md](reports/2026-11-01/020224-review-a-rehearse-20261101-1.md)  (run 41263410557)
 - 2026-11-01 01:54 UTC  **PASS**  `review-a-snippet-hashes-20261101`  [reports/2026-11-01/015420-review-a-snippet-hashes-20261101.md](reports/2026-11-01/015420-review-a-snippet-hashes-20261101.md)  (run 41262964393)
