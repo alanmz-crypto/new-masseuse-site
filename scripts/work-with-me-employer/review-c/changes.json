@@ -41,6 +41,10 @@
         "localhost:8090": {
           "old": "6fc1d8444f87e3e08f1d859d1406b1c1a8ad965ab836703ea9e72e7d4bd5e136",
           "new": "fb7078793fe54a503d55f22f4b3d67d51ce169f8fca1fafd806a9da8a961e405"
+        },
+        "thaisolitude.com": {
+          "old": "6fc1d8444f87e3e08f1d859d1406b1c1a8ad965ab836703ea9e72e7d4bd5e136",
+          "new": "fb7078793fe54a503d55f22f4b3d67d51ce169f8fca1fafd806a9da8a961e405"
         }
       }
     },
@@ -77,8 +81,12 @@
           "new": "1ad6a92f302583455d2dbef9f1164f86ccc44c1556d6d2c00c7c93b850140d82"
         },
         "localhost:8090": {
-          "old": "79583cfe71b14c48961c857b7f03a5aeb15ad35f1930e9a203d9df4654cab881",
-          "new": "1ad6a92f302583455d2dbef9f1164f86ccc44c1556d6d2c00c7c93b850140d82"
+          "old": "9d83bf738827d33f9248b3452cb86c5293a5b69e9579a419f41c65e1d7f024e6",
+          "new": "8462846d7cb67fe7563ab5a19eda668d841377f68f8432b9bafae0d1e0661495"
+        },
+        "thaisolitude.com": {
+          "old": "9d83bf738827d33f9248b3452cb86c5293a5b69e9579a419f41c65e1d7f024e6",
+          "new": "8462846d7cb67fe7563ab5a19eda668d841377f68f8432b9bafae0d1e0661495"
         }
       }
     },
@@ -97,6 +105,10 @@
           "new": "437099e001a0c39c0c8478309c12730a966349bdbfaac1b0a7f75893aee55f22"
         },
         "localhost:8090": {
+          "old": "d5c6e7418f7149b8bc7d1d7a4d5f702a5b31b48950eb55aaa3b03663d7377856",
+          "new": "437099e001a0c39c0c8478309c12730a966349bdbfaac1b0a7f75893aee55f22"
+        },
+        "thaisolitude.com": {
           "old": "d5c6e7418f7149b8bc7d1d7a4d5f702a5b31b48950eb55aaa3b03663d7377856",
           "new": "437099e001a0c39c0c8478309c12730a966349bdbfaac1b0a7f75893aee55f22"
         }
@@ -119,6 +131,10 @@
         "localhost:8090": {
           "old": "5ed2c85685e3c214c70dbe3427e4683376730c618eab075f7d3e54e4e707cdb6",
           "new": "689e313d23637422a812fd88cce8789677dcb57027b26c3abb08c716f9de0922"
+        },
+        "thaisolitude.com": {
+          "old": "5ed2c85685e3c214c70dbe3427e4683376730c618eab075f7d3e54e4e707cdb6",
+          "new": "689e313d23637422a812fd88cce8789677dcb57027b26c3abb08c716f9de0922"
         }
       }
     },
@@ -137,6 +153,10 @@
           "new": "1a4a8973b6db1336ce5a37f7c8a2d7600f3db4d622771c6ceaeb2b558f3dbab0"
         },
         "localhost:8090": {
+          "old": "e522e8a1393208a3fbefff58aee06dbcecbbe2559990b7f8e3533d94b0e0e271",
+          "new": "1a4a8973b6db1336ce5a37f7c8a2d7600f3db4d622771c6ceaeb2b558f3dbab0"
+        },
+        "thaisolitude.com": {
           "old": "e522e8a1393208a3fbefff58aee06dbcecbbe2559990b7f8e3533d94b0e0e271",
           "new": "1a4a8973b6db1336ce5a37f7c8a2d7600f3db4d622771c6ceaeb2b558f3dbab0"
         }
@@ -183,6 +203,10 @@
         "localhost:8090": {
           "old": "500bd0da37807040c80e75a85967f5f6f496e9c20bdf14fd7e3bd65dd663ccfd",
           "new": "245f41073fe1de4d14f6cda83ad713890c8719c9119ada7298bfb7135eecc011"
+        },
+        "thaisolitude.com": {
+          "old": "02c8d6606944b8a9a415fd07fb7f142608cef1e00d3e97804ef1e53be28079cd",
+          "new": "f0bfaf916c918b112a640e020d51793fdb7cff7ff82f4aedeaa99a93dcfb088e"
         }
       }
     },
@@ -239,6 +263,10 @@
         "localhost:8090": {
           "old": "d5c23a6194bd51d19c12834813c544943807027467f567b9ef345d839708b43d",
           "new": "f269d51c263a19a40efb0e9bb3895e5270e1155ce903f22bc92e454767033173"
+        },
+        "thaisolitude.com": {
+          "old": "1176d520e2fa88027f81a323574ff20bfffb652b7c332ead7bef36fececa1c8d",
+          "new": "38722e5471b6c86ec63f3adb68c826e9b39ec9e14e0fc7c6ee210e4d187dc002"
         }
       }
     },
@@ -283,6 +311,10 @@
         "localhost:8090": {
           "old": "6ca6192ad0eafa8bfc763ce0f3d3d89d593ef74d692178e68f7889f58121ff8f",
           "new": "d6992422c33b8098bb46a46652a5af0deafee70910aba62dc69db3c457328231"
+        },
+        "thaisolitude.com": {
+          "old": "e4ab6483c443d1efeb8f8c537642ef9015a31c6d99e698974541b302c25ca890",
+          "new": "34c28e3337158b0b63bc198d6215aaad8c1f8e4f0b30eb12041be966df3db51d"
         }
       }
     },
@@ -309,6 +341,10 @@
         "localhost:8090": {
           "old": "1027313d69f92ac9d834e8b6a5c3d4a1e2ddccfb3d1b68a3be9508146e15d60c",
           "new": "74eb4617877eb721dffb09eb01df595236974b1e8aa266440586537af9c68452"
+        },
+        "thaisolitude.com": {
+          "old": "681878c96dd4beada9b6f39d04a86168aa1954692f0ecf172faea99041911905",
+          "new": "f036280a30a0b2ca912314b205a4dff037e112d2383b6c9817be6dbbde69ff49"
         }
       }
     },
@@ -353,6 +389,10 @@
         "localhost:8090": {
           "old": "57d3831654857449036e0f82fcbf75381dd5732dabf48c84d916ff51f6ce43b6",
           "new": "52b81604c2cd1e019732eee71a94f6977431bb3b058b1e1cdc8c6c21000f288f"
+        },
+        "thaisolitude.com": {
+          "old": "f1525aa241767f8152b625844fedcd384780a91e1f15fdce6e9eb63be6e0cdab",
+          "new": "b9946ee1c46e91958576bf5c3c209620cc80c3a5723458b11d8e8011f939532b"
         }
       }
     },
@@ -373,6 +413,10 @@
         "localhost:8090": {
           "old": "f4961b738e1c1270e05a9b7b53bed346490860ff3272a1425d135c2f018f2e25",
           "new": "08b58484b5ff02028f3e7e10ab3379fb8308ac9cb732a5af051549d9ec157659"
+        },
+        "thaisolitude.com": {
+          "old": "08839dc8e20086fe30d3bcf022522feb7eb9eb39884f43d64397a8ddb52aa291",
+          "new": "cf8356296aada17addd8d9016ad2bd6248e3227e53b6aae02dfad5ef77075621"
         }
       }
     },
@@ -405,6 +449,10 @@
         "localhost:8090": {
           "old": "1da3fabf1da411c14f44d9c44807a3dbdd8dea1e23b30eecdc73570ade494a94",
           "new": "030e757fa2f25c81a7bcf9cb36f290c9af08de5095268ca638759d16d48743c2"
+        },
+        "thaisolitude.com": {
+          "old": "e0c3fca0affe576b28ee44743f7cf1b61d7d3713562b1797e37060e02609f7aa",
+          "new": "f7b39e726b445dd592c159fba16b36f56308cb5e691815f28b330d76a0f5f63f"
         }
       }
     }
@@ -437,6 +485,10 @@
         "new": "b3dd5a8833786fd589db21b3719d0bfc0adefeacf5664fa373c3c3bb1a107b88"
       },
       "localhost:8090": {
+        "old": "a0821ad8d56dbec6cd5be3bc200c030de30acb03ee70771523bb9d9e190b6671",
+        "new": "b3dd5a8833786fd589db21b3719d0bfc0adefeacf5664fa373c3c3bb1a107b88"
+      },
+      "thaisolitude.com": {
         "old": "a0821ad8d56dbec6cd5be3bc200c030de30acb03ee70771523bb9d9e190b6671",
         "new": "b3dd5a8833786fd589db21b3719d0bfc0adefeacf5664fa373c3c3bb1a107b88"
       }

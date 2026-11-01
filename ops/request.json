@@ -1,10 +1,9 @@
 {
-  "id": "review-c-live-source-20261101",
-  "op": "run",
+  "id": "review-c-live-rehearse-20261101",
+  "op": "rehearse",
   "target": "live",
-  "script": "review-c/inspect-bundle-c.sh",
+  "installer": "review-c/install-bundle-c.php",
   "args": [
-    "--sources-only"
-  ],
-  "tests": "auto"
+    "--with-uploads"
+  ]
 }
