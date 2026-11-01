@@ -1,6 +1,6 @@
 <?php
 /**
- * Bundle C, authorized by the 2026-11-01 handoff; staging38/isolated localhost.
+ * Bundle C, authorized by the 2026-11-01 handoff and Ryan's A–E live-release go.
  * Exact page fragments, two active snippets, marked CSS, Astra blog-meta and two
  * new WPCode snippets. No existing posts/files/media are removed. security.txt
  * uses Ryan's approved public mailbox and a virtual endpoint, not a server file.
@@ -13,7 +13,7 @@
 if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) ) { exit( 'Run with WP-CLI.' ); }
 $home = untrailingslashit( home_url() );
 $host = (string) wp_parse_url( $home, PHP_URL_HOST ) . ( wp_parse_url( $home, PHP_URL_PORT ) ? ':' . wp_parse_url( $home, PHP_URL_PORT ) : '' );
-if ( ! in_array( $host, array( 'localhost:8090', 'staging38.thaisolitude.com' ), true ) ) { WP_CLI::error( 'Refusing target: staging38/isolated localhost only. Live disabled.' ); }
+if ( ! in_array( $host, array( 'localhost:8090', 'staging38.thaisolitude.com', 'thaisolitude.com' ), true ) ) { WP_CLI::error( 'Refusing target: isolated localhost, staging38 or thaisolitude.com only.' ); }
 if ( 'astra' !== get_stylesheet() || ! current_user_can( 'manage_options' ) || ! current_user_can( 'unfiltered_html' ) || ! current_user_can( 'edit_css' ) || ! function_exists( 'wpcode' ) || ! class_exists( 'WPCode_Snippet' ) ) { WP_CLI::error( 'Requires Astra, WPCode and administrator --user=1.' ); }
 $args = isset( $args ) && is_array( $args ) ? $args : array();
 $mode = $args[0] ?? 'preflight';

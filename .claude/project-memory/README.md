@@ -1,11 +1,14 @@
 # Project memory (snapshot for cloud sessions)
 
-- [Site review Bundle D](site-review-bundle-d.md) — 2026-11-01: wording/research applied on staging38; draft PR #65 stacked on C; rehearsal2 (1,376 checks), 53 origin checks, rendered gates and restore import PASS; final public interactive check pending; live disabled.
+- [Site review Bundle D](site-review-bundle-d.md) — staged wording/research verified; existing draft #65 integrates current main's A/B/C live code for ordered D preparation, no D live write.
 
-- [Site review Bundle C](site-review-bundle-c.md) — 2026-11-01: applied on staging38; rehearsal2 (1,248 checks), rollback/rendered gates/CSP PASS; public full browser INVALID due host challenge; support request prepared; live disabled.
-- [Site review Bundle B](site-review-bundle-b.md) — 2026-11-01: search/sharing applied on staging38; rehearsal2/12-page semantic scan/rendered gates PASS; approved default/Home card; exact rollback recorded; live disabled.
+- [Site review Bundle C](site-review-bundle-c.md) — staging applied; PR #64 live preparation after verified A/B, fresh source/hash guards, 1,248-check exact rollback rehearsal and actual dry PASS; awaiting Ryan's own run.
 
-- [Site review Bundle A](site-review-bundle-a.md) — 2026-11-01: Bundle 0 draft and fresh staging38 capture complete; Bundle A applied/verified on staging38 (262 browser assertions, rollback proven); PR #61, live disabled.
+- [Site review release](site-review-release.md) — A/B LIVE and verified; C PR #64/request `live-review-c-20261101-1` prepared, no C apply; exact phone steps, proof and deferred owner/security.txt items.
+
+- [Site review Bundle B](site-review-bundle-b.md) — LIVE via Ryan's PR #69/run; strict 12-page scan zero expectations, approved card 1305/SHA/1200×630; actual live snapshot, qualified reference and restore comparisons.
+
+- [Site review Bundle A](site-review-bundle-a.md) — LIVE via Ryan's PR #68/run; 262 live browser checks, origin/rendered/restore proof, exact live snapshot; historical reference pixel differences documented.
 
 A copy of the notes Claude keeps on Ryan's computer for this project, taken 2026-10-24 with the SSH username, the login email,
 Butsaba's Gmail address and Ryan's home IP masked. The computer's copy is the original. A cloud session reads the entries that

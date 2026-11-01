@@ -1,8 +1,8 @@
 {
-  "id": "live-chair-massage-1",
+  "id": "live-review-c-20261101-1",
   "op": "run",
   "target": "live",
-  "script": "chair-massage/push-chair-massage.sh",
+  "script": "review-c/push-bundle-c.sh",
   "args": [
     "--apply"
   ],
