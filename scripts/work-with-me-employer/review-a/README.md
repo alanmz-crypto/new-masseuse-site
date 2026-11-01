@@ -90,3 +90,5 @@ starts Site ops (LIVE) himself.
 Bundle G must include the five new closing date sentences: **15 total** after
 Bundle A, rather than the original ten. The Services page is now also in scope
 for that after-November-14 refresh.
+
+Verified on staging38, 2026-11-01: see `docs/reviews/2026-11-01-bundle-a-staging38.md` for all evidence and the exact rollback snapshot. Live remains disabled.

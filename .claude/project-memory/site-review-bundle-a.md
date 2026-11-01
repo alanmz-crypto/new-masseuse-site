@@ -31,8 +31,25 @@ tab roles remain until Bundle C. Older page builders describe historical
 releases; roll Bundle A back before using their exact-state rollback installers
 or rebuilding a page from them. Current-state rollback is Bundle A's snapshot.
 
-State: built, offline gates PASS; rehearsal and staging verification pending.
-No staging or live write yet. Live is explicitly absent from both allow-lists.
+State: **APPLIED and verified on staging38**, 2026-11-01 02:10–02:16 UTC.
+PR #61 is the one Bundle A lane; live disabled. Final record:
+`docs/reviews/2026-11-01-bundle-a-staging38.md` (all report links, checks,
+expected pixels, heights, exact rollback). Rehearsal 4, dry run and apply PASS;
+rendered gates and posture PASS, structured data identical, no PHP errors.
+Fourteen expected pixel differences; six identical views. Restore proof imported
+successfully and compared 88 fingerprints, with only intended differences.
+Browser: 262 assertions PASS, nine pages, four widths, light/dark. Three phone
+screenshots visually reviewed.
+
+Export `staging38-before-bundle-a-20261101-021038.sql` verified off-site before
+apply; snapshot `bundle-a-before-20261101-021051.json` also encrypted and verified.
+Exact rollback: `request.sh run --target staging38 --script review-a/push-bundle-a.sh --args '--rollback $HOME/private-backups/bundle-a-before-20261101-021051.json'`.
+No live write/request. Ryan reviews and gives his go before the live host/request
+is added to the same PR; he alone merges and starts the live run.
+
+Lesson: WP 7.1 adds `wp-block-paragraph` and group layout classes at render time.
+Match class tokens, not entire quoted attributes; rehearsal caught new brittle
+assertions before staging.
 
 Bundle G follow-up: A adds five closing “bookings begin November 14, 2026”
 sentences. After A, its date refresh must cover **15**, not the original ten,

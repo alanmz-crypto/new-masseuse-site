@@ -1,6 +1,6 @@
 # Project memory (snapshot for cloud sessions)
 
-- [Site review Bundle A](site-review-bundle-a.md) — 2026-11-01: Bundle 0 draft and fresh staging38 capture complete; Bundle A booking paths built; rehearsal/staging checks pending; live disabled.
+- [Site review Bundle A](site-review-bundle-a.md) — 2026-11-01: Bundle 0 draft and fresh staging38 capture complete; Bundle A applied/verified on staging38 (262 browser assertions, rollback proven); PR #61, live disabled.
 
 A copy of the notes Claude keeps on Ryan's computer for this project, taken 2026-10-24 with the SSH username, the login email,
 Butsaba's Gmail address and Ryan's home IP masked. The computer's copy is the original. A cloud session reads the entries that
