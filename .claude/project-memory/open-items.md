@@ -9,6 +9,14 @@ metadata:
 A phone cloud session (https://claude.ai/code, repo `alanmz-crypto/new-masseuse-site`) sees ONLY this repository: not his computer, not his global `~/.claude/CLAUDE.md`, not his local Claude memory, not convmem. Everything that must not be lost is therefore written here and in the notes this index points to.
 First message to send in a fresh phone session: **"Read .claude/project-memory/open-items.md and tell me what is due."**
 
+**2026-11-01 active review lane:** Bundle 0 is complete (Butsaba draft in
+`docs/inter-model/2026-11-01-butsaba-questions.md`, fresh staging38 dump PASS).
+Bundle A is built on `codex/2026-11-01-review-bundle-a`; rehearsal/staging checks
+are pending, with no site write yet. See [[site-review-bundle-a]]. The handoff's
+recorded “fix all” approval supersedes older “nothing prepared until he picks”
+status text below for the listed changes. Butsaba facts remain unanswered, live
+is disabled, and Ryan still owns merges and live runs.
+
 ## A. Happens by itself (nothing to do)
 - **BOOKING DATE MOVED to November 14, 2026 (Ryan 2026-10-30: "Change booking begins to Nov 14th. Everywhere."; [[booking-date]]). LIVE since 2026-10-30 15:43 UTC, so the strip flips on 2026-11-14 00:00 Pacific (08:00 UTC, PST), NOT Nov 1; until it is live the text below (Nov 1) is what live does.** ~~2026-11-01 00:00 Pacific (07:00 UTC) the announcement strip flips~~ (old date): from "Currently booking corporate & group massage only." to "Now accepting corporate & group massage bookings." on nine pages. It is PHP in a WPCode snippet; the SiteGround page cache is OFF (checked 2026-10-25), so no purge is needed. See [[availability-update]].
 - **The one-time check routine still points at 2026-11-01 07:30 UTC and CANNOT be edited by an agent (created over the API): Ryan edits it at its link to 2026-11-14 08:30 UTC, and the dates in its prompt (flip time, ids `...20261114`, branch `docs/2026-11-14-strip-flip-verified`, `push-strip-flip.sh` already uses Nov 14).** Old text: 2026-11-01 07:30 UTC a one-time cloud routine checks it (read-only): https://claude.ai/code/routines/trig_01PH2Rj5wHuq7vLHx9RuPdcQ . It opens either a one-sentence notes pull request from branch `docs/2026-11-01-strip-flip-verified` (= all nine pages flipped), or, if old text is still served after a retry, a pull request that PREPARES a cache purge (`live-strip-flip-1`). It never merges and never starts a live run. It opens its PR with the GitHub tool, not `gh` (see section G); its final message in the routine log says which method worked, so if no PR shows up, the routine link above still has the result.

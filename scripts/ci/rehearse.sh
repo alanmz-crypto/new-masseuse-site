@@ -232,6 +232,17 @@ else
   if grep -qE 'PHP (Fatal|Parse|Warning)' <<<"$new"; then check "no new PHP errors (fatal/parse/warning above)" 1; else echo "  (only notices/deprecations: reported, not failed)"; fi
 fi
 
+# Regulated copy must pass its rendered gates on the throwaway copy BEFORE a
+# staging write. This remains inside the rehearsal, before cleanup removes it.
+echo; echo "[4b] rendered copy gates on the applied throwaway copy"
+python3 -I -B "$wwm/home/verify-home.py" http://localhost:8090 > "$out/home-gates.log" 2>&1
+check "Home copy and links" $?
+tail -n 6 "$out/home-gates.log"
+python3 -I -B "$wwm/client-pages/verify-client-pages.py" http://localhost:8090 > "$out/client-gates.log" 2>&1
+check "client-page regulated copy, structure and links" $?
+grep '^FAIL' "$out/client-gates.log" || true
+tail -n 2 "$out/client-gates.log"
+
 echo; echo "[5] what the change touches (fingerprint A -> B; this is what staging will see move):"
 if cmp -s "$out/A.content" "$out/B.content"; then echo "  NOTHING moved: the installer found the change already present, or it changes something the fingerprint does not cover"
 else diff "$out/A.content" "$out/B.content" | grep '^>' | cut -f1-2 | sed 's/^> /  changed: /' | sort -u; fi

@@ -123,6 +123,11 @@ for (const p of ['/thai-massage/', '/therapeutic-massage/', '/deep-tissue-massag
   }
   const strip = await page.evaluate(() => document.querySelectorAll('.ts-corp-band').length);
   check(`${tag}: one availability strip`, strip === 1, strip);
+  const next = await page.evaluate(() => {
+    const panel = document.querySelector('.ts-review-next');
+    return panel ? { text: panel.textContent.replace(/\s+/g, ' ').trim(), links: [...panel.querySelectorAll('a')].map(a => a.getAttribute('href')) } : null;
+  });
+  if (next) check(`${tag}: Bundle A closing block agrees with the FAQ date and routes`, next.text.includes(`Corporate and group massage bookings begin ${BOOK_DATE}.`) && JSON.stringify(next.links) === JSON.stringify(['/corporate-massage-portland/', '/contact/']));
   if (p === '/thai-massage/') await page.screenshot({ path: path.join(out, `${label}-thai-faq.png`), clip: { x: 0, y: 0, width: 1280, height: 700 } });
   await ctx.close();
 }
