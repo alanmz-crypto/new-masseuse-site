@@ -16,8 +16,8 @@ Bundle A is **applied and verified on staging38**, PR #61, branch
 assertions PASS; exact rollback and expected pixels in [[site-review-bundle-a]].
 No live write or request. The handoff's
 recorded “fix all” approval supersedes older “nothing prepared until he picks”
-status text below for the listed changes. Butsaba facts remain unanswered, live
-is disabled, and Ryan still owns merges and live runs.
+status text below for the listed changes. Butsaba questions 1, 5, 8 and 9 are answered (record below); 2, 3, 4, 6 and 7
+remain unanswered. Live is disabled, and Ryan still owns merges and live runs.
 After A, Bundle G must refresh 15 booking-date sentences (the original ten plus
 five new closing blocks), including Services; still on/after November 14 only.
 
@@ -42,7 +42,7 @@ five new closing blocks), including Services; still on/after November 14 only.
 
 ## D. Decisions waiting on Ryan (no deadline; nothing guessed)
 - **Wording that goes stale after 2026-11-14 (date and pages corrected 2026-10-31):** the FAQ pairs on the Thai, Therapeutic, Deep Tissue and Chair pages ("...with bookings beginning November 14, 2026." and "Corporate and group massage bookings begin November 14, 2026."), the corporate hero line and the Work With Me "For clients" block: ten sentences that read as future once the strip says "Now accepting". Proposal: one installer run on or after the 14th swaps them to "since November 14, 2026" / "are open (since November 14, 2026)", staging38 first ([[site-review-2026-10-31]] item 3.7). Needs his OK (his rule: never reword established copy without asking).
-- **Site review 2026-10-31 ([[site-review-2026-10-31]]; report `docs/reviews/2026-10-31-site-review.md`):** ten decisions for Ryan at the top of the report (closing call-to-action blocks on the five long pages; Chair <-> Corporate links and a corporate card on Contact; Home card buttons to their own pages; the "Relief" chip; WordPress Address http -> https; the Services availability sentence; four search titles plus Privacy/Accessibility rows; after Nov 14 the past-tense wording and the page cache; the Nov 7 credentials work and four deletions). The handoff records approval for its listed staging edits. Bundle 0 and A are complete on staging38, not live (PR #61); B–F remain, G waits until November 14. The Butsaba draft is saved, not sent; her facts remain unanswered.
+- **Site review 2026-10-31 ([[site-review-2026-10-31]]; report `docs/reviews/2026-10-31-site-review.md`):** ten decisions for Ryan at the top of the report (closing call-to-action blocks on the five long pages; Chair <-> Corporate links and a corporate card on Contact; Home card buttons to their own pages; the "Relief" chip; WordPress Address http -> https; the Services availability sentence; four search titles plus Privacy/Accessibility rows; after Nov 14 the past-tense wording and the page cache; the Nov 7 credentials work and four deletions). The handoff records approval for its listed staging edits. Bundle 0 and A are complete on staging38, not live (PR #61); B–F remain, G waits until November 14. The Butsaba draft now records Ryan's answers to 1, 5, 8 and 9; 2, 3, 4, 6 and 7 remain unanswered. The agent has sent no message.
 - **"Mt. Tabor" to Portland (Ryan 2026-10-29: "We are in Portland and ready to start Thai Solitude for corporate and groups. Reconcile the website to that."; one item at a time):** item 1 SEO titles/descriptions of Home, Thai, Therapeutic, Deep Tissue = MERGED (PR #47), applied on staging38, NOT live ([[portland-meta]]); item 2 Contact Address line = MERGED (PR #48), applied on staging38, NOT live; Ryan: "Skip the map" ([[contact-address]]); item 3 Home licence line + Thai H1 + Deep Tissue H1 = on branch `feat/2026-10-29-onpage-portland`, staging38 first, NOT live ([[onpage-portland]]). STILL to do, one at a time: the map (left as is), About "From Chicago to Portland", "For Practices" rename, the "bookings begin November 1, 2026" wording after Nov 1. **LIVE since 2026-10-30 (run `live-portland-items-1-3`, all checks ok; see the three notes).**
 - **About page section "From Chicago to Portland"** ("...started Thai Solitude in Chicago in 2024... Now I am bringing Thai Solitude to Portland..."): LEFT for now. It is Butsaba's own history; the availability plan says not to keep relocation wording. Offer: draft a Portland-only version for side-by-side review, apply nothing until he approves.
 - **Home button "Ask about a session"**: left (an inquiry link; the Contact page opens with the corporate-only strip).
@@ -51,11 +51,23 @@ five new closing blocks), including Services; still on/after November 14 only.
 - **The price is settled:** $100 per service hour, no added fee exists anywhere ([[corporate-rate-100]]).
 - Search Console "Request indexing" for `/thai-massage/` (his account, his click) if he wants Google to refresh the snippet.
 
-## E. Needs Butsaba (Claude can draft one message covering all of it)
+## E. Butsaba answers and remaining questions
+
+**Received from Ryan, 2026-11-01:** #1 “20”; #5 “60 and 90”; #8 yes; #9 yes.
+The [question/answer record](../../docs/inter-model/2026-11-01-butsaba-questions.md)
+preserves the exact reply: 20-minute chair length, 60/90-minute Therapeutic,
+Deep Tissue and Thai options, call/text permission, and permission for both
+Windy City Massage links and the reference offer. This is not a live go.
+Do not infer mandatory/usual chair length or recalculate event capacity from
+“20” alone. Website consistency work is still to be prepared and rehearsed.
+
+**Still needed from that message:** #2 pregnancy; #3 table/mat, clothing and
+draping; #4 Thai at events; #6 payment/deposit/cancellation; #7 event days/times.
+
 - Confirm "No, you do not need to be flexible" (Thai FAQ). The old "Sessions take place in Mt. Tabor" and "I will reply to arrange a time" lines were REPLACED by the availability update, so those two no longer need confirming.
-- Facts nobody has stated: what she lies on, clothing, session lengths, pregnancy, techniques ([[therapeutic-page-evidence]]).
+- Still unconfirmed: what the client lies on, clothing/draping, pregnancy and techniques; session lengths are now confirmed above ([[therapeutic-page-evidence]]).
 - The three service pages' pictures show a client on a massage table while the FAQ says mat (Ryan said no new images).
-- Client-privacy facts left out of the privacy policy ([[privacy-policy-page]]); the (312) phone number has a Chicago area code (keep or replace?).
+- Client-privacy facts left out of the privacy policy ([[privacy-policy-page]]); the published (312) number is now approved for calls/texts; no replacement was requested.
 
 ## F. Older audit leftovers (low priority; verify before acting, they date from 2026-10-16 to 19)
 - WPvivid is still ACTIVE on staging27/staging30 (deactivate or delete there); SiteGround backup-list glance; June form entry; Ryan's admin click-through on live wp-admin ([[staging31-backend-audit]]).
