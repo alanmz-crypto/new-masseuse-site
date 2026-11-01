@@ -52,3 +52,17 @@ A or earlier exact-state installers on B's resources.
 Live disabled. No live request. Ryan reviews and gives his explicit live go
 before any live-enable/request preparation; he alone merges/runs live. Next
 independent lane: Bundle C; remaining five Butsaba answers stay pending.
+
+**LIVE PREPARATION, 2026-11-01 (supersedes disabled/next-C status above):** Ryan's
+A–E release go is recorded in [[site-review-release]]. A is now live/verified 262.
+PR #69 enables only B's exact live guards; approved payload/card unchanged.
+Fresh selected-live SureRank/settings source PASS, 15 relevant files identical;
+source WP 7.1.4 and CLI 8.5.12 (not web PHP). Capture now selects live consistently
+and supports sources-only without the redundant public dump.
+Uploads rehearsal from actual live PASS 41325234903: media import, exact rollback,
+no-op/reapply, pages/copy gates and no new site PHP errors. Actual dry PASS 41325524577
+all parts ready, approved asset absent. Request live-review-b-20261101-1 prepared,
+not applied; Ryan reviews/merges #69 then personally runs LIVE on main. After “B done”,
+read all automatic checks/restore differences and strict live 12-page semantic scan.
+Actual live snapshot is not yet known. See docs/reviews/2026-11-01-review-live-release.md.
+C/D/E are already applied on staging38; roll E/D/C back before B there.

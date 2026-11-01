@@ -9,29 +9,34 @@ metadata:
 A phone cloud session (https://claude.ai/code, repo `alanmz-crypto/new-masseuse-site`) sees ONLY this repository: not his computer, not his global `~/.claude/CLAUDE.md`, not his local Claude memory, not convmem. Everything that must not be lost is therefore written here and in the notes this index points to.
 First message to send in a fresh phone session: **"Read .claude/project-memory/open-items.md and tell me what is due."**
 
-**2026-11-01 current review/release lane (supersedes older live-disabled status):**
-Ryan: “How about we ship this for the moment and you look after we are live?”
-Completed A–E are approved for ordered release preparation; Ryan still owns
-every merge and LIVE run. **A is prepared, not applied**, PR #68, request
-`live-review-a-20261101-1`. Fresh live-source rehearsal/exact rollback and actual live dry2
-PASS. Merge #68, then Actions > Site ops (LIVE) > Run workflow > main > type
-the exact ID. Tell the agent “A done” so it reads the report before preparing B.
-See [[site-review-release]] and [release proof/phone steps](../../docs/reviews/2026-11-01-review-live-release.md).
+**2026-11-01 current review/release lane (supersedes older status):**
+A is **LIVE and verified** after Ryan merged #68 and ran live-review-a-20261101-1.
+Origin/rendered/posture/schema/site-error checks pass; backup import 0/intended
+differences reviewed. Historical staging36 pixel differences are documented,
+not a pixel pass; all 20 views exist. Follow-up live browser: 262 PASS and three
+phone captures reviewed. [Actual live proof/snapshot](../../docs/reviews/2026-11-01-bundle-a-live.md).
 
-A–E are applied on staging38. A/B source PRs #61/#63 are merged. C/D/E remain
-drafts #64/#65/#66; they need actual ordered live predecessor bytes/hash guards
-and fresh proof before their own release. Live's fresh rehearsal reports WP7.1.4;
-E's earlier stage source was7.1.3, so inspect/rehearse installed semantics rather
-than loosening its version guard. [Full staging proof and snapshots](https://github.com/alanmz-crypto/new-masseuse-site/blob/codex/2026-11-01-review-bundle-f/docs/reviews/2026-11-01-review-fix-status.md).
+**B is prepared, not applied, PR #69.** Under Ryan's A–E release go, he reviews/
+merges #69 then starts Actions > Site ops (LIVE) > Run workflow > main > type
+`live-review-b-20261101-1`. Fresh actual-live SureRank source, uploads rehearsal/exact
+rollback and live dry run PASS. Approved card/payload unchanged. Tell agent
+“B done” after the run for full report/semantic verification before C preparation.
+[[site-review-release]] and [phone steps/proof](../../docs/reviews/2026-11-01-review-live-release.md).
 
-**F stays paused, no option writes**, under Ryan's access rule: required admin
-HEAD returns403 while REST/login200; shipping A does not require that URL-option
-work. The intermittent robot issue and full public interactive check remain
-follow-ups; no durable host fix or support message. Staging security.txt is
-confirmed404, with owner static fallback pending. Butsaba2/3/4/6/7 remain pending;
-1/5/8/9 are recorded. G retains the November14 boundary and15 booking sentences.
-Credentials/deletions/Astra/www/menu-label and other owner tasks remain his.
-No live content, hosting control or credential was changed by preparation.
+C/D/E remain staging-applied drafts #64/#65/#66; do not merge them yet.
+Their ordered live predecessor hashes/host/verifier guards and fresh proof remain.
+Fresh live WP 7.1.4 differs from E's earlier 7.1.3; inspect installed source/rehearse,
+never merely relax its version guard. Fresh PHP 8.5.12 reading is CLI, not web.
+[Complete staging proof and snapshots](https://github.com/alanmz-crypto/new-masseuse-site/blob/codex/2026-11-01-review-bundle-f/docs/reviews/2026-11-01-review-fix-status.md).
+
+F is paused: required admin HEAD 403, REST/login 200; no option installer/write.
+The intermittent hosting issue/final later-bundle interactive checks and staging
+security.txt 404 owner static fallback remain follow-ups, with no durable bot fix,
+support message or hosting-control change. Butsaba 2/3/4/6/7 remain pending; 1/5/8/9
+are recorded, confirmed-length consistency separate. G retains November 14 timing/
+15 date sentences. Credentials/deletions/Astra/www/menu-label and owner tasks stay his.
+Agents never merge main or start LIVE. After each own run, inspect actual proof
+before the next bundle. No B live write occurred during preparation.
 
 ## A. Happens by itself (nothing to do)
 - **BOOKING DATE MOVED to November 14, 2026 (Ryan 2026-10-30: "Change booking begins to Nov 14th. Everywhere."; [[booking-date]]). LIVE since 2026-10-30 15:43 UTC, so the strip flips on 2026-11-14 00:00 Pacific (08:00 UTC, PST), NOT Nov 1; until it is live the text below (Nov 1) is what live does.** ~~2026-11-01 00:00 Pacific (07:00 UTC) the announcement strip flips~~ (old date): from "Currently booking corporate & group massage only." to "Now accepting corporate & group massage bookings." on nine pages. It is PHP in a WPCode snippet; the SiteGround page cache is OFF (checked 2026-10-25), so no purge is needed. See [[availability-update]].
