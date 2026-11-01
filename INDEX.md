@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-01 08:43 UTC  **PASS**  `review-b-rehearse-staging38-20261101-2`  [reports/2026-11-01/084347-review-b-rehearse-staging38-20261101-2.md](reports/2026-11-01/084347-review-b-rehearse-staging38-20261101-2.md)  (run 41289969039)
 - 2026-11-01 08:30 UTC  **FAIL**  `review-b-rehearse-staging38-20261101-1`  [reports/2026-11-01/083041-review-b-rehearse-staging38-20261101-1.md](reports/2026-11-01/083041-review-b-rehearse-staging38-20261101-1.md)  (run 41289068568)
 - 2026-11-01 08:10 UTC  **PASS**  `review-b-capture-staging38-20261101`  [reports/2026-11-01/081035-review-b-capture-staging38-20261101.md](reports/2026-11-01/081035-review-b-capture-staging38-20261101.md)  (run 41287611668)
 - 2026-11-01 07:31 UTC  **PASS**  `strip-flip-chk-20261101`  [reports/2026-11-01/073115-strip-flip-chk-20261101.md](reports/2026-11-01/073115-strip-flip-chk-20261101.md)  (run 41285067950)
