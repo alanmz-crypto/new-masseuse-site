@@ -385,3 +385,63 @@ Three things to fix or ask:
 - The one shortened citation title ("What are … talking about?") is deliberate (the house voice gate); leaving it is fine; the alternative is a
   narrow gate exemption for quoted titles. *Decider:* Ryan.
 The corporate share image http scheme, the Mt. Tabor map and the Home relative links were confirmed again by this lens (sections 5.2, 3.12, 2.1).
+
+## 13. Added 2026-11-01: visual pass, stored content, and the history check
+
+**The history check.** Every P1 and P2 item above was searched for in the notes, the Fix Checklist and the registers. The "known" labels hold.
+Three corrections: (a) 3.11 ("bringing Thai Solitude to Portland") is a decision Ryan made on 2026-10-30 ("stays in the About page"), so it is
+a standing offer of a side-by-side draft, not a fix; (b) 3.13 (research sentences above the research heading) is the structure Ryan chose to keep
+twice, so only the additive caveat sentence is on the table; (c) 3.5 session lengths: Ryan stated "60 and 90 minutes" on 2026-10-04 together
+with "publish nothing until the room is ready", and the Thai page publishes them anyway, so the choice is his: take them off Thai until the room
+exists, or add them to Therapeutic and Deep Tissue.
+
+**Visual pass over the 24 screenshots.**
+- **The four service pages are not the same shape (P1 for "seamless").** Thai and Deep Tissue run What Is > Common Reasons > What To Expect >
+  Questions > Research; Therapeutic runs What Is > Common Reasons > Who Can Benefit > FAQ with no heading > What To Expect > Research; Chair
+  adds Who Can Benefit and puts Questions before What To Expect. Therapeutic and Chair also paint their middle section stone while Thai and
+  Deep Tissue stay cream, and the stone band ends 4 px under a heading. *Proposal:* add the missing Therapeutic heading now (6.2); with Ryan's
+  OK, move the FAQ after What To Expect on Therapeutic and Chair and pick one background for all four (one CSS rule each way). *Decider:* Ryan.
+- **The same illustration appears three to five times per page (P2).** Thai: the hero plus two copies; Therapeutic: the hero plus four tinted
+  copies ("The same illustration in green tones" ...); Deep Tissue: the hero plus two. On phones the first copy sits directly under the hero.
+  *Proposal:* hide the first copy on phones with page-scoped CSS; on desktop let the copies fill their column or drop the repeats (Ryan's call;
+  no new images needed). *Decider:* Ryan.
+- **Lines of 160 to 190 characters on desktop (P2).** The research intro, every open research panel and the "Before your session ..." paragraph
+  span the full 1,200 px content width on the four service pages and Services. *Proposal:* a page-scoped `max-width: 46rem; margin: auto` rule
+  for those paragraphs and the details panels (about 90 characters a line). *Decider:* Ryan (changes the established full-width look).
+- **Three pictures sit in white boxes on the cream and stone pages (P2):** the corporate illustration (Home, Services, the corporate page's
+  520 px rectangle), the chair watercolor (Chair hero, Services row) and the "Your Session" duotone. *Proposal:* light mode only,
+  `mix-blend-mode: multiply` on those three images (white becomes the page colour, the painting is unchanged); dark mode keeps the box.
+  *Decider:* Ryan.
+- **Three illustration styles in one list (P2).** Services rows mix flat grainy illustrations, a painterly one, two watercolors on white and a
+  magenta duotone; Home mixes a watercolor with three flat ones. *Proposal now:* give the Home corporate figure the same 6:5 frame as its
+  neighbours (one CSS rule) plus the blend above; later, one matched set is Ryan's call.
+- **Corporate FAQ heading off-centre on desktop (P2).** `.ts-corp h2 { max-width: 44rem }` boxes the centred "Questions About Corporate
+  Massage" heading to the left while its separator is centred. *Proposal:* one CSS line (`max-width: none` for that block). Prepare now.
+- **Contact map block (P2).** Last on the page, after the employers panel, while the jump row says "Contact details · Map · For employers"; no
+  heading; blank cream slot when the embed does not paint. *Proposal:* a "Map" heading with one line "Portland, OR. Open in Google Maps" above
+  it, and the jump plan reordered. The map itself stays (Ryan). Prepare now.
+- **Smaller (P3).** Contact's three one-line facts each get a full-width panel on desktop (a row of three cards would match the corporate
+  page). Work With Me on phones ends with a 74 px cream strip under the dark footer (the reserved space for the sticky bar; one CSS line). The
+  Services hero clips the top of the avatar's head where About shows it whole (`object-position: center top`, page-scoped). The research
+  panels and the FAQ accordions on one page use different markers and type. The jump-link row is the smallest text on every page.
+
+**Stored content and CSS.**
+- **Template comments still stored on three service pages (P2).** Thai, Therapeutic and Deep Tissue start with the classic-editor line
+  `<!-- ... Single Service Page Template / TO ADAPT FOR OTHER SERVICES, SWAP ... -->` and carry `<!-- HERO SECTION -->`, `<!-- INTRO + SERVICE
+  SECTIONS WRAPPER -->`, `<!-- PROCESS CARDS SECTION -->` paragraphs; Home has an empty paragraph block. Invisible to visitors, on the Fix
+  Checklist since October 4. *Proposal:* one exact-match delete installer with snapshot and rollback. *Decider:* Ryan (deletion of markup).
+- **The business schema is stored three times (P2).** SureRank's global schema, stale per-page copies on Home, About and Contact saved in June
+  (their Organization lacks the phone and languages the global one has, which is the About/Contact difference in 4.4), and snippet 1023.
+  *Proposal:* delete the three per-page `surerank_settings_schemas` rows (snapshot first) so every page uses the global one, and link the
+  snippet's LocalBusiness to the Organization. *Decider:* Ryan; prepare now.
+- **Dead CSS on every page (P3).** The Additional CSS (58 KB, inlined into all 12 pages) still holds the "Coming soon" rules in three places,
+  six footer info-box rules and three Work With Me classes that match nothing. *Proposal:* a CSS-only installer with exact rollback.
+- **Housekeeping (P3).** The site timezone is unset (UTC), so the copyright year, the schema dates and cron run on UTC (only the strip names
+  its zone): Settings > General > Timezone = Los Angeles. The retina-logo option points at a file that is not in the media library (inert).
+  The strip-flip checker tests nine pages and skips Chair (one line in `availability/push-strip-flip.sh`). The corporate page has section
+  anchors but no jump-link plan (one line in the snippet, Ryan's call on the row). 23 block ids are shared between pages (Services and Deep
+  Tissue share 20), so any CSS keyed by a block id must be page-scoped; add that rule to AGENTS.md rather than regenerate ids. Orphan post
+  meta from deleted plugins is harmless.
+
+**Checked and found fine by these two lenses:** every jump link resolves on all ten pages; the strip's page list is exactly the ten client
+pages; all 105 outbound links resolve (section 12); no retracted or dead sources.

@@ -15,9 +15,8 @@ offered two options, pick the one it lists first unless this file says otherwise
    `target-content-may-be-newer.md`, `siteground-bot-challenge.md`, `chair-massage-page.md` (installer lessons), `seo-fixes.md` (SureRank rows and
    the on-page insertion), `contact-address.md` / `onpage-portland.md` (exact-replacement pattern), `accessibility-page.md` (CSS block and snippet
    patterns), `booking-date.md` (date-aware copy), `banned-words-research-exception.md`.
-3. `docs/reviews/2026-10-31-site-review.md`: the whole thing. Item numbers below refer to its sections. If it has a section 12 (the four lenses
-   that were still running when this handoff was written: research integrity, outbound links, visual pass, storage and CSS), those items are in
-   scope too, with the same rules.
+3. `docs/reviews/2026-10-31-site-review.md`: the whole thing, sections 12 and 13 included (research integrity, outbound links, the visual pass,
+   stored content and CSS, and the history check's three corrections). Item numbers below refer to its sections.
 4. `ops/README.md` and `scripts/ci/request.sh` (how a cloud session asks GitHub Actions for server work).
 
 ## 2. Facts about the environment you will be in
@@ -87,12 +86,13 @@ corporate card plus the jump-link plan entry; 1.4 move the Chair and Corporate r
 2.1 the Home card buttons (href and label per the review; root-relative about/ and contact/); 2.2 (b) the "Other services:" line on the four
 service pages (the footer services menu is 2.2 (a): do it as a footer WIDGET block addition only if the footer layout can be measured
 unchanged at 30 widths, as the corporate menu work did; otherwise leave it and say so); 8.1 the About next-step block; 3.6 the Services
-availability sentence. Gates to update: `home/verify-home.py` (new hrefs and labels), `verify-client-pages.py` (new blocks), `check-availability-update.mjs`.
+availability sentence; section 13: the Contact "Map" heading and line with the jump plan reordered, and the corporate page jump-link plan. Gates to update: `home/verify-home.py` (new hrefs and labels), `verify-client-pages.py` (new blocks), `check-availability-update.mjs`.
 
 **Bundle B, search and sharing (SureRank rows, snippet LocalBusinessInfo, one option):**
 4.1 the four titles; 4.2 Privacy and Accessibility titles and descriptions; 4.3 Services description; 4.4 snippet 1023: add image, logo, email,
 description, areaServed Portland, founder `#person`, drop `postalCode`; set the Tagline option to "Thai, Therapeutic and Deep Tissue Massage with
-Butsaba Dusrai, LMT"; 5.2 corporate `facebook_image_url` to https; 3.9 the corporate description "with table massage by arrangement at suitable
+Butsaba Dusrai, LMT"; delete the three stale per-page `surerank_settings_schemas` rows on Home, About and Contact (section 13; snapshot first)
+and link the snippet's LocalBusiness to the Organization; 5.2 corporate `facebook_image_url` to https; 3.9 the corporate description "with table massage by arrangement at suitable
 host venues." SureRank's global Person entity (4.4) is a settings screen: prepare the option value if you can read the key with
 `seo-scan/plugin-keys.sh`, otherwise give Ryan the tap-by-tap steps. 4.5 share image: build a 1200 x 630 brand card from the existing logo and
 the text "Thai Solitude · Massage in Portland, OR" (no photo, no new illustration), show it to Ryan in the PR, and set it as SureRank's default
@@ -109,6 +109,12 @@ Home hearts row gap) and the shorter strip on phones; 4.6 the 404 links snippet,
 filter); 5.5 the head cleanup snippet (RSD, oEmbed discovery, shortlink) and `security.txt` (ask Ryan which mailbox; the file is a static file in
 the web root, so it is his to upload unless a snippet serves `/.well-known/security.txt` through a rewrite). Also the Accessibility statement v5
 (page 1230): "and Chair Massage" in both sentences, the date, and a line naming the new panels, built with the `accessibility/` v3 pattern.
+Section 13 layout items, all CSS in the Additional CSS with page scoping (23 block ids are shared between pages): the corporate FAQ heading
+centring, the three white-box pictures (`mix-blend-mode: multiply`, light mode only), the Home corporate figure's 6:5 frame, the Services hero
+`object-position: center top`, the Work With Me cream strip under the footer, the readable measure (`max-width: 46rem`) for the research
+paragraphs and panels on the five long pages, hiding the first repeated illustration on phones, one background colour for the middle of all
+four service pages (pick cream, the Thai/Deep Tissue look) and the FAQ moved after "What To Expect" on Therapeutic and Chair (an installer that
+moves blocks: snapshot, exact rollback). Measure before/after at 30 widths as the corporate menu work did and name every page whose height changes.
 
 **Bundle D, wording (page content, exact replacements):**
 3.10 "Relief" to "Ease" (block label + span, and the key in snippet A11yHeartLinks; add `wording_tiers.BAD` to `verify-home.py`); 3.8 the two
@@ -120,7 +126,12 @@ heading "Nurses, Hospital Staff and Caregivers", the Deep Tissue duplicate healt
 review section 12: the five research-fidelity edits (the 2003 review sentence on three pages, the 2024 qualifier on two, the Cochrane low-back
 phrase on two, the four study styles on Therapeutic, the two Cochrane citations in one form with full author lists) and the AHA href on Work
 With Me (leave the shortened citation title as it is). Do NOT touch serial commas, Title Case or number styles site-wide (3.14's last sentences): too much churn for the
-value; list them as declined in the PR. For "bi-weekly" read the cited abstract first and write what it says. The Chair page is built by
+value; list them as declined in the PR. For "bi-weekly" read the cited abstract first and write what it says. Two items the history check marked as Ryan's earlier decisions: 3.11
+(the About section stays, his words on 2026-10-30) and 3.13 (the research sentences above the heading): do NOT change them under "fix all";
+put the side-by-side draft for 3.11 and the one caveat sentence for 3.13 in the Bundle D PR as questions and wait for his answer. 3.5 session
+lengths: Ryan said "60 and 90 minutes" but "publish nothing until the room is ready"; ask him whether to take them off the Thai page or add
+them to the other two. Also in this bundle: the exact-match delete of the template comments and empty paragraph (section 13, invisible markup)
+and the dead-CSS installer (coming-soon, footer info-box and unused Work With Me rules). The Chair page is built by
 `chair-massage/build-chair-massage.py`: change the builder and its content file in the same commit as the installer so the "content matches its
 builder" gate stays green; the exact-state check in `install-chair-massage.php` will no longer match the live page after this bundle, so its
 rollback path is retired (say so in the chair note).
@@ -134,7 +145,8 @@ italic font and the inline CSS alone (declined / no safe fix).
 **Bundle F, WordPress options (one installer, options table):**
 5.1 `siteurl` and `home` to `https://thaisolitude.com` (snapshot both; staging38 first, confirm wp-admin still loads there; the menu items keep
 their stored http links, which WordPress rewrites on output, so leave them); 5.5 Discussion defaults (`default_comment_status` closed,
-`default_ping_status` closed, pingback flag off), `show_avatars` 0. Re-run the dump afterwards and confirm `/wp-json/` shows https and
+`default_ping_status` closed, pingback flag off), `show_avatars` 0; `timezone_string` = America/Los_Angeles (section 13; the strip names its own
+zone, so its wording cannot change: check it anyway); clear the inert retina-logo option. Re-run the dump afterwards and confirm `/wp-json/` shows https and
 `/wp-json/wp/v2/users` has no `avatar_urls`.
 
 **Bundle G, after 2026-11-14 only:**
@@ -146,7 +158,9 @@ in the push script).
 **Ryan only (list them in the final PR, tap by tap, do not do them):** 5.3 credentials and 2FA (from 2026-11-07, at a computer); 5.4 deletions
 (readme.html, the ten draft snippets, the two inactive plugins and their leftovers, `Default.html`, the ten unused media files); the Astra
 update; the www redirect in Site Tools (4.6); the HSTS preload decision; the domain mailbox decision (5.5); the "For Practices" menu label
-(open-items D; he has not chosen); anything that needs a fact from Butsaba.
+(open-items D; he has not chosen); a matched set of service illustrations (section 13, new pictures); anything that needs a fact from Butsaba.
+Repository-only fixes you can do in Bundle 0 without any site write: add `chair-massage` to `availability/push-strip-flip.sh` (it tests nine pages),
+and the AGENTS.md rule that CSS keyed by a block id must be page-scoped.
 
 ## 5. Things that are easy to get wrong here
 

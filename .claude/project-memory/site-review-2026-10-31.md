@@ -13,8 +13,11 @@ external fetchers such as Tavily return stale cached copies), so live was captur
 `site-dump-live-2` (12 sitemap pages as served, 30 probes, 60 asset HEADs, read-only WP-CLI listings incl. stored page content, SureRank rows, snippets,
 Additional CSS) and `site-shots-live-1` (24 full-page screenshots printed inline as base64, because the run artifact on Azure blob storage is out of
 reach). Eight review lenses produced 139 findings; the P1/P2 ones were verified by hand against the capture and the notes. Report:
-`docs/reviews/2026-10-31-site-review.md` (top ten first, then by theme, lanes at the end). Four more lenses (research integrity, outbound links,
-visual pass, stored content/CSS) were cut short by the account's usage limit twice; a second run was started and its results, if any, get appended.
+`docs/reviews/2026-10-31-site-review.md` (top ten first, then by theme, lanes at the end). The four remaining lenses (research integrity, outbound links, visual pass, stored content/CSS) and a history check of every P1/P2 item
+finished on 2026-11-01 and are sections 12 and 13 of the report: research sentences sound (five fidelity edits), all 105 outbound links resolve,
+the four service pages are not the same shape (FAQ position, missing Therapeutic heading, stone vs cream), repeated illustrations, 160-190
+character lines, template comments still stored, the business schema stored three times, timezone unset. The history check confirmed the known
+labels and marked 3.11 and 3.13 as Ryan's earlier decisions (ask, do not change).
 
 **Top findings (all need Ryan's word; nothing prepared yet):** the four service pages and Services end with no call to action; Chair and Corporate
 never link to each other and Contact has no corporate path; Home's three "Services" card buttons still go to the overview (Fix Checklist P1 since
