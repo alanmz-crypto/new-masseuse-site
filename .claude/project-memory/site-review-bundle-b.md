@@ -29,7 +29,7 @@ Import once by SHA; assign global fallback and Home URL. Retain existing images;
 exact rollback removes only this snapshot's newly created attachment after restoring
 old settings. Rehearsal requires uploads. This is staging authorization, not live go.
 
-State: **APPLIED on staging38**, 2026-11-01 08:46 UTC, PR #63.
+State: **APPLIED on staging38**, 2026-11-01 08:46 UTC, PR #63 is merged (Ryan reported it; GitHub confirmed merge52e7d6a on 2026-11-01).
 Uploads rehearsal2, dry run, apply and strict semantic scan PASS. All 12 pages
 answer 200; zero metadata/entity/card expectation failures. Home OG/Twitter and
 global fallback reference approved attachment 1314 at
@@ -49,6 +49,6 @@ Rollback refuses any captured-store or new-media post/meta/file drift and restor
 settings before removing only this snapshot's new attachment. Roll B back before
 A or earlier exact-state installers on B's resources.
 
-Live disabled. No live request. Ryan reviews and gives his explicit live go
-before any live-enable/request preparation; he alone merges/runs live. Next
+Live disabled. No live request. PR #63 is merged; live-enable/request preparation now needs a follow-up PR
+after Ryan's explicit live go. He alone merges/runs live. Next
 independent lane: Bundle C; remaining five Butsaba answers stay pending.

@@ -243,6 +243,16 @@ check "client-page regulated copy, structure and links" $?
 grep '^FAIL' "$out/client-gates.log" || true
 tail -n 2 "$out/client-gates.log"
 
+# Optional package-owned browser gate. It runs only on the isolated applied
+# copy, before cleanup, and must pass before any staging write is authorized.
+extra="$wwm/$(dirname "$inst")/check-rehearsal.mjs"
+if [ -f "$extra" ]; then
+  echo; echo "[4c] package browser checks on the applied throwaway copy"
+  node "$extra" http://localhost:8090 > "$out/package-browser.log" 2>&1
+  check "package browser checks" $?
+  grep -E '^(FAIL|INVALID|Bundle C:|CONTRAST|LAYOUT|MIN_CONTRAST|HEADING|HEIGHT|INFO)' "$out/package-browser.log" || true
+fi
+
 echo; echo "[5] what the change touches (fingerprint A -> B; this is what staging will see move):"
 if cmp -s "$out/A.content" "$out/B.content"; then echo "  NOTHING moved: the installer found the change already present, or it changes something the fingerprint does not cover"
 else diff "$out/A.content" "$out/B.content" | grep '^>' | cut -f1-2 | sed 's/^> /  changed: /' | sort -u; fi

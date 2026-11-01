@@ -31,6 +31,22 @@ def meta(page, attr, name):
     return html.unescape(m.group(1)) if m else None
 
 
+def has_block_heading(source, block_id, label):
+    starts = list(re.finditer(r'<div\b[^>]*class="[^"]*\buagb-block-' + re.escape(block_id) + r'\b[^"]*"[^>]*>', source))
+    if len(starts) != 1:
+        return False
+    heading = re.match(r'\s*(?:<div\b[^>]*class="[^"]*\buagb-separator\b[^"]*"[^>]*>\s*</div>\s*)?<h3\b[^>]*class="[^"]*\buagb-heading-text\b[^"]*"[^>]*>(.*?)</h3>', source[starts[0].end():], re.S)
+    return bool(heading) and text_of(heading[1]) == label
+
+
+def has_c_runtime(source):
+    return bool(re.search(r'<script\b[^>]*\bid=["\']ts-accessibility-runtime["\']', source))
+
+
+def strip_tags(source):
+    return re.findall(r'<div\b[^>]*class="[^"]*\bts-corp-band\b[^"]*"[^>]*>', source)
+
+
 import importlib.util
 import os
 _spec = importlib.util.spec_from_file_location("wording_tiers", os.path.join(os.path.dirname(os.path.abspath(__file__)), "wording_tiers.py"))
@@ -89,6 +105,7 @@ check("Therapeutic Massage returns 200", code == 200, code)
 main = re.search(r"<main.*?</main>", th, re.S)
 mh_th = main.group(0) if main else ""
 tt = text_of(mh_th)
+BUNDLE_C = has_c_runtime(svc) or has_c_runtime(th) or any(text_of(h) == "Questions About Therapeutic Massage" for h in re.findall(r'<h2\b[^>]*>(.*?)</h2>', th, re.S))
 check("page body found", bool(tt))
 res_th = wt.check(mh_th)
 q = "Can I Ask You to Focus on My Neck and Shoulders?"
@@ -379,7 +396,7 @@ for keep in ["Start — From November 1 · open for days, evenings and weekends"
     check("Work With Me: kept as it was: %r" % keep[:48], keep in wm)
 check("Work With Me: the repeated résumé links are all still there (3)", wwm_page.count("Butsaba_Dusrai_LMT_Resume_License.pdf") >= 3, wwm_page.count("Butsaba_Dusrai_LMT_Resume_License.pdf"))
 check("Work With Me: no 'Relocating from Chicago' wording", "Relocating" not in wm and "relocating" not in wm)
-check("Work With Me: no announcement strip (it is an employment page)", '<div class="ts-corp-band">' not in wwm_page)
+check("Work With Me: no announcement strip (it is an employment page)", not strip_tags(wwm_page))
 home_page, _ = get("/")
 check("The 'For Practices' menu label is unchanged", ">For Practices</a>" in home_page)
 if SCHED in wm:
@@ -389,8 +406,8 @@ if SCHED in wm:
           wm.count("Corporate and group massage bookings begin " + BOOK_DATE + "; individual appointments at a dedicated Thai Solitude location are planned for summer 2027.") == 1)
     for label, path in (("Home", "/"), ("About", "/about/"), ("Services", "/services/"), ("Contact", "/contact/"), ("Thai Massage", "/thai-massage/"), ("Therapeutic Massage", "/therapeutic-massage/"), ("Deep Tissue Massage", "/deep-tissue-massage/")):
         pg, c = get(path)
-        check("%s: returns 200 and holds exactly one availability strip" % label, c == 200 and pg.count('<div class="ts-corp-band">') == 1, c)
-        bt = text_of(re.search(r'<div class="ts-corp-band">.*?</div></div>', pg, re.S).group(0)) if '<div class="ts-corp-band">' in pg else ""
+        check("%s: returns 200 and holds exactly one availability strip" % label, c == 200 and len(strip_tags(pg)) == 1, c)
+        bt = text_of(re.search(r'<div\b[^>]*class="[^"]*\bts-corp-band\b[^"]*"[^>]*>.*?</div>\s*</div>', pg, re.S).group(0)) if strip_tags(pg) else ""
         check("%s: the strip names the availability, links to the corporate page and avoids the house-list words" % label,
               ("Currently booking corporate & group massage only." in bt or "Now accepting corporate & group massage bookings." in bt) and "summer 2027" in bt and "/corporate-massage-portland/" in pg
               and not wt.hits(bt, wt.VOICE + wt.CLAIMS + wt.EVIDENCE), bt[:60])
@@ -405,7 +422,7 @@ if SCHED in wm:
     ctxt = text_of(cp)
     check("Corporate page: states that bookings begin %s, and that events are scheduled around her work commitments" % BOOK_DATE,
           ctxt.count("Corporate and group massage bookings begin " + BOOK_DATE + ". Arranged through an organization or venue at a shared location.") == 1 and ctxt.count(SCHED) == 1)
-    check("Corporate page: no strip on the page itself", '<div class="ts-corp-band">' not in cp)
+    check("Corporate page: no strip on the page itself", not strip_tags(cp))
 else:
     print("INFO Work With Me and availability: the update is not on this site yet (the parts the plan says to keep were checked above)")
 
@@ -434,7 +451,7 @@ else:
     check("Chair Massage meta/og carry no restricted wording", not bad_cm, bad_cm)
     for hh in ["What Is Chair Massage?", "Common Reasons Clients Choose Chair Massage", "Who Can Benefit From Chair Massage?", "Questions About Chair Massage", "What To Expect During Your Appointment", "What the Research Says About Chair Massage"]:
         check("Chair Massage: heading %r once" % hh, ct.count(hh) == 1)
-    check("Chair Massage: the strip under the header, once", cm.count('<div class="ts-corp-band">') == 1)
+    check("Chair Massage: the strip under the header, once", len(strip_tags(cm)) == 1)
     check("Chair Massage: the jump-links row with four targets", len(re.findall(r'<nav [^>]*class="ts-jump"', cm)) == 1 and all(('href="#%s"' % a) in cm and ('id="%s"' % a) in cm for a in ("ts-what-it-is", "ts-common-reasons", "ts-who-can-benefit", "ts-what-to-expect")))
     check("Chair Massage: the safety sentence once (in the paragraph before the steps)", ct.count("New numbness, weakness, unexplained swelling or radiating pain means you should see a doctor before massage.") == 1)
     for qq in ["Do I Need to Undress for Chair Massage?", "How Long Is a Chair Massage?", "What Is the Massage Chair Like?", "Is Chair Massage the Same as a Mechanical Massage Chair?", "How Much Pressure Will You Use?",
@@ -521,6 +538,51 @@ if BUNDLE_B:
         check(f"Bundle B {label}: explicit approved title and description", bool(got_title) and html.unescape(got_title[1]).strip() == want_title and meta(pg, "name", "description") == want_desc)
         check(f"Bundle B {label}: matching og/twitter titles and descriptions", all(meta(pg, a, n) == v for a, n, v in (("property", "og:title", want_title), ("name", "twitter:title", want_title), ("property", "og:description", want_desc), ("name", "twitter:description", want_desc))))
         check(f"Bundle B {label}: title <= 60 and description <= 160", len(want_title) <= 60 and len(want_desc) <= 160, f"{len(want_title)}/{len(want_desc)}")
+
+if BUNDLE_C:
+    about_c, about_code = get("/about/")
+    contact_c, contact_code = get("/contact/")
+    privacy_c, privacy_code = get("/privacy-policy/")
+    access_c, access_code = get("/accessibility/")
+    c_pages = {"home": home_page, "services": svc, "thai-massage": thm, "therapeutic-massage": th,
+               "deep-tissue-massage": dtp, "chair-massage": cm, "corporate-massage-portland": cp_page,
+               "about": about_c, "contact": contact_c, "privacy-policy": privacy_c, "accessibility": access_c,
+               "work-with-me": wwm_page}
+    check("Bundle C: About, Contact, Privacy and Accessibility return 200", all(c == 200 for c in (about_code, contact_code, privacy_code, access_code)))
+    for slug, pg in c_pages.items():
+        check(f"Bundle C {slug}: accessibility runtime present", has_c_runtime(pg))
+        if slug not in ("corporate-massage-portland", "work-with-me"):
+            strips = strip_tags(pg)
+            check(f"Bundle C {slug}: one named booking-notice landmark", len(strips) == 1 and 'role="region"' in strips[0] and 'aria-label="Booking notice"' in strips[0])
+    semantic_headings = {
+        "home": (("e6d24376", "Experience"), ("0a8b3bc1", "Clear Communication"), ("eee8f105", "Thai and Therapeutic Training")),
+        "services": (("2c1fc22f", "Consultation and Assessment"), ("3e2e789f", "Planning the Session"), ("4fdc0b6f", "The Massage"), ("3b941aaf", "After the Session")),
+        "thai-massage": (("6c30a7ff", "Consultation and Assessment"), ("0422be24", "Personalized Session Plan"), ("863c3724", "Thai Massage Session"), ("cf15aaf5", "Post-Session Guidance")),
+        "therapeutic-massage": (("b0f9a0b1", "Consultation and Assessment"), ("d2b1c2d3", "Planning the Session"), ("f4d3e4f5", "Therapeutic Massage Work"), ("b6f5a6b7", "Post-Session Guidance")),
+        "deep-tissue-massage": (("2c1fc22f", "Consultation and Assessment"), ("3e2e789f", "Planning the Session"), ("4fdc0b6f", "Deep Tissue Work"), ("3b941aaf", "Post-Session Guidance")),
+        "chair-massage": (("78b38aa2", "Quick Check-In"), ("05fef95b", "Settling Into the Chair"), ("084d247e", "Chair Massage Work"), ("f14b2a44", "Before You Go")),
+    }
+    for slug, headings in semantic_headings.items():
+        for bid, label in headings:
+            check(f"Bundle C {slug}: {label!r} is an H3 in its original block", has_block_heading(c_pages[slug], bid, label))
+    corp_headings = [text_of(h) for h in re.findall(r'<h3\b[^>]*class="[^"]*\bts-corp__card-title\b[^"]*"[^>]*>(.*?)</h3>', cp_page, re.S)]
+    check("Bundle C Corporate: three unchanged card titles are H3s", corp_headings == ["Chair massage for teams", "Three- or five-hour booking blocks", "Table massage by arrangement"])
+    hidden = [(attrs, text_of(label)) for attrs, label in re.findall(r'<h2\b([^>]*)>(.*?)</h2>', svc, re.S) if 'id="ts-services-heading"' in attrs]
+    check("Bundle C Services: hidden H2 names the service rows", len(hidden) == 1 and hidden[0][1] == "Massage services" and "screen-reader-text" in hidden[0][0] and svc.find('id="ts-services-heading"') < svc.find('uagb-block-8bb921f3'))
+    check("Bundle C Therapeutic: FAQ heading appears once", [text_of(h) for h in re.findall(r'<h2\b[^>]*>(.*?)</h2>', th, re.S)].count("Questions About Therapeutic Massage") == 1)
+    map_url = "https://maps.google.com/maps?q=Mt.%20Tabor%2C%20Portland&z=12&hl=en&t=m&output=embed&iwloc=near"
+    map_frames = []
+    for tag in re.findall(r'<iframe\b[^>]*>', contact_c, re.S):
+        attrs = {k: html.unescape(v) for k, v in re.findall(r'([\w:-]+)="([^"]*)"', tag)}
+        if attrs.get("title") == "Map of Portland, Oregon":
+            map_frames.append(attrs)
+    check("Bundle C Contact: lazy named map iframe preserves the Mt. Tabor query", len(map_frames) == 1 and map_frames[0].get("src") == map_url and map_frames[0].get("loading") == "lazy" and not re.search(r'<embed\b', contact_c, re.I))
+    access_text = text_of(access_c)
+    research_pages = "Thai Massage, Therapeutic Massage, Deep Tissue Massage and Chair Massage pages"
+    chair_checks = "The Chair Massage research summaries and Sources panel were included in the mouse, Enter and Space keyboard, and light- and dark-version text-contrast checks."
+    check("Bundle C Accessibility: both research lists include Chair", access_text.count(research_pages) == 2)
+    check("Bundle C Accessibility: new panels' checks and November 1 date", access_text.count(chair_checks) == 1 and access_text.count("Last updated: November 1, 2026.") == 1)
+    check("Bundle C Accessibility: screen-reader, specialist-audit and existing limitations remain", all(t in access_text for t in ("No screen reader was used in this testing.", "This was not a full audit by an accessibility specialist", "two links inside the expandable sections may not be announced clearly by screen readers.", "The map on the Contact page is provided by Google")))
 
 print("\nRESULT: " + ("all checks passed" if not fails else f"{fails} check(s) FAILED"))
 sys.exit(1 if fails else 0)

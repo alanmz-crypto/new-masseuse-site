@@ -18,6 +18,8 @@ let checks = 0, fails = 0, invalid = false;
 const check = (label, ok, detail = '') => { checks++; if (!ok) fails++; console.log(`${ok ? 'PASS' : 'FAIL'} ${label}${detail ? ' ' + detail : ''}`); };
 const runtime = preview ? readFileSync(new URL('./accessibility-runtime.php', import.meta.url), 'utf8') : '';
 const style = preview ? runtime.match(/<style id="ts-accessibility-runtime-css">([\s\S]*?)<\/style>/)?.[1] : '';
+const postApply = !baseline && !preview;
+const contract = postApply ? (await import('./bundle-c-contract.mjs')).createContract(JSON.parse(readFileSync(new URL('./heading-baseline.json', import.meta.url), 'utf8')), check, base) : null;
 const script = preview ? runtime.match(/<script id="ts-accessibility-runtime">([\s\S]*?)<\/script>/)?.[1] : '';
 if (preview && (!style || !script)) throw new Error('Reviewed runtime style/script not found');
 const browser = await chromium.launch();
@@ -67,9 +69,9 @@ try {
       await page.addScriptTag({ content: script });
       await page.waitForTimeout(100);
     }
-    for (const width of [1280, 390]) {
+    for (const width of (postApply ? [1280, 390, 320] : [1280, 390])) {
       await page.setViewportSize({ width, height: 900 });
-      if (preview) check(`${path} ${width} FAQ/runtime geometry unchanged`, equalGeometry(before[width], await geometry(page)));
+      if (preview) { await page.evaluate(() => document.documentElement.setAttribute('data-ts-theme', 'light')); check(`${path} ${width} FAQ/runtime geometry unchanged`, equalGeometry(before[width], await geometry(page))); }
       for (const theme of ['light', 'dark']) {
         await page.evaluate(t => document.documentElement.setAttribute('data-ts-theme', t), theme);
         const state = await page.evaluate(() => {
@@ -99,9 +101,11 @@ try {
         check(tag + ' expected FAQ count and one native button per question', state.count === (faqCounts[path] || 0) && state.buttons === state.count, `items=${state.count} buttons=${state.buttons}`);
         check(tag + ' disclosure ARIA, unique controls and no tab roles', state.oldRoles === 0 && state.disclosure && state.icons);
         check(tag + ' distinct footer names and scroll button role', state.menu === 'Footer navigation' && state.widget === 'Footer information' && state.scroll === 'button');
-        check(tag + ' résumé links announce new tab', state.pdfs.every(label => label === 'View résumé (PDF), opens in a new tab'));
+        check(tag + ' résumé links announce new tab', (!['/contact/', '/work-with-me/'].includes(path) || state.pdfs.length > 0) && state.pdfs.every(label => label === 'View résumé (PDF), opens in a new tab'));
+        if (contract) await contract.atWidth(page, path, width, theme);
       }
     }
+    if (contract) await contract.pageInteractions(page, path);
     const first = page.locator('button.ts-faq-disclosure').first();
     if (faqCounts[path]) {
       const expanded = await first.getAttribute('aria-expanded');
@@ -118,6 +122,16 @@ try {
       await first.click();
       await page.waitForTimeout(450);
       check(path + ' mouse closes once', await first.getAttribute('aria-expanded') === expanded);
+    }
+    const answerLink = page.locator('.uagb-faq-content a').first();
+    if (await answerLink.count()) {
+      const unchanged = await answerLink.evaluate(link => {
+        const item = link.closest('.uagb-faq-item');
+        const before = item.classList.contains('uagb-faq-item-active');
+        link.dispatchEvent(new KeyboardEvent('keyup', { key: 'Enter', keyCode: 13, bubbles: true }));
+        return item.classList.contains('uagb-faq-item-active') === before;
+      });
+      check(path + ' answer-link keyup does not toggle its FAQ', unchanged);
     }
     const scroll = page.locator('#ast-scroll-top');
     await page.evaluate(() => scrollTo(0, document.body.scrollHeight));
@@ -140,6 +154,7 @@ try {
     check(path + ' no browser errors', errors.length === 0, errors.join('; '));
     await page.close();
   }
+  if (contract && !invalid) { invalid = await contract.endpoints(context); if (!invalid) contract.finish(); }
 } finally { await context.close(); await browser.close(); }
 console.log(`Bundle C: ${checks} assertions, ${fails} failures${invalid ? ', INVALID challenge' : ''}`);
 process.exitCode = invalid ? 2 : fails ? 1 : 0;
