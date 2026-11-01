@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Read-only Bundle E capture on staging38: fresh dump, exact native stores,
+# Read-only Bundle E capture on staging38 or live: fresh dump, exact native stores,
 # ten known upload originals and installed core emoji callbacks/source.
 # A verified PNG copy is converted in the temporary archive directory only.
 # No import, option/post/cache updates or persistent server files.
@@ -16,7 +16,8 @@ fi
 dump="$repo/scripts/work-with-me-employer/seo-scan/dump-site.sh"
 [ -f "$dump" ] || { echo "Missing dump-site.sh." >&2; exit 1; }
 case "${1:-}" in ''|--sources-only) ;; *) echo "Usage: inspect-bundle-e.sh [--sources-only]" >&2; exit 1 ;; esac
-[ "${S_TARGET:-staging38}" = staging38 ] || { echo "Bundle E capture is staging38 only." >&2; exit 1; }
+target="${S_TARGET:-staging38}"
+case "$target" in staging38) want=staging38.thaisolitude.com ;; live) want=thaisolitude.com ;; *) echo "Bundle E capture permits staging38 or live only." >&2; exit 1 ;; esac
 creds="${S26_CREDS:-$repo/remote_execution.txt}"
 [ -f "$creds" ] || { echo "Missing credentials file." >&2; exit 1; }
 field() { sed -n "s/^$1:[[:space:]]*//p" "$creds" | head -1; }
@@ -25,13 +26,13 @@ host=$(field Host); port=$(field Port); user=$(field User); user="${user%%@*}"
 [ -n "${SSH_AUTH_SOCK:-}" ] && [ -S "$SSH_AUTH_SOCK" ] || { echo "No ssh-agent socket (SSH_AUTH_SOCK)." >&2; exit 2; }
 ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 "$user@$host")
 "${ssh_cmd[@]}" true 2>/dev/null || { echo "SSH login refused; check the ssh-agent holds the right key." >&2; exit 2; }
-if [ "${1:-}" != --sources-only ]; then S_TARGET=staging38 S26_CREDS="$creds" bash "$dump"; fi
+if [ "${1:-}" != --sources-only ]; then S_TARGET="$target" S26_CREDS="$creds" bash "$dump"; fi
 
 read -r -d '' REMOTE <<'EOS' || true
 set -euo pipefail
 wp() { command wp --skip-plugins=sg-security "$@"; }
 want=$1
-[ "$want" = staging38.thaisolitude.com ] || { echo "Remote target refused." >&2; exit 1; }
+case "$want" in staging38.thaisolitude.com|thaisolitude.com) ;; *) echo "Remote target refused." >&2; exit 1 ;; esac
 doc=""; cfgs=$(mktemp); scratch=$(mktemp -d); trap 'rm -rf "$cfgs" "$scratch"' EXIT
 find "$HOME/www" -maxdepth 4 -name wp-config.php 2>/dev/null > "$cfgs"
 while IFS= read -r cfg; do d=$(dirname "$cfg"); h=$(wp --path="$d" option get home 2>/dev/null || true); hh=${h#http://}; hh=${hh#https://}; hh=${hh%/}
@@ -41,12 +42,14 @@ mkdir -p "$scratch/data/source"
 export TS_E_EXPORT="$scratch/data"
 wp --path="$doc" eval '
 $out = getenv("TS_E_EXPORT");
+global $wp_version;
+$site = set_url_scheme(home_url(), "https");
 $write = function ($name, $data) use ($out) {
     $json = json_encode($data, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
     if (false === $json || false === file_put_contents($out."/".$name, $json)) { WP_CLI::error("Capture serialization failed: ".$name); }
 };
-$content = function ($p) { return array("id"=>$p->ID, "content"=>$p->post_content, "sha256"=>hash("sha256", $p->post_content), "bytes"=>strlen($p->post_content), "meta"=>get_post_meta($p->ID)); };
-$data = array("home"=>home_url(), "astra-settings"=>get_option("astra-settings"), "pages"=>array(), "snippets"=>array());
+$content = function ($p) { return array("id"=>$p->ID, "title"=>$p->post_title, "type"=>$p->post_type, "status"=>$p->post_status, "content"=>$p->post_content, "sha256"=>hash("sha256", $p->post_content), "bytes"=>strlen($p->post_content), "meta"=>get_post_meta($p->ID)); };
+$data = array("home"=>home_url(), "wp_version"=>$wp_version, "php_version"=>PHP_VERSION, "theme_version"=>wp_get_theme()->get("Version"), "page_on_front"=>(int)get_option("page_on_front"), "astra-settings"=>get_option("astra-settings"), "pages"=>array(), "snippets"=>array());
 foreach (get_posts(array("post_type"=>"page", "post_status"=>"publish", "numberposts"=>-1, "suppress_filters"=>true)) as $p) { $data["pages"][$p->post_name] = $content($p); }
 foreach (get_posts(array("post_type"=>"wpcode", "post_status"=>"publish", "numberposts"=>-1, "suppress_filters"=>true)) as $p) { $data["snippets"][$p->post_title] = $content($p); }
 $css = wp_get_custom_css_post("astra");
@@ -71,7 +74,7 @@ $assets = array(
 );
 $images = array(); global $wpdb;
 foreach ($assets as $key=>$relative) {
-    $url = "https://staging38.thaisolitude.com/wp-content/uploads/".$relative;
+    $url = $site."/wp-content/uploads/".$relative;
     $ids = array();
     foreach (array($url, str_replace("https://", "http://", $url), trailingslashit($uploads["baseurl"]).$relative) as $candidate) { $id = attachment_url_to_postid($candidate); if ($id) { $ids[] = (int)$id; } }
     foreach ($wpdb->get_col($wpdb->prepare("SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s", "_wp_attached_file", $relative)) as $id) { if ("attachment" === get_post_type($id)) { $ids[] = (int)$id; } }
@@ -97,7 +100,7 @@ foreach ($assets as $key=>$relative) {
                 if (!$path || 0 !== strpos($path, $upload_root.DIRECTORY_SEPARATOR) || !is_file($path) || !is_readable($path)) { WP_CLI::error("Public image size unavailable: ".$derived); }
                 $dimensions = @getimagesize($path); $derived_bytes = filesize($path);
                 if (!$dimensions || false === $derived_bytes || empty($dimensions["mime"]) || $dimensions[0] !== (int)($entry["width"] ?? 0) || $dimensions[1] !== (int)($entry["height"] ?? 0) || $dimensions["mime"] !== ($entry["mime-type"] ?? null)) { WP_CLI::error("Image size metadata differs from file: ".$derived); }
-                $item["attachment"]["sizes"][$name] = array("relative_file"=>$derived, "url"=>"https://staging38.thaisolitude.com/wp-content/uploads/".$derived, "width"=>$dimensions[0], "height"=>$dimensions[1], "mime"=>$dimensions["mime"], "filesize"=>$derived_bytes);
+                $item["attachment"]["sizes"][$name] = array("relative_file"=>$derived, "url"=>$site."/wp-content/uploads/".$derived, "width"=>$dimensions[0], "height"=>$dimensions[1], "mime"=>$dimensions["mime"], "filesize"=>$derived_bytes);
             }
         }
     }
@@ -180,10 +183,10 @@ $write("emoji.json", array("wp_version"=>$wp_version, "hook_context"=>"WP-CLI bo
 if (false === file_put_contents($out."/source/emoji-core.php", $source_text)) { WP_CLI::error("Core source capture failed."); }
 if (false === file_put_contents($out."/source/emoji-registrations.txt", $registrations)) { WP_CLI::error("Core registration capture failed."); }
 $image_sources = array();
-foreach (array("blocks/image/block.json"=>"image-block.json", "blocks/image.php"=>"image.php") as $name=>$saved) {
+foreach (array("blocks/image/block.json"=>"image-block.json", "blocks/image.php"=>"image.php", "media.php"=>"media.php") as $name=>$saved) {
     $file = $core_root."/".$name; $relative = $core_relative($file);
     if (false === $relative || !is_readable($file)) {
-        if ("image-block.json" === $saved) { WP_CLI::error("Installed public image block metadata unavailable."); }
+        if (in_array($saved, array("image-block.json", "media.php"), true)) { WP_CLI::error("Installed public image block metadata unavailable."); }
         $image_sources[WPINC."/".$name] = array("available"=>false); continue;
     }
     $bytes = file_get_contents($file);
@@ -199,4 +202,4 @@ echo BUNDLEE-BEGIN
 base64 -w0 "$scratch/data.tgz" | fold -w 200000
 echo; echo BUNDLEE-END
 EOS
-"${ssh_cmd[@]}" bash -s -- staging38.thaisolitude.com <<<"$REMOTE"
+"${ssh_cmd[@]}" bash -s -- "$want" <<<"$REMOTE"
