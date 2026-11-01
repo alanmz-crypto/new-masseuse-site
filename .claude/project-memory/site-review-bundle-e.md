@@ -43,3 +43,13 @@ complete 8-image/4-page geometry/delivery/preload/emoji suite. All frames/page
 heights are unchanged from original-image DOM; phone image captures reviewed.
 The old report grep omitted E’s numeric summary; fixed for future reports only.
 Dry/apply next; still no E staging write. Report114001-review-e-rehearse...-3.
+
+First staging attempt (11:47 UTC) failed metadata validation and recovered;
+no E changes remain. Host diagnostics confirm uploads logical/physical paths
+are symlinked: passing physical paths made attachment metadata absolute.
+Home/Therapeutic old bytes match; zero created files/media/snippets remain.
+Fix: use WordPress-returned logical paths for insert/metadata, realpath only for
+containment/hash checks. New isolated-only preparation reproduces the symlink
+scenario before baseline; it is never uploaded by the staging push script.
+Rehearsal4 required before retry. Failed snapshot114734 is private; DB114718
+verified off-site before the attempt. Detailed report links in the proof file.

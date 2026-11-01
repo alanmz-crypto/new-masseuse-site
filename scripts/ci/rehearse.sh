@@ -169,6 +169,12 @@ if [ -n "$seam" ] && [ -n "${TS_REHEARSAL_TEST_PREP:-}" ]; then   # TESTING ONLY
   echo "TEST MODE: preparing the copy"; wpc --user=1 eval "$TS_REHEARSAL_TEST_PREP" | sed 's/^/    /'
 fi
 
+prepare="${inst%/*}/prepare-rehearsal.php"
+if [ -f "$wwm/$prepare" ]; then
+  echo "[2b] package preparation on the isolated localhost copy only"
+  wpc --user=1 eval-file "/wwm/$prepare" || invalid "package rehearsal preparation failed"
+fi
+
 sql() { dc exec -T db mariadb -uroot -prehearsal --default-character-set=utf8mb4 -N -B wp "$@"; }   # the client in the wpcli image insists on TLS; query the db container directly
 fp() { # fingerprint lines into $out/$1.txt (the prove-restore.sh query set)
   local q="$work/fp.sql" t

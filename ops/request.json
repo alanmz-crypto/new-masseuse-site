@@ -1,8 +1,9 @@
 {
-  "id": "review-e-upload-paths-staging38-20261101",
-  "op": "run",
+  "id": "review-e-rehearse-staging38-20261101-4",
+  "op": "rehearse",
   "target": "staging38",
-  "script": "review-e/inspect-upload-paths.sh",
-  "args": [],
-  "tests": "auto"
+  "installer": "review-e/install-bundle-e.php",
+  "args": [
+    "--with-uploads"
+  ]
 }

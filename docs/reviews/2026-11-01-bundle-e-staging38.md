@@ -1,6 +1,6 @@
 # Bundle E: staging38 performance
 
-**Status:** prepared; no E WordPress write. Draft PR #66 is stacked on applied D (draft PR #65). Live remains disabled. Offline gates and isolated uploads rehearsal 3 pass; staging dry run is next.
+**Status:** prepared; no E changes remain applied after the first staging attempt recovered. Draft PR #66 is stacked on applied D (draft PR #65). Live remains disabled. Offline gates and isolated uploads rehearsal 3 pass; staging dry run is next.
 
 ## Verified source and changes
 
@@ -53,3 +53,25 @@ The first emoji inspection returned no callbacks because a physical-path check d
 Fresh origin probing confirms `/.well-known/security.txt` still returns 404 on staging38: C’s virtual route works in Apache rehearsal but is not being served through SiteGround’s path handling. The prepared static payload in review-c/security-staging38/security.txt remains a Ryan-owned upload/fallback under the handoff; the approved mailbox stays butsabad@gmail.com. The SiteGround AntiBot support draft has not been sent and no hosting setting changed.
 
 Butsaba’s unanswered facts and confirmed session-length consistency work remain separate. F remains, G waits until November 14, and every live go/run remains Ryan’s. After E is applied, roll E back before D/C/B/A or older exact-state installers.
+
+## Staging-path correction before retry
+
+The first staging apply stopped at metadata validation and recovered exactly:
+`reports/2026-11-01/114735-review-e-apply-staging38-20261101.md`. Fresh export
+`staging38-before-bundle-e-20261101-114718.sql` (6,982,630 bytes) was verified
+encrypted off-site before the attempt. Incomplete snapshot
+`bundle-e-before-20261101-114734.json` remains private.
+
+Read-only diagnosis PASS:
+`reports/2026-11-01/115017-review-e-upload-paths-staging38-20261101.md`.
+The configured logical uploads base differs from realpath on SiteGround;
+WordPress’s relative-path helper recognizes the logical path but leaves the
+physical path absolute. The failed attachment metadata had an absolute path.
+Home/Therapeutic still match their exact old bytes, the temporary attachment
+and both snippets are absent, and zero of the three owned upload files remain.
+
+The installer now passes the logical path returned by WordPress to its media
+APIs, using realpath only for containment/SHA guards. A package preparation hook
+reproduces that symlink distinction only inside the isolated localhost rehearsal;
+its PHP guard requires localhost and the local environment, and the staging push
+does not upload this preparation file. Rehearsal4 must pass before any retry.

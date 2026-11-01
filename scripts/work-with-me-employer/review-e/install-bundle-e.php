@@ -34,6 +34,7 @@ $data = $hydrate( $data );
 $upload = wp_upload_dir( null, false, false );
 $upload_root = empty( $upload['error'] ) ? realpath( $upload['basedir'] ) : false;
 if ( ! $upload_root || '/wp-content/uploads' !== rtrim( (string) wp_parse_url( $upload['baseurl'], PHP_URL_PATH ), '/' ) ) { WP_CLI::error( 'Unexpected uploads location.' ); }
+if ( _wp_relative_upload_path( $upload['basedir'] . '/' . $media['relative_file'] ) !== $media['relative_file'] ) { WP_CLI::error( 'WordPress logical upload path does not map to the expected relative file.' ); }
 $file_info = function ( $relative ) use ( $upload_root ) {
 	$path = realpath( $upload_root . '/' . $relative );
 	if ( ! $path || 0 !== strpos( $path, $upload_root . DIRECTORY_SEPARATOR ) || ! is_file( $path ) || ! is_readable( $path ) ) { throw new \RuntimeException( 'Image unavailable: ' . $relative ); }
@@ -168,15 +169,17 @@ try {
 		try { $handled = wp_handle_sideload( $sideload, array( 'test_form' => false, 'mimes' => array( 'webp' => 'image/webp' ) ) ); }
 		finally { remove_filter( 'upload_dir', $fixed_uploads ); if ( is_file( $tmp ) ) { unlink( $tmp ); } }
 		if ( ! empty( $handled['error'] ) ) { throw new \RuntimeException( 'WebP upload: ' . $handled['error'] ); }
-		$created_path = realpath( $handled['file'] );
+		$wordpress_file = (string) $handled['file']; $created_path = realpath( $wordpress_file );
 		if ( ! $created_path || 0 !== strpos( $created_path, $upload_root . DIRECTORY_SEPARATOR ) || hash_file( 'sha256', $created_path ) !== $media['sha256'] ) { throw new \RuntimeException( 'Uploaded file unavailable/outside uploads or bytes differ.' ); }
 		$snap['created_upload_files'] = array( $created_path => $media['sha256'] ); $save( $file, $snap );
 		if ( $created_path !== realpath( $upload_root . '/' . $media['relative_file'] ) || $handled['type'] !== $media['mime'] ) { throw new \RuntimeException( 'Unexpected upload filename/MIME.' ); }
-		$id = wp_insert_attachment( array( 'post_mime_type' => $media['mime'], 'post_title' => $media['title'], 'post_content' => '', 'post_status' => 'inherit', 'guid' => $handled['url'] ), $created_path, 0, true );
+		// WordPress derives relative metadata by its configured logical basedir.
+		// Keep realpath only for byte/path guards; SiteGround uses symlinked roots.
+		$id = wp_insert_attachment( array( 'post_mime_type' => $media['mime'], 'post_title' => $media['title'], 'post_content' => '', 'post_status' => 'inherit', 'guid' => $handled['url'] ), $wordpress_file, 0, true );
 		if ( is_wp_error( $id ) ) { throw new \RuntimeException( 'WebP import: ' . $id->get_error_message() ); }
 		$media_id = (int) $id; $snap['created_media_id'] = $media_id; $save( $file, $snap ); $snap['created_media'] = $capture_media( $media_id ); $save( $file, $snap );
 		try {
-			$metadata = wp_generate_attachment_metadata( $media_id, $created_path );
+			$metadata = wp_generate_attachment_metadata( $media_id, $wordpress_file );
 			if ( ! is_array( $metadata ) || ( $metadata['width'] ?? null ) !== $media['width'] || ( $metadata['height'] ?? null ) !== $media['height'] || ( $metadata['file'] ?? null ) !== $media['relative_file'] ) { throw new \RuntimeException( 'Generated media dimensions/file metadata incomplete.' ); }
 			wp_update_attachment_metadata( $media_id, $metadata );
 			if ( wp_get_attachment_metadata( $media_id ) !== $metadata ) { throw new \RuntimeException( 'Saved attachment metadata differs.' ); }
@@ -202,6 +205,6 @@ try {
 } catch ( \Throwable $e ) {
 	try { $restore( $old ); if ( $capture() !== $old ) { throw new \RuntimeException( 'Old-store recovery differs.' ); } $cleanup( $snap ); }
 	catch ( \Throwable $r ) { WP_CLI::error( $e->getMessage() . '; recovery/cleanup failed: ' . $r->getMessage() . '; snapshot ' . $file ); }
-	WP_CLI::error( $e->getMessage() . '; old stores restored and only owned resources removed.' );
+	WP_CLI::error( $e->getMessage() . '; old stores restored and only owned resources removed. Snapshot: ' . $file );
 }
 WP_CLI::success( 'Applied Bundle E. Before-snapshot: ' . $file );
