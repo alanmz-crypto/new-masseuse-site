@@ -1,8 +1,10 @@
 {
-  "id": "review-c-live-dry-20261101",
+  "id": "review-c-live-postchange-20261101-2",
   "op": "run",
   "target": "live",
-  "script": "review-c/push-bundle-c.sh",
-  "args": [],
+  "script": "post-change-test.sh",
+  "args": [
+    "live"
+  ],
   "tests": "auto"
 }
