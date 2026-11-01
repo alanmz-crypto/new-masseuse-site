@@ -1,6 +1,6 @@
 # Project memory (snapshot for cloud sessions)
 
-- [Site review Bundle F](site-review-bundle-f.md) — preparing six safe WordPress options on staging38; exact source/override/login capture next; no F write, live disabled.
+- [Site review Bundle F](site-review-bundle-f.md) — PAUSED, draft PR #67: six raw rows captured; admin verification 403, REST/login 200; stop-for-access rule, no F write/live action.
 
 - [Site review Bundle E](site-review-bundle-e.md) — performance applied on staging38, draft PR #66 stacked on D; symlink rehearsal (1,664 checks), 26 origin checks, rendered gates/restore import PASS; 96.46% smaller WebP; final interactive check pending, live disabled.
 
