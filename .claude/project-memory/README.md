@@ -1,11 +1,11 @@
 # Project memory (snapshot for cloud sessions)
 
-- [Site review Bundle E](site-review-bundle-e.md) — staged; #66 prepared for Ryan’s live run with exact post-D/core/media guards and live-copy uploads/frame/rollback rehearsal.
+- [Site review Bundle E](site-review-bundle-e.md) — LIVE via Ryan’s #66/run; origin26, actual backup/ownership/browser proof and qualified historical comparisons; exact live rollback.
 - [Site review Bundle D](site-review-bundle-d.md) — LIVE via Ryan’s #65/run; 53 origin/128 public assertions PASS, exact snapshot and qualified INVALID/restore results.
 
 - [Site review Bundle C](site-review-bundle-c.md) — LIVE via Ryan's #64/run; 1,247 public assertions pass, security.txt 404 remains; CSP 4 views/0 and rendered/security/PHP checks verified, qualified reference differences and actual snapshot.
 
-- [Site review release](site-review-release.md) — A–D LIVE; E #66/request prepared, exact core/source/rollback rehearsal/dry; phone steps and deferred hosting/TXT/F lanes.
+- [Site review release](site-review-release.md) — A–E LIVE through Ryan’s runs; completion record, actual snapshots/proof, no further LIVE request; hosting/TXT/F/facts/date/owner lanes remain.
 
 - [Site review Bundle B](site-review-bundle-b.md) — LIVE via Ryan's PR #69/run; strict 12-page scan zero expectations, approved card 1305/SHA/1200×630; actual live snapshot, qualified reference and restore comparisons.
 

@@ -25,15 +25,16 @@ was INVALID202/zero tests. Restore import0/intended differences/noSEO or CSS dri
 Actual snapshot bundle-d-before-20261101-185003.json and fresh export verified
  encrypted offsite. [D actual proof](../../docs/reviews/2026-11-01-bundle-d-live.md).
 
-**E is prepared, not applied, existing PR #66.** Normal integration preserves A–D.
-Fresh live capture verifies D predecessor, ten originals/six derivatives and exact
-approved WebP. Strict reviewed versions staging7.1.3, local/apex7.1.4; no relaxed range.
-[Fresh live-copy uploads rehearsal, run 41339834933](https://github.com/alanmz-crypto/new-masseuse-site/blob/ops-log/reports/2026-11-01/190757-review-e-live-rehearse-20261101.md) **PASS: 1,664 assertions, zero failures** (C 1,248 + D 128 + E 288). The source is WP 7.1.4; isolated uploads symlink preparation, apply/no-op/exact fingerprint rollback/reapply, regulated Home/client gates and no new site PHP errors all pass. Fingerprints move only Home/Therapeutic, the two new snippets and WPCode cache (related media/post/meta/term rows). All eight image frames and page heights remain unchanged at three widths/light+dark (48 image states). Three phone previews—Home Deep/Thai and Therapeutic red—were visually reviewed.
-[Actual live read-only preflight, run 41340220974](https://github.com/alanmz-crypto/new-masseuse-site/blob/ops-log/reports/2026-11-01/190905-review-e-live-dry-20261101.md) **PASS**: Home/Therapeutic and both new snippets ready; WebP ready to import once, ten originals preserved. No content write occurred.
-Ryan reviews/merges #66 only, then Actions > Site ops (LIVE) > Run workflow > main >
-confirm `live-review-e-20261101-1`. Tell agent “E done” for origin/postchange/restore/
-public verification. No E live snapshot/created IDs/write yet.
-[[site-review-release]] / [current proof/phone steps](../../docs/reviews/2026-11-01-review-live-release.md).
+**E is LIVE via Ryan’s #66/run41340701287, applied19:14UTC.** Origin26 PASS;
+Native ownership proof **9 checks PASS**; focused public E browser check **INVALID** (hosting robot challenge on the initial WebP request, zero assertions). It remains pending access; no retry loop. Generic public code/rendered/posture/pages/PHP PASS; historical
+stage36 schema27/23 and20 pixels FAIL (zero parseerrors/missing views). Restore
+import0/intended differences/noSEO/CSS drift. Exact snapshot
+bundle-e-before-20261101-191447.json (SHA0ffe75e3aa18) and fresh DB5976437B
+(SHA1e319bac239b) verified encrypted offsite. [E actual proof](../../docs/reviews/2026-11-01-bundle-e-live.md).
+
+**A–E deployed; E focused public check blocked.** Review/merge the completion-proof PR after Gates is green;
+no new LIVE request/run is required. The completed E apply ID must not be reused.
+[[site-review-release]] / [current record](../../docs/reviews/2026-11-01-review-live-release.md).
 
 Keep F #67 paused: adminHEAD403/no six-option installer/write. C security.txt404/
 uninstalled static owner fallback, intermittent hosting protection, pending Butsaba
@@ -61,7 +62,7 @@ Astra/www/menu tasks remain. Agents never merge main or dispatch LIVE.
 
 ## D. Decisions waiting on Ryan (no deadline; nothing guessed)
 - **Wording that goes stale after 2026-11-14 (date and pages corrected 2026-10-31):** the FAQ pairs on the Thai, Therapeutic, Deep Tissue and Chair pages ("...with bookings beginning November 14, 2026." and "Corporate and group massage bookings begin November 14, 2026."), the corporate hero line and the Work With Me "For clients" block: fifteen sentences after Bundle A that read as future once the strip says "Now accepting". Proposal: one installer run on or after the 14th swaps them to "since November 14, 2026" / "are open (since November 14, 2026)", staging38 first ([[site-review-2026-10-31]] item 3.7). Needs his OK (his rule: never reword established copy without asking).
-- **Site review 2026-10-31 ([[site-review-2026-10-31]]; report `docs/reviews/2026-10-31-site-review.md`):** ten decisions for Ryan at the top of the report (closing call-to-action blocks on the five long pages; Chair <-> Corporate links and a corporate card on Contact; Home card buttons to their own pages; the "Relief" chip; WordPress Address http -> https; the Services availability sentence; four search titles plus Privacy/Accessibility rows; after Nov 14 the past-tense wording and the page cache; the Nov 7 credentials work and four deletions). The handoff records approval for its listed staging edits. Bundle 0 and A–D are complete on staging38 and live; E is staged and prepared for Ryan’s #66 live run; F is paused for admin access; G waits until November 14. The Butsaba draft now records Ryan's answers to 1, 5, 8 and 9; 2, 3, 4, 6 and 7 remain unanswered. The agent has sent no message.
+- **Site review 2026-10-31 ([[site-review-2026-10-31]]; report `docs/reviews/2026-10-31-site-review.md`):** ten decisions for Ryan at the top of the report (closing call-to-action blocks on the five long pages; Chair <-> Corporate links and a corporate card on Contact; Home card buttons to their own pages; the "Relief" chip; WordPress Address http -> https; the Services availability sentence; four search titles plus Privacy/Accessibility rows; after Nov 14 the past-tense wording and the page cache; the Nov 7 credentials work and four deletions). The handoff records approval for its listed staging edits. Bundle 0 and A–E are complete on staging38 and live; F is paused for admin access; G waits until November 14. The Butsaba draft now records Ryan's answers to 1, 5, 8 and 9; 2, 3, 4, 6 and 7 remain unanswered. The agent has sent no message.
 - **"Mt. Tabor" to Portland (Ryan 2026-10-29: "We are in Portland and ready to start Thai Solitude for corporate and groups. Reconcile the website to that."; one item at a time):** item 1 SEO titles/descriptions of Home, Thai, Therapeutic, Deep Tissue = MERGED (PR #47), applied on staging38, NOT live ([[portland-meta]]); item 2 Contact Address line = MERGED (PR #48), applied on staging38, NOT live; Ryan: "Skip the map" ([[contact-address]]); item 3 Home licence line + Thai H1 + Deep Tissue H1 = on branch `feat/2026-10-29-onpage-portland`, staging38 first, NOT live ([[onpage-portland]]). STILL to do, one at a time: the map (left as is), About "From Chicago to Portland", "For Practices" rename, the "bookings begin November 1, 2026" wording after Nov 1. **LIVE since 2026-10-30 (run `live-portland-items-1-3`, all checks ok; see the three notes).**
 - **About page section "From Chicago to Portland"** ("...started Thai Solitude in Chicago in 2024... Now I am bringing Thai Solitude to Portland..."): LEFT for now. It is Butsaba's own history; the availability plan says not to keep relocation wording. Offer: draft a Portland-only version for side-by-side review, apply nothing until he approves.
 - **Home button "Ask about a session"**: left (an inquiry link; the Contact page opens with the corporate-only strip).

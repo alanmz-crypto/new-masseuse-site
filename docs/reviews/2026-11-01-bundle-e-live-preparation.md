@@ -1,10 +1,10 @@
-# Bundle E: live release preparation
+# Bundle E: historical live release preparation
 
-E is prepared for Ryan’s own merge/run in existing PR #66. No live E content write has occurred. A/B/C/D are live; [D’s actual proof](2026-11-01-bundle-d-live.md) records 53 origin and 128 public browser assertions passing, with the automatic HTTP 202 attempt separately INVALID.
+This records preparation reviewed before Ryan merged #66 and applied E at 19:14 UTC on November 1. See the [actual live result, snapshot and verification](2026-11-01-bundle-e-live.md); never rerun the completed apply ID. At preparation time A/B/C/D were live; [D’s actual proof](2026-11-01-bundle-d-live.md) records 53 origin and 128 public browser assertions passing, with the automatic HTTP 202 attempt separately INVALID.
 
 ## Approved scope
 
-The original [staging scope and proof](2026-11-01-bundle-e-staging38.md) remain unchanged: four image-only replacements on Home/Therapeutic, the same 400×313 WebP, verified intrinsic/responsive attributes on four pages, two existing font preloads and frontend-only emoji suppression. No prose, CSS, SEO or WordPress options edit. The Home Deep/Thai illustrations now match their service pages. All ten originals and existing responsive derivatives remain unchanged. Work With Me has two actual content images; no third image was invented.
+The original [staging scope and proof](2026-11-01-bundle-e-staging38.md) remain unchanged: four image-only replacements on Home/Therapeutic, the same 400×313 WebP, verified intrinsic/responsive attributes on four pages, two existing font preloads and frontend-only emoji suppression. No prose, CSS, SEO or site-setting edit; the normal WPCode cache refresh is recorded in the live proof. The Home Deep/Thai illustrations now match their service pages. All ten originals and existing responsive derivatives remain unchanged. Work With Me has two actual content images; no third image was invented.
 
 The prepared red WebP remains 21,796 bytes, SHA256 `e795b73e4272e90f92db59b2734be41dd06365ac8ca6f0e8aa5e02d11ee1a756`, versus the unchanged 616,299-byte PNG: 96.46% smaller. No re-encoding or substituted asset is included in this release.
 
@@ -22,15 +22,11 @@ The installed public core was reviewed against the original 7.1.3 source. Emoji 
 
 [Actual live read-only preflight, run 41340220974](https://github.com/alanmz-crypto/new-masseuse-site/blob/ops-log/reports/2026-11-01/190905-review-e-live-dry-20261101.md) **PASS**: Home/Therapeutic and both new snippets ready; WebP ready to import once, ten originals preserved. No content write occurred.
 
-Final Gates, mergeability and comments are checked before the PR becomes ready. Source compatibility is supported by the full runtime rehearsal, including exact rollback and the logical-versus-physical uploads path hook.
+Final Gates 41340334386 passed on 32b8ddb; mergeability/comments were checked before #66 became ready. Source compatibility is supported by the full runtime rehearsal, including exact rollback and the logical-versus-physical uploads path hook.
 
-## Ryan’s phone steps
+## Completed handoff to Ryan
 
-1. Review and merge [PR #66 only](https://github.com/alanmz-crypto/new-masseuse-site/pull/66) after Gates is green. Keep F #67 paused.
-2. [Actions → Site ops (LIVE)](https://github.com/alanmz-crypto/new-masseuse-site/actions/workflows/site-live.yml) → Run workflow → main → confirm exactly `live-review-e-20261101-1` → Run workflow.
-3. Tell the agent “E done” or send the run link. It reads the origin/post-change/restore sections and checks E on the public site. Stop on failures; never reuse a completed ID.
-
-The prepared request is only `review-e/push-bundle-e.sh --apply`, live, tests auto. The installer defaults to read-only preflight. A fresh DB export verified encrypted off-site precedes apply/rollback; a complete exact before-snapshot is copied off-site before the mandatory 26 origin assertions. The actual live snapshot and created IDs are recorded only after Ryan’s run; staging IDs/snapshots are not live evidence.
+Ryan reviewed/merged #66 and personally dispatched `live-review-e-20261101-1` from main. The request is completed and must not be reused. The actual before-snapshot is `bundle-e-before-20261101-191447.json`; live verification and created IDs are recorded in the [live proof](2026-11-01-bundle-e-live.md). No further live apply is required.
 
 ## Exact rollback and remaining work
 
