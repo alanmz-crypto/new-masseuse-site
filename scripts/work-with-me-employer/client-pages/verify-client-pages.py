@@ -479,12 +479,13 @@ if BUNDLE_A:
               and '>Request a corporate massage quote</a>' in body and '>Ask a question</a>' in body
               and 'href="/corporate-massage-portland/"' in body and 'href="/contact/"' in body)
         if slug != "services":
-            other = re.findall(r'<p class="ts-review-other">(.*?)</p>', body, re.S)
+            other = re.findall(r'<p\b[^>]*class="[^"]*\bts-review-other\b[^"]*"[^>]*>(.*?)</p>', body, re.S)
             expected = {f"/{s}/" for s in offers if s != slug}
+            positions = (body.find('ts-review-other'), body.find('What the Research Says'), body.rfind('ts-source'), body.find('ts-review-next'))
             check(f"Bundle A {slug}: other four services before research; Next step after Sources",
                   len(other) == 1 and set(re.findall(r'href="([^"]+)"', other[0])) == expected
-                  and body.find('class="ts-review-other"') < body.find('What the Research Says')
-                  and body.rfind('ts-source') < body.find('ts-review-next'))
+                  and 0 <= positions[0] < positions[1] and 0 <= positions[2] < positions[3],
+                  {'links': re.findall(r'href="([^"]+)"', other[0]) if other else [], 'positions': positions})
     order = [svc.find('uagb-block-' + bid + '"') for bid in ("8bb921f3", "b3c7a91e", "1f6539c9", "4e23bf70", "75fb60e4")]
     check("Bundle A Services: Chair, Corporate, Therapeutic, Deep Tissue, Thai row order", min(order) >= 0 and order == sorted(order))
     check("Bundle A Services: availability sentence present once", text_of(svc).count("Right now I offer corporate and group massage only, at suitable Portland venues; individual appointments at a dedicated Thai Solitude location are planned for summer 2027.") == 1)
@@ -492,7 +493,7 @@ if BUNDLE_A:
     check("Bundle A Services: four jumps find their targets", bool(jump) and all(f'href="#{anchor}"' in jump[0] and f'id="{anchor}"' in svc for anchor in ("ts-corporate-group", "ts-chair-massage", "ts-thai-massage", "ts-what-to-expect")))
     about_a, _ = get("/about/")
     contact_a, _ = get("/contact/")
-    check("Bundle A About: closing licence and three paths", 'class="ts-review-license"' in about_a and 'LMT-29905' in about_a and all(f'href="{p}"' in about_a for p in ("/services/", "/corporate-massage-portland/", "/contact/")))
+    check("Bundle A About: closing licence and three paths", bool(re.search(r'<p\b[^>]*class="[^"]*\bts-review-license\b', about_a)) and 'LMT-29905' in about_a and all(f'href="{p}"' in about_a for p in ("/services/", "/corporate-massage-portland/", "/contact/")))
     check("Bundle A Contact: corporate card, quote email and jump target", bool(re.search(r'<div class="[^"]*\bts-review-contact\b', contact_a)) and 'id="corporate-quote"' in contact_a and 'href="#corporate-quote"' in contact_a and '>Corporate quote</a>' in contact_a and 'subject=Corporate%20massage%20quote%20request' in contact_a)
     check("Bundle A Corporate: Chair link and mobile shortcuts", 'href="/chair-massage/"' in cp_page and 'class="ts-corp__sticky"' in cp_page and '>Request a quote</a>' in cp_page and '>Email butsabad@gmail.com</a>' in cp_page)
 else:
