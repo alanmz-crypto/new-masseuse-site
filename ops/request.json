@@ -1,8 +1,11 @@
 {
-  "id": "review-b-seo-staging38-20261101",
+  "id": "review-b-home-shots-staging38-20261101",
   "op": "run",
   "target": "staging38",
-  "script": "seo-scan/scan-seo.sh",
-  "args": [],
+  "script": "tools/shots-inline.mjs",
+  "args": [
+    "https://staging38.thaisolitude.com",
+    "/"
+  ],
   "tests": "auto"
 }
