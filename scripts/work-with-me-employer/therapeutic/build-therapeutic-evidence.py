@@ -187,15 +187,17 @@ PANELS = [
         'term.{cochrane_lbp} A 2014 review of 20 trials found low-quality evidence that soft-tissue massage improved shoulder movement, pain and function compared with no intervention in the short term, right after '
         'the sessions ended.{vdd14} In the 2024 Cochrane review of neck pain, a subgroup analysis favored higher doses of eight or more sessions of at least 30 minutes over four weeks.{cochrane_neck}',
         (
-            'The same reviews also report the limits. The low-back review rated the quality of the evidence low to very low, found no long-term benefit over '
-            'no treatment, and its authors said they had “very little confidence” in the results. No serious side effects were reported; the most common minor'
-            ' one was more pain, in 1.5 to 25 percent of people.{cochrane_lbp} The 2024 neck review of 33 studies with 1,994 people found that, compared with '
-            'a placebo massage, massage probably makes little or no difference to pain, function or quality of life at up to 12 weeks (low-certainty '
-            'evidence), and adverse events were too poorly reported to judge.{cochrane_neck} In a trial of 80 adults with shoulder pain who were all doing '
-            'exercises, adding four weeks of massage gave no extra benefit for pain, disability or movement, and a small difference in pain at 12 weeks '
-            'favored exercise alone.{vdd15} In 41 people with low-back pain who were all having physiotherapy, adding real massage or a placebo massage for '
-            'three weeks both reduced pain and disability and improved mobility, and only the real-massage group improved on a quality-of-life '
-            'measure.{ucurum}'
+            (
+                'The same reviews also report the limits. The low-back review rated the quality of the evidence low to very low, found no long-term benefit over '
+                'no intervention, and its authors said they had “very little confidence” in the results. No serious side effects were reported; the most common '
+                'minor one was more pain, in 1.5 to 25 percent of people.{cochrane_lbp} The 2024 neck review of 33 studies with 1,994 people found that, compared '
+                'with a placebo massage, massage probably makes little or no difference to pain, function or quality of life at up to 12 weeks (low-certainty '
+                'evidence), and adverse events were too poorly reported to judge.{cochrane_neck} In a trial of 80 adults with shoulder pain who were all doing '
+                'exercises, adding four weeks of massage gave no extra benefit for pain, disability or movement, and a small difference in pain at 12 weeks '
+                'favored exercise alone.{vdd15} In 41 people with low-back pain who were all having physiotherapy, adding real massage or a placebo massage for '
+                'three weeks both reduced pain and disability and improved mobility, and only the real-massage group improved on a quality-of-life '
+                'measure.{ucurum}'
+            )
         ),
         (
             'Smaller studies point the same encouraging way for tight shoulder muscles. In a crossover study of 17 healthy adults, muscle activity in the '

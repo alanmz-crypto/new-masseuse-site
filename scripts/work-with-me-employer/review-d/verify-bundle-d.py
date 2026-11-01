@@ -26,7 +26,8 @@ for slug, expected in checks.items():
     result = subprocess.run(['curl', '-sS', '--max-time', '40', '-w', '\n%{http_code}', base + path], capture_output=True, text=True)
     page, _, code = result.stdout.rpartition('\n')
     if code == '202' or re.search(r'<title>[^<]*Robot Challenge', page, re.I):
-        sys.exit('INVALID: hosting robot challenge; no pass claimed')
+        print('INVALID: hosting robot challenge; no pass claimed')
+        sys.exit(2)
     main = re.search(r'<main\b[^>]*>[\s\S]*?</main>', page)
     if result.returncode or code != '200' or not main:
         sys.exit('FAIL: no valid rendered origin page for ' + slug)

@@ -569,7 +569,7 @@ if BUNDLE_D:
     for slug in ("therapeutic-massage", "deep-tissue-massage"):
         body_text = text_of(modality_pages[slug])
         check(f"Bundle D {slug}: Mak active-comparator qualifier retained", body_text.count(mak_qualifier) == 1 and "conclusions that massage was better than other active approaches were rare." not in body_text)
-        check(f"Bundle D {slug}: Cochrane long-term statement names no-treatment comparator", body_text.count("found no long-term benefit over no treatment") == 1 and "found no benefit over the long term" not in body_text)
+        check(f"Bundle D {slug}: Cochrane long-term statement names no-treatment comparator", body_text.count('found no long-term benefit over no intervention') == 1 and "found no benefit over the long term" not in body_text)
     research_note = "These are general findings, not medical advice or a promise of any result; the full summaries, including the weaker results, are in the research section below."
     for slug in ("therapeutic-massage", "deep-tissue-massage", "chair-massage"):
         body_text = text_of(modality_pages[slug])

@@ -112,9 +112,9 @@
         "count": 1
       },
       {
-        "label": "Normalize complete research citations",
+        "label": "Two Thai papers share the verified complete author list",
         "text": "Sripongngam T, Eungpinichpong W, Sirivongs D, Kanpittaya J, Tangvoraphonkchai K, Chanaboon S.",
-        "count": 1
+        "count": 2
       },
       {
         "label": "Normalize complete research citations",
@@ -162,7 +162,7 @@
       },
       {
         "label": "Cochrane 2015: specify the long-term comparator",
-        "text": "found no long-term benefit over no treatment",
+        "text": "found no long-term benefit over no intervention",
         "count": 1
       },
       {
@@ -227,7 +227,7 @@
       },
       {
         "label": "Cochrane 2015: specify the long-term comparator",
-        "text": "found no long-term benefit over no treatment",
+        "text": "found no long-term benefit over no intervention",
         "count": 1
       },
       {

@@ -38,7 +38,7 @@ All required abstracts, full texts and author records were accessible through th
 
 - [Ernst 2003](https://pubmed.ncbi.nlm.nih.gov/12777645/): distinguish most adverse effects from serious effects; use the accurate existing Chair sentence on three pages.
 - [Mak 2024](https://pubmed.ncbi.nlm.nih.gov/39008297/): restore the moderate-/high-certainty qualifier on two pages.
-- [Cochrane 2015](https://pubmed.ncbi.nlm.nih.gov/26329399/) and [Cochrane 2024](https://pubmed.ncbi.nlm.nih.gov/38415786/): name the no-treatment comparator, complete authors and consistent citations.
+- [Cochrane 2015](https://pubmed.ncbi.nlm.nih.gov/26329399/) and [Cochrane 2024](https://pubmed.ncbi.nlm.nih.gov/38415786/): name the no-intervention comparator, complete authors and consistent citations.
 - Studied techniques: [chair](https://pubmed.ncbi.nlm.nih.gov/20846441/), [Anma](https://pmc.ncbi.nlm.nih.gov/articles/PMC5172615/), [rhythmical](https://pubmed.ncbi.nlm.nih.gov/26365448/), [myofascial release](https://pubmed.ncbi.nlm.nih.gov/19123877/). The last source specifies myofascial release; this is more precise than the review’s proposed sports-massage label. Both rhythmical-study mentions identify that style.
 - [Arsovski 2025 full text](https://pmc.ncbi.nlm.nih.gov/articles/PMC12140169/): methods explicitly say twice a week for 8 weeks/16 interventions, resolving “bi-weekly.” Its abstract’s recovery comparison does not match its frequency-count table, and “longer sessions” conflates months/years receiving therapy with session length. The replacement retains the stated 40-minute protocol and reported athlete-group comparison and omits those two conflicting claims. This newly found limitation is a source-fidelity correction, not stronger evidence for the service.
 
@@ -48,7 +48,11 @@ Site-wide serial commas, Title Case, number/range-style changes, the italic font
 
 ## Verification and rollback
 
-Pending isolated uploads rehearsal, origin rendered copy check, staging dry run/apply with verified encrypted off-site DB/snapshot backup, rendered gates and restore proof. No pass is claimed for a challenged public browser request.
+- Offline gates PASS locally and on both GitHub Gates runs for `1890924ee4e97b2a89154e8dc70283c1bf6e9a36` (runs 41297905967 and 41297902089).
+- Independent review PASS: all 45 sequential replacement counts, all nine complete old/new page hashes for both hosts, every generated preview, block-attribute JSON and balanced WordPress block nesting. Frozen snippet hashes and footer source match the fresh stores.
+- First rehearsal: apply/reapply/exact rollback/reapply PASS; C browser regression 1,248/1,248 PASS. Two regulated-copy checks rejected the review’s “no treatment” phrase; use the source-faithful “no intervention” to preserve the shared house rules. One D assertion incorrectly expected a verified author list once; two different Thai papers share that complete list, so the correct rendered count is two. No staging write. Report: `reports/2026-11-01/103530-review-d-rehearse-staging38-20261101-1.md`.
+- Home/About 390 px paragraph captures from that isolated run visually reviewed: full text present, no clipping or side-scroll.
+- Corrected isolated uploads rehearsal is running. Origin rendered copy check, staging dry run/apply with verified encrypted off-site DB/snapshot backup, rendered gates and restore proof remain pending. No pass is claimed for a challenged public browser request.
 
 Rollback D before C, then B, then A. Older Chair/Corporate/research exact-state installers cannot run against D’s edited content; restore through the bundle snapshots in reverse order first. The historical Chair installer rollback stays retired while D is present.
 

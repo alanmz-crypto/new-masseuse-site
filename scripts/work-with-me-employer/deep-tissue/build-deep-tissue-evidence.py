@@ -167,20 +167,22 @@ PANELS = [
   'followed by better lower-back movement and lower pain ratings in the massage group, while the group given no therapy showed no significant changes.{wendt} A 2015 Cochrane review of 25 trials found that massage was better than no '
   'intervention for low-back pain in the short term.{cochrane_lbp}',
   (
-      'The larger and more carefully designed studies are more cautious. In the Stockholm Neck trial of 619 adults with ongoing neck pain, deep tissue '
-      'massage led to a higher chance of improvement in pain than advice to stay active in the short term but not at later follow-ups, and at 12 months '
-      'none of the therapies tested was more effective than advice for pain intensity or for pain-related disability.{skillgate} A cost analysis of the '
-      'same trial found that massage and the combined therapy cost more and were less beneficial than advice, that differences in health-related quality'
-      ' of life were minimal, and its authors concluded that massage and the combined therapy are not cost-effective.{picoespinosa} The 2024 Cochrane '
-      'review of massage for neck pain, which included 33 studies with 1,994 people, found that, compared with a placebo massage, massage probably makes'
-      ' little or no difference to pain, function or quality of life at up to 12 weeks (low-certainty evidence), and adverse events were too poorly '
-      'reported to judge.{cochrane_neck} The 2015 Cochrane review of low-back pain rated the quality of the evidence low to very low, found no long-term'
-      ' benefit over no treatment, and its authors said they had “very little confidence” in the results.{cochrane_lbp} In 59 adults with chronic low '
-      'back pain who had two weeks of deep tissue massage with or without a nonsteroidal anti-inflammatory drug, pain and function improved in both '
-      'groups with no difference between them; because everyone had massage, the trial cannot show how much of the change was due to the massage '
-      'itself.{majchrzycki} In the office-worker trial, the two groups differed significantly in only one lower-back movement, and the authors said '
-      'larger studies and an assessment of long-term effects are needed.{wendt} The small trial of 26 older adults ended by saying that further research'
-      ' is needed.{romanowski}'
+      (
+          'The larger and more carefully designed studies are more cautious. In the Stockholm Neck trial of 619 adults with ongoing neck pain, deep tissue '
+          'massage led to a higher chance of improvement in pain than advice to stay active in the short term but not at later follow-ups, and at 12 months '
+          'none of the therapies tested was more effective than advice for pain intensity or for pain-related disability.{skillgate} A cost analysis of the '
+          'same trial found that massage and the combined therapy cost more and were less beneficial than advice, that differences in health-related quality'
+          ' of life were minimal, and its authors concluded that massage and the combined therapy are not cost-effective.{picoespinosa} The 2024 Cochrane '
+          'review of massage for neck pain, which included 33 studies with 1,994 people, found that, compared with a placebo massage, massage probably makes'
+          ' little or no difference to pain, function or quality of life at up to 12 weeks (low-certainty evidence), and adverse events were too poorly '
+          'reported to judge.{cochrane_neck} The 2015 Cochrane review of low-back pain rated the quality of the evidence low to very low, found no long-term'
+          ' benefit over no intervention, and its authors said they had “very little confidence” in the results.{cochrane_lbp} In 59 adults with chronic low'
+          ' back pain who had two weeks of deep tissue massage with or without a nonsteroidal anti-inflammatory drug, pain and function improved in both '
+          'groups with no difference between them; because everyone had massage, the trial cannot show how much of the change was due to the massage '
+          'itself.{majchrzycki} In the office-worker trial, the two groups differed significantly in only one lower-back movement, and the authors said '
+          'larger studies and an assessment of long-term effects are needed.{wendt} The small trial of 26 older adults ended by saying that further research'
+          ' is needed.{romanowski}'
+      )
   ),
   'Still, people in the Stockholm Neck trial who had massage, exercise or both were more likely than those given advice to say they had recovered, at every follow-up through one year.{skillgate} A subgroup analysis in the 2024 Cochrane '
   'review favored higher doses (eight or more sessions of at least 30 minutes over four weeks), which suggests that regular sessions may matter.{cochrane_neck}',

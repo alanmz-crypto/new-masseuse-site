@@ -244,7 +244,7 @@
         {
           "label": "Cochrane 2015: specify the long-term comparator",
           "old": "found no benefit over the long term",
-          "new": "found no long-term benefit over no treatment",
+          "new": "found no long-term benefit over no intervention",
           "count": 1
         },
         {
@@ -281,11 +281,11 @@
       "hashes": {
         "staging38.thaisolitude.com": {
           "old": "9689ae17c3a77c260f273d798f49965f6cb0219a8df26ff405e7f2b87ab02511",
-          "new": "da94865ff15eaae72da4669212766c0ab7437130d4ab8cce443c3063af33eefb"
+          "new": "12b867d553baca4932ad7f9c5257839d90f1b3fc4da9e0acfa9203d612fec159"
         },
         "localhost:8090": {
           "old": "f269d51c263a19a40efb0e9bb3895e5270e1155ce903f22bc92e454767033173",
-          "new": "39579321c184858cc520dcae98c5158dbb5cc7cc29ca8a366dc61df531950baa"
+          "new": "8cee6ac6230b2f80cc07c468f1434e4130c459d2301eb92a85445e295f8535b4"
         }
       }
     },
@@ -330,7 +330,7 @@
         {
           "label": "Cochrane 2015: specify the long-term comparator",
           "old": "found no benefit over the long term",
-          "new": "found no long-term benefit over no treatment",
+          "new": "found no long-term benefit over no intervention",
           "count": 1
         },
         {
@@ -343,11 +343,11 @@
       "hashes": {
         "staging38.thaisolitude.com": {
           "old": "fee9d6491b9fac1483e4c8ddcd1f6dd3e042e315987dbc049a9350b0e8ec479e",
-          "new": "ea99203e79a235fb427ddbf8e860c60ae83c6d995e29b67a61d7807233954d4f"
+          "new": "a85c683bebf9212f7215367ea84e4ec426db9177f67c901a648bd278852e5546"
         },
         "localhost:8090": {
           "old": "d6992422c33b8098bb46a46652a5af0deafee70910aba62dc69db3c457328231",
-          "new": "ca796e435f768ffd4a0468259cbef159e23436ee89344708b78b5e2be0a14329"
+          "new": "32fff3487caa992b7ea68a0ce5f5477c268d4f49cbef0e9dba879ed53ac9cfc8"
         }
       }
     },

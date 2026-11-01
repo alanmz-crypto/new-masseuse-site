@@ -25,7 +25,10 @@ try {
       const area = document.createElement('textarea'); area.innerHTML = raw;
       return area.value.replace(/\s+/g, ' ').trim().replace(/’/g, "'").replace(/[“”]/g, '"');
     });
-    for (const item of want.texts) check(`${slug} ${item.label}`, body.split(item.text).length - 1 === item.count);
+    for (const item of want.texts) {
+      const count = body.split(item.text).length - 1;
+      check(`${slug} ${item.label} (count ${count}, expected ${item.count})`, count === item.count);
+    }
     const hrefs = await page.locator('main a').evaluateAll(links => links.map(a => a.getAttribute('href')));
     for (const item of want.links) check(`${slug} corrected href ${item.href}`, hrefs.filter(h => h === item.href).length === item.count);
     check(`${slug} footer middot`, (await page.locator('footer').innerText()).replace(/\s+/g, ' ').includes('Butsaba Dusrai, LMT · Oregon License LMT-29905'));
