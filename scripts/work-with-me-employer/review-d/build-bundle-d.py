@@ -16,7 +16,7 @@ def build():
     for page in data['pages'].values():
         for pair in page['pairs']:
             assert pair['old'] and pair['old'] != pair['new'] and pair['count'] > 0
-        assert set(page['hashes']) == {'localhost:8090', 'staging38.thaisolitude.com'}
+        assert set(page['hashes']) == {'localhost:8090', 'staging38.thaisolitude.com', 'thaisolitude.com'}
         for hashes in page['hashes'].values():
             assert set(hashes) == {'old', 'new'} and hashes['old'] != hashes['new']
     for snippet in data['snippets'].values():

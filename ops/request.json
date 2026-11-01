@@ -1,10 +1,9 @@
 {
-  "id": "review-d-live-source-20261101",
-  "op": "run",
+  "id": "review-d-live-rehearse-20261101",
+  "op": "rehearse",
   "target": "live",
-  "script": "review-d/inspect-bundle-d.sh",
+  "installer": "review-d/install-bundle-d.php",
   "args": [
-    "--sources-only"
-  ],
-  "tests": "auto"
+    "--with-uploads"
+  ]
 }
