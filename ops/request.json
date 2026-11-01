@@ -1,8 +1,10 @@
 {
-  "id": "review-e-dry-staging38-20261101-2",
+  "id": "review-e-apply-staging38-20261101-2",
   "op": "run",
   "target": "staging38",
   "script": "review-e/push-bundle-e.sh",
-  "args": [],
+  "args": [
+    "--apply"
+  ],
   "tests": "auto"
 }
