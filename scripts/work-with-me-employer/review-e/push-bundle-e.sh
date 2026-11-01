@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Bundle E on staging38 ONLY. Dry run by default; --apply / --rollback FILE take
+# Bundle E on staging38 or the exact live apex. Dry run by default; --apply / --rollback FILE take
 # a fresh DB export and verified encrypted off-site copy before writing.
 # See install-bundle-e.php and README.md for exact scope and rollback.
 # shellcheck disable=SC2016  # the single-quoted commands below are meant to expand on the server, not here
@@ -22,7 +22,7 @@ case "${1:-}" in
   *) echo "Usage: $0 [--apply | --rollback FILE]" >&2; exit 1 ;;
 esac
 target="${S_TARGET:-staging38}"
-case "$target" in staging38) ;; *) echo "S_TARGET must be staging38; live is disabled." >&2; exit 1 ;; esac
+case "$target" in staging38|live) ;; *) echo "S_TARGET must be staging38 or live." >&2; exit 1 ;; esac
 echo "Target site: $target   mode: $mode"
 ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 "$user@$host")
 
@@ -35,7 +35,7 @@ read -r -d '' REMOTE <<'EOS' || true
 set -euo pipefail
 wp() { command wp --skip-plugins=sg-security "$@"; }   # SiteGround Security 1.6.9 + PHP 8.5 makes EVERY wp exit 0 on live (shutdown-handler bug); skipping that one plugin keeps exit codes true. See AGENTS.md and check-wp-exit-codes.sh.
 phase=$1; target=$2; snap=${3:-}
-case "$target" in staging38) want="staging38.thaisolitude.com" ;; *) echo "Remote refused: target must be staging38, got '$target'." >&2; exit 1 ;; esac
+case "$target" in staging38) want="staging38.thaisolitude.com" ;; live) want="thaisolitude.com" ;; *) echo "Remote refused: target must be staging38 or live, got '$target'." >&2; exit 1 ;; esac
 command -v python3 >/dev/null || { echo "Python3 required for origin checks; nothing changed." >&2; exit 1; }
 command -v wp >/dev/null || { echo "wp-cli not found on the server" >&2; exit 1; }
 doc=""

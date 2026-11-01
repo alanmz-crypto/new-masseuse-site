@@ -1,6 +1,6 @@
 <?php
 /**
- * Approved review Bundle E on staging38 / isolated localhost only.
+ * Approved review Bundle E on staging38, exact live apex or isolated localhost only.
  * Two exact page-image replacements, prepared WebP and two WPCode snippets.
  * All ten original images remain unchanged. No CSS, prose, SEO or options edit.
  * Private complete snapshots and verified off-site DB backup precede writes.
@@ -10,14 +10,14 @@
 if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) ) { exit( 'Run with WP-CLI.' ); }
 $home = untrailingslashit( home_url() );
 $host = (string) wp_parse_url( $home, PHP_URL_HOST ) . ( wp_parse_url( $home, PHP_URL_PORT ) ? ':' . wp_parse_url( $home, PHP_URL_PORT ) : '' );
-if ( ! in_array( $host, array( 'localhost:8090', 'staging38.thaisolitude.com' ), true ) ) { WP_CLI::error( 'staging38 / isolated localhost only. Live disabled.' ); }
+if ( ! in_array( $host, array( 'localhost:8090', 'staging38.thaisolitude.com', 'thaisolitude.com' ), true ) ) { WP_CLI::error( 'Exact staging38, live apex or isolated localhost required.' ); }
 if ( 'astra' !== get_stylesheet() || ! current_user_can( 'manage_options' ) || ! current_user_can( 'unfiltered_html' ) || ! current_user_can( 'upload_files' ) || ! function_exists( 'wpcode' ) || ! class_exists( 'WPCode_Snippet' ) || ! class_exists( 'WP_HTML_Tag_Processor' ) ) { WP_CLI::error( 'Requires Astra, WPCode and administrator --user=1.' ); }
 $args = isset( $args ) && is_array( $args ) ? $args : array();
 $mode = $args[0] ?? 'preflight';
 if ( ! in_array( $mode, array( 'preflight', 'apply', 'rollback' ), true ) ) { WP_CLI::error( 'Unknown mode.' ); }
 $data = require __DIR__ . '/bundle-e-content.php';
 global $wp_version, $wpdb;
-if ( $wp_version !== $data['wp_version'] ) { WP_CLI::error( 'Installed core changed since emoji/source review; nothing changed.' ); }
+if ( ! isset( $data['wp_versions'][ $host ] ) || $wp_version !== $data['wp_versions'][ $host ] ) { WP_CLI::error( 'Installed core changed since emoji/source review; nothing changed.' ); }
 $media = $data['media']; $payload = __DIR__ . '/assets/' . $media['name'];
 $dim = is_file( $payload ) ? getimagesize( $payload ) : false;
 if ( ! $dim || $dim[0] !== $media['width'] || $dim[1] !== $media['height'] || $dim['mime'] !== $media['mime'] || filesize( $payload ) !== $media['filesize'] || hash_file( 'sha256', $payload ) !== $media['sha256'] ) { WP_CLI::error( 'Prepared WebP missing/changed.' ); }

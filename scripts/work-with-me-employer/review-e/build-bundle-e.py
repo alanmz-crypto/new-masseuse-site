@@ -11,10 +11,13 @@ HERE = Path(__file__).resolve().parent
 
 def build():
     data = json.loads((HERE / 'changes.json').read_text())
+    assert data['wp_versions'] == {'staging38.thaisolitude.com': '7.1.3', 'localhost:8090': '7.1.4', 'thaisolitude.com': '7.1.4'}
     assert set(data['pages']) == {'home', 'therapeutic-massage'}
     assert sum(len(p['pairs']) for p in data['pages'].values()) == 4
     assert len(data['originals']) == 10
     for page in data['pages'].values():
+        assert set(page['hashes']) == set(data['wp_versions'])
+        assert all(re.fullmatch(r'[a-f0-9]{64}', value) for state in page['hashes'].values() for value in state.values())
         for pair in page['pairs']:
             body = lambda value: re.sub(r'<img\b[^>]*>', '', re.sub(r'<!--[\s\S]*?-->', '', value))
             assert body(pair['old']) == body(pair['new']), 'E changes only image attributes'

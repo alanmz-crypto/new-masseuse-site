@@ -6,7 +6,7 @@ import { createHash } from 'node:crypto';
 const require = createRequire(process.env.TS_PLAYWRIGHT_ROOT || '/home/lauer/Projects/SubProjects/Mirror/package.json');
 const { chromium } = require('playwright');
 const base = (process.argv[2] || '').replace(/\/$/, '');
-if (!/^(https:\/\/staging38\.thaisolitude\.com|http:\/\/localhost:8090)$/.test(base)) throw new Error('staging38 or isolated localhost only');
+if (!/^(https:\/\/(?:staging38\.)?thaisolitude\.com|http:\/\/localhost:8090)$/.test(base)) throw new Error('Exact staging38, live apex or isolated localhost only');
 const inline = process.argv.includes('inline') && !process.argv.includes('no-inline');
 // Eight original rendered IMG elements from the pre-E staging capture. No full-page baseline or attachment-ID asset selection is packaged.
 const PAGES = [

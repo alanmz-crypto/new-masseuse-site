@@ -31,6 +31,10 @@
         "localhost:8090": {
           "old": "bc7953a5b5470e9035ed1497f1e7c79369f597c9ca96bcc60ae99f34b07fe002",
           "new": "87fd91fbdefef76532ad146c650c441634a10a3c7dce4ba38516c83b9f6375d0"
+        },
+        "thaisolitude.com": {
+          "old": "75aef61711e7fac2fc5894eacaa26aef8514c0840bb1626d9b809bc91e9ed842",
+          "new": "a5060e297017966ba024dc59c666f8eaef5cb0ccb0b0611c44c51e36b82308ed"
         }
       }
     },
@@ -51,6 +55,10 @@
         "localhost:8090": {
           "old": "8cee6ac6230b2f80cc07c468f1434e4130c459d2301eb92a85445e295f8535b4",
           "new": "1e718391d9b6884302608cfdd7139650344ec4474e2945221d47adbefb50fcb8"
+        },
+        "thaisolitude.com": {
+          "old": "b2a2c91e60dba184da80feb26d688fb70cb8f2ebca54c22da39f1f1272918677",
+          "new": "2fbc7d388dc825744c38b7bd1b9d2acab973691f6dd9fd0eab480ebbd34be234"
         }
       }
     }
@@ -213,5 +221,11 @@
     "filesize": 21796,
     "sha256": "e795b73e4272e90f92db59b2734be41dd06365ac8ca6f0e8aa5e02d11ee1a756",
     "relative_file": "2026/11/therapeutic-red-400.webp"
+  },
+  "live_source_report": "reports/2026-11-01/190302-review-e-live-source-20261101.md",
+  "wp_versions": {
+    "staging38.thaisolitude.com": "7.1.3",
+    "localhost:8090": "7.1.4",
+    "thaisolitude.com": "7.1.4"
   }
 }

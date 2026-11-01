@@ -1,10 +1,9 @@
 {
-  "id": "review-e-live-source-20261101",
-  "op": "run",
+  "id": "review-e-live-rehearse-20261101",
+  "op": "rehearse",
   "target": "live",
-  "script": "review-e/inspect-bundle-e.sh",
+  "installer": "review-e/install-bundle-e.php",
   "args": [
-    "--sources-only"
-  ],
-  "tests": "auto"
+    "--with-uploads"
+  ]
 }

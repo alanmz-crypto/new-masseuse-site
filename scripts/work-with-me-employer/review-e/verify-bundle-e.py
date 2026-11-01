@@ -9,8 +9,8 @@ import subprocess
 import sys
 
 base = sys.argv[1].rstrip('/')
-if base not in ('http://localhost:8090', 'https://staging38.thaisolitude.com'):
-    sys.exit('staging38 or isolated localhost only')
+if base not in ('http://localhost:8090', 'https://staging38.thaisolitude.com', 'https://thaisolitude.com'):
+    sys.exit('Exact staging38, live apex or isolated localhost only')
 data = json.loads(Path(__file__).with_name('changes.json').read_text())
 total = failures = 0
 
