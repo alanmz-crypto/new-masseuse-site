@@ -1,8 +1,9 @@
 # Review Bundle A — booking paths and internal links
 
 Authorized by `docs/inter-model/2026-11-01-site-review-fix-handoff.md` (Ryan's
-“fix all”). Staging38 first; rehearsed first; live disabled. No Butsaba-dependent
-facts, deletions, credentials, menu labels or live requests.
+“fix all”). Staging38 first; rehearsed first. Ryan authorized release preparation
+on 2026-11-01; live request is prepared in PR #68, not applied. No Butsaba-dependent
+facts, deletions, credentials or menu labels. See the [release record](../../../docs/reviews/2026-11-01-review-live-release.md).
 
 The stored-byte source is the fresh read-only staging38 capture
 `review-a-dump-staging38-20261101`, archive SHA256
@@ -83,12 +84,18 @@ heights. `check-bundle-a.mjs` measures heights with additions shown/hidden in th
 same DOM; this is an estimate of the height change, not a before/after pixel
 proof. Read the automatic pixel-test differences in that context.
 
-No live host is allowed. After staging evidence is reviewed, Ryan must give the
-live go before an enable-live commit and request are prepared. He merges and
-starts Site ops (LIVE) himself.
+The installer/push now allow exactly thaisolitude.com after Ryan's release go.
+A fresh isolated rehearsal from live and actual live dry run pass. He alone merges
+PR #68 and starts Site ops (LIVE), confirming `live-review-a-20261101-1`; nothing has applied yet.
+The public checker accepts HTTPS staging38 or apex for post-release verification.
+
+Production's Corporate source has no final LF. The mobile-quote pair drops exactly
+one LF from BOTH old and new fragments; staging's existing LF remains outside the
+replacement, preserving its applied bytes. No wording, count or frozen snippet
+changed. No-LF/one-LF/two-LF roundtrips and the live-source rehearsal pass.
 
 Bundle G must include the five new closing date sentences: **15 total** after
 Bundle A, rather than the original ten. The Services page is now also in scope
 for that after-November-14 refresh.
 
-Verified on staging38, 2026-11-01: see `docs/reviews/2026-11-01-bundle-a-staging38.md` for all evidence and the exact rollback snapshot. Live remains disabled.
+Verified on staging38, 2026-11-01: see `docs/reviews/2026-11-01-bundle-a-staging38.md` for all evidence and the exact staging rollback snapshot. Live is prepared, not applied; its actual snapshot will be recorded only after Ryan's own run. Roll E/D/C/B back first before A on current staging38.

@@ -1,8 +1,10 @@
 # Project memory (snapshot for cloud sessions)
 
+- [Site review release](site-review-release.md) — Ryan's A–E go; A PR #68/request `live-review-a-20261101-1` prepared, no live apply; fresh live-source rehearsal/dry2 PASS, exact phone steps; F/hosting follow-ups deferred.
+
 - [Site review Bundle B](site-review-bundle-b.md) — 2026-11-01: search/sharing applied on staging38; rehearsal2/12-page semantic scan/rendered gates PASS; approved default/Home card; exact rollback recorded; live disabled.
 
-- [Site review Bundle A](site-review-bundle-a.md) — 2026-11-01: Bundle 0 draft and fresh staging38 capture complete; Bundle A applied/verified on staging38 (262 browser assertions, rollback proven); PR #61, live disabled.
+- [Site review Bundle A](site-review-bundle-a.md) — 2026-11-01: Bundle 0 draft and fresh staging38 capture complete; Bundle A applied/verified on staging38 (262 browser assertions, rollback proven); PR #61 merged; A live preparation is PR #68, awaiting Ryan's run.
 
 A copy of the notes Claude keeps on Ryan's computer for this project, taken 2026-10-24 with the SSH username, the login email,
 Butsaba's Gmail address and Ryan's home IP masked. The computer's copy is the original. A cloud session reads the entries that
