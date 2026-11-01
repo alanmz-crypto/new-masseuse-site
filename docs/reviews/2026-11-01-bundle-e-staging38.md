@@ -33,6 +33,8 @@ Rollback refuses changed stores or owned post/meta/terms/files, restores/read-ba
 
 First rehearsal stopped before any apply: old image fragments needed host templates for the localized localhost copy. The per-host page hashes matched, but fragment URLs had retained the staging hostname. Corrected without any staging write. Report: `reports/2026-11-01/112935-review-e-rehearse-staging38-20261101-1.md`.
 
+Second rehearsal exercised recovery: WordPress’s upload handler requires its file array by reference; the temporary literal caused apply to stop before an upload. Old stores were restored/read back, private temp cleaned, and no staging write occurred. The handler now receives a standard named upload array. Report: `reports/2026-11-01/113514-review-e-rehearse-staging38-20261101-2.md`.
+
 Pending: corrected isolated uploads apply/reapply/exact rollback/reapply, C+D regression suites and E image/geometry/delivery/preload/emoji browser checks; staging dry/apply/origin checks and restore proof. Public interactive checks remain pending while the hosting challenge is intermittent. No public retry loop or live action.
 
 Source reports:

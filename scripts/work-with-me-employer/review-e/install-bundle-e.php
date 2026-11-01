@@ -164,7 +164,8 @@ try {
 		$tmp = tempnam( $dir, 'review-e-import-' ); if ( ! $tmp || ! copy( $payload, $tmp ) || ! chmod( $tmp, 0600 ) ) { throw new \RuntimeException( 'Private import staging failed.' ); }
 		$fixed_uploads = function ( $value ) use ( $media ) { $value['subdir'] = '/' . dirname( $media['relative_file'] ); $value['path'] = $value['basedir'] . $value['subdir']; $value['url'] = $value['baseurl'] . $value['subdir']; return $value; };
 		add_filter( 'upload_dir', $fixed_uploads );
-		try { $handled = wp_handle_sideload( array( 'name' => $media['name'], 'tmp_name' => $tmp ), array( 'test_form' => false, 'mimes' => array( 'webp' => 'image/webp' ) ) ); }
+		$sideload = array( 'name' => $media['name'], 'tmp_name' => $tmp, 'type' => $media['mime'], 'size' => $media['filesize'], 'error' => 0 );
+		try { $handled = wp_handle_sideload( $sideload, array( 'test_form' => false, 'mimes' => array( 'webp' => 'image/webp' ) ) ); }
 		finally { remove_filter( 'upload_dir', $fixed_uploads ); if ( is_file( $tmp ) ) { unlink( $tmp ); } }
 		if ( ! empty( $handled['error'] ) ) { throw new \RuntimeException( 'WebP upload: ' . $handled['error'] ); }
 		$created_path = realpath( $handled['file'] );

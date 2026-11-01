@@ -1,5 +1,5 @@
 {
-  "id": "review-e-rehearse-staging38-20261101-2",
+  "id": "review-e-rehearse-staging38-20261101-3",
   "op": "rehearse",
   "target": "staging38",
   "installer": "review-e/install-bundle-e.php",
