@@ -252,7 +252,7 @@ if [ -f "$extra" ]; then
   package_browser_rc=$?
   check "package browser checks" "$package_browser_rc"
   [ "$package_browser_rc" -eq 0 ] || tail -n 30 "$out/package-browser.log"
-  grep -E '^(FAIL|INVALID|Bundle C:|CONTRAST|LAYOUT|MIN_CONTRAST|HEADING|HEIGHT|INFO)' "$out/package-browser.log" || true
+  grep -E '^(FAIL|INVALID|Bundle C:|CONTRAST|LAYOUT|MIN_CONTRAST|HEADING|HEIGHT|INFO|INLINE)' "$out/package-browser.log" || true
 fi
 
 echo; echo "[5] what the change touches (fingerprint A -> B; this is what staging will see move):"

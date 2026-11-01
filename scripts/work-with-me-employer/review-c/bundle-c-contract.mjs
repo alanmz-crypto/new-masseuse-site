@@ -12,8 +12,33 @@ const rgb = value => {
 
 export function createContract(baselines, check, base) {
   const desktopStrips = new Map();
-  let converted = 0, mapChecks = 0, minContrast = Infinity;
+  let converted = 0, mapChecks = 0, geometryComparisons = 0, minContrast = Infinity;
   async function atWidth(page, path, width, theme) {
+    if (theme === 'light') {
+      const proof = await page.evaluate(() => {
+        const rect = el => { const r = el.getBoundingClientRect(); return [r.x, r.y, r.width, r.height]; };
+        const entries = [...document.querySelectorAll('.uagb-faq-item')].map(item => {
+          const question = item.querySelector('.uagb-faq-questions-button');
+          const button = question?.querySelector('button.ts-faq-disclosure');
+          return button ? { item, question, button, nodes: [...button.childNodes], marker: document.createComment('ts-faq-geometry'), before: [rect(item), rect(question)] } : null;
+        }).filter(Boolean);
+        let without;
+        try {
+          // Preserve every original node and listener. Only remove the native
+          // wrapper briefly; the original question DIV receives the same nodes.
+          entries.forEach(e => e.button.replaceWith(e.marker, ...e.nodes));
+          without = entries.map(e => [rect(e.item), rect(e.question)]);
+        } finally {
+          entries.forEach(e => { if (e.marker.parentNode) e.marker.replaceWith(e.button); e.nodes.forEach(node => e.button.appendChild(node)); });
+        }
+        const after = entries.map(e => [rect(e.item), rect(e.question)]);
+        const equal = (a, b) => a.every((box, j) => box.every((n, k) => Math.abs(n - b[j][k]) <= .1));
+        return { count: entries.length, failures: entries.flatMap((e, i) => equal(e.before, without[i]) && equal(e.before, after[i]) ? [] : [{ question: e.button.textContent.trim(), wrapped: e.before, unwrapped: without[i], restored: after[i] }]) };
+      });
+      geometryComparisons += proof.count;
+      if (proof.count) check(`${path} ${width} native FAQ wrapper leaves all item/question geometry unchanged`, proof.failures.length === 0, proof.failures.length ? JSON.stringify(proof.failures) : `items=${proof.count}`);
+      if (proof.count) console.log('INFO FAQ_GEOMETRY ' + JSON.stringify({ path, width, compared: proof.count, failures: proof.failures.length }));
+    }
     const expected = baselines.find(b => b.path === path && b.width === width);
     if (expected) {
       const actual = await page.evaluate(expected => expected.map(want => {
@@ -46,6 +71,13 @@ export function createContract(baselines, check, base) {
       const rows = [...new Set(hearts.map(e => Math.round(e.getBoundingClientRect().top)))].sort((a, b) => a - b);
       const heartWrap = document.querySelector('body.home .entry-content .wp-block-columns:has(> .wp-block-column > .uagb-block-972dd645)');
       const iframe = document.querySelector('iframe[title="Map of Portland, Oregon"]');
+      const faqGroup = path === '/therapeutic-massage/' ? document.querySelector('.ts-therapeutic-faq') : null;
+      const faqGrid = path === '/therapeutic-massage/' ? document.querySelector('.uagb-block-a7e6f7a8') : null;
+      const faqHeading = faqGroup?.querySelector('.uagb-block-d621cb0e h2');
+      const faqHeadingBlock = faqGroup?.querySelector('.uagb-block-d621cb0e');
+      const faq = faqGroup?.querySelector('.wp-block-uagb-faq');
+      const faqHeadingStyle = faqHeading ? getComputedStyle(faqHeading) : null;
+      const headingLine = faqHeadingStyle ? parseFloat(faqHeadingStyle.lineHeight) : NaN;
       return {
         h1s: document.querySelectorAll('h1').length,
         chevrons: [...document.querySelectorAll('.uagb-faq-item')].every(item => {
@@ -63,6 +95,7 @@ export function createContract(baselines, check, base) {
         hiddenHeading: hidden ? { tag: hidden.tagName, text: hidden.textContent.trim(), display: getComputedStyle(hidden).display, visibility: getComputedStyle(hidden).visibility, ariaHidden: hidden.getAttribute('aria-hidden'), width: hiddenbox.width, height: hiddenbox.height, position: getComputedStyle(hidden).position } : null,
         serviceRows: path === '/services/' ? ['Chair Massage', 'Corporate & Group Massage'].map(text => !![...main.querySelectorAll('h3')].find(h => h.textContent.trim() === text)) : [],
         faqH2: path === '/therapeutic-massage/' ? [...main.querySelectorAll('h2')].filter(h => h.textContent.trim() === 'Questions About Therapeutic Massage').length : 0,
+        faqGroup: faqGroup ? { gridChildren: faqGrid?.children.length, thirdChild: faqGrid?.children[2] === faqGroup, headingThenFaq: !!faqHeadingBlock && !!faq && faqHeadingBlock.nextElementSibling === faq, headingWidth: faqHeading?.getBoundingClientRect().width, headingHeight: faqHeading?.getBoundingClientRect().height, lineHeight: Number.isFinite(headingLine) ? headingLine : parseFloat(faqHeadingStyle?.fontSize || '0') * 1.2, noOverflow: faqGroup.scrollWidth <= faqGroup.clientWidth + 1 } : null,
         phoneUnderlines: contacts.map(a => getComputedStyle(a).textDecorationLine),
         map: iframe ? { src: iframe.getAttribute('src'), title: iframe.title, lazy: iframe.loading, height: iframe.getBoundingClientRect().height, embeds: main.querySelectorAll('embed').length } : null,
         layout: { path, width, height: document.documentElement.scrollHeight, h1Y: h1box?.top + scrollY, h1Height: h1box?.height, h1MarginTop: h1 ? getComputedStyle(h1).marginTop : null, entryHeaderPaddingTop: document.querySelector('.entry-header') ? getComputedStyle(document.querySelector('.entry-header')).paddingTop : null, stripHeight: strip?.getBoundingClientRect().height || 0, heartRowGap: heartWrap ? getComputedStyle(heartWrap).rowGap : null, heartRows: rows },
@@ -81,10 +114,19 @@ export function createContract(baselines, check, base) {
     }
     if (path === '/services/') {
       const h = state.hiddenHeading;
-      check(tag + ' hidden Services H2 remains accessible without layout height', !!h && h.tag === 'H2' && h.text === 'Massage services' && h.display !== 'none' && h.visibility !== 'hidden' && h.ariaHidden !== 'true' && h.width <= 1 && h.height <= 1 && h.position === 'absolute');
+      check(tag + ' hidden Services H2 remains accessible without layout height', !!h && h.tag === 'H2' && h.text === 'Massage services' && h.display !== 'none' && h.visibility !== 'hidden' && h.ariaHidden !== 'true' && h.width <= 1 && h.height <= 1 && h.position === 'absolute', JSON.stringify(h));
       check(tag + ' Chair and Corporate rows have H3 titles', state.serviceRows.length === 2 && state.serviceRows.every(Boolean));
     }
-    if (path === '/therapeutic-massage/') check(tag + ' one Therapeutic FAQ H2', state.faqH2 === 1);
+    if (path === '/therapeutic-massage/') {
+      check(tag + ' one Therapeutic FAQ H2', state.faqH2 === 1);
+      const group = state.faqGroup;
+      check(tag + ' Therapeutic H2/FAQ share the third of three grid slots', !!group && group.gridChildren === 3 && group.thirdChild && group.headingThenFaq, JSON.stringify(group));
+      check(tag + ' Therapeutic FAQ heading stays compact with no group overflow', !!group && group.noOverflow && group.lineHeight > 0 && group.headingHeight <= 4 * group.lineHeight + .1 && (width !== 1280 || group.headingWidth >= 300), JSON.stringify(group));
+      if (base === 'http://localhost:8090' && theme === 'light' && [1280, 390].includes(width) && group) {
+        const jpg = await page.locator('.ts-therapeutic-faq').screenshot({ type: 'jpeg', quality: 45 });
+        console.log(`INLINE bundle-c-therapeutic-faq-${width}.jpg base64:${jpg.toString('base64')}`);
+      }
+    }
     if (path === '/contact/') {
       check(tag + ' Contact phone links are visibly underlined', state.phoneUnderlines.length > 0 && state.phoneUnderlines.every(v => v.includes('underline')));
       const map = state.map;
@@ -202,6 +244,8 @@ export function createContract(baselines, check, base) {
   function finish() {
     check('all 23 Spectra and three Corporate converted headings matched baseline', converted === 26, String(converted));
     check('all four responsive map heights checked', mapChecks === 4, String(mapChecks));
+    check('all 49 FAQ wrappers measured at three widths', geometryComparisons === 147, String(geometryComparisons));
+    console.log('INFO FAQ_GEOMETRY total=' + geometryComparisons + ' expected=147');
     console.log('Bundle C minimum measured Chair panel contrast: ' + (Number.isFinite(minContrast) ? minContrast.toFixed(3) + ':1' : 'not measured'));
   }
   return { atWidth, pageInteractions, endpoints, finish };
