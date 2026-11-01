@@ -1,6 +1,6 @@
 # Bundle D: staging38 wording and research fidelity
 
-**Status:** prepared for isolated rehearsal; not yet applied. Live is disabled. Public whole-site browser verification remains blocked by SiteGround’s robot challenge. No public retry loop.
+**Status:** isolated rehearsal PASS; staging dry run pending, not yet applied. Live is disabled. Public whole-site browser verification remains blocked by SiteGround’s robot challenge. No public retry loop.
 
 Stacked on Bundle C, draft PR #64; Bundle B PR #63 is merged. All nine fresh stored page hashes match the applied C state. Source capture PASS: `reports/2026-11-01/102012-review-d-capture-staging38-20261101.md`.
 
@@ -52,7 +52,7 @@ Site-wide serial commas, Title Case, number/range-style changes, the italic font
 - Independent review PASS: all 45 sequential replacement counts, all nine complete old/new page hashes for both hosts, every generated preview, block-attribute JSON and balanced WordPress block nesting. Frozen snippet hashes and footer source match the fresh stores.
 - First rehearsal: apply/reapply/exact rollback/reapply PASS; C browser regression 1,248/1,248 PASS. Two regulated-copy checks rejected the review’s “no treatment” phrase; use the source-faithful “no intervention” to preserve the shared house rules. One D assertion incorrectly expected a verified author list once; two different Thai papers share that complete list, so the correct rendered count is two. No staging write. Report: `reports/2026-11-01/103530-review-d-rehearse-staging38-20261101-1.md`.
 - Home/About 390 px paragraph captures from that isolated run visually reviewed: full text present, no clipping or side-scroll.
-- Corrected isolated uploads rehearsal is running. Origin rendered copy check, staging dry run/apply with verified encrypted off-site DB/snapshot backup, rendered gates and restore proof remain pending. No pass is claimed for a challenged public browser request.
+- Corrected isolated uploads rehearsal PASS: 1,376 browser assertions (C 1,248 + D 128), regulated-copy/Home gates, apply, idempotent repeat apply, exact rollback and reapply; no new PHP errors. Report: `reports/2026-11-01/104227-review-d-rehearse-staging38-20261101-2.md`. Staging dry run is next. Origin rendered copy check, staging dry run/apply with verified encrypted off-site DB/snapshot backup, rendered gates and restore proof remain pending. No pass is claimed for a challenged public browser request.
 
 Rollback D before C, then B, then A. Older Chair/Corporate/research exact-state installers cannot run against D’s edited content; restore through the bundle snapshots in reverse order first. The historical Chair installer rollback stays retired while D is present.
 

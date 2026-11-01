@@ -23,8 +23,8 @@ After A, Bundle G must refresh 15 booking-date sentences (the original ten plus
 five new closing blocks), including Services; still on/after November 14 only.
 
 **Bundle D is prepared**, draft PR #65 stacked on C: nine pages, heart links and
-footer separator; fresh origin capture and offline gates PASS, isolated uploads
-rehearsal next. Source checks resolve twice-weekly protocol and the studied
+footer separator; fresh origin capture, offline gates and isolated uploads
+rehearsal2 PASS (1,376 assertions/exact rollback), staging dry run next. Source checks resolve twice-weekly protocol and the studied
 myofascial-release style; two conflicting 2025 abstract comparisons are omitted.
 No D staging write yet. Public full browser verification stays pending while
 the host robot challenge exists. See [[site-review-bundle-d]].

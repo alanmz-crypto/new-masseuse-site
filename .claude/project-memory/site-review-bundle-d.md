@@ -6,7 +6,7 @@ metadata:
 ---
 
 Draft PR #65, branch `codex/2026-11-01-review-bundle-d`, base C draft PR #64.
-Prepared; isolated uploads rehearsal pending. No D staging write yet. Live is
+Prepared; isolated uploads rehearsal2 PASS (1,376 browser assertions, regulated-copy gates, apply/reapply/exact rollback/reapply). Dry run next; no D staging write yet. Live is
 disabled and no live request exists. Fresh origin dump/raw-store capture PASS;
 all 12 page hashes match applied C. Required research sources were accessible.
 
