@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Read-only Bundle E capture on staging38: fresh dump, exact native stores,
-# seven known upload originals and installed core emoji callbacks/source.
-# No conversion, import, option/post/cache updates or persistent server files.
+# ten known upload originals and installed core emoji callbacks/source.
+# A verified PNG copy is converted in the temporary archive directory only.
+# No import, option/post/cache updates or persistent server files.
 # Image/emoji outputs contain no EXIF, credentials or absolute server paths.
 # shellcheck disable=SC2016
 set -euo pipefail
@@ -63,7 +64,10 @@ $assets = array(
     "thai-session-cutout"=>"2026/10/thai-massage-therapy-session-cutout.webp",
     "home-therapeutic-target"=>"2026/06/ComfyUI_01040_curves.webp",
     "home-deep-tissue-target"=>"2026/06/ComfyUI_01044_.webp",
-    "home-thai-target"=>"2026/06/00illaCNN512Curve.webp"
+    "home-thai-target"=>"2026/06/00illaCNN512Curve.webp",
+    "home-therapeutic-current"=>"2026/10/therapeutic-massage-illustration.webp",
+    "home-deep-tissue-current"=>"2026/10/deep-tissue-massage-illustration.webp",
+    "home-thai-current"=>"2026/10/thai-massage-illustration.webp"
 );
 $images = array(); global $wpdb;
 foreach ($assets as $key=>$relative) {
@@ -85,12 +89,47 @@ foreach ($assets as $key=>$relative) {
         if ($stored !== $relative) { WP_CLI::error("Attachment file differs: ".$relative); }
         $meta = wp_get_attachment_metadata($id);
         $item["attachment"] = array("relative_file"=>$stored, "width"=>is_array($meta) ? ($meta["width"] ?? null) : null, "height"=>is_array($meta) ? ($meta["height"] ?? null) : null, "mime"=>get_post_mime_type($id));
+        if (0 === strpos($key, "home-") && str_ends_with($key, "-target")) {
+            $item["attachment"]["sizes"] = array();
+            foreach ((array)($meta["sizes"] ?? array()) as $name=>$entry) {
+                if (empty($entry["file"]) || basename($entry["file"]) !== $entry["file"]) { WP_CLI::error("Unexpected image size filename: ".$relative); }
+                $derived = dirname($relative)."/".$entry["file"]; $path = realpath($upload_root."/".$derived);
+                if (!$path || 0 !== strpos($path, $upload_root.DIRECTORY_SEPARATOR) || !is_file($path) || !is_readable($path)) { WP_CLI::error("Public image size unavailable: ".$derived); }
+                $dimensions = @getimagesize($path); $derived_bytes = filesize($path);
+                if (!$dimensions || false === $derived_bytes || empty($dimensions["mime"]) || $dimensions[0] !== (int)($entry["width"] ?? 0) || $dimensions[1] !== (int)($entry["height"] ?? 0) || $dimensions["mime"] !== ($entry["mime-type"] ?? null)) { WP_CLI::error("Image size metadata differs from file: ".$derived); }
+                $item["attachment"]["sizes"][$name] = array("relative_file"=>$derived, "url"=>"https://staging38.thaisolitude.com/wp-content/uploads/".$derived, "width"=>$dimensions[0], "height"=>$dimensions[1], "mime"=>$dimensions["mime"], "filesize"=>$derived_bytes);
+            }
+        }
     }
     $images[$key] = $item;
 }
 $write("images.json", $images);
 
+// Prepare the reviewed 400px WebP from a private copy, never the original.
+$original = $upload_root."/".$assets["therapeutic-png"];
+if (hash_file("sha256", $original) !== $images["therapeutic-png"]["sha256"]) { WP_CLI::error("PNG changed before preparation."); }
+if (!mkdir($out."/assets", 0700) || !copy($original, $out."/assets/therapeutic-red-original.png")) { WP_CLI::error("Private PNG copy failed."); }
+$editor = wp_get_image_editor($out."/assets/therapeutic-red-original.png");
+if (is_wp_error($editor)) { WP_CLI::error("Image editor unavailable: ".$editor->get_error_message()); }
+$quality = $editor->set_quality(82);
+$resize = $editor->resize(400, 0, false);
+if (is_wp_error($quality) || is_wp_error($resize)) { WP_CLI::error("Private WebP preparation failed."); }
+$saved = $editor->save($out."/assets/therapeutic-red-400.webp", "image/webp");
+if (is_wp_error($saved)) { WP_CLI::error("WebP save failed: ".$saved->get_error_message()); }
+$webp = $out."/assets/therapeutic-red-400.webp"; $dimensions = getimagesize($webp);
+if (!$dimensions || $dimensions[0] !== 400 || $dimensions[1] !== 313 || $dimensions["mime"] !== "image/webp" || filesize($webp) >= $images["therapeutic-png"]["filesize"] || hash_file("sha256", $original) !== $images["therapeutic-png"]["sha256"]) { WP_CLI::error("WebP dimensions/bytes or unchanged original check failed."); }
+$write("webp.json", array("name"=>"therapeutic-red-400.webp", "source_sha256"=>$images["therapeutic-png"]["sha256"], "width"=>400, "height"=>313, "mime"=>"image/webp", "quality"=>82, "editor"=>get_class($editor), "filesize"=>filesize($webp), "sha256"=>hash_file("sha256", $webp)));
+
 global $wp_version, $wp_filter;
+$core_root = realpath(ABSPATH.WPINC);
+if (!$core_root || !is_dir($core_root)) { WP_CLI::error("Installed public core directory unavailable."); }
+$core_root = wp_normalize_path($core_root);
+$core_relative = function ($path) use ($core_root) {
+    $physical = realpath($path);
+    if (!$physical) { return false; }
+    $physical = wp_normalize_path($physical);
+    return 0 === strpos($physical, $core_root."/") ? WPINC."/".substr($physical, strlen($core_root)+1) : false;
+};
 $usual = array("init", "wp_enqueue_scripts", "wp_print_scripts", "wp_print_styles", "wp_head", "wp_footer", "embed_head", "admin_init", "admin_enqueue_scripts", "admin_print_scripts", "admin_print_styles", "login_enqueue_scripts", "login_head", "login_footer", "wp_mail", "the_content_feed", "comment_text_rss", "tiny_mce_plugins", "wp_resource_hints", "wp_default_scripts", "wp_default_styles", "script_loader_tag", "emoji_svg_url", "emoji_url", "emoji_ext", "emoji_svg_ext");
 $hooks = array_fill_keys($usual, array()); $functions = array();
 foreach ($wp_filter as $hook=>$object) {
@@ -100,7 +139,7 @@ foreach ($wp_filter as $hook=>$object) {
             $cb = $entry["function"];
             if (!is_string($cb) || false === stripos($cb, "emoji") || !function_exists($cb)) { continue; }
             $ref = new ReflectionFunction($cb); $source = $ref->getFileName();
-            if (!$source || 0 !== strpos(wp_normalize_path($source), wp_normalize_path(ABSPATH.WPINC)."/")) { continue; }
+            if (!$source || false === $core_relative($source)) { continue; }
             if (!isset($hooks[$hook])) { $hooks[$hook] = array(); }
             $hooks[$hook][] = array("callback"=>$cb, "priority"=>(int)$priority, "accepted_args"=>$entry["accepted_args"]);
         }
@@ -110,8 +149,8 @@ $source_text = "<?php\n// Read-only excerpts from installed public WordPress cor
 foreach (get_defined_functions()["user"] as $name) {
     if (false === stripos($name, "emoji")) { continue; }
     $ref = new ReflectionFunction($name); $file = $ref->getFileName();
-    if (!$file || 0 !== strpos(wp_normalize_path($file), wp_normalize_path(ABSPATH.WPINC)."/")) { continue; }
-    $relative = substr(wp_normalize_path($file), strlen(wp_normalize_path(ABSPATH)));
+    $relative = $file ? $core_relative($file) : false;
+    if (false === $relative) { continue; }
     $first = $ref->getStartLine(); $last = $ref->getEndLine();
     if ($last-$first > 500) { WP_CLI::error("Core emoji function unexpectedly large: ".$name); }
     $lines = file($file);
@@ -119,10 +158,40 @@ foreach (get_defined_functions()["user"] as $name) {
     $functions[$name] = array("file"=>$relative, "first_line"=>$first, "last_line"=>$last);
     $source_text .= "\n// ".$name." — ".$relative.":".$first."\n".implode("", array_slice($lines, $first-1, $last-$first+1))."\n";
 }
+$registrations = "Read-only targeted emoji lines from installed public WordPress core.\n";
+$source_files = array();
+foreach (array("default-filters.php", "formatting.php", "script-loader.php") as $name) {
+    $file = $core_root."/".$name; $relative = $core_relative($file);
+    if (false === $relative || !is_readable($file)) { WP_CLI::error("Required public core source unavailable: ".$name); }
+    $lines = file($file);
+    if (false === $lines) { WP_CLI::error("Public core source read failed: ".$name); }
+    $selected = array();
+    foreach ($lines as $i=>$line) {
+        if (false === stripos($line, "emoji")) { continue; }
+        foreach (range(max(0, $i-2), min(count($lines)-1, $i+2)) as $n) { $selected[$n] = true; }
+    }
+    ksort($selected); $source_files[$relative] = array("sha256"=>hash_file("sha256", $file), "selected_lines"=>count($selected));
+    $registrations .= "\n=== ".$relative." ===\n";
+    $last = -2;
+    foreach ($selected as $n=>$unused) { if ($n !== $last+1) { $registrations .= "...\n"; } $registrations .= ($n+1).": ".$lines[$n]; $last = $n; }
+}
 ksort($hooks); ksort($functions);
-$write("emoji.json", array("wp_version"=>$wp_version, "hook_context"=>"WP-CLI bootstrap; no frontend actions invoked", "hooks"=>$hooks, "core_functions"=>$functions));
+$write("emoji.json", array("wp_version"=>$wp_version, "hook_context"=>"WP-CLI bootstrap; no frontend actions invoked", "hooks"=>$hooks, "core_functions"=>$functions, "targeted_source_files"=>$source_files));
 if (false === file_put_contents($out."/source/emoji-core.php", $source_text)) { WP_CLI::error("Core source capture failed."); }
-WP_CLI::log("Bundle E native stores, seven image originals and public core emoji facts captured read-only.");
+if (false === file_put_contents($out."/source/emoji-registrations.txt", $registrations)) { WP_CLI::error("Core registration capture failed."); }
+$image_sources = array();
+foreach (array("blocks/image/block.json"=>"image-block.json", "blocks/image.php"=>"image.php") as $name=>$saved) {
+    $file = $core_root."/".$name; $relative = $core_relative($file);
+    if (false === $relative || !is_readable($file)) {
+        if ("image-block.json" === $saved) { WP_CLI::error("Installed public image block metadata unavailable."); }
+        $image_sources[WPINC."/".$name] = array("available"=>false); continue;
+    }
+    $bytes = file_get_contents($file);
+    if (false === $bytes || file_put_contents($out."/source/".$saved, $bytes) !== strlen($bytes)) { WP_CLI::error("Public image block source capture failed."); }
+    $image_sources[$relative] = array("available"=>true, "captured_file"=>"source/".$saved, "sha256"=>hash("sha256", $bytes));
+}
+$write("source-files.json", $image_sources);
+WP_CLI::log("Bundle E native stores, ten image originals and public core emoji facts captured read-only.");
 '
 tar czf "$scratch/data.tgz" -C "$scratch/data" .
 echo "BUNDLEE-SHA256 $(sha256sum "$scratch/data.tgz" | cut -d' ' -f1)"
