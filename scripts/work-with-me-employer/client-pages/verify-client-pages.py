@@ -436,7 +436,7 @@ else:
     check("Chair Massage: the 'Where Do Sessions Take Place?' answer says %s, once" % BOOK_DATE, ct.count("with bookings beginning %s. Individual appointments at a dedicated Thai Solitude location are planned for summer 2027. I do not offer individual house calls." % BOOK_DATE) == 1)
     faq_links = re.findall(r'uagb-faq-content[^>]*>(?:(?!</div>).)*?<a ([^>]+)>(.*?)</a>', mh_cm, re.S)
     check("Chair Massage: only the three approved Corporate FAQ links after Bundle A; no links before it",
-          (len(faq_links) == 3 and all('href="/corporate-massage-portland/"' in attrs and text_of(label) == 'Corporate and Group Massage page' for attrs, label in faq_links)) if BUNDLE_A else not faq_links)
+          (len(faq_links) == 3 and all('href="/corporate-massage-portland/"' in attrs and text_of(label) == 'Corporate and Group Massage page' for attrs, label in faq_links)) if BUNDLE_A else not faq_links, faq_links)
     csumm = [wt.text(x) for x in re.findall(r"<summary>(.*?)</summary>", mh_cm, re.S)]
     check("Chair Massage: the five research panels in order", csumm == ["Reviews, and What They Say About Limits", "Stress, Anxiety and Blood Pressure", "Desk Work, Muscle Discomfort and Movement", "Nurses, Hospital Staff and Carers", "Sources"], csumm)
     cdet = re.findall(r"<details[^>]*>", mh_cm)
