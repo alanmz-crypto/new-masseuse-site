@@ -37,3 +37,5 @@ window; batch the verification and point agents at the derived files (`site/x/*.
 
 **Next:** Ryan picks from the top ten; a session then builds one installer per pick (exact-anchor insertions, rehearse, staging38, live on his go)
 and sends Butsaba the one message in section 9. After 2026-11-14: the past-tense installer for the ten "bookings begin" sentences and the cache switch.
+
+**Handoff (2026-11-01, Ryan: "Prepare a handoff to have a new agent fix all"):** `docs/inter-model/2026-11-01-site-review-fix-handoff.md`: the rules restated, the environment facts, the installer pattern table, seven bundles in order (A booking path and links, B search and sharing, C markup and accessibility, D wording, E performance, F options, G after Nov 14), the Ryan-only list and the Butsaba message, and the first message for Ryan to send. "Fix all" is recorded there as his OK for the edits of established copy that the review lists; staging38 first and live on his run still hold.

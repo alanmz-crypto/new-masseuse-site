@@ -351,3 +351,37 @@ research-section word exemption is honoured on the four pages that have one.
 - `scripts/work-with-me-employer/seo-scan/dump-site.sh` (read-only server-side dump) and `scripts/work-with-me-employer/tools/shots-inline.mjs`
   (inline screenshots), both runnable through `scripts/ci/request.sh run --target live|staging38`.
 - The raw findings with full evidence (139 items, eight lenses) are in the session's scratchpad; the ones that matter are above.
+
+## 12. Added 2026-11-01: research integrity and outbound links
+
+Two of the four late lenses finished (the visual pass over the screenshots and the stored-content/CSS pass are still pending; they get appended
+here if they produce anything).
+
+**Research sections: verified sound, with five small fidelity fixes (P3).** Every research sentence on the Thai, Therapeutic, Deep Tissue and
+Chair pages was read against its cited abstract (94 distinct PubMed records, the two Cochrane summaries, NCCIH, UNESCO, one PMC full text); no
+dead, redirected or retracted source. Five sentences could match their sources more exactly:
+- "most serious events followed unusual techniques or massage by laypeople" (Thai [8], Therapeutic [14], Deep Tissue [13]): the 2003 review says
+  most *adverse effects* came from exotic techniques or laymen, and serious ones mostly from non-Swedish techniques; the Chair page already
+  carries the accurate wording. *Proposal:* use the Chair page's sentence on the three pages.
+- "conclusions that massage was better than other active approaches were rare" (Therapeutic [1], Deep Tissue [4]): the 2024 review says
+  conclusions *backed by moderate- or high-certainty evidence* were rare. *Proposal:* add the qualifier, as the Chair page has it.
+- "found no benefit over the long term" (Therapeutic [15], Deep Tissue [17], the 2015 Cochrane low-back review): the review found no long-term
+  benefit over *no treatment*, but a low-quality long-term pain benefit over active controls. *Proposal:* "found no long-term benefit over no
+  treatment".
+- Therapeutic [20], [7], [27], [24] describe a chair-massage, an Anma, a rhythmical and a sports-massage study as plain "massage". *Proposal:*
+  name the style in two or three words each ("weekly 30-minute chair massages", "eight Anma (Japanese) massage sessions", "a single rhythmical
+  massage", "a 40-minute whole-body sports massage").
+- The two Cochrane reviews are cited in two forms (authors vs "Cochrane evidence summary") and two Thai entries say "et al." while every other
+  entry lists all authors. *Proposal:* one form per review, full author lists.
+*Decider:* Ryan (edits of established research copy; one installer across the three pages; the builders' content files change in the same commit).
+
+**Outbound links: all 105 resolve (P3).** None dead or redirected; one DOI (Chatchawan 2005) sits behind a publisher bot wall but resolves.
+Three things to fix or ask:
+- "American Heart Association" in the Work With Me credentials links to the AHA donation homepage; the BLS course page
+  (`https://cpr.heart.org/en/courses/basic-life-support-course-options`) explains the certification in one click. *Proposal:* change the href
+  only. *Decider:* Ryan.
+- Windy City Massage is named and linked twice and offered as a reference; the October 4 checklist never got Butsaba's permission. *Proposal:*
+  one line in the Butsaba message; if no, plain text instead of links. *Decider:* Butsaba.
+- The one shortened citation title ("What are … talking about?") is deliberate (the house voice gate); leaving it is fine; the alternative is a
+  narrow gate exemption for quoted titles. *Decider:* Ryan.
+The corporate share image http scheme, the Mt. Tabor map and the Home relative links were confirmed again by this lens (sections 5.2, 3.12, 2.1).
