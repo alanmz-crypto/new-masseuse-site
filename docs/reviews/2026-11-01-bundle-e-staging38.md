@@ -74,4 +74,12 @@ The installer now passes the logical path returned by WordPress to its media
 APIs, using realpath only for containment/SHA guards. A package preparation hook
 reproduces that symlink distinction only inside the isolated localhost rehearsal;
 its PHP guard requires localhost and the local environment, and the staging push
-does not upload this preparation file. Rehearsal4 must pass before any retry.
+does not upload this preparation file. Rehearsal 4 must pass before any retry.
+
+Rehearsal 4 PASS with the observed symlink setup:
+`reports/2026-11-01/115850-review-e-rehearse-staging38-20261101-4.md`.
+Both logical/physical path conditions are reproduced; apply, no-op reapply,
+exact rollback, reapply, regulated-copy gates and no new PHP errors pass.
+C 1,248 + D 128 + E 288 = 1,664 browser assertions pass. All 8 reviewed placements
+retain geometry across three widths/light+dark; delivered WebP bytes,
+responsive images, preloads and emoji absence pass. Fresh dry run before retry.
