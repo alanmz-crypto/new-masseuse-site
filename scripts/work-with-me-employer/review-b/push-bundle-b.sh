@@ -28,7 +28,7 @@ ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o 
 
 echo "[1] Connecting and uploading the package to ~/wwm-package-bundle-b (outside every web root) ..."
 "${ssh_cmd[@]}" true 2>/dev/null || { echo "SSH login refused; check the ssh-agent holds the right key." >&2; exit 2; }
-tar -C "$here" -cf - install-bundle-b.php bundle-b-content.php \
+tar -C "$here" -cf - install-bundle-b.php bundle-b-content.php assets/thai-solitude-share-preview.png \
   | "${ssh_cmd[@]}" 'mkdir -p "$HOME/wwm-package-bundle-b" && tar -xf - -C "$HOME/wwm-package-bundle-b"'
 
 read -r -d '' REMOTE <<'EOS' || true

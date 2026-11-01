@@ -13,7 +13,8 @@ hash `9cc63d278e5e5812899a6f0e0bf24a81e44f46f764b0a7b003d4e0e8faa8354e`.
 
 One installer: seven page-title/description groups, About/Contact Organization
 rows, Corporate HTTPS social URL, existing global Person, tagline,
-LocalBusinessInfo and one exact Home card wording replacement. All snapshots
+LocalBusinessInfo, one exact Home card wording replacement, and the approved
+default/Home share card. All snapshots
 include the ten pages' exact content/SureRank rows plus both options and snippet.
 Pages are looked up by slug, snippet by published title. Preflight refuses drift
 or mixed states; rollback refuses unless every whole stored resource is still
@@ -33,8 +34,12 @@ Oregon License LMT-29905. Colours and fallback font stacks come from Additional
 CSS. SVG is the layout source; PNG is a CairoSVG rendering. No photo or new
 illustration. Logo source SHA256:
 `5d4845d84308bd1e91afdf9be8274a89f2440f8e41820915236e8a32f8c9553a`.
-**The preview is not imported or assigned to default/Home social metadata.**
-The handoff explicitly requires Ryan's yes first. Existing share images remain.
+Ryan approved this exact card in chat on 2026-11-01: **“Yes, use this card.”**
+The installer imports the PNG once by hash, assigns its URL to the global fallback
+and Home social metadata, and leaves existing images intact. Home uses a URL-only
+setting so rehearsal re-apply does not depend on a new attachment ID. Exact rollback
+restores the old settings first and removes only the attachment created by that
+snapshot; any pre-existing identical attachment is retained. Rehearse with uploads.
 
 Cloud Git CLI authentication is unavailable; the connected GitHub tool works.
 Actions requests use the exact `request.sh` JSON protocol through GitHub tree /

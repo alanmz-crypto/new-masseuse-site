@@ -18,7 +18,7 @@ No live write or request. The handoff's
 recorded “fix all” approval supersedes older “nothing prepared until he picks”
 status text below for the listed changes. Butsaba questions 1, 5, 8 and 9 are answered (record below); 2, 3, 4, 6 and 7
 remain unanswered. Live is disabled, and Ryan still owns merges and live runs.
-**Bundle B is in progress** on `codex/2026-11-01-review-bundle-b`: fresh staging38 capture PASS; search/sharing installer built, rehearsal/staging pending. Brand-card preview awaits approval before default/Home assignment. See [[site-review-bundle-b]].
+**Bundle B is in progress** on `codex/2026-11-01-review-bundle-b`: fresh staging38 capture PASS; search/sharing installer built, rehearsal/staging pending. Ryan approved the exact brand card for default/Home on 2026-11-01; included in the uploads rehearsal. See [[site-review-bundle-b]].
 After A, Bundle G must refresh 15 booking-date sentences (the original ten plus
 five new closing blocks), including Services; still on/after November 14 only.
 

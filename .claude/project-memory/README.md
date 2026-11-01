@@ -1,6 +1,6 @@
 # Project memory (snapshot for cloud sessions)
 
-- [Site review Bundle B](site-review-bundle-b.md) — 2026-11-01: search/sharing built against fresh staging38 values; rehearsal/staging pending; share-card preview awaits approval; live disabled.
+- [Site review Bundle B](site-review-bundle-b.md) — 2026-11-01: search/sharing built against fresh staging38 values; rehearsal/staging pending; default/Home share card approved; live disabled.
 
 - [Site review Bundle A](site-review-bundle-a.md) — 2026-11-01: Bundle 0 draft and fresh staging38 capture complete; Bundle A applied/verified on staging38 (262 browser assertions, rollback proven); PR #61, live disabled.
 

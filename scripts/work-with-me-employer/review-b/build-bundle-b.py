@@ -5,6 +5,7 @@ import hashlib
 import importlib.util
 import json
 import re
+import struct
 import sys
 
 HERE = Path(__file__).resolve().parent
@@ -12,6 +13,10 @@ HERE = Path(__file__).resolve().parent
 
 def build():
     data = json.loads((HERE / 'changes.json').read_text())
+    card = (HERE / 'assets/thai-solitude-share-preview.png').read_bytes()
+    assert card[:8] == b'\x89PNG\r\n\x1a\n'
+    assert struct.unpack('>II', card[16:24]) == (1200, 630)
+    assert hashlib.sha256(card).hexdigest() == data['share_image']['sha256']
     for kind in ['old', 'new']:
         assert hashlib.sha256(data['snippet_' + kind].encode()).hexdigest() == data['snippet_' + kind + '_sha256']
     spec = importlib.util.spec_from_file_location('wording_tiers', HERE / '../client-pages/wording_tiers.py')

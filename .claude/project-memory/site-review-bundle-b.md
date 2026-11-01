@@ -1,6 +1,6 @@
 ---
 name: site-review-bundle-b
-description: 2026-11-01 Bundle B search/sharing on staging38; fresh capture, metadata and linked Person/LocalBusiness, brand preview pending approval
+description: 2026-11-01 Bundle B search/sharing on staging38; fresh capture, metadata and linked Person/LocalBusiness, approved default/Home brand card
 metadata:
   type: project
 ---
@@ -12,8 +12,8 @@ Tooling `scripts/work-with-me-employer/review-b/`; README describes every store,
 guard, exact rollback and capture provenance. Source capture PASS, verified
 archives, all required information accessible through GitHub. Git CLI credentials
 are unavailable; connected GitHub tools publish equivalent Actions JSON requests.
-Local source baseline tree equals current main (PR #61 merged). PR #62's answers
-are carried forward so open items do not regress while that notes PR is pending.
+Bundle A and the partial-answer notes are merged (PRs #61/#62). Their exact
+notes are retained; the branch integrates main without regressing the answers.
 
 Includes Home's “by arrangement” wording as required by review3.9, not only the
 Corporate description. Exact approved Corporate description is 162 characters;
@@ -24,8 +24,10 @@ LocalBusiness gains image/logo/email/description/Portland/founder; ZIP removed;
 no hours invented. New titles/descriptions/social copies and tagline are checked.
 
 Brand share-card preview: 1200×630, existing logo plus requested text and the
-existing licence number. No new illustration. **Not imported or assigned**:
-handoff requires Ryan's yes for default/Home social-image replacement.
+existing licence number. No new illustration. Ryan explicitly approved it on 2026-11-01: **“Yes, use this card.”**
+Import once by SHA; assign global fallback and Home URL. Retain existing images;
+exact rollback removes only this snapshot's newly created attachment after restoring
+old settings. Rehearsal requires uploads. This is staging authorization, not live go.
 
 State: built; offline gates PASS. Rehearsal/staging/verification pending.
 Live disabled. No live request; fresh backup and exact rollback required.

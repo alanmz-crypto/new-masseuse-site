@@ -287,7 +287,7 @@ return json_decode( <<<'BUNDLEBJSON'
     "auto_generate_description": true,
     "page_description": "%content%",
     "auto_description": "",
-    "fallback_image": "",
+    "fallback_image": "{{SHARE_URL}}",
     "auto_generated_og_image": "",
     "canonical_url": "",
     "focus_keyword": "",
@@ -541,11 +541,11 @@ return json_decode( <<<'BUNDLEBJSON'
           "@id": "%site.url%#%id%",
           "name": "Butsaba Dusrai",
           "url": "%site.url%about/",
-          "givenName": "%author.first_name%",
-          "familyName": "%author.last_name%",
+          "givenName": "Butsaba",
+          "familyName": "Dusrai",
           "brand": "%site.title%",
           "mainEntityOfPage": "",
-          "description": "%author.description%",
+          "description": "",
           "email": "",
           "image": "%site.url%wp-content/uploads/2026/09/cropped-cropped-butsaba_avatar-1.webp",
           "telephone": "",
@@ -1077,7 +1077,17 @@ return json_decode( <<<'BUNDLEBJSON'
   "home_new": "with table massage by arrangement at suitable host venues.",
   "logo_path": "/wp-content/uploads/2026/09/cropped-cropped-butsaba_avatar-1.webp",
   "snippet_old_sha256": "9cc63d278e5e5812899a6f0e0bf24a81e44f46f764b0a7b003d4e0e8faa8354e",
-  "snippet_new_sha256": "ddb3d9639f0a58c1038082f62943650f086282974cc9197882983d8b99d0d72b"
+  "snippet_new_sha256": "ddb3d9639f0a58c1038082f62943650f086282974cc9197882983d8b99d0d72b",
+  "share_image": {
+    "name": "thai-solitude-share-card.png",
+    "sha256": "7b769b1a2b82b2cb3ef2bf11a5e6ba65f271b963952fdfe1041c53b6ade5319d",
+    "width": 1200,
+    "height": 630,
+    "alt": "Thai Solitude · Massage in Portland, OR. Oregon License LMT-29905.",
+    "title": "Thai Solitude · Massage in Portland, OR",
+    "approved": "Ryan: Yes, use this card; 2026-11-01"
+  },
+  "home_social_old_url": "{{HTTPS}}/wp-content/uploads/2026/06/ComfyUI_01084_.webp"
 }
 BUNDLEBJSON
 , true );
