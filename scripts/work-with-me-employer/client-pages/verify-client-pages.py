@@ -61,7 +61,7 @@ def either(t, old, new):
 # ---- Services -------------------------------------------------------------------------------------------------------------
 svc, code = get("/services/")
 check("Services returns 200", code == 200, code)
-BUNDLE_A = 'class="wp-block-group ts-review-next"' in svc
+BUNDLE_A = bool(re.search(r'<div class="[^"]*\bts-review-next\b', svc))
 new_title = "Massage Services | Butsaba Dusrai, Oregon LMT"
 # seo-fixes (Ryan, 2026-10-30: "fix Services"): the description says "in Portland"; a site not changed yet still has the approved "in Mt. Tabor, Portland" wording. Either one, and the social copies must match it.
 SVC_DESC_OLD = "Thai, therapeutic and deep tissue massage with Butsaba Dusrai, LMT, in Mt. Tabor, Portland. Every session starts with your goals."
@@ -474,7 +474,7 @@ if BUNDLE_A:
         main_body = re.search(r"<main.*?</main>", body, re.S)
         body = main_body[0] if main_body else ""
         check(f"Bundle A {slug}: one closing Next step with the agreed date and both buttons",
-              body.count('class="wp-block-group ts-review-next"') == 1
+              len(re.findall(r'<div class="[^"]*\bts-review-next\b', body)) == 1
               and f'Corporate and group massage bookings begin {BOOK_DATE}.' in body
               and '>Request a corporate massage quote</a>' in body and '>Ask a question</a>' in body
               and 'href="/corporate-massage-portland/"' in body and 'href="/contact/"' in body)
@@ -484,7 +484,7 @@ if BUNDLE_A:
             check(f"Bundle A {slug}: other four services before research; Next step after Sources",
                   len(other) == 1 and set(re.findall(r'href="([^"]+)"', other[0])) == expected
                   and body.find('class="ts-review-other"') < body.find('What the Research Says')
-                  and body.rfind('ts-source') < body.find('class="wp-block-group ts-review-next"'))
+                  and body.rfind('ts-source') < body.find('ts-review-next'))
     order = [svc.find('uagb-block-' + bid + '"') for bid in ("8bb921f3", "b3c7a91e", "1f6539c9", "4e23bf70", "75fb60e4")]
     check("Bundle A Services: Chair, Corporate, Therapeutic, Deep Tissue, Thai row order", min(order) >= 0 and order == sorted(order))
     check("Bundle A Services: availability sentence present once", text_of(svc).count("Right now I offer corporate and group massage only, at suitable Portland venues; individual appointments at a dedicated Thai Solitude location are planned for summer 2027.") == 1)
@@ -493,7 +493,7 @@ if BUNDLE_A:
     about_a, _ = get("/about/")
     contact_a, _ = get("/contact/")
     check("Bundle A About: closing licence and three paths", 'class="ts-review-license"' in about_a and 'LMT-29905' in about_a and all(f'href="{p}"' in about_a for p in ("/services/", "/corporate-massage-portland/", "/contact/")))
-    check("Bundle A Contact: corporate card, quote email and jump target", 'class="wp-block-group ts-review-contact"' in contact_a and 'id="corporate-quote"' in contact_a and 'href="#corporate-quote"' in contact_a and '>Corporate quote</a>' in contact_a and 'subject=Corporate%20massage%20quote%20request' in contact_a)
+    check("Bundle A Contact: corporate card, quote email and jump target", bool(re.search(r'<div class="[^"]*\bts-review-contact\b', contact_a)) and 'id="corporate-quote"' in contact_a and 'href="#corporate-quote"' in contact_a and '>Corporate quote</a>' in contact_a and 'subject=Corporate%20massage%20quote%20request' in contact_a)
     check("Bundle A Corporate: Chair link and mobile shortcuts", 'href="/chair-massage/"' in cp_page and 'class="ts-corp__sticky"' in cp_page and '>Request a quote</a>' in cp_page and '>Email butsabad@gmail.com</a>' in cp_page)
 else:
     print("INFO Review Bundle A has not been applied here")

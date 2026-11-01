@@ -16,6 +16,8 @@ are pending, with no site write yet. See [[site-review-bundle-a]]. The handoff's
 recorded “fix all” approval supersedes older “nothing prepared until he picks”
 status text below for the listed changes. Butsaba facts remain unanswered, live
 is disabled, and Ryan still owns merges and live runs.
+After A, Bundle G must refresh 15 booking-date sentences (the original ten plus
+five new closing blocks), including Services; still on/after November 14 only.
 
 ## A. Happens by itself (nothing to do)
 - **BOOKING DATE MOVED to November 14, 2026 (Ryan 2026-10-30: "Change booking begins to Nov 14th. Everywhere."; [[booking-date]]). LIVE since 2026-10-30 15:43 UTC, so the strip flips on 2026-11-14 00:00 Pacific (08:00 UTC, PST), NOT Nov 1; until it is live the text below (Nov 1) is what live does.** ~~2026-11-01 00:00 Pacific (07:00 UTC) the announcement strip flips~~ (old date): from "Currently booking corporate & group massage only." to "Now accepting corporate & group massage bookings." on nine pages. It is PHP in a WPCode snippet; the SiteGround page cache is OFF (checked 2026-10-25), so no purge is needed. See [[availability-update]].

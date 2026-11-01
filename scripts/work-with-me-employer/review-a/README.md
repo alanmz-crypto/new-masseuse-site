@@ -86,3 +86,7 @@ proof. Read the automatic pixel-test differences in that context.
 No live host is allowed. After staging evidence is reviewed, Ryan must give the
 live go before an enable-live commit and request are prepared. He merges and
 starts Site ops (LIVE) himself.
+
+Bundle G must include the five new closing date sentences: **15 total** after
+Bundle A, rather than the original ten. The Services page is now also in scope
+for that after-November-14 refresh.

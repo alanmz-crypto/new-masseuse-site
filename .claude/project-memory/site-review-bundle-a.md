@@ -33,3 +33,7 @@ or rebuilding a page from them. Current-state rollback is Bundle A's snapshot.
 
 State: built, offline gates PASS; rehearsal and staging verification pending.
 No staging or live write yet. Live is explicitly absent from both allow-lists.
+
+Bundle G follow-up: A adds five closing “bookings begin November 14, 2026”
+sentences. After A, its date refresh must cover **15**, not the original ten,
+including the Services closing block. Apply G only on/after November 14.
