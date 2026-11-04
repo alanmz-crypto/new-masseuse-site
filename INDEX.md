@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-04 07:55 UTC  **PASS**  `ui-progress-live-rehearse-20261104`  [reports/2026-11-04/075549-ui-progress-live-rehearse-20261104.md](reports/2026-11-04/075549-ui-progress-live-rehearse-20261104.md)  (run 41795168279)
 - 2026-11-04 07:50 UTC  **PASS**  `ui-progress-live-home-20261104`  [reports/2026-11-04/075030-ui-progress-live-home-20261104.md](reports/2026-11-04/075030-ui-progress-live-home-20261104.md)  (run 41795017487)
 - 2026-11-04 07:41 UTC  **PASS**  `ui-progress-all-browser-20261104`  [reports/2026-11-04/074100-ui-progress-all-browser-20261104.md](reports/2026-11-04/074100-ui-progress-all-browser-20261104.md)  (run 41793411463)
 - 2026-11-04 07:39 UTC  **PASS**  `ui-progress-all-apply-20261104`  [reports/2026-11-04/073909-ui-progress-all-apply-20261104.md](reports/2026-11-04/073909-ui-progress-all-apply-20261104.md)  (run 41793273857)
