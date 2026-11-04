@@ -1,5 +1,9 @@
 # Reading progress on long service pages
 
+This records the initial four-page release. The [sitewide update](../reading-progress-sitewide/README.md)
+supersedes it on staging38 following the user's request to include every page.
+The original CSS and installer remain unchanged for rollback after undoing that update.
+
 One interface improvement requested on 2026-11-04: a quiet, three-pixel position
 indicator across the top of the viewport while reading Thai, Therapeutic, Deep
 Tissue and Chair Massage. It fills as the visitor scrolls toward the bottom of
