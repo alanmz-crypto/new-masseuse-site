@@ -1,15 +1,17 @@
 # Complete page navigation: live release
 
-**Prepared for owner launch; not applied to live.** Ryan requested “Publish
-live” after merging [source/staging PR #77](https://github.com/alanmz-crypto/new-masseuse-site/pull/77)
-at **13:20:44 UTC on November 4, 2026**, main commit
-`aea59a5b847f0a7b6a743bf6f87426b9762e2007`.
-Request `live-page-navigation-20261104-1` is **prepared, not run** in
-[`ops/live-request.json`](../../ops/live-request.json), for the paired navigation
-push with `--apply` and automatic checks. Fresh live-copy rehearsal and read-only
-live preflight have passed; no live application is recorded.
-[Release PR #78](https://github.com/alanmz-crypto/new-masseuse-site/pull/78) carries the release; check its final Gates status before merging. The request was
-prepared at source `e4a404b72d3424e2e5721f8e9d156709c3a6e3be`.
+**LIVE since November 4, 2026, 13:43:20 UTC.** Ryan merged
+[release PR #78](https://github.com/alanmz-crypto/new-masseuse-site/pull/78) at
+**13:41:22 UTC**, main commit `5a451e6b6261c69636ae38a2a89edd397801d815`, then
+personally ran [41840605814](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/41840605814).
+Request `live-page-navigation-20261104-1` is **completed; never reuse it**.
+The run finished at **13:46:22 UTC**. Source/staging
+[PR #77](https://github.com/alanmz-crypto/new-masseuse-site/pull/77) had merged at
+13:20:44 UTC into `aea59a5b847f0a7b6a743bf6f87426b9762e2007`.
+No agent merged main or dispatched LIVE. The focused public browser attempt was
+**INVALID202, zero assertions**; verification remains pending hosting access,
+with no immediate retry queued. The completed deployment and twelve passing
+origin checks stand.
 
 Ryan reported that the apparent loading issue on his device was resolved with
 his VPN. The availability diagnostic was cancelled before execution. No website
@@ -108,29 +110,57 @@ Touch coverage is emulated; Safari and physical devices are untested.
   requires the current runtime markers and exact complete inline list on each
   scoped page, using its existing responses without additional page requests.
 
-## Preparation and owner launch
+## Actual live results
 
-- Fresh live-copy rehearsal: **PASS**, including Chromium/Firefox **572/0 each**.
-- Read-only live preflight: **PASS**, ready with no write.
-- [Release PR #78](https://github.com/alanmz-crypto/new-masseuse-site/pull/78):
-  contains the release and its final Gates check; merge only with Gates green.
-- Request `live-page-navigation-20261104-1`: **prepared, not run**.
-- Actual live export, snapshot, apply and public verification: **not available**.
+The owner-run apply passed. All twelve origin route checks returned HTTP 200,
+including the current runtime markers and exact complete inline list on each
+scoped page. All **69,937 CSS bytes**, page content and SEO stayed unchanged.
 
-[CLAUDE.md](../../CLAUDE.md) states: **“Live: never start it.”** After successful
-preparation, Ryan merges the release PR, then starts **Actions → Site ops (LIVE)
-→ Run workflow on main**, confirming the exact prepared request ID. No agent
-merges main or dispatches LIVE. Record the actual run and its evidence before
-changing this document to applied.
+The fresh export and paired before-snapshot were verified against their server
+copies and read back identically from encrypted `offsite-2026-11` storage:
+
+- Export: `live-before-page-navigation-20261104-134308.sql`, **4,103,062 bytes**,
+  plaintext SHA256 prefix **`af8f8017f71e`**, verified before mutation.
+- Snapshot: `page-navigation-before-20261104-134320-6e7e4664.json`, plaintext
+  SHA256 prefix **`e0503a710e0f`**, verified before public checks.
+- Restore import exited **0**. Restored/current copies each had **95
+  fingerprints**. Only snippets **1232/1338**, WPCode's `wpcode_snippets` cache
+  and SiteGround Security activity/visitor log row counts differed. CSS, pages,
+  SEO and unrelated tracked settings were unchanged.
+- The broad public suite completed: code/rendered-copy/posture, page HTTP checks
+  and PHP logs passed. Its overall result was **FAIL** against historical
+  **staging36**: schema counts **27 versus 23**, and **20/20 pixel views differed**.
+  There were **zero schema parse errors or missing captures**. These are the
+  known old-reference limitations, not an aggregate pass; no retry is queued.
+- [Focused public browser attempt](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/41872918516),
+  request `ui-page-navigation-live-browser-20261104`, source
+  `3478760acb2fdc2399bd40e689295f7334df1b48`, finished **17:00:01 UTC**:
+  **INVALID: HTTP 202 hosting challenge on the first request; zero assertions**.
+  It stopped without additional requests. This is neither a feature failure nor
+  a browser pass. Focused public verification remains pending hosting access;
+  no immediate retry is queued. The earlier 572/0 live-copy browser results do
+  not substitute for this public check.
+
+Ryan completed the merge and owner launch described by
+[CLAUDE.md](../../CLAUDE.md), whose rule is **“Live: never start it.”** The apply
+request was prepared at `e4a404b72d3424e2e5721f8e9d156709c3a6e3be`, then executed
+by Ryan from the merged main commit above. No additional apply request is needed.
 
 ## Exact live rollback
 
-The future live apply must create and verify its own database export and paired
-before-snapshot. No live snapshot path exists yet. A live rollback must use that
-actual live snapshot; **never substitute the staging snapshot listed above**.
-It restores both complete prior snippet records, metadata, taxonomy and original
-modified timestamps, with CSS unchanged, and refuses later drift. Undo this
-paired migration before attempting an older section-guide rollback.
+A live rollback uses **this run's live snapshot**,
+`page-navigation-before-20261104-134320-6e7e4664.json`; never substitute a staging
+snapshot. It restores both complete prior snippet records, metadata, taxonomy
+and original modified timestamps, with CSS unchanged, and refuses later drift.
+Undo this paired migration before attempting an older section-guide rollback.
 
-Rollback is a separate owner-run LIVE request with a fresh verified backup.
-Record its exact command only after the actual live snapshot path is known.
+This command **prepares a separate rollback request; it does not execute it**.
+The helper generates a new timestamp-based request ID. Never reuse the completed
+apply ID:
+
+```sh
+scripts/ci/request.sh live --script page-navigation/push-page-navigation.sh --args '--rollback $HOME/private-backups/page-navigation-before-20261104-134320-6e7e4664.json'
+```
+
+A rollback requires a new verified backup and its own owner merge/LIVE launch.
+No rollback request has been prepared or run as part of this completion record.

@@ -1,18 +1,27 @@
 # Complete page navigation
 
-**Applied on staging38 at 12:40:03 UTC on 2026-11-04; not live.**
-[Source/staging PR #77](https://github.com/alanmz-crypto/new-masseuse-site/pull/77)
-merged at 13:20:44 UTC into `aea59a5`. Ryan has requested publication; the
-[live release](../../../docs/reviews/2026-11-04-page-navigation-release.md) is in
-preparation. Fresh live-copy rehearsal passed **572/0 each in Chromium and
-Firefox**; read-only live preflight passed at 13:35:04 UTC, ready with unchanged
-69,937-byte CSS and no site write.
-Request `live-page-navigation-20261104-1` is prepared, not run;
-[release PR #78](https://github.com/alanmz-crypto/new-masseuse-site/pull/78) carries the release; verify its final Gates check before merging.
-Ryan requested that in-page jump links cover the important context, especially
-Services, and match the native section guides. Focused public browser checks
-passed 572/0. The broad follow-up passed copy, page, structured-data and PHP
-checks; its eight expected navigation pixel differences are recorded below.
+**LIVE since 13:43:20 UTC on November 4, 2026.** Ryan merged
+[release PR #78](https://github.com/alanmz-crypto/new-masseuse-site/pull/78) at
+13:41:22 UTC into `5a451e6b6261c69636ae38a2a89edd397801d815`, then personally ran
+[41840605814](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/41840605814).
+Request `live-page-navigation-20261104-1` is completed; **never reuse it**.
+All twelve origin checks passed. Verified encrypted export/snapshot, exact live
+rollback and restore proof are in the
+[live release record](../../../docs/reviews/2026-11-04-page-navigation-release.md).
+The broad live suite passed copy/posture/pages/PHP checks but retains the known
+historical staging36 schema/pixel differences; it is not an aggregate pass.
+Focused public request `ui-page-navigation-live-browser-20261104` finished
+**INVALID202, zero assertions** at 17:00:01 UTC: the first request received the
+hosting challenge, then the check stopped. Verification remains pending access;
+no immediate retry is queued. This does not undo the completed deployment or
+twelve passing origin checks.
+
+The source/staging change merged in
+[PR #77](https://github.com/alanmz-crypto/new-masseuse-site/pull/77) at 13:20:44 UTC.
+Staging applied at 12:40:03 UTC and passed 572/0 public browser checks. The fresh
+live-copy rehearsal passed 572/0 each in Chromium/Firefox; live preflight passed
+before the owner launch. Ryan requested that in-page links cover the important
+context, especially Services, and match the native section guides.
 
 The inline row is the single source of destinations. It is rendered on the
 server, so links and anchors work without JavaScript. On the five pages below,
@@ -150,6 +159,7 @@ Frozen payload SHA256:
 - Prior inline file: `1034cd2011adb1991392f26cf4b6d2fe04ef8916af9f7ce045c1023ecd4224c4`.
 - Prior native file and unchanged CSS are pinned to the original guide package.
 
-The live release requires its own fresh live-copy rehearsal, read-only preflight
-and prepared request. Ryan merges the release PR and starts the LIVE workflow;
-the future live rollback must use its actual live snapshot, never staging's.
+Live preparation and owner launch are complete. Focused public live verification
+is pending hosting access after INVALID202; no further apply or immediate retry
+is queued. A live rollback
+must use the actual live snapshot recorded above, never the staging snapshot.
