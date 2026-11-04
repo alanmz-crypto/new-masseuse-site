@@ -1,8 +1,8 @@
 {
-  "id": "live-review-e-20261101-1",
+  "id": "live-reading-progress-20261104-1",
   "op": "run",
   "target": "live",
-  "script": "review-e/push-bundle-e.sh",
+  "script": "reading-progress-sitewide/push-reading-progress-sitewide.sh",
   "args": [
     "--apply"
   ],
