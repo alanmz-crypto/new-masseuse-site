@@ -77,7 +77,14 @@ available. No-JavaScript navigation remains native anchor scrolling.
   uses native mouse input after checking stable, visible, unobscured geometry,
   avoiding an automation click-retry stall. The fixture includes the theme-event
   regression and refusal to move focus when the destination hash differs.
-- Corrected fresh rehearsal, staging preflight/apply and public checks pending.
+- Corrected fresh staging38-copy rehearsal, request
+  `ui-page-navigation-rehearse-2-20261104`,
+  [run41829646501](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/41829646501),
+  source `d7f73cee435874b5eab7b9225c7ce70933dcd8f0`, finished12:38:23 UTC:
+  **PASS**, including **572/0 Chromium and572/0 Firefox**; paired apply,
+  idempotence, exact full-record/date rollback, reapply, page status, PHP and both
+  rendered-copy gates. Only snippets1232/1349 and WPCode's cache changed.
+- Staging preflight/apply and public checks pending.
 
 Frozen payload SHA256:
 
