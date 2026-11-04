@@ -1,7 +1,8 @@
 {
-  "id": "ui-progress-live-rehearse-20261104",
-  "op": "rehearse",
+  "id": "ui-progress-live-dry-20261104",
+  "op": "run",
   "target": "live",
-  "installer": "reading-progress-sitewide/install-reading-progress-sitewide.php",
-  "args": []
+  "script": "reading-progress-sitewide/push-reading-progress-sitewide.sh",
+  "args": [],
+  "tests": "auto"
 }
