@@ -1,8 +1,10 @@
 {
-  "id": "ui-page-navigation-dry-2-20261104",
+  "id": "ui-page-navigation-apply-20261104",
   "op": "run",
   "target": "staging38",
   "script": "page-navigation/push-page-navigation.sh",
-  "args": [],
+  "args": [
+    "--apply"
+  ],
   "tests": "auto"
 }
