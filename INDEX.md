@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-04 11:40 UTC  **PASS**  `ui-section-guide-live-dry-20261104`  [reports/2026-11-04/114058-ui-section-guide-live-dry-20261104.md](reports/2026-11-04/114058-ui-section-guide-live-dry-20261104.md)  (run 41822180450)
 - 2026-11-04 11:40 UTC  **PASS**  `ui-section-guide-live-rehearse-20261104`  [reports/2026-11-04/114025-ui-section-guide-live-rehearse-20261104.md](reports/2026-11-04/114025-ui-section-guide-live-rehearse-20261104.md)  (run 41822042344)
 - 2026-11-04 10:31 UTC  **PASS**  `ui-section-questions-browser-20261104`  [reports/2026-11-04/103134-ui-section-questions-browser-20261104.md](reports/2026-11-04/103134-ui-section-questions-browser-20261104.md)  (run 41814478901)
 - 2026-11-04 10:26 UTC  **PASS**  `ui-section-questions-apply-20261104`  [reports/2026-11-04/102616-ui-section-questions-apply-20261104.md](reports/2026-11-04/102616-ui-section-questions-apply-20261104.md)  (run 41813690976)
