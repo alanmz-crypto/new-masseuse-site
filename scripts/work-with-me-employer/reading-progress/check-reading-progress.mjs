@@ -114,7 +114,12 @@ try {
       return all.split('ts-reading-progress:start').length === 2 && all.includes(expected.trim());
     }, css));
     check(`${label}: citation scope`, (await page.locator('.entry-content cite.ts-source').count() > 0) === service);
-    check(`${label}: browser supports native timeline`, await page.evaluate(() => CSS.supports('animation-timeline: scroll(root block)')));
+    const nativeTimeline = await page.evaluate(() => CSS.supports('animation-timeline: scroll(root block)'));
+    // Chromium is the required native-animation test lane. An older bundled
+    // Firefox instead exercises the real unsupported-browser fallback; it must
+    // not be reported as verification of Firefox's newer animation support.
+    if (engine === 'chromium') check(`${label}: browser supports native timeline`, nativeTimeline);
+    console.log(`INFO ${label}: ${nativeTimeline ? 'native timeline mode' : 'unsupported browser fallback mode (no timeline animation tested)'}`);
 
     for (const width of [1280, 390, 320]) {
       await page.setViewportSize({ width, height: 900 });
@@ -127,8 +132,8 @@ try {
         check(`${view}: no added side-scroll`, comparison.appliedWidth === comparison.baselineWidth);
         check(`${view}: content and element geometry unchanged`, comparison.geometrySame && comparison.textSame);
         if (value.overflow) console.log(`INFO ${view}: overflow observed; with progress CSS=${comparison.appliedWidth}px, without progress CSS=${comparison.baselineWidth}px, viewport=${width}px`);
-        check(`${view}: correct scope`, value.visible === service);
-        if (!service) continue;
+        check(`${view}: ${nativeTimeline ? 'correct scope' : 'fallback indicator hidden'}`, value.visible === (service && nativeTimeline));
+        if (!service || !nativeTimeline) continue;
         check(`${view}: fixed 3px decoration ignores pointer`, value.position === 'fixed' && value.height === '3px' && value.pointer === 'none');
         check(`${view}: tracks midpoint`, value.scale !== null && Math.abs(value.scale - value.expected) < 0.025 && value.expected > 0.45 && value.expected < 0.55);
         check(`${view}: uses theme accent`, await page.evaluate(() => {
@@ -142,7 +147,7 @@ try {
       }
     }
     if (service) {
-      for (const fraction of [0, 1]) {
+      for (const fraction of nativeTimeline ? [0, 1] : []) {
         await scroll(page, fraction);
         const value = await state(page);
         check(`${label}: ${fraction ? 'end full' : 'start empty'}`, value.scale !== null && Math.abs(value.scale - fraction) < 0.025);
@@ -150,11 +155,16 @@ try {
       await page.locator('.entry-content details').first().evaluate(detail => { detail.open = false; });
       await scroll(page, 0.5);
       const closed = await state(page);
-      await page.locator('.entry-content details').first().evaluate(detail => { detail.open = true; });
+      if (nativeTimeline) await page.locator('.entry-content details').first().evaluate(detail => { detail.open = true; });
+      else {
+        await page.locator('.entry-content details summary').first().press('Enter');
+        check(`${label}: fallback research panel opens with keyboard`, await page.locator('.entry-content details').first().evaluate(detail => detail.open));
+      }
       await page.waitForTimeout(500);
       const expanded = await state(page);
       check(`${label}: expanded panel changes scroll range`, expanded.maximum > closed.maximum);
-      check(`${label}: progress recalculates for expanded panel`, expanded.scale !== null && Math.abs(expanded.scale - expanded.expected) < 0.025);
+      if (nativeTimeline) check(`${label}: progress recalculates for expanded panel`, expanded.scale !== null && Math.abs(expanded.scale - expanded.expected) < 0.025);
+      else check(`${label}: fallback stays hidden after panel expansion`, !expanded.visible);
 
       for (const media of [{ reducedMotion: 'reduce' }, { media: 'print' }, { forcedColors: 'active' }]) {
         await page.emulateMedia(media);
