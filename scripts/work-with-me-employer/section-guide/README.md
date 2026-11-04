@@ -6,7 +6,10 @@ browser checks passed at **10:31:33 UTC**.
 Source merged via [PR #74](https://github.com/alanmz-crypto/new-masseuse-site/pull/74)
 at `47536cd` on November 4, 2026, at **10:47:28 UTC**. Deployment remains
 staging38 only. Ryan authorized the live release on November 4, 2026;
-production enablement and its owner-run request are being prepared. See the
+production enablement and request `live-section-guide-20261104-1` are ready in
+[PR #76](https://github.com/alanmz-crypto/new-masseuse-site/pull/76), pending the
+owner launch. Fresh live-source rehearsal passed **375/0 in each browser** and
+the read-only live preflight passed. See the
 [live release record](../../../docs/reviews/2026-11-04-section-guide-release.md).
 [Preview Thai Massage](https://staging38.thaisolitude.com/thai-massage/) and scroll
 past the original section links to open the guide.
