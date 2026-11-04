@@ -1,11 +1,10 @@
 {
-  "id": "ui-progress-browser-20261104",
+  "id": "ui-progress-postcheck-20261104",
   "op": "run",
   "target": "staging38",
-  "script": "reading-progress/check-reading-progress.mjs",
+  "script": "post-change-test.sh",
   "args": [
-    "https://staging38.thaisolitude.com",
-    "inline"
+    "staging38"
   ],
   "tests": "auto"
 }
