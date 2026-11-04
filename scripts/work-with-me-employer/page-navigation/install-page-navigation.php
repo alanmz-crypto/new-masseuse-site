@@ -1,7 +1,7 @@
 <?php
 /**
  * Coordinate the exact existing inline and native page-navigation snippets.
- * Staging38/localhost only. CSS is a read-only witness; only the two captured snippets may change.
+ * Exact live, staging38 and localhost origins only. CSS is a read-only witness; only the two captured snippets may change.
  * Modes: preflight / apply / rollback FILE. Push supplies verified offsite backups.
  * Full post/meta/taxonomy snapshots and original dates preserve older rollback chains.
  */
@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) ) { exit( 'Run with WP
 $home = untrailingslashit( home_url() );
 $host = (string) wp_parse_url( $home, PHP_URL_HOST );
 $port = wp_parse_url( $home, PHP_URL_PORT ); $host .= $port ? ':' . $port : '';
-if ( ! in_array( $host, array( 'localhost:8090', 'staging38.thaisolitude.com' ), true ) || ! in_array( $home, array( 'http://localhost:8090', 'http://staging38.thaisolitude.com', 'https://staging38.thaisolitude.com' ), true ) ) { WP_CLI::error( 'Only exact localhost:8090 and staging38 origins are allowed; nothing changed.' ); }
+if ( ! in_array( $host, array( 'localhost:8090', 'staging38.thaisolitude.com', 'thaisolitude.com' ), true ) || ! in_array( $home, array( 'http://localhost:8090', 'http://staging38.thaisolitude.com', 'https://staging38.thaisolitude.com', 'http://thaisolitude.com', 'https://thaisolitude.com' ), true ) ) { WP_CLI::error( 'Only exact localhost:8090, staging38 and live apex origins are allowed; nothing changed.' ); }
 if ( 'astra' !== get_stylesheet() || ! current_user_can( 'manage_options' ) || ! current_user_can( 'unfiltered_html' ) || ! current_user_can( 'edit_css' ) || ! function_exists( 'wpcode' ) || ! class_exists( 'WPCode_Snippet' ) ) { WP_CLI::error( 'Requires Astra, WPCode and an administrator (--user=1).' ); }
 $args = isset( $args ) && is_array( $args ) ? $args : array(); $mode = $args[0] ?? 'preflight';
 if ( ! in_array( $mode, array( 'preflight', 'apply', 'rollback' ), true ) || count( $args ) > ( 'rollback' === $mode ? 2 : 1 ) ) { WP_CLI::error( 'Use preflight, apply, or rollback FILE.' ); }
