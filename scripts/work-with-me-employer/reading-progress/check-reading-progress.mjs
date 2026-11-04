@@ -5,7 +5,9 @@ import { createRequire } from 'node:module';
 import { readFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 const require = createRequire(process.env.TS_PLAYWRIGHT_ROOT || '/home/lauer/Projects/SubProjects/Mirror/package.json');
-const { chromium } = require('playwright');
+const { chromium, firefox } = require('playwright');
+const engine = process.env.TS_BROWSER || 'chromium';
+if (!['chromium', 'firefox'].includes(engine)) throw new Error('TS_BROWSER must be chromium or firefox');
 const base = (process.argv[2] || '').replace(/\/$/, '');
 const fixture = base === '--fixture';
 if (!fixture && !['http://localhost:8090', 'https://staging38.thaisolitude.com'].includes(base)) {
@@ -14,7 +16,7 @@ if (!fixture && !['http://localhost:8090', 'https://staging38.thaisolitude.com']
 const css = readFileSync(new URL('./reading-progress.css', import.meta.url), 'utf8');
 const baselineCSS = fixture && process.env.TS_BASELINE_CSS ? readFileSync(process.env.TS_BASELINE_CSS, 'utf8') : '';
 const marker = /\/\* ts-reading-progress:start[^]*?\/\* ts-reading-progress:end \*\//;
-const browser = await chromium.launch(process.env.TS_CHROMIUM_EXECUTABLE ? { executablePath: process.env.TS_CHROMIUM_EXECUTABLE } : {});
+const browser = await (engine === 'firefox' ? firefox : chromium).launch(engine === 'chromium' && process.env.TS_CHROMIUM_EXECUTABLE ? { executablePath: process.env.TS_CHROMIUM_EXECUTABLE } : {});
 const context = await browser.newContext({ viewport: { width: 1280, height: 900 }, reducedMotion: 'no-preference' });
 if (fixture) await context.route('**/*', route => route.abort());
 let assertions = 0, failures = 0, invalid = false;
@@ -176,5 +178,5 @@ try {
   await context.close();
   await browser.close();
 }
-console.log(`Reading progress: ${assertions} browser assertions, ${failures} failures${invalid ? ', INVALID' : ''}`);
+console.log(`Reading progress (${engine}): ${assertions} browser assertions, ${failures} failures${invalid ? ', INVALID' : ''}`);
 process.exitCode = invalid ? 2 : failures ? 1 : 0;
