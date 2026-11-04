@@ -1,8 +1,10 @@
 {
-  "id": "ui-progress-dry-20261104",
+  "id": "ui-progress-apply-20261104",
   "op": "run",
   "target": "staging38",
   "script": "reading-progress/push-reading-progress.sh",
-  "args": [],
+  "args": [
+    "--apply"
+  ],
   "tests": "auto"
 }
