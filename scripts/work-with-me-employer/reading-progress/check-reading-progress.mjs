@@ -17,6 +17,7 @@ const css = readFileSync(new URL('./reading-progress.css', import.meta.url), 'ut
 const baselineCSS = fixture && process.env.TS_BASELINE_CSS ? readFileSync(process.env.TS_BASELINE_CSS, 'utf8') : '';
 const marker = /\/\* ts-reading-progress:start[^]*?\/\* ts-reading-progress:end \*\//;
 const browser = await (engine === 'firefox' ? firefox : chromium).launch(engine === 'chromium' && process.env.TS_CHROMIUM_EXECUTABLE ? { executablePath: process.env.TS_CHROMIUM_EXECUTABLE } : {});
+console.log(`INFO reading progress browser: ${engine} ${browser.version()}`);
 const context = await browser.newContext({ viewport: { width: 1280, height: 900 }, reducedMotion: 'no-preference' });
 if (fixture) await context.route('**/*', route => route.abort());
 let assertions = 0, failures = 0, invalid = false;
@@ -46,6 +47,37 @@ async function state(page) {
       maximum,
     };
   });
+}
+async function baselineComparison(page) {
+  return page.evaluate(pattern => {
+    const block = new RegExp(pattern);
+    const style = [...document.querySelectorAll('style')].find(s => block.test(s.textContent));
+    const original = style.textContent;
+    const measure = () => ({
+      width: document.documentElement.scrollWidth,
+      text: document.body.innerText,
+      rects: [...document.body.querySelectorAll('*')].filter(el => !['SCRIPT', 'STYLE'].includes(el.tagName)).map(el => {
+        const r = el.getBoundingClientRect();
+        return [r.x + scrollX, r.y + scrollY, r.width, r.height];
+      }),
+    });
+    const applied = measure();
+    let baseline;
+    try {
+      // Remove only this feature from the current DOM. This preserves the
+      // same rendered page, assets, viewport, scroll position and theme.
+      style.textContent = original.replace(block, '');
+      baseline = measure();
+    } finally {
+      style.textContent = original;
+    }
+    return {
+      appliedWidth: applied.width,
+      baselineWidth: baseline.width,
+      geometrySame: JSON.stringify(applied.rects) === JSON.stringify(baseline.rects),
+      textSame: applied.text === baseline.text,
+    };
+  }, marker.source);
 }
 function fixtureHTML(service) {
   return `<!doctype html><html lang="en"><head><title>Reading progress fixture</title><style>
@@ -91,7 +123,10 @@ try {
         await scroll(page, 0.5);
         const value = await state(page);
         const view = `${label} ${width} ${theme}`;
-        check(`${view}: no side-scroll`, !value.overflow);
+        const comparison = await baselineComparison(page);
+        check(`${view}: no added side-scroll`, comparison.appliedWidth === comparison.baselineWidth);
+        check(`${view}: content and element geometry unchanged`, comparison.geometrySame && comparison.textSame);
+        if (value.overflow) console.log(`INFO ${view}: overflow observed; with progress CSS=${comparison.appliedWidth}px, without progress CSS=${comparison.baselineWidth}px, viewport=${width}px`);
         check(`${view}: correct scope`, value.visible === service);
         if (!service) continue;
         check(`${view}: fixed 3px decoration ignores pointer`, value.position === 'fixed' && value.height === '3px' && value.pointer === 'none');
@@ -121,26 +156,6 @@ try {
       check(`${label}: expanded panel changes scroll range`, expanded.maximum > closed.maximum);
       check(`${label}: progress recalculates for expanded panel`, expanded.scale !== null && Math.abs(expanded.scale - expanded.expected) < 0.025);
 
-      // Disable only this marked block in the DOM, compare every element's
-      // document geometry, and restore it. Existing content must never move.
-      await scroll(page, 0);
-      const geometryStable = await page.evaluate(pattern => {
-        const block = new RegExp(pattern);
-        const style = [...document.querySelectorAll('style')].find(s => block.test(s.textContent));
-        const original = style.textContent;
-        const measure = () => [...document.body.querySelectorAll('*')].filter(el => !['SCRIPT', 'STYLE'].includes(el.tagName)).map(el => {
-          const r = el.getBoundingClientRect();
-          return [r.x, r.y + scrollY, r.width, r.height];
-        });
-        const before = measure();
-        const text = document.body.innerText;
-        style.textContent = original.replace(block, '');
-        const after = measure();
-        const same = text === document.body.innerText && JSON.stringify(before) === JSON.stringify(after);
-        style.textContent = original;
-        return same;
-      }, marker.source);
-      check(`${label}: exact content and element geometry preserved`, geometryStable);
       for (const media of [{ reducedMotion: 'reduce' }, { media: 'print' }, { forcedColors: 'active' }]) {
         await page.emulateMedia(media);
         check(`${label}: suppressed for ${JSON.stringify(media)}`, !(await state(page)).visible);

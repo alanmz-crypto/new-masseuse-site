@@ -3,7 +3,9 @@
 import { spawnSync } from 'node:child_process';
 if (process.argv[2] !== 'http://localhost:8090') throw new Error('Isolated localhost rehearsal only');
 for (const engine of ['chromium', 'firefox']) {
-  const child = spawnSync(process.execPath, [new URL('./check-reading-progress.mjs', import.meta.url).pathname, ...process.argv.slice(2)], {
+  const args = [new URL('./check-reading-progress.mjs', import.meta.url).pathname, process.argv[2]];
+  if (engine === 'chromium' && !process.argv.includes('no-inline')) args.push('inline');
+  const child = spawnSync(process.execPath, args, {
     stdio: 'inherit', env: { ...process.env, TS_BROWSER: engine },
   });
   if (child.error || child.signal || child.status !== 0) {

@@ -38,7 +38,8 @@ on write failure. Repeat apply does nothing. Partial/duplicate/changed markers
 fail. Rollback requires the exact original snapshot and exact applied CSS;
 later CSS changes are refused rather than overwritten.
 
-Only `http://localhost:8090` and `https://staging38.thaisolitude.com` are allowed.
+Only `http://localhost:8090` and staging38's exact HTTP/HTTPS origins are allowed
+(staging currently stores an HTTP home URL, while visitors use HTTPS).
 Production is not enabled. Nothing is installed as a plugin or remote theme
 file, and page text, SEO fields, booking links and existing interactions are not
 edited. Git source changes alone do not alter WordPress.

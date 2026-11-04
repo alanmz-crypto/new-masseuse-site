@@ -16,9 +16,10 @@ $host .= $port ? ':' . $port : '';
 if ( ! in_array( $host, array( 'localhost:8090', 'staging38.thaisolitude.com' ), true ) ) {
 	WP_CLI::error( 'Target host is not allowed; nothing changed.' );
 }
-// Also enforce scheme/path, beyond the host allow-list used by the rehearsal.
-if ( ! in_array( $home, array( 'http://localhost:8090', 'https://staging38.thaisolitude.com' ), true ) ) {
-	WP_CLI::error( 'Only localhost:8090 and HTTPS staging38 are allowed; nothing changed.' );
+// Staging38 currently stores an HTTP home URL (fresh rehearsal, 2026-11-04),
+// although visitors use HTTPS. Keep both exact origins; no paths or other sites.
+if ( ! in_array( $home, array( 'http://localhost:8090', 'http://staging38.thaisolitude.com', 'https://staging38.thaisolitude.com' ), true ) ) {
+	WP_CLI::error( 'Only localhost:8090 and exact staging38 origins are allowed; nothing changed.' );
 }
 if ( 'astra' !== get_stylesheet() || ! current_user_can( 'manage_options' ) || ! current_user_can( 'edit_css' ) ) {
 	WP_CLI::error( 'Requires Astra and an administrator allowed to edit CSS (--user=1).' );
