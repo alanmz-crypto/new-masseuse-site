@@ -1,11 +1,9 @@
 {
-  "id": "ui-page-navigation-events-20261104",
-  "op": "run",
+  "id": "ui-page-navigation-rehearse-2-20261104",
+  "op": "rehearse",
   "target": "staging38",
-  "script": "page-navigation/inspect-navigation.mjs",
+  "installer": "page-navigation/install-page-navigation.php",
   "args": [
-    "https://staging38.thaisolitude.com",
-    "--no-js"
-  ],
-  "tests": "auto"
+    "--with-uploads"
+  ]
 }
