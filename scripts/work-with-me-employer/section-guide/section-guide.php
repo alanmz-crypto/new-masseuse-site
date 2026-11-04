@@ -1,5 +1,5 @@
 <?php
-// Native, nonmodal section guide. Preserve jump links and include the research heading.
+// Native, nonmodal section guide. Preserve jump links and include questions and research.
 add_action( 'wp_footer', function () {
 	static $printed = false;
 	if ( $printed || is_admin() || is_feed() || ! is_page( array( 'thai-massage', 'therapeutic-massage', 'deep-tissue-massage', 'chair-massage' ) ) ) {
@@ -31,22 +31,30 @@ add_action( 'wp_footer', function () {
     });
     if (!entries.length) return;
 
-    var research = Array.from(content.querySelectorAll('h2')).filter(function (heading) {
-      return /^What the Research Says About (Thai|Therapeutic|Deep Tissue|Chair) Massage$/.test(heading.textContent.replace(/\s+/g, ' ').trim());
-    });
-    if (research.length === 1 && !entries.some(function (entry) { return entry.target === research[0]; })) {
-      var heading = research[0];
+    var headings = Array.from(content.querySelectorAll('h2'));
+    function addHeadingLink(label, pattern, baseId) {
+      var matches = headings.filter(function (heading) {
+        return pattern.test(heading.textContent.replace(/\s+/g, ' ').trim());
+      });
+      if (matches.length !== 1 || entries.some(function (entry) { return entry.target === matches[0]; })) return;
+      var heading = matches[0];
       if (!heading.id) {
-        var id = 'ts-guide-research';
+        var id = baseId;
         var suffix = 2;
-        while (document.getElementById(id)) id = 'ts-guide-research-' + suffix++;
+        while (document.getElementById(id)) id = baseId + '-' + suffix++;
         heading.id = id;
       }
       // Reuse a rendered anchor only when it resolves to this exact heading.
       if (document.getElementById(heading.id) === heading) {
-        entries.push({ label: 'What Research Says', href: '#' + encodeURIComponent(heading.id), target: heading });
+        entries.push({ label: label, href: '#' + encodeURIComponent(heading.id), target: heading });
       }
     }
+    addHeadingLink('Questions', /^Questions About (Thai|Therapeutic|Deep Tissue|Chair) Massage$/, 'ts-guide-questions');
+    addHeadingLink('What Research Says', /^What the Research Says About (Thai|Therapeutic|Deep Tissue|Chair) Massage$/, 'ts-guide-research');
+    entries.sort(function (a, b) {
+      if (a.target === b.target) return 0;
+      return a.target.compareDocumentPosition(b.target) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1;
+    });
 
     var trigger = document.createElement('button');
     trigger.id = 'ts-section-guide-trigger';

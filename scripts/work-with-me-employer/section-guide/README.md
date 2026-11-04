@@ -1,17 +1,21 @@
 # Section guide for the four research pages
 
-**Guide and “What Research Says” shortcut applied and verified on staging38; not live.**
-The research shortcut was applied at **09:56:07 UTC on November 4, 2026**;
-focused public browser checks passed at **10:03:09 UTC**.
+**Guide and “What Research Says” shortcut are verified on staging38; not live.**
+The requested **“Questions” addition is prepared, with rehearsal and staging
+application PENDING**. The verified research version remains deployed until then.
 [Preview Thai Massage](https://staging38.thaisolitude.com/thai-massage/) and scroll
 past the original section links to open the guide.
 This adds a compact “On this page” control to Thai, Therapeutic, Deep Tissue and
 Chair Massage. It appears after the existing jump-link row scrolls above the
 viewport and hides near the footer. Opening it shows those same labels and
-fragment destinations in a native, nonmodal popover. The update also adds “What
-Research Says” to the existing research heading on each of the four pages. It
-reuses the heading's ID or assigns a collision-free ID only in the rendered DOM;
-no heading text or stored page HTML changes. The original links remain
+fragment destinations in a native, nonmodal popover. The latest update adds
+“Questions” beside the existing “What Research Says” shortcut, targeting each
+page's FAQ and research headings. It reuses their IDs or assigns collision-free
+IDs only in the rendered DOM; no heading text or stored page HTML changes. All
+entries follow the headings' document order. Existing labels and destinations
+remain intact, including “Who can benefit” on Therapeutic and Chair Massage;
+the guide therefore has five entries on Thai/Deep Tissue and six on
+Therapeutic/Chair. The original links remain
 in place as the no-JavaScript and unsupported-browser fallback.
 
 The purpose is to make the existing section navigation available while reading
@@ -54,13 +58,14 @@ writing. The runtime PHP's leading opening tag is removed for the WPCode record.
 Frozen payload SHA256 values:
 
 - CSS: `3b74dcdef902a484d9c3c2abf8f7070dd2a8956f30b3b7d3c7295b2d00ea5eb7`.
-- Current PHP file: `faf54532012660a640fa2d7ff51d87f8e21e781f256e1361000d68de5d35249a`.
+- Current Questions PHP: `071149c634d51bb6d2b7e3f4de59b695a5802a3e63c7da1939b3fa1684210e2b`.
+- Frozen research v2 PHP (`section-guide-v2.php`): `faf54532012660a640fa2d7ff51d87f8e21e781f256e1361000d68de5d35249a`.
 - Frozen deployed v1 PHP (`section-guide-v1.php`): `c59264212eba983602621961eb453443cac1993149f55249a6d32af3c59cc777`.
 
 On a fresh installation, the only persistent additions are one marked CSS block
 and one active PHP snippet titled `TSSectionGuide v1`. Every existing CSS byte is
-preserved before the appended block. On the already-deployed original version,
-preflight reports `ready-upgrade`: the installer replaces only the exact frozen
+preserved before the appended block. On either exact registered prior version,
+preflight reports `ready-upgrade`: the installer replaces only that frozen
 runtime in the same snippet, preserving its ID, metadata and terms. It changes
 no CSS bytes. No page HTML is persisted or rewritten.
 The installer refuses partial or duplicate blocks, a conflicting or renamed
@@ -73,11 +78,13 @@ failed applies attempt to restore the recorded original state.
 Rollback requires the exact private snapshot and unchanged applied CSS and
 snippet state. A **runtime-upgrade snapshot** restores the full original snippet
 record, including code and modified timestamps, and leaves CSS untouched. A
+compact frozen registry validates each snapshot's source and destination bytes,
+so the rollback chain remains **Questions → research → original guide → remove**. A
 **fresh-install snapshot** restores every original CSS byte and removes only its
 unchanged newly created snippet, following the
 [review-c owned-snippet pattern](../review-c/install-bundle-c.php). Both paths
-refuse later edits. The original v1 removal snapshot remains usable after the
-runtime upgrade is rolled back; the unchanged earlier package at commit
+refuse later edits. The earlier research and v1 removal snapshots remain usable after their
+later runtime upgrades are rolled back; the unchanged earlier package at commit
 `60a4a49` also retains that removal path. The progress indicator and all earlier
 snippets remain part of either restored state.
 
@@ -85,7 +92,7 @@ snippets remain part of either restored state.
 exports a fresh database, copies it encrypted offsite and verifies the copy
 before writing; it then copies and verifies the exact before-snapshot offsite
 before public checks. Four service pages must return HTTP 200 with the license,
-CSS, scoped runtime marker and research shortcut label. Home and Contact must return 200 with the license
+CSS, scoped runtime marker and both requested shortcut labels. Home and Contact must return 200 with the license
 and CSS, without the runtime. HTTP 202 is an invalid bot challenge, not a pass.
 
 ## Workflow
@@ -98,15 +105,20 @@ scripts/ci/request.sh run --target staging38 --script section-guide/push-section
 scripts/ci/request.sh run --target staging38 --script section-guide/push-section-guide.sh --args '--apply'
 ```
 
-This exact staging command undoes only the research shortcut, restoring the
-original snippet code, identity, dates and settings without changing CSS:
+Use the Questions upgrade snapshot printed by its apply to undo only that
+addition. Its actual path is **PENDING**; no Questions snapshot exists yet.
+That rollback restores the deployed research version with its exact code,
+identity, dates and settings, leaving CSS unchanged.
+
+After Questions rollback, this existing research rollback command restores the
+original guide without changing CSS:
 
 ```sh
 scripts/ci/request.sh run --target staging38 --script section-guide/push-section-guide.sh --args '--rollback $HOME/private-backups/section-guide-before-20261104-095607-f0075705.json'
 ```
 
-The original 09:18 installation snapshot remains valid after that runtime
-rollback. Do not use it to undo the runtime upgrade directly.
+The original 09:18 installation snapshot remains valid after the research
+rollback. Follow the snapshot chain in reverse order; do not skip an upgrade.
 
 After runtime rollback, the original staging removal command below restores the
 pre-guide CSS (including reading progress) and removes the owned snippet. It is
@@ -119,7 +131,18 @@ scripts/ci/request.sh run --target staging38 --script section-guide/push-section
 Git source changes do not update WordPress. A future live release requires its
 own reviewed enablement and owner-run workflow; this package has no live target.
 
+## Questions verification — PENDING
+
+- Registry/installer PHP 8.5 lint, push-script `bash -n` and `git diff --check`:
+  PASS. Frozen runtime files preserve the deployed v1 and research v2 bytes.
+- Current-stage upgrade rehearsal, repeat apply, exact rollback and reapply:
+  PENDING.
+- Browser checks, dry run, staging apply, actual Questions snapshot, verified
+  offsite backup and public verification: PENDING.
+
 ## Research shortcut verification — November 4, 2026
+
+These results cover research v2 (`faf54532…`), before the Questions addition.
 
 - Current local Chromium 154 fixtures: **367 assertions, zero failures**; focused
   research-shortcut checks: **20 assertions, zero failures**. The mobile fixture
@@ -146,7 +169,7 @@ own reviewed enablement and owner-run workflow; this package has no live target.
   WordPress mutation** at 09:44:20 UTC: the encrypted offsite backup service
   returned HTTP 502 and verification failed. The installer never reached its
   apply phase. The [queued public check](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/41809702630)
-  therefore saw the old three-link guide (**65 assertions, 2 failures**); it does
+  therefore saw the pre-research guide (**65 assertions, 2 failures**); it does
   not validate the research update. Report publication also failed with GitHub
   Internal Server Errors. These outcomes are recorded from direct job logs.
 - A later branch push succeeded, allowing the
