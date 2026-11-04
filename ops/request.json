@@ -1,10 +1,11 @@
 {
-  "id": "ui-section-research-apply-2-20261104",
+  "id": "ui-section-research-browser-2-20261104",
   "op": "run",
   "target": "staging38",
-  "script": "section-guide/push-section-guide.sh",
+  "script": "section-guide/check-section-guide.mjs",
   "args": [
-    "--apply"
+    "https://staging38.thaisolitude.com",
+    "inline"
   ],
   "tests": "auto"
 }
