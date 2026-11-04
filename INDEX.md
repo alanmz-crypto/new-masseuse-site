@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-04 09:24 UTC  **PASS**  `ui-section-guide-browser-20261104`  [reports/2026-11-04/092446-ui-section-guide-browser-20261104.md](reports/2026-11-04/092446-ui-section-guide-browser-20261104.md)  (run 41806377819)
 - 2026-11-04 09:22 UTC  **PASS**  `ui-section-guide-apply-20261104`  [reports/2026-11-04/092206-ui-section-guide-apply-20261104.md](reports/2026-11-04/092206-ui-section-guide-apply-20261104.md)  (run 41806275637)
 - 2026-11-04 09:16 UTC  **PASS**  `ui-section-guide-dry-3-20261104`  [reports/2026-11-04/091658-ui-section-guide-dry-3-20261104.md](reports/2026-11-04/091658-ui-section-guide-dry-3-20261104.md)  (run 41805476957)
 - 2026-11-04 09:16 UTC  **PASS**  `ui-section-guide-rehearse-5-20261104`  [reports/2026-11-04/091629-ui-section-guide-rehearse-5-20261104.md](reports/2026-11-04/091629-ui-section-guide-rehearse-5-20261104.md)  (run 41805372496)
