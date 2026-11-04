@@ -1,8 +1,11 @@
 {
-  "id": "review-e-live-dry-20261101",
+  "id": "ui-progress-all-browser-20261104",
   "op": "run",
-  "target": "live",
-  "script": "review-e/push-bundle-e.sh",
-  "args": [],
+  "target": "staging38",
+  "script": "reading-progress-sitewide/check-reading-progress.mjs",
+  "args": [
+    "https://staging38.thaisolitude.com",
+    "inline"
+  ],
   "tests": "auto"
 }
