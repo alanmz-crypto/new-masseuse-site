@@ -1,11 +1,7 @@
 {
-  "id": "ui-progress-live-browser-20261104",
-  "op": "run",
-  "target": "live",
-  "script": "reading-progress-sitewide/check-reading-progress.mjs",
-  "args": [
-    "https://thaisolitude.com",
-    "inline"
-  ],
-  "tests": "auto"
+  "id": "ui-section-guide-rehearse-20261104",
+  "op": "rehearse",
+  "target": "staging38",
+  "installer": "section-guide/install-section-guide.php",
+  "args": []
 }
