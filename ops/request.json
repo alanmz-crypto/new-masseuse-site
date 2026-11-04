@@ -1,11 +1,10 @@
 {
-  "id": "ui-page-navigation-browser-20261104",
+  "id": "ui-page-navigation-postcheck-20261104",
   "op": "run",
   "target": "staging38",
-  "script": "page-navigation/check-page-navigation.mjs",
+  "script": "post-change-test.sh",
   "args": [
-    "https://staging38.thaisolitude.com",
-    "inline"
+    "staging38"
   ],
   "tests": "auto"
 }
