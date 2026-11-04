@@ -51,7 +51,11 @@ for (const theme of ['light', 'dark']) {
       const t = (s) => (document.querySelector(s) || {}).textContent || '';
       const imgs = [...document.querySelectorAll('.entry-content img')].map(i => ({ src: i.getAttribute('src') || '', ok: i.complete && i.naturalWidth > 0, alt: i.getAttribute('alt') || '', title: i.getAttribute('title') || '' }));
       const links = [...document.querySelectorAll('nav.ts-jump a')].map(a => a.getAttribute('href'));
-      const targets = links.map(h => !!document.getElementById(h.slice(1)));
+      const targets = links.map(h => {
+        if (!h?.startsWith('#')) return false;
+        const id = decodeURIComponent(h.slice(1)), matches = [...document.querySelectorAll('[id]')].filter(el => el.id === id);
+        return matches.length === 1 && document.querySelector('.entry-content').contains(matches[0]);
+      });
       const det = [...document.querySelectorAll('.entry-content details')];
       return {
         title: document.title, h1: t('h1'), band: document.querySelectorAll('.ts-corp-band').length, nav: document.querySelectorAll('nav.ts-jump').length, links, targets,
@@ -66,7 +70,7 @@ for (const theme of ['light', 'dark']) {
     check(`${tag}: title tag`, r.title.startsWith('Chair Massage | Butsaba Dusrai, Oregon LMT'), r.title);
     check(`${tag}: H1`, r.h1.trim() === 'Chair Massage in Portland', r.h1.trim());
     check(`${tag}: the strip under the header, once`, r.band === 1, r.band);
-    check(`${tag}: jump-links row with four links, every target on the page`, r.nav === 1 && r.links.length === 4 && r.targets.every(Boolean), JSON.stringify(r.links));
+    check(`${tag}: original four jump links retained; every current target is unique and in page content`, r.nav === 1 && ['#ts-what-it-is', '#ts-common-reasons', '#ts-who-can-benefit', '#ts-what-to-expect'].every(href => r.links.includes(href)) && new Set(r.links).size === r.links.length && r.targets.every(Boolean), JSON.stringify(r.links));
     check(`${tag}: one picture on the page, the watercolor as the hero, loaded, tooltip = alt text`, r.imgs.length === 1 && r.imgs[0].ok && r.imgs[0].alt && r.imgs[0].alt === r.imgs[0].title && /chair-massage-tree\.webp/.test(r.imgs[0].src), JSON.stringify(r.imgs.map(i => [i.src.split('/').pop(), i.ok])));
     check(`${tag}: six section headings in order`, JSON.stringify(r.h2s) === JSON.stringify(['What Is Chair Massage?', 'Common Reasons Clients Choose Chair Massage', 'Who Can Benefit From Chair Massage?', 'Questions About Chair Massage', 'What To Expect During Your Appointment', 'What the Research Says About Chair Massage']), JSON.stringify(r.h2s));
     check(`${tag}: eleven FAQ items, the first open`, r.faq === 11 && r.firstOpen, r.faq);
@@ -89,7 +93,7 @@ for (const theme of ['light', 'dark']) {
     await page.waitForTimeout(400);
     check(`${tag}: second research panel opens on click`, await det2.evaluate(d => d.open && d.querySelector('p').getClientRects().length > 0));
     // jump link scrolls
-    await page.locator('nav.ts-jump a').nth(3).click();
+    await page.locator('nav.ts-jump a[href="#ts-what-to-expect"]').click();
     await page.waitForTimeout(1500);   // the theme scrolls to an anchor with its own animation
     check(`${tag}: jump link scrolls to its target`, await page.evaluate(() => { const el = document.getElementById('ts-what-to-expect'); const b = el.getBoundingClientRect(); return b.top >= -10 && b.top < innerHeight * 0.6; }), await page.evaluate(() => Math.round(document.getElementById('ts-what-to-expect').getBoundingClientRect().top)));
     await page.evaluate(() => scrollTo(0, 0));
