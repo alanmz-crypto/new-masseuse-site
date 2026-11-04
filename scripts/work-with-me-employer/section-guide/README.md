@@ -1,6 +1,8 @@
 # Section guide for the four research pages
 
-**Prepared for staging38; verification and deployment evidence are PENDING.**
+**Applied and verified on staging38 on November 4, 2026; not live.**
+[Preview Thai Massage](https://staging38.thaisolitude.com/thai-massage/) and scroll
+past the original section links to open the guide.
 This adds a compact “On this page” control to Thai, Therapeutic, Deep Tissue and
 Chair Massage. It appears after the existing jump-link row scrolls above the
 viewport and hides near the footer. Opening it shows those same labels and
@@ -83,34 +85,81 @@ scripts/ci/request.sh run --target staging38 --script section-guide/push-section
 scripts/ci/request.sh run --target staging38 --script section-guide/push-section-guide.sh --args '--apply'
 ```
 
-Use only the exact snapshot path printed by the successful apply:
+The actual staging rollback command restores the original CSS, including the
+reading-progress indicator, and removes only the unchanged owned snippet:
 
 ```sh
-scripts/ci/request.sh run --target staging38 --script section-guide/push-section-guide.sh --args '--rollback $HOME/private-backups/section-guide-before-TIMESTAMP-SUFFIX.json'
+scripts/ci/request.sh run --target staging38 --script section-guide/push-section-guide.sh --args '--rollback $HOME/private-backups/section-guide-before-20261104-091816-4f642403.json'
 ```
 
 Git source changes do not update WordPress. A future live release requires its
 own reviewed enablement and owner-run workflow; this package has no live target.
 
-## Verification evidence — PENDING
+## Verification evidence — November 4, 2026
 
 - Static validation: installer and runtime pass PHP 8.5 lint in the repository's
   digest-pinned CLI image; push script passes `bash -n`; `git diff --check` passes.
-- Local Chromium 154 fixtures: **339 assertions, zero failures**, including
-  native keyboard and touch dismissal, no-JavaScript/unsupported fallbacks,
+- Local Chromium 154 fixtures: **347 assertions, zero failures**, including
+  native keyboard and Chromium emulated-touch dismissal, no-JavaScript/unsupported fallbacks,
   themes, preference exclusions, footer behavior and unchanged content/CTAs.
   Both normal mobile and 320×568 at 200% text screenshots were visually reviewed.
   The initial WordPress rehearsal exposed missed visibility updates when an
   instant jump skips the navigation row. A fixture reproduced both directions;
-  current-position checks fixed them and the enlarged-text reflow case.
-- Fresh staging-source rehearsal, including apply, no-op reapply, exact rollback
-  and reapply: PENDING.
-- Staging dry run, database export and encrypted offsite verification: PENDING.
-- Staging apply, exact snapshot, public route checks, post-change comparisons and
-  restore proof: PENDING.
-- Focused public browser checks, native keyboard/dismissal/focus behavior,
-  narrow screens, themes, preferences and unchanged page geometry: PENDING.
+  current-position checks fixed both directions. The panel also follows the
+  trigger's measured height for the enlarged-text reflow case.
+- Geometry comparisons remain exact. Each sample independently waits for lazy
+  asset requests, fonts and repeated stable layout measurements before comparing
+  content and every element's position and dimensions; it does not wait for the
+  expected before/after result.
+- Firefox's end-of-document Tab behavior matched the automation boundary in
+  [Playwright #39268](https://github.com/microsoft/playwright/issues/39268).
+  The final guide sits before the footer, and the test requires Tab to focus the
+  first footer link and Shift+Tab to return to the last popover link. This tests a
+  concrete page successor instead of interpreting focus leaving the document.
+  Safari and physical-device behavior have not been tested for this feature.
+- [Final staging-source rehearsal](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/41805372496)
+  (`ui-section-guide-rehearse-5-20261104`, commit `bacf37e`, finished 09:16 UTC):
+  **PASS** on an isolated copy of WordPress 7.1.3 with uploads. Apply, no-op
+  reapply, exact rollback, reapply, page statuses, content gates and absence of new
+  PHP errors passed. Rollback restored every baseline fingerprint apart from
+  WPCode's disposable snippet-list cache; reapply matched with regenerated snippet
+  IDs set aside. Only CSS post 29, the new snippet and WPCode's cache changed.
+  Chromium **153.0.8010.12** and Firefox **155.0** each passed **331 assertions,
+  zero failures**, including exact forward/reverse Tab navigation through the
+  footer. Both engines tested the native popover.
+- [Final staging dry run](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/41805476957)
+  (`ui-section-guide-dry-3-20261104`, commit `753ad9d`, finished 09:16:57 UTC):
+  **PASS**, `ready`, 66,514 original CSS bytes; nothing changed in WordPress.
+- [Staging apply, post-change checks and restore proof](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/41806275637)
+  (`ui-section-guide-apply-20261104`, commit `2950eef`): **PASS**, applied at
+  **09:18:16 UTC**. All six origin checks returned HTTP 200 with the license and
+  CSS; the runtime appeared on the four service pages and stayed absent on Home
+  and Contact. **All five broad post-change groups passed** against live:
+  code/rendered/posture checks, pages/sitemap/robots, structured data **27/27**
+  (zero parse failures; modification dates set aside), **20/20 pixel-identical**
+  baseline views at zero tolerance, and no site PHP errors/warnings/deprecations.
+- Fresh database export: `staging38-before-section-guide-20261104-091800.sql`,
+  **7,278,947 bytes**, plaintext SHA256 prefix `564b39e4f4d7`. Exact before-snapshot:
+  `section-guide-before-20261104-091816-4f642403.json`, plaintext SHA256 prefix
+  `fb6661c101b1`. Both were stored encrypted in `offsite-2026-11`, read back and
+  verified identical to the server copies. The database was verified before
+  apply; the snapshot was verified before public checks.
+- The actual export restored successfully (**import exit 0**): **94 fingerprints
+  in the restored copy, 95 on staging**. Differences were only Additional CSS
+  post **29**, new snippet **1349**, WPCode's snippet-list cache and related post,
+  postmeta and term-relationship row counts. Page content, SEO and other settings
+  were unchanged. The comparison's informational exit 3 represents these expected
+  additions, not an import failure.
+- [Focused public staging check](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/41806377819)
+  (`ui-section-guide-browser-20261104`, commit `0a01f67`, finished 09:24:45 UTC):
+  Chromium **153.0.8010.12**, **331 assertions, zero failures**. The four service
+  pages passed at 1280/390/320 widths in both themes, including exact unchanged
+  content/geometry, keyboard dismissal and destination focus, forward/reverse Tab,
+  reduced motion, forced colors, print/admin exclusions and unsupported/no-script
+  fallbacks. Chromium touch emulation checked tap dismissal; 320×568 at 200% text
+  checked reflow. Other pages and their existing fixed controls stayed unaffected.
+  The actual staging mobile screenshot was visually reviewed: readable links,
+  clean panel spacing and separation from the existing scroll-to-top control.
 
-Record actual run links and results here before describing staging as deployed
-or verified. Browser/device coverage and broad-check limitations must be stated
-separately from the focused feature checks.
+The broad baseline views do not exercise the open popover. Focused feature
+coverage is recorded separately; Safari and physical devices remain untested.
