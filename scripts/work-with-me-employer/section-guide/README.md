@@ -94,10 +94,13 @@ own reviewed enablement and owner-run workflow; this package has no live target.
 
 - Static validation: installer and runtime pass PHP 8.5 lint in the repository's
   digest-pinned CLI image; push script passes `bash -n`; `git diff --check` passes.
-- Local Chromium 154 fixtures: **326 assertions, zero failures**, including
+- Local Chromium 154 fixtures: **339 assertions, zero failures**, including
   native keyboard and touch dismissal, no-JavaScript/unsupported fallbacks,
   themes, preference exclusions, footer behavior and unchanged content/CTAs.
   Both normal mobile and 320×568 at 200% text screenshots were visually reviewed.
+  The initial WordPress rehearsal exposed missed visibility updates when an
+  instant jump skips the navigation row. A fixture reproduced both directions;
+  current-position checks fixed them and the enlarged-text reflow case.
 - Fresh staging-source rehearsal, including apply, no-op reapply, exact rollback
   and reapply: PENDING.
 - Staging dry run, database export and encrypted offsite verification: PENDING.

@@ -67,7 +67,43 @@ async function pastNav(page) {
   if (await page.locator(trigger).count() && !await page.locator(trigger).isVisible()) console.log('DIAGNOSTIC hidden guide after pastNav: ' + JSON.stringify(await scrollState(page)));
 }
 async function isOpen(page) { return page.locator(panel).evaluate(el => el.matches(':popover-open')); }
-async function entryState(page) { return page.locator('.entry-content').evaluate(el => ({ html: el.innerHTML, text: el.innerText, width: document.documentElement.scrollWidth, rects: [...el.querySelectorAll('*')].map(item => { const r = item.getBoundingClientRect(); return [r.x + scrollX, r.y + scrollY, r.width, r.height]; }) })); }
+async function entryState(page) {
+  return page.locator('.entry-content').evaluate(el => ({
+    html: el.innerHTML, text: el.innerText, width: document.documentElement.scrollWidth,
+    rects: [...el.querySelectorAll('*')].map(item => {
+      const r = item.getBoundingClientRect();
+      return { tag: item.tagName.toLowerCase(), id: item.id, class: item.getAttribute('class') || '', rect: [r.x + scrollX, r.y + scrollY, r.width, r.height] };
+    }),
+  }));
+}
+function entryDiff(before, after) {
+  const changed = [];
+  for (let index = 0; index < Math.max(before.rects.length, after.rects.length) && changed.length < 5; index++) {
+    if (JSON.stringify(before.rects[index]) !== JSON.stringify(after.rects[index])) changed.push({ index, before: before.rects[index], after: after.rects[index] });
+  }
+  return { htmlUnchanged: before.html === after.html, textUnchanged: before.text === after.text, width: { before: before.width, after: after.width }, elementCount: { before: before.rects.length, after: after.rects.length }, firstChangedElements: changed };
+}
+async function stableEntryState(page, label) {
+  // Settle independently of the expected popup state or the comparison baseline.
+  // Scrolling can start lazy asset requests, so let those begin before network idle.
+  const initial = await entryState(page);
+  await settle(page);
+  await page.waitForLoadState('networkidle', { timeout: 15000 });
+  await page.evaluate(() => document.fonts.ready);
+  let previous = await entryState(page), unchangedSamples = 0;
+  for (let attempt = 0; attempt < 10; attempt++) {
+    await settle(page);
+    const current = await entryState(page);
+    unchangedSamples = JSON.stringify(previous) === JSON.stringify(current) ? unchangedSamples + 1 : 0;
+    if (unchangedSamples >= 2) {
+      if (JSON.stringify(initial) !== JSON.stringify(current)) console.log(`DIAGNOSTIC layout changed while settling ${label}: ${JSON.stringify(entryDiff(initial, current))}`);
+      return current;
+    }
+    if (attempt === 9) throw new Error(`Layout did not stabilize for ${label}: ${JSON.stringify(entryDiff(previous, current))}`);
+    previous = current;
+  }
+}
+
 async function fit(page, label) {
   const result = await page.evaluate(({ trigger, panel }) => {
     const a = document.querySelector(trigger).getBoundingClientRect(), b = document.querySelector(panel).getBoundingClientRect();
@@ -101,12 +137,12 @@ try {
         const label = `${slug} ${width} ${theme}`;
         check(`${label}: original nav above viewport`, await original.evaluate(el => el.getBoundingClientRect().bottom < 0));
         check(`${label}: guide appears after navigation leaves`, await page.locator(trigger).isVisible());
-        const before = await entryState(page);
+        const before = await stableEntryState(page, `${label} before opening`);
         await page.locator(trigger).click(); await settle(page);
         check(`${label}: opens`, await isOpen(page));
         await fit(page, label);
-        const after = await entryState(page);
-        check(`${label}: original content and geometry unchanged`, JSON.stringify(before) === JSON.stringify(after));
+        const after = await stableEntryState(page, `${label} after opening`);
+        check(`${label}: original content and geometry unchanged`, JSON.stringify(before) === JSON.stringify(after), JSON.stringify(entryDiff(before, after)));
         await page.keyboard.press('Escape'); await settle(page);
         check(`${label}: Escape closes`, !await isOpen(page));
       }
@@ -169,10 +205,11 @@ try {
     await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight / 2)); await settle(page);
     check(`${slug || 'home'}: no guide added`, await page.locator(trigger + ', ' + panel).count() === 0);
     check(`${slug || 'home'}: runtime not emitted outside scoped pages`, await page.locator('#ts-section-guide-runtime').count() === 0);
-    const styled = await entryState(page);
+    const styled = await stableEntryState(page, `${slug || 'home'} with guide styles`);
     await page.locator('style').evaluateAll(styles => { for (const style of styles) style.textContent = style.textContent.replace(/\/\* ts-section-guide:start \*\/[\s\S]*?\/\* ts-section-guide:end \*\//g, ''); });
     await settle(page);
-    check(`${slug || 'home'}: content and any fixed CTA geometry unaffected by guide styles`, JSON.stringify(styled) === JSON.stringify(await entryState(page)));
+    const unstyled = await stableEntryState(page, `${slug || 'home'} without guide styles`);
+    check(`${slug || 'home'}: content and any fixed CTA geometry unaffected by guide styles`, JSON.stringify(styled) === JSON.stringify(unstyled), JSON.stringify(entryDiff(styled, unstyled)));
     check(`${slug || 'home'}: no browser errors`, errors.length === 0, errors.join('; '));
     await page.close();
   }
