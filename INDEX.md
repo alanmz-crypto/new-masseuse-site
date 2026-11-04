@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-04 06:55 UTC  **FAIL**  `ui-progress-rehearse-3-20261104`  [reports/2026-11-04/065504-ui-progress-rehearse-3-20261104.md](reports/2026-11-04/065504-ui-progress-rehearse-3-20261104.md)  (run 41788338874)
 - 2026-11-04 06:52 UTC  **INVALID**  `ui-progress-rehearse-2-20261104`  [reports/2026-11-04/065223-ui-progress-rehearse-2-20261104.md](reports/2026-11-04/065223-ui-progress-rehearse-2-20261104.md)  (run 41788281477)
 - 2026-11-04 06:51 UTC  **INVALID**  `ui-progress-rehearse-20261104`  [reports/2026-11-04/065100-ui-progress-rehearse-20261104.md](reports/2026-11-04/065100-ui-progress-rehearse-20261104.md)  (run 41788150008)
 - 2026-11-04 06:46 UTC  **PASS**  `ui-progress-css-20261104`  [reports/2026-11-04/064615-ui-progress-css-20261104.md](reports/2026-11-04/064615-ui-progress-css-20261104.md)  (run 41787686292)
