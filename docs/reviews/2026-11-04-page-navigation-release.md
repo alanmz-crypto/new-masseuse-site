@@ -1,12 +1,15 @@
 # Complete page navigation: live release
 
-**Live preparation in progress; not applied to live.** Ryan requested “Publish
+**Prepared for owner launch; not applied to live.** Ryan requested “Publish
 live” after merging [source/staging PR #77](https://github.com/alanmz-crypto/new-masseuse-site/pull/77)
 at **13:20:44 UTC on November 4, 2026**, main commit
 `aea59a5b847f0a7b6a743bf6f87426b9762e2007`.
-Request `live-page-navigation-20261104-1` is **planned, not yet prepared or run**.
-Fresh live-copy rehearsal and read-only live preflight are pending. A merged
-source PR is not evidence of a live deployment.
+Request `live-page-navigation-20261104-1` is **prepared, not run** in
+[`ops/live-request.json`](../../ops/live-request.json), for the paired navigation
+push with `--apply` and automatic checks. Fresh live-copy rehearsal and read-only
+live preflight have passed; no live application is recorded.
+[Release PR #78](https://github.com/alanmz-crypto/new-masseuse-site/pull/78) carries the release; check its final Gates status before merging. The request was
+prepared at source `e4a404b72d3424e2e5721f8e9d156709c3a6e3be`.
 
 Ryan reported that the apparent loading issue on his device was resolved with
 his VPN. The availability diagnostic was cancelled before execution. No website
@@ -76,16 +79,42 @@ contains the full source, browser and rollback evidence.
   eight expected navigation-row differences, no missing/problem captures. This
   is not an aggregate pass. No further staging retry is queued.
 
-Touch coverage is emulated; Safari and physical devices are untested. Staging
-verification does not replace the pending fresh live-copy rehearsal and live
-preflight.
+Touch coverage is emulated; Safari and physical devices are untested.
+
+## Fresh live preparation evidence
+
+- [Live-copy rehearsal](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/41838099630),
+  request `ui-page-navigation-live-rehearse-20261104`, source
+  `a4b79d6fa38134d300aa5d2e60be54aecb18005b`, finished **13:34:35 UTC**: **PASS**.
+  It copied WordPress **7.1.4** and 268 MB of files read-only from live, whose
+  stored origin remains `http://thaisolitude.com`, into isolated localhost.
+  Paired apply, repeat no-op, exact full-record/date rollback and reapply passed.
+  All **69,937 CSS bytes** stayed unchanged; baseline fingerprints matched after
+  rollback with the derived WPCode cache set aside. Only snippets **1232/1338**
+  and WPCode's cache changed in the tracked fingerprints after apply. Page copy
+  and SEO fingerprints did not drift. Page statuses, regulated-copy gates and
+  PHP checks passed.
+- The same rehearsal passed **572 browser assertions, zero failures each** in
+  Chromium **153.0.8010.12** and Firefox **155.0**, including all scoped fragment,
+  focus and no-JavaScript destinations. These checks used the isolated live copy;
+  they are not post-deployment public results.
+- [Read-only live preflight](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/41838471144),
+  request `ui-page-navigation-live-dry-20261104`, source
+  `d657728d65e229d1fac0fecc912d0f7d341119fe`, finished **13:35:04 UTC**: **PASS**.
+  Exact stored origin `http://thaisolitude.com`, state `ready`, CSS **69,937
+  bytes**; no WordPress data changed.
+- Local PHP/Bash syntax checks, **81 paired-installer mock checks**, **14 host
+  guard cases** and **39 rendered-map checks** passed. The origin verifier now
+  requires the current runtime markers and exact complete inline list on each
+  scoped page, using its existing responses without additional page requests.
 
 ## Preparation and owner launch
 
-- Fresh live-copy rehearsal: **pending**.
-- Read-only live preflight: **pending**.
-- Release pull request and Gates: **pending**.
-- Planned request `live-page-navigation-20261104-1`: **not prepared or run**.
+- Fresh live-copy rehearsal: **PASS**, including Chromium/Firefox **572/0 each**.
+- Read-only live preflight: **PASS**, ready with no write.
+- [Release PR #78](https://github.com/alanmz-crypto/new-masseuse-site/pull/78):
+  contains the release and its final Gates check; merge only with Gates green.
+- Request `live-page-navigation-20261104-1`: **prepared, not run**.
 - Actual live export, snapshot, apply and public verification: **not available**.
 
 [CLAUDE.md](../../CLAUDE.md) states: **“Live: never start it.”** After successful
