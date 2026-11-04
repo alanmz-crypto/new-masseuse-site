@@ -5,7 +5,9 @@ Questions was added at **10:22:43 UTC on November 4, 2026**; focused public
 browser checks passed at **10:31:33 UTC**.
 Source merged via [PR #74](https://github.com/alanmz-crypto/new-masseuse-site/pull/74)
 at `47536cd` on November 4, 2026, at **10:47:28 UTC**. Deployment remains
-staging38 only; no live enablement or request was created.
+staging38 only. Ryan authorized the live release on November 4, 2026;
+production enablement and its owner-run request are being prepared. See the
+[live release record](../../../docs/reviews/2026-11-04-section-guide-release.md).
 [Preview Thai Massage](https://staging38.thaisolitude.com/thai-massage/) and scroll
 past the original section links to open the guide.
 This adds a compact “On this page” control to Thai, Therapeutic, Deep Tissue and
@@ -55,7 +57,8 @@ record below; native support alone is not a claim of tested device behavior.
 ## Installation and exact rollback
 
 `install-section-guide.php` permits only `http://localhost:8090` and the exact
-HTTP/HTTPS staging38 origins. **Production is not allowed.** It checks Astra,
+HTTP/HTTPS staging38 and apex `thaisolitude.com` origins. No other hostname or
+port is allowed. It checks Astra,
 WPCode, administrator permissions, frozen CSS/PHP hashes and PHP syntax before
 writing. The runtime PHP's leading opening tag is removed for the WPCode record.
 Frozen payload SHA256 values:
@@ -91,7 +94,7 @@ later runtime upgrades are rolled back; the unchanged earlier package at commit
 `60a4a49` also retains that removal path. The progress indicator and all earlier
 snippets remain part of either restored state.
 
-`push-section-guide.sh` is dry by default and permits staging38 only. An apply
+`push-section-guide.sh` is dry by default and permits staging38 or live. An apply
 exports a fresh database, copies it encrypted offsite and verifies the copy
 before writing; it then copies and verifies the exact before-snapshot offsite
 before public checks. Four service pages must return HTTP 200 with the license,
@@ -133,8 +136,11 @@ also available using the original package at commit `60a4a49`:
 scripts/ci/request.sh run --target staging38 --script section-guide/push-section-guide.sh --args '--rollback $HOME/private-backups/section-guide-before-20261104-091816-4f642403.json'
 ```
 
-Git source changes do not update WordPress. A future live release requires its
-own reviewed enablement and owner-run workflow; this package has no live target.
+Git source changes do not update WordPress. The authorized live release uses its
+own reviewed enablement and owner-run workflow; see the
+[live release record](../../../docs/reviews/2026-11-04-section-guide-release.md).
+A fresh live installation has its own snapshot and rollback; never use a staging
+snapshot to undo the live installation.
 
 ## Questions verification — November 4, 2026
 
