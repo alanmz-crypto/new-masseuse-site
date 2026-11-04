@@ -12,7 +12,7 @@ add_action( 'wp_footer', function () {
   'use strict';
   function init() {
     if (document.getElementById('ts-section-guide-trigger') ||
-        !('popover' in HTMLElement.prototype) || !('IntersectionObserver' in window) ||
+        !('popover' in HTMLElement.prototype) ||
         typeof HTMLElement.prototype.showPopover !== 'function' ||
         document.body.classList.contains('admin-bar') ||
         document.querySelector('.ts-corp__sticky, .ts-wwm__sticky')) return;
@@ -80,36 +80,50 @@ add_action( 'wp_footer', function () {
     document.body.appendChild(panel);
 
     var footer = document.getElementById('colophon');
-    var navAbove = original.getBoundingClientRect().bottom < 0;
-    var footerVisible = footer ? footer.getBoundingClientRect().top < window.innerHeight && footer.getBoundingClientRect().bottom > 0 : false;
+    var updatePending = false;
+    var lastTriggerHeight = 0;
     function updatePanelPosition() {
       // Enlarged text may wrap the trigger. Keep the panel above its real height.
       var height = trigger.getBoundingClientRect().height;
-      if (height > 0) panel.style.setProperty('--ts-guide-trigger-height', height + 'px');
+      if (height > 0 && height !== lastTriggerHeight) {
+        lastTriggerHeight = height;
+        panel.style.setProperty('--ts-guide-trigger-height', height + 'px');
+      }
     }
     function updateVisibility() {
+      var navAbove = original.getBoundingClientRect().bottom < 0;
+      var footerRect = footer && footer.getBoundingClientRect();
+      var footerVisible = footerRect && footerRect.top < window.innerHeight && footerRect.bottom > 0;
       var focused = trigger.contains(document.activeElement) || panel.contains(document.activeElement);
       // Retain the control while it owns focus or its panel is open, even if the
       // original navigation/footer returns into view. Never hide focused controls.
-      trigger.hidden = !((navAbove && !footerVisible) || focused || panel.matches(':popover-open'));
+      var hidden = !((navAbove && !footerVisible) || focused || panel.matches(':popover-open'));
+      if (trigger.hidden !== hidden) trigger.hidden = hidden;
       updatePanelPosition();
     }
-    var observer = new IntersectionObserver(function (changes) {
-      changes.forEach(function (change) {
-        if (change.target === original) navAbove = change.boundingClientRect.bottom < 0;
-        if (change.target === footer) footerVisible = change.isIntersecting;
+    function scheduleUpdate() {
+      if (updatePending) return;
+      updatePending = true;
+      requestAnimationFrame(function () {
+        updatePending = false;
+        updateVisibility();
       });
-      updateVisibility();
-    });
-    observer.observe(original);
-    if (footer) observer.observe(footer);
-    if ('ResizeObserver' in window) new ResizeObserver(updatePanelPosition).observe(trigger);
-    window.addEventListener('resize', updatePanelPosition);
+    }
+    // A jump can move the original nav from below to above the viewport without
+    // ever intersecting it. Read current geometry once per frame, not cached
+    // intersection state; also refresh after text/layout changes and history restore.
+    window.addEventListener('scroll', scheduleUpdate, { passive: true });
+    window.addEventListener('resize', scheduleUpdate);
+    window.addEventListener('pageshow', scheduleUpdate);
+    if ('ResizeObserver' in window) {
+      var sizes = new ResizeObserver(scheduleUpdate);
+      [document.body, original, trigger].forEach(function (element) { sizes.observe(element); });
+    }
     panel.addEventListener('beforetoggle', updatePanelPosition);
     panel.addEventListener('toggle', updateVisibility);
     [trigger, panel].forEach(function (element) {
       element.addEventListener('focusin', updateVisibility);
-      element.addEventListener('focusout', function () { requestAnimationFrame(updateVisibility); });
+      element.addEventListener('focusout', scheduleUpdate);
     });
     updateVisibility();
   }

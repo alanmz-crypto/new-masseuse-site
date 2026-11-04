@@ -27,8 +27,12 @@ The [Popover API](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API)
 provides the top layer, native light dismissal and keyboard behavior without a
 custom focus-trapping dialog. The implementation uses `popover="auto"` and a
 `popovertarget` button, following the [HTML popover specification](https://html.spec.whatwg.org/multipage/popover.html).
-It feature-detects both popover support and Intersection Observer before adding
-controls. It does not depend on CSS anchor positioning, scroll-target-group or
+The [cross-browser feature record](https://web-platform-dx.github.io/web-features-explorer/features/popover/)
+dates Baseline availability to January 27, 2025, including the iOS 18.3 dismissal
+fix. The guide uses this native UI primitive without requiring anchor positioning.
+It feature-detects native popover support before adding controls. Visibility
+uses current geometry, with passive scroll updates limited to one per frame, so
+instant jumps work as well as gradual scrolling. It does not depend on CSS anchor positioning, scroll-target-group or
 an external JavaScript library. Actual browser coverage belongs in the evidence
 record below; native support alone is not a claim of tested device behavior.
 
@@ -41,7 +45,7 @@ writing. The runtime PHP's leading opening tag is removed for the WPCode record.
 Frozen payload SHA256 values:
 
 - CSS: `3b74dcdef902a484d9c3c2abf8f7070dd2a8956f30b3b7d3c7295b2d00ea5eb7`.
-- PHP file: `138bca3cfccd405b2e44772dbce3cb33528ec33f870baa9b2105aa8a348fccc2`.
+- PHP file: `cb68b9a5aa1159c85d6f86096278e13f6819d9b12e27e14baee483b8c6002d23`.
 
 The only persistent additions are one marked CSS block in Additional CSS and
 one active PHP snippet titled `TSSectionGuide v1`. Every existing CSS byte is
@@ -90,7 +94,10 @@ own reviewed enablement and owner-run workflow; this package has no live target.
 
 - Static validation: installer and runtime pass PHP 8.5 lint in the repository's
   digest-pinned CLI image; push script passes `bash -n`; `git diff --check` passes.
-  Browser fixtures: PENDING.
+- Local Chromium 154 fixtures: **326 assertions, zero failures**, including
+  native keyboard and touch dismissal, no-JavaScript/unsupported fallbacks,
+  themes, preference exclusions, footer behavior and unchanged content/CTAs.
+  Both normal mobile and 320×568 at 200% text screenshots were visually reviewed.
 - Fresh staging-source rehearsal, including apply, no-op reapply, exact rollback
   and reapply: PENDING.
 - Staging dry run, database export and encrypted offsite verification: PENDING.

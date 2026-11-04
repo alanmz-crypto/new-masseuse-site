@@ -27,12 +27,12 @@ function check(label, ok, detail = '') { assertions++; if (!ok) failures++; cons
 const noScriptContexts = new WeakSet();
 const tick = page => noScriptContexts.has(page.context()) ? page.waitForTimeout(40) : page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
 async function settle(page) { await tick(page); await page.waitForTimeout(120); await tick(page); }
-function fixtureHTML(slug, short = false) {
+function fixtureHTML(slug, short = false, tallHeader = false) {
   const scoped = services.includes(slug);
   const sticky = slug === 'corporate-massage-portland' ? 'ts-corp__sticky' : slug === 'work-with-me' ? 'ts-wwm__sticky' : '';
   return `<!doctype html><html lang="en"><head><title>Section guide fixture</title><style>
   :root{--ts-panel:#fff;--ts-ink:#1c2531;--ts-accent-deep:#7a520a;--ts-rule:#d5d6cf}html[data-ts-theme="dark"]{--ts-panel:#202936;--ts-ink:#f1f0ea;--ts-accent-deep:#e2b866;background:#151c26;color:#f1f0ea}
-  body{margin:0;font:1rem/1.6 system-ui}header,footer,main{padding:24px;box-sizing:border-box}main{max-width:1000px;margin:auto}header{height:${short ? '0' : '130px'}}section{min-height:${short ? '0' : '700px'}}footer{height:${short ? '80px' : '280px'}}a{color:inherit}#ast-scroll-top{position:fixed;right:16px;bottom:16px;width:44px;height:44px}
+  body{margin:0;font:1rem/1.6 system-ui}header,footer,main{padding:24px;box-sizing:border-box}main{max-width:1000px;margin:auto}header{height:${short ? '0' : tallHeader ? '1400px' : '130px'}}section{min-height:${short ? '0' : '700px'}}footer{height:${short ? '80px' : '280px'}}a{color:inherit}#ast-scroll-top{position:fixed;right:16px;bottom:16px;width:44px;height:44px}
   </style><style>${baselineCSS}</style>${short ? '<style>header{display:none}main{padding:0}.entry-content :is(h1,h2,p){margin:0;font-size:16px;line-height:1.2}footer{height:40px;padding:0}</style>' : ''}<style id="wp-custom-css">${progressCSS}\n${css}</style></head><body><header><a href="#content">Skip to content</a></header>
   <main id="content" class="entry-content"><nav class="ts-jump" aria-label="On this page"><ul class="ts-jump__list"><li><a href="#what-it-is">What it is</a></li><li><a href="#common-reasons">Common reasons</a></li><li><a href="#what-to-expect">What to expect</a></li></ul></nav><h1>Massage information</h1><section><h2 id="what-it-is">What it is</h2><p>Existing introductory information.</p><a href="#what-to-expect">Read more</a></section><section><h2 id="common-reasons">Common reasons</h2><p>Existing session information.</p></section><section><h2 id="what-to-expect">What to expect</h2><p>Existing details.</p></section>${sticky ? `<div class="${sticky}"><a href="mailto:example@example.test">Contact</a></div>` : ''}</main><footer id="colophon"><a href="#what-it-is">Footer link</a><p>Oregon License LMT-29905</p></footer><button id="ast-scroll-top" aria-label="Scroll to top">↑</button>${scoped ? `<script id="ts-section-guide-runtime">${script}</script>` : ''}</body></html>`;
 }
@@ -41,7 +41,7 @@ async function contextFor({ noJS = false, unsupported = false, admin = false, to
   if (noJS) noScriptContexts.add(context);
   if (unsupported) await context.addInitScript(() => { delete HTMLElement.prototype.showPopover; delete HTMLElement.prototype.hidePopover; });
   if (admin) await context.addInitScript(() => { const observer = new MutationObserver(() => { if (document.body) { document.body.classList.add('admin-bar'); observer.disconnect(); } }); observer.observe(document, { childList: true, subtree: true }); });
-  if (fixture) await context.route('**/*', route => { const url = new URL(route.request().url()); const slug = url.pathname.replace(/^\/+|\/+$/g, ''); route.fulfill({ contentType: 'text/html', body: fixtureHTML(slug, url.searchParams.has('short')) }); });
+  if (fixture) await context.route('**/*', route => { const url = new URL(route.request().url()); const slug = url.pathname.replace(/^\/+|\/+$/g, ''); route.fulfill({ contentType: 'text/html', body: fixtureHTML(slug, url.searchParams.has('short'), url.searchParams.has('tall-header')) }); });
   return context;
 }
 async function load(context, slug, suffix = '') {
@@ -57,10 +57,14 @@ async function load(context, slug, suffix = '') {
   await settle(page);
   return { page, errors };
 }
+async function scrollState(page) {
+  return page.evaluate(({ trigger, panel }) => ({ scrollY, viewport: { width: innerWidth, height: innerHeight }, documentHeight: document.documentElement.scrollHeight, nav: document.querySelector('.entry-content .ts-jump')?.getBoundingClientRect().toJSON(), footer: document.querySelector('#colophon')?.getBoundingClientRect().toJSON(), triggerHidden: document.querySelector(trigger)?.hidden, panelOpen: document.querySelector(panel)?.matches(':popover-open') }), { trigger, panel });
+}
 async function pastNav(page) {
   await settle(page);
   await page.evaluate(() => { document.activeElement?.blur(); const nav = document.querySelector('.entry-content .ts-jump'); scrollTo(0, scrollY + nav.getBoundingClientRect().bottom + 100); });
   await settle(page);
+  if (await page.locator(trigger).count() && !await page.locator(trigger).isVisible()) console.log('DIAGNOSTIC hidden guide after pastNav: ' + JSON.stringify(await scrollState(page)));
 }
 async function isOpen(page) { return page.locator(panel).evaluate(el => el.matches(':popover-open')); }
 async function entryState(page) { return page.locator('.entry-content').evaluate(el => ({ html: el.innerHTML, text: el.innerText, width: document.documentElement.scrollWidth, rects: [...el.querySelectorAll('*')].map(item => { const r = item.getBoundingClientRect(); return [r.x + scrollX, r.y + scrollY, r.width, r.height]; }) })); }
@@ -191,6 +195,36 @@ try {
     await fallback.close();
   }
   if (fixture) {
+    const { page: jumpPage } = await load(context, 'thai-massage', '?tall-header');
+    let jumpState = await scrollState(jumpPage);
+    check('jump scroll: original nav starts below viewport', jumpState.nav.top >= jumpState.viewport.height, JSON.stringify(jumpState));
+    check('jump scroll: guide initially hidden', !await jumpPage.locator(trigger).isVisible());
+    await pastNav(jumpPage);
+    jumpState = await scrollState(jumpPage);
+    check('jump scroll: one jump moved entire nav above viewport with footer still below', jumpState.nav.bottom < 0 && jumpState.footer.top >= jumpState.viewport.height, JSON.stringify(jumpState));
+    check('jump scroll: guide appears without intermediate nav intersection', await jumpPage.locator(trigger).isVisible(), JSON.stringify(jumpState));
+    await jumpPage.evaluate(() => { const nav = document.querySelector('.entry-content .ts-jump'); scrollTo(0, scrollY + nav.getBoundingClientRect().top - 100); }); await settle(jumpPage);
+    jumpState = await scrollState(jumpPage);
+    check('reverse jump setup: original nav intersects viewport', jumpState.nav.top < jumpState.viewport.height && jumpState.nav.bottom > 0, JSON.stringify(jumpState));
+    await pastNav(jumpPage);
+    check('reverse jump setup: guide visible before reverse jump', await jumpPage.locator(trigger).isVisible(), JSON.stringify(await scrollState(jumpPage)));
+    await jumpPage.evaluate(() => scrollTo(0, 0)); await settle(jumpPage);
+    jumpState = await scrollState(jumpPage);
+    check('reverse jump: original nav moves wholly below viewport', jumpState.nav.top >= jumpState.viewport.height, JSON.stringify(jumpState));
+    check('reverse jump: guide hides without intermediate nav intersection', !await jumpPage.locator(trigger).isVisible(), JSON.stringify(jumpState));
+    await jumpPage.evaluate(() => scrollTo(0, document.documentElement.scrollHeight)); await settle(jumpPage);
+    jumpState = await scrollState(jumpPage);
+    check('footer jump: visible footer suppresses closed guide', jumpState.footer.top < jumpState.viewport.height && jumpState.footer.bottom > 0 && !await jumpPage.locator(trigger).isVisible(), JSON.stringify(jumpState));
+    await pastNav(jumpPage);
+    check('footer jump: leaving footer for main content restores guide', await jumpPage.locator(trigger).isVisible(), JSON.stringify(await scrollState(jumpPage)));
+    await jumpPage.evaluate(() => { scrollTo(0, 0); document.documentElement.style.fontSize = '200%'; });
+    await jumpPage.setViewportSize({ width: 320, height: 568 }); await settle(jumpPage);
+    jumpState = await scrollState(jumpPage);
+    check('resized jump: original nav below viewport after 200% text reflow', jumpState.nav.top >= jumpState.viewport.height && !await jumpPage.locator(trigger).isVisible(), JSON.stringify(jumpState));
+    await pastNav(jumpPage);
+    jumpState = await scrollState(jumpPage);
+    check('resized jump: guide appears after jump at 320×568 and 200% text', jumpState.nav.bottom < 0 && await jumpPage.locator(trigger).isVisible(), JSON.stringify(jumpState));
+    await jumpPage.close();
     const { page } = await load(context, 'thai-massage', '?short');
     const shortSize = await page.evaluate(() => ({ height: document.documentElement.scrollHeight, viewport: innerHeight }));
     check('short page: no scroll range', shortSize.height <= shortSize.viewport, JSON.stringify(shortSize));
