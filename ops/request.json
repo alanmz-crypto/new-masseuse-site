@@ -1,9 +1,8 @@
 {
-  "id": "ui-section-guide-live-rehearse-20261104",
-  "op": "rehearse",
+  "id": "ui-section-guide-live-dry-20261104",
+  "op": "run",
   "target": "live",
-  "installer": "section-guide/install-section-guide.php",
-  "args": [
-    "--with-uploads"
-  ]
+  "script": "section-guide/push-section-guide.sh",
+  "args": [],
+  "tests": "auto"
 }
