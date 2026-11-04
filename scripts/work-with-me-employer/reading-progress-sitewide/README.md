@@ -31,7 +31,8 @@ then use the original package's original snapshot.
 The release branch allows `localhost:8090`, the exact HTTP/HTTPS staging38
 origins and the observed live origin `http://thaisolitude.com`. Visitors and
 public checks use `https://thaisolitude.com`; this does not change the stored
-site address. Live enablement is prepared, **not deployed**. The push script takes a fresh DB export, verifies its
+site address. The owner applied the live release at 08:00:26 UTC on November 4.
+The push script takes a fresh DB export, verifies its
 encrypted offsite copy, applies the update, then copies the exact rollback
 snapshot offsite before checking all twelve public routes. Page content, booking
 links, SEO, snippets and site settings are not edited.
@@ -58,7 +59,8 @@ changes alone do not update WordPress or production.
 
 ## Staging verification — November 4, 2026
 
-**Applied on staging38 at 07:35 UTC. Production is unchanged.**
+**Applied on staging38 at 07:35 UTC, then on live at 08:00:26 UTC.**
+This section records staging verification; the live results and limits follow below.
 [Preview Home](https://staging38.thaisolitude.com/) by scrolling;
 [PR #71](https://github.com/alanmz-crypto/new-masseuse-site/pull/71).
 
@@ -81,19 +83,34 @@ scripts/ci/request.sh run --target staging38 --script reading-progress-sitewide/
 This restores the four-page version. Its original installer and snapshot remain
 available afterward.
 
-## Owner-run live release — prepared, not deployed
+## Owner-run live release — completed
 
 Ryan merged [source PR #71](https://github.com/alanmz-crypto/new-masseuse-site/pull/71)
-at `249c091` and said “Merged. Next.” [Release PR #72](https://github.com/alanmz-crypto/new-masseuse-site/pull/72)
-is prepared on `release/2026-11-04-reading-progress`, using the same frozen sitewide CSS tested
-above. The [release record](../../../docs/reviews/2026-11-04-reading-progress-release.md)
-tracks the live-source rehearsal, read-only live dry run, request and owner steps.
-The live-copy rehearsal and actual live dry run passed. Request
-`live-reading-progress-20261104-1` is prepared; evidence and owner steps are
-recorded there. No agent dispatches the LIVE workflow.
+and [release PR #72](https://github.com/alanmz-crypto/new-masseuse-site/pull/72)
+(`main` commit `1efeb7e`), then started [LIVE run 41796118623](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/41796118623).
+**Applied at 08:00:26 UTC on November 4, 2026.** Request
+`live-reading-progress-20261104-1` is completed and must not be reused.
 
-Live starts without an indicator (`ready-empty`), unlike staging's v1 upgrade.
-Its apply appends the sitewide block; an exact rollback using the future **live**
-snapshot removes it entirely. The staging snapshot above instead restores v1
-and must never be used on live. The actual live backup/snapshot and post-apply
-results will be recorded only after the owner's run.
+All twelve live route checks returned 200 with the sitewide CSS and license.
+Code/rendered/posture/page/PHP checks passed. The broad comparison against old
+staging36 reports schema counts 27/23 and all twenty pixel views different
+(zero missing captures); this is not an aggregate generic-suite pass. Restore
+import succeeded with 94/94 fingerprints: only CSS 29, revision rows and
+SiteGround Security activity-log row counts differed; pages, SEO, options and
+snippets did not change. See the [full live record](../../../docs/reviews/2026-11-04-reading-progress-release.md).
+
+The exact live database export is
+`live-before-reading-progress-sitewide-20261104-080010.sql` (3,916,951 bytes,
+SHA256 prefix `3b30badd45f1`). The exact live snapshot is
+`reading-progress-sitewide-before-20261104-080026-19484792.json` (SHA256 prefix
+`f9c2d44651a9`). Both were verified encrypted offsite. Live started `ready-empty`,
+so rollback with that live snapshot removes the bar entirely; the staging
+snapshot above restores v1. Never substitute a staging snapshot for the live one.
+
+Ryan reported the bar working on a tablet and on the iPhone after turning off
+Reduce Motion. The iPhone's initial absence was the intended preference behavior;
+no code change was needed. The [focused public live check](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/41797118924)
+passed **560 assertions with zero failures** across all twelve pages, three widths
+and both themes, including the preference exclusions.
+Completion notes need only a source PR merge after Gates passes, with no new
+live request or dispatch.
