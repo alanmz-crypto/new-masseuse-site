@@ -76,7 +76,7 @@ and CSS, without the runtime. HTTP 202 is an invalid bot challenge, not a pass.
 Use unique request IDs with the existing Actions request workflow:
 
 ```sh
-scripts/ci/request.sh rehearse --source staging38 --installer section-guide/install-section-guide.php
+scripts/ci/request.sh rehearse --source staging38 --installer section-guide/install-section-guide.php --with-uploads
 scripts/ci/request.sh run --target staging38 --script section-guide/push-section-guide.sh
 scripts/ci/request.sh run --target staging38 --script section-guide/push-section-guide.sh --args '--apply'
 ```

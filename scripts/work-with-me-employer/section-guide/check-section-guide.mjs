@@ -64,9 +64,12 @@ async function pastNav(page) {
   await settle(page);
   await page.evaluate(() => { document.activeElement?.blur(); const nav = document.querySelector('.entry-content .ts-jump'); scrollTo(0, scrollY + nav.getBoundingClientRect().bottom + 100); });
   await settle(page);
-  if (await page.locator(trigger).count() && !await page.locator(trigger).isVisible()) console.log('DIAGNOSTIC hidden guide after pastNav: ' + JSON.stringify(await scrollState(page)));
+  if (await page.locator(trigger).count() && !await page.locator(trigger).isVisible()) console.log('INFO DIAGNOSTIC hidden guide after pastNav: ' + JSON.stringify(await scrollState(page)));
 }
 async function isOpen(page) { return page.locator(panel).evaluate(el => el.matches(':popover-open')); }
+async function focusState(page) {
+  return page.evaluate(panel => { const active = document.activeElement, links = document.querySelectorAll(panel + ' a'); return { documentHasFocus: document.hasFocus(), lastPanelLinkFocused: active === links[links.length - 1], insidePanel: Boolean(active?.closest(panel)), activeElement: active ? { tag: active.tagName.toLowerCase(), id: active.id, class: active.getAttribute('class') || '', href: active.getAttribute('href') } : null }; }, panel);
+}
 async function entryState(page) {
   return page.locator('.entry-content').evaluate(el => ({
     html: el.innerHTML, text: el.innerText, width: document.documentElement.scrollWidth,
@@ -96,7 +99,7 @@ async function stableEntryState(page, label) {
     const current = await entryState(page);
     unchangedSamples = JSON.stringify(previous) === JSON.stringify(current) ? unchangedSamples + 1 : 0;
     if (unchangedSamples >= 2) {
-      if (JSON.stringify(initial) !== JSON.stringify(current)) console.log(`DIAGNOSTIC layout changed while settling ${label}: ${JSON.stringify(entryDiff(initial, current))}`);
+      if (JSON.stringify(initial) !== JSON.stringify(current)) console.log(`INFO DIAGNOSTIC layout changed while settling ${label}: ${JSON.stringify(entryDiff(initial, current))}`);
       return current;
     }
     if (attempt === 9) throw new Error(`Layout did not stabilize for ${label}: ${JSON.stringify(entryDiff(previous, current))}`);
@@ -154,8 +157,14 @@ try {
     await page.keyboard.press('Escape'); await settle(page);
     check(`${slug}: Escape restores trigger focus`, await page.locator(trigger).evaluate(el => document.activeElement === el));
     await page.locator(trigger).click(); await settle(page);
-    await page.locator(panel + ' a').last().focus(); await page.keyboard.press('Tab');
-    check(`${slug}: Tab can leave panel`, !await page.evaluate(panel => Boolean(document.activeElement.closest(panel)), panel));
+    await page.locator(panel + ' a').last().focus();
+    const beforeTab = await focusState(page);
+    check(`${slug}: Tab exit starts at focused last panel link`, beforeTab.documentHasFocus && beforeTab.lastPanelLinkFocused, JSON.stringify(beforeTab));
+    await page.keyboard.press('Tab');
+    const afterTab = await focusState(page);
+    console.log(`INFO ${slug}: Tab focus transition ${JSON.stringify({ before: beforeTab, after: afterTab })}`);
+    // activeElement can retain its last node when Tab moves to browser chrome.
+    check(`${slug}: Tab can leave panel`, !afterTab.documentHasFocus || !afterTab.insidePanel, JSON.stringify({ before: beforeTab, after: afterTab }));
     if (await isOpen(page)) await page.keyboard.press('Escape');
     await pastNav(page); await page.locator(trigger).click(); await settle(page);
     await page.mouse.click(300, 40); await settle(page);
