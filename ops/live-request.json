@@ -1,8 +1,8 @@
 {
-  "id": "live-reading-progress-20261104-1",
+  "id": "live-section-guide-20261104-1",
   "op": "run",
   "target": "live",
-  "script": "reading-progress-sitewide/push-reading-progress-sitewide.sh",
+  "script": "section-guide/push-section-guide.sh",
   "args": [
     "--apply"
   ],
