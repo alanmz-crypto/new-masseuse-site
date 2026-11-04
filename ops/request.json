@@ -1,10 +1,11 @@
 {
-  "id": "ui-page-navigation-apply-20261104",
+  "id": "ui-page-navigation-browser-20261104",
   "op": "run",
   "target": "staging38",
-  "script": "page-navigation/push-page-navigation.sh",
+  "script": "page-navigation/check-page-navigation.mjs",
   "args": [
-    "--apply"
+    "https://staging38.thaisolitude.com",
+    "inline"
   ],
   "tests": "auto"
 }
