@@ -1,0 +1,29 @@
+/* ts-reading-progress:start (2026-11-04) */
+/* The four long service pages already contain cited research. This decorative
+   position cue follows the whole page, including expanded research panels.
+   Content stays visible and navigation stays native in every browser. */
+@media screen and (prefers-reduced-motion: no-preference) and (forced-colors: none) {
+  @supports (animation-timeline: scroll(root block)) {
+    body:not(.admin-bar):has(.entry-content cite.ts-source)::after {
+      content: "";
+      position: fixed;
+      inset: 0 0 auto;
+      height: 3px;
+      z-index: 99;
+      background: var(--ts-accent-deep, #7A520A);
+      pointer-events: none;
+      transform: scaleX(0);
+      transform-origin: left center;
+      /* Firefox needs a nonzero duration; the scroll timeline still controls progress.
+         https://developer.mozilla.org/en-US/docs/Web/CSS/animation-duration */
+      animation: ts-reading-progress 1ms linear both;
+      /* Keep timeline AFTER the shorthand, which resets it. */
+      animation-timeline: scroll(root block);
+    }
+    @keyframes ts-reading-progress {
+      from { transform: scaleX(0); }
+      to { transform: scaleX(1); }
+    }
+  }
+}
+/* ts-reading-progress:end */
