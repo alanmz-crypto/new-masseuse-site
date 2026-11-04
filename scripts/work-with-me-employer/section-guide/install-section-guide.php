@@ -22,7 +22,7 @@ $mode = $args[0] ?? 'preflight';
 if ( ! in_array( $mode, array( 'preflight', 'apply', 'rollback' ), true ) || count( $args ) > ( 'rollback' === $mode ? 2 : 1 ) ) { WP_CLI::error( 'Use preflight, apply, or rollback FILE.' ); }
 $block = file_get_contents( __DIR__ . '/section-guide.css' );
 $runtime = file_get_contents( __DIR__ . '/section-guide.php' );
-if ( false === $block || hash( 'sha256', $block ) !== '3b74dcdef902a484d9c3c2abf8f7070dd2a8956f30b3b7d3c7295b2d00ea5eb7' || false === $runtime || hash( 'sha256', $runtime ) !== 'cb68b9a5aa1159c85d6f86096278e13f6819d9b12e27e14baee483b8c6002d23' || 0 !== strpos( $runtime, "<?php\n" ) ) {
+if ( false === $block || hash( 'sha256', $block ) !== '3b74dcdef902a484d9c3c2abf8f7070dd2a8956f30b3b7d3c7295b2d00ea5eb7' || false === $runtime || hash( 'sha256', $runtime ) !== 'c59264212eba983602621961eb453443cac1993149f55249a6d32af3c59cc777' || 0 !== strpos( $runtime, "<?php\n" ) ) {
 	WP_CLI::error( 'Reviewed CSS or PHP payload hash differs; nothing changed.' );
 }
 $code = substr( $runtime, 6 );

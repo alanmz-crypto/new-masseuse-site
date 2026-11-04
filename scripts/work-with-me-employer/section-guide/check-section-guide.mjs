@@ -162,9 +162,15 @@ try {
     check(`${slug}: Tab exit starts at focused last panel link`, beforeTab.documentHasFocus && beforeTab.lastPanelLinkFocused, JSON.stringify(beforeTab));
     await page.keyboard.press('Tab');
     const afterTab = await focusState(page);
+    const firstFooterLink = page.locator('#colophon a[href]:not([tabindex="-1"]):visible').first();
+    afterTab.firstFooterLinkFocused = await firstFooterLink.evaluate(el => document.activeElement === el);
     console.log(`INFO ${slug}: Tab focus transition ${JSON.stringify({ before: beforeTab, after: afterTab })}`);
-    // activeElement can retain its last node when Tab moves to browser chrome.
-    check(`${slug}: Tab can leave panel`, !afterTab.documentHasFocus || !afterTab.insidePanel, JSON.stringify({ before: beforeTab, after: afterTab }));
+    // A real document successor avoids Firefox's end-of-document focus ambiguity
+    // (microsoft/playwright#39268), and verifies the guide's native reading order.
+    check(`${slug}: Tab reaches first footer link`, afterTab.documentHasFocus && afterTab.firstFooterLinkFocused, JSON.stringify({ before: beforeTab, after: afterTab }));
+    await page.keyboard.press('Shift+Tab');
+    const afterReverseTab = await focusState(page);
+    check(`${slug}: Shift+Tab returns to last panel link`, afterReverseTab.documentHasFocus && afterReverseTab.lastPanelLinkFocused, JSON.stringify(afterReverseTab));
     if (await isOpen(page)) await page.keyboard.press('Escape');
     await pastNav(page); await page.locator(trigger).click(); await settle(page);
     await page.mouse.click(300, 40); await settle(page);
@@ -281,5 +287,5 @@ try {
   if (!invalid) { failures++; console.error(error.stack); }
   else console.log(error.message);
 } finally { await context.close(); await browser.close(); }
-console.log(`Section guide (${engine}): ${assertions} browser assertions, ${failures} failures${invalid ? ', INVALID' : ''}`);
+console.log(`INFO Section guide (${engine}): ${assertions} browser assertions, ${failures} failures${invalid ? ', INVALID' : ''}`);
 process.exitCode = invalid ? 2 : failures ? 1 : 0;

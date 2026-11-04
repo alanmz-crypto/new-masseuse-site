@@ -76,10 +76,13 @@ add_action( 'wp_footer', function () {
     });
     nav.appendChild(list);
     panel.appendChild(nav);
-    document.body.appendChild(trigger);
-    document.body.appendChild(panel);
-
     var footer = document.getElementById('colophon');
+    // Keep section navigation before the footer in document/tab order. The
+    // last popover link then has a real next page destination in every browser.
+    var mount = footer ? footer.parentNode : document.body;
+    mount.insertBefore(trigger, footer || null);
+    mount.insertBefore(panel, footer || null);
+
     var updatePending = false;
     var lastTriggerHeight = 0;
     function updatePanelPosition() {

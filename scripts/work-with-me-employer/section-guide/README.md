@@ -12,7 +12,9 @@ these long pages. The popover uses native Escape and outside-click dismissal,
 44-pixel controls, visible keyboard focus, safe-area spacing and a scrollable
 panel on short screens. Selecting a destination follows the original fragment
 link and moves focus to its heading. A focused or open control stays available
-when the original row or footer enters view. Corporate and Work With Me keep
+when the original row or footer enters view. The guide is inserted before the
+footer in document order so Tab can continue naturally to footer links. If the
+footer is absent, it is appended to the body instead. Corporate and Work With Me keep
 their existing fixed mobile controls; other pages do not receive the runtime.
 
 This navigation remains usable with Reduce Motion enabled: it adds no animated
@@ -45,7 +47,7 @@ writing. The runtime PHP's leading opening tag is removed for the WPCode record.
 Frozen payload SHA256 values:
 
 - CSS: `3b74dcdef902a484d9c3c2abf8f7070dd2a8956f30b3b7d3c7295b2d00ea5eb7`.
-- PHP file: `cb68b9a5aa1159c85d6f86096278e13f6819d9b12e27e14baee483b8c6002d23`.
+- PHP file: `c59264212eba983602621961eb453443cac1993149f55249a6d32af3c59cc777`.
 
 The only persistent additions are one marked CSS block in Additional CSS and
 one active PHP snippet titled `TSSectionGuide v1`. Every existing CSS byte is
