@@ -1,9 +1,8 @@
 {
-  "id": "ui-page-navigation-live-rehearse-20261104",
-  "op": "rehearse",
+  "id": "ui-page-navigation-live-dry-20261104",
+  "op": "run",
   "target": "live",
-  "installer": "page-navigation/install-page-navigation.php",
-  "args": [
-    "--with-uploads"
-  ]
+  "script": "page-navigation/push-page-navigation.sh",
+  "args": [],
+  "tests": "auto"
 }
