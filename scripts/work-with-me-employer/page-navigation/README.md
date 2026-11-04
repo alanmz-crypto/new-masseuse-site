@@ -1,7 +1,11 @@
 # Complete page navigation
 
 **Applied on staging38 at 12:40:03 UTC on 2026-11-04; not live.**
-[PR #77](https://github.com/alanmz-crypto/new-masseuse-site/pull/77) is staging-only.
+[Source/staging PR #77](https://github.com/alanmz-crypto/new-masseuse-site/pull/77)
+merged at 13:20:44 UTC into `aea59a5`. Ryan has requested publication; the
+[live release](../../../docs/reviews/2026-11-04-page-navigation-release.md) is in
+preparation, with fresh live-copy rehearsal and read-only preflight pending.
+Request `live-page-navigation-20261104-1` is planned, not yet prepared or run.
 Ryan requested that in-page jump links cover the important context, especially
 Services, and match the native section guides. Focused public browser checks
 passed 572/0. The broad follow-up passed copy, page, structured-data and PHP
@@ -143,5 +147,6 @@ Frozen payload SHA256:
 - Prior inline file: `1034cd2011adb1991392f26cf4b6d2fe04ef8916af9f7ce045c1023ecd4224c4`.
 - Prior native file and unchanged CSS are pinned to the original guide package.
 
-No production mutation is part of the staging-only installer. A later exact-live
-enablement requires its own fresh rehearsal/preflight and owner-run request.
+The live release requires its own fresh live-copy rehearsal, read-only preflight
+and prepared request. Ryan merges the release PR and starts the LIVE workflow;
+the future live rollback must use its actual live snapshot, never staging's.
