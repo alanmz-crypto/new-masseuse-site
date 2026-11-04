@@ -1,11 +1,9 @@
 {
-  "id": "ui-section-questions-browser-20261104",
-  "op": "run",
-  "target": "staging38",
-  "script": "section-guide/check-section-guide.mjs",
+  "id": "ui-section-guide-live-rehearse-20261104",
+  "op": "rehearse",
+  "target": "live",
+  "installer": "section-guide/install-section-guide.php",
   "args": [
-    "https://staging38.thaisolitude.com",
-    "inline"
-  ],
-  "tests": "auto"
+    "--with-uploads"
+  ]
 }
