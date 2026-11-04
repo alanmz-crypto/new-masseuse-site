@@ -1,9 +1,8 @@
 # Section guide for the four research pages
 
-**Original guide applied and verified on staging38; not live.**
-The requested “What Research Says” shortcut passed upgrade rehearsal but is
-**not deployed**: backup verification and GitHub service errors blocked release.
-The original three-link guide remains on staging.
+**Guide and “What Research Says” shortcut applied and verified on staging38; not live.**
+The research shortcut was applied at **09:56:07 UTC on November 4, 2026**;
+focused public browser checks passed at **10:03:09 UTC**.
 [Preview Thai Massage](https://staging38.thaisolitude.com/thai-massage/) and scroll
 past the original section links to open the guide.
 This adds a compact “On this page” control to Thai, Therapeutic, Deep Tissue and
@@ -99,11 +98,15 @@ scripts/ci/request.sh run --target staging38 --script section-guide/push-section
 scripts/ci/request.sh run --target staging38 --script section-guide/push-section-guide.sh --args '--apply'
 ```
 
-Use the runtime-upgrade snapshot printed by its apply to undo only the research
-shortcut after a successful future apply. **No upgrade snapshot exists yet**:
-its first apply stopped before the installer ran. The original 09:18 installation
-snapshot below remains valid. Do not use it to undo a future runtime upgrade
-directly; first use that upgrade's own snapshot.
+This exact staging command undoes only the research shortcut, restoring the
+original snippet code, identity, dates and settings without changing CSS:
+
+```sh
+scripts/ci/request.sh run --target staging38 --script section-guide/push-section-guide.sh --args '--rollback $HOME/private-backups/section-guide-before-20261104-095607-f0075705.json'
+```
+
+The original 09:18 installation snapshot remains valid after that runtime
+rollback. Do not use it to undo the runtime upgrade directly.
 
 After runtime rollback, the original staging removal command below restores the
 pre-guide CSS (including reading progress) and removes the owned snippet. It is
@@ -116,7 +119,7 @@ scripts/ci/request.sh run --target staging38 --script section-guide/push-section
 Git source changes do not update WordPress. A future live release requires its
 own reviewed enablement and owner-run workflow; this package has no live target.
 
-## Research shortcut verification — staging application blocked
+## Research shortcut verification — November 4, 2026
 
 - Current local Chromium 154 fixtures: **367 assertions, zero failures**; focused
   research-shortcut checks: **20 assertions, zero failures**. The mobile fixture
@@ -146,13 +149,42 @@ own reviewed enablement and owner-run workflow; this package has no live target.
   therefore saw the old three-link guide (**65 assertions, 2 failures**); it does
   not validate the research update. Report publication also failed with GitHub
   Internal Server Errors. These outcomes are recorded from direct job logs.
-- The protected retry request `ui-section-research-apply-2-20261104` is prepared
-  **locally only; it has not been submitted or started**. GitHub rejected the
-  branch push with Internal Server Error; the connected API fallback timed out,
-  and a subsequent read confirmed the request was absent remotely. There is no
-  retry run to report. The research shortcut remains **not deployed**. A
-  successful apply, its actual upgrade snapshot, verified offsite backup and
-  fresh public checks are still required.
+- A later branch push succeeded, allowing the
+  [protected retry](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/41810759635)
+  (`ui-section-research-apply-2-20261104`, commit `d0b3c59`) **passed**, upgrading
+  existing snippet **1349** at **09:56:07 UTC**. All six origin checks returned
+  HTTP 200 with the expected license, unchanged CSS and scoped runtime; each
+  service page included the research shortcut label. Home and Contact remained
+  outside the runtime scope. This successful retry resolves the earlier blocked
+  application; it used the same rehearsed payload.
+- Fresh database export: `staging38-before-section-guide-20261104-095544.sql`,
+  **7,368,900 bytes**, plaintext SHA256 prefix `e969474168ba`. Exact upgrade
+  snapshot: `section-guide-before-20261104-095607-f0075705.json`, plaintext SHA256
+  prefix `e0d24d9588c9`. Both were stored encrypted in `offsite-2026-11`, read back
+  and verified identical. The export was verified before mutation; the snapshot
+  was verified before public checks.
+- **All five broad post-change groups passed** against live: code/rendered/posture
+  checks, page/sitemap/robots statuses, structured data **27/27** with zero parse
+  failures (modification dates set aside), **20/20 pixel-identical** baseline
+  views at zero tolerance, and no site PHP errors/warnings/deprecations.
+- Restore proof: **import exit 0**, **95 fingerprints on each side**. Only
+  snippet **1349** and WPCode's cache changed. CSS, pages, SEO, other settings and
+  row counts were unchanged. The comparison's informational exit 3 records those
+  expected runtime/cache differences.
+- [Fresh focused public browser job](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/41811309488/job/126510963652)
+  (`ui-section-research-browser-2-20261104`, commit `7ac3171`): the browser request
+  **passed at 10:03:09 UTC**, Chromium **153.0.8010.12**, **351 assertions, zero
+  failures**. All four pages had exactly one added “What Research Says” item;
+  activation updated the native fragment, focused the existing research heading
+  through a unique anchor, closed the panel and preserved original content after
+  focus cleanup. The suite also covered keyboard navigation, themes, narrow
+  screens, preferences and Chromium touch emulation. The actual staging mobile
+  screenshot from this job was visually reviewed: the fourth item is visible,
+  fits the panel and does not overlap other controls.
+  The **workflow failed only when publishing the report**: GitHub returned
+  Internal Server Error while pushing `ops-log`. Direct job logs establish the
+  browser pass; no published ops-log report exists for this run. Deployment and
+  successful browser verification remain intact despite that publication error.
 
 ## Original guide verification — November 4, 2026
 
