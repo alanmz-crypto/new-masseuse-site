@@ -1,11 +1,8 @@
 {
-  "id": "ui-progress-all-browser-20261104",
+  "id": "ui-progress-live-dry-20261104",
   "op": "run",
-  "target": "staging38",
-  "script": "reading-progress-sitewide/check-reading-progress.mjs",
-  "args": [
-    "https://staging38.thaisolitude.com",
-    "inline"
-  ],
+  "target": "live",
+  "script": "reading-progress-sitewide/push-reading-progress-sitewide.sh",
+  "args": [],
   "tests": "auto"
 }

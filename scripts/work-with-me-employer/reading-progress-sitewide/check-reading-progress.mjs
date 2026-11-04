@@ -1,6 +1,6 @@
 // Browser contract for sitewide reading progress. No WordPress writes.
 // node check-reading-progress.mjs --fixture
-// node check-reading-progress.mjs <http://localhost:8090|https://staging38.thaisolitude.com> [inline]
+// node check-reading-progress.mjs <http://localhost:8090|https://staging38.thaisolitude.com|https://thaisolitude.com> [inline]
 import { createRequire } from 'node:module';
 import { readFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
@@ -10,8 +10,8 @@ const engine = process.env.TS_BROWSER || 'chromium';
 if (!['chromium', 'firefox'].includes(engine)) throw new Error('TS_BROWSER must be chromium or firefox');
 const base = (process.argv[2] || '').replace(/\/$/, '');
 const fixture = base === '--fixture';
-if (!fixture && !['http://localhost:8090', 'https://staging38.thaisolitude.com'].includes(base)) {
-  throw new Error('Use --fixture, isolated localhost:8090 or exact staging38');
+if (!fixture && !['http://localhost:8090', 'https://staging38.thaisolitude.com', 'https://thaisolitude.com'].includes(base)) {
+  throw new Error('Use --fixture, isolated localhost:8090, exact staging38 or the HTTPS live apex');
 }
 const css = readFileSync(new URL('./reading-progress.css', import.meta.url), 'utf8');
 const baselineCSS = fixture && process.env.TS_BASELINE_CSS ? readFileSync(process.env.TS_BASELINE_CSS, 'utf8') : '';
