@@ -1,10 +1,7 @@
 {
-  "id": "ui-progress-postcheck-20261104",
-  "op": "run",
+  "id": "ui-progress-all-rehearse-20261104",
+  "op": "rehearse",
   "target": "staging38",
-  "script": "post-change-test.sh",
-  "args": [
-    "staging38"
-  ],
-  "tests": "auto"
+  "installer": "reading-progress-sitewide/install-reading-progress-sitewide.php",
+  "args": []
 }
