@@ -1,11 +1,8 @@
 {
-  "id": "ui-section-questions-browser-20261104",
+  "id": "ui-section-guide-live-dry-20261104",
   "op": "run",
-  "target": "staging38",
-  "script": "section-guide/check-section-guide.mjs",
-  "args": [
-    "https://staging38.thaisolitude.com",
-    "inline"
-  ],
+  "target": "live",
+  "script": "section-guide/push-section-guide.sh",
+  "args": [],
   "tests": "auto"
 }

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Section guide on staging38 only. Dry by default; writes take
+# Section guide on staging38 or live. Dry by default; writes take
 # a fresh DB export and verified encrypted off-site copy before writing.
 # See install-section-guide.php and README.md for exact scope and rollback.
 # shellcheck disable=SC2016  # the single-quoted commands below are meant to expand on the server, not here
@@ -22,7 +22,7 @@ case "${1:-}" in
   *) echo "Usage: $0 [--apply | --rollback FILE]" >&2; exit 1 ;;
 esac
 target="${S_TARGET:-staging38}"
-case "$target" in staging38) ;; *) echo "S_TARGET must be staging38; live is not allowed." >&2; exit 1 ;; esac
+case "$target" in staging38|live) ;; *) echo "S_TARGET must be staging38 or live." >&2; exit 1 ;; esac
 if [ -n "$snap" ] && [[ ! "$snap" =~ ^(\$HOME|/home/[a-zA-Z0-9_-]+)/private-backups/section-guide-before-[a-zA-Z0-9.-]+\.json$ ]]; then
   echo "Snapshot must be a section-guide-before JSON inside private-backups." >&2; exit 1
 fi
@@ -38,7 +38,7 @@ read -r -d '' REMOTE <<'EOS' || true
 set -euo pipefail
 wp() { command wp --skip-plugins=sg-security "$@"; }   # SiteGround Security 1.6.9 + PHP 8.5 makes EVERY wp exit 0 on live (shutdown-handler bug); skipping that one plugin keeps exit codes true. See AGENTS.md and check-wp-exit-codes.sh.
 phase=$1; target=$2; snap=${3:-}
-case "$target" in staging38) want="staging38.thaisolitude.com" ;; *) echo "Remote refused: only staging38 is allowed." >&2; exit 1 ;; esac
+case "$target" in staging38) want="staging38.thaisolitude.com" ;; live) want="thaisolitude.com" ;; *) echo "Remote refused: only staging38 or live is allowed." >&2; exit 1 ;; esac
 command -v wp >/dev/null || { echo "wp-cli not found on the server" >&2; exit 1; }
 doc=""
 cfgs=$(mktemp); trap 'rm -f "$cfgs"' EXIT

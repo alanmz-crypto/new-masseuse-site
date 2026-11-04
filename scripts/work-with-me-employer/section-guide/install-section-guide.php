@@ -2,7 +2,7 @@
 /**
  * Add the section guide or upgrade its exact original runtime in the same snippet.
  * WP-CLI --user=1 eval-file: preflight / apply / rollback FILE.
- * Only isolated localhost:8090 and exact staging38 origins; no live allowlist.
+ * Only isolated localhost:8090 and exact staging38/live apex origins.
  * Snapshot every prior CSS byte and this run's complete new snippet identity.
  * Fresh rollback removes only its owned snippet; runtime rollback restores its exact prior version.
  */
@@ -11,8 +11,8 @@ $home = untrailingslashit( home_url() );
 $host = (string) wp_parse_url( $home, PHP_URL_HOST );
 $port = wp_parse_url( $home, PHP_URL_PORT );
 $host .= $port ? ':' . $port : '';
-if ( ! in_array( $host, array( 'localhost:8090', 'staging38.thaisolitude.com' ), true ) || ! in_array( $home, array( 'http://localhost:8090', 'http://staging38.thaisolitude.com', 'https://staging38.thaisolitude.com' ), true ) ) {
-	WP_CLI::error( 'Only exact localhost:8090 and staging38 origins are allowed; nothing changed.' );
+if ( ! in_array( $host, array( 'localhost:8090', 'staging38.thaisolitude.com', 'thaisolitude.com' ), true ) || ! in_array( $home, array( 'http://localhost:8090', 'http://staging38.thaisolitude.com', 'https://staging38.thaisolitude.com', 'http://thaisolitude.com', 'https://thaisolitude.com' ), true ) ) {
+	WP_CLI::error( 'Only exact localhost:8090, staging38 and live apex origins are allowed; nothing changed.' );
 }
 if ( 'astra' !== get_stylesheet() || ! current_user_can( 'manage_options' ) || ! current_user_can( 'unfiltered_html' ) || ! current_user_can( 'edit_css' ) || ! function_exists( 'wpcode' ) || ! class_exists( 'WPCode_Snippet' ) ) {
 	WP_CLI::error( 'Requires Astra, WPCode and an administrator allowed to edit CSS and PHP (--user=1).' );

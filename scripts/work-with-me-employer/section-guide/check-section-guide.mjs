@@ -1,5 +1,5 @@
 // Read-only section-guide contract. --fixture uses the actual emitted JS and CSS.
-// node check-section-guide.mjs --fixture | http://localhost:8090 | https://staging38.thaisolitude.com [inline]
+// node check-section-guide.mjs --fixture | http://localhost:8090 | https://staging38.thaisolitude.com | https://thaisolitude.com [inline]
 import { createRequire } from 'node:module';
 import { readFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
@@ -9,7 +9,7 @@ const engine = process.env.TS_BROWSER || 'chromium';
 if (!['chromium', 'firefox'].includes(engine)) throw new Error('TS_BROWSER must be chromium or firefox');
 const base = (process.argv[2] || '').replace(/\/$/, '');
 const fixture = base === '--fixture';
-if (!fixture && !['http://localhost:8090', 'https://staging38.thaisolitude.com'].includes(base)) throw new Error('Exact localhost/staging38 or --fixture only');
+if (!fixture && !['http://localhost:8090', 'https://staging38.thaisolitude.com', 'https://thaisolitude.com'].includes(base)) throw new Error('Exact localhost/staging38/HTTPS apex live or --fixture only');
 const css = readFileSync(new URL('./section-guide.css', import.meta.url), 'utf8');
 const php = readFileSync(new URL('./section-guide.php', import.meta.url), 'utf8');
 const script = php.match(/<script id="ts-section-guide-runtime">([\s\S]*?)<\/script>/)?.[1];
