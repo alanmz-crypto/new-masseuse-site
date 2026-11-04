@@ -1,5 +1,5 @@
 <?php
-// Native, nonmodal section guide. Existing jump links remain the source of truth.
+// Native, nonmodal section guide. Preserve jump links and include the research heading.
 add_action( 'wp_footer', function () {
 	static $printed = false;
 	if ( $printed || is_admin() || is_feed() || ! is_page( array( 'thai-massage', 'therapeutic-massage', 'deep-tissue-massage', 'chair-massage' ) ) ) {
@@ -27,9 +27,26 @@ add_action( 'wp_footer', function () {
       var target;
       try { target = document.getElementById(decodeURIComponent(href.slice(1))); } catch (_) { return; }
       if (!target || !content.contains(target) || original.contains(target)) return;
-      entries.push({ source: source, href: href, target: target });
+      entries.push({ label: source.textContent, href: href, target: target });
     });
     if (!entries.length) return;
+
+    var research = Array.from(content.querySelectorAll('h2')).filter(function (heading) {
+      return /^What the Research Says About (Thai|Therapeutic|Deep Tissue|Chair) Massage$/.test(heading.textContent.replace(/\s+/g, ' ').trim());
+    });
+    if (research.length === 1 && !entries.some(function (entry) { return entry.target === research[0]; })) {
+      var heading = research[0];
+      if (!heading.id) {
+        var id = 'ts-guide-research';
+        var suffix = 2;
+        while (document.getElementById(id)) id = 'ts-guide-research-' + suffix++;
+        heading.id = id;
+      }
+      // Reuse a rendered anchor only when it resolves to this exact heading.
+      if (document.getElementById(heading.id) === heading) {
+        entries.push({ label: 'What Research Says', href: '#' + encodeURIComponent(heading.id), target: heading });
+      }
+    }
 
     var trigger = document.createElement('button');
     trigger.id = 'ts-section-guide-trigger';
@@ -49,7 +66,7 @@ add_action( 'wp_footer', function () {
     entries.forEach(function (entry) {
       var item = document.createElement('li');
       var link = document.createElement('a');
-      link.textContent = entry.source.textContent;
+      link.textContent = entry.label;
       link.setAttribute('href', entry.href);
       link.addEventListener('click', function (event) {
         // Preserve modified clicks and browser-native fragment/history behavior.

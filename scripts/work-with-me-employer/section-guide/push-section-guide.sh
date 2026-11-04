@@ -31,7 +31,7 @@ ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o 
 
 echo "[1] Connecting and uploading the package to ~/wwm-package-section-guide (outside every web root) ..."
 "${ssh_cmd[@]}" true 2>/dev/null || { echo "SSH login refused; check the ssh-agent holds the right key." >&2; exit 2; }
-tar -C "$here" -cf - install-section-guide.php section-guide.css section-guide.php \
+tar -C "$here" -cf - install-section-guide.php section-guide.css section-guide.php section-guide-v1.php \
   | "${ssh_cmd[@]}" 'mkdir -p "$HOME/wwm-package-section-guide" && tar -xf - -C "$HOME/wwm-package-section-guide"'
 
 read -r -d '' REMOTE <<'EOS' || true
@@ -77,7 +77,10 @@ case "$phase" in
       case "$route" in
         /|/contact/)
           if grep -Fq 'id="ts-section-guide-runtime"' "$tmp"; then echo "FAIL $route: unexpected section-guide runtime" >&2; exit 1; fi ;;
-        *) grep -Fq 'id="ts-section-guide-runtime"' "$tmp" || { echo "FAIL $route: missing section-guide runtime" >&2; exit 1; } ;;
+        *)
+          for expected in 'id="ts-section-guide-runtime"' 'What Research Says'; do
+            grep -Fq -- "$expected" "$tmp" || { echo "FAIL $route: missing $expected" >&2; exit 1; }
+          done ;;
       esac
       echo "public check: $route HTTP 200; CSS, licence and scoped runtime verified"
     done ;;

@@ -18,6 +18,7 @@ const progressCSS = readFileSync(new URL('../reading-progress-sitewide/reading-p
 const baselineCSS = fixture && process.env.TS_BASELINE_CSS ? readFileSync(process.env.TS_BASELINE_CSS, 'utf8') : '';
 const services = ['thai-massage', 'therapeutic-massage', 'deep-tissue-massage', 'chair-massage'];
 const excluded = ['', 'contact', 'corporate-massage-portland', 'work-with-me'];
+const researchHeadings = { 'thai-massage': 'What the Research Says About Thai Massage', 'therapeutic-massage': 'What the Research Says About Therapeutic Massage', 'deep-tissue-massage': 'What the Research Says About Deep Tissue Massage', 'chair-massage': 'What the Research Says About Chair Massage' };
 const trigger = '#ts-section-guide-trigger';
 const panel = '#ts-section-guide-popover';
 const browser = await (engine === 'firefox' ? firefox : chromium).launch(engine === 'chromium' && process.env.TS_CHROMIUM_EXECUTABLE ? { executablePath: process.env.TS_CHROMIUM_EXECUTABLE } : {});
@@ -29,12 +30,13 @@ const tick = page => noScriptContexts.has(page.context()) ? page.waitForTimeout(
 async function settle(page) { await tick(page); await page.waitForTimeout(120); await tick(page); }
 function fixtureHTML(slug, short = false, tallHeader = false) {
   const scoped = services.includes(slug);
+  const research = scoped ? `<section>${slug === 'chair-massage' ? '<span id="ts-guide-research" hidden></span>' : ''}<h2${slug === 'therapeutic-massage' ? ' id="therapeutic-research"' : ''}>${researchHeadings[slug]}</h2><p>Existing research and references.</p></section>` : '';
   const sticky = slug === 'corporate-massage-portland' ? 'ts-corp__sticky' : slug === 'work-with-me' ? 'ts-wwm__sticky' : '';
   return `<!doctype html><html lang="en"><head><title>Section guide fixture</title><style>
   :root{--ts-panel:#fff;--ts-ink:#1c2531;--ts-accent-deep:#7a520a;--ts-rule:#d5d6cf}html[data-ts-theme="dark"]{--ts-panel:#202936;--ts-ink:#f1f0ea;--ts-accent-deep:#e2b866;background:#151c26;color:#f1f0ea}
   body{margin:0;font:1rem/1.6 system-ui}header,footer,main{padding:24px;box-sizing:border-box}main{max-width:1000px;margin:auto}header{height:${short ? '0' : tallHeader ? '1400px' : '130px'}}section{min-height:${short ? '0' : '700px'}}footer{height:${short ? '80px' : '280px'}}a{color:inherit}#ast-scroll-top{position:fixed;right:16px;bottom:16px;width:44px;height:44px}
   </style><style>${baselineCSS}</style>${short ? '<style>header{display:none}main{padding:0}.entry-content :is(h1,h2,p){margin:0;font-size:16px;line-height:1.2}footer{height:40px;padding:0}</style>' : ''}<style id="wp-custom-css">${progressCSS}\n${css}</style></head><body><header><a href="#content">Skip to content</a></header>
-  <main id="content" class="entry-content"><nav class="ts-jump" aria-label="On this page"><ul class="ts-jump__list"><li><a href="#what-it-is">What it is</a></li><li><a href="#common-reasons">Common reasons</a></li><li><a href="#what-to-expect">What to expect</a></li></ul></nav><h1>Massage information</h1><section><h2 id="what-it-is">What it is</h2><p>Existing introductory information.</p><a href="#what-to-expect">Read more</a></section><section><h2 id="common-reasons">Common reasons</h2><p>Existing session information.</p></section><section><h2 id="what-to-expect">What to expect</h2><p>Existing details.</p></section>${sticky ? `<div class="${sticky}"><a href="mailto:example@example.test">Contact</a></div>` : ''}</main><footer id="colophon"><a href="#what-it-is">Footer link</a><p>Oregon License LMT-29905</p></footer><button id="ast-scroll-top" aria-label="Scroll to top">↑</button>${scoped ? `<script id="ts-section-guide-runtime">${script}</script>` : ''}</body></html>`;
+  <main id="content" class="entry-content"><nav class="ts-jump" aria-label="On this page"><ul class="ts-jump__list"><li><a href="#what-it-is">What it is</a></li><li><a href="#common-reasons">Common reasons</a></li><li><a href="#what-to-expect">What to expect</a></li></ul></nav><h1>Massage information</h1><section><h2 id="what-it-is">What it is</h2><p>Existing introductory information.</p><a href="#what-to-expect">Read more</a></section><section><h2 id="common-reasons">Common reasons</h2><p>Existing session information.</p></section><section><h2 id="what-to-expect">What to expect</h2><p>Existing details.</p></section>${research}${sticky ? `<div class="${sticky}"><a href="mailto:example@example.test">Contact</a></div>` : ''}</main><footer id="colophon"><a href="#what-it-is">Footer link</a><p>Oregon License LMT-29905</p></footer><button id="ast-scroll-top" aria-label="Scroll to top">↑</button>${scoped ? `<script id="ts-section-guide-runtime">${script}</script>` : ''}</body></html>`;
 }
 async function contextFor({ noJS = false, unsupported = false, admin = false, touch = false } = {}) {
   const context = await browser.newContext({ viewport: { width: 1280, height: 900 }, reducedMotion: 'no-preference', javaScriptEnabled: !noJS, hasTouch: touch });
@@ -130,7 +132,10 @@ try {
     check(`${slug}: original navigation remains present`, links.length > 0);
     check(`${slug}: native auto popover`, await page.locator(panel).getAttribute('popover') === 'auto');
     check(`${slug}: UI outside page content`, await page.locator('.entry-content ' + trigger + ', .entry-content ' + panel).count() === 0);
-    check(`${slug}: exact existing labels and fragments`, JSON.stringify(links) === JSON.stringify(await page.locator(panel + ' a').evaluateAll(items => items.map(a => ({ text: a.textContent, href: a.getAttribute('href') })))));
+    const guideLinks = await page.locator(panel + ' a').evaluateAll(items => items.map(a => ({ text: a.textContent, href: a.getAttribute('href') })));
+    check(`${slug}: exact existing labels and fragments retained in order`, JSON.stringify(links) === JSON.stringify(guideLinks.slice(0, links.length)), JSON.stringify(guideLinks));
+    check(`${slug}: exactly one additional What Research Says item`, guideLinks.length === links.length + 1 && guideLinks.filter(link => link.text === 'What Research Says').length === 1 && guideLinks.at(-1).text === 'What Research Says', JSON.stringify(guideLinks));
+
     check(`${slug}: guide hidden before scrolling`, !await page.locator(trigger).isVisible());
     for (const width of [1280, 390, 320]) {
       await page.setViewportSize({ width, height: 844 });
@@ -184,6 +189,19 @@ try {
     check(`${slug}: selection closes panel`, !await isOpen(page));
     await page.evaluate(() => document.activeElement.blur()); await settle(page);
     check(`${slug}: temporary focus attribute cleaned up`, htmlBeforeJump === await original.locator('xpath=..').evaluate(el => el.innerHTML));
+    await pastNav(page); await page.locator(trigger).click(); await settle(page);
+    const researchLink = page.locator(panel).getByRole('link', { name: 'What Research Says', exact: true });
+    const researchHref = await researchLink.getAttribute('href');
+    await researchLink.click(); await settle(page);
+    check(`${slug}: research selection updates native fragment`, new URL(page.url()).hash === researchHref);
+    const researchFocus = await page.evaluate(({ href, headingText }) => {
+      const id = decodeURIComponent(href.slice(1)), target = document.getElementById(id), active = document.activeElement;
+      return { focusedHeading: active?.matches('h2') && active.textContent.replace(/\s+/g, ' ').trim() === headingText && target === active, targetCount: [...document.querySelectorAll('[id]')].filter(el => el.id === id).length };
+    }, { href: researchHref, headingText: researchHeadings[slug] });
+    check(`${slug}: research selection focuses the existing research heading through a unique fragment`, researchFocus.focusedHeading && researchFocus.targetCount === 1, JSON.stringify(researchFocus));
+    check(`${slug}: research selection closes panel`, !await isOpen(page));
+    await page.evaluate(() => document.activeElement.blur()); await settle(page);
+    check(`${slug}: research focus cleanup preserves original content`, htmlBeforeJump === await original.locator('xpath=..').evaluate(el => el.innerHTML));
     for (const media of [{ reducedMotion: 'reduce' }, { forcedColors: 'active' }]) {
       await page.emulateMedia(media); await pastNav(page); await page.locator(trigger).click(); await settle(page);
       check(`${slug}: functional with ${JSON.stringify(media)}`, await isOpen(page));
