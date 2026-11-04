@@ -1,8 +1,8 @@
 # Section guide for the four research pages
 
-**Guide and “What Research Says” shortcut are verified on staging38; not live.**
-The requested **“Questions” addition is prepared, with rehearsal and staging
-application PENDING**. The verified research version remains deployed until then.
+**Guide with “Questions” and “What Research Says” is applied and verified on staging38; not live.**
+Questions was added at **10:22:43 UTC on November 4, 2026**; focused public
+browser checks passed at **10:31:33 UTC**.
 [Preview Thai Massage](https://staging38.thaisolitude.com/thai-massage/) and scroll
 past the original section links to open the guide.
 This adds a compact “On this page” control to Thai, Therapeutic, Deep Tissue and
@@ -105,10 +105,12 @@ scripts/ci/request.sh run --target staging38 --script section-guide/push-section
 scripts/ci/request.sh run --target staging38 --script section-guide/push-section-guide.sh --args '--apply'
 ```
 
-Use the Questions upgrade snapshot printed by its apply to undo only that
-addition. Its actual path is **PENDING**; no Questions snapshot exists yet.
-That rollback restores the deployed research version with its exact code,
-identity, dates and settings, leaving CSS unchanged.
+This exact staging command undoes only the Questions addition, restoring the
+research version's exact code, identity, dates and settings with CSS unchanged:
+
+```sh
+scripts/ci/request.sh run --target staging38 --script section-guide/push-section-guide.sh --args '--rollback $HOME/private-backups/section-guide-before-20261104-102243-126c4626.json'
+```
 
 After Questions rollback, this existing research rollback command restores the
 original guide without changing CSS:
@@ -131,20 +133,67 @@ scripts/ci/request.sh run --target staging38 --script section-guide/push-section
 Git source changes do not update WordPress. A future live release requires its
 own reviewed enablement and owner-run workflow; this package has no live target.
 
-## Questions verification — PENDING
+## Questions verification — November 4, 2026
 
 - Registry/installer PHP 8.5 lint, push-script `bash -n` and `git diff --check`:
   PASS. Frozen runtime files preserve the deployed v1 and research v2 bytes.
-- Current-stage upgrade rehearsal, repeat apply, exact rollback and reapply:
-  PENDING.
-- Browser checks, dry run, staging apply, actual Questions snapshot, verified
-  offsite backup and public verification: PENDING.
+- Local Chromium 154 fixture: **391 assertions, zero failures**. The reviewed
+  390-pixel mobile fixture fits all five Thai entries in section order. The
+  runtime follows each actual page's section order. This is browser emulation,
+  not physical-device verification.
+- [Current-stage Questions rehearsal](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/41812945785)
+  (`ui-section-questions-rehearse-20261104`, commit `fb24d4c`, finished 10:20:36 UTC):
+  **PASS** on a fresh WordPress 7.1.3 staging38 copy with uploads. The actual
+  **research v2 → Questions v3 → research v2 → Questions v3** migration preserved
+  snippet **1349**, passed no-op reapply and restored its full code, identity,
+  modified dates and settings on rollback. All **69,937 CSS bytes stayed
+  unchanged**. Only snippet 1349 and WPCode's cache fingerprints moved; rollback
+  matched baseline with that cache set aside. Page statuses, content gates and
+  PHP checks passed. Chromium **153.0.8010.12** and Firefox **155.0** each passed
+  **375 assertions, zero failures**. The older rollback chain was reviewed for
+  compatibility, not rerun here; its historical proofs below remain separate.
+- [Questions staging dry run](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/41813059181)
+  (`ui-section-questions-dry-20261104`, commit `0472c94`, finished 10:21:06 UTC):
+  **PASS**, `ready-upgrade`, **69,937 CSS bytes**, no WordPress changes. Both the
+  request and report-publication steps completed successfully.
+- [Questions staging apply, broad checks and restore proof](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/41813690976)
+  (`ui-section-questions-apply-20261104`, commit `12614e5`): **PASS**, applied at
+  **10:22:43 UTC** in existing snippet **1349**. All six origin checks returned
+  HTTP 200 with the expected license, CSS and scoped runtime. Service pages
+  included the Questions runtime call and research label; Home and Contact
+  remained outside the runtime scope.
+- Fresh database export: `staging38-before-section-guide-20261104-102220.sql`,
+  **7,370,684 bytes**, plaintext SHA256 prefix `4ce8ccbae2d3`. Exact Questions
+  snapshot: `section-guide-before-20261104-102243-126c4626.json`, plaintext SHA256
+  prefix `367fa1a875d1`. Both were stored encrypted in `offsite-2026-11`, read back
+  and verified identical. The export was verified before mutation and the
+  snapshot before public checks.
+- **All five broad post-change groups passed** against live: code/rendered/posture
+  checks, page/sitemap/robots statuses, structured data **27/27** with zero parse
+  failures (modification dates set aside), **20/20 pixel-identical** baseline
+  views at zero tolerance, and no site PHP errors/warnings/deprecations.
+- Restore proof: **import exit 0**, **95 fingerprints on each side**. Only
+  snippet **1349** and WPCode's cache changed; CSS, pages, SEO, other settings and
+  row counts were unchanged. The informational comparison exit 3 records those
+  expected runtime/cache differences.
+- [Focused public Questions check](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/41814478901)
+  (`ui-section-questions-browser-20261104`, commit `d2f2cc3`, finished 10:31:33 UTC):
+  **PASS**, Chromium **153.0.8010.12**, **375 assertions, zero failures**. Request
+  and report publication both succeeded. All four pages have one Questions item
+  and one What Research Says item; each follows a unique native fragment to the
+  existing matching heading, closes the panel and preserves original content
+  after focus cleanup. Entries follow each actual page's section order; all
+  original labels/destinations remain, including Who can benefit where present.
+  The suite also covered keyboard navigation, themes, narrow screens, preferences
+  and Chromium touch emulation. The actual staging mobile screenshot was visually
+  reviewed: all five Thai entries fit cleanly and follow the page's section order.
+  Safari and physical devices remain untested.
 
 ## Research shortcut verification — November 4, 2026
 
 These results cover research v2 (`faf54532…`), before the Questions addition.
 
-- Current local Chromium 154 fixtures: **367 assertions, zero failures**; focused
+- Research-version local Chromium 154 fixtures: **367 assertions, zero failures**; focused
   research-shortcut checks: **20 assertions, zero failures**. The mobile fixture
   screenshot with the extra link was visually reviewed. These are local results,
   not proof of staging application or physical-device testing.
@@ -172,7 +221,7 @@ These results cover research v2 (`faf54532…`), before the Questions addition.
   therefore saw the pre-research guide (**65 assertions, 2 failures**); it does
   not validate the research update. Report publication also failed with GitHub
   Internal Server Errors. These outcomes are recorded from direct job logs.
-- A later branch push succeeded, allowing the
+- A later branch push succeeded, and the
   [protected retry](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/41810759635)
   (`ui-section-research-apply-2-20261104`, commit `d0b3c59`) **passed**, upgrading
   existing snippet **1349** at **09:56:07 UTC**. All six origin checks returned
