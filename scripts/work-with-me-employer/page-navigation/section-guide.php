@@ -30,11 +30,16 @@ add_action( 'wp_footer', function () {
     window.tsPageNavigationInitialized = true;
     function followSection(event, entry, closePanel) {
       // Preserve modified clicks and browser-native fragment/history behavior.
-      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
       if (closePanel) closePanel();
-      // Default anchor navigation scrolls first. Focus follows without a second scroll.
+      // Astra prevents the original links' default action, then updates the hash
+      // itself. Cooperate with that navigation as well as native anchor behavior.
+      // Focus only when the selected fragment is current; never navigate here.
       requestAnimationFrame(function () {
         var target = entry.target;
+        var fragment;
+        try { fragment = decodeURIComponent(window.location.hash.slice(1)); } catch (_) { return; }
+        if (fragment !== target.id) return;
         var heading = target.matches('h1,h2,h3,h4,h5,h6') ? target : target.querySelector('h1,h2,h3,h4,h5,h6');
         var destination = heading || target;
         if (!destination.isConnected) return;

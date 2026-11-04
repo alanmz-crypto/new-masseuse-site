@@ -99,7 +99,10 @@ add_filter( 'the_content', function ( $content ) {
 		} elseif ( 'blk' === $kind ) {
 			foreach ( $tags[0] as $tag ) {
 				$after = substr( $search, $tag[1] + strlen( $tag[0] ), 900 );
-				if ( $has_class( $tag[0], 'wp-block-group' ) && false !== stripos( $after, $match ) ) { $candidates[] = $tag; }
+				// Preserve the legacy Contact target: the first group before Phone.
+				// WordPress may render nested group wrappers around the same card;
+				// those are not competing destinations and must not remove this link.
+				if ( preg_match( '/^<div\b/i', $tag[0] ) && $has_class( $tag[0], 'wp-block-group' ) && false !== stripos( $after, $match ) ) { $candidates[] = $tag; break; }
 			}
 		} elseif ( 'faq' === $kind ) {
 			$items = array_values( array_filter( $tags[0], static function ( $tag ) use ( $has_class ) { return $has_class( $tag[0], 'uagb-faq-item' ); } ) );

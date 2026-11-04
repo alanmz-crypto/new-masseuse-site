@@ -56,23 +56,33 @@ available. No-JavaScript navigation remains native anchor scrolling.
   [release](../../../docs/reviews/2026-11-04-section-guide-release.md). Its public
   browser follow-up passed **375/0**, with the broad old-reference limitations
   tracked there separately.
-- Local server-rendering harness: **36/0**, including exact maps/order, preservation
+- Local server-rendering harness: **39/0**, including exact maps/order, preservation
   of existing markup, legacy IDs, collision suffixes, ambiguous/duplicate targets
   and quoted/bare-attribute edge cases. Actual WordPress rendering remains covered
   by the fresh rehearsal below.
 - Paired-installer mock: **38/0**, including failure after the second write has
   mutated, final snapshot-save failure, exact record/date rollback, safe retry and
   refusal of unknown concurrent metadata. PHP8.5/Bash syntax and diff checks passed.
-- Local Chromium browser fixture: **588 assertions, zero failures**; Services'
+- Local Chromium browser fixture: **593 assertions, zero failures**; Services'
   390-pixel screenshot and 320-pixel/200% text screenshot were visually reviewed.
   The fixture models server markup using the actual runtime/CSS; it is not a
   substitute for the WordPress rehearsal of PHP output.
-- Fresh rehearsal, staging preflight/apply and public checks pending.
+- First fresh WordPress rehearsal (`ui-page-navigation-rehearse-20261104`,
+  [run41826610536](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/41826610536))
+  passed paired apply/idempotence/exact rollback, unchanged-page fingerprints and
+  regulated-copy gates, but failed browser verification. No staging write followed.
+  Astra prevents native inline clicks and updates the fragment itself; the focus
+  helper now follows that confirmed destination. Contact keeps the legacy first
+  matching group despite WordPress's nested wrappers. A no-JavaScript test now
+  uses native mouse input after checking stable, visible, unobscured geometry,
+  avoiding an automation click-retry stall. The fixture includes the theme-event
+  regression and refusal to move focus when the destination hash differs.
+- Corrected fresh rehearsal, staging preflight/apply and public checks pending.
 
 Frozen payload SHA256:
 
-- Inline: `bea04499abbe10f177282ce25a69f8ab8801312faa4b334d0be85f958e789b9f`.
-- Native: `9c1aa136e0f61136d9f897fd44b241e6410b6cf6d2190c1070e5263a72b0f258`.
+- Inline: `06353fa604ec35a389cf79a3e3904877e105a7a07d66f7eca752fe24cecede83`.
+- Native: `d5646a3339d7c9611d255bf995a321d44e067b7378d4bac5d0768c5aa607bd19`.
 - Prior inline file: `1034cd2011adb1991392f26cf4b6d2fe04ef8916af9f7ce045c1023ecd4224c4`.
 - Prior native file and unchanged CSS are pinned to the original guide package.
 

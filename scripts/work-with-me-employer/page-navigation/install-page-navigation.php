@@ -17,13 +17,13 @@ $plans = array(
 	'A11yPageJumpLinks' => array(
 		'old_file' => 'jump-links-before.php', 'old_file_sha256' => '1034cd2011adb1991392f26cf4b6d2fe04ef8916af9f7ce045c1023ecd4224c4',
 		'old_sha256' => '225d38dbc4a87744397c1a55888b6fb5fb5fdf9df127c78c2544845e371f9a36',
-		'new_file' => 'jump-links.php', 'new_file_sha256' => 'bea04499abbe10f177282ce25a69f8ab8801312faa4b334d0be85f958e789b9f',
+		'new_file' => 'jump-links.php', 'new_file_sha256' => '06353fa604ec35a389cf79a3e3904877e105a7a07d66f7eca752fe24cecede83',
 		'note' => 'Created 2026-10-18 by scripts/work-with-me-employer/accessibility/install-jump-links.php (rollback: delete this snippet and the ts-a11y-jump CSS block).',
 	),
 	'TSSectionGuide v1' => array(
 		'old_file' => '../section-guide/section-guide.php', 'old_file_sha256' => '071149c634d51bb6d2b7e3f4de59b695a5802a3e63c7da1939b3fa1684210e2b',
 		'old_sha256' => '573ea9f5f8f0ea297d61aa72745a275cd50c999b2367d34fea901d02874c4ff5',
-		'new_file' => 'section-guide.php', 'new_file_sha256' => '9c1aa136e0f61136d9f897fd44b241e6410b6cf6d2190c1070e5263a72b0f258',
+		'new_file' => 'section-guide.php', 'new_file_sha256' => 'd5646a3339d7c9611d255bf995a321d44e067b7378d4bac5d0768c5aa607bd19',
 		'note' => 'Created 2026-11-04 by section-guide/install-section-guide.php; exact owned-snippet rollback only.',
 	),
 );

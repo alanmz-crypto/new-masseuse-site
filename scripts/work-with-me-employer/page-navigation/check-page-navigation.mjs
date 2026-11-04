@@ -57,7 +57,7 @@ function check(label, ok, detail = '') { assertions++; if (!ok) failures++; cons
 const noScriptContexts = new WeakSet();
 const tick = page => noScriptContexts.has(page.context()) ? page.waitForTimeout(40) : page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
 async function settle(page) { await tick(page); await page.waitForTimeout(120); await tick(page); }
-function fixtureHTML(slug, short = false, tallHeader = false) {
+function fixtureHTML(slug, short = false, tallHeader = false, themeAnchor = false) {
   const scoped = services.includes(slug), entries = maps[slug] || legacyMaps[slug] || [item('Introduction', 'Introduction', 'intro'), item('Details', 'Details', 'details')];
   const escape = text => text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
   const nav = `<nav class="ts-jump" aria-label="On this page"><ul class="ts-jump__list">${entries.map(entry => `<li><a href="#${entry.id}">${escape(entry.label)}</a></li>`).join('')}</ul></nav>`;
@@ -65,18 +65,19 @@ function fixtureHTML(slug, short = false, tallHeader = false) {
   // Represent Spectra's accordion interaction while exercising the actual PHP-emitted jump helper.
   const privacy = slug === 'privacy-policy' ? `<script>document.querySelectorAll('.uagb-faq-questions-button').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.uagb-faq-item').forEach(item=>{item.classList.remove('uagb-faq-item-active');item.querySelector('.uagb-faq-content').style.display='none';});const item=button.closest('.uagb-faq-item');item.classList.add('uagb-faq-item-active');item.querySelector('.uagb-faq-content').style.display='block';}));</script>${privacyScript}` : '';
 
+  const themeHook = themeAnchor ? `<script>document.querySelectorAll('.ts-jump a').forEach(anchor=>anchor.addEventListener('click',event=>{event.preventDefault();location.hash=anchor.getAttribute('href');}));</script>` : '';
   const sticky = slug === 'corporate-massage-portland' ? 'ts-corp__sticky' : slug === 'work-with-me' ? 'ts-wwm__sticky' : '';
   return `<!doctype html><html lang="en"><head><title>Page navigation fixture</title><style>
   :root{--ts-panel:#fff;--ts-ink:#1c2531;--ts-accent-deep:#7a520a;--ts-rule:#d5d6cf}html[data-ts-theme="dark"]{--ts-panel:#202936;--ts-ink:#f1f0ea;--ts-accent-deep:#e2b866;background:#151c26;color:#f1f0ea}
   body{margin:0;font:1rem/1.6 system-ui}header,footer,main{padding:24px;box-sizing:border-box}main{max-width:1000px;margin:auto}header{height:${short ? '0' : tallHeader ? '1400px' : '130px'}}section{min-height:${short ? '0' : '700px'}}footer{height:${short ? '80px' : '280px'}}a{color:inherit}#ast-scroll-top{position:fixed;right:16px;bottom:16px;width:44px;height:44px}
-  </style><style>${baselineCSS}</style>${short ? '<style>header{display:none}main{padding:0}.entry-content :is(h1,h2,h3,p){margin:0;font-size:16px;line-height:1.2}footer{height:40px;padding:0}</style>' : ''}<style id="wp-custom-css">${progressCSS}\n${css}</style></head><body><header><a href="#content">Skip to content</a></header><main id="content" class="entry-content">${nav}<h1>Existing page information</h1>${sections}${sticky ? `<div class="${sticky}"><a href="mailto:example@example.test">Contact</a></div>` : ''}</main><footer id="colophon"><a href="#${entries[0].id}">Footer link</a><p>Oregon License LMT-29905</p></footer><button id="ast-scroll-top" aria-label="Scroll to top">↑</button>${scoped ? `<script id="ts-section-guide-runtime">${script}</script>` : ''}${privacy}</body></html>`;
+  </style><style>${baselineCSS}</style>${short ? '<style>header{display:none}main{padding:0}.entry-content :is(h1,h2,h3,p){margin:0;font-size:16px;line-height:1.2}footer{height:40px;padding:0}</style>' : ''}<style id="wp-custom-css">${progressCSS}\n${css}</style></head><body><header><a href="#content">Skip to content</a></header><main id="content" class="entry-content">${nav}<h1>Existing page information</h1>${sections}${sticky ? `<div class="${sticky}"><a href="mailto:example@example.test">Contact</a></div>` : ''}</main><footer id="colophon"><a href="#${entries[0].id}">Footer link</a><p>Oregon License LMT-29905</p></footer><button id="ast-scroll-top" aria-label="Scroll to top">↑</button>${themeHook}${scoped ? `<script id="ts-section-guide-runtime">${script}</script>` : ''}${privacy}</body></html>`;
 }
 async function contextFor({ noJS = false, unsupported = false, admin = false, touch = false } = {}) {
   const context = await browser.newContext({ viewport: { width: 1280, height: 900 }, reducedMotion: 'no-preference', javaScriptEnabled: !noJS, hasTouch: touch });
   if (noJS) noScriptContexts.add(context);
   if (unsupported) await context.addInitScript(() => { delete HTMLElement.prototype.showPopover; delete HTMLElement.prototype.hidePopover; });
   if (admin) await context.addInitScript(() => { const observer = new MutationObserver(() => { if (document.body) { document.body.classList.add('admin-bar'); observer.disconnect(); } }); observer.observe(document, { childList: true, subtree: true }); });
-  if (fixture) await context.route('**/*', route => { const url = new URL(route.request().url()); const slug = url.pathname.replace(/^\/+|\/+$/g, ''); route.fulfill({ contentType: 'text/html', body: fixtureHTML(slug, url.searchParams.has('short'), url.searchParams.has('tall-header')) }); });
+  if (fixture) await context.route('**/*', route => { const url = new URL(route.request().url()); const slug = url.pathname.replace(/^\/+|\/+$/g, ''); route.fulfill({ contentType: 'text/html', body: fixtureHTML(slug, url.searchParams.has('short'), url.searchParams.has('tall-header'), url.searchParams.has('theme-anchor')) }); });
   return context;
 }
 async function load(context, slug, suffix = '') {
@@ -88,6 +89,11 @@ async function load(context, slug, suffix = '') {
   if (!noScriptContexts.has(context)) {
     await page.addStyleTag({ content: 'html{scroll-behavior:auto!important}' });
     await page.evaluate(() => document.fonts.ready);
+  } else {
+    // DevTools-only measurement CSS; scripting remains disabled for the page.
+    // addStyleTag waits for a page callback that does not run with scripting off.
+    const scrollCSS = await page.evaluate(() => { const before = getComputedStyle(document.documentElement).scrollBehavior; const style = document.createElement('style'); style.textContent = 'html{scroll-behavior:auto!important}'; document.head.appendChild(style); return { before, after: getComputedStyle(document.documentElement).scrollBehavior }; });
+    console.log(`INFO ${slug || 'home'} without JavaScript: measurement scroll CSS ${JSON.stringify(scrollCSS)}`);
   }
   await settle(page);
   return { page, errors };
@@ -175,6 +181,36 @@ async function reachedDestination(page, href, expected) {
     await page.waitForTimeout(100);
   }
   return state;
+}
+async function noScriptUserClick(page, locator, label, report = false) {
+  // Playwright's retry timer can stall with JS disabled after an initially moving
+  // target. Use real input only after independent geometry and hit-test checks.
+  await locator.evaluate(el => el.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' }));
+  await page.waitForTimeout(100);
+  await page.waitForLoadState('networkidle', { timeout: 15000 });
+  await locator.evaluate(el => el.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' }));
+  let previous, stable = 0;
+  const samples = [];
+  for (let attempt = 0; attempt < 25; attempt++) {
+    const state = await locator.evaluate(el => {
+      const rect = el.getBoundingClientRect(), x = (Math.max(0, rect.left) + Math.min(innerWidth, rect.right)) / 2, y = (Math.max(0, rect.top) + Math.min(innerHeight, rect.bottom)) / 2;
+      let visible = rect.width > 0 && rect.height > 0 && rect.right > 0 && rect.left < innerWidth && rect.bottom > 0 && rect.top < innerHeight;
+      for (let node = el; node && visible; node = node.parentElement) { const css = getComputedStyle(node); visible = css.display !== 'none' && css.visibility !== 'hidden' && Number(css.opacity) > 0; }
+      const hit = document.elementFromPoint(x, y);
+      return { rect: rect.toJSON(), x, y, scrollY, fonts: document.fonts.status, visible, receivesInput: Boolean(hit && (hit === el || el.contains(hit))), hit: hit && { tag: hit.tagName, id: hit.id, class: hit.getAttribute('class') } };
+    });
+    samples.push(state); if (samples.length > 4) samples.shift();
+    const key = JSON.stringify([state.rect, state.scrollY]);
+    stable = state.visible && state.receivesInput && state.fonts === 'loaded' && key === previous ? stable + 1 : 0;
+    if (stable >= 2) {
+      if (report || attempt > 2) console.log(`INFO ${label}: no-JS native click after ${attempt + 1} geometry samples ${JSON.stringify(state)}`);
+      await page.mouse.click(state.x, state.y);
+      return;
+    }
+    previous = key;
+    await page.waitForTimeout(100);
+  }
+  throw new Error(`No stable visible input target for ${label}: ${JSON.stringify(samples)}`);
 }
 async function inlineContract(page, slug) {
   const expected = maps[slug] || legacyMaps[slug];
@@ -354,7 +390,7 @@ try {
     const links = await inlineContract(page, slug);
     check(`${slug} without JavaScript: no added guide`, await page.locator(trigger + ', ' + panel).count() === 0);
     for (let index = 0; index < maps[slug].length; index++) {
-      await page.locator('.entry-content .ts-jump a').nth(index).click();
+      await noScriptUserClick(page, page.locator('.entry-content .ts-jump a').nth(index), `${slug} ${maps[slug][index].label}`, index === 0);
       const state = await reachedDestination(page, links[index].href, maps[slug][index]);
       check(`${slug} without JavaScript: ${maps[slug][index].label} reaches the existing target`, state.hash === links[index].href && state.reached && state.correctHeading && state.unique && state.inContent, JSON.stringify(state));
     }
@@ -363,6 +399,22 @@ try {
   }
   await noJSContext.close();
   if (fixture) {
+    const { page: themePage } = await load(context, 'services', '?theme-anchor');
+    const themedLink = themePage.locator('.entry-content .ts-jump a').first(), themedHref = await themedLink.getAttribute('href');
+    await themedLink.click(); await settle(themePage);
+    let themedState = await reachedDestination(themePage, themedHref, maps.services[0]);
+    check('theme anchor handler: native fragment still reaches the heading', themedState.hash === themedHref && themedState.reached, JSON.stringify(themedState));
+    check('theme anchor handler: inline navigation still transfers heading focus', themedState.focused && themedState.correctHeading, JSON.stringify(themedState));
+    await themePage.evaluate(() => document.activeElement.blur()); await pastNav(themePage);
+    await themePage.locator(trigger).click(); await themePage.locator(panel + ' a').first().click(); await settle(themePage);
+    themedState = await reachedDestination(themePage, themedHref, maps.services[0]);
+    check('theme anchor handler: native guide retains heading focus and dismissal', themedState.focused && themedState.correctHeading && !await isOpen(themePage), JSON.stringify(themedState));
+    const cancelledLink = themePage.locator('.entry-content .ts-jump a').last(), cancelledHref = await cancelledLink.getAttribute('href');
+    await cancelledLink.evaluate(anchor => anchor.addEventListener('click', event => { event.preventDefault(); history.pushState(null, '', '#cancelled-navigation'); }, { once: true }));
+    await cancelledLink.click(); await settle(themePage);
+    const cancelledState = await destinationState(themePage, cancelledHref, maps.services.at(-1));
+    check('cancelled anchor: a different fragment does not transfer destination focus', cancelledState.hash === '#cancelled-navigation' && !cancelledState.focused, JSON.stringify(cancelledState));
+    await themePage.close();
     const { page: jumpPage } = await load(context, 'thai-massage', '?tall-header');
     let jumpState = await scrollState(jumpPage);
     check('jump scroll: original nav starts below viewport', jumpState.nav.top >= jumpState.viewport.height, JSON.stringify(jumpState));
