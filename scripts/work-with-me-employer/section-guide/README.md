@@ -1,16 +1,19 @@
 # Section guide for the four research pages
 
-**Guide with “Questions” and “What Research Says” is applied and verified on staging38; not live.**
-Questions was added at **10:22:43 UTC on November 4, 2026**; focused public
-browser checks passed at **10:31:33 UTC**.
-Source merged via [PR #74](https://github.com/alanmz-crypto/new-masseuse-site/pull/74)
-at `47536cd` on November 4, 2026, at **10:47:28 UTC**. Deployment remains
-staging38 only. Ryan authorized the live release on November 4, 2026;
-production enablement and request `live-section-guide-20261104-1` are ready in
-[PR #76](https://github.com/alanmz-crypto/new-masseuse-site/pull/76), pending the
-owner launch. Fresh live-source rehearsal passed **375/0 in each browser** and
-the read-only live preflight passed. See the
-[live release record](../../../docs/reviews/2026-11-04-section-guide-release.md).
+**Guide with “Questions” and “What Research Says” is LIVE since 11:46:23 UTC
+on November 4, 2026.** Ryan merged source PR #74 and release PR #76, then ran
+[the live request](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/41823566103).
+All six origin checks passed; the automatic broad public suite was blocked by
+HTTP 202. Verified encrypted export/snapshot and restore proof are recorded in
+[the live release record](../../../docs/reviews/2026-11-04-section-guide-release.md).
+The focused live Chromium check passed **375/0** at 11:53:34 UTC. Staging's Questions update applied
+at 10:22:43 UTC and its focused browser check passed at 10:31:33 UTC.
+
+This package is the frozen v3 guide. The subsequent
+[page-navigation migration](../page-navigation/README.md) aligns the inline links
+with the native guide and adds Services; its paired rollback must precede any
+older guide rollback. It is applied on staging38 as of 12:40:03 UTC on November 4;
+the live site still uses this v3 guide.
 [Preview Thai Massage](https://staging38.thaisolitude.com/thai-massage/) and scroll
 past the original section links to open the guide.
 This adds a compact “On this page” control to Thai, Therapeutic, Deep Tissue and

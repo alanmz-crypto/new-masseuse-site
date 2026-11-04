@@ -1,8 +1,10 @@
 {
-  "id": "ui-section-guide-live-dry-20261104",
+  "id": "ui-page-navigation-postcheck-20261104",
   "op": "run",
-  "target": "live",
-  "script": "section-guide/push-section-guide.sh",
-  "args": [],
+  "target": "staging38",
+  "script": "post-change-test.sh",
+  "args": [
+    "staging38"
+  ],
   "tests": "auto"
 }
