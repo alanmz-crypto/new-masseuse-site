@@ -1,6 +1,7 @@
 {
-  "id": "ui-progress-css-20261104",
-  "op": "inspect",
+  "id": "ui-progress-rehearse-20261104",
+  "op": "rehearse",
   "target": "staging38",
-  "query": "css"
+  "installer": "reading-progress/install-reading-progress.php",
+  "args": []
 }
