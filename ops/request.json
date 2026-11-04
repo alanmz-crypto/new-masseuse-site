@@ -1,7 +1,7 @@
 {
-  "id": "ui-progress-live-home-20261104",
-  "op": "inspect",
+  "id": "ui-progress-live-rehearse-20261104",
+  "op": "rehearse",
   "target": "live",
-  "query": "option",
-  "arg": "home"
+  "installer": "reading-progress-sitewide/install-reading-progress-sitewide.php",
+  "args": []
 }
