@@ -10,6 +10,13 @@ if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) ) {
 	exit( 'Run with WP-CLI.' );
 }
 $home = untrailingslashit( home_url() );
+$host = (string) wp_parse_url( $home, PHP_URL_HOST );
+$port = wp_parse_url( $home, PHP_URL_PORT );
+$host .= $port ? ':' . $port : '';
+if ( ! in_array( $host, array( 'localhost:8090', 'staging38.thaisolitude.com' ), true ) ) {
+	WP_CLI::error( 'Target host is not allowed; nothing changed.' );
+}
+// Also enforce scheme/path, beyond the host allow-list used by the rehearsal.
 if ( ! in_array( $home, array( 'http://localhost:8090', 'https://staging38.thaisolitude.com' ), true ) ) {
 	WP_CLI::error( 'Only localhost:8090 and HTTPS staging38 are allowed; nothing changed.' );
 }
