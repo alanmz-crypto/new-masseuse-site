@@ -1,9 +1,8 @@
 {
-  "id": "ui-section-guide-rehearse-5-20261104",
-  "op": "rehearse",
+  "id": "ui-section-guide-dry-3-20261104",
+  "op": "run",
   "target": "staging38",
-  "installer": "section-guide/install-section-guide.php",
-  "args": [
-    "--with-uploads"
-  ]
+  "script": "section-guide/push-section-guide.sh",
+  "args": [],
+  "tests": "auto"
 }
