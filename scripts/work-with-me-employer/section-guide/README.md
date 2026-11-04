@@ -3,6 +3,9 @@
 **Guide with “Questions” and “What Research Says” is applied and verified on staging38; not live.**
 Questions was added at **10:22:43 UTC on November 4, 2026**; focused public
 browser checks passed at **10:31:33 UTC**.
+Source merged via [PR #74](https://github.com/alanmz-crypto/new-masseuse-site/pull/74)
+at `47536cd` on November 4, 2026, at **10:47:28 UTC**. Deployment remains
+staging38 only; no live enablement or request was created.
 [Preview Thai Massage](https://staging38.thaisolitude.com/thai-massage/) and scroll
 past the original section links to open the guide.
 This adds a compact “On this page” control to Thai, Therapeutic, Deep Tissue and
