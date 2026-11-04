@@ -12,7 +12,8 @@ at 10:22:43 UTC and its focused browser check passed at 10:31:33 UTC.
 This package is the frozen v3 guide. The subsequent
 [page-navigation migration](../page-navigation/README.md) aligns the inline links
 with the native guide and adds Services; its paired rollback must precede any
-older guide rollback. It is not yet applied.
+older guide rollback. It is applied on staging38 as of 12:40:03 UTC on November 4;
+the live site still uses this v3 guide.
 [Preview Thai Massage](https://staging38.thaisolitude.com/thai-massage/) and scroll
 past the original section links to open the guide.
 This adds a compact “On this page” control to Thai, Therapeutic, Deep Tissue and

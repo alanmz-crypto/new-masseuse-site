@@ -1,7 +1,10 @@
 # Complete page navigation
 
-**In progress; not applied.** Ryan requested that in-page jump links cover the
-important context, especially Services, and match the native section guides.
+**Applied on staging38 at 12:40:03 UTC on 2026-11-04; not live.**
+[PR #77](https://github.com/alanmz-crypto/new-masseuse-site/pull/77) is staging-only.
+Ryan requested that in-page jump links cover the important context, especially
+Services, and match the native section guides. Focused public browser checks and
+the once-only broad public follow-up remain pending.
 
 The inline row is the single source of destinations. It is rendered on the
 server, so links and anchors work without JavaScript. On the five pages below,
@@ -39,6 +42,13 @@ again after this paired migration has been undone.
 The frozen original guide package remains under `../section-guide/`. Never run
 its old installer to overwrite this newer runtime. Undo the paired migration
 first, using this migration's exact snapshot from the same site.
+
+This exact staging rollback restores both prior snippet records and leaves CSS
+unchanged:
+
+```sh
+scripts/ci/request.sh run --target staging38 --script page-navigation/push-page-navigation.sh --args '--rollback $HOME/private-backups/page-navigation-before-20261104-124003-a437350c.json'
+```
 
 Existing bookmarks are preserved, including `ts-therapeutic-massage` and
 `ts-your-session` used by the Home heart links, and `ts-guide-questions` /
@@ -81,10 +91,29 @@ available. No-JavaScript navigation remains native anchor scrolling.
   `ui-page-navigation-rehearse-2-20261104`,
   [run41829646501](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/41829646501),
   source `d7f73cee435874b5eab7b9225c7ce70933dcd8f0`, finished12:38:23 UTC:
-  **PASS**, including **572/0 Chromium and572/0 Firefox**; paired apply,
+  **PASS**, including **572/0 Chromium and 572/0 Firefox**; paired apply,
   idempotence, exact full-record/date rollback, reapply, page status, PHP and both
   rendered-copy gates. Only snippets1232/1349 and WPCode's cache changed.
-- Staging preflight/apply and public checks pending.
+- Corrected staging preflight, request `ui-page-navigation-dry-2-20261104`,
+  [run 41829739285](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/41829739285),
+  source `577e2ef9ea20d53bad5243aa62cc1e183cd63262`, finished 12:39:02 UTC:
+  **PASS**, ready with no site change.
+- Staging apply, request `ui-page-navigation-apply-20261104`,
+  [run 41831164491](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/41831164491),
+  source `6d0d9f1d06715dbdc058f3fb6e959dd296dd5939`: **applied at 12:40:03 UTC**.
+  All twelve origin route checks returned HTTP 200 and verified the licence,
+  unchanged CSS markers and scoped navigation. Fresh export
+  `staging38-before-page-navigation-20261104-123950.sql` is 7,371,584 bytes
+  (SHA256 prefix `c04e8ecde7c4`); exact rollback snapshot
+  `page-navigation-before-20261104-124003-a437350c.json` has SHA256 prefix
+  `1ddb456421a9`. Both were copied, hash-verified and read back identically from
+  encrypted offsite storage. Restore import exited 0; restored and current copies
+  each had 95 fingerprints. Only snippets 1232/1349 and WPCode's
+  `wpcode_snippets` cache option differed.
+- Automatic broad public checks were **INVALID: HTTP 202 hosting challenge,
+  zero checks**. A once-only follow-up remains pending; this is not a pass.
+- Focused public staging browser verification is pending in request
+  `ui-page-navigation-browser-20261104`, source `4e6920a`.
 
 Frozen payload SHA256:
 
