@@ -1,8 +1,7 @@
 {
-  "id": "ui-progress-all-dry-20261104",
-  "op": "run",
+  "id": "ui-progress-all-rehearse-2-20261104",
+  "op": "rehearse",
   "target": "staging38",
-  "script": "reading-progress-sitewide/push-reading-progress-sitewide.sh",
-  "args": [],
-  "tests": "auto"
+  "installer": "reading-progress-sitewide/install-reading-progress-sitewide.php",
+  "args": []
 }
