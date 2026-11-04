@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-04 12:22 UTC  **PASS**  `ui-page-navigation-events-20261104`  [reports/2026-11-04/122205-ui-page-navigation-events-20261104.md](reports/2026-11-04/122205-ui-page-navigation-events-20261104.md)  (run 41828398628)
 - 2026-11-04 12:15 UTC  **PASS**  `ui-page-navigation-dry-20261104`  [reports/2026-11-04/121511-ui-page-navigation-dry-20261104.md](reports/2026-11-04/121511-ui-page-navigation-dry-20261104.md)  (run 41826755455)
 - 2026-11-04 12:14 UTC  **FAIL**  `ui-page-navigation-rehearse-20261104`  [reports/2026-11-04/121438-ui-page-navigation-rehearse-20261104.md](reports/2026-11-04/121438-ui-page-navigation-rehearse-20261104.md)  (run 41826610536)
 - 2026-11-04 11:59 UTC  **FAIL**  `ui-section-guide-live-postcheck-20261104`  [reports/2026-11-04/115924-ui-section-guide-live-postcheck-20261104.md](reports/2026-11-04/115924-ui-section-guide-live-postcheck-20261104.md)  (run 41824811088)
