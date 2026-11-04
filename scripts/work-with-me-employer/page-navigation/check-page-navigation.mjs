@@ -248,6 +248,16 @@ try {
       await page.setViewportSize({ width, height: 844 });
       for (const theme of ['light', 'dark']) {
         await page.evaluate(theme => document.documentElement.setAttribute('data-ts-theme', theme), theme);
+        if (slug === 'services' && width === 390 && theme === 'light' && (process.argv.includes('inline') || process.env.TS_SCREENSHOT_DIR)) {
+          const scrollBefore = await page.evaluate(() => [scrollX, scrollY]);
+          if (process.env.TS_SCREENSHOT_DIR) {
+            mkdirSync(process.env.TS_SCREENSHOT_DIR, { recursive: true });
+            await original.screenshot({ path: join(process.env.TS_SCREENSHOT_DIR, 'page-navigation-services-inline-mobile.png') });
+          }
+          if (process.argv.includes('inline')) console.log(`INLINE page-navigation-services-inline-mobile.jpg base64:${(await original.screenshot({ type: 'jpeg', quality: 85 })).toString('base64')}`);
+          await page.evaluate(([x, y]) => scrollTo(x, y), scrollBefore);
+          await settle(page);
+        }
         await pastNav(page);
         const label = `${slug} ${width} ${theme}`;
         check(`${label}: original nav above viewport`, await original.evaluate(el => el.getBoundingClientRect().bottom < 0));
