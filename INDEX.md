@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-04 13:46 UTC  **PASS**  `live-page-navigation-20261104-1`  [reports/2026-11-04/134623-live-page-navigation-20261104-1.md](reports/2026-11-04/134623-live-page-navigation-20261104-1.md)  (run 41840605814)
 - 2026-11-04 13:35 UTC  **PASS**  `ui-page-navigation-live-dry-20261104`  [reports/2026-11-04/133505-ui-page-navigation-live-dry-20261104.md](reports/2026-11-04/133505-ui-page-navigation-live-dry-20261104.md)  (run 41838471144)
 - 2026-11-04 13:34 UTC  **PASS**  `ui-page-navigation-live-rehearse-20261104`  [reports/2026-11-04/133435-ui-page-navigation-live-rehearse-20261104.md](reports/2026-11-04/133435-ui-page-navigation-live-rehearse-20261104.md)  (run 41838099630)
 - 2026-11-04 12:49 UTC  **FAIL**  `ui-page-navigation-postcheck-20261104`  [reports/2026-11-04/124921-ui-page-navigation-postcheck-20261104.md](reports/2026-11-04/124921-ui-page-navigation-postcheck-20261104.md)  (run 41831845838)
