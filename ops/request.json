@@ -1,8 +1,11 @@
 {
-  "id": "ui-page-navigation-dry-20261104",
+  "id": "ui-page-navigation-events-20261104",
   "op": "run",
   "target": "staging38",
-  "script": "page-navigation/push-page-navigation.sh",
-  "args": [],
+  "script": "page-navigation/inspect-navigation.mjs",
+  "args": [
+    "https://staging38.thaisolitude.com",
+    "--no-js"
+  ],
   "tests": "auto"
 }
