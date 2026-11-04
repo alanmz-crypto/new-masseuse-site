@@ -2,7 +2,7 @@
 /**
  * Extend the reviewed CSS-only reading indicator to every public theme page.
  * WP-CLI: --user=1 eval-file install-reading-progress-sitewide.php preflight|apply|rollback [FILE]
- * Only localhost:8090 and staging38. Production is deliberately not allowed.
+ * Only localhost:8090, staging38 and the exact observed live origin.
  * Remote mutations use push-reading-progress-sitewide.sh for a verified off-site DB backup.
  * This installer saves exact CSS bytes and refuses rollback after any CSS drift.
  */
@@ -13,13 +13,13 @@ $home = untrailingslashit( home_url() );
 $host = (string) wp_parse_url( $home, PHP_URL_HOST );
 $port = wp_parse_url( $home, PHP_URL_PORT );
 $host .= $port ? ':' . $port : '';
-if ( ! in_array( $host, array( 'localhost:8090', 'staging38.thaisolitude.com' ), true ) ) {
+if ( ! in_array( $host, array( 'localhost:8090', 'staging38.thaisolitude.com', 'thaisolitude.com' ), true ) ) {
 	WP_CLI::error( 'Target host is not allowed; nothing changed.' );
 }
-// Staging38 currently stores an HTTP home URL (fresh rehearsal, 2026-11-04),
-// although visitors use HTTPS. Keep both exact origins; no paths or other sites.
-if ( ! in_array( $home, array( 'http://localhost:8090', 'http://staging38.thaisolitude.com', 'https://staging38.thaisolitude.com' ), true ) ) {
-	WP_CLI::error( 'Only localhost:8090 and exact staging38 origins are allowed; nothing changed.' );
+// Staging38 and live store HTTP home URLs (live inspected 2026-11-04), although
+// visitors use HTTPS. Keep exact origins; no www, paths, ports or other sites.
+if ( ! in_array( $home, array( 'http://localhost:8090', 'http://staging38.thaisolitude.com', 'https://staging38.thaisolitude.com', 'http://thaisolitude.com' ), true ) ) {
+	WP_CLI::error( 'Only localhost:8090, exact staging38 origins and the observed live origin are allowed; nothing changed.' );
 }
 if ( 'astra' !== get_stylesheet() || ! current_user_can( 'manage_options' ) || ! current_user_can( 'edit_css' ) ) {
 	WP_CLI::error( 'Requires Astra and an administrator allowed to edit CSS (--user=1).' );
