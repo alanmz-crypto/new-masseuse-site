@@ -1,10 +1,9 @@
 {
-  "id": "ui-section-guide-live-postcheck-20261104",
-  "op": "run",
-  "target": "live",
-  "script": "post-change-test.sh",
+  "id": "ui-page-navigation-rehearse-20261104",
+  "op": "rehearse",
+  "target": "staging38",
+  "installer": "page-navigation/install-page-navigation.php",
   "args": [
-    "live"
-  ],
-  "tests": "auto"
+    "--with-uploads"
+  ]
 }
