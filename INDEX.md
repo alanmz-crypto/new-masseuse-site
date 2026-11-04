@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-04 08:38 UTC  **PASS**  `ui-section-guide-dry-20261104`  [reports/2026-11-04/083814-ui-section-guide-dry-20261104.md](reports/2026-11-04/083814-ui-section-guide-dry-20261104.md)  (run 41800752793)
 - 2026-11-04 08:37 UTC  **FAIL**  `ui-section-guide-rehearse-20261104`  [reports/2026-11-04/083744-ui-section-guide-rehearse-20261104.md](reports/2026-11-04/083744-ui-section-guide-rehearse-20261104.md)  (run 41800602231)
 - 2026-11-04 08:10 UTC  **PASS**  `ui-progress-live-browser-20261104`  [reports/2026-11-04/081009-ui-progress-live-browser-20261104.md](reports/2026-11-04/081009-ui-progress-live-browser-20261104.md)  (run 41797118924)
 - 2026-11-04 08:04 UTC  **PASS**  `live-reading-progress-20261104-1`  [reports/2026-11-04/080420-live-reading-progress-20261104-1.md](reports/2026-11-04/080420-live-reading-progress-20261104-1.md)  (run 41796118623)
