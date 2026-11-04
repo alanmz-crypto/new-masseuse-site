@@ -1,10 +1,11 @@
 {
-  "id": "ui-page-navigation-sources-20261104",
+  "id": "ui-section-guide-live-browser-20261104",
   "op": "run",
-  "target": "staging38",
-  "script": "review-d/inspect-bundle-d.sh",
+  "target": "live",
+  "script": "section-guide/check-section-guide.mjs",
   "args": [
-    "--sources-only"
+    "https://thaisolitude.com",
+    "inline"
   ],
   "tests": "auto"
 }
