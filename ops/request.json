@@ -1,11 +1,10 @@
 {
-  "id": "ui-section-guide-live-browser-20261104",
+  "id": "ui-section-guide-live-postcheck-20261104",
   "op": "run",
   "target": "live",
-  "script": "section-guide/check-section-guide.mjs",
+  "script": "post-change-test.sh",
   "args": [
-    "https://thaisolitude.com",
-    "inline"
+    "live"
   ],
   "tests": "auto"
 }
