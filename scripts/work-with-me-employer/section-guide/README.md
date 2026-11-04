@@ -1,8 +1,9 @@
 # Section guide for the four research pages
 
 **Original guide applied and verified on staging38; not live.**
-The requested “What Research Says” shortcut is prepared; its upgrade rehearsal
-and staging application are **PENDING**.
+The requested “What Research Says” shortcut passed upgrade rehearsal but is
+**not deployed**: backup verification and GitHub service errors blocked release.
+The original three-link guide remains on staging.
 [Preview Thai Massage](https://staging38.thaisolitude.com/thai-massage/) and scroll
 past the original section links to open the guide.
 This adds a compact “On this page” control to Thai, Therapeutic, Deep Tissue and
@@ -99,8 +100,10 @@ scripts/ci/request.sh run --target staging38 --script section-guide/push-section
 ```
 
 Use the runtime-upgrade snapshot printed by its apply to undo only the research
-shortcut. Its actual path is **PENDING** until staging application. Do not use the
-original installation snapshot to undo the shortcut directly.
+shortcut after a successful future apply. **No upgrade snapshot exists yet**:
+its first apply stopped before the installer ran. The original 09:18 installation
+snapshot below remains valid. Do not use it to undo a future runtime upgrade
+directly; first use that upgrade's own snapshot.
 
 After runtime rollback, the original staging removal command below restores the
 pre-guide CSS (including reading progress) and removes the owned snippet. It is
@@ -113,12 +116,43 @@ scripts/ci/request.sh run --target staging38 --script section-guide/push-section
 Git source changes do not update WordPress. A future live release requires its
 own reviewed enablement and owner-run workflow; this package has no live target.
 
-## Research shortcut verification — PENDING
+## Research shortcut verification — staging application blocked
 
-- Guarded runtime upgrade, repeat apply, exact rollback and reapply on a fresh
-  copy of the currently deployed staging38: PENDING.
-- Research shortcut browser checks, dry run, staging apply, actual upgrade
-  snapshot and encrypted offsite backup verification: PENDING.
+- Current local Chromium 154 fixtures: **367 assertions, zero failures**; focused
+  research-shortcut checks: **20 assertions, zero failures**. The mobile fixture
+  screenshot with the extra link was visually reviewed. These are local results,
+  not proof of staging application or physical-device testing.
+- [Current-stage upgrade rehearsal](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/41808608914)
+  (`ui-section-research-rehearse-20261104`, commit `2691e47`, finished 09:39:56 UTC):
+  **PASS** on a fresh WordPress 7.1.3 staging38 copy with uploads. Preflight found
+  `ready-upgrade`; apply updated existing snippet **1349**, repeat apply was a
+  no-op, rollback restored its full original code, identity, modified dates and
+  settings, and reapply passed. All **69,937 CSS bytes stayed unchanged**. Only
+  snippet 1349 and WPCode's cache fingerprints changed; rollback matched the
+  baseline with that cache set aside. Page statuses, content gates and PHP checks
+  passed. Chromium **153.0.8010.12** and Firefox **155.0** each passed **351
+  assertions, zero failures**, including the research shortcut.
+- [Staging dry-run job](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/41808718641/job/126504086471)
+  (`ui-section-research-dry-20261104`, commit `76a4abd`): the request step **passed**
+  at 09:41:07 UTC, `ready-upgrade`, **69,937 CSS bytes**, no WordPress changes.
+  Direct Actions logs confirm that result. The **workflow failed at report
+  publication only**: GitHub returned Internal Server Error while pushing to
+  `ops-log`, so no published ops-log report exists for this run.
+- [First apply attempt](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/41809535022/job/126505018884)
+  (`ui-section-research-apply-20261104`, commit `3ece9f1`) **stopped before any
+  WordPress mutation** at 09:44:20 UTC: the encrypted offsite backup service
+  returned HTTP 502 and verification failed. The installer never reached its
+  apply phase. The [queued public check](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/41809702630)
+  therefore saw the old three-link guide (**65 assertions, 2 failures**); it does
+  not validate the research update. Report publication also failed with GitHub
+  Internal Server Errors. These outcomes are recorded from direct job logs.
+- The protected retry request `ui-section-research-apply-2-20261104` is prepared
+  **locally only; it has not been submitted or started**. GitHub rejected the
+  branch push with Internal Server Error; the connected API fallback timed out,
+  and a subsequent read confirmed the request was absent remotely. There is no
+  retry run to report. The research shortcut remains **not deployed**. A
+  successful apply, its actual upgrade snapshot, verified offsite backup and
+  fresh public checks are still required.
 
 ## Original guide verification — November 4, 2026
 
