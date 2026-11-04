@@ -30,9 +30,30 @@ const pages = ['', 'about', 'services', 'thai-massage', 'therapeutic-massage', '
 const researchPages = new Set(['thai-massage', 'therapeutic-massage', 'deep-tissue-massage', 'chair-massage']);
 const tick = page => page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
 async function scroll(page, fraction) {
-  await page.evaluate(value => scrollTo(0, (document.documentElement.scrollHeight - innerHeight) * value), fraction);
   await tick(page);
-  await page.waitForTimeout(80);
+  // Responsive layout and scroll anchoring may change the range after a resize.
+  // Settle document geometry and the requested position, never the indicator
+  // itself: its transform is still checked independently against actual scroll.
+  let stableSamples = 0;
+  let last;
+  for (let attempt = 0; attempt < 12; attempt++) {
+    const before = await page.evaluate(value => {
+      const maximum = Math.max(0, document.documentElement.scrollHeight - innerHeight);
+      scrollTo(0, maximum * value);
+      return { maximum, width: innerWidth, height: innerHeight };
+    }, fraction);
+    await tick(page);
+    await page.waitForTimeout(80);
+    last = await page.evaluate(() => ({
+      maximum: Math.max(0, document.documentElement.scrollHeight - innerHeight),
+      width: innerWidth, height: innerHeight, y: scrollY,
+    }));
+    const settled = last.maximum === before.maximum && last.width === before.width && last.height === before.height
+      && Math.abs(last.y - last.maximum * fraction) <= 1;
+    stableSamples = settled ? stableSamples + 1 : 0;
+    if (stableSamples >= 2) return;
+  }
+  throw new Error(`Document scroll did not settle at ${fraction}: ${JSON.stringify(last)} (${page.url()})`);
 }
 async function state(page) {
   return page.evaluate(() => {
@@ -45,7 +66,7 @@ async function state(page) {
       height: style.height, position: style.position, pointer: style.pointerEvents,
       color: style.backgroundColor,
       overflow: document.documentElement.scrollWidth > innerWidth,
-      maximum,
+      maximum, scrollY, viewportWidth: innerWidth, viewportHeight: innerHeight,
     };
   });
 }
@@ -135,7 +156,9 @@ try {
         check(`${view}: ${nativeTimeline ? 'correct scope' : 'fallback indicator hidden'}`, value.visible === nativeTimeline);
         if (!nativeTimeline) continue;
         check(`${view}: fixed 3px decoration ignores pointer`, value.position === 'fixed' && value.height === '3px' && value.pointer === 'none');
-        check(`${view}: tracks current scroll range`, value.scale !== null && Math.abs(value.scale - value.expected) < 0.025 && (value.maximum <= 0 || Math.abs(value.expected - 0.5) <= Math.max(0.05, 1 / value.maximum)));
+        const tracks = value.scale !== null && Math.abs(value.scale - value.expected) < 0.025 && (value.maximum <= 0 || Math.abs(value.expected - 0.5) <= Math.max(0.05, 1 / value.maximum));
+        check(`${view}: tracks current scroll range`, tracks);
+        if (!tracks) console.log(`INFO ${view}: progress mismatch ${JSON.stringify(value)}`);
         check(`${view}: uses theme accent`, await page.evaluate(() => {
           const swatch = document.createElement('span');
           swatch.style.color = 'var(--ts-accent-deep, #7A520A)';
