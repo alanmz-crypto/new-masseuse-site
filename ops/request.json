@@ -1,8 +1,10 @@
 {
-  "id": "ui-section-questions-dry-20261104",
+  "id": "ui-section-questions-apply-20261104",
   "op": "run",
   "target": "staging38",
   "script": "section-guide/push-section-guide.sh",
-  "args": [],
+  "args": [
+    "--apply"
+  ],
   "tests": "auto"
 }
