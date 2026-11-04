@@ -1,8 +1,8 @@
 {
-  "id": "live-section-guide-20261104-1",
+  "id": "live-page-navigation-20261104-1",
   "op": "run",
   "target": "live",
-  "script": "section-guide/push-section-guide.sh",
+  "script": "page-navigation/push-page-navigation.sh",
   "args": [
     "--apply"
   ],

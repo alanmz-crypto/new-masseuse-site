@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Paired page navigation on staging38 only. Dry by default; writes take
+# Paired page navigation on staging38 or live. Dry by default; writes take
 # a fresh DB export and verified encrypted off-site copy before writing.
 # See install-page-navigation.php and README.md for exact scope and rollback.
 # shellcheck disable=SC2016  # the single-quoted commands below are meant to expand on the server, not here
@@ -22,7 +22,7 @@ case "${1:-}" in
   *) echo "Usage: $0 [--apply | --rollback FILE]" >&2; exit 1 ;;
 esac
 target="${S_TARGET:-staging38}"
-case "$target" in staging38) ;; *) echo "S_TARGET must be staging38; live is not allowed." >&2; exit 1 ;; esac
+case "$target" in staging38|live) ;; *) echo "S_TARGET must be staging38 or live." >&2; exit 1 ;; esac
 if [ -n "$snap" ] && [[ ! "$snap" =~ ^(\$HOME|/home/[a-zA-Z0-9_-]+)/private-backups/page-navigation-before-[a-zA-Z0-9.-]+\.json$ ]]; then
   echo "Snapshot must be a page-navigation-before JSON inside private-backups." >&2; exit 1
 fi
@@ -38,7 +38,7 @@ read -r -d '' REMOTE <<'EOS' || true
 set -euo pipefail
 wp() { command wp --skip-plugins=sg-security "$@"; }   # SiteGround Security 1.6.9 + PHP 8.5 makes EVERY wp exit 0 on live (shutdown-handler bug); skipping that one plugin keeps exit codes true. See AGENTS.md and check-wp-exit-codes.sh.
 phase=$1; target=$2; snap=${3:-}
-case "$target" in staging38) want="staging38.thaisolitude.com" ;; *) echo "Remote refused: only staging38 is allowed." >&2; exit 1 ;; esac
+case "$target" in staging38) want="staging38.thaisolitude.com" ;; live) want="thaisolitude.com" ;; *) echo "Remote refused: only staging38 or live is allowed." >&2; exit 1 ;; esac
 command -v wp >/dev/null || { echo "wp-cli not found on the server" >&2; exit 1; }
 doc=""
 cfgs=$(mktemp); trap 'rm -f "$cfgs"' EXIT
@@ -80,7 +80,32 @@ case "$phase" in
       esac
       case "$route" in
         /services/|/thai-massage/|/therapeutic-massage/|/deep-tissue-massage/|/chair-massage/)
-          grep -Fq 'id="ts-section-guide-runtime"' "$tmp" || { echo "FAIL $route: missing native navigation runtime" >&2; exit 1; } ;;
+          for expected in 'id="ts-section-guide-runtime"' 'window.tsPageNavigationInitialized'; do
+            grep -Fq -- "$expected" "$tmp" || { echo "FAIL $route: missing current navigation runtime: $expected" >&2; exit 1; }
+          done
+          # Exact server-rendered maps reject stale inline links as well as stale native JS.
+          # Corporate's ampersand is escaped by WordPress esc_html() in the frozen renderer.
+          if [ "$route" = /services/ ]; then
+            links=(
+              'ts-chair-massage|Chair massage' 'ts-corporate-group|Corporate &amp; group'
+              'ts-therapeutic-massage|Therapeutic massage' 'ts-deep-tissue-massage|Deep tissue massage'
+              'ts-thai-massage|Thai massage' 'ts-your-session|Your session' 'ts-what-to-expect|What to expect'
+            )
+          else
+            links=('ts-what-it-is|What it is' 'ts-common-reasons|Common reasons')
+            case "$route" in
+              /therapeutic-massage/|/chair-massage/)
+                links+=('ts-who-can-benefit|Who can benefit' 'ts-guide-questions|Questions' 'ts-what-to-expect|What to expect') ;;
+              *) links+=('ts-what-to-expect|What to expect' 'ts-guide-questions|Questions') ;;
+            esac
+            links+=('ts-guide-research|What Research Says')
+          fi
+          expected_nav='<nav class="ts-jump" aria-label="On this page"><ul class="ts-jump__list">'
+          for link in "${links[@]}"; do
+            expected_nav+="<li><a href=\"#${link%%|*}\">${link#*|}</a></li>"
+          done
+          expected_nav+='</ul></nav>'
+          grep -Fq -- "$expected_nav" "$tmp" || { echo "FAIL $route: current complete inline navigation map differs" >&2; exit 1; } ;;
         *) if grep -Fq 'id="ts-section-guide-runtime"' "$tmp"; then echo "FAIL $route: unexpected native runtime" >&2; exit 1; fi ;;
       esac
       echo "public check: $route HTTP 200; licence, unchanged CSS markers and scoped navigation verified"
