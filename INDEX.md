@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-04 12:45 UTC  **PASS**  `ui-page-navigation-browser-20261104`  [reports/2026-11-04/124559-ui-page-navigation-browser-20261104.md](reports/2026-11-04/124559-ui-page-navigation-browser-20261104.md)  (run 41831499758)
 - 2026-11-04 12:41 UTC  **PASS**  `ui-page-navigation-apply-20261104`  [reports/2026-11-04/124116-ui-page-navigation-apply-20261104.md](reports/2026-11-04/124116-ui-page-navigation-apply-20261104.md)  (run 41831164491)
 - 2026-11-04 12:39 UTC  **PASS**  `ui-page-navigation-dry-2-20261104`  [reports/2026-11-04/123903-ui-page-navigation-dry-2-20261104.md](reports/2026-11-04/123903-ui-page-navigation-dry-2-20261104.md)  (run 41829739285)
 - 2026-11-04 12:38 UTC  **PASS**  `ui-page-navigation-rehearse-2-20261104`  [reports/2026-11-04/123826-ui-page-navigation-rehearse-2-20261104.md](reports/2026-11-04/123826-ui-page-navigation-rehearse-2-20261104.md)  (run 41829646501)
