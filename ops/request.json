@@ -1,11 +1,7 @@
 {
-  "id": "rollback-pill-nav-v2-staging39-20261108",
-  "op": "run",
+  "id": "rehearse-pill-nav-20261108-3",
+  "op": "rehearse",
   "target": "staging39",
-  "script": "link-ideas/push-pill-nav.sh",
-  "args": [
-    "--rollback",
-    "$HOME/private-backups/pill-nav-before-20261108-010400-f14ff46f.json"
-  ],
-  "tests": "auto"
+  "installer": "link-ideas/install-pill-nav.php",
+  "args": []
 }
