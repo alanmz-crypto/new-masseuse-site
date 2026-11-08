@@ -24,7 +24,7 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     const Y = () => p.evaluate(() => Math.round(scrollY));
     const seg = i => p.evaluate(k => { const r = document.querySelectorAll('.ts-pk-rail li')[k].getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; }, i);
     const slideTo = async (i, lift = true) => { const a = await seg(0), z = await seg(i); await touch('touchStart', a.x, a.y); for (let k = 1; k <= 8; k++) { await touch('touchMove', a.x, a.y + (z.y - a.y) * k / 8); await W(30); } if (lift) { await touch('touchEnd'); await W(600); } };
-    const card = () => p.evaluate(() => { const c = document.querySelector('.ts-pk-card'); return { on: c.classList.contains('is-on'), pinned: c.classList.contains('is-pinned'), name: (c.querySelector('.open > b') || {}).textContent || '', heading: (c.querySelector('.shot strong') || {}).textContent || '', excerpt: (c.querySelector('.shot em') || {}).textContent || '', desc: (c.querySelector('.open .d') || {}).textContent || '', lines: c.querySelectorAll('.shot > span').length, inView: c.getBoundingClientRect().left >= 0 }; });
+    const card = () => p.evaluate(() => { const c = document.querySelector('.ts-pk-card'); return { on: c.classList.contains('is-on'), pinned: c.classList.contains('is-pinned'), name: (c.querySelector('.open > b') || {}).textContent || '', sum: ((c.querySelector('.open .sum') || {}).textContent || '').trim(), second: !!c.querySelector('.open .shot, .open .open, .open .ts-pk-card, .open .d'), inView: c.getBoundingClientRect().left >= 0 }; });
     const strip = () => p.evaluate(() => { const items = [...document.querySelectorAll('.ts-pk-top .tr span')], k = items.findIndex(x => x.classList.contains('is-now')); return (k < 0 ? '' : items[k].textContent) + ' / ' + (k + 1) + ' of ' + items.length; });   // the title in the middle, and its place
     const landed = sel => p.evaluate(s => { const h = document.querySelector(s).getBoundingClientRect().top, sb = document.querySelector('.ts-pk-top').getBoundingClientRect().bottom; return { h: Math.round(h), sb: Math.round(sb), ok: h >= sb - 2 && sb + 40 >= h }; }, sel);
     const hrefOf = i => p.evaluate(k => document.querySelectorAll('.entry-content .ts-jump a')[k].getAttribute('href'), i);
@@ -93,7 +93,7 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     ok(`${tag} touching the strip does nothing`, (await Y()) === y0 && !(await card()).on);
     await slideTo(3, false);
     let c = await card();
-    ok(`${tag} sliding the rail previews the section: name, description, its real heading and its first lines`, c.on && c.name === 'Questions' && c.desc.length > 20 && c.heading.length > 5 && c.excerpt.length > 30 && c.lines === 3 && c.inView, JSON.stringify(c));
+    ok(`${tag} sliding the rail previews the section: its name and a summary, with no second window inside (Ryan, 2026-11-08)`, c.on && c.name === 'Questions' && c.sum.length > 60 && !c.second && c.inView, JSON.stringify(c));
     ok(`${tag} the page does not move while browsing`, (await Y()) === y0);
     await touch('touchEnd'); await W(600);
     ok(`${tag} lifting keeps the preview, no jump`, (await card()).pinned && (await Y()) === y0);
@@ -114,10 +114,27 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     ok(`${tag} stack: now 3 closed boxes above and 1 below`, await p.evaluate(() => { const c = document.querySelector('.ts-pk-card'), o = c.querySelector('.open'), rows = [...c.querySelectorAll('.row')]; return rows.filter(x => o.compareDocumentPosition(x) & Node.DOCUMENT_POSITION_PRECEDING).length === 3 && rows.filter(x => o.compareDocumentPosition(x) & Node.DOCUMENT_POSITION_FOLLOWING).length === 1; }));
     await touch('touchStart', 12, Math.round((await p.evaluate(() => innerHeight)) * 0.6)); await touch('touchEnd'); await W(400);
     for (const k of [0, 1, 2, 4]) { await slideTo(k, false); const ck = await card(); await touch('touchEnd'); await W(300);
-      ok(`${tag} preview of "${labels[k]}" has its description, heading and first lines`, ck.name === labels[k] && ck.desc.length > 20 && ck.heading.length > 5 && ck.excerpt.length > 30, JSON.stringify(ck)); }
+      ok(`${tag} preview of "${labels[k]}" has a summary and no inner window`, ck.name === labels[k] && ck.sum.length > 60 && !ck.second, JSON.stringify(ck)); }
+    // Ryan, 2026-11-08: no second window; a concise summary of the topic, scrollable, read without jumping
+    await slideTo(3); y0 = await Y();
+    const sm = await p.evaluate(() => { const s = document.querySelector('.ts-pk-card .open .sum'), cs = getComputedStyle(s), norm = t => t.replace(/\s+/g, ' ').trim(), page = norm(document.querySelector('.entry-content').textContent);
+      const sents = norm(s.textContent).split(/(?<=[.!?])\s+/).map(x => x.replace(/[.!?:]+$/, '')).filter(Boolean);
+      return { n: sents.length, own: sents.every(x => page.includes(x)), missing: sents.filter(x => !page.includes(x)), oy: cs.overflowY, tab: s.tabIndex, role: s.getAttribute('role'), label: s.getAttribute('aria-label') || '', len: s.textContent.length, sh: s.scrollHeight, ch: s.clientHeight }; });
+    ok(`${tag} summary: only the page's own sentences (regulated copy), at least two, at most about 480 characters`, sm.own && sm.n >= 2 && sm.len <= 700, JSON.stringify(sm));
+    ok(`${tag} summary: scrollable, a keyboard stop and a named region`, sm.oy === 'auto' && sm.tab === 0 && sm.role === 'region' && sm.label.includes('Questions'), JSON.stringify(sm));
+    if (sm.sh > sm.ch + 4) {
+      const sb = await p.$eval('.ts-pk-card .open .sum', e => { const r = e.getBoundingClientRect(); return { x: Math.round(r.left + r.width / 2), y: Math.round(r.bottom - 8) }; }), h0 = await p.evaluate(() => location.hash);
+      await touch('touchStart', sb.x, sb.y); for (let k = 1; k <= 8; k++) { await touch('touchMove', sb.x, sb.y - 10 * k); await W(30); } await touch('touchEnd'); await W(700);
+      const after = await p.evaluate(() => ({ top: document.querySelector('.ts-pk-card .open .sum').scrollTop, hash: location.hash }));
+      c = await card();
+      ok(`${tag} summary: dragging it scrolls the summary, not the page; no jump, the box stays open`, after.top > 10 && (await Y()) === y0 && after.hash === h0 && c.on && c.pinned && c.name === 'Questions', JSON.stringify({ after, y: await Y(), y0, c }));
+    } else ok(`${tag} summary: short enough to show whole (no scrolling needed)`, sm.sh <= sm.ch + 4, JSON.stringify(sm));
+    const sc = await p.$eval('.ts-pk-card .open .sum', e => { const r = e.getBoundingClientRect(); return { x: Math.round(r.left + r.width / 2), y: Math.round(r.top + 10) }; });
+    await touch('touchStart', sc.x, sc.y); await touch('touchEnd'); await W(1200);
+    c = await card(); ok(`${tag} summary: tapping it never jumps`, (await Y()) === y0 && c.on && c.name === 'Questions', JSON.stringify(c));
     await touch('touchStart', 12, Math.round(st.vh * 0.6)); await touch('touchEnd'); await W(400);   // the page's left margin (the top is now the pinned header)
     ok(`${tag} tapping elsewhere closes the preview and keeps the place`, !(await card()).on && (await Y()) === y0);
-    await slideTo(3); await p.tap('.ts-pk-card .shot'); await W(300);
+    await slideTo(3); await p.tap('.ts-pk-card .open > b'); await W(300);
     ok(`${tag} the heading glows briefly after the jump`, await p.evaluate(h => document.querySelector(h).classList.contains('ts-pk-flash'), await hrefOf(3)));
     await W(1300);
     let L = await landed(await hrefOf(3)); ok(`${tag} tapping the preview jumps, heading just below the strip`, L.ok, JSON.stringify(L));
@@ -139,7 +156,7 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     await p.keyboard.press('Escape'); await W(200);
     ok(`${tag} keyboard order: the rail comes right after the strip, before the sections`, await p.evaluate(() => { const n = document.querySelector('.ts-pk-nav'), h = document.querySelector('.entry-content h2'), st = document.querySelector('.ts-pk-top'); return !!(st.compareDocumentPosition(n) & Node.DOCUMENT_POSITION_FOLLOWING) && !!(n.compareDocumentPosition(h) & Node.DOCUMENT_POSITION_FOLLOWING); }));
     const hl = await p.evaluate(() => history.length); y0 = await Y();
-    await slideTo(4); await p.tap('.ts-pk-card .shot'); await W(1600);
+    await slideTo(4); await p.tap('.ts-pk-card .open > b'); await W(1600);
     ok(`${tag} a jump adds no browser-history entry`, (await p.evaluate(() => history.length)) === hl);
     await p.evaluate(y => scrollTo(0, y), y0); await W(800);
     const cssText = await p.evaluate(() => document.getElementById('ts-peek-nav-css').textContent);
@@ -148,7 +165,7 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     // second Kiro review (2026-11-08): taps that are already handled never reach what is underneath; Enter on ×; one keyboard stop
     await p.evaluate(() => { const t = document.createElement('a'); t.id = 'pk-under'; t.href = '#pk-under'; t.style.cssText = 'position:fixed;inset:0;z-index:50'; window.__under = 0; t.addEventListener('click', e => { e.preventDefault(); window.__under++; }); document.body.appendChild(t); });
     await slideTo(2); y0 = await Y();
-    const shotAt = await p.$eval('.ts-pk-card .shot', e => { const r = e.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
+    const shotAt = await p.$eval('.ts-pk-card .open > b', e => { const r = e.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
     await touch('touchStart', shotAt.x, shotAt.y); await touch('touchEnd'); await W(1500);
     ok(`${tag} a tap on the preview jumps and does not also click what is under the card`, (await Y()) !== y0 && (await p.evaluate(() => window.__under)) === 0, `under=${await p.evaluate(() => window.__under)}`);
     await slideTo(1);
@@ -199,13 +216,13 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     ok(`${tag} index slide: the names fan out first`, (await fanState()).open);
     for (let k = 1; k <= 10; k++) { await touch('touchMove', ixAt2.x, ixAt2.y + (q.y - ixAt2.y) * k / 10); await W(30); }
     c = await card(); fs = await fanState();
-    ok(`${tag} index slide: sliding onto the rail closes the fan and previews the section under the finger`, !fs.open && c.on && !c.pinned && c.name === 'Questions' && c.heading.length > 5, JSON.stringify({ fan: fs.open, c }));
+    ok(`${tag} index slide: sliding onto the rail closes the fan and previews the section under the finger`, !fs.open && c.on && !c.pinned && c.name === 'Questions' && c.sum.length > 60, JSON.stringify({ fan: fs.open, c }));
     ok(`${tag} index slide: the page does not move`, (await Y()) === y0);
     const q2 = await seg(1); for (let k = 1; k <= 5; k++) { await touch('touchMove', ixAt2.x, q.y + (q2.y - q.y) * k / 5); await W(30); }
     ok(`${tag} index slide: the preview follows the finger along the rail`, (await card()).name === 'Common reasons');
     await touch('touchEnd'); await W(600);
     c = await card(); ok(`${tag} index slide: lifting keeps the preview, no jump`, c.pinned && c.name === 'Common reasons' && (await Y()) === y0, JSON.stringify(c));
-    await p.tap('.ts-pk-card .shot'); await W(1600);
+    await p.tap('.ts-pk-card .open > b'); await W(1600);
     L = await landed(await hrefOf(1)); ok(`${tag} index slide: tapping the preview then jumps there`, L.ok, JSON.stringify(L));
     await p.evaluate(y => scrollTo(0, y), y0); await W(800);
     await touch('touchStart', ixAt2.x, ixAt2.y); await W(300); await touch('touchMove', ixAt2.x - 6, ixAt2.y + 6); await W(100); await touch('touchEnd'); await W(600);
@@ -309,7 +326,7 @@ for (const [label, init] of [['landscape, 7 sections', [addSections]], ['landsca
   const cdp = await ctx.newCDPSession(p);
   const z = await p.evaluate(() => { const r = document.querySelectorAll('.ts-pk-rail li')[2].getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
   await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [z] }); await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] }); await p.waitForTimeout(500);
-  const t0 = await p.evaluate(() => { const c = document.querySelector('.ts-pk-card'); return { y: Math.round(scrollY), fit: c.className.match(/fit\d/g) || [], shot: !!c.querySelector('.shot') && getComputedStyle(c.querySelector('.shot')).display !== 'none' }; });
+  const t0 = await p.evaluate(() => { const c = document.querySelector('.ts-pk-card'); return { y: Math.round(scrollY), fit: c.className.match(/fit\d/g) || [], shot: !!c.querySelector('.sum') && getComputedStyle(c.querySelector('.sum')).display !== 'none' && !c.querySelector('.sum').closest('.fit1, .fit2, .fit3') }; });
   ok('at the top of the page the preview keeps its full detail (measured from where the strip sticks)', t0.y === 0 && t0.shot && !t0.fit.includes('fit2') && !t0.fit.includes('fit3'), JSON.stringify(t0));
   await p.keyboard.press('Escape'); await p.waitForTimeout(300);
   await p.evaluate(() => document.querySelectorAll('.ts-pk-rail a')[1].dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 }))); await p.waitForTimeout(300);

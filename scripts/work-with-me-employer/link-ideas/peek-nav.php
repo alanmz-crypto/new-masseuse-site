@@ -53,11 +53,9 @@ html .ts-pk .ts-pk-card .row b{display:grid;place-items:center;flex:0 0 auto;wid
 html .ts-pk .ts-pk-card .row span{min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .ts-pk-card .d{display:block;font-size:.86rem;line-height:1.4;color:var(--pk-ink);opacity:.9}
 .ts-pk-card .here{display:block;margin-top:.35rem;font-size:.75rem;color:var(--pk-muted)}
-.ts-pk-card .shot{display:block;margin:.55rem 0 0;padding:.7rem .75rem;border-radius:12px;background:var(--pk-ground);border:1px solid var(--pk-rule)}
-.ts-pk-card .shot strong{display:block;font-size:.95rem;line-height:1.25;margin:0 0 .3rem}
-.ts-pk-card .shot em{display:block;font-style:normal;font-size:.82rem;line-height:1.4;color:var(--pk-muted);margin:0 0 .45rem}
-.ts-pk-card .shot span{display:block;height:.42rem;margin:0 0 .32rem;border-radius:9px;background:var(--pk-stone)}
-.ts-pk-card .shot span:nth-of-type(2){width:80%}.ts-pk-card .shot span:nth-of-type(3){width:60%}
+/* the summary: the section's own opening sentences, scrollable inside the open box (no second window; touching or scrolling it never jumps) */
+.ts-pk-card .sum{display:block;margin:.5rem 0 0;padding:0 .35rem 0 0;max-height:9.8em;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;font-size:.86rem;line-height:1.45;color:var(--pk-ink);cursor:auto}
+.ts-pk-card .sum:focus-visible{outline:3px solid var(--pk-accent);outline-offset:2px;border-radius:6px}
 .ts-pk-card .hint{display:block;margin-top:.6rem;padding-top:.55rem;border-top:1px solid var(--pk-rule);font-size:.82rem;font-weight:700;color:var(--pk-on)}
 html[data-ts-theme="dark"] .ts-pk-card .hint{color:var(--pk-on)}
 .ts-pk-card .x{position:absolute;right:.35rem;top:.35rem;display:none;width:40px;height:40px;margin:0;padding:0;border:0;border-radius:50%;background:transparent;color:var(--pk-muted);font:inherit;font-size:1.3rem;line-height:1;cursor:pointer;touch-action:manipulation}
@@ -68,7 +66,6 @@ html[data-ts-theme="dark"] .ts-pk-card .hint{color:var(--pk-on)}
 .ts-pk-flash{border-radius:8px;background:rgba(200,150,62,.28);background:color-mix(in srgb,var(--pk-accent) 28%,transparent);transition:background-color .6s}
 .ts-pk-unflash{transition:background-color .6s}
 /* keep the text clear of the rail on phones and tablets; the bottom "On this page" button is replaced by the rail */
-@media (max-height:500px){.ts-pk-card .shot>span,.ts-pk-card .here{display:none}.ts-pk-card .shot em{margin:0}}   /* landscape phones: the card fits the screen */
 html.ts-pk-ready.ts-pk-pad:not(.ts-pk-left) .entry-content{padding-right:var(--pk-clear)}   /* the strip's text stays clear of the rail while it is still in the page */
 html.ts-pk-ready .entry-content .ts-jump{display:none!important}   /* Ryan, 2026-11-08: "You can remove the in-page links beneath header." The strip, rail and index replace the row; without JavaScript (no ts-pk-ready) it still shows and works */
 html.ts-pk-ready #ts-section-guide-trigger,html.ts-pk-ready #ts-section-guide-popover{display:none!important}   /* only once the rail is there */
@@ -134,10 +131,9 @@ html.ts-pk-ready body.admin-bar #masthead .ast-mobile-header-content{max-height:
 }
 @media (min-height:501px) and (max-width:600px){html.ts-pk-ready body.admin-bar #masthead{top:0}}
 /* the stack fits between the strip and the bottom of the screen: it gives up detail in steps (fit1-fit3), never the open box's name and "Tap to go there" */
-html .ts-pk .ts-pk-card.fit1 .shot>span,html .ts-pk .ts-pk-card.fit1 .here{display:none}
-html .ts-pk .ts-pk-card.fit1 .shot em{margin:0}
-html .ts-pk .ts-pk-card.fit2 .shot{display:none}
-html .ts-pk .ts-pk-card.fit3 .open .d{display:none}
+html .ts-pk .ts-pk-card.fit1 .here{display:none}
+html .ts-pk .ts-pk-card.fit2 .sum{max-height:6.6em}
+html .ts-pk .ts-pk-card.fit3 .sum{max-height:4.4em}
 html .ts-pk .ts-pk-card.fit3 .row{min-height:26px;padding:.1rem .5rem;font-size:.75rem}
 html .ts-pk .ts-pk-card.fit3 .row b{width:1.2rem;height:1.2rem}
 html .ts-pk .ts-pk-card.fit3 .open{padding:.45rem .7rem}
@@ -145,7 +141,7 @@ html .ts-pk .ts-pk-card .more{display:none;margin:.2rem .3rem;font-size:.72rem;f
 html .ts-pk .ts-pk-card.fit4 .row:not(.near){display:none}
 html .ts-pk .ts-pk-card.fit4 .more{display:block}
 html .ts-pk .ts-pk-card.fit5 .row,html .ts-pk .ts-pk-card.fit5 .more{display:none}
-html .ts-pk .ts-pk-card.fit5 .open small,html .ts-pk .ts-pk-card.fit5 .side{display:none}
+html .ts-pk .ts-pk-card.fit5 .open small,html .ts-pk .ts-pk-card.fit5 .side,html .ts-pk .ts-pk-card.fit5 .sum{display:none}
 html .ts-pk .ts-pk-card.fit5 .open > b{font-size:.95rem;margin-top:0}
 html .ts-pk .ts-pk-card.fit5 .hint{margin-top:.3rem;padding-top:.3rem}   /* very short screens or very large text: the open box keeps only its name and "Tap to go there" */
 html .ts-pk .ts-pk-card.ts-pk-stack{overflow-y:auto;overscroll-behavior:contain}   /* last resort: the card scrolls, and fit() brings the open box into view */
@@ -192,7 +188,24 @@ add_action( 'wp_footer', function () {
           }
         }
       });
+      S.forEach(function (s, i) { s.summary = summarize(i) || s.excerpt || s.desc; });
       if (segs) segs.forEach(function (li, i) { li.querySelector('a').setAttribute('aria-label', S[i].label + (S[i].desc ? ': ' + S[i].desc : '')); });   // the rail's names for screen readers include the description
+    }
+
+    // a summary of a section made only of its own words: its opening sentences, in order, about 3 to 5 sentences (the copy is regulated, so nothing is reworded)
+    function summarize(i) {
+      var h = el(i), nx = el(i + 1); if (!h) return '';
+      var text = [];
+      [].forEach.call(content.querySelectorAll('p, li'), function (p) {
+        if (!(h.compareDocumentPosition(p) & Node.DOCUMENT_POSITION_FOLLOWING) || (nx && !(p.compareDocumentPosition(nx) & Node.DOCUMENT_POSITION_FOLLOWING))) return;
+        if (p.closest('.ts-pk') || p.closest('.ts-jump') || p.closest('nav') || p.closest('figcaption') || p.querySelector('p, li')) return;
+        var t = p.textContent.trim().replace(/\s+/g, ' '); if (t.length < 25 || /\?$/.test(t)) return;
+        text.push(/[.!?:]$/.test(t) ? t : t + '.');
+      });
+      var all = text.join(' ').replace(/\b(Dr|Mr|Mrs|Ms|St|vs|etc|e\.g|i\.e)\./gi, function (m) { return m.replace(/\./g, '\u2024'); });
+      var sent = all.match(/[^.!?]+[.!?]+(\s|$)/g) || (all ? [all] : []), out = '';
+      for (var k = 0; k < sent.length; k++) { if (out && (out.length >= 480 || k >= 5)) break; out += sent[k]; }
+      return out.trim().replace(/\u2024/g, '.');
     }
 
     // the parts: top strip (display only), rail with its index icon, card
@@ -317,8 +330,8 @@ add_action( 'wp_footer', function () {
     }
     function openHTML(i, pinned) {
       var s = S[i], here = i === cur ? 'You are reading this section.' : (cur < 0 ? '' : 'You are in: ' + S[cur].label);
-      return '<button type="button" class="x" aria-label="Close the preview">×</button><small>Section ' + (i + 1) + ' of ' + S.length + ' · ' + s.mins + ' min</small><b>' + esc(s.label) + '</b>' + (s.desc ? '<span class="d">' + esc(s.desc) + '</span>' : '') + '<span class="here">' + esc(here) + '</span>' +
-        '<span class="shot"><strong>' + esc(s.heading) + '</strong>' + (s.excerpt ? '<em>' + esc(s.excerpt) + '</em>' : '') + '<span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span></span>' +
+      return '<button type="button" class="x" aria-label="Close the preview">×</button><small>Section ' + (i + 1) + ' of ' + S.length + ' · ' + s.mins + ' min</small><b>' + esc(s.label) + '</b><span class="here">' + esc(here) + '</span>' +
+        (s.summary ? '<div class="sum" tabindex="0" role="region" aria-label="Summary of ' + esc(s.label) + '">' + esc(s.summary) + '</div>' : '') +
         '<span class="hint"><span>' + (pinned ? 'Tap to go there' : 'Lift to keep this preview') + '</span>' + (pinned ? '<button type="button" class="side" aria-label="Move the section bar to the ' + sideName() + ' side">⇆ ' + (sideName() === 'left' ? 'Left' : 'Right') + '</button>' : '') + '</span>';
     }
     function hover(i) { segs.forEach(function (li, k) { li.classList.toggle('is-hover', k === i); }); }
@@ -363,6 +376,7 @@ add_action( 'wp_footer', function () {
         var k = +row.getAttribute('data-k'), rr = row.getBoundingClientRect(), f = card.contains(document.activeElement);
         show(k, rr.top + rr.height / 2, true); hover(k); if (f) { var no = card.querySelector('.open'); (no || card).focus({ preventScroll: true }); } return;   // screen readers hear the new section
       }
+      if (target.closest('.sum')) return;   // reading the summary (tapping or scrolling it) never jumps
       var i = +card.dataset.i, hadFocus = card.contains(document.activeElement); hideCard();
       if (target.closest('.side')) { setSide(sideName() === 'left'); if (hadFocus) focusSeg(i); return; }
       if (target.closest('.x')) { if (hadFocus) focusSeg(i); return; }   // closing keeps keyboard users on the rail
