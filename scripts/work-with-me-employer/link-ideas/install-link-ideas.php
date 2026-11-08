@@ -39,6 +39,9 @@ if ( ! is_file( $src ) ) {
 }
 $html    = rtrim( (string) file_get_contents( $src ) );
 $content = "<!-- wp:html -->\n" . $html . "\n<!-- /wp:html -->";
+if ( preg_match( '/\\[[^\\]\\n]*&[^\\]\\n]*\\]/', (string) strstr( $html, '<script>' ) ) ) {
+	WP_CLI::error( 'Internal error: the script has an ampersand inside [...], which WordPress escapes when it renders the page.' );
+}
 if ( 1 !== substr_count( $html, '<script>' ) || 1 !== substr_count( $html, '<style>' ) || false !== strpos( $html, '<!-- wp:' ) ) {
 	WP_CLI::error( 'Internal error: link-ideas.html is not the reviewed single block.' );
 }
@@ -115,8 +118,9 @@ $snap = $file && is_file( $file ) ? json_decode( (string) file_get_contents( $fi
 if ( ! is_array( $snap ) || ( $snap['home'] ?? '' ) !== $home || ( $snap['slug'] ?? '' ) !== $slug || empty( $snap['page_id'] ) ) {
 	WP_CLI::error( 'Snapshot is missing, incomplete (the apply may not have finished), or from another site.' );
 }
-if ( 'applied' !== $now['state'] || (int) $now['id'] !== (int) $snap['page_id'] ) {
-	WP_CLI::success( 'Nothing to roll back: the page this snapshot names is not there in its original form (' . $now['report'] . ').' );
+// the page this snapshot names, carrying this installer's marker (any earlier version of link-ideas.html): it is ours to delete
+if ( 'ready' === $now['state'] || (int) $now['id'] !== (int) $snap['page_id'] || '1' !== (string) get_post_meta( (int) $snap['page_id'], '_ts_link_ideas', true ) ) {
+	WP_CLI::success( 'Nothing to roll back: the page this snapshot names is not there with this installer\'s marker (' . $now['report'] . ').' );
 	return;
 }
 wp_delete_post( (int) $snap['page_id'], true );
