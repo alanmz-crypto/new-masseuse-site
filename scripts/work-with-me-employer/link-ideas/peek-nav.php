@@ -12,9 +12,9 @@ add_action( 'wp_head', function () {
 html[data-ts-theme="dark"] .ts-pk{--pk-on:#8CCB5B;--pk-on-text:#0E141C}
 .ts-pk,.ts-pk *,.ts-pk *::before{box-sizing:border-box}
 /* top strip: display only */
-.ts-pk-top{position:sticky;top:0;z-index:90;margin:0 -12px 1.25rem;padding:.45rem 12px .55rem;background:var(--pk-ground);background:color-mix(in srgb,var(--pk-ground) 94%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--pk-rule);pointer-events:none;-webkit-user-select:none;user-select:none}
-body.admin-bar .ts-pk-top{top:var(--wp-admin--admin-bar--height,32px)}
-@media (max-width:600px){body.admin-bar .ts-pk-top{top:0}}
+.ts-pk-top{position:sticky;top:var(--pk-head,0px);z-index:90;margin:0 -12px 1.25rem;padding:.45rem 12px .55rem;background:var(--pk-ground);background:color-mix(in srgb,var(--pk-ground) 94%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--pk-rule);pointer-events:none;-webkit-user-select:none;user-select:none}
+body.admin-bar .ts-pk-top{top:calc(var(--wp-admin--admin-bar--height,32px) + var(--pk-head,0px))}
+@media (max-width:600px){body.admin-bar .ts-pk-top{top:var(--pk-head,0px)}}
 .ts-pk-top .in{margin:0}
 .ts-pk-top p{display:flex;justify-content:space-between;gap:1rem;margin:0 0 .35rem;font-size:.82rem;line-height:1.3;color:var(--pk-muted)}
 .ts-pk-top p b{min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:var(--pk-ink);font-weight:700}
@@ -23,7 +23,7 @@ body.admin-bar .ts-pk-top{top:var(--wp-admin--admin-bar--height,32px)}
 .ts-pk-top li{flex:var(--len,1) 1 0;min-width:0;height:5px;margin:0;border-radius:9px;background:var(--pk-rule);overflow:hidden}
 .ts-pk-top li i{display:block;height:100%;border-radius:inherit;background:var(--pk-on);transform-origin:left;transform:scaleX(var(--p,0))}
 /* rail: right edge, thumb zone */
-.ts-pk-nav{position:fixed;right:max(2px,env(safe-area-inset-right));top:30%;bottom:max(14%,76px);z-index:91;width:44px}   /* % follows the visible viewport on iOS */
+.ts-pk-nav{position:fixed;right:max(2px,env(safe-area-inset-right));top:max(30%,calc(var(--pk-head,0px) + var(--pk-strip,0px) + 64px));bottom:max(14%,76px);z-index:91;width:44px}   /* % follows the visible viewport on iOS; the index icon stays clear of the header and strip */
 .ts-pk-rail{position:absolute;inset:0;display:flex;flex-direction:column;gap:5px;margin:0;padding:8px 0;list-style:none;touch-action:none;-webkit-user-select:none;user-select:none;border-radius:22px;transition:background-color .2s,box-shadow .2s}
 .ts-pk-nav.is-active .ts-pk-rail{background:var(--pk-panel);background:color-mix(in srgb,var(--pk-panel) 92%,transparent);box-shadow:0 6px 24px -12px rgba(0,0,0,.45)}
 .ts-pk-rail li{position:relative;flex:var(--len,1) 1 0;min-height:22px;margin:0;padding:0}
@@ -118,6 +118,13 @@ html.ts-pk-left .ts-pk .ts-pk-fan li{right:auto;left:52px;transform:translateX(-
 html.ts-pk-left .ts-pk .ts-pk-nav.is-index .ts-pk-fan li{transform:none}
 .ts-pk-nav.is-index .ts-pk-label{opacity:0}
 @media (prefers-reduced-motion:reduce){html .ts-pk .ts-pk-fan li,html .ts-pk .ts-pk-ix{transition-duration:.01ms!important;transition-delay:0ms!important}}
+/* the site header stays on top (Ryan, 2026-11-08: "make the header persistent too"); not on short landscape screens, where header, strip and rail would not fit */
+@media (min-height:501px){
+html.ts-pk-ready #masthead{position:sticky;top:0;z-index:96}
+html.ts-pk-ready body.admin-bar #masthead{top:var(--wp-admin--admin-bar--height,32px)}
+html.ts-pk-ready #masthead .ast-mobile-header-content{max-height:calc(100vh - var(--pk-head,0px));max-height:calc(100dvh - var(--pk-head,0px));overflow-y:auto}   /* the phone menu still opens fully from the pinned header */
+}
+@media (min-height:501px) and (max-width:600px){html.ts-pk-ready body.admin-bar #masthead{top:0}}
 @media print{.ts-pk{display:none!important}}
 </style>
 	<?php
@@ -182,6 +189,16 @@ add_action( 'wp_footer', function () {
     segs = [].slice.call(rail.children);
     var tip = box.querySelector('.ts-pk-tip'), ixBtn = nav.querySelector('.ts-pk-ix'), fan = nav.querySelector('.ts-pk-fan'), fanItems = [].slice.call(fan.children);
     root.classList.add('ts-pk-ready');
+    // the pinned header: the strip sticks right under it (its height changes with the phone menu, the logo and the admin bar)
+    var head = document.getElementById('masthead');
+    function measureHead() {
+      var pinned = head && getComputedStyle(head).position === 'sticky';
+      root.style.setProperty('--pk-head', (pinned ? head.offsetHeight : 0) + 'px');
+      root.style.setProperty('--pk-strip', strip.offsetHeight + 'px');
+    }
+    measureHead();
+    if (head && 'ResizeObserver' in window) new ResizeObserver(measureHead).observe(head);
+    window.addEventListener('resize', measureHead);
 
     // left-hand option (remembered on this device)
     function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } return null; }
@@ -201,7 +218,7 @@ add_action( 'wp_footer', function () {
 
     // where the reader is
     var cur = -1;
-    function line() { return Math.max(window.innerHeight * 0.25, top.offsetHeight + 24); }
+    function line() { return Math.max(window.innerHeight * 0.25, (parseFloat(getComputedStyle(top).top) || 0) + top.offsetHeight + 24); }   // below the pinned header and the strip
     function bounds(i) { var h = el(i), nx = el(i + 1), a = h ? h.getBoundingClientRect().top : 0, b = nx ? nx.getBoundingClientRect().top : content.getBoundingClientRect().bottom; return [a, b]; }
     function part(i) { var b = bounds(i); return Math.max(0, Math.min(1, (line() - b[0]) / Math.max(1, b[1] - b[0]))); }
     function fill(i) { return i < cur ? 1 : (i === cur ? part(i) : 0); }

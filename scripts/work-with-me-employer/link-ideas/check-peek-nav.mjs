@@ -38,7 +38,17 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     ok(`${tag} the rail's names for screen readers include each section's description`, (await p.$$eval('.ts-pk-rail a', a => a.map(x => x.getAttribute('aria-label')))).every(l => l && l.includes(': ') && l.length > 25), (await p.$$eval('.ts-pk-rail a', a => a.map(x => x.getAttribute('aria-label')))).join(' | '));
     await p.evaluate(() => { const h = document.querySelectorAll('.entry-content .ts-jump a')[1]; const t = document.getElementById(h.getAttribute('href').slice(1)); scrollTo(0, t.getBoundingClientRect().top + scrollY - 100); }); await W(700);
     const st = await p.evaluate(() => { const t = document.querySelector('.ts-pk-top'), r = t.getBoundingClientRect(), n = document.querySelector('.ts-pk-rail').getBoundingClientRect(); return { top: Math.round(r.top), h: Math.round(r.height), pe: getComputedStyle(t).pointerEvents, controls: t.querySelectorAll('a,button,[tabindex]').length, rail: { top: Math.round(n.top), bottom: Math.round(n.bottom), right: Math.round(n.right) }, vh: innerHeight, vw: innerWidth, fills: [...t.querySelectorAll('li i')].map(i => +i.style.getPropertyValue('--p')) }; });
-    ok(`${tag} once past the row, the strip shows at the top`, st.top === 0 && st.h > 20 && 70 >= st.h, JSON.stringify(st));
+    const hd = await p.evaluate(() => { const h = document.getElementById('masthead'), r = h.getBoundingClientRect(), i = document.querySelector('.ts-pk-ix').getBoundingClientRect(), t = document.querySelector('.ts-pk-top').getBoundingClientRect(); return { pos: getComputedStyle(h).position, top: Math.round(r.top), bottom: Math.round(r.bottom), iconTop: Math.round(i.top), stripBottom: Math.round(t.bottom) }; });
+    ok(`${tag} the site header stays on top while reading (Ryan, 2026-11-08)`, hd.pos === 'sticky' && hd.top === 0, JSON.stringify(hd));
+    ok(`${tag} the strip sticks right under the header`, 1 >= Math.abs(st.top - hd.bottom) && st.h > 20 && 70 >= st.h, JSON.stringify({ st, hd }));
+    ok(`${tag} the index icon stays clear of the header and the strip`, hd.iconTop >= hd.stripBottom + 4, JSON.stringify(hd));
+    const mt = p.locator('#ast-mobile-header .menu-toggle, #ast-mobile-header .ast-mobile-menu-trigger-minimal').first();
+    if (size === 'phone' && await mt.count() && await mt.isVisible()) {
+      await mt.click(); await W(600);
+      const m = await p.evaluate(() => { const c = document.querySelector('#ast-mobile-header .ast-mobile-header-content'); if (!c) return null; const r = c.getBoundingClientRect(); return { shown: getComputedStyle(c).display !== 'none' && r.height > 0, top: Math.round(r.top), bottom: Math.round(r.bottom), vh: innerHeight }; });
+      ok(`${tag} the phone menu opens from the pinned header mid-page and fits the screen`, !!m && m.shown && m.top >= 0 && m.vh + 1 >= m.bottom, JSON.stringify(m));
+      await mt.click(); await W(400);
+    }
     ok(`${tag} the strip names the current topic and position`, (await strip()) === 'Common reasons / 2 of 5', await strip());
     ok(`${tag} the strip shows progress per section`, st.fills[0] === 1 && st.fills[1] > 0 && 1 > st.fills[1] && st.fills[2] === 0, st.fills.join(' '));
     ok(`${tag} the strip is display only`, st.pe === 'none' && st.controls === 0);
@@ -186,6 +196,7 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
   }
   const rb = await p.evaluate(() => ({ rail: Math.round(document.querySelector('.ts-pk-rail').getBoundingClientRect().bottom), vh: innerHeight }));
   ok('landscape phone: the rail ends above the Back button', rb.vh - rb.rail >= 70, JSON.stringify(rb));
+  ok('landscape phone: the header is not pinned there (header, strip and rail would not fit)', await p.evaluate(() => getComputedStyle(document.getElementById('masthead')).position !== 'sticky'));
   ok('landscape phone: no JavaScript errors', errors.length === 0, errors.join(' | '));
   await ctx.close();
 }
