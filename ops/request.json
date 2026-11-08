@@ -1,5 +1,11 @@
 {
-  "id": "backup-s39-save-1369-1",
-  "op": "backup",
-  "target": "staging39"
+  "id": "rollback-peek-nav-v19-s39-1",
+  "op": "run",
+  "target": "staging39",
+  "script": "link-ideas/push-peek-nav.sh",
+  "args": [
+    "--rollback",
+    "$HOME/private-backups/peek-nav-before-20261108-180339-b42020e0.json"
+  ],
+  "tests": "auto"
 }
