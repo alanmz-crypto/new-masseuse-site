@@ -106,7 +106,7 @@ The mock has placeholder text and none of Astra's real styles; staging39 has bot
 
 > Read `docs/inter-model/2026-11-08-peek-nav-kiro-review-2-handoff.md` on branch `claude/wizardly-bell-xu0rta` of `alanmz-crypto/new-masseuse-site`
 > (pull the latest commit first) and follow it. Build the mock (`scripts/work-with-me-employer/link-ideas/mock/build-mock.py`), run
-> `check-peek-nav.mjs` (expect 282 passed), then review what changed since your first review: the pinned header and `measureHead`, the index icon
+> `check-peek-nav.mjs` (expect 310 passed), then review what changed since your first review: the pinned header and `measureHead`, the index icon
 > (press and hold, and press-then-slide onto the rail), the hidden link row, the left-hand option, the first-time hint, the removed Back button, and `install-sitewide-cleanup.php`.
 > Report flaws first (most severe first, with file:line, how to reproduce on the mock or in a browser, and the smallest fix), then enhancements;
 > say which findings you reproduced and which are from reading only. Do not edit `ops/request.json` or `ops/live-request.json`, do not run
