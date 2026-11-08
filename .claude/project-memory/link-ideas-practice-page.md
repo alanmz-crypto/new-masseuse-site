@@ -72,3 +72,9 @@ Chromium check `ui-rail-ideas-staging39-20261108`: **142/0** (iPhone 13 + iPad M
 **Lessons:** a drawer that should close on a sideways swipe needs `touch-action: pan-y`, or the browser cancels the pointer; buttons tapped right after a
 gesture need `touch-action: manipulation` (double-tap-zoom detection can swallow the tap). When writing page HTML with the Write tool, `<` in the
 content arrives as a real `<`: escape the script's strings with a script afterwards and re-check that it has no `<`.
+
+**Top strip added (2026-11-08):** Ryan: "leave the scrub in the top, just don't make it interactive ... just there so people know where they're at in the page and what
+the topic is." The rail page now has a sticky, display-only strip (current topic, "2 of 6", one bar per section sized by length); `pointer-events: none`, no
+controls, `aria-hidden` (the rail has the links). Jumps land just below it. Re-applied as page **#1348** (snapshot `rail-ideas-before-20261108-024214-c7b6cfab.json`,
+export `staging39-before-rail-ideas-20261108-024155.sql`); check `ui-rail-ideas-staging39-20261108-2`: **166/0**.
+**Undo:** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-rail-ideas.sh --args '--rollback $HOME/private-backups/rail-ideas-before-20261108-024214-c7b6cfab.json'`.
