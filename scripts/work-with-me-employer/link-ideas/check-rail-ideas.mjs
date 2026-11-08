@@ -32,7 +32,8 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
       if (lift) { await touch('touchEnd'); await W(600); }
     };
     const card = () => p.evaluate(() => { const c = document.querySelector('.tsr-card'); return { on: c.classList.contains('is-on'), pinned: c.classList.contains('is-pinned'), armed: c.classList.contains('is-armed'), name: (c.querySelector('b') || {}).textContent || '', blurb: (c.querySelector('.d') || {}).textContent || '', shot: !!c.querySelector('.shot'), inView: c.getBoundingClientRect().left >= 0 }; });
-    const landed = id => p.evaluate(i => { const t = document.getElementById(i).getBoundingClientRect().top; return t >= -2 && 80 >= t; }, id);
+    const landed = id => p.evaluate(i => { const t = document.getElementById(i).getBoundingClientRect().top, sb = document.querySelector('.tsr-top').getBoundingClientRect().bottom; return t >= sb - 2 && sb + 40 >= t; }, id);   // just below the top strip
+    const strip = () => p.evaluate(() => { const t = document.querySelector('.tsr-top'); return t.querySelector('.tsr-top-name').textContent + ' / ' + t.querySelector('.tsr-top-count').textContent; });
     const pick = async n => { await p.evaluate(() => scrollTo(0, 0)); await W(200); await p.tap(`.tsr-picker button[data-idea="${n}"]`); await W(250);
       await p.evaluate(() => scrollTo(0, document.getElementById('tsr-common-reasons').getBoundingClientRect().top + scrollY + 80)); await W(500); };
     const backWorks = async (y0, what) => {
@@ -47,6 +48,15 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     ok(`${tag} rail sits on the right edge in the thumb zone (lower part of the screen)`, rail.top >= rail.vh * 0.25 && rail.vh >= rail.bottom && rail.right >= rail.vw - 12, JSON.stringify(rail));
     let y0;
 
+    // the top strip: display only
+    const st = await p.evaluate(() => { const t = document.querySelector('.tsr-top'), r = t.getBoundingClientRect(), cs = getComputedStyle(t); return { top: Math.round(r.top), h: Math.round(r.height), pe: cs.pointerEvents, controls: t.querySelectorAll('a,button,input,[tabindex]').length, hidden: t.getAttribute('aria-hidden'), fills: [...t.querySelectorAll('li i')].map(i => +i.style.getPropertyValue('--p')) }; });
+    ok(`${tag} top strip stays at the top while reading`, st.top === 0 && st.h > 20 && 70 >= st.h, JSON.stringify(st));
+    ok(`${tag} top strip names the current topic and position`, (await strip()) === 'Common reasons / 2 of 6', await strip());
+    ok(`${tag} top strip shows progress per section`, st.fills[0] === 1 && st.fills[1] > 0 && 1 > st.fills[1] && st.fills[2] === 0, st.fills.join(' '));
+    ok(`${tag} top strip is display only (no controls, ignores touches, hidden from screen readers since the rail has the links)`, st.pe === 'none' && st.controls === 0 && st.hidden === 'true', JSON.stringify(st));
+    y0 = await Y(); await touch('touchStart', 120, 20); await touch('touchEnd'); await W(500);
+    ok(`${tag} touching the top strip does nothing`, (await Y()) === y0 && !(await card()).on);
+
     // 1. slide, lift, choose
     y0 = await Y(); await slideTo(3, { lift: false });
     let c = await card(); ok(`${tag} 1: sliding shows the section under the thumb and what it covers`, c.on && c.name === 'Questions' && c.blurb.length > 10 && c.inView, JSON.stringify(c));
@@ -57,6 +67,7 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     ok(`${tag} 1: Stay here keeps the place`, !(await card()).on && (await Y()) === y0);
     await slideTo(3); await p.tap('.tsr-card .go'); await W(1500);
     ok(`${tag} 1: Go there jumps`, await landed('tsr-questions'));
+    ok(`${tag} top strip follows the jump`, (await strip()) === 'Questions / 4 of 6', await strip());
     await backWorks(y0, '1');
 
     // 2. pull in to go

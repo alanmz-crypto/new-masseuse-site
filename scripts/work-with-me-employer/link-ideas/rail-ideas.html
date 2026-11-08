@@ -20,13 +20,24 @@ html[data-ts-theme="dark"] .tsr-lab{--x-on:#8CCB5B;--x-on-text:#0E141C}
 .tsr-lab.is-js .tsr-about:not(.is-on){display:none}
 
 /* sample sections (placeholders: lines instead of words) */
-.tsr-lab .tsr-sec{scroll-margin-top:1rem;padding:2rem 3.25rem 1rem 0;border-top:1px solid var(--x-rule)}
+.tsr-lab .tsr-sec{scroll-margin-top:4.5rem;padding:2rem 3.25rem 1rem 0;border-top:1px solid var(--x-rule)}
 .tsr-lab .tsr-sec h2{font-size:clamp(1.35rem,3.6vw,1.75rem);margin:0 0 .35rem;color:var(--x-ink);border-radius:8px;transition:background-color .6s}
 .tsr-lab .tsr-sec h2:focus{outline:none}
 .tsr-lab .tsr-sec.is-flash h2{background:color-mix(in srgb,var(--x-accent) 28%,transparent)}
 .tsr-lab .tsr-blurb{margin:0 0 1rem;color:var(--x-muted);font-size:.95rem}
 .tsr-lab .tsr-line{display:block;height:.8rem;margin:0 0 .75rem;border-radius:99px;background:var(--x-stone)}
 .tsr-lab .tsr-line:nth-child(3n){width:84%}.tsr-lab .tsr-line:nth-child(4n){width:62%}
+
+/* the top strip: display only (not interactive): where you are in the page and the current topic */
+.tsr-lab .tsr-top{position:sticky;top:0;z-index:39;margin:0 calc(-1 * min(16px,4vw)) .5rem;padding:.45rem min(16px,4vw) .55rem;background:color-mix(in srgb,var(--x-ground) 92%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--x-rule);pointer-events:none;-webkit-user-select:none;user-select:none}
+.tsr-lab:not(.is-js) .tsr-top{display:none}
+.tsr-lab .tsr-top p{display:flex;justify-content:space-between;gap:1rem;margin:0 0 .35rem;font-size:.82rem;line-height:1.3;color:var(--x-muted)}
+.tsr-lab .tsr-top p b{min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:var(--x-ink);font-weight:700}
+.tsr-lab .tsr-top p span{flex:0 0 auto}
+.tsr-lab .tsr-top ol{display:flex;gap:3px;margin:0;padding:0;list-style:none}
+.tsr-lab .tsr-top li{flex:var(--len,1) 1 0;min-width:0;height:5px;margin:0;border-radius:9px;background:var(--x-rule);overflow:hidden}
+.tsr-lab .tsr-top li i{display:block;height:100%;border-radius:inherit;background:var(--x-on);transform-origin:left;transform:scaleX(var(--p,0))}
+@media print{.tsr-lab .tsr-top{display:none}}
 
 /* the rail: right edge, in the thumb zone (lower part of the screen) */
 .tsr-lab .tsr-nav{position:fixed;right:max(4px,env(safe-area-inset-right));top:var(--rail-top);bottom:var(--rail-bottom);z-index:40;width:48px}
@@ -120,7 +131,7 @@ html[data-ts-theme="dark"] .tsr-lab{--x-on:#8CCB5B;--x-on-text:#0E141C}
 <header class="tsr-intro">
 <p class="tsr-eyebrow">Practice page · staging only · phone and tablet first</p>
 <h1>Side rail ideas</h1>
-<p>A rail on the right edge, where your thumb already is. Slide along it to browse the sections without losing your place, and jump only when you choose. After any jump, “Back to …” returns you to where you were reading.</p>
+<p>The strip at the top only shows where you are and the current topic. The rail on the right edge, where your thumb already is, does the choosing. Slide along it to browse the sections without losing your place, and jump only when you choose. After any jump, “Back to …” returns you to where you were reading.</p>
 <ul class="tsr-picker" aria-label="Choose an idea">
 <li><button type="button" data-idea="1" aria-pressed="true"><b>1</b>Lift</button></li>
 <li><button type="button" data-idea="2" aria-pressed="false"><b>2</b>Pull in</button></li>
@@ -134,6 +145,8 @@ html[data-ts-theme="dark"] .tsr-lab{--x-on:#8CCB5B;--x-on-text:#0E141C}
 <div class="tsr-about" data-about="4"><h2>4. Slide, then hold to go</h2><p>Slide to browse. Rest your thumb on a section and a ring fills; keep holding until it is full and the page goes there. Keep moving or lift early and nothing happens.</p></div>
 <div class="tsr-about" data-about="5"><h2>5. Pull out a drawer</h2><p>A short tab on the right edge shows how far you have read. Tap it or swipe it left and a drawer slides in with every section, its description, length and progress. Scroll the drawer freely; the page only moves when you tap a section. Swipe the drawer right to close.</p></div>
 </header>
+
+<div class="tsr-top" aria-hidden="true"><p><b class="tsr-top-name">What it is</b><span class="tsr-top-count">1 of 6</span></p><ol></ol></div>
 
 <nav class="tsr-nav" aria-label="On this page">
 <ol class="tsr-rail"></ol><span class="tsr-you" aria-hidden="true"></span><span class="tsr-label" aria-hidden="true"></span>
@@ -165,11 +178,14 @@ html[data-ts-theme="dark"] .tsr-lab{--x-on:#8CCB5B;--x-on-text:#0E141C}
   var nav = lab.querySelector('.tsr-nav'), rail = nav.querySelector('.tsr-rail'), you = nav.querySelector('.tsr-you'), label = nav.querySelector('.tsr-label'), tab = nav.querySelector('.tsr-tab');
   var card = lab.querySelector('.tsr-card'), drawer = lab.querySelector('.tsr-drawer'), back = lab.querySelector('.tsr-back');
   var idea = 1, cur = -1, from = null;
+  var top = lab.querySelector('.tsr-top'), topList = top.querySelector('ol');
+  topList.innerHTML = S.map(function () { return '\u003cli>\u003ci>\u003c/i>\u003c/li>'; }).join('');
+  var topSegs = [].slice.call(topList.children);
   function esc(t) { var d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
   function buzz() { if (navigator.vibrate) { try { navigator.vibrate(6); } catch (e) {} } }
 
   /* where the reader is */
-  function line() { return window.innerHeight * 0.25; }
+  function line() { return Math.max(window.innerHeight * 0.25, top.offsetHeight + 24); }
   function where() { var y = line(), idx = -1; S.forEach(function (s, i) { if (y >= s.el.getBoundingClientRect().top) idx = i; }); return idx; }
   function part(i) { var r = S[i].el.getBoundingClientRect(); return Math.max(0, Math.min(1, (line() - r.top) / r.height)); }
   function fill(i) { return cur > i ? 1 : (i === cur ? part(i) : 0); }
@@ -180,7 +196,7 @@ html[data-ts-theme="dark"] .tsr-lab{--x-on:#8CCB5B;--x-on-text:#0E141C}
   function go(i) {
     from = { y: window.scrollY, name: 0 > cur ? 'the top' : S[cur].name };
     var s = S[i].el;
-    window.scrollTo({ top: s.getBoundingClientRect().top + window.scrollY - 16, behavior: calm.matches ? 'auto' : 'smooth' });
+    window.scrollTo({ top: s.getBoundingClientRect().top + window.scrollY - top.offsetHeight - 12, behavior: calm.matches ? 'auto' : 'smooth' });
     var h = s.querySelector('h2'); if (h) h.focus({ preventScroll: true });
     s.classList.add('is-flash'); setTimeout(function () { s.classList.remove('is-flash'); }, 1200);
     try { history.replaceState(null, '', '#' + S[i].id); } catch (e) {}
@@ -297,6 +313,8 @@ html[data-ts-theme="dark"] .tsr-lab{--x-on:#8CCB5B;--x-on-text:#0E141C}
   function draw() {
     ticking = false; cur = where();
     segs.forEach(function (li, i) { li.style.setProperty('--len', S[i].len.toFixed(2)); li.querySelector('i').style.setProperty('--p', fill(i).toFixed(3)); var a = li.querySelector('a'); if (i === cur) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
+    topSegs.forEach(function (li, i) { li.style.setProperty('--len', S[i].len.toFixed(2)); li.firstChild.style.setProperty('--p', fill(i).toFixed(3)); });
+    top.querySelector('.tsr-top-name').textContent = S[Math.max(cur, 0)].name; top.querySelector('.tsr-top-count').textContent = (Math.max(cur, 0) + 1) + ' of ' + S.length;
     var w = whole(), nr = nav.getBoundingClientRect(), rr = rail.getBoundingClientRect();
     you.style.top = (rr.top - nr.top + 8 + w * (rr.height - 16)) + 'px';
     label.style.top = you.style.top; label.textContent = 0 > cur ? S[0].name : S[cur].name;
