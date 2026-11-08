@@ -1,11 +1,7 @@
 {
-  "id": "ui-page-navigation-live-browser-20261104",
-  "op": "run",
-  "target": "live",
-  "script": "page-navigation/check-page-navigation.mjs",
-  "args": [
-    "https://thaisolitude.com",
-    "inline"
-  ],
-  "tests": "auto"
+  "id": "inspect-staging39-home-20261108",
+  "op": "inspect",
+  "target": "staging39",
+  "query": "option",
+  "arg": "home"
 }
