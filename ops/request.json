@@ -1,8 +1,10 @@
 {
-  "id": "dry-sitewide-cleanup-staging39-20261108",
+  "id": "apply-sitewide-cleanup-staging39-20261108",
   "op": "run",
   "target": "staging39",
   "script": "link-ideas/push-sitewide-cleanup.sh",
-  "args": [],
+  "args": [
+    "--apply"
+  ],
   "tests": "auto"
 }
