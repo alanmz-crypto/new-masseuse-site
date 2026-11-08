@@ -1,7 +1,7 @@
 {
-  "id": "inspect-staging39-home-20261108",
-  "op": "inspect",
+  "id": "rehearse-link-ideas-20261108",
+  "op": "rehearse",
   "target": "staging39",
-  "query": "option",
-  "arg": "home"
+  "installer": "link-ideas/install-link-ideas.php",
+  "args": []
 }
