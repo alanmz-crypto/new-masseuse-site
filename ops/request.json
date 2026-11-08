@@ -1,10 +1,7 @@
 {
-  "id": "ui-progress-ideas-staging39-20261108",
-  "op": "run",
+  "id": "rehearse-rail-ideas-20261108",
+  "op": "rehearse",
   "target": "staging39",
-  "script": "link-ideas/check-progress-ideas.mjs",
-  "args": [
-    "https://staging39.thaisolitude.com"
-  ],
-  "tests": "none"
+  "installer": "link-ideas/install-rail-ideas.php",
+  "args": []
 }
