@@ -184,14 +184,14 @@ add_action( 'wp_footer', function () {
     // what each section is: its heading, its first paragraph, its length (read from the page itself)
     // Ryan, 2026-11-08: the summary is a glance. Each distinct idea of the section becomes one short "subject, verb, object" (three words or so);
     // ideas that overlap are merged into one, or the lesser one is left out; no minutiae and nothing said twice (also not across sections). A long
-    // section (the research) may have a longer list; the box scrolls. Written by hand from the rendered page (new wording on a regulated page: no
+    // section (the research) may have a longer list; the box scrolls. A list that holds about 60% or less of its section ends with "etc." (Ryan). Written by hand from the rendered page (new wording on a regulated page: no
     // claim words, no outcomes promised; checked with wording_tiers; for Ryan's approval before live). A section without a list keeps its own paragraphs.
     var GISTS = {
-      'ts-what-it-is': ['Movement meets massage', 'Pressure, rocking, stretching', 'Butsaba\'s specialty', 'Restful or active', 'Rooted in Thai self-care'],
+      'ts-what-it-is': ['Movement meets massage', 'Pressure, rocking, stretching', 'Butsaba\'s specialty', 'Restful or active', 'Rooted in Thai self-care', 'UNESCO-listed heritage', 'Trained at Still Light'],
       'ts-common-reasons': ['Routines leave stiffness', 'Freer movement wanted', 'Some simply unwind', 'Tight areas get time'],
       'ts-what-to-expect': ['Share health history', 'Warning signs: see doctor', 'Brief talk first', 'You set the pace', 'Check-ins throughout', 'Change anything, anytime', 'Aftercare tips'],
       'ts-guide-questions': ['Wear loose clothing', 'Done on a mat', '60 or 90 minutes', 'Stretches never forced', 'Group bookings: Nov 14', 'Solo sessions: summer 2027', 'No home visits'],
-      'ts-guide-research': ['Evidence is limited', 'Trials are small, short', 'Reviews reported less pain', 'Big reviews stay cautious', 'Regular sessions may matter', 'Serious harm is rare', 'Massage beat sham devices', 'Other methods mostly tied', 'Not always ahead', 'Muscles recovered faster', 'Stress results mixed', 'Swedish relaxed more', 'Thai energized more']
+      'ts-guide-research': ['Evidence is limited', 'Trials are small, short', 'Reviews reported less pain', 'Big reviews stay cautious', 'Regular sessions may matter', 'Serious harm is rare', 'Massage beat sham devices', 'Other methods mostly tied', 'Not always ahead', 'Muscles recovered faster', 'Stress results mixed', 'Swedish relaxed more', 'Thai energized more', 'etc.']
     };
     function describe() {
       var ps = [].slice.call(content.querySelectorAll('p'));
