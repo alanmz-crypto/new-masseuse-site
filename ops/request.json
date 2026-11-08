@@ -1,7 +1,11 @@
 {
-  "id": "inspect-staging39-astra-20261108",
-  "op": "inspect",
+  "id": "rollback-peek-nav-v7-staging39-20261108",
+  "op": "run",
   "target": "staging39",
-  "query": "option",
-  "arg": "astra-settings"
+  "script": "link-ideas/push-peek-nav.sh",
+  "args": [
+    "--rollback",
+    "$HOME/private-backups/peek-nav-before-20261108-062353-1c40c41c.json"
+  ],
+  "tests": "auto"
 }
