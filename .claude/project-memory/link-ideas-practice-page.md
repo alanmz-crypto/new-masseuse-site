@@ -116,3 +116,16 @@ Details per finding: `docs/inter-model/2026-11-08-peek-nav-kiro-review-response.
 commit failed, `request.sh` still pushed and ran the previous commit (harmless here: "Already applied"). A resumed cloud session may have Docker stopped:
 `sudo -n dockerd &` brings back the three Docker gates of `check-all.sh`.
 **Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-050713-0f6a1da8.json'`.
+
+## Index icon ideas (2026-11-08)
+Ryan: "Above the rail, directly above it, ... a simple, tasteful, minimalistic index icon that when you press will show all of the indexed items from the rail so
+that they slide out and slide back into the rail ... Create five designs"; "when you touch that index, they will slide out, and when you lift your finger up, they
+will disappear back into the rail."
+**staging39 only:** practice page https://staging39.thaisolitude.com/index-nav-ideas/ (page #1354; `?idea=1..5`). Source `link-ideas/index-ideas.html`,
+`install-index-ideas.php`, `push-index-ideas.sh`, `check-index-ideas.mjs`. A 44px icon 10px above the rail; press and hold = names out (page does not move),
+lift = names back in; click without a press (keyboard, VoiceOver/TalkBack) toggles; Escape closes; long press menu blocked. Designs: 1 Fan (list icon; names slide
+sideways out of their own rail piece, staggered), 2 Unfold (three dots; a dark list unfolds downward from the icon), 3 Drop (four squares; names drop out of the icon
+and bounce into place beside their piece), 4 Panel (bookmark; the rail widens into a light panel and the names fade in), 5 Arc (compass; names swing out on a curve).
+Current section highlighted, read ones ticked. Export `staging39-before-index-ideas-20261108-052106.sql`; snapshot `index-ideas-before-20261108-052120-93294332.json`;
+check `ui-index-ideas-staging39-20261108-2`: **222/0** (iPhone 13 + iPad Mini, light + dark, real touch). Not yet on the Thai page; waiting for Ryan's pick.
+**Lesson:** an `<svg>` element has no `hidden` property; toggle the attribute (`setAttribute('hidden','')` / `removeAttribute`).
