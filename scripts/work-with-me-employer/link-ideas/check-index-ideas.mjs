@@ -33,19 +33,19 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
       const dt = `${tag} design ${n}`;
       await p.evaluate(() => scrollTo(0, 0)); await W(200); await p.tap(`.tsi-picker button[data-idea="${n}"]`); await W(200);
       ok(`${dt}: its own icon shows`, await p.evaluate(k => [...document.querySelectorAll('.tsi-icon svg')].filter(s => getComputedStyle(s).display !== 'none').map(s => s.getAttribute('data-for')).join() === String(k), n));
-      await p.evaluate(() => scrollTo(0, document.getElementById('tsi-common-reasons').getBoundingClientRect().top + scrollY + 150)); await W(500);
+      await p.evaluate(() => scrollTo(0, document.getElementById('tsi-common-reasons').getBoundingClientRect().top + scrollY - (innerHeight * 0.3 - 40))); await W(500);   // the reading line (30% down) 40px into Common reasons
       const geo = await p.evaluate(() => { const i = document.querySelector('.tsi-icon').getBoundingClientRect(), r = document.querySelector('.tsi-rail').getBoundingClientRect(); return { gap: Math.round(r.top - i.bottom), dx: Math.round(Math.abs(i.right - r.right)), w: Math.round(i.width), h: Math.round(i.height) }; });
       ok(`${dt}: the icon sits directly above the rail`, geo.gap >= 0 && 16 >= geo.gap && 2 >= geo.dx && geo.w >= 44 && geo.h >= 44, JSON.stringify(geo));
       let st = await state();
       ok(`${dt}: closed at rest (no names showing)`, !st.open && st.items.every(i => 0.05 >= i.op));
-      const ic = await p.$eval('.tsi-icon', e => { const r = e.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
+      const ic = await p.$eval('.tsi-icon', e => { const r = e.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2, top: r.top }; });
       const y0 = await Y();
       await touch('touchStart', ic.x, ic.y); await W(800);
       st = await state();
       ok(`${dt}: pressing and holding the icon slides out every section name`, st.open && st.exp === 'true' && st.items.map(i => i.name).join('|') === names.join('|') && st.items.every(i => i.op > 0.95), JSON.stringify(st.items.map(i => i.op)));
       ok(`${dt}: every name is fully on screen`, st.items.every(i => i.left >= 0 && st.vw >= i.right), JSON.stringify(st.items.map(i => [Math.round(i.left), Math.round(i.right)])));
       ok(`${dt}: the section being read is highlighted`, st.items.filter(i => i.now).map(i => i.name).join() === 'Common reasons');
-      if (n === 2) ok(`${dt}: the names unfold as a list below the icon, in order`, st.items.every((i, k) => k === 0 || i.mid > st.items[k - 1].mid) && st.items[0].mid > ic.y, JSON.stringify(st.items.map(i => Math.round(i.mid))));
+      if (n === 2) ok(`${dt}: the names unfold as a list from the icon downward, in order`, st.items.every((i, k) => k === 0 || i.mid > st.items[k - 1].mid) && st.items[0].mid > ic.top, JSON.stringify(st.items.map(i => Math.round(i.mid))));
       else ok(`${dt}: each name sits beside its own piece of the rail${n === 5 ? ' (tilted along the arc)' : ''}`, st.items.every(i => (n === 5 ? 14 : 8) >= Math.abs(i.mid - i.seg)), JSON.stringify(st.items.map(i => Math.round(i.mid - i.seg))));
       ok(`${dt}: the page does not move while the names are out`, (await Y()) === y0);
       await touch('touchEnd'); await W(700);
