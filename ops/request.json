@@ -1,8 +1,10 @@
 {
-  "id": "dry-peek-nav-staging39-20261108",
+  "id": "apply-peek-nav-staging39-20261108",
   "op": "run",
   "target": "staging39",
   "script": "link-ideas/push-peek-nav.sh",
-  "args": [],
+  "args": [
+    "--apply"
+  ],
   "tests": "auto"
 }
