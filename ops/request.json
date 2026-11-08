@@ -1,10 +1,11 @@
 {
-  "id": "ui-peek-nav-s39-35-1",
+  "id": "dump-thai-s39-1",
   "op": "run",
   "target": "staging39",
-  "script": "link-ideas/check-peek-nav.mjs",
+  "script": "link-ideas/dump-sections.mjs",
   "args": [
-    "https://staging39.thaisolitude.com"
+    "https://staging39.thaisolitude.com",
+    "/thai-massage/"
   ],
   "tests": "auto"
 }
