@@ -1,7 +1,11 @@
 {
-  "id": "rehearse-link-ideas-20261108-2",
-  "op": "rehearse",
+  "id": "rollback-link-ideas-v1-staging39-20261108",
+  "op": "run",
   "target": "staging39",
-  "installer": "link-ideas/install-link-ideas.php",
-  "args": []
+  "script": "link-ideas/push-link-ideas.sh",
+  "args": [
+    "--rollback",
+    "$HOME/private-backups/link-ideas-before-20261108-002530-17bcd97c.json"
+  ],
+  "tests": "auto"
 }
