@@ -31,8 +31,9 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
 
     ok(`${tag} the row still has the five links in order (no-JavaScript fallback)`, (await p.$$eval('.entry-content .ts-jump a', a => a.map(x => x.textContent).join('|'))) === labels.join('|'));
     ok(`${tag} the pills trial is gone`, await p.evaluate(() => !document.getElementById('ts-pill-nav-runtime') && !document.querySelector('.ts-pill-ind')));
-    const atTop = await p.evaluate(() => { const row = document.querySelector('.entry-content .ts-jump').getBoundingClientRect(), t = document.querySelector('.ts-pk-top'), r = t.getBoundingClientRect(), n = document.querySelector('.ts-pk-nav'); return { inFlow: t.parentNode === document.querySelector('.entry-content .ts-jump').parentNode, gap: Math.round(r.top - row.bottom), rail: getComputedStyle(n).visibility, railOp: getComputedStyle(n).opacity }; });
-    ok(`${tag} the strip sits in the page right under the row (as in the mock-up)`, atTop.inFlow && atTop.gap >= -2 && 40 >= atTop.gap, JSON.stringify(atTop));
+    const atTop = await p.evaluate(() => { const row = document.querySelector('.entry-content .ts-jump'), t = document.querySelector('.ts-pk-top'), n = document.querySelector('.ts-pk-nav'), first = document.querySelector('.entry-content h2'); return { rowShown: getComputedStyle(row).display !== 'none', stripAfterRow: row.nextElementSibling === t, stripBeforeSections: !!(t.compareDocumentPosition(first) & Node.DOCUMENT_POSITION_FOLLOWING), rail: getComputedStyle(n).visibility, railOp: getComputedStyle(n).opacity }; });
+    ok(`${tag} the in-page link row under the header is removed (Ryan, 2026-11-08)`, !atTop.rowShown, JSON.stringify(atTop));
+    ok(`${tag} the strip takes the row's place at the top of the content`, atTop.stripAfterRow && atTop.stripBeforeSections, JSON.stringify(atTop));
     ok(`${tag} the rail is there from the start (as in the mock-up)`, atTop.rail === 'visible' && atTop.railOp === '1', JSON.stringify(atTop));
     ok(`${tag} the rail's names for screen readers include each section's description`, (await p.$$eval('.ts-pk-rail a', a => a.map(x => x.getAttribute('aria-label')))).every(l => l && l.includes(': ') && l.length > 25), (await p.$$eval('.ts-pk-rail a', a => a.map(x => x.getAttribute('aria-label')))).join(' | '));
     await p.evaluate(() => { const h = document.querySelectorAll('.entry-content .ts-jump a')[1]; const t = document.getElementById(h.getAttribute('href').slice(1)); scrollTo(0, t.getBoundingClientRect().top + scrollY - 100); }); await W(700);
@@ -159,10 +160,7 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     await slideTo(1); await p.tap('.ts-pk-card .side'); await W(500);
     ok(`${tag} "⇆ Right" moves it back`, await p.evaluate(() => !document.documentElement.classList.contains('ts-pk-left') && localStorage.getItem('ts-pk-side') === 'right' && document.querySelector('.ts-pk-rail').getBoundingClientRect().right >= innerWidth - 8));
     await p.evaluate(() => { const h = document.querySelectorAll('.entry-content .ts-jump a')[1]; const t = document.getElementById(h.getAttribute('href').slice(1)); scrollTo(0, t.getBoundingClientRect().top + scrollY - 100); }); await W(600);
-    // the row at the top of the page
-    await p.evaluate(() => scrollTo(0, document.querySelector('.entry-content .ts-jump').getBoundingClientRect().top + scrollY - 200)); await W(500);
-    await p.tap('.entry-content .ts-jump a:text-is("What Research Says")'); await W(1700);
-    L = await landed(await hrefOf(4)); ok(`${tag} the row at the top also lands the heading below the strip`, L.ok, JSON.stringify(L));
+    ok(`${tag} the hidden row's links are out of the keyboard order`, await p.evaluate(() => [...document.querySelectorAll('.entry-content .ts-jump a')].every(a => { a.focus(); return document.activeElement !== a; })));
     ok(`${tag} no sideways page scroll`, await p.evaluate(() => innerWidth + 1 >= document.documentElement.scrollWidth));
     ok(`${tag} no JavaScript errors`, errors.length === 0, errors.join(' | '));
     await ctx.close();
@@ -190,6 +188,13 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
   const rb = await p.evaluate(() => ({ rail: Math.round(document.querySelector('.ts-pk-rail').getBoundingClientRect().bottom), vh: innerHeight }));
   ok('landscape phone: the rail ends above the Back button', rb.vh - rb.rail >= 70, JSON.stringify(rb));
   ok('landscape phone: no JavaScript errors', errors.length === 0, errors.join(' | '));
+  await ctx.close();
+}
+{ // without JavaScript the row is the way around the page
+  const ctx = await b.newContext({ ...devices['iPhone 13'], deviceScaleFactor: 1, javaScriptEnabled: false });
+  const p = await ctx.newPage(); const r = await p.goto(base + '/thai-massage/', { waitUntil: 'load' }); if (!r || r.status() !== 200) { console.log(`INVALID no-JS answered ${r && r.status()}`); await b.close(); process.exit(2); }
+  const nj = await p.evaluate(() => { const row = document.querySelector('.entry-content .ts-jump'); return { shown: !!row && getComputedStyle(row).display !== 'none' && row.getBoundingClientRect().height > 0, links: row ? [...row.querySelectorAll('a')].map(a => a.textContent).join('|') : '' }; });
+  ok('without JavaScript the in-page link row still shows, with all five links (fallback)', nj.shown && nj.links === labels.join('|'), JSON.stringify(nj));
   await ctx.close();
 }
 const ctx = await b.newContext({ ...devices['iPhone 13'], deviceScaleFactor: 1 });

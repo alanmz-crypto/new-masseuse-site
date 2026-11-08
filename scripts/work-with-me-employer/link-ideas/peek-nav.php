@@ -67,6 +67,7 @@ html[data-ts-theme="dark"] .ts-pk-card .hint{color:var(--pk-on)}
 /* keep the text clear of the rail on phones and tablets; the bottom "On this page" button is replaced by the rail */
 @media (max-height:500px){.ts-pk-card .shot>span,.ts-pk-card .here{display:none}.ts-pk-card .shot em{margin:0}}   /* landscape phones: the card fits the screen */
 @media (max-width:1100px){html.ts-pk-ready:not(.ts-pk-left) .entry-content{padding-right:26px}html:not(.ts-pk-left) .ts-pk-top{padding-right:44px}}   /* the strip's text stays clear of the rail while it is still in the page */
+html.ts-pk-ready .entry-content .ts-jump{display:none!important}   /* Ryan, 2026-11-08: "You can remove the in-page links beneath header." The strip, rail and index replace the row; without JavaScript (no ts-pk-ready) it still shows and works */
 html.ts-pk-ready #ts-section-guide-trigger,html.ts-pk-ready #ts-section-guide-popover{display:none!important}   /* only once the rail is there */
 html.ts-pk-ready .entry-content [id]{scroll-margin-top:64px}
 @media (prefers-reduced-motion:reduce){.ts-pk *,.ts-pk-top,.ts-pk-nav,.ts-pk-card{transition:none!important}.ts-pk-card,.ts-pk-card.is-on{transform:none}}
