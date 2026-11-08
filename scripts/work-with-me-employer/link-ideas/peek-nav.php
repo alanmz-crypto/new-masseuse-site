@@ -104,6 +104,25 @@ html.ts-pk-left .ts-pk-tip{right:auto;left:58px}
 html.ts-pk-left .ts-pk-nav.is-hinting .ts-pk-rail{animation-name:ts-pk-wiggle-l}
 @keyframes ts-pk-wiggle-l{0%,100%{transform:none}30%{transform:translateX(7px)}60%{transform:translateX(-3px)}}
 @media (prefers-reduced-motion:reduce){.ts-pk-nav.is-hinting .ts-pk-rail{animation:none}.ts-pk-tip{transition:none;transform:none}}
+/* index icon: always above the rail, drawn in the page's own colours (no box, border or shadow); hold it to fan out every section name */
+html .ts-pk .ts-pk-ix{position:absolute;right:0;bottom:100%;width:44px;height:44px;margin:0 0 8px;padding:0;border:0;border-radius:50%;background:var(--pk-ground);color:var(--pk-muted);box-shadow:none;cursor:pointer;touch-action:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;transition:color .2s,transform .2s var(--pk-ease)}
+html .ts-pk .ts-pk-ix:hover,html .ts-pk .ts-pk-ix:focus{background:var(--pk-ground);color:var(--pk-ink);box-shadow:none}
+html .ts-pk .ts-pk-ix:focus-visible{outline:3px solid var(--pk-accent);outline-offset:2px}
+html .ts-pk .ts-pk-nav.is-index .ts-pk-ix{color:var(--pk-on);transform:scale(.92)}
+.ts-pk-ix svg{display:block;width:22px;height:22px;margin:auto;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;pointer-events:none}
+html.ts-pk-left .ts-pk .ts-pk-ix{right:auto;left:0}
+.ts-pk-fan{position:absolute;inset:0;pointer-events:none}
+html .ts-pk .ts-pk-fan li{position:absolute;right:52px;top:0;display:flex;align-items:center;gap:.45rem;max-width:min(64vw,260px);margin:-17px 0 0;padding:.42rem .8rem .42rem .55rem;border-radius:999px;background:var(--pk-ink);color:var(--pk-panel);font-size:.86rem;font-weight:700;line-height:1.2;white-space:nowrap;opacity:0;box-shadow:0 8px 20px -12px rgba(0,0,0,.55);transform:translateX(26px) scale(.55);transform-origin:right center;transition:opacity .2s,transform .3s var(--pk-ease);transition-delay:var(--d-close,0ms)}
+html .ts-pk .ts-pk-fan li span{overflow:hidden;text-overflow:ellipsis}
+html .ts-pk .ts-pk-fan li b{display:grid;place-items:center;flex:0 0 auto;width:1.45rem;height:1.45rem;margin:0;border-radius:50%;background:rgba(255,255,255,.14);font-size:.72rem}
+html .ts-pk .ts-pk-fan li.is-done b{background:var(--pk-on);color:var(--pk-on-text)}
+html .ts-pk .ts-pk-fan li.is-now{background:var(--pk-on);color:var(--pk-on-text)}
+html .ts-pk .ts-pk-fan li.is-now b{background:rgba(0,0,0,.16);color:inherit}
+html .ts-pk .ts-pk-nav.is-index .ts-pk-fan li{opacity:1;transform:none;transition-delay:var(--d-open,0ms)}
+html.ts-pk-left .ts-pk .ts-pk-fan li{right:auto;left:52px;transform:translateX(-26px) scale(.55);transform-origin:left center}
+html.ts-pk-left .ts-pk .ts-pk-nav.is-index .ts-pk-fan li{transform:none}
+.ts-pk-nav.is-index .ts-pk-label{opacity:0}
+@media (prefers-reduced-motion:reduce){html .ts-pk .ts-pk-fan li,html .ts-pk .ts-pk-ix{transition-duration:.01ms!important;transition-delay:0ms!important}}
 @media print{.ts-pk{display:none!important}}
 </style>
 	<?php
@@ -156,16 +175,17 @@ add_action( 'wp_footer', function () {
     strip.innerHTML = '<div class="in"><p><b></b><span></span></p><ol>' + S.map(function () { return '<li><i></i></li>'; }).join('') + '</ol></div>';
     row.parentNode.insertBefore(strip, row.nextSibling);   // in the page, right under the row; it sticks to the top as you read (display only)
     var box = document.createElement('div'); box.className = 'ts-pk';
-    box.innerHTML = '<nav class="ts-pk-nav" aria-label="Sections on this page"><ol class="ts-pk-rail">' + S.map(function (s) { return '<li><a href="' + esc(s.href) + '" aria-label="' + esc(s.label) + '" draggable="false"><i></i></a></li>'; }).join('') + '</ol><span class="ts-pk-you" aria-hidden="true"></span><span class="ts-pk-label" aria-hidden="true"></span></nav>' +
+    box.innerHTML = '<nav class="ts-pk-nav" aria-label="Sections on this page"><button type="button" class="ts-pk-ix" aria-expanded="false" aria-controls="ts-pk-fan" aria-label="Show all sections (press and hold)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 7h12M6 12h9M6 17h6"/></svg></button>' +
+      '<ol class="ts-pk-fan" id="ts-pk-fan" aria-label="All sections" aria-hidden="true">' + S.map(function (s, i) { return '<li><b>' + (i + 1) + '</b><span>' + esc(s.label) + '</span></li>'; }).join('') + '</ol><ol class="ts-pk-rail">' + S.map(function (s) { return '<li><a href="' + esc(s.href) + '" aria-label="' + esc(s.label) + '" draggable="false"><i></i></a></li>'; }).join('') + '</ol><span class="ts-pk-you" aria-hidden="true"></span><span class="ts-pk-label" aria-hidden="true"></span></nav>' +
       '<div class="ts-pk-card" role="group" aria-label="Section preview" tabindex="-1"></div><button type="button" class="ts-pk-back" hidden></button>' +
-      '<div class="ts-pk-tip" role="note" hidden><p>Slide your thumb along this bar to preview each section. Lift, then tap the preview to go there.</p><div class="row"><button type="button" class="ok">Got it</button><button type="button" class="flip"></button></div></div>';
+      '<div class="ts-pk-tip" role="note" hidden><p>Slide your thumb along this bar to preview each section. Lift, then tap the preview to go there. Hold the icon above it to see them all.</p><div class="row"><button type="button" class="ok">Got it</button><button type="button" class="flip"></button></div></div>';
     var host = strip.parentNode, okHost = true;
     for (var an = host; an && an !== document.documentElement; an = an.parentElement) { var cs = getComputedStyle(an); if (cs.transform !== 'none' || cs.filter !== 'none' || cs.perspective !== 'none' || (cs.backdropFilter || cs.webkitBackdropFilter || 'none') !== 'none' || /transform|filter|perspective/.test(cs.willChange || '') || (cs.containerType && cs.containerType !== 'normal') || /paint|layout|strict|content/.test(cs.contain || '')) { okHost = false; break; } }   // any of these would make position:fixed relative to that ancestor
     if (okHost) host.insertBefore(box, strip.nextSibling); else document.body.appendChild(box);   // keyboard order: row, strip, rail, then the sections
     var top = strip, topSegs = [].slice.call(top.querySelectorAll('li')), nav = box.querySelector('.ts-pk-nav'), rail = nav.querySelector('.ts-pk-rail'),
       you = nav.querySelector('.ts-pk-you'), label = nav.querySelector('.ts-pk-label'), card = box.querySelector('.ts-pk-card'), back = box.querySelector('.ts-pk-back');
     segs = [].slice.call(rail.children);
-    var tip = box.querySelector('.ts-pk-tip');
+    var tip = box.querySelector('.ts-pk-tip'), ixBtn = nav.querySelector('.ts-pk-ix'), fan = nav.querySelector('.ts-pk-fan'), fanItems = [].slice.call(fan.children);
     root.classList.add('ts-pk-ready');
 
     // left-hand option (remembered on this device)
@@ -308,6 +328,30 @@ add_action( 'wp_footer', function () {
       if (cur > -1 && !rail.contains(document.activeElement)) rove(cur);
       if (!tipDone && cur > -1) maybeTip();
     }
+
+    // the index icon: hold it and every section name fans out beside its piece of the rail; lift and they slide back (a click without a press toggles)
+    var ixOpen = false, ixPress = null, ixPressedAt = -1e9;
+    function fanLayout() {
+      var nr = nav.getBoundingClientRect(), n = S.length;
+      segs.forEach(function (li, k) {
+        var r = li.getBoundingClientRect(), it = fanItems[k];
+        it.style.top = (r.top + r.height / 2 - nr.top) + 'px';
+        it.style.setProperty('--d-open', (k * 35) + 'ms'); it.style.setProperty('--d-close', ((n - 1 - k) * 25) + 'ms');   // out top to bottom, back bottom to top
+        it.classList.toggle('is-now', k === cur); it.classList.toggle('is-done', k < cur); it.firstChild.textContent = k < cur ? '✓' : String(k + 1);
+      });
+    }
+    function setIndex(on) {
+      if (on === ixOpen) return; ixOpen = on;
+      if (on) { hideCard(); hideTip(); fanLayout(); buzz(); }
+      nav.classList.toggle('is-index', on); ixBtn.setAttribute('aria-expanded', String(on)); fan.setAttribute('aria-hidden', String(!on));
+    }
+    ixBtn.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+    ixBtn.addEventListener('pointerdown', function (e) { if (e.button > 0 || !e.isPrimary) return; ixPress = e.pointerId; try { ixBtn.setPointerCapture(e.pointerId); } catch (err) {} setIndex(true); e.preventDefault(); });
+    function ixRelease(e) { if (ixPress === null || e.pointerId !== ixPress) return; ixPress = null; ixPressedAt = performance.now(); setIndex(false); }
+    ixBtn.addEventListener('pointerup', ixRelease); ixBtn.addEventListener('pointercancel', ixRelease); ixBtn.addEventListener('lostpointercapture', ixRelease);
+    ixBtn.addEventListener('click', function (e) { e.preventDefault(); if (performance.now() - ixPressedAt < 600) { ixPressedAt = -1e9; return; } setIndex(!ixOpen); });
+    document.addEventListener('pointerdown', function (e) { if (ixOpen && ixPress === null && !ixBtn.contains(e.target)) { setIndex(false); swallowNextClick(false); } }, true);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && ixOpen) { setIndex(false); ixBtn.focus(); } });
 
     // first-time hint: once per visitor, when they start reading; it goes away by itself, on "Got it", or when they touch the rail
     var tipDone = store('ts-pk-tip') === 'seen', tipT = 0;

@@ -118,6 +118,31 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     ok(`${tag} arrow keys move along the rail`, await p.evaluate(() => document.activeElement === document.querySelectorAll('.ts-pk-rail a')[2] && document.activeElement.getAttribute('tabindex') === '0'));
     const thm = await p.evaluate(() => { const o = getComputedStyle(document.querySelector('.ts-pk-rail')), l = getComputedStyle(document.querySelector('.ts-pk-rail li')), so = getComputedStyle(document.querySelector('.ts-pk-top ol')), a = getComputedStyle(document.querySelector('.ts-pk-rail a')); return { ml: o.marginLeft, pl: o.paddingLeft, ls: o.listStyleType, lim: l.marginTop + ' ' + l.marginLeft, sol: so.marginLeft + ' ' + so.paddingLeft, td: a.textDecorationLine }; });
     ok(`${tag} the theme's content styles do not reach the rail or strip`, thm.ml === '0px' && thm.pl === '0px' && thm.ls === 'none' && thm.lim === '0px 0px' && thm.sol === '0px 0px' && thm.td === 'none', JSON.stringify(thm));
+    // index icon (Ryan, 2026-11-08: design 1 "Fan", always at the top of the rail, blended into the page)
+    const fanState = () => p.evaluate(() => { const nav = document.querySelector('.ts-pk-nav'), segs = [...document.querySelectorAll('.ts-pk-rail li')].map(l => { const r = l.getBoundingClientRect(); return r.top + r.height / 2; }), rail = document.querySelector('.ts-pk-rail').getBoundingClientRect();
+      return { open: nav.classList.contains('is-index'), exp: document.querySelector('.ts-pk-ix').getAttribute('aria-expanded'), hid: document.querySelector('.ts-pk-fan').getAttribute('aria-hidden'), railL: rail.left, railR: rail.right, vw: innerWidth,
+        items: [...document.querySelectorAll('.ts-pk-fan li')].map((l, k) => { const r = l.getBoundingClientRect(); return { name: l.querySelector('span').textContent, op: +getComputedStyle(l).opacity, d: Math.round(r.top + r.height / 2 - segs[k]), l: r.left, r: r.right, now: l.classList.contains('is-now') }; }) }; });
+    const ixg = await p.evaluate(() => { const b = document.querySelector('.ts-pk-ix'), i = b.getBoundingClientRect(), r = document.querySelector('.ts-pk-rail').getBoundingClientRect(), cs = getComputedStyle(b);
+      const probe = document.createElement('span'); probe.style.background = 'var(--pk-ground)'; document.querySelector('.ts-pk').appendChild(probe); const ground = getComputedStyle(probe).backgroundColor; probe.remove();
+      return { shown: cs.display !== 'none' && cs.visibility === 'visible' && +cs.opacity === 1, gap: Math.round(r.top - i.bottom), dx: Math.round(Math.abs(i.right - r.right)), w: Math.round(i.width), bg: cs.backgroundColor, ground, shadow: cs.boxShadow, border: cs.borderTopWidth, before: !!(b.compareDocumentPosition(document.querySelector('.ts-pk-rail')) & Node.DOCUMENT_POSITION_FOLLOWING) }; });
+    ok(`${tag} index icon: always shown, directly above the rail`, ixg.shown && ixg.gap >= 0 && 16 >= ixg.gap && 2 >= ixg.dx && ixg.w >= 44, JSON.stringify(ixg));
+    ok(`${tag} index icon: blended into the page (page background, no border or shadow)`, ixg.bg === ixg.ground && ixg.shadow === 'none' && ixg.border === '0px', JSON.stringify(ixg));
+    ok(`${tag} index icon: comes right before the rail for the keyboard`, ixg.before);
+    y0 = await Y();
+    const ixAt = await p.$eval('.ts-pk-ix', e => { const r = e.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
+    await touch('touchStart', ixAt.x, ixAt.y); await W(800);
+    let fs = await fanState();
+    ok(`${tag} index: holding the icon fans out every section name beside its piece of the rail`, fs.open && fs.exp === 'true' && fs.hid === 'false' && fs.items.map(i => i.name).join('|') === labels.join('|') && fs.items.every(i => i.op > 0.95 && 8 >= Math.abs(i.d) && i.r <= fs.railL + 2 && i.l >= 0), JSON.stringify(fs.items.map(i => [i.op, i.d, Math.round(i.l)])));
+    ok(`${tag} index: the section being read is highlighted`, fs.items.filter(i => i.now).map(i => i.name).join() === (await strip()).split(' / ')[0]);
+    ok(`${tag} index: the page does not move`, (await Y()) === y0);
+    await touch('touchEnd'); await W(700);
+    fs = await fanState();
+    ok(`${tag} index: lifting the finger slides the names back into the rail`, !fs.open && fs.exp === 'false' && fs.hid === 'true' && fs.items.every(i => 0.05 >= i.op) && (await Y()) === y0, JSON.stringify(fs.items.map(i => i.op)));
+    ok(`${tag} index: a long press cannot open the browser's menu`, await p.evaluate(() => { const ev = new MouseEvent('contextmenu', { bubbles: true, cancelable: true }); document.querySelector('.ts-pk-ix').dispatchEvent(ev); return ev.defaultPrevented; }));
+    await p.evaluate(() => document.querySelector('.ts-pk-ix').dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 }))); await W(500);
+    ok(`${tag} index: a click without a press (keyboard, screen reader) opens it`, (await fanState()).open);
+    await p.keyboard.press('Escape'); await W(500);
+    ok(`${tag} index: Escape closes it and focus stays on the icon`, !(await fanState()).open && (await p.evaluate(() => document.activeElement === document.querySelector('.ts-pk-ix'))));
     // left-hand option (Ryan, 2026-11-08: yes)
     await slideTo(1); await p.tap('.ts-pk-card .side'); await W(500);
     const lh = await p.evaluate(() => { const r = document.querySelector('.ts-pk-rail').getBoundingClientRect(); return { left: document.documentElement.classList.contains('ts-pk-left'), railLeft: Math.round(r.left), stored: localStorage.getItem('ts-pk-side'), card: document.querySelector('.ts-pk-card').classList.contains('is-on') }; });
@@ -125,6 +150,9 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     await slideTo(3, false); c = await card(); const cr = await p.$eval('.ts-pk-card', e => Math.round(e.getBoundingClientRect().left)); await touch('touchEnd'); await W(400);
     ok(`${tag} on the left, sliding previews as on the right (card beside the rail)`, c.on && c.name === 'Questions' && cr >= 40 && 80 >= cr, `left=${cr}`);
     ok(`${tag} on the left, no sideways page scroll`, await p.evaluate(() => innerWidth + 1 >= document.documentElement.scrollWidth));
+    const ixL = await p.$eval('.ts-pk-ix', e => { const r = e.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2, l: Math.round(r.left) }; });
+    await touch('touchStart', ixL.x, ixL.y); await W(800); fs = await fanState(); await touch('touchEnd'); await W(500);
+    ok(`${tag} on the left, the index icon and its names mirror to the left edge`, 8 >= ixL.l && fs.open && fs.items.every(i => i.l >= fs.railR - 2 && fs.vw >= i.r), JSON.stringify({ icon: ixL.l, items: fs.items.map(i => Math.round(i.l)) }));
     await p.reload({ waitUntil: 'load' }); await W(500);
     await p.evaluate(() => { const h = document.querySelectorAll('.entry-content .ts-jump a')[1]; const t = document.getElementById(h.getAttribute('href').slice(1)); scrollTo(0, t.getBoundingClientRect().top + scrollY - 100); }); await W(700);
     ok(`${tag} after a reload the rail stays on the left, and the hint does not show again`, await p.evaluate(() => document.documentElement.classList.contains('ts-pk-left') && document.querySelector('.ts-pk-tip').hidden));
