@@ -11,6 +11,7 @@ add_action( 'wp_head', function () {
 @media (min-width:922px){:root{--ts-head:91px}}
 html[data-ts-theme="dark"]{--ts-pill-on:#8CCB5B;--ts-pill-on-text:#0E141C}
 html{scroll-padding-top:calc(var(--ts-head) + var(--ts-pills-h) + 12px)}
+.entry-content [id]{scroll-margin-top:calc(var(--ts-head) + var(--ts-pills-h) + 12px)}
 @media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
 /* the header stays on top */
 #masthead{position:sticky;top:0;z-index:60;transition:box-shadow .25s}
@@ -87,6 +88,19 @@ add_action( 'wp_footer', function () {
     head.classList.toggle('ts-head-shadow', window.scrollY > 4 && !stuck);
   }
   function ends() { list.classList.toggle('ts-at-end', list.scrollLeft + list.clientWidth >= list.scrollWidth - 2); }
+  // Taps on a pill: handled here first (capture), so no other script's jump hides the heading under the header and pills.
+  nav.addEventListener('click', function (e) {
+    var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    var t = document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1)));
+    if (!t) return;
+    e.preventDefault(); e.stopPropagation();
+    var y = t.getBoundingClientRect().top + window.scrollY - (head.offsetHeight + nav.offsetHeight + 12);
+    window.scrollTo({ top: Math.max(0, y), behavior: calm.matches ? 'auto' : 'smooth' });
+    try { history.pushState(null, '', a.getAttribute('href')); } catch (err) {}
+    if (!t.hasAttribute('tabindex')) t.setAttribute('tabindex', '-1');
+    t.focus({ preventScroll: true });
+  }, true);
   var ticking = false;
   function ask() { if (!ticking) { ticking = true; window.requestAnimationFrame(update); } }
   window.addEventListener('scroll', ask, { passive: true });

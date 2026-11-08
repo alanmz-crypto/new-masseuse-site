@@ -49,6 +49,13 @@ for (const [size, opts] of [['phone', devices['iPhone 13']], ['desktop', { viewp
     await ctx.close();
   }
 }
+for (const [size, opts] of [['phone', devices['iPhone 13']], ['desktop', { viewport: { width: 1280, height: 860 } }]]) {
+  const c = await b.newContext({ ...opts, deviceScaleFactor: 1 });
+  const { p } = await load(c, '/thai-massage/#ts-guide-research'); await p.waitForTimeout(1500);
+  const r = await p.evaluate(() => ({ headingTop: Math.round(document.getElementById('ts-guide-research').getBoundingClientRect().top), navBottom: Math.round(document.querySelector('.ts-jump').getBoundingClientRect().bottom) }));
+  ok(`${size} arriving at /thai-massage/#ts-guide-research: heading below the pills`, r.headingTop >= r.navBottom - 1 && r.headingTop <= r.navBottom + 60, JSON.stringify(r));
+  await c.close();
+}
 const ctx = await b.newContext({ viewport: { width: 1280, height: 860 } });
 const { p } = await load(ctx, '/therapeutic-massage/');
 await p.evaluate(() => scrollTo(0, 2500)); await p.waitForTimeout(400);
