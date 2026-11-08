@@ -1,10 +1,10 @@
 {
-  "id": "apply-link-ideas-staging39-20261108-2",
+  "id": "ui-link-ideas-staging39-20261108",
   "op": "run",
   "target": "staging39",
-  "script": "link-ideas/push-link-ideas.sh",
+  "script": "link-ideas/check-link-ideas.mjs",
   "args": [
-    "--apply"
+    "https://staging39.thaisolitude.com"
   ],
-  "tests": "auto"
+  "tests": "none"
 }
