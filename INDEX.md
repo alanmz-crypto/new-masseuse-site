@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-08 01:01 UTC  **PASS**  `rollback-pill-nav-v1-staging39-20261108`  [reports/2026-11-08/010112-rollback-pill-nav-v1-staging39-20261108.md](reports/2026-11-08/010112-rollback-pill-nav-v1-staging39-20261108.md)  (run 42432295360)
 - 2026-11-08 00:59 UTC  **FAIL**  `ui-pill-nav-staging39-20261108`  [reports/2026-11-08/005921-ui-pill-nav-staging39-20261108.md](reports/2026-11-08/005921-ui-pill-nav-staging39-20261108.md)  (run 42432132747)
 - 2026-11-08 00:57 UTC  **PASS**  `check-pill-nav-staging39-20261108`  [reports/2026-11-08/005722-check-pill-nav-staging39-20261108.md](reports/2026-11-08/005722-check-pill-nav-staging39-20261108.md)  (run 42432079389)
 - 2026-11-08 00:56 UTC  **FAIL**  `apply-pill-nav-staging39-20261108`  [reports/2026-11-08/005635-apply-pill-nav-staging39-20261108.md](reports/2026-11-08/005635-apply-pill-nav-staging39-20261108.md)  (run 42431996093)
