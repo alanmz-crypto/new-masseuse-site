@@ -136,3 +136,8 @@ Hold = every name fans out beside its rail piece (staggered, current one green, 
 long press blocked; mirrors with the left-hand option; one keyboard stop right before the rail. The first-time hint now also mentions the icon.
 Export `staging39-before-peek-nav-20261108-061042.sql`; snapshot `peek-nav-before-20261108-061058-bfb0e317.json`; check `ui-peek-nav-staging39-20261108-8`: **267/0**.
 **Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-061058-bfb0e317.json'`.
+**Row removed (2026-11-08):** Ryan: "You can remove the in-page links beneath header." Now snippet **#1356**: with the runtime ready (`html.ts-pk-ready`) the
+server-rendered `.ts-jump` row is `display:none` and the strip sits in its place; without JavaScript the row still shows and works (checked with JavaScript
+off). The row stays in the HTML as the source of the section list. Export `staging39-before-peek-nav-20261108-062336.sql`; snapshot
+`peek-nav-before-20261108-062353-1c40c41c.json`; check `ui-peek-nav-staging39-20261108-9`: **272/0**.
+**Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-062353-1c40c41c.json'`.
