@@ -1,0 +1,312 @@
+<div class="tsx-lab" id="tsx-lab">
+<style>
+.tsx-lab{--x-ink:var(--ts-ink,#1C2531);--x-muted:var(--ts-muted,#4A5563);--x-rule:var(--ts-rule,#D5D6CF);--x-panel:var(--ts-panel,#FFFFFF);--x-stone:var(--ts-stone,#F4F2EC);--x-green:var(--ts-green,var(--ast-global-color-0,#377A00));--x-accent:var(--ts-accent,#C8963E);--x-pale:var(--ts-pale,#EAF7EB);--x-radius:16px;--x-shadow:0 10px 30px -12px rgba(1,33,4,.28);--x-ease:cubic-bezier(.2,.8,.2,1);color:var(--x-ink);max-width:880px;margin:0 auto;padding:0 0 4rem}
+.tsx-lab *,.tsx-lab *::before,.tsx-lab *::after{box-sizing:border-box}
+.tsx-lab a:focus-visible,.tsx-lab button:focus-visible,.tsx-lab input:focus-visible{outline:3px solid var(--x-accent);outline-offset:2px}
+.tsx-lab .tsx-intro{background:var(--x-pale);border-radius:22px;padding:clamp(1.25rem,4vw,2.25rem);margin:0 0 1.5rem}
+.tsx-lab .tsx-eyebrow{font-size:.75rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--x-green);margin:0 0 .5rem}
+.tsx-lab .tsx-intro h1{font-size:clamp(1.6rem,4.5vw,2.3rem);line-height:1.15;margin:0 0 .5rem;color:var(--x-ink)}
+.tsx-lab .tsx-intro p{margin:0 0 1rem;color:var(--x-muted);font-size:1rem;line-height:1.55}
+.tsx-lab .tsx-picker{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.4rem;margin:0;padding:.3rem;list-style:none;background:var(--x-panel);border:1px solid var(--x-rule);border-radius:14px}
+.tsx-lab .tsx-picker li{margin:0}
+.tsx-lab .tsx-picker button{width:100%;min-height:52px;margin:0;padding:.35rem .2rem;border:0;border-radius:10px;background:transparent;color:var(--x-muted);font:inherit;font-size:clamp(.68rem,2.6vw,.8rem);font-weight:600;line-height:1.2;overflow-wrap:anywhere;cursor:pointer;transition:background .2s,color .2s}
+.tsx-lab .tsx-picker button b{display:block;font-size:1.1rem;color:inherit}
+.tsx-lab .tsx-picker button[aria-pressed="true"]{background:var(--x-green);color:#fff}
+.tsx-lab .tsx-picker button:hover:not([aria-pressed="true"]){background:var(--x-stone);color:var(--x-ink)}
+.tsx-lab .tsx-about{margin:1rem 0 0;padding:1rem 1.1rem;background:var(--x-panel);border-radius:12px;border:1px solid var(--x-rule)}
+.tsx-lab .tsx-about h2{font-size:1.15rem;margin:0 0 .3rem;color:var(--x-ink)}
+.tsx-lab .tsx-about p{margin:0 0 .35rem;font-size:.92rem}
+.tsx-lab .tsx-about p:last-child{margin:0}
+.tsx-lab .tsx-about code{font-size:.85em;background:var(--x-stone);padding:.05em .35em;border-radius:5px;color:var(--x-ink)}
+.tsx-lab.is-js .tsx-idea:not(.is-on){display:none}
+.tsx-lab.is-js .tsx-about:not(.is-on){display:none}
+.tsx-lab .tsx-idea{margin:0 0 1.25rem}
+.tsx-lab .tsx-sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+
+/* the sample sections every idea jumps to */
+.tsx-lab .tsx-sec{scroll-margin-top:5.5rem;min-height:70vh;padding:2rem 0 1rem;border-top:1px solid var(--x-rule)}
+.tsx-lab .tsx-sec h2{font-size:clamp(1.35rem,3.6vw,1.75rem);margin:0 0 1rem;color:var(--x-ink);border-radius:8px;transition:background-color .6s}
+.tsx-lab .tsx-sec h2:focus{outline:none}
+.tsx-lab .tsx-sec.is-flash h2{background:color-mix(in srgb,var(--x-accent) 28%,transparent)}
+.tsx-lab .tsx-line{display:block;height:.8rem;margin:0 0 .7rem;border-radius:99px;background:var(--x-stone)}
+.tsx-lab .tsx-line:nth-child(3n){width:82%}.tsx-lab .tsx-line:nth-child(4n){width:64%}
+
+/* 1. sticky scroll-spy pills */
+.tsx-lab .tsx-pills{position:sticky;top:0;z-index:20;margin:0 calc(-1 * min(16px,4vw));padding:.55rem min(16px,4vw);background:color-mix(in srgb,var(--x-panel) 82%,transparent);-webkit-backdrop-filter:blur(12px) saturate(1.4);backdrop-filter:blur(12px) saturate(1.4);border-bottom:1px solid var(--x-rule)}
+.tsx-lab .tsx-pills__track{position:relative;display:flex;gap:.35rem;margin:0;padding:0;list-style:none;overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 14px,#000 calc(100% - 22px),transparent);mask-image:linear-gradient(90deg,transparent 0,#000 14px,#000 calc(100% - 22px),transparent)}
+.tsx-lab .tsx-pills__track::-webkit-scrollbar{display:none}
+.tsx-lab .tsx-pills__track li{margin:0;flex:0 0 auto;scroll-snap-align:center}
+.tsx-lab .tsx-pills__ind{position:absolute;left:0;top:0;height:100%;width:0;border-radius:999px;background:var(--x-green);transition:transform .35s var(--x-ease),width .35s var(--x-ease);pointer-events:none;z-index:0}
+.tsx-lab .tsx-pills a{position:relative;z-index:1;display:inline-flex;align-items:center;min-height:44px;padding:0 1rem;border-radius:999px;border:1px solid var(--x-rule);color:var(--x-ink);font-size:.9rem;font-weight:600;text-decoration:none;white-space:nowrap;transition:color .3s,border-color .3s}
+.tsx-lab .tsx-pills a.is-active{color:#fff;border-color:transparent}
+.tsx-lab:not(.is-js) .tsx-pills a.is-active{background:var(--x-green)}
+
+/* 2. segmented progress bar */
+.tsx-lab .tsx-seg{position:sticky;top:0;z-index:20;margin:0 calc(-1 * min(16px,4vw));padding:.6rem min(16px,4vw) .7rem;background:color-mix(in srgb,var(--x-panel) 86%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid var(--x-rule)}
+.tsx-lab .tsx-seg__now{display:flex;justify-content:space-between;gap:1rem;margin:0 0 .45rem;font-size:.85rem;color:var(--x-muted)}
+.tsx-lab .tsx-seg__now strong{color:var(--x-ink);font-weight:700}
+.tsx-lab .tsx-seg__list{display:flex;gap:4px;margin:0;padding:0;list-style:none}
+.tsx-lab .tsx-seg__list li{flex:1 1 0;margin:0}
+.tsx-lab .tsx-seg__list a{position:relative;display:block;height:28px;text-decoration:none}
+.tsx-lab .tsx-seg__list a::before{content:"";position:absolute;left:0;right:0;top:11px;height:6px;border-radius:99px;background:var(--x-rule)}
+.tsx-lab .tsx-seg__list a i{position:absolute;left:0;top:11px;height:6px;width:100%;border-radius:99px;background:var(--x-green);transform-origin:left;transform:scaleX(var(--p,0))}
+.tsx-lab .tsx-seg__list a:hover::before{background:var(--x-muted)}
+
+/* 3. topic cards */
+.tsx-lab .tsx-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr));gap:.75rem;margin:0;padding:0;list-style:none}
+.tsx-lab .tsx-cards li{margin:0}
+.tsx-lab .tsx-cards a{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:.85rem;min-height:72px;padding:.9rem 1rem;border:1px solid var(--x-rule);border-radius:var(--x-radius);background:var(--x-panel);color:var(--x-ink);text-decoration:none;transition:transform .25s var(--x-ease),box-shadow .25s var(--x-ease),border-color .25s}
+.tsx-lab .tsx-cards a:hover{transform:translateY(-3px);box-shadow:var(--x-shadow);border-color:var(--x-green)}
+.tsx-lab .tsx-cards .tsx-num{display:grid;place-items:center;width:2.4rem;height:2.4rem;border-radius:12px;background:var(--x-pale);color:var(--x-green);font-weight:800;font-size:.95rem}
+.tsx-lab .tsx-cards .tsx-t{font-weight:700;font-size:1rem;line-height:1.25}
+.tsx-lab .tsx-cards .tsx-t small{display:block;font-weight:400;font-size:.8rem;color:var(--x-muted);margin-top:.15rem}
+.tsx-lab .tsx-cards svg,.tsx-lab .tsx-back svg,.tsx-lab .tsx-island svg,.tsx-lab .tsx-cmdk-open svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tsx-lab .tsx-cards a:hover svg{color:var(--x-green)}
+.tsx-lab .tsx-back{position:fixed;right:16px;bottom:16px;z-index:30;display:inline-flex;align-items:center;gap:.4rem;min-height:48px;padding:0 1.1rem;border-radius:999px;background:var(--x-ink);color:var(--x-panel);font-size:.9rem;font-weight:700;text-decoration:none;box-shadow:var(--x-shadow);opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .3s,transform .3s var(--x-ease)}
+.tsx-lab .tsx-back.is-shown{opacity:1;transform:none;pointer-events:auto}
+.tsx-lab .tsx-back:hover{color:var(--x-panel)}
+
+/* 4. command palette */
+.tsx-lab .tsx-cmdk-open{display:flex;align-items:center;gap:.65rem;width:100%;min-height:56px;margin:0;padding:0 1rem;border:1px solid var(--x-rule);border-radius:var(--x-radius);background:var(--x-panel);color:var(--x-muted);font:inherit;font-size:1rem;text-align:left;cursor:pointer;box-shadow:0 1px 0 var(--x-rule);transition:border-color .2s,box-shadow .2s}
+.tsx-lab .tsx-cmdk-open:hover{border-color:var(--x-green);box-shadow:var(--x-shadow)}
+.tsx-lab .tsx-cmdk-open span{flex:1}
+.tsx-lab kbd{font:inherit;font-size:.75rem;padding:.15rem .45rem;border:1px solid var(--x-rule);border-bottom-width:2px;border-radius:6px;color:var(--x-muted);background:var(--x-stone)}
+.tsx-lab .tsx-cmdk-fallback{margin:.6rem 0 0;padding:0 0 0 1.1rem;font-size:.9rem}
+.tsx-lab.is-js .tsx-cmdk-fallback{display:none}
+.tsx-lab:not(.is-js) .tsx-cmdk-open{display:none}
+.tsx-cmdk{width:min(560px,calc(100vw - 32px));max-height:min(520px,80vh);margin:12vh auto auto;padding:0;border:1px solid var(--ts-rule,#D5D6CF);border-radius:18px;background:var(--ts-panel,#fff);color:var(--ts-ink,#1C2531);box-shadow:0 30px 80px -20px rgba(0,0,0,.45);overflow:hidden}
+.tsx-cmdk::backdrop{background:rgba(14,20,28,.45);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.tsx-cmdk[open]{animation:tsx-pop .22s cubic-bezier(.2,.8,.2,1)}
+@keyframes tsx-pop{from{opacity:0;transform:translateY(8px) scale(.98)}}
+.tsx-cmdk__in{display:flex;align-items:center;gap:.6rem;padding:.9rem 1rem;border-bottom:1px solid var(--ts-rule,#D5D6CF)}
+.tsx-cmdk__in svg{width:20px;height:20px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;color:var(--ts-muted,#4A5563)}
+.tsx-cmdk input{flex:1;min-width:0;min-height:40px;margin:0;padding:0;border:0;background:transparent;color:inherit;font:inherit;font-size:1.05rem;box-shadow:none}
+.tsx-cmdk input:focus{outline:none;box-shadow:none}
+.tsx-cmdk ul{max-height:340px;overflow-y:auto;margin:0;padding:.4rem;list-style:none}
+.tsx-cmdk li{margin:0}
+.tsx-cmdk a{display:flex;justify-content:space-between;align-items:center;gap:1rem;min-height:48px;padding:0 .85rem;border-radius:10px;color:inherit;text-decoration:none}
+.tsx-cmdk a small{color:var(--ts-muted,#4A5563);font-size:.8rem}
+.tsx-cmdk a[aria-selected="true"]{background:var(--ts-green,#377A00);color:#fff}
+.tsx-cmdk a[aria-selected="true"] small{color:#fff}
+.tsx-cmdk mark{background:none;color:inherit;font-weight:800;text-decoration:underline;text-underline-offset:.2em}
+.tsx-cmdk__empty{padding:1rem;color:var(--ts-muted,#4A5563);text-align:center;margin:0}
+.tsx-cmdk__foot{display:flex;gap:1rem;padding:.6rem 1rem;border-top:1px solid var(--ts-rule,#D5D6CF);font-size:.75rem;color:var(--ts-muted,#4A5563)}
+.tsx-cmdk__foot kbd{font:inherit;font-size:.7rem;padding:.1rem .35rem;border:1px solid var(--ts-rule,#D5D6CF);border-radius:5px}
+
+/* 5. floating island */
+.tsx-lab .tsx-island{position:fixed;left:50%;bottom:max(16px,env(safe-area-inset-bottom));z-index:30;width:min(320px,calc(100vw - 32px));transform:translateX(-50%);border-radius:26px;background:var(--x-ink);color:var(--x-panel);box-shadow:0 18px 50px -14px rgba(0,0,0,.55);transition:width .35s var(--x-ease),border-radius .35s var(--x-ease)}
+.tsx-lab .tsx-island.is-open{width:min(380px,calc(100vw - 32px));border-radius:22px}
+.tsx-lab .tsx-island__bar{display:flex;align-items:center;gap:.6rem;width:100%;min-height:52px;margin:0;padding:0 .6rem 0 1.1rem;border:0;background:transparent;color:inherit;font:inherit;font-size:.9rem;text-align:left;cursor:pointer;border-radius:26px}
+.tsx-lab .tsx-island__bar:hover,.tsx-lab .tsx-island__bar:focus{background:transparent;color:inherit}
+.tsx-lab .tsx-island__label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tsx-lab .tsx-island__label small{opacity:.7;margin-right:.4rem}
+.tsx-lab .tsx-island__ring{width:34px;height:34px;flex:0 0 auto}
+.tsx-lab .tsx-island__ring circle{fill:none;stroke-width:3}
+.tsx-lab .tsx-island__ring .bg{stroke:rgba(255,255,255,.18)}
+.tsx-lab .tsx-island__ring .fg{stroke:var(--x-accent);stroke-linecap:round;transform:rotate(-90deg);transform-origin:center;transition:stroke-dashoffset .2s linear}
+.tsx-lab .tsx-island__chev{transition:transform .35s var(--x-ease)}
+.tsx-lab .tsx-island.is-open .tsx-island__chev{transform:rotate(180deg)}
+.tsx-lab .tsx-island__panel{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s var(--x-ease)}
+.tsx-lab .tsx-island.is-open .tsx-island__panel{grid-template-rows:1fr}
+.tsx-lab .tsx-island__panel>div{overflow:hidden}
+.tsx-lab .tsx-island ol{margin:0;padding:.2rem .5rem .6rem;list-style:none;counter-reset:i}
+.tsx-lab .tsx-island li{margin:0;counter-increment:i}
+.tsx-lab .tsx-island ol a{display:flex;align-items:center;gap:.7rem;min-height:44px;padding:0 .65rem;border-radius:12px;color:inherit;text-decoration:none;font-size:.95rem}
+.tsx-lab .tsx-island ol a::before{content:counter(i);display:grid;place-items:center;width:1.6rem;height:1.6rem;border-radius:8px;background:rgba(255,255,255,.12);font-size:.75rem;font-weight:700}
+.tsx-lab .tsx-island ol a:hover{background:rgba(255,255,255,.1);color:inherit}
+.tsx-lab .tsx-island ol a.is-active::before{background:var(--x-accent);color:var(--x-ink)}
+.tsx-lab:not(.is-js) .tsx-island{position:static;transform:none;width:auto}
+.tsx-lab:not(.is-js) .tsx-island__panel{grid-template-rows:1fr}
+
+@media (prefers-reduced-motion:reduce){.tsx-lab *,.tsx-lab *::before,.tsx-cmdk{transition:none!important;animation:none!important}}
+@media print{.tsx-lab .tsx-back,.tsx-lab .tsx-island,.tsx-lab .tsx-pills,.tsx-lab .tsx-seg{display:none}}
+</style>
+
+<header class="tsx-intro">
+<p class="tsx-eyebrow">Practice page · staging only</p>
+<h1>In-page link ideas</h1>
+<p>Five ways to replace the plain “On this page” link row. Pick one, then scroll or tap. Every idea is plain HTML, CSS and a little JavaScript: no plugin, so the same code can go on the real pages.</p>
+<ul class="tsx-picker" aria-label="Choose an idea">
+<li><button type="button" data-idea="1" aria-pressed="true"><b>1</b>Pills</button></li>
+<li><button type="button" data-idea="2" aria-pressed="false"><b>2</b>Progress</button></li>
+<li><button type="button" data-idea="3" aria-pressed="false"><b>3</b>Cards</button></li>
+<li><button type="button" data-idea="4" aria-pressed="false"><b>4</b>Search</button></li>
+<li><button type="button" data-idea="5" aria-pressed="false"><b>5</b>Island</button></li>
+</ul>
+<div class="tsx-about is-on" data-about="1"><h2>1. Sticky pills that follow you</h2><p>A row of rounded buttons that sticks to the top while you read. The green highlight slides to the section you are in, and on a phone the row scrolls sideways.</p><p>Built with <code>position: sticky</code>, <code>IntersectionObserver</code> and CSS scroll snap.</p></div>
+<div class="tsx-about" data-about="2"><h2>2. Progress segments</h2><p>One short bar per section, like story bars on a phone. Each bar fills as you read that section, and the label says where you are (“2 of 6”). Tap a bar to jump.</p><p>Built with <code>position: sticky</code> and a scroll listener throttled with <code>requestAnimationFrame</code>.</p></div>
+<div class="tsx-about" data-about="3"><h2>3. Topic cards</h2><p>Big numbered tiles instead of small text links: easy to tap and easy to scan. After you jump, the heading glows briefly, and a “Topics” button appears so you can get back.</p><p>Built with CSS grid, the CSS <code>:focus</code> highlight and a scroll listener.</p></div>
+<div class="tsx-about" data-about="4"><h2>4. Search box (command palette)</h2><p>A “Find a topic” box. Type a few letters to filter, use the arrow keys and Enter, or tap a result. On a computer, Ctrl+K or ⌘K opens it from anywhere.</p><p>Built with the browser’s own <code>&lt;dialog&gt;</code> element.</p></div>
+<div class="tsx-about" data-about="5"><h2>5. Floating island</h2><p>A small pill at the bottom of the screen, where the thumb rests. It shows the section you are reading and a ring for progress. Tap it and it opens into the full list.</p><p>Built with <code>position: fixed</code>, a CSS grid open/close animation and a scroll listener.</p></div>
+</header>
+
+<!-- idea 1 -->
+<nav class="tsx-idea tsx-pills is-on" data-idea="1" aria-label="On this page">
+<ul class="tsx-pills__track"><li aria-hidden="true" class="tsx-pills__ind"></li>
+<li><a href="#tsx-what-it-is">What it is</a></li>
+<li><a href="#tsx-common-reasons">Common reasons</a></li>
+<li><a href="#tsx-who-can-benefit">Who can benefit</a></li>
+<li><a href="#tsx-questions">Questions</a></li>
+<li><a href="#tsx-what-to-expect">What to expect</a></li>
+<li><a href="#tsx-research">What Research Says</a></li>
+</ul>
+</nav>
+
+<!-- idea 2 -->
+<nav class="tsx-idea tsx-seg" data-idea="2" aria-label="On this page">
+<p class="tsx-seg__now"><strong class="tsx-seg__label">What it is</strong><span class="tsx-seg__count">1 of 6</span></p>
+<ul class="tsx-seg__list">
+<li><a href="#tsx-what-it-is" title="What it is"><span class="tsx-sr">What it is</span><i></i></a></li>
+<li><a href="#tsx-common-reasons" title="Common reasons"><span class="tsx-sr">Common reasons</span><i></i></a></li>
+<li><a href="#tsx-who-can-benefit" title="Who can benefit"><span class="tsx-sr">Who can benefit</span><i></i></a></li>
+<li><a href="#tsx-questions" title="Questions"><span class="tsx-sr">Questions</span><i></i></a></li>
+<li><a href="#tsx-what-to-expect" title="What to expect"><span class="tsx-sr">What to expect</span><i></i></a></li>
+<li><a href="#tsx-research" title="What Research Says"><span class="tsx-sr">What Research Says</span><i></i></a></li>
+</ul>
+</nav>
+
+<!-- idea 3 -->
+<nav class="tsx-idea" data-idea="3" aria-label="On this page" id="tsx-topics">
+<ul class="tsx-cards">
+<li><a href="#tsx-what-it-is"><span class="tsx-num">01</span><span class="tsx-t">What it is<small>The basics</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a></li>
+<li><a href="#tsx-common-reasons"><span class="tsx-num">02</span><span class="tsx-t">Common reasons<small>Why people book</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a></li>
+<li><a href="#tsx-who-can-benefit"><span class="tsx-num">03</span><span class="tsx-t">Who can benefit<small>Is it a fit</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a></li>
+<li><a href="#tsx-questions"><span class="tsx-num">04</span><span class="tsx-t">Questions<small>Short answers</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a></li>
+<li><a href="#tsx-what-to-expect"><span class="tsx-num">05</span><span class="tsx-t">What to expect<small>Your session</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a></li>
+<li><a href="#tsx-research"><span class="tsx-num">06</span><span class="tsx-t">What Research Says<small>Studies and sources</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a></li>
+</ul>
+<a class="tsx-back" href="#tsx-topics"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>Topics</a>
+</nav>
+
+<!-- idea 4 -->
+<nav class="tsx-idea" data-idea="4" aria-label="On this page">
+<button type="button" class="tsx-cmdk-open" aria-haspopup="dialog"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>Find a topic on this page…</span><kbd class="tsx-kbd">Ctrl K</kbd></button>
+<ul class="tsx-cmdk-fallback">
+<li><a href="#tsx-what-it-is">What it is</a></li>
+<li><a href="#tsx-common-reasons">Common reasons</a></li>
+<li><a href="#tsx-who-can-benefit">Who can benefit</a></li>
+<li><a href="#tsx-questions">Questions</a></li>
+<li><a href="#tsx-what-to-expect">What to expect</a></li>
+<li><a href="#tsx-research">What Research Says</a></li>
+</ul>
+<dialog class="tsx-cmdk" aria-label="Find a topic">
+<div class="tsx-cmdk__in"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input type="text" role="combobox" aria-expanded="true" aria-controls="tsx-cmdk-list" aria-autocomplete="list" placeholder="Type to filter…" autocomplete="off" spellcheck="false" aria-label="Find a topic"></div>
+<ul id="tsx-cmdk-list" role="listbox"></ul>
+<p class="tsx-cmdk__empty" hidden>No topic matches.</p>
+<div class="tsx-cmdk__foot"><span><kbd>↑</kbd> <kbd>↓</kbd> move</span><span><kbd>Enter</kbd> go</span><span><kbd>Esc</kbd> close</span></div>
+</dialog>
+</nav>
+
+<!-- idea 5 -->
+<nav class="tsx-idea tsx-island" data-idea="5" aria-label="On this page">
+<button type="button" class="tsx-island__bar" aria-expanded="false" aria-controls="tsx-island-panel">
+<svg class="tsx-island__ring" viewBox="0 0 36 36" aria-hidden="true"><circle class="bg" cx="18" cy="18" r="15"/><circle class="fg" cx="18" cy="18" r="15" stroke-dasharray="94.25" stroke-dashoffset="94.25"/></svg>
+<span class="tsx-island__label"><small>1/6</small><span>What it is</span></span>
+<svg class="tsx-island__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>
+<span class="tsx-sr">Show all topics</span>
+</button>
+<div class="tsx-island__panel" id="tsx-island-panel"><div>
+<ol>
+<li><a href="#tsx-what-it-is">What it is</a></li>
+<li><a href="#tsx-common-reasons">Common reasons</a></li>
+<li><a href="#tsx-who-can-benefit">Who can benefit</a></li>
+<li><a href="#tsx-questions">Questions</a></li>
+<li><a href="#tsx-what-to-expect">What to expect</a></li>
+<li><a href="#tsx-research">What Research Says</a></li>
+</ol>
+</div></div>
+</nav>
+
+<section class="tsx-sec" id="tsx-what-it-is" aria-labelledby="tsx-h1"><h2 id="tsx-h1" tabindex="-1">What it is</h2><p class="tsx-sr">Placeholder section.</p><div aria-hidden="true"><span class="tsx-line"></span><span class="tsx-line"></span><span class="tsx-line"></span><span class="tsx-line"></span><span class="tsx-line"></span><span class="tsx-line"></span></div></section>
+<section class="tsx-sec" id="tsx-common-reasons" aria-labelledby="tsx-h2"><h2 id="tsx-h2" tabindex="-1">Common reasons</h2><p class="tsx-sr">Placeholder section.</p><div aria-hidden="true"><span class="tsx-line"></span><span class="tsx-line"></span><span class="tsx-line"></span><span class="tsx-line"></span><span class="tsx-line"></span></div></section>
+<section class="tsx-sec" id="tsx-who-can-benefit" aria-labelledby="tsx-h3"><h2 id="tsx-h3" tabindex="-1">Who can benefit</h2><p class="tsx-sr">Placeholder section.</p><div aria-hidden="true"><span class="tsx-line"></span><span class="tsx-line"></span><span class="tsx-line"></span><span class="tsx-line"></span><span class="tsx-line"></span><span class="tsx-line"></span><span class="tsx-line"></span></div></section>
+<section class="tsx-sec" id="tsx-questions" aria-labelledby="tsx-h4"><h2 id="tsx-h4" tabindex="-1">Questions</h2><p class="tsx-sr">Placeholder section.</p><div aria-hidden="true"><span class="tsx-line"></span><span class="tsx-line"></span><span class="tsx-line"></span><span class="tsx-line"></span></div></section>
+<section class="tsx-sec" id="tsx-what-to-expect" aria-labelledby="tsx-h5"><h2 id="tsx-h5" tabindex="-1">What to expect</h2><p class="tsx-sr">Placeholder section.</p><div aria-hidden="true"><span class="tsx-line"></span><span class="tsx-line"></span><span class="tsx-line"></span><span class="tsx-line"></span><span class="tsx-line"></span><span class="tsx-line"></span></div></section>
+<section class="tsx-sec" id="tsx-research" aria-labelledby="tsx-h6"><h2 id="tsx-h6" tabindex="-1">What Research Says</h2><p class="tsx-sr">Placeholder section.</p><div aria-hidden="true"><span class="tsx-line"></span><span class="tsx-line"></span><span class="tsx-line"></span><span class="tsx-line"></span><span class="tsx-line"></span></div></section>
+
+<script>
+(function(){
+var lab=document.getElementById('tsx-lab');if(!lab||!('IntersectionObserver' in window)){return;}
+lab.classList.add('is-js');
+var calm=window.matchMedia('(prefers-reduced-motion: reduce)');
+var secs=[].slice.call(lab.querySelectorAll('.tsx-sec'));
+var names=secs.map(function(s){return s.querySelector('h2').textContent;});
+var current=0,idea=1;
+
+/* shared: jump smoothly, move focus to the heading (for keyboards and screen readers), flash it, keep the address bar right */
+function go(id){var s=document.getElementById(id);if(!s){return;}
+  s.scrollIntoView({behavior:calm.matches?'auto':'smooth',block:'start'});
+  var h=s.querySelector('h2');if(h){h.focus({preventScroll:true});}
+  s.classList.add('is-flash');setTimeout(function(){s.classList.remove('is-flash');},1200);
+  try{history.replaceState(null,'','#'+id);}catch(e){}}
+lab.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href^="#tsx-"]');if(!a||!lab.contains(a)){return;}
+  var id=a.getAttribute('href').slice(1);if(id==='tsx-topics'){return;}
+  e.preventDefault();go(id);if(idea===5){island(false);}});
+
+/* shared: which section is being read, and how far through it */
+function where(){var y=window.innerHeight*0.35,idx=0;for(var i=0;i<secs.length;i++){if(secs[i].getBoundingClientRect().top<=y){idx=i;}}return idx;}
+function part(s){var r=s.getBoundingClientRect(),y=window.innerHeight*0.35;return Math.max(0,Math.min(1,(y-r.top)/r.height));}
+function whole(){var a=secs[0].getBoundingClientRect().top,b=secs[secs.length-1].getBoundingClientRect().bottom,y=window.innerHeight*0.35;return Math.max(0,Math.min(1,(y-a)/(b-a)));}
+
+/* 1. pills */
+var pills=[].slice.call(lab.querySelectorAll('.tsx-pills a')),track=lab.querySelector('.tsx-pills__track'),ind=lab.querySelector('.tsx-pills__ind');
+function pillsTo(i){pills.forEach(function(p,k){p.classList.toggle('is-active',k===i);if(k===i){p.setAttribute('aria-current','true');}else{p.removeAttribute('aria-current');}});
+  var p=pills[i];if(!p||!p.offsetWidth){return;}ind.style.width=p.offsetWidth+'px';ind.style.transform='translateX('+p.offsetLeft+'px)';
+  var want=p.offsetLeft-(track.clientWidth-p.offsetWidth)/2;track.scrollTo({left:want,behavior:calm.matches?'auto':'smooth'});}
+
+/* 2. segments */
+var segs=[].slice.call(lab.querySelectorAll('.tsx-seg__list a')),segLabel=lab.querySelector('.tsx-seg__label'),segCount=lab.querySelector('.tsx-seg__count');
+function segUpdate(i){segs.forEach(function(a,k){a.querySelector('i').style.setProperty('--p',k<i?1:(k===i?part(secs[k]).toFixed(3):0));if(k===i){a.setAttribute('aria-current','true');}else{a.removeAttribute('aria-current');}});
+  segLabel.textContent=names[i];segCount.textContent=(i+1)+' of '+secs.length;}
+
+/* 3. cards: the Topics button shows once the cards have scrolled off the top */
+var cards=lab.querySelector('.tsx-cards'),back=lab.querySelector('.tsx-back');
+function backUpdate(){back.classList.toggle('is-shown',cards.getBoundingClientRect().bottom<0);}
+back.addEventListener('click',function(e){e.preventDefault();cards.scrollIntoView({behavior:calm.matches?'auto':'smooth',block:'center'});var f=cards.querySelector('a');if(f){f.focus({preventScroll:true});}});
+
+/* 4. command palette */
+var dlg=lab.querySelector('.tsx-cmdk'),inp=dlg.querySelector('input'),list=dlg.querySelector('ul'),empty=dlg.querySelector('.tsx-cmdk__empty'),sel=0,hits=[];
+var mac=/Mac|iPhone|iPad/.test(navigator.platform||navigator.userAgent);lab.querySelector('.tsx-kbd').textContent=mac?'⌘K':'Ctrl K';
+function esc(t){return t.replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function render(){var q=inp.value.trim().toLowerCase();hits=[];secs.forEach(function(s,i){var n=names[i],at=n.toLowerCase().indexOf(q);if(!q||at>-1){hits.push({i:i,html:q?esc(n.slice(0,at))+'<mark>'+esc(n.slice(at,at+q.length))+'</mark>'+esc(n.slice(at+q.length)):esc(n)});}});
+  sel=Math.min(sel,Math.max(0,hits.length-1));
+  list.innerHTML=hits.map(function(h,k){return '<li role="presentation"><a role="option" id="tsx-opt-'+k+'" href="#'+secs[h.i].id+'" aria-selected="'+(k===sel)+'"><span>'+h.html+'</span><small>Section '+(h.i+1)+'</small></a></li>';}).join('');
+  empty.hidden=hits.length>0;if(hits.length){inp.setAttribute('aria-activedescendant','tsx-opt-'+sel);}else{inp.removeAttribute('aria-activedescendant');}}
+function openK(){if(dlg.open){return;}inp.value='';sel=0;render();dlg.showModal();inp.focus();}
+function pick(k){var h=hits[k];if(!h){return;}dlg.close();go(secs[h.i].id);}
+lab.querySelector('.tsx-cmdk-open').addEventListener('click',openK);
+inp.addEventListener('input',function(){sel=0;render();});
+inp.addEventListener('keydown',function(e){if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();if(!hits.length){return;}sel=(sel+(e.key==='ArrowDown'?1:-1)+hits.length)%hits.length;render();var o=document.getElementById('tsx-opt-'+sel);if(o){o.scrollIntoView({block:'nearest'});}}else if(e.key==='Enter'){e.preventDefault();pick(sel);}});
+list.addEventListener('click',function(e){var a=e.target.closest('a');if(!a){return;}e.preventDefault();e.stopPropagation();pick(+a.id.replace('tsx-opt-',''));});
+dlg.addEventListener('click',function(e){if(e.target===dlg){dlg.close();}});
+document.addEventListener('keydown',function(e){if(idea===4&&(e.ctrlKey||e.metaKey)&&(e.key==='k'||e.key==='K')){e.preventDefault();openK();}});
+
+/* 5. island */
+var isl=lab.querySelector('.tsx-island'),bar=isl.querySelector('.tsx-island__bar'),ring=isl.querySelector('.fg'),islLab=isl.querySelector('.tsx-island__label'),islLinks=[].slice.call(isl.querySelectorAll('ol a'));
+function island(open){isl.classList.toggle('is-open',open);bar.setAttribute('aria-expanded',String(open));}
+bar.addEventListener('click',function(){island(!isl.classList.contains('is-open'));});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&isl.classList.contains('is-open')){island(false);bar.focus();}});
+document.addEventListener('click',function(e){if(isl.classList.contains('is-open')&&!isl.contains(e.target)){island(false);}});
+function islUpdate(i){islLab.innerHTML='<small>'+(i+1)+'/'+secs.length+'</small><span>'+esc(names[i])+'</span>';ring.style.strokeDashoffset=(94.25*(1-whole())).toFixed(2);
+  islLinks.forEach(function(a,k){a.classList.toggle('is-active',k===i);if(k===i){a.setAttribute('aria-current','true');}else{a.removeAttribute('aria-current');}});}
+
+/* one scroll handler, at most once per frame */
+var ticking=false;
+function update(){ticking=false;var i=where();if(idea===1&&i!==current){pillsTo(i);}if(idea===2){segUpdate(i);}if(idea===3){backUpdate();}if(idea===5){islUpdate(i);}current=i;}
+window.addEventListener('scroll',function(){if(!ticking){ticking=true;requestAnimationFrame(update);}},{passive:true});
+window.addEventListener('resize',function(){if(idea===1){pillsTo(current);}});
+
+/* the idea picker (remembers the choice in the address: ?idea=3) */
+var btns=[].slice.call(lab.querySelectorAll('.tsx-picker button'));
+function show(n){idea=n;island(false);if(dlg.open){dlg.close();}
+  btns.forEach(function(b){b.setAttribute('aria-pressed',String(+b.dataset.idea===n));});
+  [].forEach.call(lab.querySelectorAll('.tsx-idea'),function(el){el.classList.toggle('is-on',+el.dataset.idea===n);});
+  [].forEach.call(lab.querySelectorAll('.tsx-about'),function(el){el.classList.toggle('is-on',+el.dataset.about===n);});
+  back.classList.remove('is-shown');current=where();if(n===1){pillsTo(current);}update();
+  try{var u=new URL(location.href);u.searchParams.set('idea',n);history.replaceState(null,'',u);}catch(e){}}
+btns.forEach(function(b){b.addEventListener('click',function(){show(+b.dataset.idea);});});
+var start=1;try{start=+new URL(location.href).searchParams.get('idea')||1;}catch(e){}
+show(start>=1&&start<=5?start:1);
+})();
+</script>
+</div>
