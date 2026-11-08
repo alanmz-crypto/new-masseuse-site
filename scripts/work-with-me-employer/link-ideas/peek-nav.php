@@ -12,11 +12,10 @@ add_action( 'wp_head', function () {
 html[data-ts-theme="dark"] .ts-pk{--pk-on:#8CCB5B;--pk-on-text:#0E141C}
 .ts-pk,.ts-pk *,.ts-pk *::before{box-sizing:border-box}
 /* top strip: display only */
-.ts-pk-top{position:fixed;left:0;right:0;top:0;z-index:90;padding:.45rem max(16px,env(safe-area-inset-left)) .55rem;background:color-mix(in srgb,var(--pk-ground) 94%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--pk-rule);pointer-events:none;-webkit-user-select:none;user-select:none;transform:translateY(-110%);transition:transform .3s var(--pk-ease)}
+.ts-pk-top{position:sticky;top:0;z-index:90;margin:0 -12px 1.25rem;padding:.45rem 12px .55rem;background:color-mix(in srgb,var(--pk-ground) 94%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--pk-rule);pointer-events:none;-webkit-user-select:none;user-select:none}
 body.admin-bar .ts-pk-top{top:var(--wp-admin--admin-bar--height,32px)}
 @media (max-width:600px){body.admin-bar .ts-pk-top{top:0}}
-html.ts-pk-shown .ts-pk-top{transform:none}
-.ts-pk-top .in{max-width:1200px;margin:0 auto}
+.ts-pk-top .in{margin:0}
 .ts-pk-top p{display:flex;justify-content:space-between;gap:1rem;margin:0 0 .35rem;font-size:.82rem;line-height:1.3;color:var(--pk-muted)}
 .ts-pk-top p b{min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:var(--pk-ink);font-weight:700}
 .ts-pk-top p span{flex:0 0 auto}
@@ -24,43 +23,49 @@ html.ts-pk-shown .ts-pk-top{transform:none}
 .ts-pk-top li{flex:var(--len,1) 1 0;min-width:0;height:5px;margin:0;border-radius:9px;background:var(--pk-rule);overflow:hidden}
 .ts-pk-top li i{display:block;height:100%;border-radius:inherit;background:var(--pk-on);transform-origin:left;transform:scaleX(var(--p,0))}
 /* rail: right edge, thumb zone */
-.ts-pk-nav{position:fixed;right:max(2px,env(safe-area-inset-right));top:30vh;bottom:14vh;z-index:91;width:44px;opacity:0;visibility:hidden;transition:opacity .25s,visibility 0s linear .25s}
-html.ts-pk-shown .ts-pk-nav{opacity:1;visibility:visible;transition:opacity .25s}
+.ts-pk-nav{position:fixed;right:max(4px,env(safe-area-inset-right));top:30vh;bottom:14vh;z-index:91;width:48px}
 .ts-pk-rail{position:absolute;inset:0;display:flex;flex-direction:column;gap:5px;margin:0;padding:8px 0;list-style:none;touch-action:none;-webkit-user-select:none;user-select:none;border-radius:22px;transition:background-color .2s,box-shadow .2s}
 .ts-pk-nav.is-active .ts-pk-rail{background:color-mix(in srgb,var(--pk-panel) 92%,transparent);box-shadow:0 6px 24px -12px rgba(0,0,0,.45)}
-.ts-pk-rail li{position:relative;flex:var(--len,1) 1 0;min-height:24px;margin:0;padding:0}
+.ts-pk-rail li{position:relative;flex:var(--len,1) 1 0;min-height:22px;margin:0;padding:0}
 .ts-pk-rail a{position:absolute;inset:0;display:block;text-decoration:none;-webkit-tap-highlight-color:transparent}
 .ts-pk-rail a:focus-visible{outline:3px solid var(--pk-accent);outline-offset:-2px;border-radius:12px}
 .ts-pk-rail a::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:6px;margin-left:-3px;border-radius:9px;background:var(--pk-rule);box-shadow:0 0 0 2px var(--pk-ground);transition:width .15s,margin .15s,background-color .15s}
 .ts-pk-rail a i{position:absolute;left:50%;top:0;bottom:0;width:6px;margin-left:-3px;border-radius:9px;background:var(--pk-on);transform-origin:top;transform:scaleY(var(--p,0));transition:width .15s,margin .15s}
 .ts-pk-rail li.is-hover a::before,.ts-pk-rail li.is-hover a i{width:12px;margin-left:-6px}
 .ts-pk-rail li.is-hover a::before{background:var(--pk-accent)}
-.ts-pk-you{position:absolute;right:28px;width:10px;height:10px;margin-top:-5px;border-radius:50%;background:var(--pk-ink);box-shadow:0 0 0 3px var(--pk-ground);pointer-events:none;transition:top .2s}
+.ts-pk-label{position:absolute;right:52px;max-width:60vw;margin-top:-14px;padding:.3rem .65rem;border-radius:999px;background:var(--pk-ink);color:var(--pk-panel);font-size:.75rem;font-weight:700;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none;opacity:0;transition:opacity .3s,top .2s}
+.ts-pk-nav.is-moving .ts-pk-label{opacity:.92}
+.ts-pk-nav.is-active .ts-pk-label{opacity:0}
+.ts-pk-you{position:absolute;right:30px;width:10px;height:10px;margin-top:-5px;border-radius:50%;background:var(--pk-ink);box-shadow:0 0 0 3px var(--pk-ground);pointer-events:none;transition:top .2s}
 /* peek card */
-.ts-pk-card{position:fixed;right:58px;z-index:92;width:min(300px,calc(100vw - 76px));padding:.85rem 1rem;border:1px solid var(--pk-rule);border-radius:18px;background:var(--pk-panel);color:var(--pk-ink);box-shadow:var(--pk-shadow);pointer-events:none;opacity:0;transform:translateX(10px) scale(.98);transition:opacity .15s,transform .2s var(--pk-ease);font-size:1rem;line-height:1.4}
+.ts-pk-card{position:fixed;right:64px;z-index:92;width:min(300px,calc(100vw - 84px));padding:.85rem 1rem;border:1px solid var(--pk-rule);border-radius:18px;background:var(--pk-panel);color:var(--pk-ink);box-shadow:var(--pk-shadow);pointer-events:none;opacity:0;transform:translateX(10px) scale(.98);transition:opacity .15s,transform .2s var(--pk-ease);font-size:1rem;line-height:1.4}
 .ts-pk-card.is-on{opacity:1;transform:none}
 .ts-pk-card.is-pinned{pointer-events:auto;cursor:pointer}
 .ts-pk-card small{display:block;font-size:.72rem;color:var(--pk-muted);text-transform:uppercase;letter-spacing:.08em}
 .ts-pk-card b{display:block;font-size:1.05rem;margin:.15rem 2rem .1rem 0}
+.ts-pk-card .d{display:block;font-size:.86rem;line-height:1.4;color:var(--pk-ink);opacity:.9}
 .ts-pk-card .here{display:block;margin-top:.35rem;font-size:.75rem;color:var(--pk-muted)}
 .ts-pk-card .shot{display:block;margin:.55rem 0 0;padding:.7rem .75rem;border-radius:12px;background:var(--pk-ground);border:1px solid var(--pk-rule)}
 .ts-pk-card .shot strong{display:block;font-size:.95rem;line-height:1.25;margin:0 0 .3rem}
 .ts-pk-card .shot em{display:block;font-style:normal;font-size:.82rem;line-height:1.4;color:var(--pk-muted);margin:0 0 .45rem}
 .ts-pk-card .shot span{display:block;height:.42rem;margin:0 0 .32rem;border-radius:9px;background:var(--pk-stone)}
-.ts-pk-card .shot span:nth-of-type(2){width:78%}
+.ts-pk-card .shot span:nth-of-type(2){width:80%}.ts-pk-card .shot span:nth-of-type(3){width:60%}
 .ts-pk-card .hint{display:block;margin-top:.6rem;padding-top:.55rem;border-top:1px solid var(--pk-rule);font-size:.82rem;font-weight:700;color:var(--pk-on)}
 html[data-ts-theme="dark"] .ts-pk-card .hint{color:var(--pk-on)}
 .ts-pk-card .x{position:absolute;right:.35rem;top:.35rem;display:none;width:40px;height:40px;margin:0;padding:0;border:0;border-radius:50%;background:transparent;color:var(--pk-muted);font:inherit;font-size:1.3rem;line-height:1;cursor:pointer;touch-action:manipulation}
 .ts-pk-card .x:hover,.ts-pk-card .x:focus{background:var(--pk-stone);color:var(--pk-ink)}
 .ts-pk-card.is-pinned .x{display:block}
 .ts-pk-card:focus-visible{outline:3px solid var(--pk-accent);outline-offset:2px}
+/* the heading glows briefly after a jump */
+.ts-pk-flash{border-radius:8px;background:color-mix(in srgb,var(--pk-accent) 28%,transparent);transition:background-color .6s}
+.ts-pk-unflash{transition:background-color .6s}
 /* back to where you were */
 .ts-pk-back{position:fixed;right:max(10px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));z-index:93;display:inline-flex;align-items:center;gap:.35rem;max-width:calc(100vw - 20px);min-height:46px;margin:0;padding:0 1rem;border:0;border-radius:999px;background:var(--pk-ink);color:var(--pk-panel);font:inherit;font-size:.85rem;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:var(--pk-shadow);cursor:pointer;touch-action:manipulation}
 .ts-pk-back:hover,.ts-pk-back:focus{background:var(--pk-ink);color:var(--pk-panel)}
 .ts-pk-back:focus-visible{outline:3px solid var(--pk-accent);outline-offset:2px}
 .ts-pk-back[hidden]{display:none}
 /* keep the text clear of the rail on phones and tablets; the bottom "On this page" button is replaced by the rail */
-@media (max-width:1100px){html.ts-pk-ready .entry-content{padding-right:26px}}
+@media (max-width:1100px){html.ts-pk-ready .entry-content{padding-right:26px}.ts-pk-top{padding-right:44px}}   /* the strip's text stays clear of the rail while it is still in the page */
 #ts-section-guide-trigger,#ts-section-guide-popover{display:none!important}
 html.ts-pk-ready .entry-content [id]{scroll-margin-top:64px}
 @media (prefers-reduced-motion:reduce){.ts-pk *,.ts-pk-top,.ts-pk-nav,.ts-pk-card{transition:none!important}}
@@ -92,27 +97,33 @@ add_action( 'wp_footer', function () {
     function describe() {
       var ps = [].slice.call(content.querySelectorAll('p'));
       S.forEach(function (s, i) {
-        var h = el(i), nx = el(i + 1) || null; s.heading = h ? h.textContent.trim() : s.label; s.excerpt = ''; s.mins = 1;
+        var h = el(i), nx = el(i + 1) || null; s.heading = h ? h.textContent.trim() : s.label; s.excerpt = ''; s.desc = ''; s.mins = 1;
         if (!h) return;
         var r = document.createRange(); r.setStartBefore(h); if (nx) r.setEndBefore(nx); else r.setEndAfter(content.lastChild);
         var words = (r.toString().match(/\S+/g) || []).length; s.mins = Math.max(1, Math.round(words / 200));
         for (var k = 0; k < ps.length; k++) {
           var p = ps[k], after = h.compareDocumentPosition(p) & Node.DOCUMENT_POSITION_FOLLOWING, before = !nx || (p.compareDocumentPosition(nx) & Node.DOCUMENT_POSITION_FOLLOWING);
-          if (after && before && p.textContent.trim().length > 30 && !p.closest('.ts-jump')) {
-            var t = p.textContent.trim().replace(/\s+/g, ' '); s.excerpt = t.length > 120 ? t.slice(0, 117).replace(/\s+\S*$/, '') + '…' : t; break;
+          if (after && before && p.textContent.trim().length > 30 && !p.closest('.ts-jump') && !p.closest('.ts-pk-top')) {
+            var t = p.textContent.trim().replace(/\s+/g, ' '); s.excerpt = t.length > 120 ? t.slice(0, 117).replace(/\s+\S*$/, '') + '…' : t;
+            var first = (t.match(/^.*?[.!?](\s|$)/) || [t])[0].trim(); s.desc = first.length > 90 ? first.slice(0, 87).replace(/\s+\S*$/, '') + '…' : first; break;
           }
         }
       });
+      if (segs) segs.forEach(function (li, i) { li.querySelector('a').setAttribute('aria-label', S[i].label + (S[i].desc ? ': ' + S[i].desc : '')); });   // the rail's names for screen readers include the description
     }
 
     // the parts: top strip (display only), rail, card, back button
+    var segs = null;
+    var strip = document.createElement('div'); strip.className = 'ts-pk ts-pk-top'; strip.setAttribute('aria-hidden', 'true');
+    strip.innerHTML = '<div class="in"><p><b></b><span></span></p><ol>' + S.map(function () { return '<li><i></i></li>'; }).join('') + '</ol></div>';
+    row.parentNode.insertBefore(strip, row.nextSibling);   // in the page, right under the row; it sticks to the top as you read (display only)
     var box = document.createElement('div'); box.className = 'ts-pk';
-    box.innerHTML = '<div class="ts-pk-top" aria-hidden="true"><div class="in"><p><b></b><span></span></p><ol>' + S.map(function () { return '<li><i></i></li>'; }).join('') + '</ol></div></div>' +
-      '<nav class="ts-pk-nav" aria-label="Sections on this page"><ol class="ts-pk-rail">' + S.map(function (s) { return '<li><a href="' + esc(s.href) + '"><i></i><span class="screen-reader-text">' + esc(s.label) + '</span></a></li>'; }).join('') + '</ol><span class="ts-pk-you" aria-hidden="true"></span></nav>' +
+    box.innerHTML = '<nav class="ts-pk-nav" aria-label="Sections on this page"><ol class="ts-pk-rail">' + S.map(function (s) { return '<li><a href="' + esc(s.href) + '" aria-label="' + esc(s.label) + '"><i></i></a></li>'; }).join('') + '</ol><span class="ts-pk-you" aria-hidden="true"></span><span class="ts-pk-label" aria-hidden="true"></span></nav>' +
       '<div class="ts-pk-card" role="group" aria-label="Section preview" tabindex="-1"></div><button type="button" class="ts-pk-back" hidden></button>';
     document.body.appendChild(box);
-    var top = box.querySelector('.ts-pk-top'), topSegs = [].slice.call(top.querySelectorAll('li')), nav = box.querySelector('.ts-pk-nav'), rail = nav.querySelector('.ts-pk-rail'),
-      segs = [].slice.call(rail.children), you = nav.querySelector('.ts-pk-you'), card = box.querySelector('.ts-pk-card'), back = box.querySelector('.ts-pk-back');
+    var top = strip, topSegs = [].slice.call(top.querySelectorAll('li')), nav = box.querySelector('.ts-pk-nav'), rail = nav.querySelector('.ts-pk-rail'),
+      you = nav.querySelector('.ts-pk-you'), label = nav.querySelector('.ts-pk-label'), card = box.querySelector('.ts-pk-card'), back = box.querySelector('.ts-pk-back');
+    segs = [].slice.call(rail.children);
     root.classList.add('ts-pk-ready');
 
     // where the reader is
@@ -128,8 +139,8 @@ add_action( 'wp_footer', function () {
     function jumpTo(i, record) {
       var h = el(i); if (!h) return;
       if (record) { from = { y: window.scrollY, name: cur < 0 ? 'the top' : S[cur].label }; back.textContent = '↩ Back to ' + from.name; back.hidden = false; }
-      root.classList.add('ts-pk-shown');
       window.scrollTo({ top: h.getBoundingClientRect().top + window.scrollY - (top.offsetHeight + 12), behavior: calm.matches ? 'auto' : 'smooth' });
+      h.classList.remove('ts-pk-unflash'); h.classList.add('ts-pk-flash'); setTimeout(function () { h.classList.add('ts-pk-unflash'); h.classList.remove('ts-pk-flash'); }, 1200);
       if (!h.hasAttribute('tabindex')) h.setAttribute('tabindex', '-1');
       h.focus({ preventScroll: true });
       try { history.pushState(null, '', S[i].href); } catch (e) {}
@@ -144,8 +155,8 @@ add_action( 'wp_footer', function () {
     // the peek card
     function cardHTML(i, pinned) {
       var s = S[i], here = i === cur ? 'You are reading this section.' : (cur < 0 ? '' : 'You are in: ' + S[cur].label);
-      return '<button type="button" class="x" aria-label="Close the preview">×</button><small>Section ' + (i + 1) + ' of ' + S.length + ' · ' + s.mins + ' min</small><b>' + esc(s.label) + '</b><span class="here">' + esc(here) + '</span>' +
-        '<span class="shot"><strong>' + esc(s.heading) + '</strong>' + (s.excerpt ? '<em>' + esc(s.excerpt) + '</em>' : '') + '<span aria-hidden="true"></span><span aria-hidden="true"></span></span>' +
+      return '<button type="button" class="x" aria-label="Close the preview">×</button><small>Section ' + (i + 1) + ' of ' + S.length + ' · ' + s.mins + ' min</small><b>' + esc(s.label) + '</b>' + (s.desc ? '<span class="d">' + esc(s.desc) + '</span>' : '') + '<span class="here">' + esc(here) + '</span>' +
+        '<span class="shot"><strong>' + esc(s.heading) + '</strong>' + (s.excerpt ? '<em>' + esc(s.excerpt) + '</em>' : '') + '<span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span></span>' +
         '<span class="hint">' + (pinned ? 'Tap to go there' : 'Lift to keep this preview') + '</span>';
     }
     function hover(i) { segs.forEach(function (li, k) { li.classList.toggle('is-hover', k === i); }); }
@@ -173,15 +184,16 @@ add_action( 'wp_footer', function () {
     var ticking = false;
     function draw() {
       ticking = false;
-      root.classList.toggle('ts-pk-shown', row.getBoundingClientRect().bottom < 0);
       var y = line(), i = -1; S.forEach(function (s, k) { var h = el(k); if (h && h.getBoundingClientRect().top <= y) i = k; }); cur = i;
       segs.forEach(function (li, k) { li.style.setProperty('--len', (S[k].len || 1).toFixed(2)); li.querySelector('i').style.setProperty('--p', fill(k).toFixed(3)); var a = li.querySelector('a'); if (k === cur) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
       topSegs.forEach(function (li, k) { li.style.setProperty('--len', (S[k].len || 1).toFixed(2)); li.firstChild.style.setProperty('--p', fill(k).toFixed(3)); });
       top.querySelector('b').textContent = S[Math.max(cur, 0)].label; top.querySelector('span').textContent = (Math.max(cur, 0) + 1) + ' of ' + S.length;
       var rr = rail.getBoundingClientRect(), nr = nav.getBoundingClientRect(); you.style.top = (rr.top - nr.top + 8 + whole() * (rr.height - 16)) + 'px';
+      label.style.top = you.style.top; label.textContent = S[Math.max(cur, 0)].label;
     }
     function ask() { if (!ticking) { ticking = true; window.requestAnimationFrame(draw); } }
-    window.addEventListener('scroll', ask, { passive: true });
+    var still = 0;
+    window.addEventListener('scroll', function () { ask(); nav.classList.add('is-moving'); clearTimeout(still); still = setTimeout(function () { nav.classList.remove('is-moving'); }, 900); }, { passive: true });   // the section name shows beside the rail while the page scrolls
     window.addEventListener('resize', function () { lengths(); ask(); });
     if ('ResizeObserver' in window) new ResizeObserver(function () { lengths(); ask(); }).observe(content);   // FAQ answers opening change the lengths
 
@@ -191,7 +203,7 @@ add_action( 'wp_footer', function () {
       var hash = location.hash, i = -1; S.forEach(function (s, k) { if (s.href === hash) i = k; }); if (i < 0) return;
       var until = Date.now() + 4000, timer = 0, done = false;
       function stop() { done = true; window.removeEventListener('scroll', idle); }
-      function fix() { var h = el(i); if (!h || done) return; root.classList.add('ts-pk-shown'); var t = h.getBoundingClientRect().top, want = top.offsetHeight + 12; if (Math.abs(t - want) > 6) window.scrollTo({ top: t + window.scrollY - want, behavior: 'instant' }); }
+      function fix() { var h = el(i); if (!h || done) return; var t = h.getBoundingClientRect().top, want = top.offsetHeight + 12; if (Math.abs(t - want) > 6) window.scrollTo({ top: t + window.scrollY - want, behavior: 'instant' }); }
       function idle() { clearTimeout(timer); timer = setTimeout(function () { if (Date.now() > until) { stop(); return; } fix(); }, 180); }
       ['wheel', 'touchstart', 'keydown', 'mousedown'].forEach(function (ev) { window.addEventListener(ev, stop, { once: true, passive: true }); });
       window.addEventListener('scroll', idle, { passive: true }); idle();
