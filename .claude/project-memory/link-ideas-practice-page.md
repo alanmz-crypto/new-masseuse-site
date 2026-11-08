@@ -225,4 +225,10 @@ the rail top stood for the page top, so starting mid-page leapt back near the to
 turns green), then follows; the page glides toward the thumb (22% of the distance per frame, capped at 12% of the screen) instead of leaping. Snippet
 **#1371**; snapshot `peek-nav-before-20261108-195800-9df0c12b.json`; staging39 check `ui-peek-nav-s39-32-1` **464/0**.
 **Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-195800-9df0c12b.json'`.
+**Scroll dropped (Ryan: "The scrolling is wonky" ... "Get rid of the scroll idea."):** sliding from the icon straight down onto the rail is the rail
+preview again (page still); kept: slide from the icon onto a name and lift = its box; 2 s hold keeps the list and a tap on a name opens its box; the
+preview takes over only on a clearly straight slide down (a diagonal to a far name crosses the wide rail). Lesson: a page scrub from a short rail fights
+the phone's own scrolling (absolute mapping leaps, easing lags) and duplicates a normal swipe, which already shows the section name beside the rail.
+Snippet **#1372**; snapshot `peek-nav-before-20261108-202316-cf244515.json`; staging39 check `ui-peek-nav-s39-33-1` **444/0**.
+**Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-202316-cf244515.json'`.
 
