@@ -1,7 +1,10 @@
 {
-  "id": "rehearse-progress-ideas-20261108-2",
-  "op": "rehearse",
+  "id": "apply-progress-ideas-staging39-20261108-2",
+  "op": "run",
   "target": "staging39",
-  "installer": "link-ideas/install-progress-ideas.php",
-  "args": []
+  "script": "link-ideas/push-progress-ideas.sh",
+  "args": [
+    "--apply"
+  ],
+  "tests": "auto"
 }
