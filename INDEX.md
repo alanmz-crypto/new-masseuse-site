@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-08 00:23 UTC  **PASS**  `rehearse-link-ideas-20261108`  [reports/2026-11-08/002346-rehearse-link-ideas-20261108.md](reports/2026-11-08/002346-rehearse-link-ideas-20261108.md)  (run 42429438370)
 - 2026-11-08 00:13 UTC  **PASS**  `inspect-staging39-home-20261108`  [reports/2026-11-08/001342-inspect-staging39-home-20261108.md](reports/2026-11-08/001342-inspect-staging39-home-20261108.md)  (run 42428757141)
 - 2026-11-04 17:00 UTC  **INVALID**  `ui-page-navigation-live-browser-20261104`  [reports/2026-11-04/170002-ui-page-navigation-live-browser-20261104.md](reports/2026-11-04/170002-ui-page-navigation-live-browser-20261104.md)  (run 41872918516)
 - 2026-11-04 13:46 UTC  **PASS**  `live-page-navigation-20261104-1`  [reports/2026-11-04/134623-live-page-navigation-20261104-1.md](reports/2026-11-04/134623-live-page-navigation-20261104-1.md)  (run 41840605814)
