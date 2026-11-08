@@ -76,7 +76,7 @@ case "$phase" in
     tmp=$(mktemp -d); trap 'rm -rf "$tmp" "$cfgs"' EXIT
     bad=0
     fetch() { local code; code=$(curl -s -o "$tmp/$1.html" -w '%{http_code}' --max-time 30 "https://$want$2" || true); echo "  $code $2"; [ "$code" = 200 ] || { echo "$2 does not answer 200 (202 = SiteGround's bot challenge = INVALID, retry later)."; exit 1; }; }
-    need() { local n; n=$(grep -o -F -- "$2" "$tmp/$1.html" | wc -l); if [ "$n" = "$3" ]; then echo "  ok   $1: $n x $2"; else echo "  FAIL $1: $n x $2 (want $3)"; bad=1; fi; }
+    need() { local n; n=$( { grep -o -F -- "$2" "$tmp/$1.html" || true; } | wc -l); if [ "$n" = "$3" ]; then echo "  ok   $1: $n x $2"; else echo "  FAIL $1: $n x $2 (want $3)"; bad=1; fi; }
     fetch thai /thai-massage/
     need thai 'id="ts-pill-nav-css"' 1
     need thai 'id="ts-pill-nav-runtime"' 1

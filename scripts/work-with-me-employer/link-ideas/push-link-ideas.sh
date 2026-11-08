@@ -77,7 +77,7 @@ case "$phase" in
     code=$(curl -s -o "$tmp/p.html" -w '%{http_code}' --max-time 30 "https://$want/in-page-link-ideas/" || true); echo "  $code /in-page-link-ideas/"
     [ "$code" = 200 ] || { echo "/in-page-link-ideas/ does not answer 200 (202 = SiteGround's bot challenge = INVALID, retry later)." >&2; exit 1; }
     bad=0
-    need() { local n; n=$(grep -o -F -- "$1" "$tmp/p.html" | wc -l); if [ "$n" = "$2" ]; then echo "  ok   $n x $1"; else echo "  FAIL $n x $1 (want $2)"; bad=1; fi; }
+    need() { local n; n=$( { grep -o -F -- "$1" "$tmp/p.html" || true; } | wc -l); if [ "$n" = "$2" ]; then echo "  ok   $n x $1"; else echo "  FAIL $n x $1 (want $2)"; bad=1; fi; }
     need 'id="tsx-lab"' 1
     need '<h1>In-page link ideas</h1>' 1
     need 'data-idea="' 10                                  # five picker buttons + five idea blocks
