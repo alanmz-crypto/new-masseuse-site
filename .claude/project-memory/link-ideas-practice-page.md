@@ -212,3 +212,12 @@ about 40% of a phone's width stays free. Snippet **#1369**; snapshot `peek-nav-b
 **Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-180339-b42020e0.json'`.
 **Saved state (Ryan, before the next design):** `link-ideas/saved/20261108-1369/` (code copies of #1369 + restore steps); staging39 DB export `staging39-manual-20261108-182958.sql`, verified off-site. Hand-written summaries would need Ryan's (and Butsaba's) approval of new wording.
 
+**Index icon scrolls the page; slide onto a name to keep it (2026-11-08, Ryan + session synthesis):** press the icon (names fan out); slide straight down
+the rail = the page scrolls with the thumb (rail = whole page), only the current section's name shows (`.ts-pk-chip`, closed-box form); slide sideways
+onto it (green) and lift = it stays; tap = its box with the summary; tap again = go there; lift on the rail = stay where you scrolled; tap elsewhere lets it
+go. Slide from the icon onto a list name and lift = its box opens. 2 s hold still keeps the list; a tap on a name opens its box (not a jump). Starting on
+the rail still previews without moving the page. Scrolling starts only on a clearly straight slide (24px into the rail, <12% sideways); leaving the rail
+sideways first = picking a name (a diagonal to a far name passes over the wide rail). Snippet **#1370**; snapshot
+`peek-nav-before-20261108-191607-4d74fdf9.json`; staging39 check `ui-peek-nav-s39-31-1` **456/0**. Saved state to go back to: `link-ideas/saved/20261108-1369/`.
+**Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-191607-4d74fdf9.json'`.
+
