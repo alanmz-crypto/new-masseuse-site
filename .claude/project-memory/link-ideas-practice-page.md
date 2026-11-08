@@ -209,5 +209,6 @@ never jumps. Snippet #1368, staging39 check `ui-peek-nav-s39-29-1` **404/0**. (2
 boxes (stone, 10px corners, number in a light circle; the current one has the open box's green edge). (3) Held 2 s, the names stay open after lifting
 (buzz + green ring on the icon): tap a name to jump, touch the rail for that box and its summary, tap anywhere else to close; names capped at 48vw so
 about 40% of a phone's width stays free. Snippet **#1369**; snapshot `peek-nav-before-20261108-180339-b42020e0.json`; staging39 check `ui-peek-nav-s39-30-1` **428/0** (mock 428/0).
-**Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-180339-b42020e0.json'`. Hand-written summaries would need Ryan's (and Butsaba's) approval of new wording.
+**Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-180339-b42020e0.json'`.
+**Saved state (Ryan, before the next design):** `link-ideas/saved/20261108-1369/` (code copies of #1369 + restore steps); staging39 DB export `staging39-manual-20261108-182958.sql`, verified off-site. Hand-written summaries would need Ryan's (and Butsaba's) approval of new wording.
 

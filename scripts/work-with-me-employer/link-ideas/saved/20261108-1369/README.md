@@ -8,7 +8,7 @@ The known-good design before the next (larger) redesign. Ryan asked for a state 
   (the same commit is also in the branch history, which is never force-pushed). Browser check on staging39: **428 passed, 0 failed**
   (`ui-peek-nav-s39-30-1`).
 - **Server:** snippet **#1369** on staging39; its before-snapshot is `$HOME/private-backups/peek-nav-before-20261108-180339-b42020e0.json`;
-  a full staging39 database export was taken right after this save (see `.claude/project-memory/link-ideas-practice-page.md`).
+  full staging39 database export right after this save: `private-backups/staging39-manual-20261108-182958.sql` (4,395,050 bytes), verified encrypted off-site copy in the draft release `offsite-2026-11` (report `backup-s39-save-1369-1`).
 
 ## How to go back to this state
 
