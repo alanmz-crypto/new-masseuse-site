@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-08 09:15 UTC  **INVALID**  `rollback-peek-nav-v13-staging39-20261108`  [reports/2026-11-08/091518-rollback-peek-nav-v13-staging39-20261108.md](reports/2026-11-08/091518-rollback-peek-nav-v13-staging39-20261108.md)  (run 42466370765)
 - 2026-11-08 08:49 UTC  **PASS**  `rehearse-sitewide-cleanup-20261108-2`  [reports/2026-11-08/084938-rehearse-sitewide-cleanup-20261108-2.md](reports/2026-11-08/084938-rehearse-sitewide-cleanup-20261108-2.md)  (run 42464462519)
 - 2026-11-08 08:47 UTC  **PASS**  `ui-peek-nav-staging39-20261108-16`  [reports/2026-11-08/084757-ui-peek-nav-staging39-20261108-16.md](reports/2026-11-08/084757-ui-peek-nav-staging39-20261108-16.md)  (run 42464122640)
 - 2026-11-08 08:43 UTC  **PASS**  `apply-peek-nav-staging39-20261108-14`  [reports/2026-11-08/084310-apply-peek-nav-staging39-20261108-14.md](reports/2026-11-08/084310-apply-peek-nav-staging39-20261108-14.md)  (run 42464000268)
