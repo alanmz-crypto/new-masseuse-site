@@ -1,0 +1,303 @@
+# Site op `ui-peek-nav-flicker-repro-20261108`
+
+| | |
+|---|---|
+| operation | `run` on `staging39` |
+| script | `link-ideas/check-peek-nav.mjs` `https://staging39.thaisolitude.com` |
+| lane | ops (site-ops.yml) |
+| commit | `5899f30d7916947cdbb8018b0b8cc6854cabefd2` on `claude/wizardly-bell-xu0rta` |
+| run | https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42457910655 |
+| started | 2026-11-08 07:13:57 UTC |
+
+## check-peek-nav.mjs https://staging39.thaisolitude.com(S_TARGET=staging39): FAIL (exit 1)
+
+```text
+PASS phone/light the row still has the five links in order (no-JavaScript fallback)
+PASS phone/light the pills trial is gone
+PASS phone/light the in-page link row under the header is removed (Ryan, 2026-11-08)  [{"rowShown":false,"stripAfterRow":true,"stripBeforeSections":true,"rail":"visible","railOp":"1"}]
+PASS phone/light the strip takes the row's place at the top of the content  [{"rowShown":false,"stripAfterRow":true,"stripBeforeSections":true,"rail":"visible","railOp":"1"}]
+PASS phone/light the rail is there from the start (as in the mock-up)  [{"rowShown":false,"stripAfterRow":true,"stripBeforeSections":true,"rail":"visible","railOp":"1"}]
+PASS phone/light the rail's names for screen readers include each section's description  [What it is: Thai massage brings movement and massage together through rhythmic compression, gentle… | Common reasons: People often come to Thai massage when long hours at a desk, travel, exercise, or… | What to expect: Before your session, tell me about any health conditions, medications, pregnancy,… | Questions: You stay fully clothed, so wear something loose and comfortable that lets you move easily. | What Research Says: Research on traditional Thai massage is still limited.]
+PASS phone/light the site header stays on top while reading (Ryan, 2026-11-08)  [{"pos":"sticky","top":0,"bottom":85,"iconTop":147,"stripBottom":124}]
+PASS phone/light the strip sticks right under the header  [{"st":{"top":85,"h":39,"pe":"none","controls":0,"rail":{"top":199,"bottom":571,"right":390},"vh":664,"vw":390,"fills":[1,0.086,0,0,0]},"hd":{"pos":"sticky","top":0,"bottom":85,"iconTop":147,"stripBottom":124}}]
+PASS phone/light the index icon stays clear of the header and the strip  [{"pos":"sticky","top":0,"bottom":85,"iconTop":147,"stripBottom":124}]
+FAIL phone/light opening the phone menu does not flicker (header and menu sizes stay still)  [328/243/421px | 421/336/328px]
+PASS phone/light the phone menu opens from the pinned header mid-page and fits the screen  [{"shown":true,"top":85,"bottom":328,"vh":664}]
+PASS phone/light the strip names the current topic and position  [Common reasons / 2 of 5]
+PASS phone/light the strip shows progress per section  [1 0.086 0 0 0]
+PASS phone/light the strip is display only
+PASS phone/light the thin sitewide reading-progress bar is gone (Ryan, 2026-11-08)
+PASS phone/light the scroll-to-top button is gone (Ryan, 2026-11-08)
+PASS phone/light first visit: a hint appears beside the rail once reading starts  [{"shown":true,"text":"Slide your thumb along this bar to preview each section. Lift, then tap the preview to go there. Hold the icon above it to see them all.Got itUse it on the left","wiggle":true,"stored":"seen"}]
+PASS phone/light "Got it" hides the hint
+PASS phone/light while the page scrolls, the section name shows beside the rail  [{"moving":true,"text":"Common reasons","op":0.92}]
+PASS phone/light ...and fades once scrolling stops
+PASS phone/light the rail sits on the right edge in the thumb zone  [{"top":199,"bottom":571,"right":390}]
+PASS phone/light the bottom "On this page" button is replaced by the rail
+PASS phone/light touching the strip does nothing
+PASS phone/light sliding the rail previews the section: name, description, its real heading and its first lines  [{"on":true,"pinned":false,"name":"Questions","heading":"Questions About Thai Massage","excerpt":"You stay fully clothed, so wear something loose and comfortable that lets you move easily.","desc":"You stay fully clothed, so wear something loose and comfortable that lets you move easily.","lines":3,"inView":true}]
+PASS phone/light the page does not move while browsing
+PASS phone/light lifting keeps the preview, no jump
+PASS phone/light preview of "What it is" has its description, heading and first lines  [{"on":true,"pinned":false,"name":"What it is","heading":"What Is Thai Massage?","excerpt":"Thai massage brings movement and massage together through rhythmic compression, gentle rocking, and assisted…","desc":"Thai massage brings movement and massage together through rhythmic compression, gentle…","lines":3,"inView":true}]
+PASS phone/light preview of "Common reasons" has its description, heading and first lines  [{"on":true,"pinned":false,"name":"Common reasons","heading":"Common Reasons Clients Choose Thai Massage","excerpt":"People often come to Thai massage when long hours at a desk, travel, exercise, or everyday routines leave them stiff…","desc":"People often come to Thai massage when long hours at a desk, travel, exercise, or…","lines":3,"inView":true}]
+PASS phone/light preview of "What to expect" has its description, heading and first lines  [{"on":true,"pinned":false,"name":"What to expect","heading":"What To Expect During Your Appointment","excerpt":"Before your session, tell me about any health conditions, medications, pregnancy, recent injury or surgery. I may…","desc":"Before your session, tell me about any health conditions, medications, pregnancy,…","lines":3,"inView":true}]
+PASS phone/light preview of "What Research Says" has its description, heading and first lines  [{"on":true,"pinned":false,"name":"What Research Says","heading":"What the Research Says About Thai Massage","excerpt":"Research on traditional Thai massage is still limited. Most studies are small, many compare Thai massage with…","desc":"Research on traditional Thai massage is still limited.","lines":3,"inView":true}]
+PASS phone/light tapping elsewhere closes the preview and keeps the place
+PASS phone/light the heading glows briefly after the jump
+PASS phone/light tapping the preview jumps, heading just below the strip  [{"h":136,"sb":124,"ok":true}]
+PASS phone/light the strip follows the jump  [Questions / 4 of 5]
+PASS phone/light no "Back to ..." button after a jump (Ryan, 2026-11-08)
+PASS phone/light a long press on the rail cannot open the link menu or drag the link
+PASS phone/light tapping elsewhere only closes the preview (does not also click what was tapped)
+PASS phone/light ...and the next tap works normally
+PASS phone/light a screen-reader double-tap on the rail (click without a press) opens the preview and focuses it  [{"on":true,"pinned":true,"name":"What to expect","heading":"What To Expect During Your Appointment","excerpt":"Before your session, tell me about any health conditions, medications, pregnancy, recent injury or surgery. I may…","desc":"Before your session, tell me about any health conditions, medications, pregnancy,…","lines":3,"inView":true}]
+PASS phone/light keyboard order: the rail comes right after the strip, before the sections
+PASS phone/light a jump adds no browser-history entry
+PASS phone/light older browsers get a solid strip background (color-mix fallback)
+PASS phone/light the bottom guide button is hidden only when the rail is there
+PASS phone/light a tap on the preview jumps and does not also click what is under the card  [under=0]
+PASS phone/light a slow outside press (700 ms) only closes the preview  [under=0]
+PASS phone/light ...and the next tap reaches the page again
+PASS phone/light Enter on × closes the preview without jumping, and focus returns to the rail
+PASS phone/light the rail is one keyboard stop
+PASS phone/light arrow keys move along the rail
+PASS phone/light the theme's content styles do not reach the rail or strip  [{"ml":"0px","pl":"0px","ls":"none","lim":"0px 0px","sol":"0px 0px","td":"none"}]
+PASS phone/light index icon: always shown, directly above the rail  [{"shown":true,"gap":8,"dx":0,"w":44,"bg":"rgb(245, 244, 239)","ground":"rgb(245, 244, 239)","shadow":"none","border":"0px","before":true}]
+PASS phone/light index icon: blended into the page (page background, no border or shadow)  [{"shown":true,"gap":8,"dx":0,"w":44,"bg":"rgb(245, 244, 239)","ground":"rgb(245, 244, 239)","shadow":"none","border":"0px","before":true}]
+PASS phone/light index icon: comes right before the rail for the keyboard
+PASS phone/light index: holding the icon fans out every section name beside its piece of the rail  [[[1,-1,242],[1,-1,197],[1,-1,212],[1,-1,237],[1,-1,184]]]
+PASS phone/light index: the section being read is highlighted
+PASS phone/light index: the page does not move
+PASS phone/light index: lifting the finger slides the names back into the rail  [[0,0,0,0,0]]
+PASS phone/light index: a long press cannot open the browser's menu
+PASS phone/light index: a click without a press (keyboard, screen reader) opens it
+PASS phone/light index: Escape closes it and focus stays on the icon
+PASS phone/light "⇆ Left" in the preview moves the rail to the left edge and closes the preview  [{"left":true,"railLeft":2,"stored":"left","card":false}]
+PASS phone/light on the left, sliding previews as on the right (card beside the rail)  [left=58]
+PASS phone/light on the left, no sideways page scroll
+PASS phone/light on the left, the index icon and its names mirror to the left edge  [{"icon":2,"items":[54,54,54,54,54]}]
+PASS phone/light after a reload the rail stays on the left, and the hint does not show again
+PASS phone/light "⇆ Right" moves it back
+PASS phone/light the hidden row's links are out of the keyboard order
+PASS phone/light no sideways page scroll
+PASS phone/light no JavaScript errors
+PASS phone/dark the row still has the five links in order (no-JavaScript fallback)
+PASS phone/dark the pills trial is gone
+PASS phone/dark the in-page link row under the header is removed (Ryan, 2026-11-08)  [{"rowShown":false,"stripAfterRow":true,"stripBeforeSections":true,"rail":"visible","railOp":"1"}]
+PASS phone/dark the strip takes the row's place at the top of the content  [{"rowShown":false,"stripAfterRow":true,"stripBeforeSections":true,"rail":"visible","railOp":"1"}]
+PASS phone/dark the rail is there from the start (as in the mock-up)  [{"rowShown":false,"stripAfterRow":true,"stripBeforeSections":true,"rail":"visible","railOp":"1"}]
+PASS phone/dark the rail's names for screen readers include each section's description  [What it is: Thai massage brings movement and massage together through rhythmic compression, gentle… | Common reasons: People often come to Thai massage when long hours at a desk, travel, exercise, or… | What to expect: Before your session, tell me about any health conditions, medications, pregnancy,… | Questions: You stay fully clothed, so wear something loose and comfortable that lets you move easily. | What Research Says: Research on traditional Thai massage is still limited.]
+PASS phone/dark the site header stays on top while reading (Ryan, 2026-11-08)  [{"pos":"sticky","top":0,"bottom":85,"iconTop":147,"stripBottom":124}]
+PASS phone/dark the strip sticks right under the header  [{"st":{"top":85,"h":39,"pe":"none","controls":0,"rail":{"top":199,"bottom":571,"right":390},"vh":664,"vw":390,"fills":[1,0.086,0,0,0]},"hd":{"pos":"sticky","top":0,"bottom":85,"iconTop":147,"stripBottom":124}}]
+PASS phone/dark the index icon stays clear of the header and the strip  [{"pos":"sticky","top":0,"bottom":85,"iconTop":147,"stripBottom":124}]
+FAIL phone/dark opening the phone menu does not flicker (header and menu sizes stay still)  [328/243/421px | 421/336/328px]
+PASS phone/dark the phone menu opens from the pinned header mid-page and fits the screen  [{"shown":true,"top":85,"bottom":328,"vh":664}]
+PASS phone/dark the strip names the current topic and position  [Common reasons / 2 of 5]
+PASS phone/dark the strip shows progress per section  [1 0.086 0 0 0]
+PASS phone/dark the strip is display only
+PASS phone/dark the thin sitewide reading-progress bar is gone (Ryan, 2026-11-08)
+PASS phone/dark the scroll-to-top button is gone (Ryan, 2026-11-08)
+PASS phone/dark first visit: a hint appears beside the rail once reading starts  [{"shown":true,"text":"Slide your thumb along this bar to preview each section. Lift, then tap the preview to go there. Hold the icon above it to see them all.Got itUse it on the left","wiggle":true,"stored":"seen"}]
+PASS phone/dark "Got it" hides the hint
+PASS phone/dark while the page scrolls, the section name shows beside the rail  [{"moving":true,"text":"Common reasons","op":0.92}]
+PASS phone/dark ...and fades once scrolling stops
+PASS phone/dark the rail sits on the right edge in the thumb zone  [{"top":199,"bottom":571,"right":390}]
+PASS phone/dark the bottom "On this page" button is replaced by the rail
+PASS phone/dark touching the strip does nothing
+PASS phone/dark sliding the rail previews the section: name, description, its real heading and its first lines  [{"on":true,"pinned":false,"name":"Questions","heading":"Questions About Thai Massage","excerpt":"You stay fully clothed, so wear something loose and comfortable that lets you move easily.","desc":"You stay fully clothed, so wear something loose and comfortable that lets you move easily.","lines":3,"inView":true}]
+PASS phone/dark the page does not move while browsing
+PASS phone/dark lifting keeps the preview, no jump
+PASS phone/dark preview of "What it is" has its description, heading and first lines  [{"on":true,"pinned":false,"name":"What it is","heading":"What Is Thai Massage?","excerpt":"Thai massage brings movement and massage together through rhythmic compression, gentle rocking, and assisted…","desc":"Thai massage brings movement and massage together through rhythmic compression, gentle…","lines":3,"inView":true}]
+PASS phone/dark preview of "Common reasons" has its description, heading and first lines  [{"on":true,"pinned":false,"name":"Common reasons","heading":"Common Reasons Clients Choose Thai Massage","excerpt":"People often come to Thai massage when long hours at a desk, travel, exercise, or everyday routines leave them stiff…","desc":"People often come to Thai massage when long hours at a desk, travel, exercise, or…","lines":3,"inView":true}]
+PASS phone/dark preview of "What to expect" has its description, heading and first lines  [{"on":true,"pinned":false,"name":"What to expect","heading":"What To Expect During Your Appointment","excerpt":"Before your session, tell me about any health conditions, medications, pregnancy, recent injury or surgery. I may…","desc":"Before your session, tell me about any health conditions, medications, pregnancy,…","lines":3,"inView":true}]
+PASS phone/dark preview of "What Research Says" has its description, heading and first lines  [{"on":true,"pinned":false,"name":"What Research Says","heading":"What the Research Says About Thai Massage","excerpt":"Research on traditional Thai massage is still limited. Most studies are small, many compare Thai massage with…","desc":"Research on traditional Thai massage is still limited.","lines":3,"inView":true}]
+PASS phone/dark tapping elsewhere closes the preview and keeps the place
+PASS phone/dark the heading glows briefly after the jump
+PASS phone/dark tapping the preview jumps, heading just below the strip  [{"h":136,"sb":124,"ok":true}]
+PASS phone/dark the strip follows the jump  [Questions / 4 of 5]
+PASS phone/dark no "Back to ..." button after a jump (Ryan, 2026-11-08)
+PASS phone/dark a long press on the rail cannot open the link menu or drag the link
+PASS phone/dark tapping elsewhere only closes the preview (does not also click what was tapped)
+PASS phone/dark ...and the next tap works normally
+PASS phone/dark a screen-reader double-tap on the rail (click without a press) opens the preview and focuses it  [{"on":true,"pinned":true,"name":"What to expect","heading":"What To Expect During Your Appointment","excerpt":"Before your session, tell me about any health conditions, medications, pregnancy, recent injury or surgery. I may…","desc":"Before your session, tell me about any health conditions, medications, pregnancy,…","lines":3,"inView":true}]
+PASS phone/dark keyboard order: the rail comes right after the strip, before the sections
+PASS phone/dark a jump adds no browser-history entry
+PASS phone/dark older browsers get a solid strip background (color-mix fallback)
+PASS phone/dark the bottom guide button is hidden only when the rail is there
+PASS phone/dark a tap on the preview jumps and does not also click what is under the card  [under=0]
+PASS phone/dark a slow outside press (700 ms) only closes the preview  [under=0]
+PASS phone/dark ...and the next tap reaches the page again
+PASS phone/dark Enter on × closes the preview without jumping, and focus returns to the rail
+PASS phone/dark the rail is one keyboard stop
+PASS phone/dark arrow keys move along the rail
+PASS phone/dark the theme's content styles do not reach the rail or strip  [{"ml":"0px","pl":"0px","ls":"none","lim":"0px 0px","sol":"0px 0px","td":"none"}]
+PASS phone/dark index icon: always shown, directly above the rail  [{"shown":true,"gap":8,"dx":0,"w":44,"bg":"rgb(21, 28, 38)","ground":"rgb(21, 28, 38)","shadow":"none","border":"0px","before":true}]
+PASS phone/dark index icon: blended into the page (page background, no border or shadow)  [{"shown":true,"gap":8,"dx":0,"w":44,"bg":"rgb(21, 28, 38)","ground":"rgb(21, 28, 38)","shadow":"none","border":"0px","before":true}]
+PASS phone/dark index icon: comes right before the rail for the keyboard
+PASS phone/dark index: holding the icon fans out every section name beside its piece of the rail  [[[1,-1,242],[1,-1,197],[1,-1,212],[1,-1,237],[1,-1,184]]]
+PASS phone/dark index: the section being read is highlighted
+PASS phone/dark index: the page does not move
+PASS phone/dark index: lifting the finger slides the names back into the rail  [[0,0,0,0,0]]
+PASS phone/dark index: a long press cannot open the browser's menu
+PASS phone/dark index: a click without a press (keyboard, screen reader) opens it
+PASS phone/dark index: Escape closes it and focus stays on the icon
+PASS phone/dark "⇆ Left" in the preview moves the rail to the left edge and closes the preview  [{"left":true,"railLeft":2,"stored":"left","card":false}]
+PASS phone/dark on the left, sliding previews as on the right (card beside the rail)  [left=58]
+PASS phone/dark on the left, no sideways page scroll
+PASS phone/dark on the left, the index icon and its names mirror to the left edge  [{"icon":2,"items":[54,54,54,54,54]}]
+PASS phone/dark after a reload the rail stays on the left, and the hint does not show again
+PASS phone/dark "⇆ Right" moves it back
+PASS phone/dark the hidden row's links are out of the keyboard order
+PASS phone/dark no sideways page scroll
+PASS phone/dark no JavaScript errors
+PASS tablet/light the row still has the five links in order (no-JavaScript fallback)
+PASS tablet/light the pills trial is gone
+PASS tablet/light the in-page link row under the header is removed (Ryan, 2026-11-08)  [{"rowShown":false,"stripAfterRow":true,"stripBeforeSections":true,"rail":"visible","railOp":"1"}]
+PASS tablet/light the strip takes the row's place at the top of the content  [{"rowShown":false,"stripAfterRow":true,"stripBeforeSections":true,"rail":"visible","railOp":"1"}]
+PASS tablet/light the rail is there from the start (as in the mock-up)  [{"rowShown":false,"stripAfterRow":true,"stripBeforeSections":true,"rail":"visible","railOp":"1"}]
+PASS tablet/light the rail's names for screen readers include each section's description  [What it is: Thai massage brings movement and massage together through rhythmic compression, gentle… | Common reasons: People often come to Thai massage when long hours at a desk, travel, exercise, or… | What to expect: Before your session, tell me about any health conditions, medications, pregnancy,… | Questions: You stay fully clothed, so wear something loose and comfortable that lets you move easily. | What Research Says: Research on traditional Thai massage is still limited.]
+PASS tablet/light the site header stays on top while reading (Ryan, 2026-11-08)  [{"pos":"sticky","top":0,"bottom":85,"iconTop":255,"stripBottom":124}]
+PASS tablet/light the strip sticks right under the header  [{"st":{"top":85,"h":39,"pe":"none","controls":0,"rail":{"top":307,"bottom":881,"right":768},"vh":1024,"vw":768,"fills":[1,0.195,0,0,0]},"hd":{"pos":"sticky","top":0,"bottom":85,"iconTop":255,"stripBottom":124}}]
+PASS tablet/light the index icon stays clear of the header and the strip  [{"pos":"sticky","top":0,"bottom":85,"iconTop":255,"stripBottom":124}]
+PASS tablet/light the strip names the current topic and position  [Common reasons / 2 of 5]
+PASS tablet/light the strip shows progress per section  [1 0.195 0 0 0]
+PASS tablet/light the strip is display only
+PASS tablet/light the thin sitewide reading-progress bar is gone (Ryan, 2026-11-08)
+PASS tablet/light the scroll-to-top button is gone (Ryan, 2026-11-08)
+PASS tablet/light first visit: a hint appears beside the rail once reading starts  [{"shown":true,"text":"Slide your thumb along this bar to preview each section. Lift, then tap the preview to go there. Hold the icon above it to see them all.Got itUse it on the left","wiggle":true,"stored":"seen"}]
+PASS tablet/light "Got it" hides the hint
+PASS tablet/light while the page scrolls, the section name shows beside the rail  [{"moving":true,"text":"Common reasons","op":0.892296}]
+PASS tablet/light ...and fades once scrolling stops
+PASS tablet/light the rail sits on the right edge in the thumb zone  [{"top":307,"bottom":881,"right":768}]
+PASS tablet/light the bottom "On this page" button is replaced by the rail
+PASS tablet/light touching the strip does nothing
+PASS tablet/light sliding the rail previews the section: name, description, its real heading and its first lines  [{"on":true,"pinned":false,"name":"Questions","heading":"Questions About Thai Massage","excerpt":"You stay fully clothed, so wear something loose and comfortable that lets you move easily.","desc":"You stay fully clothed, so wear something loose and comfortable that lets you move easily.","lines":3,"inView":true}]
+PASS tablet/light the page does not move while browsing
+PASS tablet/light lifting keeps the preview, no jump
+PASS tablet/light preview of "What it is" has its description, heading and first lines  [{"on":true,"pinned":false,"name":"What it is","heading":"What Is Thai Massage?","excerpt":"Thai massage brings movement and massage together through rhythmic compression, gentle rocking, and assisted…","desc":"Thai massage brings movement and massage together through rhythmic compression, gentle…","lines":3,"inView":true}]
+PASS tablet/light preview of "Common reasons" has its description, heading and first lines  [{"on":true,"pinned":false,"name":"Common reasons","heading":"Common Reasons Clients Choose Thai Massage","excerpt":"People often come to Thai massage when long hours at a desk, travel, exercise, or everyday routines leave them stiff…","desc":"People often come to Thai massage when long hours at a desk, travel, exercise, or…","lines":3,"inView":true}]
+PASS tablet/light preview of "What to expect" has its description, heading and first lines  [{"on":true,"pinned":false,"name":"What to expect","heading":"What To Expect During Your Appointment","excerpt":"Before your session, tell me about any health conditions, medications, pregnancy, recent injury or surgery. I may…","desc":"Before your session, tell me about any health conditions, medications, pregnancy,…","lines":3,"inView":true}]
+PASS tablet/light preview of "What Research Says" has its description, heading and first lines  [{"on":true,"pinned":false,"name":"What Research Says","heading":"What the Research Says About Thai Massage","excerpt":"Research on traditional Thai massage is still limited. Most studies are small, many compare Thai massage with…","desc":"Research on traditional Thai massage is still limited.","lines":3,"inView":true}]
+PASS tablet/light tapping elsewhere closes the preview and keeps the place
+PASS tablet/light the heading glows briefly after the jump
+PASS tablet/light tapping the preview jumps, heading just below the strip  [{"h":136,"sb":124,"ok":true}]
+PASS tablet/light the strip follows the jump  [Questions / 4 of 5]
+PASS tablet/light no "Back to ..." button after a jump (Ryan, 2026-11-08)
+PASS tablet/light a long press on the rail cannot open the link menu or drag the link
+PASS tablet/light tapping elsewhere only closes the preview (does not also click what was tapped)
+PASS tablet/light ...and the next tap works normally
+PASS tablet/light a screen-reader double-tap on the rail (click without a press) opens the preview and focuses it  [{"on":true,"pinned":true,"name":"What to expect","heading":"What To Expect During Your Appointment","excerpt":"Before your session, tell me about any health conditions, medications, pregnancy, recent injury or surgery. I may…","desc":"Before your session, tell me about any health conditions, medications, pregnancy,…","lines":3,"inView":true}]
+PASS tablet/light keyboard order: the rail comes right after the strip, before the sections
+PASS tablet/light a jump adds no browser-history entry
+PASS tablet/light older browsers get a solid strip background (color-mix fallback)
+PASS tablet/light the bottom guide button is hidden only when the rail is there
+PASS tablet/light a tap on the preview jumps and does not also click what is under the card  [under=0]
+PASS tablet/light a slow outside press (700 ms) only closes the preview  [under=0]
+PASS tablet/light ...and the next tap reaches the page again
+PASS tablet/light Enter on × closes the preview without jumping, and focus returns to the rail
+PASS tablet/light the rail is one keyboard stop
+PASS tablet/light arrow keys move along the rail
+PASS tablet/light the theme's content styles do not reach the rail or strip  [{"ml":"0px","pl":"0px","ls":"none","lim":"0px 0px","sol":"0px 0px","td":"none"}]
+PASS tablet/light index icon: always shown, directly above the rail  [{"shown":true,"gap":8,"dx":0,"w":44,"bg":"rgb(245, 244, 239)","ground":"rgb(245, 244, 239)","shadow":"none","border":"0px","before":true}]
+PASS tablet/light index icon: blended into the page (page background, no border or shadow)  [{"shown":true,"gap":8,"dx":0,"w":44,"bg":"rgb(245, 244, 239)","ground":"rgb(245, 244, 239)","shadow":"none","border":"0px","before":true}]
+PASS tablet/light index icon: comes right before the rail for the keyboard
+PASS tablet/light index: holding the icon fans out every section name beside its piece of the rail  [[[1,-1,620],[1,-1,575],[1,-1,590],[1,-1,615],[1,-1,562]]]
+PASS tablet/light index: the section being read is highlighted
+PASS tablet/light index: the page does not move
+PASS tablet/light index: lifting the finger slides the names back into the rail  [[0,0,0,0,0]]
+PASS tablet/light index: a long press cannot open the browser's menu
+PASS tablet/light index: a click without a press (keyboard, screen reader) opens it
+PASS tablet/light index: Escape closes it and focus stays on the icon
+PASS tablet/light "⇆ Left" in the preview moves the rail to the left edge and closes the preview  [{"left":true,"railLeft":2,"stored":"left","card":false}]
+PASS tablet/light on the left, sliding previews as on the right (card beside the rail)  [left=58]
+PASS tablet/light on the left, no sideways page scroll
+PASS tablet/light on the left, the index icon and its names mirror to the left edge  [{"icon":2,"items":[54,54,54,54,54]}]
+PASS tablet/light after a reload the rail stays on the left, and the hint does not show again
+PASS tablet/light "⇆ Right" moves it back
+PASS tablet/light the hidden row's links are out of the keyboard order
+PASS tablet/light no sideways page scroll
+PASS tablet/light no JavaScript errors
+PASS tablet/dark the row still has the five links in order (no-JavaScript fallback)
+PASS tablet/dark the pills trial is gone
+PASS tablet/dark the in-page link row under the header is removed (Ryan, 2026-11-08)  [{"rowShown":false,"stripAfterRow":true,"stripBeforeSections":true,"rail":"visible","railOp":"1"}]
+PASS tablet/dark the strip takes the row's place at the top of the content  [{"rowShown":false,"stripAfterRow":true,"stripBeforeSections":true,"rail":"visible","railOp":"1"}]
+PASS tablet/dark the rail is there from the start (as in the mock-up)  [{"rowShown":false,"stripAfterRow":true,"stripBeforeSections":true,"rail":"visible","railOp":"1"}]
+PASS tablet/dark the rail's names for screen readers include each section's description  [What it is: Thai massage brings movement and massage together through rhythmic compression, gentle… | Common reasons: People often come to Thai massage when long hours at a desk, travel, exercise, or… | What to expect: Before your session, tell me about any health conditions, medications, pregnancy,… | Questions: You stay fully clothed, so wear something loose and comfortable that lets you move easily. | What Research Says: Research on traditional Thai massage is still limited.]
+PASS tablet/dark the site header stays on top while reading (Ryan, 2026-11-08)  [{"pos":"sticky","top":0,"bottom":85,"iconTop":255,"stripBottom":124}]
+PASS tablet/dark the strip sticks right under the header  [{"st":{"top":85,"h":39,"pe":"none","controls":0,"rail":{"top":307,"bottom":881,"right":768},"vh":1024,"vw":768,"fills":[1,0.195,0,0,0]},"hd":{"pos":"sticky","top":0,"bottom":85,"iconTop":255,"stripBottom":124}}]
+PASS tablet/dark the index icon stays clear of the header and the strip  [{"pos":"sticky","top":0,"bottom":85,"iconTop":255,"stripBottom":124}]
+PASS tablet/dark the strip names the current topic and position  [Common reasons / 2 of 5]
+PASS tablet/dark the strip shows progress per section  [1 0.195 0 0 0]
+PASS tablet/dark the strip is display only
+PASS tablet/dark the thin sitewide reading-progress bar is gone (Ryan, 2026-11-08)
+PASS tablet/dark the scroll-to-top button is gone (Ryan, 2026-11-08)
+PASS tablet/dark first visit: a hint appears beside the rail once reading starts  [{"shown":true,"text":"Slide your thumb along this bar to preview each section. Lift, then tap the preview to go there. Hold the icon above it to see them all.Got itUse it on the left","wiggle":true,"stored":"seen"}]
+PASS tablet/dark "Got it" hides the hint
+PASS tablet/dark while the page scrolls, the section name shows beside the rail  [{"moving":true,"text":"Common reasons","op":0.892262}]
+PASS tablet/dark ...and fades once scrolling stops
+PASS tablet/dark the rail sits on the right edge in the thumb zone  [{"top":307,"bottom":881,"right":768}]
+PASS tablet/dark the bottom "On this page" button is replaced by the rail
+PASS tablet/dark touching the strip does nothing
+PASS tablet/dark sliding the rail previews the section: name, description, its real heading and its first lines  [{"on":true,"pinned":false,"name":"Questions","heading":"Questions About Thai Massage","excerpt":"You stay fully clothed, so wear something loose and comfortable that lets you move easily.","desc":"You stay fully clothed, so wear something loose and comfortable that lets you move easily.","lines":3,"inView":true}]
+PASS tablet/dark the page does not move while browsing
+PASS tablet/dark lifting keeps the preview, no jump
+PASS tablet/dark preview of "What it is" has its description, heading and first lines  [{"on":true,"pinned":false,"name":"What it is","heading":"What Is Thai Massage?","excerpt":"Thai massage brings movement and massage together through rhythmic compression, gentle rocking, and assisted…","desc":"Thai massage brings movement and massage together through rhythmic compression, gentle…","lines":3,"inView":true}]
+PASS tablet/dark preview of "Common reasons" has its description, heading and first lines  [{"on":true,"pinned":false,"name":"Common reasons","heading":"Common Reasons Clients Choose Thai Massage","excerpt":"People often come to Thai massage when long hours at a desk, travel, exercise, or everyday routines leave them stiff…","desc":"People often come to Thai massage when long hours at a desk, travel, exercise, or…","lines":3,"inView":true}]
+PASS tablet/dark preview of "What to expect" has its description, heading and first lines  [{"on":true,"pinned":false,"name":"What to expect","heading":"What To Expect During Your Appointment","excerpt":"Before your session, tell me about any health conditions, medications, pregnancy, recent injury or surgery. I may…","desc":"Before your session, tell me about any health conditions, medications, pregnancy,…","lines":3,"inView":true}]
+PASS tablet/dark preview of "What Research Says" has its description, heading and first lines  [{"on":true,"pinned":false,"name":"What Research Says","heading":"What the Research Says About Thai Massage","excerpt":"Research on traditional Thai massage is still limited. Most studies are small, many compare Thai massage with…","desc":"Research on traditional Thai massage is still limited.","lines":3,"inView":true}]
+PASS tablet/dark tapping elsewhere closes the preview and keeps the place
+PASS tablet/dark the heading glows briefly after the jump
+PASS tablet/dark tapping the preview jumps, heading just below the strip  [{"h":136,"sb":124,"ok":true}]
+PASS tablet/dark the strip follows the jump  [Questions / 4 of 5]
+PASS tablet/dark no "Back to ..." button after a jump (Ryan, 2026-11-08)
+PASS tablet/dark a long press on the rail cannot open the link menu or drag the link
+PASS tablet/dark tapping elsewhere only closes the preview (does not also click what was tapped)
+PASS tablet/dark ...and the next tap works normally
+PASS tablet/dark a screen-reader double-tap on the rail (click without a press) opens the preview and focuses it  [{"on":true,"pinned":true,"name":"What to expect","heading":"What To Expect During Your Appointment","excerpt":"Before your session, tell me about any health conditions, medications, pregnancy, recent injury or surgery. I may…","desc":"Before your session, tell me about any health conditions, medications, pregnancy,…","lines":3,"inView":true}]
+PASS tablet/dark keyboard order: the rail comes right after the strip, before the sections
+PASS tablet/dark a jump adds no browser-history entry
+PASS tablet/dark older browsers get a solid strip background (color-mix fallback)
+PASS tablet/dark the bottom guide button is hidden only when the rail is there
+PASS tablet/dark a tap on the preview jumps and does not also click what is under the card  [under=0]
+PASS tablet/dark a slow outside press (700 ms) only closes the preview  [under=0]
+PASS tablet/dark ...and the next tap reaches the page again
+PASS tablet/dark Enter on × closes the preview without jumping, and focus returns to the rail
+PASS tablet/dark the rail is one keyboard stop
+PASS tablet/dark arrow keys move along the rail
+PASS tablet/dark the theme's content styles do not reach the rail or strip  [{"ml":"0px","pl":"0px","ls":"none","lim":"0px 0px","sol":"0px 0px","td":"none"}]
+PASS tablet/dark index icon: always shown, directly above the rail  [{"shown":true,"gap":8,"dx":0,"w":44,"bg":"rgb(21, 28, 38)","ground":"rgb(21, 28, 38)","shadow":"none","border":"0px","before":true}]
+PASS tablet/dark index icon: blended into the page (page background, no border or shadow)  [{"shown":true,"gap":8,"dx":0,"w":44,"bg":"rgb(21, 28, 38)","ground":"rgb(21, 28, 38)","shadow":"none","border":"0px","before":true}]
+PASS tablet/dark index icon: comes right before the rail for the keyboard
+PASS tablet/dark index: holding the icon fans out every section name beside its piece of the rail  [[[1,-1,620],[1,-1,575],[1,-1,590],[1,-1,615],[1,-1,562]]]
+PASS tablet/dark index: the section being read is highlighted
+PASS tablet/dark index: the page does not move
+PASS tablet/dark index: lifting the finger slides the names back into the rail  [[0,0,0,0,0]]
+PASS tablet/dark index: a long press cannot open the browser's menu
+PASS tablet/dark index: a click without a press (keyboard, screen reader) opens it
+PASS tablet/dark index: Escape closes it and focus stays on the icon
+PASS tablet/dark "⇆ Left" in the preview moves the rail to the left edge and closes the preview  [{"left":true,"railLeft":2,"stored":"left","card":false}]
+PASS tablet/dark on the left, sliding previews as on the right (card beside the rail)  [left=58]
+PASS tablet/dark on the left, no sideways page scroll
+PASS tablet/dark on the left, the index icon and its names mirror to the left edge  [{"icon":2,"items":[54,54,54,54,54]}]
+PASS tablet/dark after a reload the rail stays on the left, and the hint does not show again
+PASS tablet/dark "⇆ Right" moves it back
+PASS tablet/dark the hidden row's links are out of the keyboard order
+PASS tablet/dark no sideways page scroll
+PASS tablet/dark no JavaScript errors
+PASS phone arriving at /thai-massage/#ts-guide-research lands the heading below the strip  [{"h":136,"sb":124,"ok":true}]
+PASS tablet arriving at /thai-massage/#ts-guide-research lands the heading below the strip  [{"h":136,"sb":124,"ok":true}]
+PASS landscape phone: the preview of section 1 fits on screen  [{"top":47,"bottom":291,"vh":342}]
+PASS landscape phone: the preview of section 5 fits on screen  [{"top":78,"bottom":330,"vh":342}]
+PASS landscape phone: the rail ends above the Back button  [{"rail":266,"vh":342}]
+PASS landscape phone: the header is not pinned there (header, strip and rail would not fit)
+PASS landscape phone: no JavaScript errors
+PASS without JavaScript the in-page link row still shows, with all five links (fallback)  [{"shown":true,"links":"What it is|Common reasons|What to expect|Questions|What Research Says"}]
+PASS Therapeutic Massage unchanged (no strip, no rail)
+PASS Therapeutic Massage: no reading-progress bar and no scroll-to-top button either (sitewide)
+
+chromium: 280 passed, 2 failed
+```
+
+**RESULT: FAIL** - check-peek-nav.mjs failed (exit 1)
+
+_finished 2026-11-08 07:17:22 UTC_
