@@ -1,8 +1,8 @@
 {
-  "id": "ui-link-ideas-staging39-20261108",
+  "id": "probe-thai-header-staging39-20261108",
   "op": "run",
   "target": "staging39",
-  "script": "link-ideas/check-link-ideas.mjs",
+  "script": "link-ideas/probe-thai-header.mjs",
   "args": [
     "https://staging39.thaisolitude.com"
   ],
