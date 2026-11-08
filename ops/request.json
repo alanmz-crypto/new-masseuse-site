@@ -1,10 +1,6 @@
 {
-  "id": "ui-peek-nav-staging39-20261108-9",
-  "op": "run",
+  "id": "inspect-staging39-css-20261108",
+  "op": "inspect",
   "target": "staging39",
-  "script": "link-ideas/check-peek-nav.mjs",
-  "args": [
-    "https://staging39.thaisolitude.com"
-  ],
-  "tests": "none"
+  "query": "css"
 }
