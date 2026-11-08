@@ -1,7 +1,10 @@
 {
-  "id": "rehearse-index-ideas-20261108",
-  "op": "rehearse",
+  "id": "apply-index-ideas-staging39-20261108",
+  "op": "run",
   "target": "staging39",
-  "installer": "link-ideas/install-index-ideas.php",
-  "args": []
+  "script": "link-ideas/push-index-ideas.sh",
+  "args": [
+    "--apply"
+  ],
+  "tests": "auto"
 }
