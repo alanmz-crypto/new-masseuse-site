@@ -1,0 +1,327 @@
+<div class="tsr-lab" id="tsr-lab">
+<style>
+.tsr-lab{--x-ink:var(--ts-ink,#1C2531);--x-muted:var(--ts-muted,#4A5563);--x-rule:var(--ts-rule,#D5D6CF);--x-panel:var(--ts-panel,#FAF9F6);--x-ground:var(--ts-ground,#F5F4EF);--x-stone:var(--ts-stone,#ECEBE4);--x-on:var(--ts-green,var(--ast-global-color-0,#377A00));--x-on-text:#fff;--x-accent:var(--ts-accent,#C8963E);--x-pale:var(--ts-pale,#EAF7EB);--x-ease:cubic-bezier(.2,.8,.2,1);--x-shadow:0 16px 44px -16px rgba(0,0,0,.45);--rail-top:30vh;--rail-bottom:14vh;color:var(--x-ink);max-width:880px;margin:0 auto;padding:0 0 5rem}
+html[data-ts-theme="dark"] .tsr-lab{--x-on:#8CCB5B;--x-on-text:#0E141C}
+.tsr-lab *,.tsr-lab *::before,.tsr-lab *::after{box-sizing:border-box}
+.tsr-lab a:focus-visible,.tsr-lab button:focus-visible{outline:3px solid var(--x-accent);outline-offset:2px}
+.tsr-lab button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.tsr-lab .tsr-intro{background:var(--x-pale);border-radius:22px;padding:clamp(1.25rem,4vw,2.25rem);margin:0 0 1.25rem}
+.tsr-lab .tsr-eyebrow{font-size:.75rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--x-on);margin:0 0 .5rem}
+.tsr-lab .tsr-intro h1{font-size:clamp(1.6rem,4.5vw,2.3rem);line-height:1.15;margin:0 0 .5rem;color:var(--x-ink)}
+.tsr-lab .tsr-intro p{margin:0 0 1rem;color:var(--x-muted);line-height:1.55}
+.tsr-lab .tsr-picker{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.35rem;margin:0;padding:.3rem;list-style:none;background:var(--x-panel);border:1px solid var(--x-rule);border-radius:14px}
+.tsr-lab .tsr-picker li{margin:0}
+.tsr-lab .tsr-picker button{width:100%;min-height:54px;margin:0;padding:.3rem .15rem;border:0;border-radius:10px;background:transparent;color:var(--x-muted);font:inherit;font-size:clamp(.66rem,2.5vw,.8rem);font-weight:600;line-height:1.2;overflow-wrap:anywhere;cursor:pointer}
+.tsr-lab .tsr-picker button b{display:block;font-size:1.1rem}
+.tsr-lab .tsr-picker button[aria-pressed="true"]{background:var(--x-on);color:var(--x-on-text)}
+.tsr-lab .tsr-about{margin:1rem 0 0;padding:1rem 1.1rem;background:var(--x-panel);border:1px solid var(--x-rule);border-radius:12px}
+.tsr-lab .tsr-about h2{font-size:1.15rem;margin:0 0 .3rem;color:var(--x-ink)}
+.tsr-lab .tsr-about p{margin:0;font-size:.92rem;line-height:1.5}
+.tsr-lab.is-js .tsr-about:not(.is-on){display:none}
+
+/* sample sections (placeholders: lines instead of words) */
+.tsr-lab .tsr-sec{scroll-margin-top:1rem;padding:2rem 3.25rem 1rem 0;border-top:1px solid var(--x-rule)}
+.tsr-lab .tsr-sec h2{font-size:clamp(1.35rem,3.6vw,1.75rem);margin:0 0 .35rem;color:var(--x-ink);border-radius:8px;transition:background-color .6s}
+.tsr-lab .tsr-sec h2:focus{outline:none}
+.tsr-lab .tsr-sec.is-flash h2{background:color-mix(in srgb,var(--x-accent) 28%,transparent)}
+.tsr-lab .tsr-blurb{margin:0 0 1rem;color:var(--x-muted);font-size:.95rem}
+.tsr-lab .tsr-line{display:block;height:.8rem;margin:0 0 .75rem;border-radius:99px;background:var(--x-stone)}
+.tsr-lab .tsr-line:nth-child(3n){width:84%}.tsr-lab .tsr-line:nth-child(4n){width:62%}
+
+/* the rail: right edge, in the thumb zone (lower part of the screen) */
+.tsr-lab .tsr-nav{position:fixed;right:max(4px,env(safe-area-inset-right));top:var(--rail-top);bottom:var(--rail-bottom);z-index:40;width:48px}
+.tsr-lab:not(.is-js) .tsr-nav{position:static;width:auto}
+.tsr-lab .tsr-rail[hidden],.tsr-lab .tsr-you[hidden],.tsr-lab .tsr-label[hidden],.tsr-lab .tsr-tab[hidden]{display:none}
+.tsr-lab .tsr-rail{position:absolute;inset:0;display:flex;flex-direction:column;gap:5px;margin:0;padding:8px 0;list-style:none;touch-action:none;-webkit-user-select:none;user-select:none;border-radius:24px;transition:background-color .2s,box-shadow .2s}
+.tsr-lab .tsr-nav.is-active .tsr-rail{background:color-mix(in srgb,var(--x-panel) 92%,transparent);box-shadow:0 6px 24px -12px rgba(0,0,0,.45)}
+.tsr-lab .tsr-rail li{position:relative;flex:var(--len,1) 1 0;min-height:22px;margin:0}
+.tsr-lab .tsr-rail a{position:absolute;inset:0;display:block;text-decoration:none;-webkit-tap-highlight-color:transparent}
+.tsr-lab .tsr-rail a::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:6px;margin-left:-3px;border-radius:9px;background:var(--x-rule);box-shadow:0 0 0 2px var(--x-ground);transition:width .15s,margin .15s,background-color .15s}
+.tsr-lab .tsr-rail a i{position:absolute;left:50%;top:0;bottom:0;width:6px;margin-left:-3px;border-radius:9px;background:var(--x-on);transform-origin:top;transform:scaleY(var(--p,0));transition:width .15s,margin .15s}
+.tsr-lab .tsr-rail li.is-hover a::before,.tsr-lab .tsr-rail li.is-hover a i{width:12px;margin-left:-6px}
+.tsr-lab .tsr-rail li.is-hover a::before{background:var(--x-accent)}
+.tsr-lab .tsr-you{position:absolute;right:30px;width:10px;height:10px;margin-top:-5px;border-radius:50%;background:var(--x-ink);box-shadow:0 0 0 3px var(--x-ground);pointer-events:none;transition:top .2s}
+.tsr-lab .tsr-label{position:absolute;right:52px;max-width:60vw;margin-top:-14px;padding:.3rem .65rem;border-radius:999px;background:var(--x-ink);color:var(--x-panel);font-size:.75rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none;opacity:0;transition:opacity .3s,top .2s}
+.tsr-lab .tsr-nav.is-moving .tsr-label{opacity:.92}
+.tsr-lab .tsr-nav.is-active .tsr-label{opacity:0}
+
+/* the preview card, beside the thumb */
+.tsr-lab .tsr-card{position:fixed;right:64px;z-index:41;width:min(300px,calc(100vw - 84px));padding:.85rem 1rem;border-radius:18px;background:var(--x-ink);color:var(--x-panel);box-shadow:var(--x-shadow);pointer-events:none;opacity:0;transform:translateX(10px) scale(.98);transition:opacity .15s,transform .2s var(--x-ease),background-color .2s}
+.tsr-lab .tsr-card.is-on{opacity:1;transform:none}
+.tsr-lab .tsr-card.is-pinned{pointer-events:auto}
+.tsr-lab .tsr-card small{display:block;font-size:.72rem;opacity:.75;text-transform:uppercase;letter-spacing:.08em}
+.tsr-lab .tsr-card b{display:block;font-size:1.05rem;margin:.15rem 0 .1rem}
+.tsr-lab .tsr-card .d{display:block;font-size:.86rem;opacity:.9;line-height:1.4}
+.tsr-lab .tsr-card .here{display:block;margin-top:.45rem;font-size:.75rem;opacity:.7}
+.tsr-lab .tsr-card .hint{display:block;margin-top:.6rem;padding-top:.55rem;border-top:1px solid color-mix(in srgb,var(--x-panel) 22%,transparent);font-size:.8rem;font-weight:700}
+.tsr-lab .tsr-card .acts{display:none;gap:.5rem;margin-top:.75rem}
+.tsr-lab .tsr-card.is-pinned .acts{display:flex}
+.tsr-lab .tsr-card .acts button{flex:1;min-height:46px;margin:0;padding:0 .7rem;border:0;border-radius:999px;font:inherit;font-size:.9rem;font-weight:700;cursor:pointer}
+.tsr-lab .tsr-card .go,.tsr-lab .tsr-card .go:hover,.tsr-lab .tsr-card .go:focus{background:var(--x-on);color:var(--x-on-text)}
+.tsr-lab .tsr-card .stay,.tsr-lab .tsr-card .stay:hover,.tsr-lab .tsr-card .stay:focus{background:transparent;color:var(--x-panel);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--x-panel) 45%,transparent)}
+/* 2: pull in to go */
+.tsr-lab .tsr-card .pull{position:relative;display:block;height:6px;margin-top:.6rem;border-radius:9px;background:color-mix(in srgb,var(--x-panel) 22%,transparent);overflow:hidden}
+.tsr-lab .tsr-card .pull i{position:absolute;right:0;top:0;bottom:0;width:100%;border-radius:inherit;background:var(--x-on);transform-origin:right;transform:scaleX(var(--k,0))}
+.tsr-lab .tsr-card.is-armed{background:var(--x-on);color:var(--x-on-text)}
+.tsr-lab .tsr-card.is-armed .pull i{background:var(--x-on-text)}
+/* 3: page peek */
+.tsr-lab .tsr-card.peek{background:var(--x-panel);color:var(--x-ink);border:1px solid var(--x-rule)}
+.tsr-lab .tsr-card.peek .shot{display:block;margin:.55rem 0 0;padding:.7rem .75rem;border-radius:12px;background:var(--x-ground);border:1px solid var(--x-rule)}
+.tsr-lab .tsr-card.peek .shot strong{display:block;font-size:.95rem;margin:0 0 .2rem}
+.tsr-lab .tsr-card.peek .shot em{display:block;font-style:normal;font-size:.78rem;color:var(--x-muted);margin:0 0 .45rem}
+.tsr-lab .tsr-card.peek .shot span{display:block;height:.45rem;margin:0 0 .35rem;border-radius:9px;background:var(--x-stone)}
+.tsr-lab .tsr-card.peek .shot span:nth-of-type(2){width:80%}.tsr-lab .tsr-card.peek .shot span:nth-of-type(3){width:60%}
+.tsr-lab .tsr-card.peek .hint{border-top-color:var(--x-rule);color:var(--x-on)}
+.tsr-lab .tsr-card.peek.is-pinned{cursor:pointer}
+.tsr-lab .tsr-card.peek .x{position:absolute;right:.4rem;top:.4rem;width:40px;height:40px;margin:0;padding:0;border:0;border-radius:50%;background:transparent;color:var(--x-muted);font:inherit;font-size:1.25rem;cursor:pointer;display:none}
+.tsr-lab .tsr-card.peek.is-pinned .x{display:block}
+/* 4: hold to go */
+.tsr-lab .tsr-card .ring{float:right;width:40px;height:40px;margin:-.2rem -.2rem .2rem .5rem}
+.tsr-lab .tsr-card .ring circle{fill:none;stroke-width:4}
+.tsr-lab .tsr-card .ring .bg{stroke:color-mix(in srgb,var(--x-panel) 25%,transparent)}
+.tsr-lab .tsr-card .ring .fg{stroke:var(--x-on);stroke-linecap:round;stroke-dasharray:100.53;stroke-dashoffset:100.53;transform:rotate(-90deg);transform-origin:center}
+.tsr-lab .tsr-card.is-holding .ring .fg{animation:tsr-fill var(--hold,750ms) linear forwards}
+@keyframes tsr-fill{to{stroke-dashoffset:0}}
+/* 5: drawer */
+.tsr-lab .tsr-tab{position:absolute;right:0;top:50%;width:48px;height:min(240px,100%);margin-top:calc(min(240px,100%) / -2);padding:0;border:0;background:transparent;cursor:pointer;touch-action:none}
+.tsr-lab .tsr-tab::before{content:"";position:absolute;right:6px;top:0;bottom:0;width:8px;border-radius:9px;background:var(--x-rule)}
+.tsr-lab .tsr-tab i{position:absolute;right:6px;top:0;bottom:0;width:8px;border-radius:9px;background:var(--x-on);transform-origin:top;transform:scaleY(var(--p,0))}
+.tsr-lab .tsr-tab span{position:absolute;right:22px;top:50%;transform:translateY(-50%);padding:.35rem .6rem;border-radius:999px;background:var(--x-ink);color:var(--x-panel);font-size:.72rem;font-weight:700;white-space:nowrap;opacity:.92}
+.tsr-lab .tsr-drawer{position:fixed;inset:0 0 0 auto;width:min(360px,88vw);max-width:none;height:100%;max-height:none;margin:0 0 0 auto;padding:0;border:0;background:var(--x-panel);color:var(--x-ink);box-shadow:var(--x-shadow);overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y}
+.tsr-lab .tsr-drawer::backdrop{background:rgba(14,20,28,.4)}
+.tsr-lab .tsr-drawer[open]{animation:tsr-in .3s var(--x-ease)}
+@keyframes tsr-in{from{transform:translateX(40px);opacity:0}}
+.tsr-lab .tsr-drawer header{position:sticky;top:0;display:flex;align-items:center;justify-content:space-between;padding:1rem 1rem .5rem;background:var(--x-panel)}
+.tsr-lab .tsr-drawer h2{font-size:1.05rem;margin:0}
+.tsr-lab .tsr-drawer .x{min-width:44px;min-height:44px;margin:0;padding:0;border:0;border-radius:50%;background:var(--x-stone);color:var(--x-ink);font:inherit;font-size:1.2rem;cursor:pointer}
+.tsr-lab .tsr-drawer ol{margin:0;padding:0 .6rem 1rem;list-style:none}
+.tsr-lab .tsr-drawer li{margin:0}
+.tsr-lab .tsr-drawer a{display:grid;grid-template-columns:2rem 1fr auto;gap:.15rem .7rem;align-items:center;padding:.8rem .6rem;border-radius:14px;color:var(--x-ink);text-decoration:none}
+.tsr-lab .tsr-drawer a:hover{background:var(--x-stone);color:var(--x-ink)}
+.tsr-lab .tsr-drawer a.is-now{background:var(--x-pale)}
+.tsr-lab .tsr-drawer .num{grid-row:span 3;display:grid;place-items:center;width:2rem;height:2rem;border-radius:50%;border:2px solid var(--x-rule);font-size:.8rem;font-weight:800;color:var(--x-muted)}
+.tsr-lab .tsr-drawer .is-done .num{background:var(--x-on);border-color:var(--x-on);color:var(--x-on-text)}
+.tsr-lab .tsr-drawer .is-now .num{border-color:var(--x-on);color:var(--x-on)}
+.tsr-lab .tsr-drawer .t{font-weight:700}
+.tsr-lab .tsr-drawer .m{font-size:.75rem;color:var(--x-muted)}
+.tsr-lab .tsr-drawer .d{grid-column:2 / 4;font-size:.85rem;color:var(--x-muted)}
+.tsr-lab .tsr-drawer .bar{grid-column:2 / 4;position:relative;display:block;height:4px;margin-top:.35rem;border-radius:9px;background:var(--x-rule);overflow:hidden}
+.tsr-lab .tsr-drawer .bar i{position:absolute;inset:0;background:var(--x-on);transform-origin:left;transform:scaleX(var(--p,0))}
+
+/* back to where you were */
+.tsr-lab .tsr-back{position:fixed;right:max(10px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));z-index:42;display:inline-flex;align-items:center;gap:.35rem;max-width:calc(100vw - 20px);min-height:46px;margin:0;padding:0 1rem;border:0;border-radius:999px;background:var(--x-ink);color:var(--x-panel);font:inherit;font-size:.85rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:var(--x-shadow);cursor:pointer}
+.tsr-lab .tsr-back:hover,.tsr-lab .tsr-back:focus{background:var(--x-ink);color:var(--x-panel)}
+.tsr-lab .tsr-back[hidden]{display:none}
+
+@media (prefers-reduced-motion:reduce){.tsr-lab *,.tsr-lab *::before{transition:none!important;animation:none!important}.tsr-lab .tsr-card.is-holding .ring .fg{stroke-dashoffset:50}}
+@media print{.tsr-lab .tsr-nav,.tsr-lab .tsr-back,.tsr-lab .tsr-card{display:none}}
+</style>
+
+<header class="tsr-intro">
+<p class="tsr-eyebrow">Practice page · staging only · phone and tablet first</p>
+<h1>Side rail ideas</h1>
+<p>A rail on the right edge, where your thumb already is. Slide along it to browse the sections without losing your place, and jump only when you choose. After any jump, “Back to …” returns you to where you were reading.</p>
+<ul class="tsr-picker" aria-label="Choose an idea">
+<li><button type="button" data-idea="1" aria-pressed="true"><b>1</b>Lift</button></li>
+<li><button type="button" data-idea="2" aria-pressed="false"><b>2</b>Pull in</button></li>
+<li><button type="button" data-idea="3" aria-pressed="false"><b>3</b>Peek</button></li>
+<li><button type="button" data-idea="4" aria-pressed="false"><b>4</b>Hold</button></li>
+<li><button type="button" data-idea="5" aria-pressed="false"><b>5</b>Drawer</button></li>
+</ul>
+<div class="tsr-about is-on" data-about="1"><h2>1. Slide, lift, then choose</h2><p>Slide up and down the rail: a card beside your thumb names each section and what it covers. Lift your thumb and the card stays, with “Go there” and “Stay here”. Nothing moves until you tap Go.</p></div>
+<div class="tsr-about" data-about="2"><h2>2. Slide, then pull in to go</h2><p>Slide to browse. To jump, pull your thumb in toward the middle of the screen until the card turns green, then let go. Lift without pulling and you stay where you are.</p></div>
+<div class="tsr-about" data-about="3"><h2>3. Slide to peek at the page</h2><p>Sliding shows a small preview of the section itself: its heading, its description and the start of its text. Lift and the preview stays; tap it to go there, or tap anywhere else to stay.</p></div>
+<div class="tsr-about" data-about="4"><h2>4. Slide, then hold to go</h2><p>Slide to browse. Rest your thumb on a section and a ring fills; keep holding until it is full and the page goes there. Keep moving or lift early and nothing happens.</p></div>
+<div class="tsr-about" data-about="5"><h2>5. Pull out a drawer</h2><p>A short tab on the right edge shows how far you have read. Tap it or swipe it left and a drawer slides in with every section, its description, length and progress. Scroll the drawer freely; the page only moves when you tap a section. Swipe the drawer right to close.</p></div>
+</header>
+
+<nav class="tsr-nav" aria-label="On this page">
+<ol class="tsr-rail"></ol><span class="tsr-you" aria-hidden="true"></span><span class="tsr-label" aria-hidden="true"></span>
+<button type="button" class="tsr-tab" hidden aria-haspopup="dialog" aria-label="Open the list of sections"><i></i><span></span></button>
+<noscript><ul><li><a href="#tsr-what-it-is">What it is</a></li><li><a href="#tsr-common-reasons">Common reasons</a></li><li><a href="#tsr-who-can-benefit">Who can benefit</a></li><li><a href="#tsr-questions">Questions</a></li><li><a href="#tsr-what-to-expect">What to expect</a></li><li><a href="#tsr-research">What Research Says</a></li></ul></noscript>
+</nav>
+<div class="tsr-card" role="group" aria-label="Section preview" aria-live="polite"></div>
+<dialog class="tsr-drawer" aria-labelledby="tsr-drawer-h"><header><h2 id="tsr-drawer-h">On this page</h2><button type="button" class="x" aria-label="Close">×</button></header><ol></ol></dialog>
+<button type="button" class="tsr-back" hidden></button>
+
+<section class="tsr-sec" id="tsr-what-it-is" data-mins="2" data-blurb="The basics, in plain words." aria-labelledby="tsr-h1"><h2 id="tsr-h1" tabindex="-1">What it is</h2><p class="tsr-blurb">The basics, in plain words.</p><div aria-hidden="true"><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span></div></section>
+<section class="tsr-sec" id="tsr-common-reasons" data-mins="3" data-blurb="Why people book a session." aria-labelledby="tsr-h2"><h2 id="tsr-h2" tabindex="-1">Common reasons</h2><p class="tsr-blurb">Why people book a session.</p><div aria-hidden="true"><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span></div></section>
+<section class="tsr-sec" id="tsr-who-can-benefit" data-mins="1" data-blurb="Whether this style is a good fit for you." aria-labelledby="tsr-h3"><h2 id="tsr-h3" tabindex="-1">Who can benefit</h2><p class="tsr-blurb">Whether this style is a good fit for you.</p><div aria-hidden="true"><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span></div></section>
+<section class="tsr-sec" id="tsr-questions" data-mins="4" data-blurb="Short answers to the questions people ask most." aria-labelledby="tsr-h4"><h2 id="tsr-h4" tabindex="-1">Questions</h2><p class="tsr-blurb">Short answers to the questions people ask most.</p><div aria-hidden="true"><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span></div></section>
+<section class="tsr-sec" id="tsr-what-to-expect" data-mins="2" data-blurb="What happens before, during and after a session." aria-labelledby="tsr-h5"><h2 id="tsr-h5" tabindex="-1">What to expect</h2><p class="tsr-blurb">What happens before, during and after a session.</p><div aria-hidden="true"><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span></div></section>
+<section class="tsr-sec" id="tsr-research" data-mins="3" data-blurb="Studies on this style, with their sources." aria-labelledby="tsr-h6"><h2 id="tsr-h6" tabindex="-1">What Research Says</h2><p class="tsr-blurb">Studies on this style, with their sources.</p><div aria-hidden="true"><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span><span class="tsr-line"></span></div></section>
+<div style="height:40vh" aria-hidden="true"></div>
+
+<script>
+(function () {
+  'use strict';
+  // No less-than sign anywhere in this script: WordPress's shortcode scanner reads one as the start of an HTML tag and then escapes the
+  // ampersands after it. Comparisons are written the other way round, and markup inside strings uses \u003c.
+  var lab = document.getElementById('tsr-lab');
+  if (!lab || !('PointerEvent' in window)) return;
+  lab.classList.add('is-js');
+  var calm = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var S = [].slice.call(lab.querySelectorAll('.tsr-sec')).map(function (el) { return { el: el, id: el.id, name: el.querySelector('h2').textContent, blurb: el.getAttribute('data-blurb'), mins: +el.getAttribute('data-mins') || 1 }; });
+  var nav = lab.querySelector('.tsr-nav'), rail = nav.querySelector('.tsr-rail'), you = nav.querySelector('.tsr-you'), label = nav.querySelector('.tsr-label'), tab = nav.querySelector('.tsr-tab');
+  var card = lab.querySelector('.tsr-card'), drawer = lab.querySelector('.tsr-drawer'), back = lab.querySelector('.tsr-back');
+  var idea = 1, cur = -1, from = null;
+  function esc(t) { var d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
+  function buzz() { if (navigator.vibrate) { try { navigator.vibrate(6); } catch (e) {} } }
+
+  /* where the reader is */
+  function line() { return window.innerHeight * 0.25; }
+  function where() { var y = line(), idx = -1; S.forEach(function (s, i) { if (y >= s.el.getBoundingClientRect().top) idx = i; }); return idx; }
+  function part(i) { var r = S[i].el.getBoundingClientRect(); return Math.max(0, Math.min(1, (line() - r.top) / r.height)); }
+  function fill(i) { return cur > i ? 1 : (i === cur ? part(i) : 0); }
+  function whole() { var a = S[0].el.getBoundingClientRect().top, b = S[S.length - 1].el.getBoundingClientRect().bottom; return Math.max(0, Math.min(1, (line() - a) / (b - a))); }
+  function lengths() { var hs = S.map(function (s) { return s.el.offsetHeight; }), avg = hs.reduce(function (a, b) { return a + b; }, 0) / S.length; S.forEach(function (s, i) { s.len = hs[i] / avg; }); }
+
+  /* jumping, and the way back */
+  function go(i) {
+    from = { y: window.scrollY, name: 0 > cur ? 'the top' : S[cur].name };
+    var s = S[i].el;
+    window.scrollTo({ top: s.getBoundingClientRect().top + window.scrollY - 16, behavior: calm.matches ? 'auto' : 'smooth' });
+    var h = s.querySelector('h2'); if (h) h.focus({ preventScroll: true });
+    s.classList.add('is-flash'); setTimeout(function () { s.classList.remove('is-flash'); }, 1200);
+    try { history.replaceState(null, '', '#' + S[i].id); } catch (e) {}
+    back.textContent = '↩ Back to ' + from.name; back.hidden = false;
+  }
+  back.addEventListener('click', function () { if (!from) return; window.scrollTo({ top: from.y, behavior: calm.matches ? 'auto' : 'smooth' }); from = null; back.hidden = true; });
+
+  /* the rail */
+  rail.innerHTML = S.map(function (s) { return '\u003cli>\u003ca href="#' + s.id + '" aria-label="' + esc(s.name + ': ' + s.blurb) + '">\u003ci>\u003c/i>\u003c/a>\u003c/li>'; }).join('');
+  var segs = [].slice.call(rail.children);
+  function pickAt(y) { var best = -1; segs.forEach(function (li, i) { var r = li.getBoundingClientRect(); if (y >= r.top - 3) best = i; }); return Math.max(0, best); }
+  function hover(i) { segs.forEach(function (li, k) { li.classList.toggle('is-hover', k === i); }); }
+
+  /* the card */
+  function cardHTML(i, extra) {
+    var here = i === cur ? 'You are reading this section.' : (0 > cur ? '' : 'You are in: ' + S[cur].name);
+    return '\u003csmall>Section ' + (i + 1) + ' of ' + S.length + ' · ' + S[i].mins + ' min\u003c/small>\u003cb>' + esc(S[i].name) + '\u003c/b>\u003cspan class="d">' + esc(S[i].blurb) + '\u003c/span>\u003cspan class="here">' + esc(here) + '\u003c/span>' + (extra || '');
+  }
+  function place(y) { var h = card.offsetHeight, top = Math.max(12, Math.min(window.innerHeight - h - 70, y - h / 2)); card.style.top = top + 'px'; }
+  function hideCard() { card.className = 'tsr-card'; card.innerHTML = ''; hover(-1); nav.classList.remove('is-active'); }
+
+  /* one gesture engine for the rail: start, move (with how far the thumb has pulled in), end */
+  var g = null;
+  rail.addEventListener('pointerdown', function (e) {
+    if (e.button > 0) return;
+    try { rail.setPointerCapture(e.pointerId); } catch (err) {}
+    g = { x0: e.clientX, y: e.clientY, i: pickAt(e.clientY), pull: 0 };
+    nav.classList.add('is-active'); hover(g.i); H[idea].move(g); e.preventDefault();
+  });
+  rail.addEventListener('pointermove', function (e) {
+    if (!g) return;
+    var i = g.locked ? g.i : pickAt(e.clientY);
+    g.pull = Math.max(0, g.x0 - e.clientX); g.y = e.clientY;
+    if (i !== g.i) { g.i = i; buzz(); hover(i); g.changed = true; } else { g.changed = false; }
+    H[idea].move(g);
+  });
+  function end(ok) { if (!g) return; var x = g; g = null; H[idea].end(x, ok); }
+  rail.addEventListener('pointerup', function () { end(true); });
+  rail.addEventListener('pointercancel', function () { end(false); });
+  rail.addEventListener('click', function (e) {   // presses are handled above; a keyboard Enter (detail 0) asks the idea what to do
+    e.preventDefault(); e.stopPropagation();
+    if (e.detail === 0) { var li = e.target.closest('li'); H[idea].key([].indexOf.call(segs, li)); }
+  }, true);
+
+  /* the five ideas */
+  var hold = 0;
+  function pinned(i, html) { card.className = 'tsr-card is-on is-pinned' + (idea === 3 ? ' peek' : ''); card.innerHTML = html; card.dataset.i = i; nav.classList.add('is-active'); hover(i); }
+  var acts = '\u003cdiv class="acts">\u003cbutton type="button" class="go">Go there\u003c/button>\u003cbutton type="button" class="stay">Stay here\u003c/button>\u003c/div>';
+  function peekHTML(i) { return '\u003cbutton type="button" class="x" aria-label="Close">×\u003c/button>' + cardHTML(i, '\u003cspan class="shot" aria-hidden="true">\u003cstrong>' + esc(S[i].name) + '\u003c/strong>\u003cem>' + esc(S[i].blurb) + '\u003c/em>\u003cspan>\u003c/span>\u003cspan>\u003c/span>\u003cspan>\u003c/span>\u003c/span>\u003cspan class="hint">Tap to go there\u003c/span>'); }
+  var H = {
+    1: { move: function (g) { card.className = 'tsr-card is-on'; card.innerHTML = cardHTML(g.i, '\u003cspan class="hint">Lift your thumb to choose\u003c/span>'); place(g.y); },
+         end: function (g, ok) { if (!ok) { hideCard(); return; } pinned(g.i, cardHTML(g.i) + acts); place(g.y); },
+         key: function (i) { pinned(i, cardHTML(i) + acts); var r = segs[i].getBoundingClientRect(); place(r.top + r.height / 2); card.querySelector('.go').focus(); } },
+    2: { move: function (g) {
+           var k = Math.min(1, g.pull / 80); g.armed = k === 1; g.locked = g.pull > 24;
+           card.className = 'tsr-card is-on' + (g.armed ? ' is-armed' : '');
+           card.innerHTML = cardHTML(g.i, '\u003cspan class="pull">\u003ci style="--k:' + k.toFixed(2) + '">\u003c/i>\u003c/span>\u003cspan class="hint">' + (g.armed ? 'Let go to jump here' : '← Pull in to go · lift to stay') + '\u003c/span>');
+           if (g.armed && !g.buzzed) { buzz(); g.buzzed = true; } if (!g.armed) g.buzzed = false;
+           place(g.y); },
+         end: function (g, ok) { var i = g.i, armed = g.armed; hideCard(); if (ok && armed) go(i); },
+         key: function (i) { go(i); } },
+    3: { move: function (g) { card.className = 'tsr-card is-on peek'; card.innerHTML = cardHTML(g.i, '\u003cspan class="shot" aria-hidden="true">\u003cstrong>' + esc(S[g.i].name) + '\u003c/strong>\u003cem>' + esc(S[g.i].blurb) + '\u003c/em>\u003cspan>\u003c/span>\u003cspan>\u003c/span>\u003cspan>\u003c/span>\u003c/span>\u003cspan class="hint">Lift to keep this preview\u003c/span>'); place(g.y); },
+         end: function (g, ok) { if (!ok) { hideCard(); return; } pinned(g.i, peekHTML(g.i)); place(g.y); },
+         key: function (i) { pinned(i, peekHTML(i)); var r = segs[i].getBoundingClientRect(); place(r.top + r.height / 2); card.focus(); } },
+    4: { move: function (g) {
+           if (g.done) return;
+           var keep = !g.changed && card.classList.contains('is-holding');
+           if (!keep) {
+             clearTimeout(hold);
+             card.className = 'tsr-card is-on';
+             card.innerHTML = '\u003csvg class="ring" viewBox="0 0 40 40" aria-hidden="true">\u003ccircle class="bg" cx="20" cy="20" r="16"/>\u003ccircle class="fg" cx="20" cy="20" r="16"/>\u003c/svg>' + cardHTML(g.i, '\u003cspan class="hint">Hold still to go · lift to stay\u003c/span>');
+             void card.offsetWidth; card.classList.add('is-holding');
+             var i = g.i, gg = g;   // the end handler clears this timer when the thumb lifts first
+             hold = setTimeout(function () { gg.done = true; buzz(); hideCard(); go(i); }, calm.matches ? 1100 : 750);
+           }
+           place(g.y); },
+         end: function () { clearTimeout(hold); hideCard(); },
+         key: function (i) { go(i); } },
+    5: { move: function () {}, end: function () {}, key: function () { openDrawer(); } }
+  };
+  card.addEventListener('click', function (e) {
+    var i = +card.dataset.i;
+    if (e.target.closest('.go')) { hideCard(); go(i); return; }
+    if (e.target.closest('.stay') || e.target.closest('.x')) { hideCard(); return; }
+    if (card.classList.contains('peek') && card.classList.contains('is-pinned')) { hideCard(); go(i); }
+  });
+  card.setAttribute('tabindex', '-1');
+  card.addEventListener('keydown', function (e) { if (e.key === 'Enter' && card.classList.contains('peek')) { var i = +card.dataset.i; hideCard(); go(i); } });
+  document.addEventListener('pointerdown', function (e) { if (card.classList.contains('is-pinned') && !card.contains(e.target) && !rail.contains(e.target)) hideCard(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && card.classList.contains('is-on')) hideCard(); });
+
+  /* 5. the drawer */
+  var dlist = drawer.querySelector('ol');
+  dlist.innerHTML = S.map(function (s, i) { return '\u003cli>\u003ca href="#' + s.id + '">\u003cspan class="num">' + (i + 1) + '\u003c/span>\u003cspan class="t">' + esc(s.name) + '\u003c/span>\u003cspan class="m">' + s.mins + ' min\u003c/span>\u003cspan class="d">' + esc(s.blurb) + '\u003c/span>\u003cspan class="bar">\u003ci>\u003c/i>\u003c/span>\u003c/a>\u003c/li>'; }).join('');
+  var rows = [].slice.call(dlist.querySelectorAll('a'));
+  function openDrawer() {
+    rows.forEach(function (a, i) { a.classList.toggle('is-now', i === cur); a.classList.toggle('is-done', cur > i); a.querySelector('.num').textContent = cur > i ? '✓' : (i + 1); a.querySelector('i').style.setProperty('--p', fill(i).toFixed(3)); if (i === cur) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
+    drawer.showModal(); var n = rows[Math.max(cur, 0)]; if (n) { n.focus({ preventScroll: true }); n.scrollIntoView({ block: 'center' }); }
+  }
+  dlist.addEventListener('click', function (e) { var a = e.target.closest('a'); if (!a) return; e.preventDefault(); drawer.close(); go(rows.indexOf(a)); });
+  drawer.querySelector('.x').addEventListener('click', function () { drawer.close(); });
+  drawer.addEventListener('click', function (e) { if (e.target === drawer) drawer.close(); });
+  var sw = null;   // swipe the drawer to the right to close it; swipe the tab to the left (or tap it) to open
+  drawer.addEventListener('pointerdown', function (e) { sw = { x: e.clientX, y: e.clientY }; });
+  drawer.addEventListener('pointerup', function (e) { if (sw && e.clientX - sw.x > 70 && 50 > Math.abs(e.clientY - sw.y)) drawer.close(); sw = null; });
+  var tw = null;
+  tab.addEventListener('pointerdown', function (e) { tw = e.clientX; try { tab.setPointerCapture(e.pointerId); } catch (err) {} });
+  tab.addEventListener('pointermove', function (e) { if (tw !== null && tw - e.clientX > 30) { tw = null; openDrawer(); } });
+  tab.addEventListener('pointerup', function () { tw = null; });
+  tab.addEventListener('click', function () { if (!drawer.open) openDrawer(); });
+
+  /* draw on scroll, once per frame */
+  var ticking = false;
+  function draw() {
+    ticking = false; cur = where();
+    segs.forEach(function (li, i) { li.style.setProperty('--len', S[i].len.toFixed(2)); li.querySelector('i').style.setProperty('--p', fill(i).toFixed(3)); var a = li.querySelector('a'); if (i === cur) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
+    var w = whole(), nr = nav.getBoundingClientRect(), rr = rail.getBoundingClientRect();
+    you.style.top = (rr.top - nr.top + 8 + w * (rr.height - 16)) + 'px';
+    label.style.top = you.style.top; label.textContent = 0 > cur ? S[0].name : S[cur].name;
+    tab.querySelector('i').style.setProperty('--p', w.toFixed(3)); tab.querySelector('span').textContent = (Math.max(cur, 0) + 1) + '/' + S.length;
+  }
+  var still = 0;
+  window.addEventListener('scroll', function () {
+    if (!ticking) { ticking = true; requestAnimationFrame(draw); }
+    nav.classList.add('is-moving'); clearTimeout(still); still = setTimeout(function () { nav.classList.remove('is-moving'); }, 900);   // the section name shows beside the rail while the page scrolls
+  }, { passive: true });
+  window.addEventListener('resize', function () { lengths(); draw(); });
+
+  /* the idea picker (?idea=3 opens one directly) */
+  var btns = [].slice.call(lab.querySelectorAll('.tsr-picker button'));
+  function show(n) {
+    idea = n; hideCard(); clearTimeout(hold); if (drawer.open) drawer.close();
+    btns.forEach(function (b) { b.setAttribute('aria-pressed', String(+b.dataset.idea === n)); });
+    [].forEach.call(lab.querySelectorAll('.tsr-about'), function (el) { el.classList.toggle('is-on', +el.dataset.about === n); });
+    rail.hidden = n === 5; you.hidden = n === 5; label.hidden = n === 5; tab.hidden = n !== 5;
+    lengths(); draw();
+    try { var u = new URL(location.href); u.searchParams.set('idea', n); history.replaceState(null, '', u); } catch (e) {}
+  }
+  btns.forEach(function (b) { b.addEventListener('click', function () { show(+b.dataset.idea); }); });
+  var start = 1; try { start = +new URL(location.href).searchParams.get('idea') || 1; } catch (e) {}
+  show(start >= 1 && 5 >= start ? start : 1);
+})();
+</script>
+</div>
