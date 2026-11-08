@@ -44,3 +44,16 @@ script when the count is 0: use `{ grep ... || true; } | wc -l`.
 **Undo:** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-pill-nav.sh --args '--rollback $HOME/private-backups/pill-nav-before-20261108-012240-f7bbde39.json'`.
 **Next:** Ryan reviews https://staging39.thaisolitude.com/thai-massage/ . To roll out: widen `is_page()` to the other service pages (or move the CSS
 into the jump-links snippet), staging first, then live only on his go (enable-live change in the installer allow-list and push targets).
+
+## Progress ideas practice page (2026-11-08; pills set aside)
+Ryan: pills "clunky, but let's put the pills aside"; wants the progress method, but showing what each section is, "phone and the tablet first".
+**Applied on staging39 only:** https://staging39.thaisolitude.com/progress-nav-ideas/ (page #1346; `?idea=1..5`). Source `link-ideas/progress-ideas.html`,
+`install-progress-ideas.php`, `push-progress-ideas.sh`, `check-progress-ideas.mjs`. Ideas: 1 growing segments (sized by section length; current one grows
+and shows its name); 2 bar that opens a bottom sheet (every section with description, reading time, own progress, ticks); 3 Now/Next (ring + "Next: ..."
+button + timeline list); 4 touch scrubber (slide along the bar, bubble previews name + description, release jumps); 5 edge rail (right edge; slide to fan out
+all names). Reading times are sample `data-mins` values. Export `staging39-before-progress-ideas-20261108-015124.sql` verified off-site; snapshot
+`progress-ideas-before-20261108-015138-29c66758.json`. Chromium check `ui-progress-ideas-staging39-20261108`: **98/0** (iPhone 13 + iPad Mini, light + dark,
+real touch events for 4 and 5). Safari/real devices untested. The pills snippet #1344 is still on the staging39 Thai page (undo command above).
+**Lesson (durable, supersedes the ampersand note above):** in page content, WordPress's shortcode scanner reads any `<` inside an inline script as the start of an
+HTML tag and then escapes `&` after it (`&&` became `&#038;&#038;`). Write inline page scripts with no `<` at all (flip comparisons; `<` in strings);
+`install-progress-ideas.php` refuses a script that contains one.
