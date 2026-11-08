@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-08 01:17 UTC  **PASS**  `probe-arrival-staging39-20261108-2`  [reports/2026-11-08/011750-probe-arrival-staging39-20261108-2.md](reports/2026-11-08/011750-probe-arrival-staging39-20261108-2.md)  (run 42433570659)
 - 2026-11-08 01:16 UTC  **INVALID**  `probe-arrival-staging39-20261108`  [reports/2026-11-08/011643-probe-arrival-staging39-20261108.md](reports/2026-11-08/011643-probe-arrival-staging39-20261108.md)  (run 42433463523)
 - 2026-11-08 01:14 UTC  **FAIL**  `ui-pill-nav-staging39-20261108-4`  [reports/2026-11-08/011456-ui-pill-nav-staging39-20261108-4.md](reports/2026-11-08/011456-ui-pill-nav-staging39-20261108-4.md)  (run 42433309258)
 - 2026-11-08 01:13 UTC  **PASS**  `apply-pill-nav-staging39-20261108-3`  [reports/2026-11-08/011309-apply-pill-nav-staging39-20261108-3.md](reports/2026-11-08/011309-apply-pill-nav-staging39-20261108-3.md)  (run 42433177629)
