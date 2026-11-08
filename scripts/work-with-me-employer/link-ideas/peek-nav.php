@@ -111,12 +111,11 @@ html .ts-pk .ts-pk-nav.is-index .ts-pk-ix{color:var(--pk-on);transform:scale(.92
 .ts-pk-ix svg{display:block;width:22px;height:22px;margin:auto;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;pointer-events:none}
 html.ts-pk-left .ts-pk .ts-pk-ix{right:auto;left:0}
 .ts-pk-fan{position:absolute;inset:0;pointer-events:none}
-html .ts-pk .ts-pk-fan li{position:absolute;right:52px;top:0;display:flex;align-items:center;gap:.45rem;max-width:min(64vw,260px);margin:-17px 0 0;padding:.42rem .8rem .42rem .55rem;border-radius:999px;background:var(--pk-ink);color:var(--pk-panel);font-size:.86rem;font-weight:700;line-height:1.2;white-space:nowrap;opacity:0;box-shadow:0 8px 20px -12px rgba(0,0,0,.55);transform:translateX(26px) scale(.55);transform-origin:right center;transition:opacity .2s,transform .3s var(--pk-ease);transition-delay:var(--d-close,0ms)}
-html .ts-pk .ts-pk-fan li span{overflow:hidden;text-overflow:ellipsis}
-html .ts-pk .ts-pk-fan li b{display:grid;place-items:center;flex:0 0 auto;width:1.45rem;height:1.45rem;margin:0;border-radius:50%;background:rgba(255,255,255,.14);font-size:.72rem}
-html .ts-pk .ts-pk-fan li.is-done b{background:var(--pk-on);color:var(--pk-on-text)}
-html .ts-pk .ts-pk-fan li.is-now{background:var(--pk-on);color:var(--pk-on-text)}
-html .ts-pk .ts-pk-fan li.is-now b{background:rgba(0,0,0,.16);color:inherit}
+html .ts-pk .ts-pk-fan li{position:absolute;right:52px;top:0;display:flex;align-items:center;gap:.55rem;max-width:min(64vw,260px);min-height:34px;box-sizing:border-box;margin:-17px 0 0;padding:.3rem .6rem;border:1px solid var(--pk-rule);border-radius:10px;background:var(--pk-stone);color:var(--pk-ink);font-size:.82rem;font-weight:600;line-height:1.25;white-space:nowrap;opacity:0;box-shadow:0 8px 20px -14px rgba(0,0,0,.5);transform:translateX(26px) scale(.55);transform-origin:right center;transition:opacity .2s,transform .3s var(--pk-ease);transition-delay:var(--d-close,0ms)}   /* the same form as the closed boxes in the stack (.ts-pk-card .row) */
+html .ts-pk .ts-pk-fan li span{min-width:0;overflow:hidden;text-overflow:ellipsis}
+html .ts-pk .ts-pk-fan li b{display:grid;place-items:center;flex:0 0 auto;width:1.45rem;height:1.45rem;margin:0;border-radius:50%;background:var(--pk-panel);color:var(--pk-ink);font-size:.72rem;font-weight:800}
+html .ts-pk .ts-pk-fan li.is-done b{color:var(--pk-on)}
+html .ts-pk .ts-pk-fan li.is-now{border:1.5px solid var(--pk-on)}   /* where you are: the open box's green edge */
 html .ts-pk .ts-pk-nav.is-index .ts-pk-fan li{opacity:1;transform:none;transition-delay:var(--d-open,0ms)}
 html.ts-pk-left .ts-pk .ts-pk-fan li{right:auto;left:52px;transform:translateX(-26px) scale(.55);transform-origin:left center}
 html.ts-pk-left .ts-pk .ts-pk-nav.is-index .ts-pk-fan li{transform:none}

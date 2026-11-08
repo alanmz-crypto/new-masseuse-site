@@ -198,6 +198,10 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     await touch('touchStart', ixAt.x, ixAt.y); await W(800);
     let fs = await fanState();
     ok(`${tag} index: holding the icon fans out every section name beside its piece of the rail`, fs.open && fs.exp === 'true' && fs.hid === 'false' && fs.items.map(i => i.name).join('|') === labels.join('|') && fs.items.every(i => i.op > 0.95 && 8 >= Math.abs(i.d) && i.r <= fs.railL + 2 && i.l >= 0), JSON.stringify(fs.items.map(i => [i.op, i.d, Math.round(i.l)])));
+    const form = await p.evaluate(() => { const pick = e => { const c = getComputedStyle(e), n = getComputedStyle(e.querySelector('b')); return [c.backgroundColor, c.color, c.borderTopLeftRadius, c.fontSize, c.fontWeight, n.backgroundColor, n.borderTopLeftRadius].join(' '); };
+      const card = document.querySelector('.ts-pk-card'), r = document.createElement('button'); r.className = 'row'; r.innerHTML = '<b>1</b><span>x</span>'; card.appendChild(r); const row = pick(r); r.remove();
+      const items = [...document.querySelectorAll('.ts-pk-fan li')]; return { row, fan: items.filter(l => !l.classList.contains('is-now')).map(pick), now: items.some(l => l.classList.contains('is-now')) }; });
+    ok(`${tag} index: the fanned names have the same form as the closed boxes in the stack (Ryan, 2026-11-08)`, form.fan.length > 0 && form.fan.every(x => x === form.row), JSON.stringify(form));
     ok(`${tag} index: the section being read is highlighted`, fs.items.filter(i => i.now).map(i => i.name).join() === (await strip()).split(' / ')[0]);
     ok(`${tag} index: the page does not move`, (await Y()) === y0);
     await touch('touchEnd'); await W(700);
