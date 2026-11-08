@@ -220,4 +220,9 @@ the rail still previews without moving the page. Scrolling starts only on a clea
 sideways first = picking a name (a diagonal to a far name passes over the wide rail). Snippet **#1370**; snapshot
 `peek-nav-before-20261108-191607-4d74fdf9.json`; staging39 check `ui-peek-nav-s39-31-1` **456/0**. Saved state to go back to: `link-ideas/saved/20261108-1369/`.
 **Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-191607-4d74fdf9.json'`.
+**Scroll fix (Ryan: "definitely issues with the scrolling"; chose "catch the dot"; "too fast / jumpy"):** the thumb always enters the rail at its top and
+the rail top stood for the page top, so starting mid-page leapt back near the top. Now the page waits until the thumb reaches the reading dot (it grows,
+turns green), then follows; the page glides toward the thumb (22% of the distance per frame, capped at 12% of the screen) instead of leaping. Snippet
+**#1371**; snapshot `peek-nav-before-20261108-195800-9df0c12b.json`; staging39 check `ui-peek-nav-s39-32-1` **464/0**.
+**Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-195800-9df0c12b.json'`.
 
