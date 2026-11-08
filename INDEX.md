@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-08 01:52 UTC  **PASS**  `apply-progress-ideas-staging39-20261108-2`  [reports/2026-11-08/015241-apply-progress-ideas-staging39-20261108-2.md](reports/2026-11-08/015241-apply-progress-ideas-staging39-20261108-2.md)  (run 42436011290)
 - 2026-11-08 01:50 UTC  **PASS**  `rehearse-progress-ideas-20261108-2`  [reports/2026-11-08/015051-rehearse-progress-ideas-20261108-2.md](reports/2026-11-08/015051-rehearse-progress-ideas-20261108-2.md)  (run 42435884705)
 - 2026-11-08 01:48 UTC  **PASS**  `rollback-progress-ideas-v1-staging39-20261108`  [reports/2026-11-08/014853-rollback-progress-ideas-v1-staging39-20261108.md](reports/2026-11-08/014853-rollback-progress-ideas-v1-staging39-20261108.md)  (run 42435783120)
 - 2026-11-08 01:45 UTC  **FAIL**  `apply-progress-ideas-staging39-20261108`  [reports/2026-11-08/014531-apply-progress-ideas-staging39-20261108.md](reports/2026-11-08/014531-apply-progress-ideas-staging39-20261108.md)  (run 42435570098)
