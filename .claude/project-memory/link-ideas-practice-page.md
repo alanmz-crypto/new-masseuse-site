@@ -78,3 +78,17 @@ the topic is." The rail page now has a sticky, display-only strip (current topic
 controls, `aria-hidden` (the rail has the links). Jumps land just below it. Re-applied as page **#1348** (snapshot `rail-ideas-before-20261108-024214-c7b6cfab.json`,
 export `staging39-before-rail-ideas-20261108-024155.sql`); check `ui-rail-ideas-staging39-20261108-2`: **166/0**.
 **Undo:** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-rail-ideas.sh --args '--rollback $HOME/private-backups/rail-ideas-before-20261108-024214-c7b6cfab.json'`.
+
+## Ryan's pick: Peek + display-only top strip, on the real Thai Massage page (2026-11-08)
+Ryan: "Peek. Let's use this design. Now you can try it on a real staging page."
+**staging39 only:** the pills trial (snippet #1344) was rolled back first (its own snapshot; exact undo). Then WPCode snippet **#1349**
+"TSPeekNav practice (Thai, staging39)" from `link-ideas/peek-nav.php` (installer `install-peek-nav.php`, push `push-peek-nav.sh`, check `check-peek-nav.mjs`).
+Built from the existing `.ts-jump` row (kept as the no-JavaScript fallback): names = row labels; preview = each section's real heading and first paragraph;
+reading time = words / 200. Strip + rail appear once the row scrolls away; the row's own taps and `#section` arrivals land the heading below the strip
+(capture handler + settle-align after Astra's smooth scroll); the bottom "On this page" guide button is hidden on that page; text gets 26px right padding
+under 1100px so the rail does not cover it. Site header scrolls normally (not pinned). Export `staging39-before-peek-nav-20261108-030238.sql` verified
+off-site; snapshot `peek-nav-before-20261108-030251-3fb7ea6c.json`. Chromium check `ui-peek-nav-staging39-20261108`: **103/0** (iPhone 13 + iPad Mini,
+light + dark, real touch; previews for all five sections; Back exact; row taps; `#ts-guide-research` arrival; Therapeutic unchanged).
+**Undo:** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-030251-3fb7ea6c.json'`.
+**Next:** Ryan reviews on his phone. Rollout: widen `is_page()` to the other service pages (Therapeutic, Deep Tissue, Chair, Services), staging first, then live
+only on his go (enable-live change in the installer allow-list and push targets; live dry run; `request.sh live`).
