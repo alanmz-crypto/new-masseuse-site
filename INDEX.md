@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-08 00:27 UTC  **FAIL**  `check-link-ideas-staging39-20261108-2`  [reports/2026-11-08/002729-check-link-ideas-staging39-20261108-2.md](reports/2026-11-08/002729-check-link-ideas-staging39-20261108-2.md)  (run 42429803357)
 - 2026-11-08 00:26 UTC  **FAIL**  `check-link-ideas-staging39-20261108`  [reports/2026-11-08/002635-check-link-ideas-staging39-20261108.md](reports/2026-11-08/002635-check-link-ideas-staging39-20261108.md)  (run 42429739401)
 - 2026-11-08 00:25 UTC  **FAIL**  `apply-link-ideas-staging39-20261108`  [reports/2026-11-08/002539-apply-link-ideas-staging39-20261108.md](reports/2026-11-08/002539-apply-link-ideas-staging39-20261108.md)  (run 42429634695)
 - 2026-11-08 00:24 UTC  **PASS**  `dry-link-ideas-staging39-20261108`  [reports/2026-11-08/002430-dry-link-ideas-staging39-20261108.md](reports/2026-11-08/002430-dry-link-ideas-staging39-20261108.md)  (run 42429574011)
