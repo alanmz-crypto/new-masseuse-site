@@ -1,7 +1,10 @@
 {
-  "id": "rehearse-peek-nav-22-1",
-  "op": "rehearse",
+  "id": "apply-peek-nav-s39-22-1",
+  "op": "run",
   "target": "staging39",
-  "installer": "link-ideas/install-peek-nav.php",
-  "args": []
+  "script": "link-ideas/push-peek-nav.sh",
+  "args": [
+    "--apply"
+  ],
+  "tests": "auto"
 }
