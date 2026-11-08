@@ -1,0 +1,351 @@
+<div class="tsp-lab" id="tsp-lab">
+<style>
+.tsp-lab{--x-ink:var(--ts-ink,#1C2531);--x-muted:var(--ts-muted,#4A5563);--x-rule:var(--ts-rule,#D5D6CF);--x-panel:var(--ts-panel,#FAF9F6);--x-ground:var(--ts-ground,#F5F4EF);--x-stone:var(--ts-stone,#ECEBE4);--x-on:var(--ts-green,var(--ast-global-color-0,#377A00));--x-on-text:#fff;--x-accent:var(--ts-accent,#C8963E);--x-pale:var(--ts-pale,#EAF7EB);--x-ease:cubic-bezier(.2,.8,.2,1);--x-shadow:0 14px 40px -16px rgba(0,0,0,.4);color:var(--x-ink);max-width:880px;margin:0 auto;padding:0 0 5rem}
+html[data-ts-theme="dark"] .tsp-lab{--x-on:#8CCB5B;--x-on-text:#0E141C}
+.tsp-lab *,.tsp-lab *::before,.tsp-lab *::after{box-sizing:border-box}
+.tsp-lab a:focus-visible,.tsp-lab button:focus-visible{outline:3px solid var(--x-accent);outline-offset:2px}
+.tsp-lab .tsp-sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+.tsp-lab .tsp-intro{background:var(--x-pale);border-radius:22px;padding:clamp(1.25rem,4vw,2.25rem);margin:0 0 1.25rem}
+.tsp-lab .tsp-eyebrow{font-size:.75rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--x-on);margin:0 0 .5rem}
+.tsp-lab .tsp-intro h1{font-size:clamp(1.6rem,4.5vw,2.3rem);line-height:1.15;margin:0 0 .5rem;color:var(--x-ink)}
+.tsp-lab .tsp-intro p{margin:0 0 1rem;color:var(--x-muted);line-height:1.55}
+.tsp-lab .tsp-picker{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.35rem;margin:0;padding:.3rem;list-style:none;background:var(--x-panel);border:1px solid var(--x-rule);border-radius:14px}
+.tsp-lab .tsp-picker li{margin:0}
+.tsp-lab .tsp-picker button{width:100%;min-height:54px;margin:0;padding:.3rem .15rem;border:0;border-radius:10px;background:transparent;color:var(--x-muted);font:inherit;font-size:clamp(.66rem,2.5vw,.8rem);font-weight:600;line-height:1.2;overflow-wrap:anywhere;cursor:pointer}
+.tsp-lab .tsp-picker button b{display:block;font-size:1.1rem}
+.tsp-lab .tsp-picker button[aria-pressed="true"]{background:var(--x-on);color:var(--x-on-text)}
+.tsp-lab .tsp-about{margin:1rem 0 0;padding:1rem 1.1rem;background:var(--x-panel);border:1px solid var(--x-rule);border-radius:12px}
+.tsp-lab .tsp-about h2{font-size:1.15rem;margin:0 0 .3rem;color:var(--x-ink)}
+.tsp-lab .tsp-about p{margin:0;font-size:.92rem;line-height:1.5}
+.tsp-lab.is-js .tsp-idea:not(.is-on),.tsp-lab.is-js .tsp-about:not(.is-on){display:none}
+.tsp-lab:not(.is-js) .tsp-idea:not([data-idea="1"]){display:none}
+
+/* sample sections (placeholders: lines instead of words) */
+.tsp-lab .tsp-sec{scroll-margin-top:6.5rem;padding:2rem 0 1rem;border-top:1px solid var(--x-rule)}
+.tsp-lab .tsp-sec h2{font-size:clamp(1.35rem,3.6vw,1.75rem);margin:0 0 .35rem;color:var(--x-ink);border-radius:8px;transition:background-color .6s}
+.tsp-lab .tsp-sec h2:focus{outline:none}
+.tsp-lab .tsp-sec.is-flash h2{background:color-mix(in srgb,var(--x-accent) 28%,transparent)}
+.tsp-lab .tsp-blurb{margin:0 0 1rem;color:var(--x-muted);font-size:.95rem}
+.tsp-lab .tsp-line{display:block;height:.8rem;margin:0 0 .75rem;border-radius:99px;background:var(--x-stone)}
+.tsp-lab .tsp-line:nth-child(3n){width:84%}.tsp-lab .tsp-line:nth-child(4n){width:62%}
+
+/* shared sticky bar */
+.tsp-lab .tsp-bar{position:sticky;top:0;z-index:30;margin:0 calc(-1 * min(16px,4vw)) 1rem;padding:.55rem min(16px,4vw) .6rem;background:color-mix(in srgb,var(--x-ground) 90%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid var(--x-rule)}
+.tsp-lab .tsp-track{position:relative;display:block;height:6px;border-radius:99px;background:var(--x-rule);overflow:hidden}
+.tsp-lab .tsp-track i{position:absolute;inset:0;border-radius:inherit;background:var(--x-on);transform-origin:left;transform:scaleX(var(--p,0))}
+
+/* 1. growing segments */
+.tsp-lab .tspA ol{display:flex;gap:4px;margin:0;padding:0;list-style:none}
+.tsp-lab .tspA li{flex:1 1 0;min-width:0;margin:0;transition:flex-grow .45s var(--x-ease)}
+.tsp-lab .tspA li.is-now{flex-grow:5}
+.tsp-lab .tspA a{display:flex;flex-direction:column;gap:6px;min-height:48px;padding:6px 0 4px;color:var(--x-muted);text-decoration:none}
+.tsp-lab .tspA .tsp-lbl{display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:.8rem;font-weight:600;text-align:center}
+.tsp-lab .tspA .tsp-lbl .n{display:inline}.tsp-lab .tspA .tsp-lbl .t{display:none}
+.tsp-lab .tspA li.is-now .tsp-lbl{color:var(--x-ink);text-align:left}
+.tsp-lab .tspA li.is-now .tsp-lbl .n{display:none}.tsp-lab .tspA li.is-now .tsp-lbl .t{display:inline}
+.tsp-lab .tspA li.is-done .tsp-lbl{color:var(--x-on)}
+@media (min-width:700px){.tsp-lab .tspA li{flex-grow:var(--len,1)}.tsp-lab .tspA li.is-now{flex-grow:calc(var(--len,1) * 1.6)}.tsp-lab .tspA .tsp-lbl{text-align:left}.tsp-lab .tspA .tsp-lbl .n{display:none}.tsp-lab .tspA .tsp-lbl .t{display:inline}}
+
+/* 2. bar that opens a list (bottom sheet) */
+.tsp-lab .tspB-open{display:flex;align-items:center;gap:.75rem;width:100%;min-height:48px;margin:0 0 .45rem;padding:0;border:0;background:transparent;color:var(--x-ink);font:inherit;text-align:left;cursor:pointer}
+.tsp-lab .tspB-open:hover,.tsp-lab .tspB-open:focus{background:transparent;color:var(--x-ink)}
+.tsp-lab .tspB-open .lbl{flex:1;min-width:0}
+.tsp-lab .tspB-open .lbl b{display:block;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tsp-lab .tspB-open .lbl small{display:block;color:var(--x-muted);font-size:.78rem}
+.tsp-lab .tspB-open .all{flex:0 0 auto;display:inline-flex;align-items:center;gap:.35rem;min-height:40px;padding:0 .85rem;border:1px solid var(--x-rule);border-radius:999px;font-size:.82rem;font-weight:700}
+.tsp-lab .tspB-open svg,.tsp-lab .tspC svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.tsp-lab .tsp-sheet{width:100%;max-width:560px;max-height:82vh;margin:auto auto 0;padding:0 0 max(12px,env(safe-area-inset-bottom));border:0;border-radius:22px 22px 0 0;background:var(--x-panel);color:var(--x-ink);box-shadow:var(--x-shadow);overflow:auto}
+@media (min-width:700px){.tsp-lab .tsp-sheet{margin:auto;border-radius:22px}}
+.tsp-lab .tsp-sheet::backdrop{background:rgba(14,20,28,.45)}
+.tsp-lab .tsp-sheet[open]{animation:tsp-up .3s var(--x-ease)}
+@keyframes tsp-up{from{transform:translateY(40px);opacity:0}}
+.tsp-lab .tsp-sheet header{position:sticky;top:0;display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.1rem .6rem;background:var(--x-panel)}
+.tsp-lab .tsp-sheet header::before{content:"";position:absolute;left:50%;top:6px;width:40px;height:4px;margin-left:-20px;border-radius:9px;background:var(--x-rule)}
+.tsp-lab .tsp-sheet h2{font-size:1.05rem;margin:0;color:var(--x-ink)}
+.tsp-lab .tsp-sheet .x{min-width:44px;min-height:44px;margin:0;padding:0;border:0;border-radius:50%;background:var(--x-stone);color:var(--x-ink);font:inherit;font-size:1.2rem;line-height:1;cursor:pointer}
+.tsp-lab .tsp-sheet ol{margin:0;padding:0 .6rem .4rem;list-style:none}
+.tsp-lab .tsp-sheet li{margin:0}
+.tsp-lab .tsp-sheet a{display:grid;grid-template-columns:2rem 1fr auto;gap:.15rem .75rem;align-items:center;padding:.75rem .6rem;border-radius:14px;color:var(--x-ink);text-decoration:none}
+.tsp-lab .tsp-sheet a:hover{background:var(--x-stone);color:var(--x-ink)}
+.tsp-lab .tsp-sheet a.is-now{background:var(--x-pale)}
+.tsp-lab .tsp-sheet .num{grid-row:span 3;display:grid;place-items:center;width:2rem;height:2rem;border-radius:50%;border:2px solid var(--x-rule);font-size:.8rem;font-weight:800;color:var(--x-muted)}
+.tsp-lab .tsp-sheet .is-done .num{background:var(--x-on);border-color:var(--x-on);color:var(--x-on-text)}
+.tsp-lab .tsp-sheet .is-now .num{border-color:var(--x-on);color:var(--x-on)}
+.tsp-lab .tsp-sheet .t{font-weight:700}
+.tsp-lab .tsp-sheet .m{font-size:.75rem;color:var(--x-muted);white-space:nowrap}
+.tsp-lab .tsp-sheet .d{grid-column:2 / 4;font-size:.85rem;color:var(--x-muted)}
+.tsp-lab .tsp-sheet .tsp-track{grid-column:2 / 4;height:4px;margin-top:.35rem}
+
+/* 3. now / next stepper */
+.tsp-lab .tspC .row{display:flex;align-items:center;gap:.5rem}
+.tsp-lab .tspC .now{flex:1;min-width:0;display:flex;align-items:center;gap:.6rem;min-height:48px;margin:0;padding:0;border:0;background:transparent;color:var(--x-ink);font:inherit;text-align:left;cursor:pointer}
+.tsp-lab .tspC .now:hover,.tsp-lab .tspC .now:focus{background:transparent;color:var(--x-ink)}
+.tsp-lab .tspC .ring{width:38px;height:38px;flex:0 0 auto}
+.tsp-lab .tspC .ring circle{fill:none;stroke-width:3.5}
+.tsp-lab .tspC .ring .bg{stroke:var(--x-rule)}
+.tsp-lab .tspC .ring .fg{stroke:var(--x-on);stroke-linecap:round;transform:rotate(-90deg);transform-origin:center}
+.tsp-lab .tspC .ring text{font-size:14px;font-weight:800;fill:var(--x-ink);text-anchor:middle;dominant-baseline:central}
+.tsp-lab .tspC .now span{min-width:0}
+.tsp-lab .tspC .now small{display:block;font-size:.72rem;color:var(--x-muted);text-transform:uppercase;letter-spacing:.08em}
+.tsp-lab .tspC .now b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:.95rem;line-height:1.2}
+.tsp-lab .tspC .now small b{display:inline;font-size:inherit}
+.tsp-lab .tspC .now .chev{transition:transform .3s var(--x-ease)}
+.tsp-lab .tspC.is-open .now .chev{transform:rotate(180deg)}
+.tsp-lab .tspC .next{flex:0 1 auto;max-width:44%;display:inline-flex;align-items:center;gap:.4rem;min-height:48px;padding:.3rem .5rem .3rem .9rem;line-height:1.15;border-radius:999px;background:var(--x-on);color:var(--x-on-text);font-size:.82rem;font-weight:700;text-decoration:none;white-space:nowrap;overflow:hidden}
+.tsp-lab .tspC .next span{min-width:0;overflow:hidden}
+.tsp-lab .tspC .next span small{display:block;font-size:.68rem;font-weight:600;opacity:.85;text-transform:uppercase;letter-spacing:.06em}
+.tsp-lab .tspC .next span b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tsp-lab .tspC .next:hover{color:var(--x-on-text)}
+.tsp-lab .tspC .next[hidden]{display:none}
+.tsp-lab .tspC .steps{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s var(--x-ease)}
+.tsp-lab .tspC.is-open .steps{grid-template-rows:1fr}
+.tsp-lab .tspC .steps>div{overflow:hidden}
+.tsp-lab .tspC ol{position:relative;margin:.4rem 0 .2rem;padding:0;list-style:none}
+.tsp-lab .tspC ol li{position:relative;margin:0;padding:0 0 0 2.4rem}
+.tsp-lab .tspC ol li::before{content:"";position:absolute;left:calc(1rem - 1px);top:0;bottom:0;width:2px;background:var(--x-rule)}
+.tsp-lab .tspC ol li:first-child::before{top:50%}.tsp-lab .tspC ol li:last-child::before{bottom:50%}
+.tsp-lab .tspC ol li.is-done::before{background:var(--x-on)}
+.tsp-lab .tspC ol a{position:relative;display:block;padding:.55rem 0;color:var(--x-ink);text-decoration:none}
+.tsp-lab .tspC ol a::before{content:"";position:absolute;left:calc(-1.4rem - 7px);top:50%;width:14px;height:14px;margin-top:-7px;border-radius:50%;border:2px solid var(--x-rule);background:var(--x-ground)}
+.tsp-lab .tspC ol li.is-done a::before{background:var(--x-on);border-color:var(--x-on)}
+.tsp-lab .tspC ol li.is-now a::before{border-color:var(--x-on);box-shadow:0 0 0 4px color-mix(in srgb,var(--x-on) 25%,transparent)}
+.tsp-lab .tspC ol a b{display:block;font-size:.95rem}
+.tsp-lab .tspC ol a small{display:block;font-size:.8rem;color:var(--x-muted)}
+.tsp-lab .tspC .tsp-track{margin-top:.45rem}
+
+/* 4. scrubber */
+.tsp-lab .tspD .hint{display:flex;justify-content:space-between;gap:1rem;margin:0 0 .4rem;font-size:.82rem;color:var(--x-muted)}
+.tsp-lab .tspD .hint b{color:var(--x-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tsp-lab .tspD ol{position:relative;display:flex;gap:3px;height:34px;margin:0;padding:0;list-style:none;touch-action:none;cursor:pointer;-webkit-user-select:none;user-select:none}
+.tsp-lab .tspD li{flex:var(--len,1) 1 0;min-width:0;margin:0}
+.tsp-lab .tspD li a{position:relative;display:block;height:100%;text-decoration:none;-webkit-tap-highlight-color:transparent}
+.tsp-lab .tspD li a::before{content:"";position:absolute;left:0;right:0;top:14px;height:8px;border-radius:99px;background:var(--x-rule);transition:transform .15s}
+.tsp-lab .tspD li a i{position:absolute;left:0;right:0;top:14px;height:8px;border-radius:99px;background:var(--x-on);transform-origin:left;transform:scaleX(var(--p,0))}
+.tsp-lab .tspD li.is-hover a::before,.tsp-lab .tspD li.is-hover a i{transform:scaleY(1.8)}
+.tsp-lab .tspD li.is-hover a i{transform:scaleX(var(--p,0)) scaleY(1.8)}
+.tsp-lab .tspD .bubble{position:absolute;left:0;top:calc(100% + 10px);z-index:31;width:min(260px,80vw);padding:.75rem .9rem;border-radius:14px;background:var(--x-ink);color:var(--x-panel);box-shadow:var(--x-shadow);pointer-events:none;opacity:0;transform:translateY(-4px);transition:opacity .15s,transform .15s}
+.tsp-lab .tspD .bubble.is-on{opacity:1;transform:none}
+.tsp-lab .tspD .bubble small{display:block;opacity:.7;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em}
+.tsp-lab .tspD .bubble b{display:block;font-size:1rem;margin:.1rem 0}
+.tsp-lab .tspD .bubble span{display:block;font-size:.82rem;opacity:.85}
+
+/* 5. edge rail */
+.tsp-lab .tspE{position:fixed;right:max(6px,env(safe-area-inset-right));top:50%;z-index:30;transform:translateY(-50%);height:min(62vh,520px);width:44px}
+.tsp-lab .tspE ol{position:absolute;right:0;top:0;bottom:0;display:flex;flex-direction:column;gap:5px;width:44px;margin:0;padding:6px 0;list-style:none;touch-action:none;-webkit-user-select:none;user-select:none;border-radius:22px;background:transparent;transition:background-color .2s,box-shadow .2s}
+.tsp-lab .tspE.is-scrub ol{background:color-mix(in srgb,var(--x-panel) 90%,transparent);box-shadow:0 6px 24px -12px rgba(0,0,0,.45)}
+.tsp-lab .tspE li{position:relative;flex:var(--len,1) 1 0;min-height:18px;margin:0}
+.tsp-lab .tspE li a{position:absolute;inset:0;display:block;text-decoration:none;-webkit-tap-highlight-color:transparent}
+.tsp-lab .tspE li a::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:6px;margin-left:-3px;border-radius:9px;background:var(--x-rule);box-shadow:0 0 0 2px var(--x-ground)}
+.tsp-lab .tspE li a i{position:absolute;left:50%;top:0;bottom:0;width:6px;margin-left:-3px;border-radius:9px;background:var(--x-on);transform-origin:top;transform:scaleY(var(--p,0))}
+.tsp-lab .tspE .tag{position:absolute;right:52px;top:50%;display:block;max-width:calc(100vw - 80px);padding:.35rem .7rem;border-radius:999px;background:var(--x-ink);color:var(--x-panel);font-size:.8rem;font-weight:700;white-space:nowrap;pointer-events:none;transform:translateY(-50%) translateX(8px);opacity:0;transition:opacity .2s,transform .2s var(--x-ease)}
+.tsp-lab .tspE li.is-now .tag{opacity:1;transform:translateY(-50%)}
+.tsp-lab .tspE.is-scrub li .tag{opacity:.9;transform:translateY(-50%);background:var(--x-panel);color:var(--x-ink);box-shadow:0 4px 16px -8px rgba(0,0,0,.5)}
+.tsp-lab .tspE.is-scrub li.is-hover .tag{opacity:1;background:var(--x-on);color:var(--x-on-text);font-size:.9rem}
+.tsp-lab .tspE.is-scrub li.is-hover a::before{background:var(--x-on)}
+.tsp-lab .tspE .tag small{display:none;font-weight:400;opacity:.9}
+.tsp-lab .tspE.is-scrub li.is-hover .tag{white-space:normal;width:max-content;max-width:min(72vw,300px);border-radius:14px;padding:.5rem .8rem}
+.tsp-lab .tspE.is-scrub li.is-hover .tag small{display:block;margin-top:.15rem;font-size:.8rem}
+.tsp-lab:not(.is-js) .tspE{position:static;transform:none;height:auto;width:auto}
+
+@media (prefers-reduced-motion:reduce){.tsp-lab *,.tsp-lab *::before{transition:none!important;animation:none!important}}
+@media print{.tsp-lab .tsp-bar,.tsp-lab .tspE{display:none}}
+</style>
+
+<header class="tsp-intro">
+<p class="tsp-eyebrow">Practice page · staging only · phone and tablet first</p>
+<h1>Progress navigation ideas</h1>
+<p>Five ways to show how far along the page you are and what each section is, so you know where a tap will take you. Pick one, then scroll, tap or slide your thumb.</p>
+<ul class="tsp-picker" aria-label="Choose an idea">
+<li><button type="button" data-idea="1" aria-pressed="true"><b>1</b>Growing</button></li>
+<li><button type="button" data-idea="2" aria-pressed="false"><b>2</b>List</button></li>
+<li><button type="button" data-idea="3" aria-pressed="false"><b>3</b>Now/Next</button></li>
+<li><button type="button" data-idea="4" aria-pressed="false"><b>4</b>Scrub</button></li>
+<li><button type="button" data-idea="5" aria-pressed="false"><b>5</b>Rail</button></li>
+</ul>
+<div class="tsp-about is-on" data-about="1"><h2>1. Growing segments</h2><p>One bar per section, sized by how long the section is. The section you are in grows and shows its name; the others shrink to their number. On a tablet every name fits.</p></div>
+<div class="tsp-about" data-about="2"><h2>2. Bar that opens a list</h2><p>A slim bar says where you are (“2 of 6 · Common reasons”). Tap it and a sheet slides up with every section: its name, a short description, its length and its own progress, with ticks for what you have read.</p></div>
+<div class="tsp-about" data-about="3"><h2>3. Now and Next</h2><p>A ring shows progress through the section you are reading, and a button names the next one (“Next: Who can benefit”). Tap the name to open a timeline of all the steps.</p></div>
+<div class="tsp-about" data-about="4"><h2>4. Scrubber</h2><p>Slide your thumb along the bar, like scrubbing a video. A bubble shows the section under your thumb and what it covers; let go to jump there. A single tap works too.</p></div>
+<div class="tsp-about" data-about="5"><h2>5. Edge rail</h2><p>A thin rail on the right edge, one piece per section, filling as you read; the current section's name sits beside it. Touch and slide along the rail and every name fans out; let go to jump.</p></div>
+</header>
+
+<!-- 1 -->
+<nav class="tsp-idea tsp-bar tspA is-on" data-idea="1" aria-label="On this page"><ol>
+<li><a href="#tsp-what-it-is"><span class="tsp-track"><i></i></span><span class="tsp-lbl"><span class="n">1</span><span class="t">What it is</span></span></a></li>
+<li><a href="#tsp-common-reasons"><span class="tsp-track"><i></i></span><span class="tsp-lbl"><span class="n">2</span><span class="t">Common reasons</span></span></a></li>
+<li><a href="#tsp-who-can-benefit"><span class="tsp-track"><i></i></span><span class="tsp-lbl"><span class="n">3</span><span class="t">Who can benefit</span></span></a></li>
+<li><a href="#tsp-questions"><span class="tsp-track"><i></i></span><span class="tsp-lbl"><span class="n">4</span><span class="t">Questions</span></span></a></li>
+<li><a href="#tsp-what-to-expect"><span class="tsp-track"><i></i></span><span class="tsp-lbl"><span class="n">5</span><span class="t">What to expect</span></span></a></li>
+<li><a href="#tsp-research"><span class="tsp-track"><i></i></span><span class="tsp-lbl"><span class="n">6</span><span class="t">What Research Says</span></span></a></li>
+</ol></nav>
+
+<!-- 2 -->
+<nav class="tsp-idea tsp-bar tspB" data-idea="2" aria-label="On this page">
+<button type="button" class="tspB-open" aria-haspopup="dialog"><span class="lbl"><b class="tspB-name">What it is</b><small class="tspB-count">1 of 6</small></span><span class="all">All sections<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg></span></button>
+<span class="tsp-track tspB-total"><i></i></span>
+<dialog class="tsp-sheet" aria-labelledby="tsp-sheet-h">
+<header><h2 id="tsp-sheet-h">On this page</h2><button type="button" class="x" aria-label="Close">×</button></header>
+<ol></ol>
+</dialog>
+</nav>
+
+<!-- 3 -->
+<nav class="tsp-idea tsp-bar tspC" data-idea="3" aria-label="On this page">
+<div class="row">
+<button type="button" class="now" aria-expanded="false" aria-controls="tspC-steps"><svg class="ring" viewBox="0 0 40 40" aria-hidden="true"><circle class="bg" cx="20" cy="20" r="16"/><circle class="fg" cx="20" cy="20" r="16" stroke-dasharray="100.53" stroke-dashoffset="100.53"/><text x="20" y="20">1</text></svg><span><small>Now reading</small><b class="tspC-name">What it is</b></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+<a class="next" href="#tsp-common-reasons"><span><small>Next</small><b>Common reasons</b></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a>
+</div>
+<div class="steps" id="tspC-steps"><div><ol></ol></div></div>
+<span class="tsp-track tspC-total"><i></i></span>
+</nav>
+
+<!-- 4 -->
+<nav class="tsp-idea tsp-bar tspD" data-idea="4" aria-label="On this page">
+<p class="hint"><b class="tspD-name">What it is</b><span>Slide to preview</span></p>
+<ol></ol>
+<div class="bubble" aria-hidden="true"><small></small><b></b><span></span></div>
+</nav>
+
+<!-- 5 -->
+<nav class="tsp-idea tspE" data-idea="5" aria-label="On this page"><ol></ol></nav>
+
+<section class="tsp-sec" id="tsp-what-it-is" data-mins="2" data-blurb="The basics, in plain words." aria-labelledby="tsp-h1"><h2 id="tsp-h1" tabindex="-1">What it is</h2><p class="tsp-blurb">The basics, in plain words.</p><div aria-hidden="true"><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span></div></section>
+<section class="tsp-sec" id="tsp-common-reasons" data-mins="3" data-blurb="Why people book a session." aria-labelledby="tsp-h2"><h2 id="tsp-h2" tabindex="-1">Common reasons</h2><p class="tsp-blurb">Why people book a session.</p><div aria-hidden="true"><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span></div></section>
+<section class="tsp-sec" id="tsp-who-can-benefit" data-mins="1" data-blurb="Whether this style is a good fit for you." aria-labelledby="tsp-h3"><h2 id="tsp-h3" tabindex="-1">Who can benefit</h2><p class="tsp-blurb">Whether this style is a good fit for you.</p><div aria-hidden="true"><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span></div></section>
+<section class="tsp-sec" id="tsp-questions" data-mins="4" data-blurb="Short answers to the questions people ask most." aria-labelledby="tsp-h4"><h2 id="tsp-h4" tabindex="-1">Questions</h2><p class="tsp-blurb">Short answers to the questions people ask most.</p><div aria-hidden="true"><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span></div></section>
+<section class="tsp-sec" id="tsp-what-to-expect" data-mins="2" data-blurb="What happens before, during and after a session." aria-labelledby="tsp-h5"><h2 id="tsp-h5" tabindex="-1">What to expect</h2><p class="tsp-blurb">What happens before, during and after a session.</p><div aria-hidden="true"><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span></div></section>
+<section class="tsp-sec" id="tsp-research" data-mins="3" data-blurb="Studies on this style, with their sources." aria-labelledby="tsp-h6"><h2 id="tsp-h6" tabindex="-1">What Research Says</h2><p class="tsp-blurb">Studies on this style, with their sources.</p><div aria-hidden="true"><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span><span class="tsp-line"></span></div></section>
+<div style="height:40vh" aria-hidden="true"></div>
+
+<script>
+(function () {
+  'use strict';
+  var lab = document.getElementById('tsp-lab');
+  if (!lab || !('requestAnimationFrame' in window)) return;
+  lab.classList.add('is-js');
+  var calm = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var secs = [].slice.call(lab.querySelectorAll('.tsp-sec'));
+  var S = secs.map(function (s) { return { id: s.id, el: s, name: s.querySelector('h2').textContent, blurb: s.getAttribute('data-blurb') }; });
+  var idea = 1, cur = -1;
+  function esc(t) { var d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
+
+  /* section lengths (for sizing) and reading time; measured, so it follows the real page */
+  function lengths() {
+    var hs = S.map(function (s) { return s.el.offsetHeight; }), tot = hs.reduce(function (a, b) { return a + b; }, 0);
+    S.forEach(function (s, i) { s.len = hs[i] / (tot / S.length); s.mins = +s.el.getAttribute('data-mins') || Math.max(1, Math.round(hs[i] / 450)); });   // data-mins: the real page's reading time (sample values here)
+  }
+  /* where the reader is: the reading line sits just under the sticky bar */
+  function line() { return Math.min(window.innerHeight * 0.3, 160); }
+  function where() { var y = line(), idx = -1; S.forEach(function (s, i) { if (s.el.getBoundingClientRect().top <= y) idx = i; }); return idx; }
+  function part(i) { var r = S[i].el.getBoundingClientRect(); return Math.max(0, Math.min(1, (line() - r.top) / r.height)); }
+  function whole() { var a = S[0].el.getBoundingClientRect().top, b = S[S.length - 1].el.getBoundingClientRect().bottom; return Math.max(0, Math.min(1, (line() - a) / (b - a))); }
+  function fill(i) { return i < cur ? 1 : (i === cur ? part(i) : 0); }
+
+  /* jumping: smooth, the heading under the bar, focus on it, flash it, keep the address right */
+  function go(id) {
+    var s = document.getElementById(id); if (!s) return;
+    var bar = lab.querySelector('.tsp-idea.is-on.tsp-bar'), off = bar ? bar.offsetHeight + 12 : 16;
+    window.scrollTo({ top: s.getBoundingClientRect().top + window.scrollY - off, behavior: calm.matches ? 'auto' : 'smooth' });
+    var h = s.querySelector('h2'); if (h) h.focus({ preventScroll: true });
+    s.classList.add('is-flash'); setTimeout(function () { s.classList.remove('is-flash'); }, 1200);
+    try { history.replaceState(null, '', '#' + id); } catch (e) {}
+  }
+  lab.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href^="#tsp-"]');
+    if (!a || !lab.contains(a)) return;
+    e.preventDefault(); closeAll(); go(a.getAttribute('href').slice(1));
+  });
+
+  /* 1. growing segments */
+  var A = [].slice.call(lab.querySelectorAll('.tspA li'));
+  function drawA() { A.forEach(function (li, i) { li.style.setProperty('--len', S[i].len.toFixed(2)); li.classList.toggle('is-now', i === Math.max(cur, 0)); li.classList.toggle('is-done', i < cur); li.querySelector('i').style.setProperty('--p', fill(i).toFixed(3)); var a = li.querySelector('a'); if (i === cur) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); }); }
+
+  /* 2. bar + sheet */
+  var B = lab.querySelector('.tspB'), sheet = B.querySelector('.tsp-sheet'), sheetList = sheet.querySelector('ol');
+  sheetList.innerHTML = S.map(function (s, i) { return '<li><a href="#' + s.id + '"><span class="num">' + (i + 1) + '</span><span class="t">' + esc(s.name) + '</span><span class="m"></span><span class="d">' + esc(s.blurb) + '</span><span class="tsp-track"><i></i></span></a></li>'; }).join('');
+  var Brows = [].slice.call(sheetList.querySelectorAll('a'));
+  B.querySelector('.tspB-open').addEventListener('click', function () { drawB(); sheet.showModal(); var n = Brows[Math.max(cur, 0)]; if (n) n.focus(); });
+  sheet.querySelector('.x').addEventListener('click', function () { sheet.close(); });
+  sheet.addEventListener('click', function (e) { if (e.target === sheet) sheet.close(); });
+  function drawB() {
+    var i0 = Math.max(cur, 0);
+    B.querySelector('.tspB-name').textContent = S[i0].name;
+    B.querySelector('.tspB-count').textContent = (i0 + 1) + ' of ' + S.length + ' · ' + Math.round(whole() * 100) + '% of the page';
+    B.querySelector('.tspB-total i').style.setProperty('--p', whole().toFixed(3));
+    Brows.forEach(function (a, i) { a.classList.toggle('is-now', i === cur); a.classList.toggle('is-done', i < cur); a.querySelector('.num').textContent = i < cur ? '✓' : (i + 1); a.querySelector('.m').textContent = S[i].mins + ' min'; a.querySelector('i').style.setProperty('--p', fill(i).toFixed(3)); if (i === cur) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
+  }
+
+  /* 3. now / next */
+  var C = lab.querySelector('.tspC'), Cnow = C.querySelector('.now'), Cnext = C.querySelector('.next'), Clist = C.querySelector('ol');
+  Clist.innerHTML = S.map(function (s) { return '<li><a href="#' + s.id + '"><b>' + esc(s.name) + '</b><small>' + esc(s.blurb) + '</small></a></li>'; }).join('');
+  var Csteps = [].slice.call(Clist.querySelectorAll('li'));
+  Cnow.addEventListener('click', function () { var o = !C.classList.contains('is-open'); C.classList.toggle('is-open', o); Cnow.setAttribute('aria-expanded', String(o)); });
+  function drawC() {
+    var i0 = Math.max(cur, 0);
+    C.querySelector('.tspC-name').textContent = S[i0].name;
+    C.querySelector('.ring .fg').style.strokeDashoffset = (100.53 * (1 - (cur < 0 ? 0 : part(i0)))).toFixed(2);
+    C.querySelector('.ring text').textContent = String(i0 + 1);
+    var nx = S[cur + 1];
+    if (nx) { Cnext.hidden = false; Cnext.setAttribute('href', '#' + nx.id); Cnext.querySelector('small').textContent = cur < 0 ? 'Start' : 'Next'; Cnext.querySelector('b').textContent = nx.name; Cnext.setAttribute('aria-label', (cur < 0 ? 'Start: ' : 'Next: ') + nx.name); } else { Cnext.hidden = true; }
+    C.querySelector('.tspC-total i').style.setProperty('--p', whole().toFixed(3));
+    Csteps.forEach(function (li, i) { li.classList.toggle('is-now', i === cur); li.classList.toggle('is-done', i < cur); });
+  }
+
+  /* shared: slide a finger (or mouse) across a track of segments to preview, release to jump */
+  function scrubber(list, axis, onPreview, onEnd) {
+    var active = false, at = -1, moved = false;
+    function pick(e) { var lis = [].slice.call(list.children), best = -1; lis.forEach(function (li, i) { var r = li.getBoundingClientRect(); var v = axis === 'x' ? e.clientX : e.clientY, lo = axis === 'x' ? r.left : r.top, hi = axis === 'x' ? r.right : r.bottom; if (v >= lo - 3 && v <= hi + 3) best = i; }); if (best < 0) { var f = lis[0].getBoundingClientRect(); best = (axis === 'x' ? e.clientX < f.left : e.clientY < f.top) ? 0 : lis.length - 1; } return best; }
+    list.addEventListener('pointerdown', function (e) { if (e.button > 0) return; active = true; moved = false; try { list.setPointerCapture(e.pointerId); } catch (err) {} at = pick(e); onPreview(at, e); e.preventDefault(); });
+    list.addEventListener('pointermove', function (e) { if (!active) return; var n = pick(e); moved = true; if (n !== at) { at = n; if (navigator.vibrate) { try { navigator.vibrate(5); } catch (err) {} } } onPreview(at, e); });
+    function end(e, jump) { if (!active) return; active = false; onEnd(); if (jump && at > -1) go(S[at].id); }
+    list.addEventListener('pointerup', function (e) { end(e, true); });
+    list.addEventListener('pointercancel', function (e) { end(e, false); });
+    list.addEventListener('click', function (e) { if (e.detail === 0) return; e.preventDefault(); e.stopPropagation(); }, true);   // a press already jumped on release; keyboard Enter (detail 0) goes through
+  }
+
+  /* 4. scrubber */
+  var D = lab.querySelector('.tspD'), Dlist = D.querySelector('ol'), bub = D.querySelector('.bubble');
+  Dlist.innerHTML = S.map(function (s) { return '<li><a href="#' + s.id + '" aria-label="' + esc(s.name) + '"><i></i></a></li>'; }).join('');
+  var Dl = [].slice.call(Dlist.children);
+  scrubber(Dlist, 'x', function (i, e) {
+    Dl.forEach(function (li, k) { li.classList.toggle('is-hover', k === i); });
+    bub.querySelector('small').textContent = 'Section ' + (i + 1) + ' of ' + S.length + ' · ' + S[i].mins + ' min';
+    bub.querySelector('b').textContent = S[i].name; bub.querySelector('span').textContent = S[i].blurb;
+    var w = bub.offsetWidth, x = e.clientX - D.getBoundingClientRect().left - w / 2, max = D.clientWidth - w - 8;
+    bub.style.left = Math.max(8, Math.min(max, x)) + 'px'; bub.classList.add('is-on');
+  }, function () { bub.classList.remove('is-on'); Dl.forEach(function (li) { li.classList.remove('is-hover'); }); });
+  function drawD() { Dl.forEach(function (li, i) { li.style.setProperty('--len', S[i].len.toFixed(2)); li.querySelector('i').style.setProperty('--p', fill(i).toFixed(3)); var a = li.querySelector('a'); if (i === cur) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); }); D.querySelector('.tspD-name').textContent = (Math.max(cur, 0) + 1) + '. ' + S[Math.max(cur, 0)].name; }
+
+  /* 5. edge rail */
+  var E = lab.querySelector('.tspE'), Elist = E.querySelector('ol');
+  Elist.innerHTML = S.map(function (s, i) { return '<li><a href="#' + s.id + '" aria-label="' + esc(s.name) + '"><i></i></a><span class="tag" aria-hidden="true">' + (i + 1) + '. ' + esc(s.name) + '<small></small></span></li>'; }).join('');
+  var El = [].slice.call(Elist.children);
+  scrubber(Elist, 'y', function (i) { E.classList.add('is-scrub'); El.forEach(function (li, k) { li.classList.toggle('is-hover', k === i); li.querySelector('small').textContent = k === i ? S[k].blurb : ''; }); },
+    function () { E.classList.remove('is-scrub'); El.forEach(function (li) { li.classList.remove('is-hover'); li.querySelector('small').textContent = ''; }); });
+  function drawE() { El.forEach(function (li, i) { li.style.setProperty('--len', S[i].len.toFixed(2)); li.classList.toggle('is-now', i === cur); li.querySelector('i').style.setProperty('--p', fill(i).toFixed(3)); var a = li.querySelector('a'); if (i === cur) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); }); }
+
+  function closeAll() { if (sheet.open) sheet.close(); C.classList.remove('is-open'); Cnow.setAttribute('aria-expanded', 'false'); }
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && C.classList.contains('is-open')) { closeAll(); Cnow.focus(); } });
+
+  /* one scroll handler, once per frame */
+  var ticking = false;
+  function draw() { ticking = false; cur = where(); [drawA, drawB, drawC, drawD, drawE][idea - 1](); }
+  window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(draw); } }, { passive: true });
+  window.addEventListener('resize', function () { lengths(); draw(); });
+
+  /* the idea picker (?idea=3 opens one directly) */
+  var btns = [].slice.call(lab.querySelectorAll('.tsp-picker button'));
+  function show(n) {
+    idea = n; closeAll();
+    btns.forEach(function (b) { b.setAttribute('aria-pressed', String(+b.dataset.idea === n)); });
+    [].forEach.call(lab.querySelectorAll('.tsp-idea'), function (el) { el.classList.toggle('is-on', +el.dataset.idea === n); });
+    [].forEach.call(lab.querySelectorAll('.tsp-about'), function (el) { el.classList.toggle('is-on', +el.dataset.about === n); });
+    lengths(); draw();
+    try { var u = new URL(location.href); u.searchParams.set('idea', n); history.replaceState(null, '', u); } catch (e) {}
+  }
+  btns.forEach(function (b) { b.addEventListener('click', function () { show(+b.dataset.idea); }); });
+  var start = 1; try { start = +new URL(location.href).searchParams.get('idea') || 1; } catch (e) {}
+  show(start >= 1 && start <= 5 ? start : 1);
+})();
+</script>
+</div>
