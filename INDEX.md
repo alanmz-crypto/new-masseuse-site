@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-08 08:15 UTC  **PASS**  `apply-peek-nav-staging39-20261108-13`  [reports/2026-11-08/081553-apply-peek-nav-staging39-20261108-13.md](reports/2026-11-08/081553-apply-peek-nav-staging39-20261108-13.md)  (run 42462073095)
 - 2026-11-08 08:14 UTC  **PASS**  `rehearse-peek-nav-20261108-13`  [reports/2026-11-08/081422-rehearse-peek-nav-20261108-13.md](reports/2026-11-08/081422-rehearse-peek-nav-20261108-13.md)  (run 42461922350)
 - 2026-11-08 08:11 UTC  **PASS**  `rollback-peek-nav-v11-staging39-20261108`  [reports/2026-11-08/081159-rollback-peek-nav-v11-staging39-20261108.md](reports/2026-11-08/081159-rollback-peek-nav-v11-staging39-20261108.md)  (run 42461819653)
 - 2026-11-08 07:52 UTC  **PASS**  `inspect-staging39-snippets-20261108`  [reports/2026-11-08/075235-inspect-staging39-snippets-20261108.md](reports/2026-11-08/075235-inspect-staging39-snippets-20261108.md)  (run 42460531881)
