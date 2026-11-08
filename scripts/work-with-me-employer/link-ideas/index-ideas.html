@@ -1,0 +1,217 @@
+<div class="tsi-lab" id="tsi-lab">
+<style>
+.tsi-lab{--x-ink:var(--ts-ink,#1C2531);--x-muted:var(--ts-muted,#4A5563);--x-rule:var(--ts-rule,#D5D6CF);--x-panel:var(--ts-panel,#FAF9F6);--x-ground:var(--ts-ground,#F5F4EF);--x-stone:var(--ts-stone,#ECEBE4);--x-on:var(--ts-green,var(--ast-global-color-0,#377A00));--x-on-text:#fff;--x-accent:var(--ts-accent,#C8963E);--x-pale:var(--ts-pale,#EAF7EB);--x-ease:cubic-bezier(.2,.8,.2,1);--x-spring:cubic-bezier(.34,1.56,.64,1);--x-shadow:0 14px 36px -14px rgba(0,0,0,.42);color:var(--x-ink);max-width:880px;margin:0 auto;padding:0 0 5rem}
+html[data-ts-theme="dark"] .tsi-lab{--x-on:#8CCB5B;--x-on-text:#0E141C}
+.tsi-lab *,.tsi-lab *::before,.tsi-lab *::after{box-sizing:border-box}
+.tsi-lab button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.tsi-lab a:focus-visible,.tsi-lab button:focus-visible{outline:3px solid var(--x-accent);outline-offset:2px}
+.tsi-lab .tsi-intro{background:var(--x-pale);border-radius:22px;padding:clamp(1.25rem,4vw,2.25rem);margin:0 0 1.25rem}
+.tsi-lab .tsi-eyebrow{font-size:.75rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--x-on);margin:0 0 .5rem}
+.tsi-lab .tsi-intro h1{font-size:clamp(1.6rem,4.5vw,2.3rem);line-height:1.15;margin:0 0 .5rem;color:var(--x-ink)}
+.tsi-lab .tsi-intro p{margin:0 0 1rem;color:var(--x-muted);line-height:1.55}
+.tsi-lab .tsi-picker{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.35rem;margin:0;padding:.3rem;list-style:none;background:var(--x-panel);border:1px solid var(--x-rule);border-radius:14px}
+.tsi-lab .tsi-picker li{margin:0;padding:0;list-style:none}
+.tsi-lab .tsi-picker button{width:100%;min-height:54px;margin:0;padding:.3rem .15rem;border:0;border-radius:10px;background:transparent;color:var(--x-muted);font:inherit;font-size:clamp(.66rem,2.5vw,.8rem);font-weight:600;line-height:1.2;overflow-wrap:anywhere;cursor:pointer}
+.tsi-lab .tsi-picker button b{display:block;font-size:1.1rem}
+.tsi-lab .tsi-picker button[aria-pressed="true"]{background:var(--x-on);color:var(--x-on-text)}
+.tsi-lab .tsi-about{margin:1rem 0 0;padding:1rem 1.1rem;background:var(--x-panel);border:1px solid var(--x-rule);border-radius:12px}
+.tsi-lab .tsi-about h2{font-size:1.15rem;margin:0 0 .3rem;color:var(--x-ink)}
+.tsi-lab .tsi-about p{margin:0;font-size:.92rem;line-height:1.5}
+.tsi-lab.is-js .tsi-about:not(.is-on){display:none}
+/* sample sections (placeholders: lines instead of words) */
+.tsi-lab .tsi-sec{padding:2rem 3.25rem 1rem 0;border-top:1px solid var(--x-rule)}
+.tsi-lab .tsi-sec h2{font-size:clamp(1.35rem,3.6vw,1.75rem);margin:0 0 1rem;color:var(--x-ink)}
+.tsi-lab .tsi-line{display:block;height:.8rem;margin:0 0 .75rem;border-radius:99px;background:var(--x-stone)}
+.tsi-lab .tsi-line:nth-child(3n){width:84%}.tsi-lab .tsi-line:nth-child(4n){width:62%}
+
+/* the rail (display only on this page) */
+.tsi-lab .tsi-nav{position:fixed;right:max(2px,env(safe-area-inset-right));top:30%;bottom:max(14%,76px);z-index:40;width:44px}
+.tsi-lab:not(.is-js) .tsi-nav{display:none}
+.tsi-lab .tsi-rail{position:absolute;inset:0;display:flex;flex-direction:column;gap:5px;margin:0;padding:8px 0;list-style:none;pointer-events:none}
+.tsi-lab .tsi-rail li{position:relative;flex:var(--len,1) 1 0;min-height:22px;margin:0;padding:0;list-style:none}
+.tsi-lab .tsi-rail li::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:6px;margin-left:-3px;border-radius:9px;background:var(--x-rule);box-shadow:0 0 0 2px var(--x-ground);transition:background-color .2s}
+.tsi-lab .tsi-rail li i{position:absolute;left:50%;top:0;bottom:0;width:6px;margin-left:-3px;border-radius:9px;background:var(--x-on);transform-origin:top;transform:scaleY(var(--p,0))}
+.tsi-lab .tsi-nav.is-open .tsi-rail li::before{background:var(--x-stone)}
+
+/* the index icon, directly above the rail */
+.tsi-lab .tsi-icon{position:absolute;right:0;bottom:100%;width:44px;height:44px;margin:0 0 10px;padding:0;border:1px solid var(--x-rule);border-radius:14px;background:var(--x-panel);color:var(--x-ink);box-shadow:0 4px 14px -8px rgba(0,0,0,.35);cursor:pointer;touch-action:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;transition:transform .2s var(--x-ease),background-color .2s,color .2s,border-color .2s}
+.tsi-lab .tsi-icon svg{display:block;width:22px;height:22px;margin:auto;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+.tsi-lab .tsi-icon svg[hidden]{display:none}
+.tsi-lab .tsi-nav.is-open .tsi-icon{transform:scale(.92);background:var(--x-ink);border-color:var(--x-ink);color:var(--x-panel)}
+
+/* the index: one item per section; each design moves them differently */
+.tsi-lab .tsi-ix{position:absolute;inset:0;margin:0;padding:0;list-style:none;pointer-events:none}
+.tsi-lab .tsi-ix li{position:absolute;right:52px;top:0;display:flex;align-items:center;gap:.45rem;max-width:min(64vw,260px);margin:-17px 0 0;padding:.42rem .8rem .42rem .55rem;border-radius:999px;background:var(--x-ink);color:var(--x-panel);font-size:.86rem;font-weight:700;line-height:1.2;white-space:nowrap;list-style:none;opacity:0;box-shadow:0 8px 20px -12px rgba(0,0,0,.55);transition:opacity .2s,transform .3s var(--x-ease);transition-delay:var(--d-close,0ms)}
+.tsi-lab .tsi-ix li span{overflow:hidden;text-overflow:ellipsis}
+.tsi-lab .tsi-ix li b{display:grid;place-items:center;flex:0 0 auto;width:1.45rem;height:1.45rem;border-radius:50%;background:rgba(255,255,255,.14);font-size:.72rem}
+.tsi-lab .tsi-ix li.is-done b{background:var(--x-on);color:var(--x-on-text)}
+.tsi-lab .tsi-ix li.is-now{background:var(--x-on);color:var(--x-on-text)}
+.tsi-lab .tsi-ix li.is-now b{background:rgba(0,0,0,.16);color:inherit}
+.tsi-lab .tsi-nav.is-open .tsi-ix li{opacity:1;transition-delay:var(--d-open,0ms)}
+
+/* 1. fan out sideways from each piece of the rail */
+.tsi-lab .tsi-d1 .tsi-ix li{transform:translateX(26px) scale(.55);transform-origin:right center}
+.tsi-lab .tsi-d1.is-open .tsi-ix li{transform:none}
+
+/* 2. a list unfolds downward out of the icon */
+.tsi-lab .tsi-d2 .tsi-ix{inset:auto 0 auto auto;top:-54px;right:52px;width:min(64vw,250px);padding:.45rem;border-radius:18px;background:var(--x-ink);box-shadow:var(--x-shadow);clip-path:inset(0 0 100% 0 round 18px);transition:clip-path .32s var(--x-ease)}
+.tsi-lab .tsi-d2.is-open .tsi-ix{clip-path:inset(0 0 0 0 round 18px)}
+.tsi-lab .tsi-d2 .tsi-ix li{position:static;max-width:none;margin:0;border-radius:12px;background:transparent;box-shadow:none;transform:translateY(-8px)}
+.tsi-lab .tsi-d2 .tsi-ix li+li{margin-top:2px}
+.tsi-lab .tsi-d2 .tsi-ix li.is-now{background:var(--x-on)}
+.tsi-lab .tsi-d2.is-open .tsi-ix li{transform:none}
+
+/* 3. the names drop out of the icon and land beside their own piece, with a little bounce */
+.tsi-lab .tsi-d3 .tsi-ix li{transform:translateY(var(--from,-60px)) scale(.4);transform-origin:right top}
+.tsi-lab .tsi-d3.is-open .tsi-ix li{transform:none;transition:opacity .2s,transform .42s var(--x-spring);transition-delay:var(--d-open,0ms)}
+
+/* 4. the rail widens into a panel and the names fade in */
+.tsi-lab .tsi-d4 .tsi-panel{position:absolute;right:-2px;top:-56px;bottom:-10px;width:min(72vw,280px);border-radius:22px 0 0 22px;background:var(--x-panel);border:1px solid var(--x-rule);border-right:0;box-shadow:var(--x-shadow);transform-origin:right center;transform:scaleX(.16);opacity:0;pointer-events:none;transition:transform .3s var(--x-ease),opacity .2s}
+.tsi-lab .tsi-d4.is-open .tsi-panel{transform:none;opacity:1}
+.tsi-lab .tsi-d4 .tsi-ix li{right:56px;background:transparent;color:var(--x-ink);box-shadow:none;transform:translateX(18px)}
+.tsi-lab .tsi-d4 .tsi-ix li b{background:var(--x-stone)}
+.tsi-lab .tsi-d4 .tsi-ix li.is-now{background:var(--x-on);color:var(--x-on-text)}
+.tsi-lab .tsi-d4 .tsi-ix li.is-done b{background:var(--x-on);color:var(--x-on-text)}
+.tsi-lab .tsi-d4 .tsi-ix li.is-now b{background:rgba(0,0,0,.16);color:inherit}
+.tsi-lab .tsi-d4.is-open .tsi-ix li{transform:none}
+.tsi-lab .tsi-panel{display:none}.tsi-lab .tsi-d4 .tsi-panel{display:block}
+
+/* 5. the names swing out along a gentle arc that hugs the edge */
+.tsi-lab .tsi-d5 .tsi-ix li{transform:translateX(30px) rotate(0) scale(.6);transform-origin:right center}
+.tsi-lab .tsi-d5.is-open .tsi-ix li{transform:translateX(calc(var(--arc,0px) * -1)) rotate(var(--tilt,0deg))}
+
+.tsi-lab .tsi-nav.is-open .tsi-ix{pointer-events:none}
+@media (prefers-reduced-motion:reduce){.tsi-lab .tsi-ix,.tsi-lab .tsi-ix li,.tsi-lab .tsi-panel,.tsi-lab .tsi-icon{transition-duration:.01ms!important;transition-delay:0ms!important}}
+@media print{.tsi-lab .tsi-nav{display:none}}
+</style>
+
+<header class="tsi-intro">
+<p class="tsi-eyebrow">Practice page · staging only · phone and tablet first</p>
+<h1>Index icon ideas</h1>
+<p>A small index icon sits right above the side rail. Press and hold it: every section name slides out of the rail. Lift your finger: they slide back in and disappear. The page does not move. Pick a design, scroll a little, then press and hold the icon.</p>
+<ul class="tsi-picker" aria-label="Choose a design">
+<li><button type="button" data-idea="1" aria-pressed="true"><b>1</b>Fan</button></li>
+<li><button type="button" data-idea="2" aria-pressed="false"><b>2</b>Unfold</button></li>
+<li><button type="button" data-idea="3" aria-pressed="false"><b>3</b>Drop</button></li>
+<li><button type="button" data-idea="4" aria-pressed="false"><b>4</b>Panel</button></li>
+<li><button type="button" data-idea="5" aria-pressed="false"><b>5</b>Arc</button></li>
+</ul>
+<div class="tsi-about is-on" data-about="1"><h2>1. Fan</h2><p>Icon: three short lines (a list). Each name slides sideways out of its own piece of the rail, one after another from top to bottom, so every name sits right next to the part of the rail it belongs to.</p></div>
+<div class="tsi-about" data-about="2"><h2>2. Unfold</h2><p>Icon: three dots in a column. A dark list unfolds downward out of the icon, like a window blind, with every section in order and the one you are reading in green.</p></div>
+<div class="tsi-about" data-about="3"><h2>3. Drop</h2><p>Icon: numbered squares. The names drop out of the icon and land beside their own piece of the rail with a small bounce; on release they fly back up into the icon.</p></div>
+<div class="tsi-about" data-about="4"><h2>4. Panel</h2><p>Icon: a bookmark. The rail itself widens into a light panel from the edge of the screen and the names fade in on it, each beside its piece of the rail.</p></div>
+<div class="tsi-about" data-about="5"><h2>5. Arc</h2><p>Icon: a small compass circle. The names swing out along a gentle curve that hugs the edge of the screen, the middle ones reaching furthest, like a fan of cards.</p></div>
+</header>
+
+<nav class="tsi-nav tsi-d1" aria-label="Sections on this page">
+<button type="button" class="tsi-icon" aria-expanded="false" aria-controls="tsi-ix" aria-label="Show all sections (press and hold)">
+<svg data-for="1" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 7h12M6 12h9M6 17h6"/></svg>
+<svg data-for="2" viewBox="0 0 24 24" aria-hidden="true" hidden><circle cx="12" cy="6" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="12" cy="18" r="1.3"/></svg>
+<svg data-for="3" viewBox="0 0 24 24" aria-hidden="true" hidden><rect x="5" y="5" width="6" height="6" rx="1.5"/><rect x="13" y="5" width="6" height="6" rx="1.5"/><rect x="5" y="13" width="6" height="6" rx="1.5"/><rect x="13" y="13" width="6" height="6" rx="1.5"/></svg>
+<svg data-for="4" viewBox="0 0 24 24" aria-hidden="true" hidden><path d="M7 4h10v16l-5-4-5 4z"/></svg>
+<svg data-for="5" viewBox="0 0 24 24" aria-hidden="true" hidden><circle cx="12" cy="12" r="8"/><path d="M14.8 9.2l-1.9 3.7-3.7 1.9 1.9-3.7z"/></svg>
+</button>
+<span class="tsi-panel" aria-hidden="true"></span>
+<ol class="tsi-rail" aria-hidden="true"></ol>
+<ol class="tsi-ix" id="tsi-ix" aria-label="Sections"></ol>
+</nav>
+
+<section class="tsi-sec" id="tsi-what-it-is"><h2>What it is</h2><div aria-hidden="true"><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span></div></section>
+<section class="tsi-sec" id="tsi-common-reasons"><h2>Common reasons</h2><div aria-hidden="true"><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span></div></section>
+<section class="tsi-sec" id="tsi-what-to-expect"><h2>What to expect</h2><div aria-hidden="true"><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span></div></section>
+<section class="tsi-sec" id="tsi-questions"><h2>Questions</h2><div aria-hidden="true"><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span></div></section>
+<section class="tsi-sec" id="tsi-research"><h2>What Research Says</h2><div aria-hidden="true"><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span><span class="tsi-line"></span></div></section>
+<div style="height:40vh" aria-hidden="true"></div>
+
+<script>
+(function () {
+  'use strict';
+  // No less-than sign anywhere in this script (WordPress's shortcode scanner would escape the ampersands after one). Elements are built with
+  // createElement, and comparisons are written the other way round.
+  var lab = document.getElementById('tsi-lab');
+  if (!lab || !('PointerEvent' in window)) return;
+  lab.classList.add('is-js');
+  var nav = lab.querySelector('.tsi-nav'), icon = nav.querySelector('.tsi-icon'), rail = nav.querySelector('.tsi-rail'), ix = nav.querySelector('.tsi-ix');
+  var secs = [].slice.call(lab.querySelectorAll('.tsi-sec'));
+  var S = secs.map(function (el) { return { el: el, name: el.querySelector('h2').textContent }; });
+  var idea = 1, cur = -1, openNow = false;
+  function make(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; }
+  S.forEach(function (s, i) {
+    var r = make('li'); r.appendChild(make('i')); rail.appendChild(r); s.seg = r;
+    var it = make('li'); it.appendChild(make('b', '', String(i + 1))); it.appendChild(make('span', '', s.name)); ix.appendChild(it); s.item = it;
+  });
+  function buzz() { if (navigator.vibrate) { try { navigator.vibrate(8); } catch (e) {} } }
+
+  // where the reader is, and how long each section is (the rail pieces are sized by it)
+  function line() { return window.innerHeight * 0.3; }
+  function lengths() { var hs = S.map(function (s) { return s.el.offsetHeight; }), avg = hs.reduce(function (a, b) { return a + b; }, 0) / S.length; S.forEach(function (s, i) { s.seg.style.setProperty('--len', (hs[i] / avg).toFixed(2)); }); }
+  function draw() {
+    var y = line(), tops = S.map(function (s) { return s.el.getBoundingClientRect(); }), i = -1;
+    tops.forEach(function (r, k) { if (y >= r.top) i = k; }); cur = i;
+    S.forEach(function (s, k) {
+      var r = tops[k], p = cur > k ? 1 : (k === cur ? Math.max(0, Math.min(1, (y - r.top) / Math.max(1, r.height))) : 0);
+      s.seg.firstChild.style.setProperty('--p', p.toFixed(3));
+      s.item.classList.toggle('is-now', k === cur); s.item.classList.toggle('is-done', cur > k);
+      s.item.firstChild.textContent = cur > k ? '✓' : String(k + 1);
+    });
+  }
+  // each name lines up with its own piece of the rail; the designs read these positions
+  function layout() {
+    var nr = nav.getBoundingClientRect(), ir = icon.getBoundingClientRect(), n = S.length;
+    S.forEach(function (s, k) {
+      var r = s.seg.getBoundingClientRect(), mid = r.top + r.height / 2 - nr.top, t = n === 1 ? 0.5 : k / (n - 1);
+      s.item.style.top = mid + 'px';
+      s.item.style.setProperty('--from', (ir.top + ir.height / 2 - nr.top - mid) + 'px');   // design 3 starts at the icon
+      s.item.style.setProperty('--arc', (Math.sin(Math.PI * t) * 34).toFixed(1) + 'px');    // design 5 bulges in the middle
+      s.item.style.setProperty('--tilt', ((t - 0.5) * -12).toFixed(1) + 'deg');
+      s.item.style.setProperty('--d-open', (k * 35) + 'ms');                                 // top to bottom on the way out
+      s.item.style.setProperty('--d-close', ((n - 1 - k) * 25) + 'ms');                      // bottom to top on the way back
+    });
+  }
+
+  // open while pressed, close when the finger lifts (keyboard and screen readers: a click toggles)
+  function setOpen(on) {
+    if (on === openNow) return; openNow = on;
+    if (on) { draw(); layout(); buzz(); }
+    nav.classList.toggle('is-open', on); icon.setAttribute('aria-expanded', String(on));
+  }
+  var press = null, pressedAt = -1e9;
+  icon.addEventListener('contextmenu', function (e) { e.preventDefault(); });   // a long press must not open the browser's menu
+  icon.addEventListener('pointerdown', function (e) {
+    if (e.button > 0 || !e.isPrimary) return;
+    press = e.pointerId; try { icon.setPointerCapture(e.pointerId); } catch (err) {}
+    setOpen(true); e.preventDefault();
+  });
+  function release(e) { if (press === null || e.pointerId !== press) return; press = null; pressedAt = performance.now(); setOpen(false); }
+  icon.addEventListener('pointerup', release);
+  icon.addEventListener('pointercancel', release);
+  icon.addEventListener('lostpointercapture', release);
+  icon.addEventListener('click', function (e) {   // the click after a press is ignored; any other click (Enter, Space, VoiceOver, TalkBack) toggles
+    e.preventDefault();
+    if (600 > performance.now() - pressedAt) { pressedAt = -1e9; return; }
+    setOpen(!openNow);
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && openNow) { setOpen(false); icon.focus(); } });
+  document.addEventListener('pointerdown', function (e) { if (openNow && press === null && !icon.contains(e.target)) setOpen(false); }, true);
+
+  var ticking = false;
+  window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(function () { ticking = false; draw(); }); } }, { passive: true });
+  window.addEventListener('resize', function () { lengths(); draw(); if (openNow) layout(); });
+
+  // the design picker (?idea=3 opens one directly)
+  var btns = [].slice.call(lab.querySelectorAll('.tsi-picker button'));
+  function show(n) {
+    idea = n; setOpen(false);
+    for (var k = 1; 5 >= k; k++) nav.classList.toggle('tsi-d' + k, k === n);
+    [].forEach.call(icon.querySelectorAll('svg'), function (s) { if (+s.getAttribute('data-for') === n) s.removeAttribute('hidden'); else s.setAttribute('hidden', ''); });   // svg has no hidden property: use the attribute
+    btns.forEach(function (b) { b.setAttribute('aria-pressed', String(+b.dataset.idea === n)); });
+    [].forEach.call(lab.querySelectorAll('.tsi-about'), function (el) { el.classList.toggle('is-on', +el.dataset.about === n); });
+    lengths(); draw(); layout();
+    try { var u = new URL(location.href); u.searchParams.set('idea', n); history.replaceState(null, '', u); } catch (e) {}
+  }
+  btns.forEach(function (b) { b.addEventListener('click', function () { show(+b.dataset.idea); }); });
+  var start = 1; try { start = +new URL(location.href).searchParams.get('idea') || 1; } catch (e) {}
+  show(start >= 1 && 5 >= start ? start : 1);
+})();
+</script>
+</div>
