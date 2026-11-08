@@ -224,25 +224,22 @@ add_action( 'wp_footer', function () {
     // the theme's own padding stays whenever it is already enough
     function clearRail() {
       var left = root.classList.contains('ts-pk-left'), side = left ? 'paddingLeft' : 'paddingRight';
-      root.classList.remove('ts-pk-pad');   // measure with the theme's own padding (no paint happens in between)
-      var cr = content.getBoundingClientRect(), nr = nav.getBoundingClientRect(), base = parseFloat(getComputedStyle(content)[side]) || 0;
-      var outside = left ? cr.left : window.innerWidth - cr.right, reach = left ? nr.right : window.innerWidth - nr.left;
-      var need = Math.ceil(reach + 6 - outside);
+      root.classList.remove('ts-pk-pad');   // start from the theme's own padding (no paint happens in between)
+      var base = parseFloat(getComputedStyle(content)[side]) || 0, need = base;
       function apply(n) { if (n > base + 0.5) { root.style.setProperty('--pk-clear', n + 'px'); root.classList.add('ts-pk-pad'); } else root.classList.remove('ts-pk-pad'); }
-      apply(need);
-      // some of the theme's blocks are wider than the column (their own margins): measure the text blocks themselves and pad a little more if one still reaches the rail
+      // measure where the text blocks really are (they can be inset from the column or wider than it) and add only what is missing
       for (var round = 0; round < 3; round++) {
-        var edge = left ? Infinity : 0;
+        var edge = left ? Infinity : -Infinity;
         [].forEach.call(content.querySelectorAll('p,li,h1,h2,h3,h4,h5,h6,blockquote,figcaption,dt,dd,td,th'), function (el) {
           if (el.closest('.ts-pk') || el.closest('.ts-jump')) return;
           var r = el.getBoundingClientRect(); if (!r.width) return;
           var cs = getComputedStyle(el), e2 = left ? r.left + (parseFloat(cs.paddingLeft) || 0) : r.right - (parseFloat(cs.paddingRight) || 0);
           edge = left ? Math.min(edge, e2) : Math.max(edge, e2);
         });
-        nr = nav.getBoundingClientRect();
-        var over = left ? (nr.right + 6) - edge : edge - (nr.left - 6);
+        if (!isFinite(edge)) break;
+        var nr = nav.getBoundingClientRect(), over = left ? (nr.right + 6) - edge : edge - (nr.left - 6);
         if (!(over > 0.5) || need >= 80) break;
-        need = Math.min(80, Math.max(need, base) + Math.ceil(over)); apply(need);   // capped, so an unusually wide element cannot squeeze the page
+        need = Math.min(80, need + Math.ceil(over)); apply(need);   // capped, so an unusually wide element cannot squeeze the page
       }
     }
     // at most once per frame, and on resize only when the width really changed (phone toolbars resize the page while scrolling)
