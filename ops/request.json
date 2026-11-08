@@ -1,10 +1,6 @@
 {
-  "id": "check-peek-nav-anon-20261108",
-  "op": "run",
+  "id": "inspect-staging39-snippets-20261108",
+  "op": "inspect",
   "target": "staging39",
-  "script": "link-ideas/push-peek-nav.sh",
-  "args": [
-    "--check"
-  ],
-  "tests": "none"
+  "query": "snippets"
 }
