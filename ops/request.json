@@ -1,7 +1,8 @@
 {
-  "id": "rehearse-peek-nav-20261108",
-  "op": "rehearse",
+  "id": "dry-peek-nav-staging39-20261108",
+  "op": "run",
   "target": "staging39",
-  "installer": "link-ideas/install-peek-nav.php",
-  "args": []
+  "script": "link-ideas/push-peek-nav.sh",
+  "args": [],
+  "tests": "auto"
 }
