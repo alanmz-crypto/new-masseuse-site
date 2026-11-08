@@ -93,7 +93,7 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     ok(`${tag} touching the strip does nothing`, (await Y()) === y0 && !(await card()).on);
     await slideTo(3, false);
     let c = await card();
-    ok(`${tag} sliding the rail previews the section: its name and a summary, with no second window inside (Ryan, 2026-11-08)`, c.on && c.name === 'Questions' && c.sum.length > 60 && !c.second && c.inView, JSON.stringify(c));
+    ok(`${tag} sliding the rail previews the section: its name and a summary, with no second window inside (Ryan, 2026-11-08)`, c.on && c.name === 'Questions' && c.sum.length > 8 && !c.second && c.inView, JSON.stringify(c));
     ok(`${tag} the page does not move while browsing`, (await Y()) === y0);
     await touch('touchEnd'); await W(600);
     ok(`${tag} lifting keeps the preview, no jump`, (await card()).pinned && (await Y()) === y0);
@@ -114,17 +114,18 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     ok(`${tag} stack: now 3 closed boxes above and 1 below`, await p.evaluate(() => { const c = document.querySelector('.ts-pk-card'), o = c.querySelector('.open'), rows = [...c.querySelectorAll('.row')]; return rows.filter(x => o.compareDocumentPosition(x) & Node.DOCUMENT_POSITION_PRECEDING).length === 3 && rows.filter(x => o.compareDocumentPosition(x) & Node.DOCUMENT_POSITION_FOLLOWING).length === 1; }));
     await touch('touchStart', 12, Math.round((await p.evaluate(() => innerHeight)) * 0.6)); await touch('touchEnd'); await W(400);
     for (const k of [0, 1, 2, 4]) { await slideTo(k, false); const ck = await card(); await touch('touchEnd'); await W(300);
-      ok(`${tag} preview of "${labels[k]}" has a summary and no inner window`, ck.name === labels[k] && ck.sum.length > 60 && !ck.second, JSON.stringify(ck)); }
+      ok(`${tag} preview of "${labels[k]}" has a summary and no inner window`, ck.name === labels[k] && ck.sum.length > 8 && !ck.second, JSON.stringify(ck)); }
     // Ryan, 2026-11-08: no second window; a concise summary of the topic, scrollable, read without jumping
-    { const all = []; for (const k of [0, 1, 2, 3, 4]) { await slideTo(k); all.push(await p.evaluate(() => { const norm = t => t.replace(/\s+/g, ' ').trim(), paras = [...document.querySelectorAll('.entry-content p, .entry-content li')].map(x => norm(x.textContent)); return [...document.querySelectorAll('.ts-pk-card .open .sum p')].map(x => norm(x.textContent)).map(t => ({ t: t.slice(0, 60), whole: paras.includes(t) })); })); await touch('touchStart', 12, Math.round(st.vh * 0.6)); await touch('touchEnd'); await W(400); }
-      const tricky = all[1].find(x => x.t.startsWith('A mock line about a session of about 1.5 hours'));
-      ok(`${tag} summary: every section's summary is whole paragraphs, and a line with "1.5", "U.S." and a closing quote stays whole`, all.every(a => a.length && a.every(x => x.whole)) && !!tricky, JSON.stringify(all.map(a => a.map(x => (x.whole ? '' : 'CUT ') + x.t)))); }
+    { const want = ['Movement meets massage', 'Stiffness brings clients', 'You set the pace', 'You stay clothed', 'Research is limited'], got = [];
+      for (const k of [0, 1, 2, 3, 4]) { await slideTo(k); got.push(await p.evaluate(() => { const g = document.querySelector('.ts-pk-card .open .sum.is-gist'); return g ? g.textContent.trim() : ''; })); await touch('touchStart', 12, Math.round(st.vh * 0.6)); await touch('touchEnd'); await W(400); }
+      const words = t => t.split(/\s+/).filter(w => !/^(a|an|the)$/i.test(w)).length;
+      ok(`${tag} summary: each section shows its glance line, three words or fewer (Ryan, 2026-11-08)`, got.join('|') === want.join('|') && got.every(t => words(t) <= 3), JSON.stringify(got));
+      ok(`${tag} summary: no forbidden or claim words in the glance lines`, !got.some(t => /\b(we|our|us|studio|heal\w*|cure\w*|treat\w*|diagnos\w*|guarantee\w*|relie\w*|pain|proof|effective\w*|lasting|chronic|anxiety)\b/i.test(t)), JSON.stringify(got)); }
     await slideTo(3); y0 = await Y();
     const sm = await p.evaluate(() => { const s = document.querySelector('.ts-pk-card .open .sum'), cs = getComputedStyle(s), norm = t => t.replace(/\s+/g, ' ').trim(), page = norm(document.querySelector('.entry-content').textContent);
       const paras = [...document.querySelectorAll('.entry-content p, .entry-content li')].map(x => norm(x.textContent)), sp = [...s.querySelectorAll('p')].map(x => norm(x.textContent));
       return { n: sp.length, own: sp.length > 0 && sp.every(x => paras.includes(x)), missing: sp.filter(x => !paras.includes(x)), oy: cs.overflowY, tab: s.tabIndex, role: s.getAttribute('role'), label: s.getAttribute('aria-label') || '', len: s.textContent.length, sh: s.scrollHeight, ch: s.clientHeight }; });
-    ok(`${tag} summary: only whole paragraphs of the page, word for word (regulated copy; Kiro, sixth review)`, sm.own && sm.n >= 1 && sm.n <= 3, JSON.stringify(sm));
-    ok(`${tag} summary: scrollable, a keyboard stop and a named region`, sm.oy === 'auto' && sm.tab === 0 && sm.role === 'region' && sm.label.includes('Questions'), JSON.stringify(sm));
+    ok(`${tag} summary: the glance line is one short line in a named region (no keyboard stop, nothing to scroll)`, sm.n === 1 && sm.tab === -1 && sm.role === 'region' && sm.label.includes('Questions') && sm.sh <= sm.ch + 4, JSON.stringify(sm));
     if (sm.sh > sm.ch + 4) {
       const sb = await p.$eval('.ts-pk-card .open .sum', e => { const r = e.getBoundingClientRect(); return { x: Math.round(r.left + r.width / 2), y: Math.round(r.bottom - 8) }; }), h0 = await p.evaluate(() => location.hash);
       await touch('touchStart', sb.x, sb.y); for (let k = 1; k <= 8; k++) { await touch('touchMove', sb.x, sb.y - 10 * k); await W(30); } await touch('touchEnd'); await W(700);
@@ -230,14 +231,14 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     const nameAt = await p.evaluate(() => { const r = document.querySelectorAll('.ts-pk-fan li')[3].getBoundingClientRect(); return { x: Math.round(r.left + r.width / 2), y: Math.round(r.top + r.height / 2) }; });
     await touch('touchStart', nameAt.x, nameAt.y); await touch('touchEnd'); await W(700);
     c = await card();
-    ok(`${tag} index: kept open, tapping a name opens its box with the summary (the others as closed boxes), no jump`, c.on && c.pinned && c.name === labels[3] && c.sum.length > 60 && !(await fanState()).open && (await Y()) === y0 && (await p.$$eval('.ts-pk-card .row', r => r.length)) === labels.length - 1, JSON.stringify(c));
+    ok(`${tag} index: kept open, tapping a name opens its box with the summary (the others as closed boxes), no jump`, c.on && c.pinned && c.name === labels[3] && c.sum.length > 8 && !(await fanState()).open && (await Y()) === y0 && (await p.$$eval('.ts-pk-card .row', r => r.length)) === labels.length - 1, JSON.stringify(c));
     await p.tap('.ts-pk-card .open > b'); await W(1600);
     L = await landed(await hrefOf(3)); ok(`${tag} index: ...and tapping that box then jumps there`, L.ok, JSON.stringify(L));
     await p.evaluate(y => scrollTo(0, y), y0); await W(900); y0 = await Y();
     await holdKeep();
     const sg = await seg(1); await touch('touchStart', sg.x, sg.y); await touch('touchEnd'); await W(700);
     c = await card(); fs = await fanState();
-    ok(`${tag} index: kept open, touching the rail closes the names and opens that section's box with its summary`, !fs.open && c.on && c.name === labels[1] && c.sum.length > 60 && (await Y()) === y0, JSON.stringify({ fan: fs.open, c }));
+    ok(`${tag} index: kept open, touching the rail closes the names and opens that section's box with its summary`, !fs.open && c.on && c.name === labels[1] && c.sum.length > 8 && (await Y()) === y0, JSON.stringify({ fan: fs.open, c }));
     await touch('touchStart', 12, Math.round(st.vh * 0.5)); await touch('touchEnd'); await W(500);
     // press the icon, then slide down onto the rail without lifting: the rail's preview takes over (Ryan, 2026-11-08)
     y0 = await Y();
@@ -247,7 +248,7 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     ok(`${tag} index slide: the names fan out first`, (await fanState()).open);
     for (let k = 1; k <= 10; k++) { await touch('touchMove', ixAt2.x, ixAt2.y + (q.y - ixAt2.y) * k / 10); await W(30); }
     c = await card(); fs = await fanState();
-    ok(`${tag} index slide: sliding onto the rail closes the fan and previews the section under the finger`, !fs.open && c.on && !c.pinned && c.name === 'Questions' && c.sum.length > 60, JSON.stringify({ fan: fs.open, c }));
+    ok(`${tag} index slide: sliding onto the rail closes the fan and previews the section under the finger`, !fs.open && c.on && !c.pinned && c.name === 'Questions' && c.sum.length > 8, JSON.stringify({ fan: fs.open, c }));
     ok(`${tag} index slide: the page does not move`, (await Y()) === y0);
     const q2 = await seg(1); for (let k = 1; k <= 5; k++) { await touch('touchMove', ixAt2.x, q.y + (q2.y - q.y) * k / 5); await W(30); }
     ok(`${tag} index slide: the preview follows the finger along the rail`, (await card()).name === 'Common reasons');
@@ -265,7 +266,7 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     ok(`${tag} index: sliding from the icon onto a name lights it up and does not scroll the page`, lit && (await Y()) === y0 && (await fanState()).open, JSON.stringify({ lit, y: await Y(), y0 }));
     await touch('touchEnd'); await W(700);
     c = await card();
-    ok(`${tag} index: lifting on that name opens its box with the summary, no jump`, c.on && c.pinned && c.name === labels[3] && c.sum.length > 60 && !(await fanState()).open && (await Y()) === y0, JSON.stringify(c));
+    ok(`${tag} index: lifting on that name opens its box with the summary, no jump`, c.on && c.pinned && c.name === labels[3] && c.sum.length > 8 && !(await fanState()).open && (await Y()) === y0, JSON.stringify(c));
     await touch('touchStart', 12, Math.round(st.vh * 0.5)); await touch('touchEnd'); await W(500);
     await touch('touchStart', ixAt2.x, ixAt2.y); await W(300); await touch('touchMove', ixAt2.x - 6, ixAt2.y + 6); await W(100); await touch('touchEnd'); await W(600);
     ok(`${tag} index slide: a small wobble on the icon, then lifting, just closes the fan (no preview)`, !(await fanState()).open && !(await card()).on && (await Y()) === y0);
@@ -337,7 +338,7 @@ const addSections = () => document.addEventListener('DOMContentLoaded', () => { 
   [['ts-extra-1', 'Extra section one for the check'], ['ts-extra-2', 'Extra section two for the check']].forEach(([id, t]) => {
     const li = document.createElement('li'); li.innerHTML = '<a href="#' + id + '">' + t + '</a>'; list.appendChild(li);
     const h = document.createElement('h2'); h.id = id; h.textContent = t; c.appendChild(h);
-    for (let n = 0; n < 4; n++) { const pp = document.createElement('p'); pp.textContent = 'A placeholder paragraph added by the browser check so that the page has seven sections for this test.'; c.appendChild(pp); }
+    for (let n = 0; n < 4; n++) { const pp = document.createElement('p'); pp.textContent = n === 0 ? 'A check line about a session of about 1.5 hours, in the U.S. style. A visitor said "it felt longer." That ends the check line.' : 'A placeholder paragraph added by the browser check so that the page has seven sections for this test.'; c.appendChild(pp); }
   }); });
 const openVisible = (p) => p.evaluate(() => { const c = document.querySelector('.ts-pk-card'), cr = c.getBoundingClientRect(), o = c.querySelector('.open'), h = c.querySelector('.open .hint'), b = c.querySelector('.open > b'); if (!o || !h || !b) return { ok: false };
   const inside = el => { const r = el.getBoundingClientRect(); return r.height > 0 && r.top >= cr.top - 1 && r.bottom <= cr.bottom + 1 && r.top >= 0 && r.bottom <= innerHeight; };
@@ -356,6 +357,8 @@ for (const [label, init] of [['landscape, 7 sections', [addSections]], ['landsca
     await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [z] }); await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] }); await p.waitForTimeout(500);
     const v = await openVisible(p);
     ok(`${label} (${n} sections): section ${k + 1}'s open box shows its name and "Tap to go there"`, v.ok, JSON.stringify(v));
+    if (n === 7 && k === n - 1) { const fb = await p.evaluate(() => { const norm = t => t.replace(/\s+/g, ' ').trim(), paras = [...document.querySelectorAll('.entry-content p, .entry-content li')].map(x => norm(x.textContent)), sp = [...document.querySelectorAll('.ts-pk-card .open .sum:not(.is-gist) p')].map(x => norm(x.textContent)); return { n: sp.length, whole: sp.every(x => paras.includes(x)), tricky: sp.some(x => x.startsWith('A check line about a session of about 1.5 hours')) }; });
+      ok(`${label}: a section without a glance line shows its own whole paragraphs; a line with "1.5", "U.S." and a closing quote stays whole (Kiro, sixth review)`, fb.n >= 1 && fb.whole && fb.tricky, JSON.stringify(fb)); }
     await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: 10, y: 10 }] }); await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] }); await p.waitForTimeout(500);
   }
   { const ixp = await p.evaluate(() => { const r = document.querySelector('.ts-pk-ix').getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
