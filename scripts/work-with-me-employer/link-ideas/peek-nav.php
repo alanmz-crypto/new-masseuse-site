@@ -52,7 +52,6 @@ html .ts-pk .ts-pk-card .row+.row{margin-top:.25rem}
 html .ts-pk .ts-pk-card .row b{display:grid;place-items:center;flex:0 0 auto;width:1.45rem;height:1.45rem;margin:0;border-radius:50%;background:var(--pk-panel);font-size:.72rem;font-weight:800}
 html .ts-pk .ts-pk-card .row span{min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .ts-pk-card .d{display:block;font-size:.86rem;line-height:1.4;color:var(--pk-ink);opacity:.9}
-.ts-pk-card .here{display:block;margin-top:.35rem;font-size:.75rem;color:var(--pk-muted)}
 /* the summary: the section's own opening sentences, scrollable inside the open box (no second window; touching or scrolling it never jumps) */
 .ts-pk-card .sum{display:block;margin:.5rem 0 0;padding:0 .35rem 0 0;max-height:9.8em;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;font-size:.86rem;line-height:1.45;color:var(--pk-ink);cursor:auto}
 html .ts-pk .ts-pk-card .sum p{margin:0 0 .55em;padding:0;font:inherit;line-height:inherit;color:inherit}
@@ -142,7 +141,6 @@ html.ts-pk-ready body.admin-bar #masthead .ast-mobile-header-content{max-height:
 }
 @media (min-height:501px) and (max-width:600px){html.ts-pk-ready body.admin-bar #masthead{top:0}}
 /* the stack fits between the strip and the bottom of the screen: it gives up detail in steps (fit1-fit3), never the open box's name and "Tap to go there" */
-html .ts-pk .ts-pk-card.fit1 .here{display:none}
 html .ts-pk .ts-pk-card.fit2 .sum{max-height:6.6em}
 html .ts-pk .ts-pk-card.fit3 .sum{max-height:4.4em}
 html .ts-pk .ts-pk-card.fit3 .row{min-height:26px;padding:.1rem .5rem;font-size:.75rem}
@@ -351,8 +349,8 @@ add_action( 'wp_footer', function () {
       return (upN ? '<span class="more" aria-hidden="true">+' + upN + ' more above</span>' : '') + above + '<div class="open" tabindex="-1" aria-label="Section ' + (i + 1) + ' preview: ' + esc(S[i].label) + '">' + openHTML(i, pinned) + '</div>' + below + (downN ? '<span class="more" aria-hidden="true">+' + downN + ' more below</span>' : '');
     }
     function openHTML(i, pinned) {
-      var s = S[i], here = i === cur ? 'You are reading this section.' : (cur < 0 ? '' : 'You are in: ' + S[cur].label);
-      return '<button type="button" class="x" aria-label="Close the preview">×</button><small>Section ' + (i + 1) + ' of ' + S.length + ' · ' + s.mins + ' min</small><b>' + esc(s.label) + '</b><span class="here">' + esc(here) + '</span>' +
+      var s = S[i];   // no "You are in ...": the strip at the top already says where you are (Ryan, 2026-11-08)
+      return '<button type="button" class="x" aria-label="Close the preview">×</button><small>Section ' + (i + 1) + ' of ' + S.length + ' · ' + s.mins + ' min</small><b>' + esc(s.label) + '</b>' +
         (s.gist ? '<div class="sum is-gist" tabindex="0" role="region" aria-label="Summary of ' + esc(s.label) + '"><ul>' + s.gist.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul></div>'
          : s.summary.length ? '<div class="sum" tabindex="0" role="region" aria-label="Summary of ' + esc(s.label) + '">' + s.summary.map(function (t) { return '<p>' + esc(t) + '</p>'; }).join('') + '</div>' : '') +
         '<span class="hint"><span>' + (pinned ? 'Tap to go there' : 'Lift to keep this preview') + '</span>' + (pinned ? '<button type="button" class="side" aria-label="Move the section bar to the ' + sideName() + ' side">⇆ ' + (sideName() === 'left' ? 'Left' : 'Right') + '</button>' : '') + '</span>';
