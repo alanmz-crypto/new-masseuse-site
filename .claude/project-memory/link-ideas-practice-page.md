@@ -201,3 +201,12 @@ top and keep only topic titles sliding by, the current one centred with part of 
 row of the section labels, current one bold in the middle, neighbours fading at the edges, sliding continuously toward the next title through the section; no bars,
 no count. Export `staging39-before-peek-nav-20261108-164427.sql`; snapshot `peek-nav-before-20261108-164442-bbf19019.json`; check **388/0**.
 **Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-164442-bbf19019.json'`.
+
+**Summary box, fan form, kept-open fan (2026-11-08, Ryan):** (1) the open box no longer has a second window inside (the mini page preview and the
+one-line description are gone); instead a scrollable summary of the topic built only from the section's own sentences (regulated copy: nothing is
+rewritten; `summarize(i)`: paragraphs and list items in order, no questions or fragments, up to ~480 characters or 5 sentences); dragging or tapping it
+never jumps. Snippet #1368, staging39 check `ui-peek-nav-s39-29-1` **404/0**. (2) The fanned names from the index icon take the form of the stack's closed
+boxes (stone, 10px corners, number in a light circle; the current one has the open box's green edge). (3) Held 2 s, the names stay open after lifting
+(buzz + green ring on the icon): tap a name to jump, touch the rail for that box and its summary, tap anywhere else to close; names capped at 48vw so
+about 40% of a phone's width stays free. Mock **428/0**. Hand-written summaries would need Ryan's (and Butsaba's) approval of new wording.
+
