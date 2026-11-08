@@ -1,5 +1,5 @@
 {
-  "id": "ui-peek-nav-staging39-20261108-12",
+  "id": "ui-peek-nav-flicker-repro-20261108",
   "op": "run",
   "target": "staging39",
   "script": "link-ideas/check-peek-nav.mjs",
