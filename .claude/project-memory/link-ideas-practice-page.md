@@ -129,3 +129,10 @@ and bounce into place beside their piece), 4 Panel (bookmark; the rail widens in
 Current section highlighted, read ones ticked. Export `staging39-before-index-ideas-20261108-052106.sql`; snapshot `index-ideas-before-20261108-052120-93294332.json`;
 check `ui-index-ideas-staging39-20261108-2`: **222/0** (iPhone 13 + iPad Mini, light + dark, real touch). Not yet on the Thai page; waiting for Ryan's pick.
 **Lesson:** an `<svg>` element has no `hidden` property; toggle the attribute (`setAttribute('hidden','')` / `removeAttribute`).
+**Index icon on the Thai page (2026-11-08):** Ryan picked design **1 (Fan)**: "the index icon with the slide open feature can remain persistent at the top of the rail,
+but please have it blended to the theme of the page." Now snippet **#1355** (replaced #1353): a 44px list icon 8px above the rail, always shown with the rail,
+drawn in the page's muted text colour on the page background (no box, border or shadow; checked against the computed `--pk-ground`), green while held.
+Hold = every name fans out beside its rail piece (staggered, current one green, read ones ticked); lift = back in; click without a press toggles; Escape closes;
+long press blocked; mirrors with the left-hand option; one keyboard stop right before the rail. The first-time hint now also mentions the icon.
+Export `staging39-before-peek-nav-20261108-061042.sql`; snapshot `peek-nav-before-20261108-061058-bfb0e317.json`; check `ui-peek-nav-staging39-20261108-8`: **267/0**.
+**Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-061058-bfb0e317.json'`.
