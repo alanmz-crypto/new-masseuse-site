@@ -1,8 +1,10 @@
 {
-  "id": "dry-pill-nav-staging39-20261108",
+  "id": "apply-pill-nav-staging39-20261108",
   "op": "run",
   "target": "staging39",
   "script": "link-ideas/push-pill-nav.sh",
-  "args": [],
+  "args": [
+    "--apply"
+  ],
   "tests": "auto"
 }
