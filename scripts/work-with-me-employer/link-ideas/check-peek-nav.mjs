@@ -212,6 +212,28 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     ok(`${tag} index: a click without a press (keyboard, screen reader) opens it`, (await fanState()).open);
     await p.keyboard.press('Escape'); await W(500);
     ok(`${tag} index: Escape closes it and focus stays on the icon`, !(await fanState()).open && (await p.evaluate(() => document.activeElement === document.querySelector('.ts-pk-ix'))));
+    // Ryan, 2026-11-08: held for 2 s, the fan stays open; tap a name to go there, the rail for its preview, anywhere else to close it
+    const holdKeep = async () => { await touch('touchStart', ixAt.x, ixAt.y); await W(2300); await touch('touchEnd'); await W(700); };
+    y0 = await Y(); await holdKeep();
+    const kf = await p.evaluate(() => { const items = [...document.querySelectorAll('.ts-pk-fan li')].map(l => l.getBoundingClientRect()); return { kept: document.querySelector('.ts-pk-nav').classList.contains('is-kept'), free: Math.round(Math.min(...items.map(r => r.left))), vw: innerWidth, pe: getComputedStyle(document.querySelector('.ts-pk-fan li')).pointerEvents }; });
+    fs = await fanState();
+    ok(`${tag} index: held for 2 seconds, the names stay out after lifting`, fs.open && kf.kept && kf.pe === 'auto' && (await Y()) === y0, JSON.stringify({ open: fs.open, kf }));
+    ok(`${tag} index: plenty of the page stays free beside the open names (well over a third of the width)`, kf.free >= kf.vw * 0.38, JSON.stringify(kf));
+    await p.evaluate(() => { const t = document.createElement('a'); t.id = 'pk-under2'; t.href = '#pk-under2'; t.style.cssText = 'position:fixed;inset:0;z-index:50'; window.__under2 = 0; t.addEventListener('click', e => { e.preventDefault(); window.__under2++; }); document.body.appendChild(t); });
+    await touch('touchStart', 12, Math.round(st.vh * 0.5)); await touch('touchEnd'); await W(600);
+    ok(`${tag} index: kept open, a tap elsewhere on the page closes it and does nothing else`, !(await fanState()).open && (await p.evaluate(() => window.__under2)) === 0 && (await Y()) === y0, `under=${await p.evaluate(() => window.__under2)}`);
+    await p.evaluate(() => document.getElementById('pk-under2').remove());
+    await holdKeep();
+    const nameAt = await p.evaluate(() => { const r = document.querySelectorAll('.ts-pk-fan li')[3].getBoundingClientRect(); return { x: Math.round(r.left + r.width / 2), y: Math.round(r.top + r.height / 2) }; });
+    await touch('touchStart', nameAt.x, nameAt.y); await touch('touchEnd'); await W(1600);
+    L = await landed(await hrefOf(3));
+    ok(`${tag} index: kept open, tapping a name jumps to that section and closes the names`, L.ok && !(await fanState()).open, JSON.stringify(L));
+    await p.evaluate(y => scrollTo(0, y), y0); await W(900); y0 = await Y();
+    await holdKeep();
+    const sg = await seg(1); await touch('touchStart', sg.x, sg.y); await touch('touchEnd'); await W(700);
+    c = await card(); fs = await fanState();
+    ok(`${tag} index: kept open, touching the rail closes the names and opens that section's box with its summary`, !fs.open && c.on && c.name === labels[1] && c.sum.length > 60 && (await Y()) === y0, JSON.stringify({ fan: fs.open, c }));
+    await touch('touchStart', 12, Math.round(st.vh * 0.5)); await touch('touchEnd'); await W(500);
     // press the icon, then slide down onto the rail without lifting: the rail's preview takes over (Ryan, 2026-11-08)
     y0 = await Y();
     const ixAt2 = await p.$eval('.ts-pk-ix', e => { const r = e.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
