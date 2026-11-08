@@ -1,7 +1,10 @@
 {
-  "id": "rehearse-pill-nav-20261108-4",
-  "op": "rehearse",
+  "id": "apply-pill-nav-staging39-20261108-4",
+  "op": "run",
   "target": "staging39",
-  "installer": "link-ideas/install-pill-nav.php",
-  "args": []
+  "script": "link-ideas/push-pill-nav.sh",
+  "args": [
+    "--apply"
+  ],
+  "tests": "auto"
 }
