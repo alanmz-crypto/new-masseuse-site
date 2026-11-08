@@ -44,7 +44,11 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     ok(`${tag} the index icon stays clear of the header and the strip`, hd.iconTop >= hd.stripBottom + 4, JSON.stringify(hd));
     const mt = p.locator('#ast-mobile-header .menu-toggle, #ast-mobile-header .ast-mobile-menu-trigger-minimal').first();
     if (size === 'phone' && await mt.count() && await mt.isVisible()) {
-      await mt.click(); await W(600);
+      await mt.click(); await W(300);
+      const fl = await p.evaluate(() => new Promise(res => { const h = document.getElementById('masthead'), c = document.querySelector('#ast-mobile-header .ast-mobile-header-content'), v = []; let n = 0;
+        (function tick() { v.push(h.offsetHeight + '/' + (c ? c.offsetHeight : 0) + '/' + getComputedStyle(document.documentElement).getPropertyValue('--pk-head').trim()); if (++n < 40) requestAnimationFrame(tick); else res(v); })(); }));
+      ok(`${tag} opening the phone menu does not flicker (header and menu sizes stay still)`, new Set(fl).size === 1, [...new Set(fl)].slice(0, 6).join(' | '));
+      await W(300);
       const m = await p.evaluate(() => { const c = document.querySelector('#ast-mobile-header .ast-mobile-header-content'); if (!c) return null; const r = c.getBoundingClientRect(); return { shown: getComputedStyle(c).display !== 'none' && r.height > 0, top: Math.round(r.top), bottom: Math.round(r.bottom), vh: innerHeight }; });
       ok(`${tag} the phone menu opens from the pinned header mid-page and fits the screen`, !!m && m.shown && m.top >= 0 && m.vh + 1 >= m.bottom, JSON.stringify(m));
       await mt.click(); await W(400);
