@@ -55,6 +55,9 @@ html .ts-pk .ts-pk-card .row span{min-width:0;overflow:hidden;white-space:nowrap
 .ts-pk-card .here{display:block;margin-top:.35rem;font-size:.75rem;color:var(--pk-muted)}
 /* the summary: the section's own opening sentences, scrollable inside the open box (no second window; touching or scrolling it never jumps) */
 .ts-pk-card .sum{display:block;margin:.5rem 0 0;padding:0 .35rem 0 0;max-height:9.8em;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;font-size:.86rem;line-height:1.45;color:var(--pk-ink);cursor:auto}
+html .ts-pk .ts-pk-card .sum p{margin:0 0 .55em;padding:0;font:inherit;line-height:inherit;color:inherit}
+html .ts-pk .ts-pk-card .sum p:last-child{margin-bottom:0}
+.ts-pk-card .sum.has-more{-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 1.8em),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 1.8em),transparent)}   /* more below: the last line fades (Kiro) */
 .ts-pk-card .sum:focus-visible{outline:3px solid var(--pk-accent);outline-offset:2px;border-radius:6px}
 .ts-pk-card .hint{display:block;margin-top:.6rem;padding-top:.55rem;border-top:1px solid var(--pk-rule);font-size:.82rem;font-weight:700;color:var(--pk-on)}
 html[data-ts-theme="dark"] .ts-pk-card .hint{color:var(--pk-on)}
@@ -111,11 +114,13 @@ html .ts-pk .ts-pk-nav.is-index .ts-pk-ix{color:var(--pk-on);transform:scale(.92
 .ts-pk-ix svg{display:block;width:22px;height:22px;margin:auto;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;pointer-events:none}
 html.ts-pk-left .ts-pk .ts-pk-ix{right:auto;left:0}
 .ts-pk-fan{position:absolute;inset:0;pointer-events:none}
-html .ts-pk .ts-pk-fan li{position:absolute;right:52px;top:0;display:flex;align-items:center;gap:.55rem;max-width:min(48vw,220px);min-height:34px;box-sizing:border-box;margin:-17px 0 0;padding:.3rem .6rem;border:1px solid var(--pk-rule);border-radius:10px;background:var(--pk-stone);color:var(--pk-ink);font-size:.82rem;font-weight:600;line-height:1.25;white-space:nowrap;opacity:0;box-shadow:0 8px 20px -14px rgba(0,0,0,.5);transform:translateX(26px) scale(.55);transform-origin:right center;transition:opacity .2s,transform .3s var(--pk-ease);transition-delay:var(--d-close,0ms)}   /* the same form as the closed boxes in the stack (.ts-pk-card .row) */
+html .ts-pk .ts-pk-fan li{position:absolute;right:52px;top:0;display:flex;align-items:center;gap:.55rem;max-width:min(48vw,220px);min-height:34px;box-sizing:border-box;margin:calc(var(--pk-fan-h,34px) / -2) 0 0;padding:.3rem .6rem;border:1px solid var(--pk-rule);border-radius:10px;background:var(--pk-stone);color:var(--pk-ink);font-size:.82rem;font-weight:600;line-height:1.25;white-space:nowrap;opacity:0;box-shadow:0 8px 20px -14px rgba(0,0,0,.5);transform:translateX(26px) scale(.55);transform-origin:right center;transition:opacity .2s,transform .3s var(--pk-ease);transition-delay:var(--d-close,0ms)}   /* the same form as the closed boxes in the stack (.ts-pk-card .row) */
 html .ts-pk .ts-pk-fan li span{min-width:0;overflow:hidden;text-overflow:ellipsis}
 html .ts-pk .ts-pk-fan li b{display:grid;place-items:center;flex:0 0 auto;width:1.45rem;height:1.45rem;margin:0;border-radius:50%;background:var(--pk-panel);color:var(--pk-ink);font-size:.72rem;font-weight:800}
 html .ts-pk .ts-pk-fan li.is-done b{color:var(--pk-on)}
 html .ts-pk .ts-pk-fan li.is-now{border:1.5px solid var(--pk-on)}   /* where you are: the open box's green edge */
+html .ts-pk .ts-pk-nav.is-tight .ts-pk-fan li{height:var(--pk-fan-h,34px);min-height:0;padding:0 .5rem;font-size:.75rem;gap:.4rem}   /* rail pieces closer than a name is tall (Kiro, sixth review) */
+html .ts-pk .ts-pk-nav.is-tight .ts-pk-fan li b{width:min(1.2rem,calc(var(--pk-fan-h,34px) - 6px));height:min(1.2rem,calc(var(--pk-fan-h,34px) - 6px));font-size:.66rem}
 html .ts-pk .ts-pk-nav.is-index .ts-pk-fan li{opacity:1;transform:none;transition-delay:var(--d-open,0ms)}
 html .ts-pk .ts-pk-nav.is-kept .ts-pk-fan li{pointer-events:auto;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}   /* kept open: tap a name to go there */
 html .ts-pk .ts-pk-nav.is-kept .ts-pk-ix{box-shadow:inset 0 0 0 2px var(--pk-on)}
@@ -190,24 +195,23 @@ add_action( 'wp_footer', function () {
           }
         }
       });
-      S.forEach(function (s, i) { s.summary = summarize(i) || s.excerpt || s.desc; });
+      S.forEach(function (s, i) { var sm = summarize(i), alt = s.excerpt || s.desc; s.summary = sm.length ? sm : (alt ? [alt] : []); });
       if (segs) segs.forEach(function (li, i) { li.querySelector('a').setAttribute('aria-label', S[i].label + (S[i].desc ? ': ' + S[i].desc : '')); });   // the rail's names for screen readers include the description
     }
 
-    // a summary of a section made only of its own words: its opening sentences, in order, about 3 to 5 sentences (the copy is regulated, so nothing is reworded)
+    // a summary of a section made only of its own words: its opening paragraphs, whole and in order (the copy is regulated, so nothing is reworded or
+    // cut mid-sentence; Kiro, sixth review: splitting into sentences broke at "1.5", "U.S." and closing quotes). It stops at a paragraph boundary once
+    // there is about 320 characters of text, at most three paragraphs; the box scrolls if it is longer.
     function summarize(i) {
-      var h = el(i), nx = el(i + 1); if (!h) return '';
-      var text = [];
+      var h = el(i), nx = el(i + 1), out = [], n = 0; if (!h) return out;
       [].forEach.call(content.querySelectorAll('p, li'), function (p) {
+        if (n >= 320 || out.length >= 3) return;
         if (!(h.compareDocumentPosition(p) & Node.DOCUMENT_POSITION_FOLLOWING) || (nx && !(p.compareDocumentPosition(nx) & Node.DOCUMENT_POSITION_FOLLOWING))) return;
         if (p.closest('.ts-pk') || p.closest('.ts-jump') || p.closest('nav') || p.closest('figcaption') || p.querySelector('p, li')) return;
-        var t = p.textContent.trim().replace(/\s+/g, ' '); if (t.length < 25 || /\?$/.test(t)) return;
-        text.push(/[.!?:]$/.test(t) ? t : t + '.');
+        var t = p.textContent.trim().replace(/\s+/g, ' '); if (t.length < 25 || /\?$/.test(t)) return;   // no headings-in-disguise, no questions
+        out.push(t); n += t.length;
       });
-      var all = text.join(' ').replace(/\b(Dr|Mr|Mrs|Ms|St|vs|etc|e\.g|i\.e)\./gi, function (m) { return m.replace(/\./g, '\u2024'); });
-      var sent = all.match(/[^.!?]+[.!?]+(\s|$)/g) || (all ? [all] : []), out = '';
-      for (var k = 0; k < sent.length; k++) { if (out && (out.length >= 480 || k >= 5)) break; out += sent[k]; }
-      return out.trim().replace(/\u2024/g, '.');
+      return out;
     }
 
     // the parts: top strip (display only), rail with its index icon, card
@@ -333,11 +337,12 @@ add_action( 'wp_footer', function () {
     function openHTML(i, pinned) {
       var s = S[i], here = i === cur ? 'You are reading this section.' : (cur < 0 ? '' : 'You are in: ' + S[cur].label);
       return '<button type="button" class="x" aria-label="Close the preview">×</button><small>Section ' + (i + 1) + ' of ' + S.length + ' · ' + s.mins + ' min</small><b>' + esc(s.label) + '</b><span class="here">' + esc(here) + '</span>' +
-        (s.summary ? '<div class="sum" tabindex="0" role="region" aria-label="Summary of ' + esc(s.label) + '">' + esc(s.summary) + '</div>' : '') +
+        (s.summary.length ? '<div class="sum" tabindex="0" role="region" aria-label="Summary of ' + esc(s.label) + '">' + s.summary.map(function (t) { return '<p>' + esc(t) + '</p>'; }).join('') + '</div>' : '') +
         '<span class="hint"><span>' + (pinned ? 'Tap to go there' : 'Lift to keep this preview') + '</span>' + (pinned ? '<button type="button" class="side" aria-label="Move the section bar to the ' + sideName() + ' side">⇆ ' + (sideName() === 'left' ? 'Left' : 'Right') + '</button>' : '') + '</span>';
     }
     function hover(i) { segs.forEach(function (li, k) { li.classList.toggle('is-hover', k === i); }); }
     function stuckBottom() { return (parseFloat(getComputedStyle(top).top) || 0) + top.offsetHeight; }   // where the strip ends once it sticks (also before it has)
+    function moreHint() { var m = card.querySelector('.sum'); if (m) m.classList.toggle('has-more', m.scrollHeight - m.scrollTop - m.clientHeight > 2); }
     function fit() {   // drop detail in steps until the whole stack fits between the stuck strip and the bottom of the screen (and within the card's own max-height)
       card.classList.remove('fit1', 'fit2', 'fit3', 'fit4', 'fit5');
       var avail = window.innerHeight - Math.max(8, stuckBottom() + 8) - 12, mh = parseFloat(getComputedStyle(card).maxHeight);
@@ -355,7 +360,7 @@ add_action( 'wp_footer', function () {
     function hideCard() { card.className = 'ts-pk-card'; shown = ''; hover(-1); nav.classList.remove('is-active'); clearTimeout(clear); clear = setTimeout(function () { if (!shown) card.innerHTML = ''; }, 220); }   // empty it after the fade
     function show(i, y, pinned) {
       var key = i + '|' + (pinned ? 1 : 0) + '|' + cur;
-      if (key !== shown) { clearTimeout(clear); card.className = 'ts-pk-card ts-pk-stack is-on' + (pinned ? ' is-pinned' : ''); card.innerHTML = cardHTML(i, pinned); card.dataset.i = i; nav.classList.add('is-active'); hover(i); shown = key; fit(); }
+      if (key !== shown) { clearTimeout(clear); card.className = 'ts-pk-card ts-pk-stack is-on' + (pinned ? ' is-pinned' : ''); card.innerHTML = cardHTML(i, pinned); card.dataset.i = i; nav.classList.add('is-active'); hover(i); shown = key; fit(); moreHint(); }
       place(y);
     }
     // "this tap is already handled": swallow the click the browser may still send (to the card, or to whatever is under it once the card is gone)
@@ -385,6 +390,7 @@ add_action( 'wp_footer', function () {
       jumpTo(i);
     }
     var cdn = null, cardTapAt = -1e9;
+    card.addEventListener('scroll', function (e) { if (e.target.classList && e.target.classList.contains('sum')) moreHint(); }, true);
     card.addEventListener('pointerdown', function (e) { cdn = card.classList.contains('is-pinned') && e.pointerType !== 'mouse' && e.isPrimary ? { id: e.pointerId, x: e.clientX, y: e.clientY } : null; });
     card.addEventListener('pointerup', function (e) {
       var d = cdn; cdn = null; if (!d || e.pointerId !== d.id || Math.abs(e.clientX - d.x) > 10 || Math.abs(e.clientY - d.y) > 10) return;
@@ -447,8 +453,12 @@ add_action( 'wp_footer', function () {
 
     // the index icon: hold it and every section name fans out beside its piece of the rail; lift and they slide back (a click without a press toggles)
     var ixOpen = false, ixPress = null, ixPressedAt = -1e9, keepT = 0, kept = false;   // Ryan, 2026-11-08: held for 2 s, the fan stays open after lifting
+    var fanPitch = 99;
     function fanLayout() {
-      var nr = nav.getBoundingClientRect(), n = S.length;
+      var nr = nav.getBoundingClientRect(), n = S.length, c = segs.map(function (li) { var r = li.getBoundingClientRect(); return r.top + r.height / 2; });
+      fanPitch = 99; for (var j = 1; j < c.length; j++) fanPitch = Math.min(fanPitch, c[j] - c[j - 1]);
+      var fh = Math.max(18, Math.min(34, Math.floor(fanPitch - 3)));   // a name is never taller than the spacing between rail pieces
+      nav.style.setProperty('--pk-fan-h', fh + 'px'); nav.classList.toggle('is-tight', fh < 34);
       segs.forEach(function (li, k) {
         var r = li.getBoundingClientRect(), it = fanItems[k];
         it.style.top = (r.top + r.height / 2 - nr.top) + 'px';
@@ -472,7 +482,11 @@ add_action( 'wp_footer', function () {
     var handed = null, ixStart = null, lean = false, over = -1;   // the rail preview the icon press turned into: { i, y }; where the press started; whether it headed for the names
     function onLeft() { return document.documentElement.classList.contains('ts-pk-left'); }
     function inRailBand(x) { var rr = rail.getBoundingClientRect(); return onLeft() ? x <= rr.right + 10 : x >= rr.left - 10; }
-    function hitFan(x, y) { for (var k = 0; k < fanItems.length; k++) { var r = fanItems[k].getBoundingClientRect(); if (x >= r.left - 6 && x <= r.right + 6 && y >= r.top - 5 && y <= r.bottom + 5) return k; } return -1; }
+    function hitFan(x, y) {   // the name whose middle is nearest the finger, within half the spacing (no overlaps, no dead gaps between names)
+      var best = -1, bd = 1e9, reach = Math.max(fanPitch / 2, 22);
+      for (var k = 0; k < fanItems.length; k++) { var r = fanItems[k].getBoundingClientRect(), d = Math.abs(y - (r.top + r.height / 2)); if (x >= r.left - 6 && x <= r.right + 6 && d <= reach && d < bd) { best = k; bd = d; } }
+      return best;
+    }
     function setOver(k) { if (k === over) return; over = k; fanItems.forEach(function (it, j) { it.classList.toggle('is-over', j === k); }); if (k > -1) buzz(); }
     ixBtn.addEventListener('pointerdown', function (e) { if (e.button > 0 || !e.isPrimary) return; tipSeen(); ixPress = e.pointerId; handed = null; ixStart = { x: e.clientX, y: e.clientY }; lean = false; try { ixBtn.setPointerCapture(e.pointerId); } catch (err) {} setIndex(true); keep(false); clearTimeout(keepT); keepT = setTimeout(function () { if (ixPress !== null && !handed && over < 0) { keep(true); buzz(); } }, 2000); e.preventDefault(); });
     ixBtn.addEventListener('pointermove', function (e) {

@@ -102,3 +102,15 @@ the dropped scroll for comparison, build the mock from `git show 255cdb6:scripts
 > how to reproduce and the smallest fix), then enhancements; say which you reproduced and which are from reading only. Do not edit `ops/request.json`
 > or `ops/live-request.json`, do not run `scripts/ci/request.sh`, and do not touch `main`. Changes, if any, go on a new branch from
 > `claude/wizardly-bell-xu0rta` with a pull request into it.
+
+## Addendum: outcomes of this review (Kiro's sixth)
+
+| # | Finding | Outcome |
+| --- | --- | --- |
+| 1 | `summarize()` drops the start of any sentence with a decimal, an abbreviation or a closing quote | **Fixed by removing the splitter**: the summary is now the section's opening paragraphs, whole and in order (about 320 characters, at most three), shown as separate paragraphs. Nothing is cut mid-sentence. The mock has a paragraph with "1.5", "U.S." and a closing quote; a new check asserts every summary paragraph is a whole page paragraph, word for word, in every section. |
+| 2 | Fanned names overlap in landscape / with 7 sections | **Fixed**: `fanLayout()` measures the spacing of the rail pieces and sizes the names to fit (`--pk-fan-h`, `is-tight`, compact like `fit3`); `hitFan` picks the name nearest the finger within half the spacing (no overlaps, no dead gaps). Checked in landscape with 7 sections and with large text: gap 3px, sliding onto name 3 picks it. |
+| L1 | "below" out of context in a summary | Whole paragraphs reduce it; Ryan or Butsaba to read the staging39 summaries once. |
+| E3 | No sign that the summary scrolls | **Done**: the last line fades (`has-more`) while there is more below; updated on scroll. |
+| E4 / E5 | Whole paragraphs; a verbatim check | **Done** (finding 1). |
+
+Mock: **451 passed, 0 failed**.

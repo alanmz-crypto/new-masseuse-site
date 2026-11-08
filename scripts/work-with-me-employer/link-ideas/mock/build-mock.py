@@ -20,7 +20,9 @@ def sec(hid, title, n):
     attr = f' id="{hid}"' if hid else ''
     # one block per section is wider than the column (as some theme blocks are on staging39: their own negative margin)
     wide = f'<div class="wp-block-group" style="margin-right:-14px"><p>{para}</p></div>'
-    return f'<h2 class="wp-block-heading"{attr}>{title}</h2>' + wide + ''.join(f'<p>{para}</p>' for _ in range(n - 1))
+    # Kiro, sixth review: text that broke the old sentence splitter (a decimal, an abbreviation, a closing quote); placeholder copy, mock only
+    tricky = '<p>A mock line about a session of about 1.5 hours, set in the U.S. style of the check. A visitor said "it felt longer." That ends the mock line.</p>' if hid == 'ts-common-reasons' else ''
+    return f'<h2 class="wp-block-heading"{attr}>{title}</h2>' + tricky + wide + ''.join(f'<p>{para}</p>' for _ in range(n - 1))
 
 row = ('<nav class="ts-jump" aria-label="On this page"><ul class="ts-jump__list">'
        '<li><a href="#ts-what-it-is">What it is</a></li><li><a href="#ts-common-reasons">Common reasons</a></li>'
