@@ -57,3 +57,18 @@ real touch events for 4 and 5). Safari/real devices untested. The pills snippet 
 **Lesson (durable, supersedes the ampersand note above):** in page content, WordPress's shortcode scanner reads any `<` inside an inline script as the start of an
 HTML tag and then escapes `&` after it (`&&` became `&#038;&#038;`). Write inline page scripts with no `<` at all (flip comparisons; `<` in strings);
 `install-progress-ideas.php` refuses a script that contains one.
+
+## Side rail ideas (2026-11-08; top-bar scrub dropped)
+Ryan asked for a scrub that browses topics "and not lose your place" and also jumps "when you choose"; then: reaching the top of a phone is uncomfortable,
+"drop the scrub ... on the side not top area, let's use the rail method. Create five possible ways to Scroll and preview and scroll and jump-to that are intuitive."
+(The browse-first top scrubber was drafted but never deployed; /progress-nav-ideas/ stays as it was.)
+**Applied on staging39 only:** https://staging39.thaisolitude.com/rail-nav-ideas/ (page #1347; `?idea=1..5`). Source `link-ideas/rail-ideas.html`,
+`install-rail-ideas.php`, `push-rail-ideas.sh`, `check-rail-ideas.mjs`. Rail on the right edge between 30% and 86% of the screen height (thumb zone).
+Ideas: 1 slide, lift, then Go/Stay card; 2 slide, then pull the thumb inwards until the card turns green, let go to jump; 3 slide to peek at a mini preview,
+tap it to go; 4 slide, then hold still until a ring fills; 5 a short tab that opens a right-hand drawer (tap or swipe left; swipe right to close).
+Every idea: browsing never moves the page, and after a jump "Back to <section>" returns to the exact scroll position.
+Export `staging39-before-rail-ideas-20261108-022953.sql` verified off-site; snapshot `rail-ideas-before-20261108-023010-860acf1b.json`.
+Chromium check `ui-rail-ideas-staging39-20261108`: **142/0** (iPhone 13 + iPad Mini, light + dark, real touch events). Safari/real devices untested.
+**Lessons:** a drawer that should close on a sideways swipe needs `touch-action: pan-y`, or the browser cancels the pointer; buttons tapped right after a
+gesture need `touch-action: manipulation` (double-tap-zoom detection can swallow the tap). When writing page HTML with the Write tool, `<` in the
+content arrives as a real `<`: escape the script's strings with a script afterwards and re-check that it has no `<`.
