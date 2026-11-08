@@ -69,6 +69,29 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     ok(`${tag} a Back button names where you were`, await p.$eval('.ts-pk-back', b => !b.hidden && b.textContent.includes('Common reasons')));
     await W(300); await p.tap('.ts-pk-back'); await W(1600);
     const y1 = await Y(); ok(`${tag} Back returns to exactly where you were`, 3 >= Math.abs(y1 - y0), `${y0} -> ${y1}`);
+    // fixes from the Kiro review (2026-11-08)
+    ok(`${tag} a long press on the rail cannot open the link menu or drag the link`, await p.evaluate(() => { const a = document.querySelector('.ts-pk-rail a'), ev = new MouseEvent('contextmenu', { bubbles: true, cancelable: true }); a.dispatchEvent(ev); return ev.defaultPrevented && a.getAttribute('draggable') === 'false'; }));
+    await p.evaluate(() => { const t = document.createElement('a'); t.id = 'pk-probe'; t.href = '#pk-probe'; t.textContent = 'probe'; t.style.cssText = 'position:fixed;left:8px;top:45%;z-index:95;padding:12px;background:#fff'; window.__pkClicks = 0; t.addEventListener('click', e => { e.preventDefault(); window.__pkClicks++; }); document.body.appendChild(t); });
+    await slideTo(1);
+    const pr = await p.$eval('#pk-probe', t => { const r = t.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
+    await touch('touchStart', pr.x, pr.y); await touch('touchEnd'); await W(500);
+    ok(`${tag} tapping elsewhere only closes the preview (does not also click what was tapped)`, !(await card()).on && (await p.evaluate(() => window.__pkClicks)) === 0);
+    await touch('touchStart', pr.x, pr.y); await touch('touchEnd'); await W(500);
+    ok(`${tag} ...and the next tap works normally`, (await p.evaluate(() => window.__pkClicks)) === 1);
+    await p.evaluate(() => document.getElementById('pk-probe').remove());
+    await p.evaluate(() => { const a = document.querySelectorAll('.ts-pk-rail a')[2]; a.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 })); }); await W(300);
+    c = await card(); ok(`${tag} a screen-reader double-tap on the rail (click without a press) opens the preview and focuses it`, c.pinned && c.name === 'What to expect' && (await p.evaluate(() => document.activeElement === document.querySelector('.ts-pk-card'))), JSON.stringify(c));
+    await p.keyboard.press('Escape'); await W(200);
+    ok(`${tag} keyboard order: the rail comes right after the strip, before the sections`, await p.evaluate(() => { const n = document.querySelector('.ts-pk-nav'), h = document.querySelector('.entry-content h2'), st = document.querySelector('.ts-pk-top'); return !!(st.compareDocumentPosition(n) & Node.DOCUMENT_POSITION_FOLLOWING) && !!(n.compareDocumentPosition(h) & Node.DOCUMENT_POSITION_FOLLOWING); }));
+    const hl = await p.evaluate(() => history.length); y0 = await Y();
+    await slideTo(4); await p.tap('.ts-pk-card .shot'); await W(1600);
+    ok(`${tag} a jump adds no browser-history entry`, (await p.evaluate(() => history.length)) === hl);
+    ok(`${tag} Back is offered after the jump`, await p.$eval('.ts-pk-back', b => !b.hidden));
+    await p.evaluate(y => scrollTo(0, y), y0); await W(1400);
+    ok(`${tag} Back hides itself once the reader is back there by hand`, await p.$eval('.ts-pk-back', b => b.hidden));
+    const cssText = await p.evaluate(() => document.getElementById('ts-peek-nav-css').textContent);
+    ok(`${tag} older browsers get a solid strip background (color-mix fallback)`, cssText.includes('background:var(--pk-ground);background:color-mix') && cssText.includes('background:var(--pk-panel);background:color-mix'));
+    ok(`${tag} the bottom guide button is hidden only when the rail is there`, cssText.split('#ts-section-guide-trigger').length === cssText.split('html.ts-pk-ready #ts-section-guide-trigger').length);
     // the row at the top of the page
     await p.evaluate(() => scrollTo(0, document.querySelector('.entry-content .ts-jump').getBoundingClientRect().top + scrollY - 200)); await W(500);
     await p.tap('.entry-content .ts-jump a:text-is("What Research Says")'); await W(1700);
@@ -83,6 +106,23 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
   const { p } = await open(ctx, '/thai-massage/#ts-guide-research'); await p.waitForTimeout(3500);   // the theme's own arrival scroll starts about 0.9 s after load
   const L = await p.evaluate(() => { const h = document.getElementById('ts-guide-research'), s = document.querySelector('.ts-pk-top'); if (!h || !s) return { ok: false }; const t = h.getBoundingClientRect().top, sb = s.getBoundingClientRect().bottom; return { h: Math.round(t), sb: Math.round(sb), ok: t >= sb - 2 && sb + 40 >= t }; });
   ok(`${size} arriving at /thai-massage/#ts-guide-research lands the heading below the strip`, L.ok, JSON.stringify(L));
+  await ctx.close();
+}
+{ // landscape phone: the preview fits the screen
+  const ctx = await b.newContext({ ...devices['iPhone 13 landscape'], deviceScaleFactor: 1 });
+  const { p, errors } = await open(ctx, '/thai-massage/');
+  const cdp = await ctx.newCDPSession(p); const touch = (type, x, y) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchEnd' ? [] : [{ x, y }] });
+  await p.evaluate(() => { const t = document.querySelectorAll('.entry-content .ts-jump a')[1]; const h = document.getElementById(t.getAttribute('href').slice(1)); scrollTo(0, h.getBoundingClientRect().top + scrollY - 80); }); await p.waitForTimeout(600);
+  for (const k of [0, 4]) {
+    const z = await p.evaluate(i => { const r = document.querySelectorAll('.ts-pk-rail li')[i].getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; }, k);
+    await touch('touchStart', z.x, z.y); await touch('touchEnd'); await p.waitForTimeout(500);
+    const r = await p.evaluate(() => { const c = document.querySelector('.ts-pk-card').getBoundingClientRect(); return { top: Math.round(c.top), bottom: Math.round(c.bottom), vh: innerHeight }; });
+    ok(`landscape phone: the preview of section ${k + 1} fits on screen`, r.top >= 0 && r.vh >= r.bottom, JSON.stringify(r));
+    await touch('touchStart', 10, 10); await touch('touchEnd'); await p.waitForTimeout(500);
+  }
+  const rb = await p.evaluate(() => ({ rail: Math.round(document.querySelector('.ts-pk-rail').getBoundingClientRect().bottom), vh: innerHeight }));
+  ok('landscape phone: the rail ends above the Back button', rb.vh - rb.rail >= 70, JSON.stringify(rb));
+  ok('landscape phone: no JavaScript errors', errors.length === 0, errors.join(' | '));
   await ctx.close();
 }
 const ctx = await b.newContext({ ...devices['iPhone 13'], deviceScaleFactor: 1 });
