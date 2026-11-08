@@ -1,7 +1,8 @@
 {
-  "id": "rehearse-sitewide-cleanup-20261108",
-  "op": "rehearse",
+  "id": "dry-sitewide-cleanup-staging39-20261108",
+  "op": "run",
   "target": "staging39",
-  "installer": "link-ideas/install-sitewide-cleanup.php",
-  "args": []
+  "script": "link-ideas/push-sitewide-cleanup.sh",
+  "args": [],
+  "tests": "auto"
 }
