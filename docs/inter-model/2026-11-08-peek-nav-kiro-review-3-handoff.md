@@ -9,10 +9,10 @@ what changed after your **second** review.
 
 Branch **`claude/wizardly-bell-xu0rta`** (nothing on `main`). Everything runs **only on staging39**; live is untouched.
 
-- The design: `scripts/work-with-me-employer/link-ideas/peek-nav.php`, one WPCode snippet, Thai Massage page only, applied as snippet **#1362**:
+- The design: `scripts/work-with-me-employer/link-ideas/peek-nav.php`, one WPCode snippet, Thai Massage page only, applied as snippet **#1363**:
   https://staging39.thaisolitude.com/thai-massage/
 - The sitewide cleanup on staging39 (reading-progress bar and Astra scroll-to-top removed): `link-ideas/install-sitewide-cleanup.php`.
-- Browser check `link-ideas/check-peek-nav.mjs`: **(result pending: the run is in progress)** on staging39 (run `ui-peek-nav-staging39-20261108-16`) and **326 passed, 0 failed on the mock**.
+- Browser check `link-ideas/check-peek-nav.mjs`: **326 passed, 0 failed** on staging39 (run `ui-peek-nav-staging39-20261108-16`) and **326 passed, 0 failed on the mock**.
 
 About your finding 1 (staging39 not serving the Peek): at the time of the response the server-side check found the snippet active and served to
 anonymous visitors (one copy of `ts-peek-nav-css` and `ts-peek-nav-runtime` on `/thai-massage/`; WPCode lists the snippet as `publish`). Each update is
@@ -26,7 +26,7 @@ happened that hour, so your load most likely fell in one. If you see it again, n
 | 1 | Staging39 not serving the Peek | Not reproduced (section 1). |
 | 2 | The hint drops keyboard focus after 9 s | **Fixed**: no auto-hide while the hint has focus (re-checked every 3 s); when it hides with focus inside, focus goes to the rail. Checked (10.5 s with focus on "Got it"). |
 | 3 | Plain in-page links land under the pinned header | **Fixed**: `scroll-margin-top` from the measured header + strip, and a capture handler on `.entry-content` for `a[href^="#"]` (the theme's own smooth scroll ignored the offset for `#hash` arrivals before). Checked with an injected in-text link. |
-| 4 | Text runs under the icon and rail | **Confirmed in principle** (the column edge, not the glyphs, is what matters) and **fixed by measurement**: `clearRail()` pads the column so it stops 6px before the rail and icon on either side, whatever margin the theme gives at that width. The icon now has no background of its own. Checked on both sides. |
+| 4 | Text runs under the icon and rail | **Confirmed** and **fixed by measurement**: `clearRail()` pads the column so it stops 6px before the rail and icon on either side, whatever margin the theme gives at that width. On staging39 a theme block with its own margin still reached 4px under the rail on phones, so `clearRail()` also measures the text blocks themselves and pads a little more (capped at 80px); the mock now has such a block and the check measures block edges (the previous snippet fails it). On staging39: text ends at 340, rail at 344. The icon has no background of its own. |
 | 5 | CRLF in the installer | **Fixed**: `(\r?\n)?` around the block and the same kind of line break kept; six LF/CRLF cases pass in PHP. |
 | 6 | Rollback reports success on CHANGED | **Fixed**: only `ready` is "nothing to roll back"; `CHANGED` is an error. The strict `true` requirement is documented in the header. |
 | 7 | iOS left-edge back swipe | **Not changed yet**: it needs a real iPhone first (the rail's gesture is vertical; Safari's back swipe is horizontal). |
@@ -40,12 +40,12 @@ happened that hour, so your load most likely fell in one. If you see it again, n
 
 1. **Press the icon, then slide onto the rail** (`handed`, the icon's `pointermove`, `ixRelease`): the hand-off threshold (the rail's top edge + 4px),
    cancel and `lostpointercapture` paths, multi-touch, and the interplay with the outside-tap swallow and the card's tap-on-`pointerup`.
-2. **`clearRail()`**: correctness on real Astra widths (phone, tablet, between 921 and 1100px), after a rotation, after switching sides, with the admin bar,
+2. **`clearRail()`** (including the second, block-measuring pass): correctness on real Astra widths (phone, tablet, between 921 and 1100px), after a rotation, after switching sides, with the admin bar,
    and whether changing `padding` on `.entry-content` can shift anything the theme or other snippets position by it.
 3. **The in-content link handler**: links inside FAQ answers or the research section, links whose target is outside `.entry-content`, and anything else
    that already listens for clicks on those links (the section guide, the A11yPageJumpLinks snippet).
 4. **The hint's new timing and focus rules** (`tipWait`, `autoHide`, `hideTip`).
-5. **`install-sitewide-cleanup.php`** after the changes (the `lead`/`trail` groups, rollback states, `umask`).
+5. **`install-sitewide-cleanup.php`** after the changes (the `lead`/`trail` groups, rollback states, `umask`). Its full rehearsal passed on a copy of staging38 (staging39 already has the cleanup applied).
 6. Anything that would block rolling the design out to Therapeutic, Deep Tissue, Chair and Services.
 
 ## 4. Files and local testing

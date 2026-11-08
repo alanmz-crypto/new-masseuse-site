@@ -171,3 +171,14 @@ fan closes and the Peek preview follows the finger along the rail; lifting there
 The first-time hint mentions it. Export `staging39-before-peek-nav-20261108-074527.sql`; snapshot `peek-nav-before-20261108-074540-f4aa4369.json`;
 check `ui-peek-nav-staging39-20261108-14`: **310/0**. Note: the second Kiro review handoff predates this (it says 282).
 **Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-074540-f4aa4369.json'`.
+
+**Third Kiro review (2026-11-08):** Kiro reviewed #1360 (before Ryan's slide gesture); Ryan: "I prefer my slide from icon idea to kiro's so choose mine."
+Finding 1 (staging not serving the Peek) not reproduced: the server check found it served anonymously; Kiro's load most likely fell in a roll-back-then-apply
+swap. Fixed: hint focus (no auto-hide while focused; focus to the rail on hide), hint after 1.5 s and not on #hash arrivals, plain in-page links below the
+header+strip (scroll-margin + capture handler), text clear of rail/icon by measurement (`clearRail()`, plus a block-measuring pass after staging39 showed a theme
+block 4px under the rail), icon background transparent, admin-bar menu height, rove/fan/hint guards; installer: CRLF, rollback stops on CHANGED, umask.
+Not taken: iOS left-edge (device first), header unpin below 600px (Ryan). Now snippet **#1363**; export `staging39-before-peek-nav-20261108-084155.sql`;
+snapshot `peek-nav-before-20261108-084212-e58e7d70.json`; check `ui-peek-nav-staging39-20261108-16`: **326/0**; cleanup installer rehearsal passed on a copy of
+staging38. Third handoff: `docs/inter-model/2026-11-08-peek-nav-kiro-review-3-handoff.md`.
+**Lesson:** measure where text *can* reach (each block's content edge), not where it happens to wrap.
+**Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-084212-e58e7d70.json'`.
