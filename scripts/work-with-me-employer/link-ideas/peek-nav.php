@@ -23,7 +23,7 @@ body.admin-bar .ts-pk-top{top:var(--wp-admin--admin-bar--height,32px)}
 .ts-pk-top li{flex:var(--len,1) 1 0;min-width:0;height:5px;margin:0;border-radius:9px;background:var(--pk-rule);overflow:hidden}
 .ts-pk-top li i{display:block;height:100%;border-radius:inherit;background:var(--pk-on);transform-origin:left;transform:scaleX(var(--p,0))}
 /* rail: right edge, thumb zone */
-.ts-pk-nav{position:fixed;right:max(2px,env(safe-area-inset-right));top:30%;bottom:max(14%,76px);z-index:91;width:44px}   /* % follows the visible viewport on iOS; the bottom stays above the Back button */
+.ts-pk-nav{position:fixed;right:max(2px,env(safe-area-inset-right));top:30%;bottom:max(14%,76px);z-index:91;width:44px}   /* % follows the visible viewport on iOS */
 .ts-pk-rail{position:absolute;inset:0;display:flex;flex-direction:column;gap:5px;margin:0;padding:8px 0;list-style:none;touch-action:none;-webkit-user-select:none;user-select:none;border-radius:22px;transition:background-color .2s,box-shadow .2s}
 .ts-pk-nav.is-active .ts-pk-rail{background:var(--pk-panel);background:color-mix(in srgb,var(--pk-panel) 92%,transparent);box-shadow:0 6px 24px -12px rgba(0,0,0,.45)}
 .ts-pk-rail li{position:relative;flex:var(--len,1) 1 0;min-height:22px;margin:0;padding:0}
@@ -59,11 +59,6 @@ html[data-ts-theme="dark"] .ts-pk-card .hint{color:var(--pk-on)}
 /* the heading glows briefly after a jump */
 .ts-pk-flash{border-radius:8px;background:rgba(200,150,62,.28);background:color-mix(in srgb,var(--pk-accent) 28%,transparent);transition:background-color .6s}
 .ts-pk-unflash{transition:background-color .6s}
-/* back to where you were */
-.ts-pk-back{position:fixed;right:max(10px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));z-index:93;display:inline-flex;align-items:center;gap:.35rem;max-width:calc(100vw - 20px);min-height:46px;margin:0;padding:0 1rem;border:0;border-radius:999px;background:var(--pk-ink);color:var(--pk-panel);font:inherit;font-size:.85rem;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:var(--pk-shadow);cursor:pointer;touch-action:manipulation}
-.ts-pk-back:hover,.ts-pk-back:focus{background:var(--pk-ink);color:var(--pk-panel)}
-.ts-pk-back:focus-visible{outline:3px solid var(--pk-accent);outline-offset:2px}
-.ts-pk-back[hidden]{display:none}
 /* keep the text clear of the rail on phones and tablets; the bottom "On this page" button is replaced by the rail */
 @media (max-height:500px){.ts-pk-card .shot>span,.ts-pk-card .here{display:none}.ts-pk-card .shot em{margin:0}}   /* landscape phones: the card fits the screen */
 @media (max-width:1100px){html.ts-pk-ready:not(.ts-pk-left) .entry-content{padding-right:26px}html:not(.ts-pk-left) .ts-pk-top{padding-right:44px}}   /* the strip's text stays clear of the rail while it is still in the page */
@@ -82,7 +77,6 @@ html.ts-pk-left .ts-pk-label{right:auto;left:48px}
 html.ts-pk-left .ts-pk-you{right:auto;left:28px}
 html.ts-pk-left .ts-pk-card{right:auto;left:58px;transform:translateX(-10px) scale(.98)}
 html.ts-pk-left .ts-pk-card.is-on{transform:none}
-html.ts-pk-left .ts-pk-back{right:auto;left:max(10px,env(safe-area-inset-left))}
 html.ts-pk-left .ts-pk-tip{right:auto;left:58px}
 @media (max-width:1100px){html.ts-pk-ready.ts-pk-left .entry-content{padding-left:26px}html.ts-pk-left .ts-pk-top{padding-left:44px}}   /* the right side keeps the theme's own spacing */
 /* the side button in the preview */
@@ -170,7 +164,7 @@ add_action( 'wp_footer', function () {
       if (segs) segs.forEach(function (li, i) { li.querySelector('a').setAttribute('aria-label', S[i].label + (S[i].desc ? ': ' + S[i].desc : '')); });   // the rail's names for screen readers include the description
     }
 
-    // the parts: top strip (display only), rail, card, back button
+    // the parts: top strip (display only), rail with its index icon, card
     var segs = null;
     var strip = document.createElement('div'); strip.className = 'ts-pk ts-pk-top'; strip.setAttribute('aria-hidden', 'true');
     strip.innerHTML = '<div class="in"><p><b></b><span></span></p><ol>' + S.map(function () { return '<li><i></i></li>'; }).join('') + '</ol></div>';
@@ -178,13 +172,13 @@ add_action( 'wp_footer', function () {
     var box = document.createElement('div'); box.className = 'ts-pk';
     box.innerHTML = '<nav class="ts-pk-nav" aria-label="Sections on this page"><button type="button" class="ts-pk-ix" aria-expanded="false" aria-controls="ts-pk-fan" aria-label="Show all sections (press and hold)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 7h12M6 12h9M6 17h6"/></svg></button>' +
       '<ol class="ts-pk-fan" id="ts-pk-fan" aria-label="All sections" aria-hidden="true">' + S.map(function (s, i) { return '<li><b>' + (i + 1) + '</b><span>' + esc(s.label) + '</span></li>'; }).join('') + '</ol><ol class="ts-pk-rail">' + S.map(function (s) { return '<li><a href="' + esc(s.href) + '" aria-label="' + esc(s.label) + '" draggable="false"><i></i></a></li>'; }).join('') + '</ol><span class="ts-pk-you" aria-hidden="true"></span><span class="ts-pk-label" aria-hidden="true"></span></nav>' +
-      '<div class="ts-pk-card" role="group" aria-label="Section preview" tabindex="-1"></div><button type="button" class="ts-pk-back" hidden></button>' +
+      '<div class="ts-pk-card" role="group" aria-label="Section preview" tabindex="-1"></div>' +
       '<div class="ts-pk-tip" role="note" hidden><p>Slide your thumb along this bar to preview each section. Lift, then tap the preview to go there. Hold the icon above it to see them all.</p><div class="row"><button type="button" class="ok">Got it</button><button type="button" class="flip"></button></div></div>';
     var host = strip.parentNode, okHost = true;
     for (var an = host; an && an !== document.documentElement; an = an.parentElement) { var cs = getComputedStyle(an); if (cs.transform !== 'none' || cs.filter !== 'none' || cs.perspective !== 'none' || (cs.backdropFilter || cs.webkitBackdropFilter || 'none') !== 'none' || /transform|filter|perspective/.test(cs.willChange || '') || (cs.containerType && cs.containerType !== 'normal') || /paint|layout|strict|content/.test(cs.contain || '')) { okHost = false; break; } }   // any of these would make position:fixed relative to that ancestor
     if (okHost) host.insertBefore(box, strip.nextSibling); else document.body.appendChild(box);   // keyboard order: row, strip, rail, then the sections
     var top = strip, topSegs = [].slice.call(top.querySelectorAll('li')), nav = box.querySelector('.ts-pk-nav'), rail = nav.querySelector('.ts-pk-rail'),
-      you = nav.querySelector('.ts-pk-you'), label = nav.querySelector('.ts-pk-label'), card = box.querySelector('.ts-pk-card'), back = box.querySelector('.ts-pk-back');
+      you = nav.querySelector('.ts-pk-you'), label = nav.querySelector('.ts-pk-label'), card = box.querySelector('.ts-pk-card');
     segs = [].slice.call(rail.children);
     var tip = box.querySelector('.ts-pk-tip'), ixBtn = nav.querySelector('.ts-pk-ix'), fan = nav.querySelector('.ts-pk-fan'), fanItems = [].slice.call(fan.children);
     root.classList.add('ts-pk-ready');
@@ -206,7 +200,7 @@ add_action( 'wp_footer', function () {
     });
 
     // where the reader is
-    var cur = -1, from = null;
+    var cur = -1;
     function line() { return Math.max(window.innerHeight * 0.25, top.offsetHeight + 24); }
     function bounds(i) { var h = el(i), nx = el(i + 1), a = h ? h.getBoundingClientRect().top : 0, b = nx ? nx.getBoundingClientRect().top : content.getBoundingClientRect().bottom; return [a, b]; }
     function part(i) { var b = bounds(i); return Math.max(0, Math.min(1, (line() - b[0]) / Math.max(1, b[1] - b[0]))); }
@@ -215,13 +209,11 @@ add_action( 'wp_footer', function () {
     function lengths() { var hs = S.map(function (s, i) { var b = bounds(i); return Math.max(1, b[1] - b[0]); }), avg = hs.reduce(function (x, y) { return x + y; }, 0) / S.length; S.forEach(function (s, i) { s.len = hs[i] / avg; });
       if (segs) { segs.forEach(function (li, k) { li.style.setProperty('--len', S[k].len.toFixed(2)); }); topSegs.forEach(function (li, k) { li.style.setProperty('--len', S[k].len.toFixed(2)); }); } }
 
-    // jumping (heading just below the strip, also under the admin bar), and the way back
-    var glow = { el: null, t: 0 }, jumping = false, jumpT = 0;   // jumping: a jump's own scrolling is under way (Back must not hide itself during it)
+    // a jump: the heading lands just below the strip (also under the admin bar)
+    var glow = { el: null, t: 0 };
     function below() { return (parseFloat(getComputedStyle(top).top) || 0) + top.offsetHeight + 12; }   // where the stuck strip ends
-    function jumpTo(i, record) {
+    function jumpTo(i) {   // Ryan, 2026-11-08: no "Back to ..." button
       var h = el(i); if (!h) return;
-      if (record) { from = { y: window.scrollY, name: cur < 0 ? 'the top' : S[cur].label }; back.textContent = '↩ Back to ' + from.name; back.hidden = false; }
-      jumping = true; clearTimeout(jumpT); jumpT = setTimeout(function () { jumping = false; }, 3000);
       window.scrollTo({ top: h.getBoundingClientRect().top + window.scrollY - below(), behavior: calm.matches ? 'auto' : 'smooth' });
       if (glow.el) { glow.el.classList.remove('ts-pk-flash'); clearTimeout(glow.t); }
       glow.el = h; h.classList.remove('ts-pk-unflash'); h.classList.add('ts-pk-flash'); glow.t = setTimeout(function () { h.classList.add('ts-pk-unflash'); h.classList.remove('ts-pk-flash'); glow.el = null; }, 1200);
@@ -229,11 +221,10 @@ add_action( 'wp_footer', function () {
       h.focus({ preventScroll: true });
       try { history.replaceState(null, '', S[i].href); } catch (e) {}   // no history entry per jump (the browser's Back would only change the address); the in-page Back returns
     }
-    back.addEventListener('click', function () { if (!from) return; jumping = true; clearTimeout(jumpT); jumpT = setTimeout(function () { jumping = false; }, 3000); window.scrollTo({ top: from.y, behavior: calm.matches ? 'auto' : 'smooth' }); from = null; back.hidden = true; });
     // the row at the top of the page uses the same jump (otherwise the theme's own smooth scroll hides the heading under the strip)
     row.addEventListener('click', function (e) {
       var a = e.target.closest ? e.target.closest('a[href^="#"]') : null; if (!a || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-      var i = links.indexOf(a); if (i < 0 || !el(i)) return; e.preventDefault(); e.stopPropagation(); jumpTo(i, true);
+      var i = links.indexOf(a); if (i < 0 || !el(i)) return; e.preventDefault(); e.stopPropagation(); jumpTo(i);
     }, true);
 
     // the peek card
@@ -273,7 +264,7 @@ add_action( 'wp_footer', function () {
       var i = +card.dataset.i, hadFocus = card.contains(document.activeElement); hideCard();
       if (target.closest('.side')) { setSide(sideName() === 'left'); if (hadFocus) focusSeg(i); return; }
       if (target.closest('.x')) { if (hadFocus) focusSeg(i); return; }   // closing keeps keyboard users on the rail
-      jumpTo(i, true);
+      jumpTo(i);
     }
     var cdn = null, cardTapAt = -1e9;
     card.addEventListener('pointerdown', function (e) { cdn = card.classList.contains('is-pinned') && e.pointerType !== 'mouse' && e.isPrimary ? { id: e.pointerId, x: e.clientX, y: e.clientY } : null; });
@@ -283,7 +274,7 @@ add_action( 'wp_footer', function () {
     });
     card.addEventListener('pointercancel', function () { cdn = null; });
     card.addEventListener('click', function (e) { if (performance.now() - cardTapAt < 700) { e.preventDefault(); return; } activate(e.target); });
-    card.addEventListener('keydown', function (e) { if (e.key !== 'Enter' || !card.classList.contains('is-pinned') || e.target.closest('button')) return; var i = +card.dataset.i; hideCard(); jumpTo(i, true); });   // Enter on × or the side button is that button's own click
+    card.addEventListener('keydown', function (e) { if (e.key !== 'Enter' || !card.classList.contains('is-pinned') || e.target.closest('button')) return; var i = +card.dataset.i; hideCard(); jumpTo(i); });   // Enter on × or the side button is that button's own click
     document.addEventListener('pointerdown', function (e) {
       if (!card.classList.contains('is-pinned') || card.contains(e.target) || rail.contains(e.target)) return;
       hideCard(); swallowNextClick(false);   // this tap only closes the preview
@@ -325,7 +316,6 @@ add_action( 'wp_footer', function () {
       var name = S[Math.max(cur, 0)].label;
       if (name !== lastLabel) { lastLabel = name; top.querySelector('b').textContent = name; top.querySelector('span').textContent = (Math.max(cur, 0) + 1) + ' of ' + S.length; label.textContent = name; }
       you.style.top = label.style.top = (rr.top - nr.top + 8 + w * (rr.height - 16)) + 'px';
-      if (from && !back.hidden && !jumping && Math.abs(sy - from.y) < 40) { from = null; back.hidden = true; }   // the reader is back there already
       if (cur > -1 && !rail.contains(document.activeElement)) rove(cur);
       if (!tipDone && cur > -1) maybeTip();
     }
@@ -367,7 +357,7 @@ add_action( 'wp_footer', function () {
     tip.querySelector('.flip').addEventListener('click', function () { setSide(sideName() === 'left'); var rr = rail.getBoundingClientRect(); tip.style.top = Math.max(12, rr.top + rr.height / 2 - tip.offsetHeight / 2) + 'px'; nav.classList.remove('is-hinting'); void nav.offsetWidth; nav.classList.add('is-hinting'); clearTimeout(tipT); tipT = setTimeout(hideTip, 6000); });
     function ask() { if (!ticking) { ticking = true; window.requestAnimationFrame(draw); } }
     var still = 0;
-    window.addEventListener('scroll', function () { ask(); nav.classList.add('is-moving'); clearTimeout(still); still = setTimeout(function () { nav.classList.remove('is-moving'); if (jumping) { jumping = false; clearTimeout(jumpT); ask(); } }, 900); }, { passive: true });   // the section name shows beside the rail while the page scrolls
+    window.addEventListener('scroll', function () { ask(); nav.classList.add('is-moving'); clearTimeout(still); still = setTimeout(function () { nav.classList.remove('is-moving'); }, 900); }, { passive: true });   // the section name shows beside the rail while the page scrolls
     window.addEventListener('resize', function () { lengths(); ask(); });
     if ('ResizeObserver' in window) new ResizeObserver(function () { lengths(); ask(); }).observe(content);   // FAQ answers opening change the lengths
 

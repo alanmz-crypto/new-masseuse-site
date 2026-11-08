@@ -42,6 +42,8 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     ok(`${tag} the strip names the current topic and position`, (await strip()) === 'Common reasons / 2 of 5', await strip());
     ok(`${tag} the strip shows progress per section`, st.fills[0] === 1 && st.fills[1] > 0 && 1 > st.fills[1] && st.fills[2] === 0, st.fills.join(' '));
     ok(`${tag} the strip is display only`, st.pe === 'none' && st.controls === 0);
+    ok(`${tag} the thin sitewide reading-progress bar is gone (Ryan, 2026-11-08)`, await p.evaluate(() => { const a = getComputedStyle(document.body, '::after'); return !document.querySelector('style#wp-custom-css') || !document.getElementById('wp-custom-css').textContent.includes('ts-reading-progress'); }));
+    ok(`${tag} the scroll-to-top button is gone (Ryan, 2026-11-08)`, await p.evaluate(() => !document.getElementById('ast-scroll-top')));
     // first-time hint (Ryan, 2026-11-08: yes)
     const tp = await p.evaluate(() => { const t = document.querySelector('.ts-pk-tip'); return { shown: !t.hidden && t.classList.contains('is-on'), text: t.textContent, wiggle: document.querySelector('.ts-pk-nav').classList.contains('is-hinting'), stored: localStorage.getItem('ts-pk-tip') }; });
     ok(`${tag} first visit: a hint appears beside the rail once reading starts`, tp.shown && tp.text.includes('Slide your thumb') && tp.text.includes('Use it on the left') && tp.wiggle && tp.stored === 'seen', JSON.stringify(tp));
@@ -72,9 +74,8 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     await W(1300);
     let L = await landed(await hrefOf(3)); ok(`${tag} tapping the preview jumps, heading just below the strip`, L.ok, JSON.stringify(L));
     ok(`${tag} the strip follows the jump`, (await strip()) === 'Questions / 4 of 5', await strip());
-    ok(`${tag} a Back button names where you were`, await p.$eval('.ts-pk-back', b => !b.hidden && b.textContent.includes('Common reasons')));
-    await W(300); await p.tap('.ts-pk-back'); await W(1600);
-    const y1 = await Y(); ok(`${tag} Back returns to exactly where you were`, 3 >= Math.abs(y1 - y0), `${y0} -> ${y1}`);
+    ok(`${tag} no "Back to ..." button after a jump (Ryan, 2026-11-08)`, await p.evaluate(() => !document.querySelector('.ts-pk-back')));
+    await p.evaluate(y => scrollTo(0, y), y0); await W(800);
     // fixes from the Kiro review (2026-11-08)
     ok(`${tag} a long press on the rail cannot open the link menu or drag the link`, await p.evaluate(() => { const a = document.querySelector('.ts-pk-rail a'), ev = new MouseEvent('contextmenu', { bubbles: true, cancelable: true }); a.dispatchEvent(ev); return ev.defaultPrevented && a.getAttribute('draggable') === 'false'; }));
     await p.evaluate(() => { const t = document.createElement('a'); t.id = 'pk-probe'; t.href = '#pk-probe'; t.textContent = 'probe'; t.style.cssText = 'position:fixed;left:8px;top:45%;z-index:95;padding:12px;background:#fff'; window.__pkClicks = 0; t.addEventListener('click', e => { e.preventDefault(); window.__pkClicks++; }); document.body.appendChild(t); });
@@ -92,9 +93,7 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     const hl = await p.evaluate(() => history.length); y0 = await Y();
     await slideTo(4); await p.tap('.ts-pk-card .shot'); await W(1600);
     ok(`${tag} a jump adds no browser-history entry`, (await p.evaluate(() => history.length)) === hl);
-    ok(`${tag} Back is offered after the jump`, await p.$eval('.ts-pk-back', b => !b.hidden));
-    await p.evaluate(y => scrollTo(0, y), y0); await W(1400);
-    ok(`${tag} Back hides itself once the reader is back there by hand`, await p.$eval('.ts-pk-back', b => b.hidden));
+    await p.evaluate(y => scrollTo(0, y), y0); await W(800);
     const cssText = await p.evaluate(() => document.getElementById('ts-peek-nav-css').textContent);
     ok(`${tag} older browsers get a solid strip background (color-mix fallback)`, cssText.includes('background:var(--pk-ground);background:color-mix') && cssText.includes('background:var(--pk-panel);background:color-mix'));
     ok(`${tag} the bottom guide button is hidden only when the rail is there`, cssText.split('#ts-section-guide-trigger').length === cssText.split('html.ts-pk-ready #ts-section-guide-trigger').length);
@@ -200,6 +199,7 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
 const ctx = await b.newContext({ ...devices['iPhone 13'], deviceScaleFactor: 1 });
 const { p } = await open(ctx, '/therapeutic-massage/');
 ok('Therapeutic Massage unchanged (no strip, no rail)', await p.evaluate(() => !document.querySelector('.ts-pk') && !document.getElementById('ts-peek-nav-runtime')));
+ok('Therapeutic Massage: no reading-progress bar and no scroll-to-top button either (sitewide)', await p.evaluate(() => !document.getElementById('ast-scroll-top') && !(document.getElementById('wp-custom-css') || { textContent: '' }).textContent.includes('ts-reading-progress')));
 await b.close();
 console.log(`\nchromium: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);
