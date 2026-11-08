@@ -1,0 +1,37 @@
+# Site op `rollback-rail-ideas-v1-staging39-20261108`
+
+| | |
+|---|---|
+| operation | `run` on `staging39` |
+| script | `link-ideas/push-rail-ideas.sh` `--rollback $HOME/private-backups/rail-ideas-before-20261108-023010-860acf1b.json` |
+| lane | ops (site-ops.yml) |
+| commit | `c168fa7986e79f109d617d8cc65af6d5c5177cb7` on `claude/wizardly-bell-xu0rta` |
+| run | https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42439394666 |
+| started | 2026-11-08 02:38:37 UTC |
+
+## push-rail-ideas.sh --rollback $HOME/private-backups/rail-ideas-before-20261108-023010-860acf1b.json(S_TARGET=staging39): PASS
+
+```text
+Target site: staging39   mode: rollback
+[1] Connecting and uploading the package to ~/wwm-package-rail-ideas (outside every web root) ...
+[2] Rolling back:
+staging39 is www/staging39.thaisolitude.com/public_html
+Success: Rollback done: page #1347 (/rail-nav-ideas/) is deleted; nothing else was ever changed.
+SiteGround cache purged
+```
+
+## post-change-test.sh staging39 (pages, structured data, 20 pixel comparisons, PHP log): exit 1 (information, see below)
+
+```text
+Usage: /home/runner/work/new-masseuse-site/new-masseuse-site/scripts/work-with-me-employer/post-change-test.sh <live|staging24|staging25|staging26|staging27|staging30|staging31|staging32|staging33|staging34|staging36|staging37|staging38> [minutes]
+```
+
+## prove-restore.sh staging39 (the export taken before the change restores; what moved since): exit 1 (information, see below)
+
+```text
+Usage: /home/runner/work/new-masseuse-site/new-masseuse-site/scripts/work-with-me-employer/prove-restore.sh <live|staging24|staging25|staging26|staging27|staging30|staging31|staging32|staging33|staging34|staging36|staging37|staging38> [export.sql]
+```
+
+**RESULT: PASS** - push-rail-ideas.sh succeeded; read the two test sections: differences are expected only where the change is
+
+_finished 2026-11-08 02:39:29 UTC_
