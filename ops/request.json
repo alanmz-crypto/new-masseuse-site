@@ -1,10 +1,7 @@
 {
-  "id": "ui-peek-nav-staging39-20261108-16",
-  "op": "run",
-  "target": "staging39",
-  "script": "link-ideas/check-peek-nav.mjs",
-  "args": [
-    "https://staging39.thaisolitude.com"
-  ],
-  "tests": "none"
+  "id": "rehearse-sitewide-cleanup-20261108-2",
+  "op": "rehearse",
+  "target": "staging38",
+  "installer": "link-ideas/install-sitewide-cleanup.php",
+  "args": []
 }
