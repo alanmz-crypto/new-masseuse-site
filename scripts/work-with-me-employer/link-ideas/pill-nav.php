@@ -89,18 +89,28 @@ add_action( 'wp_footer', function () {
   }
   function ends() { list.classList.toggle('ts-at-end', list.scrollLeft + list.clientWidth >= list.scrollWidth - 2); }
   // Taps on a pill: handled here first (capture), so no other script's jump hides the heading under the header and pills.
+  function jump(t, smooth) {
+    var y = t.getBoundingClientRect().top + window.scrollY - (head.offsetHeight + nav.offsetHeight + 12);
+    window.scrollTo({ top: Math.max(0, y), behavior: smooth && !calm.matches ? 'smooth' : 'auto' });
+  }
   nav.addEventListener('click', function (e) {
     var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
     if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     var t = document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1)));
     if (!t) return;
     e.preventDefault(); e.stopPropagation();
-    var y = t.getBoundingClientRect().top + window.scrollY - (head.offsetHeight + nav.offsetHeight + 12);
-    window.scrollTo({ top: Math.max(0, y), behavior: calm.matches ? 'auto' : 'smooth' });
+    jump(t, true);
     try { history.pushState(null, '', a.getAttribute('href')); } catch (err) {}
     if (!t.hasAttribute('tabindex')) t.setAttribute('tabindex', '-1');
     t.focus({ preventScroll: true });
   }, true);
+  // Arriving with #section in the address: some heading ids are only set by the page's other scripts after load, so align it once they have run.
+  function arrive() {
+    var h = location.hash ? decodeURIComponent(location.hash.slice(1)) : '';
+    var t = h ? document.getElementById(h) : null;
+    if (t && links.some(function (a) { return a.getAttribute('href') === '#' + h; })) jump(t, false);
+  }
+  if (document.readyState === 'complete') { setTimeout(arrive, 150); } else { window.addEventListener('load', function () { setTimeout(arrive, 150); }); }
   var ticking = false;
   function ask() { if (!ticking) { ticking = true; window.requestAnimationFrame(update); } }
   window.addEventListener('scroll', ask, { passive: true });
