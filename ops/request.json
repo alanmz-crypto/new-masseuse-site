@@ -1,10 +1,11 @@
 {
-  "id": "ui-index-ideas-staging39-20261108-2",
+  "id": "rollback-peek-nav-v5-staging39-20261108",
   "op": "run",
   "target": "staging39",
-  "script": "link-ideas/check-index-ideas.mjs",
+  "script": "link-ideas/push-peek-nav.sh",
   "args": [
-    "https://staging39.thaisolitude.com"
+    "--rollback",
+    "$HOME/private-backups/peek-nav-before-20261108-050713-0f6a1da8.json"
   ],
-  "tests": "none"
+  "tests": "auto"
 }
