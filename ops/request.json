@@ -1,10 +1,11 @@
 {
-  "id": "apply-progress-ideas-staging39-20261108",
+  "id": "rollback-progress-ideas-v1-staging39-20261108",
   "op": "run",
   "target": "staging39",
   "script": "link-ideas/push-progress-ideas.sh",
   "args": [
-    "--apply"
+    "--rollback",
+    "$HOME/private-backups/progress-ideas-before-20261108-014523-7ae07e04.json"
   ],
   "tests": "auto"
 }
