@@ -1,10 +1,11 @@
 {
-  "id": "ui-rail-ideas-staging39-20261108",
+  "id": "rollback-rail-ideas-v1-staging39-20261108",
   "op": "run",
   "target": "staging39",
-  "script": "link-ideas/check-rail-ideas.mjs",
+  "script": "link-ideas/push-rail-ideas.sh",
   "args": [
-    "https://staging39.thaisolitude.com"
+    "--rollback",
+    "$HOME/private-backups/rail-ideas-before-20261108-023010-860acf1b.json"
   ],
-  "tests": "none"
+  "tests": "auto"
 }
