@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-08 00:34 UTC  **PASS**  `rehearse-link-ideas-20261108-3`  [reports/2026-11-08/003414-rehearse-link-ideas-20261108-3.md](reports/2026-11-08/003414-rehearse-link-ideas-20261108-3.md)  (run 42430245804)
 - 2026-11-08 00:32 UTC  **PASS**  `rollback-link-ideas-v1-staging39-20261108`  [reports/2026-11-08/003225-rollback-link-ideas-v1-staging39-20261108.md](reports/2026-11-08/003225-rollback-link-ideas-v1-staging39-20261108.md)  (run 42430076982)
 - 2026-11-08 00:30 UTC  **FAIL**  `rehearse-link-ideas-20261108-2`  [reports/2026-11-08/003021-rehearse-link-ideas-20261108-2.md](reports/2026-11-08/003021-rehearse-link-ideas-20261108-2.md)  (run 42429928610)
 - 2026-11-08 00:27 UTC  **FAIL**  `check-link-ideas-staging39-20261108-2`  [reports/2026-11-08/002729-check-link-ideas-staging39-20261108-2.md](reports/2026-11-08/002729-check-link-ideas-staging39-20261108-2.md)  (run 42429803357)
