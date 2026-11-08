@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-08 00:50 UTC  **PASS**  `probe-thai-header-staging39-20261108`  [reports/2026-11-08/005025-probe-thai-header-staging39-20261108.md](reports/2026-11-08/005025-probe-thai-header-staging39-20261108.md)  (run 42431511019)
 - 2026-11-08 00:40 UTC  **PASS**  `ui-link-ideas-staging39-20261108`  [reports/2026-11-08/004004-ui-link-ideas-staging39-20261108.md](reports/2026-11-08/004004-ui-link-ideas-staging39-20261108.md)  (run 42430640581)
 - 2026-11-08 00:35 UTC  **PASS**  `apply-link-ideas-staging39-20261108-2`  [reports/2026-11-08/003556-apply-link-ideas-staging39-20261108-2.md](reports/2026-11-08/003556-apply-link-ideas-staging39-20261108-2.md)  (run 42430349995)
 - 2026-11-08 00:34 UTC  **PASS**  `rehearse-link-ideas-20261108-3`  [reports/2026-11-08/003414-rehearse-link-ideas-20261108-3.md](reports/2026-11-08/003414-rehearse-link-ideas-20261108-3.md)  (run 42430245804)
