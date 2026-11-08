@@ -152,3 +152,10 @@ off). The row stays in the HTML as the source of the section list. Export `stagi
 - Check `ui-peek-nav-staging39-20261108-10`: **269/0**.
 **Undo:** snippet: `... push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-064135-d72debe4.json'`;
 cleanup: `scripts/ci/request.sh run --target staging39 --script link-ideas/push-sitewide-cleanup.sh --args '--rollback $HOME/private-backups/sitewide-cleanup-before-20261108-064546-26530c7b.json'`.
+**Header pinned (2026-11-08):** Ryan: "Would you make the header persistent too?" Snippet **#1359** (replaced #1357; the Thai page, like the rest of the design):
+with the runtime ready `#masthead` is `position:sticky` (admin-bar aware), the strip sticks right under it (`--pk-head` measured with a ResizeObserver),
+the rail starts below header + strip + icon on short screens, and the Astra phone menu scrolls within the screen (checked: opens at 85px, fits 664px).
+Not pinned below 501px of height (landscape phones), where header, strip and rail would not fit. Export `staging39-before-peek-nav-20261108-065824.sql`;
+snapshot `peek-nav-before-20261108-065841-c543ce54.json`; check `ui-peek-nav-staging39-20261108-12`: **280/0** (the first run tapped the pinned header's logo
+in a test step and left the page; the test now taps the strip and the page margin).
+**Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-065841-c543ce54.json'`.
