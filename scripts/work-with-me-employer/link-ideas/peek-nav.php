@@ -144,6 +144,14 @@ html .ts-pk .ts-pk-card.fit3 .open .d{display:none}
 html .ts-pk .ts-pk-card.fit3 .row{min-height:26px;padding:.1rem .5rem;font-size:.75rem}
 html .ts-pk .ts-pk-card.fit3 .row b{width:1.2rem;height:1.2rem}
 html .ts-pk .ts-pk-card.fit3 .open{padding:.45rem .7rem}
+html .ts-pk .ts-pk-card .more{display:none;margin:.2rem .3rem;font-size:.72rem;font-weight:700;color:var(--pk-muted);text-align:center}
+html .ts-pk .ts-pk-card.fit4 .row:not(.near){display:none}
+html .ts-pk .ts-pk-card.fit4 .more{display:block}
+html .ts-pk .ts-pk-card.fit5 .row,html .ts-pk .ts-pk-card.fit5 .more{display:none}
+html .ts-pk .ts-pk-card.fit5 .open small,html .ts-pk .ts-pk-card.fit5 .side{display:none}
+html .ts-pk .ts-pk-card.fit5 .open > b{font-size:.95rem;margin-top:0}
+html .ts-pk .ts-pk-card.fit5 .hint{margin-top:.3rem;padding-top:.3rem}   /* very short screens or very large text: the open box keeps only its name and "Tap to go there" */
+html .ts-pk .ts-pk-card.ts-pk-stack{overflow-y:auto;overscroll-behavior:contain}   /* last resort: the card scrolls, and fit() brings the open box into view */
 @media print{.ts-pk{display:none!important}}
 </style>
 	<?php
@@ -303,11 +311,12 @@ add_action( 'wp_footer', function () {
     }, true);
 
     // the peek card
-    function rowHTML(k) { return '<button type="button" class="row" data-k="' + k + '" aria-label="Section ' + (k + 1) + ': ' + esc(S[k].heading) + ' (show its preview)"><b>' + (k + 1) + '</b><span>' + esc(S[k].heading) + '</span></button>'; }
+    function rowHTML(k, near) { return '<button type="button" class="row' + (near ? ' near' : '') + '" data-k="' + k + '" aria-label="Section ' + (k + 1) + ': ' + esc(S[k].heading) + ' (show its preview)"><b>' + (k + 1) + '</b><span>' + esc(S[k].heading) + '</span></button>'; }
     function cardHTML(i, pinned) {
       var above = '', below = '';
-      for (var k = 0; k < S.length; k++) { if (k < i) above += rowHTML(k); else if (k > i) below += rowHTML(k); }
-      return above + '<div class="open">' + openHTML(i, pinned) + '</div>' + below;
+      for (var k = 0; k < S.length; k++) { if (k < i) above += rowHTML(k, k === i - 1); else if (k > i) below += rowHTML(k, k === i + 1); }
+      var upN = Math.max(0, i - 1), downN = Math.max(0, S.length - i - 2);   // shown only when the far rows are folded away (fit4)
+      return (upN ? '<span class="more" aria-hidden="true">+' + upN + ' more above</span>' : '') + above + '<div class="open" tabindex="-1" aria-label="Section ' + (i + 1) + ' preview: ' + esc(S[i].label) + '">' + openHTML(i, pinned) + '</div>' + below + (downN ? '<span class="more" aria-hidden="true">+' + downN + ' more below</span>' : '');
     }
     function openHTML(i, pinned) {
       var s = S[i], here = i === cur ? 'You are reading this section.' : (cur < 0 ? '' : 'You are in: ' + S[cur].label);
@@ -316,13 +325,18 @@ add_action( 'wp_footer', function () {
         '<span class="hint"><span>' + (pinned ? 'Tap to go there' : 'Lift to keep this preview') + '</span>' + (pinned ? '<button type="button" class="side" aria-label="Move the section bar to the ' + sideName() + ' side">⇆ ' + (sideName() === 'left' ? 'Left' : 'Right') + '</button>' : '') + '</span>';
     }
     function hover(i) { segs.forEach(function (li, k) { li.classList.toggle('is-hover', k === i); }); }
-    function fit() {   // drop detail in steps until the whole stack fits between the strip and the bottom of the screen
-      var avail = window.innerHeight - Math.max(8, top.getBoundingClientRect().bottom + 8) - 12;
-      ['fit1', 'fit2', 'fit3'].some(function (c) { if (card.scrollHeight <= avail) return true; card.classList.add(c); return false; });
+    function stuckBottom() { return (parseFloat(getComputedStyle(top).top) || 0) + top.offsetHeight; }   // where the strip ends once it sticks (also before it has)
+    function fit() {   // drop detail in steps until the whole stack fits between the stuck strip and the bottom of the screen (and within the card's own max-height)
+      card.classList.remove('fit1', 'fit2', 'fit3', 'fit4', 'fit5');
+      var avail = window.innerHeight - Math.max(8, stuckBottom() + 8) - 12, mh = parseFloat(getComputedStyle(card).maxHeight);
+      if (mh > 0) avail = Math.min(avail, mh);
+      // fit1-3 trim the open box; fit4 folds the far rows into "+N more"; fit5 leaves the open box alone
+      ['fit1', 'fit2', 'fit3', 'fit4', 'fit5'].some(function (c) { if (card.scrollHeight <= avail + 0.5) return true; card.classList.add(c); return false; });
+      var o = card.querySelector('.open'); if (o && card.scrollHeight > card.clientHeight + 1) card.scrollTop = Math.max(0, o.offsetTop - 4);   // never hidden
     }
     function place(y) {   // the open box beside the thumb; never past the bottom of the screen, then never above the strip
       var h = card.offsetHeight, o = card.querySelector('.open'), mid = o ? o.offsetTop + o.offsetHeight / 2 : h / 2;
-      var lo = Math.max(8, top.getBoundingClientRect().bottom + 8), hi = window.innerHeight - h - 12;
+      var lo = Math.max(8, stuckBottom() + 8), hi = window.innerHeight - h - 12;
       card.style.top = Math.max(Math.min(lo, hi), Math.min(hi, y - mid)) + 'px';
     }
     var shown = '', clear = 0;
@@ -350,7 +364,7 @@ add_action( 'wp_footer', function () {
       var row = target.closest('.row');
       if (row) {   // a closed box: open it in the stack (no jump), where it was
         var k = +row.getAttribute('data-k'), rr = row.getBoundingClientRect(), f = card.contains(document.activeElement);
-        show(k, rr.top + rr.height / 2, true); hover(k); if (f) card.focus({ preventScroll: true }); return;
+        show(k, rr.top + rr.height / 2, true); hover(k); if (f) { var no = card.querySelector('.open'); (no || card).focus({ preventScroll: true }); } return;   // screen readers hear the new section
       }
       var i = +card.dataset.i, hadFocus = card.contains(document.activeElement); hideCard();
       if (target.closest('.side')) { setSide(sideName() === 'left'); if (hadFocus) focusSeg(i); return; }
@@ -471,8 +485,9 @@ add_action( 'wp_footer', function () {
     function ask() { if (!ticking) { ticking = true; window.requestAnimationFrame(draw); } }
     var still = 0;
     window.addEventListener('scroll', function () { ask(); nav.classList.add('is-moving'); clearTimeout(still); still = setTimeout(function () { nav.classList.remove('is-moving'); }, 900); }, { passive: true });   // the section name shows beside the rail while the page scrolls
-    window.addEventListener('resize', function () { lengths(); ask(); });
-    if ('ResizeObserver' in window) new ResizeObserver(function () { lengths(); ask(); scheduleClear(true); }).observe(content);   // FAQ answers or late fonts move block edges   // FAQ answers opening change the lengths
+    window.addEventListener('resize', function () { lengths(); ask(); if (card.classList.contains('is-on')) { fit(); place(card.getBoundingClientRect().top + card.offsetHeight / 2); } });   // rotation or zoom with a card open: fit it again
+    var lastCW = -1;
+    if ('ResizeObserver' in window) new ResizeObserver(function (en) { lengths(); ask(); var w = Math.round(en[0].contentRect.width); if (w !== lastCW) { lastCW = w; scheduleClear(true); } }).observe(content);   // re-measure the rail clearance only when the width changes (an FAQ opening changes the height every frame)   // FAQ answers or late fonts move block edges   // FAQ answers opening change the lengths
 
     // arriving with #section in the address: the theme's own smooth scroll runs after load and ignores the strip, so line the heading up once the page stops moving
     // (only for 4 s, and never once the visitor touches, scrolls or types)

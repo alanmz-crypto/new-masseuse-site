@@ -263,6 +263,58 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
   ok('without JavaScript the in-page link row still shows, with all five links (fallback)', nj.shown && nj.links === labels.join('|'), JSON.stringify(nj));
   await ctx.close();
 }
+// Kiro, fourth review: the open box and "Tap to go there" are always visible (7 sections or large text in landscape); full detail at the top of the page;
+// the rail clearance is not re-measured every frame while the page height animates; focus follows a newly opened box
+const addSections = () => document.addEventListener('DOMContentLoaded', () => {   // runs before the snippet's own start-up
+  const list = document.querySelector('.entry-content .ts-jump__list') || document.querySelector('.entry-content .ts-jump ul'), c = document.querySelector('.entry-content');
+  if (!list || !c) return;
+  [['ts-extra-1', 'Extra section one for the check'], ['ts-extra-2', 'Extra section two for the check']].forEach(([id, t]) => {
+    const li = document.createElement('li'); li.innerHTML = '<a href="#' + id + '">' + t + '</a>'; list.appendChild(li);
+    const h = document.createElement('h2'); h.id = id; h.textContent = t; c.appendChild(h);
+    for (let n = 0; n < 4; n++) { const pp = document.createElement('p'); pp.textContent = 'A placeholder paragraph added by the browser check so that the page has seven sections for this test.'; c.appendChild(pp); }
+  }); });
+const openVisible = (p) => p.evaluate(() => { const c = document.querySelector('.ts-pk-card'), cr = c.getBoundingClientRect(), o = c.querySelector('.open'), h = c.querySelector('.open .hint'), b = c.querySelector('.open > b'); if (!o || !h || !b) return { ok: false };
+  const inside = el => { const r = el.getBoundingClientRect(); return r.height > 0 && r.top >= cr.top - 1 && r.bottom <= cr.bottom + 1 && r.top >= 0 && r.bottom <= innerHeight; };
+  return { ok: inside(b) && inside(h), fit: c.className.match(/fit\d/g) || [], rows: [...c.querySelectorAll('.row')].filter(r => getComputedStyle(r).display !== 'none').length, more: [...c.querySelectorAll('.more')].filter(m => getComputedStyle(m).display !== 'none').map(m => m.textContent) }; });
+const bigText = () => document.addEventListener('DOMContentLoaded', () => { document.documentElement.style.fontSize = '26px'; });
+for (const [label, init] of [['landscape, 7 sections', [addSections]], ['landscape, large text', [bigText]], ['landscape, 7 sections and large text', [addSections, bigText]]]) {
+  const ctx = await b.newContext({ ...devices['iPhone 13 landscape'], deviceScaleFactor: 1 });
+  await ctx.addInitScript(() => { try { localStorage.setItem('ts-pk-tip', 'seen'); } catch (e) {} });
+  for (const f of init) await ctx.addInitScript(f);
+  const { p, errors } = await open(ctx, '/thai-massage/');
+  const cdp = await ctx.newCDPSession(p);
+  await p.evaluate(() => { const t = document.querySelectorAll('.entry-content .ts-jump a')[1]; const h = document.getElementById(t.getAttribute('href').slice(1)); scrollTo(0, h.getBoundingClientRect().top + scrollY - 80); }); await p.waitForTimeout(600);
+  const n = await p.$$eval('.ts-pk-rail li', l => l.length);
+  for (const k of [0, Math.floor(n / 2), n - 1]) {
+    const z = await p.evaluate(i => { const r = document.querySelectorAll('.ts-pk-rail li')[i].getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; }, k);
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [z] }); await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] }); await p.waitForTimeout(500);
+    const v = await openVisible(p);
+    ok(`${label} (${n} sections): section ${k + 1}'s open box shows its name and "Tap to go there"`, v.ok, JSON.stringify(v));
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: 10, y: 10 }] }); await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] }); await p.waitForTimeout(500);
+  }
+  ok(`${label}: no JavaScript errors`, errors.length === 0, errors.join(' | '));
+  await ctx.close();
+}
+{ // full detail at the top of the page (the strip is still in the page there); focus follows a newly opened box; quiet during a height animation
+  const ctx = await b.newContext({ ...devices['iPhone 13'], deviceScaleFactor: 1 });
+  await ctx.addInitScript(() => { try { localStorage.setItem('ts-pk-tip', 'seen'); } catch (e) {} });
+  const { p } = await open(ctx, '/thai-massage/');
+  const cdp = await ctx.newCDPSession(p);
+  const z = await p.evaluate(() => { const r = document.querySelectorAll('.ts-pk-rail li')[2].getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [z] }); await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] }); await p.waitForTimeout(500);
+  const t0 = await p.evaluate(() => { const c = document.querySelector('.ts-pk-card'); return { y: Math.round(scrollY), fit: c.className.match(/fit\d/g) || [], shot: !!c.querySelector('.shot') && getComputedStyle(c.querySelector('.shot')).display !== 'none' }; });
+  ok('at the top of the page the preview keeps its full detail (measured from where the strip sticks)', t0.y === 0 && t0.shot && !t0.fit.includes('fit2') && !t0.fit.includes('fit3'), JSON.stringify(t0));
+  await p.keyboard.press('Escape'); await p.waitForTimeout(300);
+  await p.evaluate(() => document.querySelectorAll('.ts-pk-rail a')[1].dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 }))); await p.waitForTimeout(300);
+  await p.focus('.ts-pk-card .row[data-k="3"]'); await p.keyboard.press('Enter'); await p.waitForTimeout(300);
+  ok('keyboard: opening a closed box moves focus to the newly opened box', await p.evaluate(() => !!document.activeElement && document.activeElement.classList.contains('open') && /Section 4 preview/.test(document.activeElement.getAttribute('aria-label') || '')));
+  await p.keyboard.press('Escape'); await p.waitForTimeout(300);
+  const flips = await p.evaluate(() => new Promise(res => { let n = 0; const mo = new MutationObserver(m => m.forEach(x => { if (x.attributeName === 'class') n++; })); mo.observe(document.documentElement, { attributes: true });
+    const d = document.createElement('div'); d.style.height = '0px'; document.querySelector('.entry-content').appendChild(d); let h = 0; const t = setInterval(() => { h += 8; d.style.height = h + 'px'; }, 16);
+    setTimeout(() => { clearInterval(t); setTimeout(() => { mo.disconnect(); d.remove(); res(n); }, 200); }, 500); }));
+  ok('while the page height animates (an FAQ opening) the rail clearance is not re-measured every frame', 2 >= flips, `class changes on <html>: ${flips}`);
+  await ctx.close();
+}
 { // Kiro, third review: a saved left side is measured correctly on load; using the rail before the hint means the hint never comes
   const ctx = await b.newContext({ ...devices['iPhone 13'], deviceScaleFactor: 1 });
   await ctx.addInitScript(() => { try { localStorage.setItem('ts-pk-side', 'left'); } catch (e) {} });
