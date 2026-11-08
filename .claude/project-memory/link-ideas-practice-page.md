@@ -141,3 +141,14 @@ server-rendered `.ts-jump` row is `display:none` and the strip sits in its place
 off). The row stays in the HTML as the source of the section list. Export `staging39-before-peek-nav-20261108-062336.sql`; snapshot
 `peek-nav-before-20261108-062353-1c40c41c.json`; check `ui-peek-nav-staging39-20261108-9`: **272/0**.
 **Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-062353-1c40c41c.json'`.
+**Back button, reading-progress bar and scroll-to-top removed (2026-11-08):** Ryan: the thin progress bar is "unnecessary ... That's on every page. Remove it";
+"get rid of the back to section button"; "get rid of the scroll to the top button"; where: "Every page on staging39".
+- Snippet **#1357** (replaced #1356): no "Back to ..." button. Snapshot `peek-nav-before-20261108-064135-d72debe4.json`; export `staging39-before-peek-nav-20261108-064124.sql`.
+- New `link-ideas/install-sitewide-cleanup.php` + `push-sitewide-cleanup.sh` (staging39 only): removed the marked `/* ts-reading-progress:start ... :end */`
+  block (1,095 bytes) from the Additional CSS (rest byte-identical; rehearsal proved the exact undo) and set Astra `astra-settings['scroll-to-top-enable']`
+  to false. Server checks: six pages 200 with neither. Export `staging39-before-sitewide-cleanup-20261108-064533.sql`; snapshot
+  `sitewide-cleanup-before-20261108-064546-26530c7b.json`. Note for live: the reading-progress feature is LIVE sitewide since 2026-11-04 (see its record);
+  removing it on live needs Ryan's go and an enable-live change.
+- Check `ui-peek-nav-staging39-20261108-10`: **269/0**.
+**Undo:** snippet: `... push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-064135-d72debe4.json'`;
+cleanup: `scripts/ci/request.sh run --target staging39 --script link-ideas/push-sitewide-cleanup.sh --args '--rollback $HOME/private-backups/sitewide-cleanup-before-20261108-064546-26530c7b.json'`.
