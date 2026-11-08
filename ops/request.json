@@ -1,10 +1,7 @@
 {
-  "id": "probe-thai-header-staging39-20261108",
-  "op": "run",
+  "id": "rehearse-pill-nav-20261108",
+  "op": "rehearse",
   "target": "staging39",
-  "script": "link-ideas/probe-thai-header.mjs",
-  "args": [
-    "https://staging39.thaisolitude.com"
-  ],
-  "tests": "none"
+  "installer": "link-ideas/install-pill-nav.php",
+  "args": []
 }
