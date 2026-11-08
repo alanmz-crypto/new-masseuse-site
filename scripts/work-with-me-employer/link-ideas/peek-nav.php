@@ -193,7 +193,9 @@ add_action( 'wp_footer', function () {
     var head = document.getElementById('masthead');
     function measureHead() {
       var pinned = head && getComputedStyle(head).position === 'sticky';
-      root.style.setProperty('--pk-head', (pinned ? head.offsetHeight : 0) + 'px');
+      var menu = head ? head.querySelector('.ast-mobile-header-content') : null;   // the open phone menu lives inside the header: never count it (counting it made the menu's
+      var bar = pinned ? head.offsetHeight - (menu ? menu.offsetHeight : 0) : 0;     // max-height depend on itself, so it flickered between two sizes)
+      root.style.setProperty('--pk-head', Math.max(0, bar) + 'px');
       root.style.setProperty('--pk-strip', strip.offsetHeight + 'px');
     }
     measureHead();
