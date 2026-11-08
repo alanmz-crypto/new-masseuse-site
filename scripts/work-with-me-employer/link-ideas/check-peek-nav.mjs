@@ -158,6 +158,25 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     ok(`${tag} index: a click without a press (keyboard, screen reader) opens it`, (await fanState()).open);
     await p.keyboard.press('Escape'); await W(500);
     ok(`${tag} index: Escape closes it and focus stays on the icon`, !(await fanState()).open && (await p.evaluate(() => document.activeElement === document.querySelector('.ts-pk-ix'))));
+    // press the icon, then slide down onto the rail without lifting: the rail's preview takes over (Ryan, 2026-11-08)
+    y0 = await Y();
+    const ixAt2 = await p.$eval('.ts-pk-ix', e => { const r = e.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
+    const q = await seg(3);
+    await touch('touchStart', ixAt2.x, ixAt2.y); await W(400);
+    ok(`${tag} index slide: the names fan out first`, (await fanState()).open);
+    for (let k = 1; k <= 10; k++) { await touch('touchMove', ixAt2.x, ixAt2.y + (q.y - ixAt2.y) * k / 10); await W(30); }
+    c = await card(); fs = await fanState();
+    ok(`${tag} index slide: sliding onto the rail closes the fan and previews the section under the finger`, !fs.open && c.on && !c.pinned && c.name === 'Questions' && c.heading.length > 5, JSON.stringify({ fan: fs.open, c }));
+    ok(`${tag} index slide: the page does not move`, (await Y()) === y0);
+    const q2 = await seg(1); for (let k = 1; k <= 5; k++) { await touch('touchMove', ixAt2.x, q.y + (q2.y - q.y) * k / 5); await W(30); }
+    ok(`${tag} index slide: the preview follows the finger along the rail`, (await card()).name === 'Common reasons');
+    await touch('touchEnd'); await W(600);
+    c = await card(); ok(`${tag} index slide: lifting keeps the preview, no jump`, c.pinned && c.name === 'Common reasons' && (await Y()) === y0, JSON.stringify(c));
+    await p.tap('.ts-pk-card .shot'); await W(1600);
+    L = await landed(await hrefOf(1)); ok(`${tag} index slide: tapping the preview then jumps there`, L.ok, JSON.stringify(L));
+    await p.evaluate(y => scrollTo(0, y), y0); await W(800);
+    await touch('touchStart', ixAt2.x, ixAt2.y); await W(300); await touch('touchMove', ixAt2.x - 6, ixAt2.y + 6); await W(100); await touch('touchEnd'); await W(600);
+    ok(`${tag} index slide: a small wobble on the icon, then lifting, just closes the fan (no preview)`, !(await fanState()).open && !(await card()).on && (await Y()) === y0);
     // left-hand option (Ryan, 2026-11-08: yes)
     await slideTo(1); await p.tap('.ts-pk-card .side'); await W(500);
     const lh = await p.evaluate(() => { const r = document.querySelector('.ts-pk-rail').getBoundingClientRect(); return { left: document.documentElement.classList.contains('ts-pk-left'), railLeft: Math.round(r.left), stored: localStorage.getItem('ts-pk-side'), card: document.querySelector('.ts-pk-card').classList.contains('is-on') }; });

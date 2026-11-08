@@ -180,7 +180,7 @@ add_action( 'wp_footer', function () {
     box.innerHTML = '<nav class="ts-pk-nav" aria-label="Sections on this page"><button type="button" class="ts-pk-ix" aria-expanded="false" aria-controls="ts-pk-fan" aria-label="Show all sections (press and hold)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 7h12M6 12h9M6 17h6"/></svg></button>' +
       '<ol class="ts-pk-fan" id="ts-pk-fan" aria-label="All sections" aria-hidden="true">' + S.map(function (s, i) { return '<li><b>' + (i + 1) + '</b><span>' + esc(s.label) + '</span></li>'; }).join('') + '</ol><ol class="ts-pk-rail">' + S.map(function (s) { return '<li><a href="' + esc(s.href) + '" aria-label="' + esc(s.label) + '" draggable="false"><i></i></a></li>'; }).join('') + '</ol><span class="ts-pk-you" aria-hidden="true"></span><span class="ts-pk-label" aria-hidden="true"></span></nav>' +
       '<div class="ts-pk-card" role="group" aria-label="Section preview" tabindex="-1"></div>' +
-      '<div class="ts-pk-tip" role="note" hidden><p>Slide your thumb along this bar to preview each section. Lift, then tap the preview to go there. Hold the icon above it to see them all.</p><div class="row"><button type="button" class="ok">Got it</button><button type="button" class="flip"></button></div></div>';
+      '<div class="ts-pk-tip" role="note" hidden><p>Slide your thumb along this bar to preview each section. Lift, then tap the preview to go there. Hold the icon above it to see them all, and slide down onto the bar to preview one.</p><div class="row"><button type="button" class="ok">Got it</button><button type="button" class="flip"></button></div></div>';
     var host = strip.parentNode, okHost = true;
     for (var an = host; an && an !== document.documentElement; an = an.parentElement) { var cs = getComputedStyle(an); if (cs.transform !== 'none' || cs.filter !== 'none' || cs.perspective !== 'none' || (cs.backdropFilter || cs.webkitBackdropFilter || 'none') !== 'none' || /transform|filter|perspective/.test(cs.willChange || '') || (cs.containerType && cs.containerType !== 'normal') || /paint|layout|strict|content/.test(cs.contain || '')) { okHost = false; break; } }   // any of these would make position:fixed relative to that ancestor
     if (okHost) host.insertBefore(box, strip.nextSibling); else document.body.appendChild(box);   // keyboard order: row, strip, rail, then the sections
@@ -356,9 +356,28 @@ add_action( 'wp_footer', function () {
       nav.classList.toggle('is-index', on); ixBtn.setAttribute('aria-expanded', String(on)); fan.setAttribute('aria-hidden', String(!on));
     }
     ixBtn.addEventListener('contextmenu', function (e) { e.preventDefault(); });
-    ixBtn.addEventListener('pointerdown', function (e) { if (e.button > 0 || !e.isPrimary) return; ixPress = e.pointerId; try { ixBtn.setPointerCapture(e.pointerId); } catch (err) {} setIndex(true); e.preventDefault(); });
-    function ixRelease(e) { if (ixPress === null || e.pointerId !== ixPress) return; ixPress = null; ixPressedAt = performance.now(); setIndex(false); }
-    ixBtn.addEventListener('pointerup', ixRelease); ixBtn.addEventListener('pointercancel', ixRelease); ixBtn.addEventListener('lostpointercapture', ixRelease);
+    // press the icon: the names fan out. Without lifting, slide down onto the rail: the fan closes and the rail's preview takes over (Ryan, 2026-11-08);
+    // lifting there keeps the preview, exactly as a press that started on the rail
+    var handed = null;   // the rail gesture the icon press turned into: { i, y }
+    ixBtn.addEventListener('pointerdown', function (e) { if (e.button > 0 || !e.isPrimary) return; ixPress = e.pointerId; handed = null; try { ixBtn.setPointerCapture(e.pointerId); } catch (err) {} setIndex(true); e.preventDefault(); });
+    ixBtn.addEventListener('pointermove', function (e) {
+      if (ixPress === null || e.pointerId !== ixPress) return;
+      var rr = rail.getBoundingClientRect();
+      if (!handed) {
+        if (e.clientY < rr.top + 4) return;   // still on (or around) the icon: the fan stays out
+        setIndex(false); handed = { i: pickAt(e.clientY), y: e.clientY }; buzz(); show(handed.i, handed.y, false); return;
+      }
+      var i = pickAt(e.clientY); handed.y = e.clientY; if (i !== handed.i) { handed.i = i; buzz(); } show(handed.i, handed.y, false);
+    });
+    function ixRelease(e) {
+      if (ixPress === null || e.pointerId !== ixPress) return;
+      ixPress = null; ixPressedAt = performance.now();
+      var h = handed; handed = null;
+      if (h && e.type === 'pointerup') { show(h.i, h.y, true); return; }   // lifted on the rail: the preview stays, tap it to go there
+      if (h) { hideCard(); return; }                                           // cancelled while on the rail
+      setIndex(false);
+    }
+    ixBtn.addEventListener('pointerup', ixRelease); ixBtn.addEventListener('pointercancel', ixRelease); ixBtn.addEventListener('lostpointercapture', function (e) { if (ixPress !== null && e.pointerId === ixPress) setTimeout(function () { ixRelease({ pointerId: e.pointerId, type: 'pointercancel' }); }, 0); });
     ixBtn.addEventListener('click', function (e) { e.preventDefault(); if (performance.now() - ixPressedAt < 600) { ixPressedAt = -1e9; return; } setIndex(!ixOpen); });
     document.addEventListener('pointerdown', function (e) { if (ixOpen && ixPress === null && !ixBtn.contains(e.target)) { setIndex(false); swallowNextClick(false); } }, true);
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && ixOpen) { setIndex(false); ixBtn.focus(); } });
