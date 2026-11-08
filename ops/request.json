@@ -1,7 +1,10 @@
 {
-  "id": "rehearse-link-ideas-20261108-3",
-  "op": "rehearse",
+  "id": "apply-link-ideas-staging39-20261108-2",
+  "op": "run",
   "target": "staging39",
-  "installer": "link-ideas/install-link-ideas.php",
-  "args": []
+  "script": "link-ideas/push-link-ideas.sh",
+  "args": [
+    "--apply"
+  ],
+  "tests": "auto"
 }
