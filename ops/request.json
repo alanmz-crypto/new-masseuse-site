@@ -1,6 +1,11 @@
 {
-  "id": "inspect-staging39-snippets-20261108",
-  "op": "inspect",
+  "id": "rollback-peek-nav-v11-staging39-20261108",
+  "op": "run",
   "target": "staging39",
-  "query": "snippets"
+  "script": "link-ideas/push-peek-nav.sh",
+  "args": [
+    "--rollback",
+    "$HOME/private-backups/peek-nav-before-20261108-074540-f4aa4369.json"
+  ],
+  "tests": "auto"
 }
