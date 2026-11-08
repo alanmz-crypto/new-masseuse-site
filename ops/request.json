@@ -1,10 +1,7 @@
 {
-  "id": "ui-pill-nav-staging39-20261108-5",
-  "op": "run",
+  "id": "rehearse-progress-ideas-20261108",
+  "op": "rehearse",
   "target": "staging39",
-  "script": "link-ideas/check-pill-nav.mjs",
-  "args": [
-    "https://staging39.thaisolitude.com"
-  ],
-  "tests": "none"
+  "installer": "link-ideas/install-progress-ideas.php",
+  "args": []
 }
