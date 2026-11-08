@@ -76,14 +76,17 @@ case "$phase" in
     tmp=$(mktemp -d); trap 'rm -rf "$tmp" "$cfgs"' EXIT
     code=$(curl -s -o "$tmp/p.html" -w '%{http_code}' --max-time 30 "https://$want/in-page-link-ideas/" || true); echo "  $code /in-page-link-ideas/"
     [ "$code" = 200 ] || { echo "/in-page-link-ideas/ does not answer 200 (202 = SiteGround's bot challenge = INVALID, retry later)." >&2; exit 1; }
-    need() { local n; n=$(grep -o -F -- "$1" "$tmp/p.html" | wc -l); [ "$n" = "$2" ] || { echo "CHECK FAILED: the page should contain '$1' exactly $2 time(s), has $n (cache?)." >&2; exit 1; }; }
+    bad=0
+    need() { local n; n=$(grep -o -F -- "$1" "$tmp/p.html" | wc -l); if [ "$n" = "$2" ]; then echo "  ok   $n x $1"; else echo "  FAIL $n x $1 (want $2)"; bad=1; fi; }
     need 'id="tsx-lab"' 1
     need '<h1>In-page link ideas</h1>' 1
     need 'data-idea="' 10                                  # five picker buttons + five idea blocks
     need 'class="tsx-sec"' 6
     need "document.getElementById('tsx-lab')" 1          # the script arrived unfiltered
     need '.tsx-lab .tsx-pills{position:sticky' 1          # the style arrived unfiltered
-    need '&#8220;' 0                                      # no curly-quote rewriting inside the script (would break it)
+    sed -n '/<script>/,/<\/script>/p' "$tmp/p.html" | grep -c -F -e '&#8220;' -e '&#8217;' -e '&#038;' | sed 's/^/  texturized or escaped characters inside the scripts: /'
+    [ "$(sed -n "/document.getElementById('tsx-lab')/,/<\/script>/p" "$tmp/p.html" | grep -c -F -e '&#8220;' -e '&#8217;' -e '&#038;' -e '&#8216;')" = 0 ] && echo "  ok   the page script is unaltered" || { echo "  FAIL the page script was altered by WordPress"; bad=1; }
+    [ "$bad" = 0 ] || { echo "CHECK FAILED (see the lines above)"; exit 1; }
     echo "public check: the page answers 200 with its heading, 5 ideas, 6 sample sections, and its style and script intact" ;;
   rollback) snap=${snap/#\$HOME/$HOME}; run rollback "$snap"; purge ;;
   *) echo "unknown phase" >&2; exit 1 ;;
