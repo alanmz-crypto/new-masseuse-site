@@ -1,7 +1,7 @@
 {
-  "id": "inspect-thai-s39-sum-1",
-  "op": "inspect",
+  "id": "rehearse-peek-nav-29-1",
+  "op": "rehearse",
   "target": "staging39",
-  "query": "page",
-  "arg": "thai-massage"
+  "installer": "link-ideas/install-peek-nav.php",
+  "args": []
 }
