@@ -58,7 +58,10 @@ html .ts-pk .ts-pk-card .row span{min-width:0;overflow:hidden;white-space:nowrap
 html .ts-pk .ts-pk-card .sum p{margin:0 0 .55em;padding:0;font:inherit;line-height:inherit;color:inherit}
 html .ts-pk .ts-pk-card .sum p:last-child{margin-bottom:0}
 .ts-pk-card .sum.has-more{-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 1.8em),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 1.8em),transparent)}   /* more below: the last line fades (Kiro) */
-html .ts-pk .ts-pk-card .sum.is-gist{max-height:none;overflow:visible;margin-top:.45rem;padding:0;font-size:1.05rem;font-weight:700;line-height:1.3;color:var(--pk-ink)}   /* a glance, never a read */
+html .ts-pk .ts-pk-card .sum.is-gist{margin-top:.45rem;font-size:.92rem;font-weight:600;line-height:1.3;color:var(--pk-ink)}   /* a glance, never a read: one idea per line */
+html .ts-pk .ts-pk-card .sum.is-gist ul{margin:0;padding:0;list-style:none}
+html .ts-pk .ts-pk-card .sum.is-gist li{position:relative;margin:0 0 .28em;padding:0 0 0 .9em}
+html .ts-pk .ts-pk-card .sum.is-gist li::before{content:'';position:absolute;left:.1em;top:.5em;width:.36em;height:.36em;border-radius:50%;background:var(--pk-on)}
 .ts-pk-card .sum:focus-visible{outline:3px solid var(--pk-accent);outline-offset:2px;border-radius:6px}
 .ts-pk-card .hint{display:block;margin-top:.6rem;padding-top:.55rem;border-top:1px solid var(--pk-rule);font-size:.82rem;font-weight:700;color:var(--pk-on)}
 html[data-ts-theme="dark"] .ts-pk-card .hint{color:var(--pk-on)}
@@ -151,7 +154,7 @@ html .ts-pk .ts-pk-card.fit4 .more{display:block}
 html .ts-pk .ts-pk-card.fit5 .row,html .ts-pk .ts-pk-card.fit5 .more{display:none}
 html .ts-pk .ts-pk-card.fit5 .open small,html .ts-pk .ts-pk-card.fit5 .side,html .ts-pk .ts-pk-card.fit5 .sum{display:none}
 html .ts-pk .ts-pk-card.fit5 .open > b{font-size:.95rem;margin-top:0}
-html .ts-pk .ts-pk-card.fit5 .sum.is-gist{display:block;margin-top:.15rem;font-size:.95rem}   /* the glance line stays even on the smallest fit */
+html .ts-pk .ts-pk-card.fit5 .sum.is-gist{display:block;max-height:2.7em;margin-top:.15rem}   /* the glance list stays even on the smallest fit (it scrolls) */
 html .ts-pk .ts-pk-card.fit5 .hint{margin-top:.3rem;padding-top:.3rem}   /* very short screens or very large text: the open box keeps only its name and "Tap to go there" */
 html .ts-pk .ts-pk-card.ts-pk-stack{overflow-y:auto;overscroll-behavior:contain}   /* last resort: the card scrolls, and fit() brings the open box into view */
 @media print{.ts-pk{display:none!important}}
@@ -179,11 +182,17 @@ add_action( 'wp_footer', function () {
     function buzz() { if (navigator.vibrate) { try { navigator.vibrate(6); } catch (e) {} } }
 
     // what each section is: its heading, its first paragraph, its length (read from the page itself)
-    // Ryan, 2026-11-08: the summary is a glance, "subject, verb, object, in three or less words", so a reader knows at once whether the section is worth
-    // reading. Written by hand per section (new wording on a regulated page: no claim words, no outcomes promised; shown to Ryan for approval before live).
-    // A section without a line here falls back to its own opening paragraphs.
-    var GISTS = { 'ts-what-it-is': 'Movement meets massage', 'ts-common-reasons': 'Stiffness brings clients', 'ts-what-to-expect': 'You set the pace',
-      'ts-guide-questions': 'You stay clothed', 'ts-guide-research': 'Research is limited' };
+    // Ryan, 2026-11-08: the summary is a glance. Each distinct idea of the section becomes one short "subject, verb, object" (three words or so);
+    // ideas that overlap are merged into one, or the lesser one is left out; no minutiae and nothing said twice (also not across sections). A long
+    // section (the research) may have a longer list; the box scrolls. Written by hand from the rendered page (new wording on a regulated page: no
+    // claim words, no outcomes promised; checked with wording_tiers; for Ryan's approval before live). A section without a list keeps its own paragraphs.
+    var GISTS = {
+      'ts-what-it-is': ['Movement meets massage', 'Pressure, rocking, stretching', 'Butsaba\'s specialty', 'Restful or active', 'Rooted in Thai self-care'],
+      'ts-common-reasons': ['Routines leave stiffness', 'Freer movement wanted', 'Some simply unwind', 'Tight areas get time'],
+      'ts-what-to-expect': ['Share health history', 'Warning signs: see doctor', 'Brief talk first', 'You set the pace', 'Check-ins throughout', 'Change anything, anytime', 'Aftercare tips'],
+      'ts-guide-questions': ['Wear loose clothing', 'Done on a mat', '60 or 90 minutes', 'Stretches never forced', 'Group bookings: Nov 14', 'Solo sessions: summer 2027', 'No home visits'],
+      'ts-guide-research': ['Evidence is limited', 'Trials are small, short', 'Reviews reported less pain', 'Big reviews stay cautious', 'Regular sessions may matter', 'Serious harm is rare', 'Massage beat sham devices', 'Other methods mostly tied', 'Not always ahead', 'Muscles recovered faster', 'Stress results mixed', 'Swedish relaxed more', 'Thai energized more']
+    };
     function describe() {
       var ps = [].slice.call(content.querySelectorAll('p'));
       S.forEach(function (s, i) {
@@ -202,7 +211,7 @@ add_action( 'wp_footer', function () {
           }
         }
       });
-      S.forEach(function (s, i) { var id = s.href.slice(1); s.gist = Object.prototype.hasOwnProperty.call(GISTS, id) ? GISTS[id] : ''; var sm = s.gist ? [] : summarize(i), alt = s.excerpt || s.desc; s.summary = sm.length ? sm : (alt ? [alt] : []); });
+      S.forEach(function (s, i) { var id = s.href.slice(1); s.gist = Object.prototype.hasOwnProperty.call(GISTS, id) ? GISTS[id] : null; var sm = s.gist ? [] : summarize(i), alt = s.excerpt || s.desc; s.summary = sm.length ? sm : (alt ? [alt] : []); });
       if (segs) segs.forEach(function (li, i) { li.querySelector('a').setAttribute('aria-label', S[i].label + (S[i].desc ? ': ' + S[i].desc : '')); });   // the rail's names for screen readers include the description
     }
 
@@ -344,7 +353,7 @@ add_action( 'wp_footer', function () {
     function openHTML(i, pinned) {
       var s = S[i], here = i === cur ? 'You are reading this section.' : (cur < 0 ? '' : 'You are in: ' + S[cur].label);
       return '<button type="button" class="x" aria-label="Close the preview">×</button><small>Section ' + (i + 1) + ' of ' + S.length + ' · ' + s.mins + ' min</small><b>' + esc(s.label) + '</b><span class="here">' + esc(here) + '</span>' +
-        (s.gist ? '<div class="sum is-gist" role="region" aria-label="Summary of ' + esc(s.label) + '"><p>' + esc(s.gist) + '</p></div>'
+        (s.gist ? '<div class="sum is-gist" tabindex="0" role="region" aria-label="Summary of ' + esc(s.label) + '"><ul>' + s.gist.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul></div>'
          : s.summary.length ? '<div class="sum" tabindex="0" role="region" aria-label="Summary of ' + esc(s.label) + '">' + s.summary.map(function (t) { return '<p>' + esc(t) + '</p>'; }).join('') + '</div>' : '') +
         '<span class="hint"><span>' + (pinned ? 'Tap to go there' : 'Lift to keep this preview') + '</span>' + (pinned ? '<button type="button" class="side" aria-label="Move the section bar to the ' + sideName() + ' side">⇆ ' + (sideName() === 'left' ? 'Left' : 'Right') + '</button>' : '') + '</span>';
     }
@@ -354,7 +363,7 @@ add_action( 'wp_footer', function () {
     function fit() {   // drop detail in steps until the whole stack fits between the stuck strip and the bottom of the screen (and within the card's own max-height)
       card.classList.remove('fit1', 'fit2', 'fit3', 'fit4', 'fit5');
       var avail = window.innerHeight - Math.max(8, stuckBottom() + 8) - 12, mh = parseFloat(getComputedStyle(card).maxHeight);
-      if (mh > 0) avail = Math.min(avail, mh);
+      if (mh > 0) avail = Math.min(avail, mh - (card.offsetHeight - card.clientHeight));   // max-height includes the border; scrollHeight does not
       // fit1-3 trim the open box; fit4 folds the far rows into "+N more"; fit5 leaves the open box alone
       ['fit1', 'fit2', 'fit3', 'fit4', 'fit5'].some(function (c) { if (card.scrollHeight <= avail + 0.5) return true; card.classList.add(c); return false; });
       var o = card.querySelector('.open'); if (o && card.scrollHeight > card.clientHeight + 1) card.scrollTop = Math.max(0, o.offsetTop - 4);   // never hidden
