@@ -41,6 +41,10 @@ Branch **`claude/wizardly-bell-xu0rta`** (nothing is on `main`). Everything belo
    and it flickered between two sizes (reproduced on staging39 and on the mock with the previous code: header 328/421 px alternating). Only the header
    bar is measured now (header minus `.ast-mobile-header-content`).
 
+10. **Added after this handoff was first written:** press the index icon, then slide down onto the rail without lifting: the fan closes and the rail's
+    Peek preview follows the finger; lifting there pins it (tap to go). Snippet **#1361**; the check now has **310** assertions (staging39 and mock 310/0).
+    Please include the icon's `pointermove` handoff (`handed`) in your review.
+
 ## 3. Files
 
 | File (under `scripts/work-with-me-employer/link-ideas/`) | What it is |
@@ -60,7 +64,7 @@ Design notes and lessons: `.claude/project-memory/link-ideas-practice-page.md`. 
 cd scripts/work-with-me-employer/link-ideas/mock
 python3 build-mock.py            # writes ./site (git-ignored)
 python3 -m http.server 8090 -d site &
-TS_PLAYWRIGHT_ROOT=<path to a playwright package.json> node ../check-peek-nav.mjs http://localhost:8090   # expect 282 passed, 0 failed
+TS_PLAYWRIGHT_ROOT=<path to a playwright package.json> node ../check-peek-nav.mjs http://localhost:8090   # expect 310 passed, 0 failed
 ```
 The mock has placeholder text and none of Astra's real styles; staging39 has both. To see a past bug, build the mock from an older commit's
 `peek-nav.php` (for example `d184012` shows the menu flicker).
@@ -103,7 +107,7 @@ The mock has placeholder text and none of Astra's real styles; staging39 has bot
 > Read `docs/inter-model/2026-11-08-peek-nav-kiro-review-2-handoff.md` on branch `claude/wizardly-bell-xu0rta` of `alanmz-crypto/new-masseuse-site`
 > (pull the latest commit first) and follow it. Build the mock (`scripts/work-with-me-employer/link-ideas/mock/build-mock.py`), run
 > `check-peek-nav.mjs` (expect 282 passed), then review what changed since your first review: the pinned header and `measureHead`, the index icon
-> (press and hold), the hidden link row, the left-hand option, the first-time hint, the removed Back button, and `install-sitewide-cleanup.php`.
+> (press and hold, and press-then-slide onto the rail), the hidden link row, the left-hand option, the first-time hint, the removed Back button, and `install-sitewide-cleanup.php`.
 > Report flaws first (most severe first, with file:line, how to reproduce on the mock or in a browser, and the smallest fix), then enhancements;
 > say which findings you reproduced and which are from reading only. Do not edit `ops/request.json` or `ops/live-request.json`, do not run
 > `scripts/ci/request.sh`, and do not touch `main`. Changes, if any, go on a new branch from `claude/wizardly-bell-xu0rta` with a pull request into it.

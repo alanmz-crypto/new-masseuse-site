@@ -165,3 +165,9 @@ header 328/421px alternating): the open Astra phone menu sits inside `#masthead`
 `staging39-before-peek-nav-20261108-072416.sql`; snapshot `peek-nav-before-20261108-072428-8b5dda0b.json`; check `ui-peek-nav-staging39-20261108-13`: **282/0**
 (menu steady at 421/336, `--pk-head` 85px). **Lesson:** never size a child from a measurement of a parent that contains it.
 **Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-072428-8b5dda0b.json'`.
+**Index-to-rail slide (2026-11-08):** Ryan: "if you press the index, it behaves as you have created it. However, if you press the index and then slide to the rail
+without lifting your finger, then the rail options open up." Snippet **#1361**: the icon keeps the pointer (capture); once the finger crosses the rail's top edge the
+fan closes and the Peek preview follows the finger along the rail; lifting there pins it (tap to go); cancel hides it; lifting on the icon just closes the fan.
+The first-time hint mentions it. Export `staging39-before-peek-nav-20261108-074527.sql`; snapshot `peek-nav-before-20261108-074540-f4aa4369.json`;
+check `ui-peek-nav-staging39-20261108-14`: **310/0**. Note: the second Kiro review handoff predates this (it says 282).
+**Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-074540-f4aa4369.json'`.
