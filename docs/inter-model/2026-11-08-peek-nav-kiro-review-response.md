@@ -54,3 +54,28 @@ So no pull request is needed for these. Useful next work for a reviewer: pull th
 mock (167/0 expected; see `mock/build-mock.py`), and review the **new** code paths: the card's tap-on-`pointerup` activation, the 450 ms click swallow after an
 outside tap, the 600 ms "click after a press" window on the rail, and the moved DOM position (rail/card/Back inserted after the strip). Real-device checks
 (#1 long press, #3, #4, #9) remain open and need a phone.
+
+## Second review (Kiro ran the current code) and Ryan's two yeses
+
+Kiro confirmed 167/0 on `931efb1` and found four real problems in the new code paths. All four are fixed in snippet **#1353** on staging39, without a pull
+request from Kiro (same session, to save a round trip), each with a check:
+
+| # | Finding | Outcome |
+| --- | --- | --- |
+| 1 | A tap on the pinned card also clicked what was under it (the card turns `pointer-events:none` before the click is hit-tested) | **Fixed**: shared `swallowNextClick()`; the card's own tap installs it. Checked with a full-screen link under the card: 0 clicks. |
+| 2 | The 450 ms swallow was timed from `pointerdown`, so slow taps clicked through | **Fixed**: timed from `pointerup`. Checked with a 700 ms press: 0 clicks; the next tap works. |
+| 3 | A touch that becomes a scroll left the swallow armed | **Fixed**: `pointercancel` disarms it. |
+| 4 | Enter on × jumped instead of closing | **Fixed**: Enter on a card button is that button's own click; focus returns to the rail piece. Checked. |
+| – | `lostpointercapture` could leave the rail stuck | **Fixed**: a real loss of capture cancels the press. |
+| – | Host check missed `backdrop-filter`, `will-change`, container queries | **Fixed**. |
+| – | Theme content rules could reach the moved parts | **Confirmed on staging39** (a theme rule underlined the rail links, invisible because they have no text) and **fixed**: scoped resets, `!important` for link decoration. Checked with computed styles. |
+| – | Ten tab stops before the content | **Fixed**: the rail is one keyboard stop (roving `tabindex`), arrow keys / Home / End move along it. Checked. |
+
+Ryan said yes to two of Kiro's enhancements:
+- **Left-hand option:** the pinned preview has a "⇆ Left / ⇆ Right" button and the first-time hint has "Use it on the left/right". The choice is stored in
+  `localStorage` (`ts-pk-side`) and mirrors the rail, card, label and Back; the right side then keeps the theme's own spacing. Checked, including after a reload.
+- **First-time hint:** once per visitor (`localStorage` `ts-pk-tip`), when reading starts: a short note beside the rail ("Slide your thumb along this bar
+  to preview each section. Lift, then tap the preview to go there.") with "Got it" and the side switch, and two gentle wiggles of the rail (none under reduced
+  motion). It leaves after 9 s, on "Got it", or when the rail is touched. Checked.
+
+Result: **223/0** on staging39 (run `ui-peek-nav-staging39-20261108-7`) and three times on the mock. Desktop hover is still open (PC decision pending).
