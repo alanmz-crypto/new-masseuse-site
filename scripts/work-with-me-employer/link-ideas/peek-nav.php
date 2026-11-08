@@ -61,10 +61,10 @@ html[data-ts-theme="dark"] .ts-pk-card .hint{color:var(--pk-on)}
 .ts-pk-unflash{transition:background-color .6s}
 /* keep the text clear of the rail on phones and tablets; the bottom "On this page" button is replaced by the rail */
 @media (max-height:500px){.ts-pk-card .shot>span,.ts-pk-card .here{display:none}.ts-pk-card .shot em{margin:0}}   /* landscape phones: the card fits the screen */
-@media (max-width:1100px){html.ts-pk-ready:not(.ts-pk-left) .entry-content{padding-right:26px}html:not(.ts-pk-left) .ts-pk-top{padding-right:44px}}   /* the strip's text stays clear of the rail while it is still in the page */
+@media (max-width:1100px){html.ts-pk-ready:not(.ts-pk-left) .entry-content{padding-right:var(--pk-clear,26px)}html:not(.ts-pk-left) .ts-pk-top{padding-right:44px}}   /* the strip's text stays clear of the rail while it is still in the page */
 html.ts-pk-ready .entry-content .ts-jump{display:none!important}   /* Ryan, 2026-11-08: "You can remove the in-page links beneath header." The strip, rail and index replace the row; without JavaScript (no ts-pk-ready) it still shows and works */
 html.ts-pk-ready #ts-section-guide-trigger,html.ts-pk-ready #ts-section-guide-popover{display:none!important}   /* only once the rail is there */
-html.ts-pk-ready .entry-content [id]{scroll-margin-top:64px}
+html.ts-pk-ready .entry-content [id]{scroll-margin-top:calc(var(--pk-head,0px) + var(--pk-strip,0px) + 12px)}   /* plain in-page links land below the pinned header and the strip */
 @media (prefers-reduced-motion:reduce){.ts-pk *,.ts-pk-top,.ts-pk-nav,.ts-pk-card{transition:none!important}.ts-pk-card,.ts-pk-card.is-on{transform:none}}
 /* theme content rules (.entry-content ol, li, a, p) must not reach these parts, which sit inside the content for keyboard order */
 html .ts-pk ol,html .ts-pk li{margin:0;padding:0;list-style:none;text-indent:0}
@@ -78,7 +78,7 @@ html.ts-pk-left .ts-pk-you{right:auto;left:28px}
 html.ts-pk-left .ts-pk-card{right:auto;left:58px;transform:translateX(-10px) scale(.98)}
 html.ts-pk-left .ts-pk-card.is-on{transform:none}
 html.ts-pk-left .ts-pk-tip{right:auto;left:58px}
-@media (max-width:1100px){html.ts-pk-ready.ts-pk-left .entry-content{padding-left:26px}html.ts-pk-left .ts-pk-top{padding-left:44px}}   /* the right side keeps the theme's own spacing */
+@media (max-width:1100px){html.ts-pk-ready.ts-pk-left .entry-content{padding-left:var(--pk-clear,26px)}html.ts-pk-left .ts-pk-top{padding-left:44px}}   /* the right side keeps the theme's own spacing */
 /* the side button in the preview */
 .ts-pk-card .hint{display:flex;align-items:center;justify-content:space-between;gap:.5rem}
 .ts-pk-card .side{display:none;flex:0 0 auto;min-height:36px;margin:0;padding:0 .7rem;border:1px solid var(--pk-rule);border-radius:999px;background:transparent;color:var(--pk-muted);font:inherit;font-size:.75rem;font-weight:700;cursor:pointer;touch-action:manipulation}
@@ -100,8 +100,8 @@ html.ts-pk-left .ts-pk-nav.is-hinting .ts-pk-rail{animation-name:ts-pk-wiggle-l}
 @keyframes ts-pk-wiggle-l{0%,100%{transform:none}30%{transform:translateX(7px)}60%{transform:translateX(-3px)}}
 @media (prefers-reduced-motion:reduce){.ts-pk-nav.is-hinting .ts-pk-rail{animation:none}.ts-pk-tip{transition:none;transform:none}}
 /* index icon: always above the rail, drawn in the page's own colours (no box, border or shadow); hold it to fan out every section name */
-html .ts-pk .ts-pk-ix{position:absolute;right:0;bottom:100%;width:44px;height:44px;margin:0 0 8px;padding:0;border:0;border-radius:50%;background:var(--pk-ground);color:var(--pk-muted);box-shadow:none;cursor:pointer;touch-action:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;transition:color .2s,transform .2s var(--pk-ease)}
-html .ts-pk .ts-pk-ix:hover,html .ts-pk .ts-pk-ix:focus{background:var(--pk-ground);color:var(--pk-ink);box-shadow:none}
+html .ts-pk .ts-pk-ix{position:absolute;right:0;bottom:100%;width:44px;height:44px;margin:0 0 8px;padding:0;border:0;border-radius:50%;background:transparent;color:var(--pk-muted);box-shadow:none;cursor:pointer;touch-action:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;transition:color .2s,transform .2s var(--pk-ease)}
+html .ts-pk .ts-pk-ix:hover,html .ts-pk .ts-pk-ix:focus{background:transparent;color:var(--pk-ink);box-shadow:none}   /* nothing sits under the icon (the text column stops before it), so no background: it takes the page's own */
 html .ts-pk .ts-pk-ix:focus-visible{outline:3px solid var(--pk-accent);outline-offset:2px}
 html .ts-pk .ts-pk-nav.is-index .ts-pk-ix{color:var(--pk-on);transform:scale(.92)}
 .ts-pk-ix svg{display:block;width:22px;height:22px;margin:auto;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;pointer-events:none}
@@ -122,7 +122,8 @@ html.ts-pk-left .ts-pk .ts-pk-nav.is-index .ts-pk-fan li{transform:none}
 @media (min-height:501px){
 html.ts-pk-ready #masthead{position:sticky;top:0;z-index:96}
 html.ts-pk-ready body.admin-bar #masthead{top:var(--wp-admin--admin-bar--height,32px)}
-html.ts-pk-ready #masthead .ast-mobile-header-content{max-height:calc(100vh - var(--pk-head,0px));max-height:calc(100dvh - var(--pk-head,0px));overflow-y:auto}   /* the phone menu still opens fully from the pinned header */
+html.ts-pk-ready #masthead .ast-mobile-header-content{max-height:calc(100vh - var(--pk-head,0px));max-height:calc(100dvh - var(--pk-head,0px));overflow-y:auto}
+html.ts-pk-ready body.admin-bar #masthead .ast-mobile-header-content{max-height:calc(100dvh - var(--pk-head,0px) - var(--wp-admin--admin-bar--height,32px))}   /* the phone menu still opens fully from the pinned header */
 }
 @media (min-height:501px) and (max-width:600px){html.ts-pk-ready body.admin-bar #masthead{top:0}}
 @media print{.ts-pk{display:none!important}}
@@ -201,11 +202,21 @@ add_action( 'wp_footer', function () {
     measureHead();
     if (head && 'ResizeObserver' in window) new ResizeObserver(measureHead).observe(head);
     window.addEventListener('resize', measureHead);
+    // the text column stops 6px before the rail and its icon, whatever margin the theme gives the content at this width (measured, not guessed)
+    function clearRail() {
+      if (window.innerWidth > 1100) return;
+      var left = root.classList.contains('ts-pk-left'), side = left ? 'paddingLeft' : 'paddingRight';
+      var cr = content.getBoundingClientRect(), nr = nav.getBoundingClientRect(), pad = parseFloat(getComputedStyle(content)[side]) || 0;
+      var outside = left ? cr.left : window.innerWidth - cr.right, reach = left ? nr.right : window.innerWidth - nr.left;
+      var need = Math.max(0, Math.ceil(reach + 6 - outside));
+      if (Math.abs(need - pad) > 0.5) root.style.setProperty('--pk-clear', need + 'px');
+    }
+    clearRail(); window.addEventListener('resize', clearRail);
 
     // left-hand option (remembered on this device)
     function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } return null; }
     function sideName() { return root.classList.contains('ts-pk-left') ? 'right' : 'left'; }   // the side a flip would move to
-    function setSide(left) { root.classList.toggle('ts-pk-left', left); store('ts-pk-side', left ? 'left' : 'right'); tip.querySelector('.flip').textContent = 'Use it on the ' + sideName(); lengths(); ask(); }
+    function setSide(left) { root.classList.toggle('ts-pk-left', left); store('ts-pk-side', left ? 'left' : 'right'); root.style.removeProperty('--pk-clear'); clearRail(); tip.querySelector('.flip').textContent = 'Use it on the ' + sideName(); lengths(); ask(); }
     root.classList.toggle('ts-pk-left', store('ts-pk-side') === 'left');
     tip.querySelector('.flip').textContent = 'Use it on the ' + sideName();
 
@@ -244,6 +255,17 @@ add_action( 'wp_footer', function () {
     row.addEventListener('click', function (e) {
       var a = e.target.closest ? e.target.closest('a[href^="#"]') : null; if (!a || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       var i = links.indexOf(a); if (i < 0 || !el(i)) return; e.preventDefault(); e.stopPropagation(); jumpTo(i);
+    }, true);
+
+    // any other in-page link in the content (a "see the questions below" link): the theme's own smooth scroll would hide the heading under the pinned header and strip
+    content.addEventListener('click', function (e) {
+      var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
+      if (!a || a.closest('.ts-pk') || a.closest('.ts-jump') || e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      var id = a.getAttribute('href').slice(1); try { id = decodeURIComponent(id); } catch (err) {}
+      var t = id ? document.getElementById(id) : null; if (!t || !content.contains(t)) return;
+      e.preventDefault(); e.stopPropagation();
+      window.scrollTo({ top: t.getBoundingClientRect().top + window.scrollY - below(), behavior: calm.matches ? 'auto' : 'smooth' });
+      try { history.replaceState(null, '', '#' + id); } catch (err) {}
     }, true);
 
     // the peek card
@@ -320,7 +342,7 @@ add_action( 'wp_footer', function () {
 
     // draw on scroll, once per frame
     var ticking = false;
-    var lastLabel = '';
+    var lastLabel = '', lastRove = -2, tipWait = 0;
     function draw() {
       ticking = false;
       // reads first (one layout pass) ...
@@ -335,8 +357,9 @@ add_action( 'wp_footer', function () {
       var name = S[Math.max(cur, 0)].label;
       if (name !== lastLabel) { lastLabel = name; top.querySelector('b').textContent = name; top.querySelector('span').textContent = (Math.max(cur, 0) + 1) + ' of ' + S.length; label.textContent = name; }
       you.style.top = label.style.top = (rr.top - nr.top + 8 + w * (rr.height - 16)) + 'px';
-      if (cur > -1 && !rail.contains(document.activeElement)) rove(cur);
-      if (!tipDone && cur > -1) maybeTip();
+      if (cur !== lastRove && cur > -1 && !rail.contains(document.activeElement)) { rove(cur); lastRove = cur; }   // only when the section changes
+      if (ixOpen) fanLayout();   // the fan stays current if the page moves while it is open (keyboard toggle)
+      if (!tipDone && !tipWait && cur > -1) tipWait = setTimeout(function () { tipWait = 0; if (!tipDone && !card.classList.contains('is-on') && !ixOpen && !g && ixPress === null) maybeTip(); }, 1500);   // after 1.5 s of reading, never over a preview or the fan
     }
 
     // the index icon: hold it and every section name fans out beside its piece of the rail; lift and they slide back (a click without a press toggles)
@@ -383,16 +406,17 @@ add_action( 'wp_footer', function () {
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && ixOpen) { setIndex(false); ixBtn.focus(); } });
 
     // first-time hint: once per visitor, when they start reading; it goes away by itself, on "Got it", or when they touch the rail
-    var tipDone = store('ts-pk-tip') === 'seen', tipT = 0;
+    var tipDone = store('ts-pk-tip') === 'seen' || /^#./.test(location.hash), tipT = 0;   // not for visitors who arrived at a section by link
     function maybeTip() {
       tipDone = true; store('ts-pk-tip', 'seen');
       var rr = rail.getBoundingClientRect(); tip.hidden = false; tip.style.top = Math.max(12, rr.top + rr.height / 2 - tip.offsetHeight / 2) + 'px';
       requestAnimationFrame(function () { tip.classList.add('is-on'); }); nav.classList.add('is-hinting');
-      tipT = setTimeout(hideTip, 9000);
+      tipT = setTimeout(autoHide, 9000);
     }
-    function hideTip() { clearTimeout(tipT); if (tip.hidden) return; tip.classList.remove('is-on'); nav.classList.remove('is-hinting'); setTimeout(function () { tip.hidden = true; }, 260); }
+    function autoHide() { if (tip.contains(document.activeElement)) { tipT = setTimeout(autoHide, 3000); return; } hideTip(); }   // never take the hint away from someone using it with the keyboard
+    function hideTip() { clearTimeout(tipT); clearTimeout(tipWait); tipWait = 0; if (tip.hidden) return; var had = tip.contains(document.activeElement); tip.classList.remove('is-on'); nav.classList.remove('is-hinting'); setTimeout(function () { tip.hidden = true; }, 260); if (had) focusSeg(Math.max(cur, 0)); }
     tip.querySelector('.ok').addEventListener('click', hideTip);
-    tip.querySelector('.flip').addEventListener('click', function () { setSide(sideName() === 'left'); var rr = rail.getBoundingClientRect(); tip.style.top = Math.max(12, rr.top + rr.height / 2 - tip.offsetHeight / 2) + 'px'; nav.classList.remove('is-hinting'); void nav.offsetWidth; nav.classList.add('is-hinting'); clearTimeout(tipT); tipT = setTimeout(hideTip, 6000); });
+    tip.querySelector('.flip').addEventListener('click', function () { setSide(sideName() === 'left'); var rr = rail.getBoundingClientRect(); tip.style.top = Math.max(12, rr.top + rr.height / 2 - tip.offsetHeight / 2) + 'px'; nav.classList.remove('is-hinting'); void nav.offsetWidth; nav.classList.add('is-hinting'); clearTimeout(tipT); tipT = setTimeout(autoHide, 6000); });
     function ask() { if (!ticking) { ticking = true; window.requestAnimationFrame(draw); } }
     var still = 0;
     window.addEventListener('scroll', function () { ask(); nav.classList.add('is-moving'); clearTimeout(still); still = setTimeout(function () { nav.classList.remove('is-moving'); }, 900); }, { passive: true });   // the section name shows beside the rail while the page scrolls

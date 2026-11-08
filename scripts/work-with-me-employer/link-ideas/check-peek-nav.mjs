@@ -56,13 +56,21 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     ok(`${tag} the strip names the current topic and position`, (await strip()) === 'Common reasons / 2 of 5', await strip());
     ok(`${tag} the strip shows progress per section`, st.fills[0] === 1 && st.fills[1] > 0 && 1 > st.fills[1] && st.fills[2] === 0, st.fills.join(' '));
     ok(`${tag} the strip is display only`, st.pe === 'none' && st.controls === 0);
+    const ov = await p.evaluate(() => { const rail = document.querySelector('.ts-pk-rail').getBoundingClientRect(), icon = document.querySelector('.ts-pk-ix').getBoundingClientRect(), edge = Math.min(rail.left, icon.left); let max = 0, worst = '';
+      const c = document.querySelector('.entry-content'), cr = c.getBoundingClientRect(), column = cr.right - parseFloat(getComputedStyle(c).paddingRight);   // the text column's edge, where any line may reach
+      document.querySelectorAll('.entry-content p, .entry-content li, .entry-content h2, .entry-content h3').forEach(el => { if (el.closest('.ts-pk') || el.closest('.ts-jump')) return; const r = document.createRange(); r.selectNodeContents(el); [...r.getClientRects()].forEach(b => { if (b.bottom > rail.top - 60 && b.top < rail.bottom && b.width > 0 && b.right > max) { max = b.right; worst = el.tagName + ': ' + el.textContent.trim().slice(0, 30); } }); });
+      return { textRight: Math.round(max), column: Math.round(column), railLeft: Math.round(rail.left), iconLeft: Math.round(icon.left), clear: Math.round(edge - Math.max(max, column)), worst }; });
+    ok(`${tag} the text column stops before the rail and the index icon (no line can run under them)`, ov.clear >= 0, JSON.stringify(ov));
     ok(`${tag} the thin sitewide reading-progress bar is gone (Ryan, 2026-11-08)`, await p.evaluate(() => { const a = getComputedStyle(document.body, '::after'); return !document.querySelector('style#wp-custom-css') || !document.getElementById('wp-custom-css').textContent.includes('ts-reading-progress'); }));
     ok(`${tag} the scroll-to-top button is gone (Ryan, 2026-11-08)`, await p.evaluate(() => !document.getElementById('ast-scroll-top')));
-    // first-time hint (Ryan, 2026-11-08: yes)
+    // first-time hint (Ryan, 2026-11-08: yes); it waits for 1.5 s of reading
+    await W(1800);
     const tp = await p.evaluate(() => { const t = document.querySelector('.ts-pk-tip'); return { shown: !t.hidden && t.classList.contains('is-on'), text: t.textContent, wiggle: document.querySelector('.ts-pk-nav').classList.contains('is-hinting'), stored: localStorage.getItem('ts-pk-tip') }; });
     ok(`${tag} first visit: a hint appears beside the rail once reading starts`, tp.shown && tp.text.includes('Slide your thumb') && tp.text.includes('Use it on the left') && tp.wiggle && tp.stored === 'seen', JSON.stringify(tp));
-    await p.tap('.ts-pk-tip .ok'); await W(400);
-    ok(`${tag} "Got it" hides the hint`, await p.evaluate(() => document.querySelector('.ts-pk-tip').hidden));
+    await p.focus('.ts-pk-tip .ok'); await W(10500);
+    ok(`${tag} the hint stays while it has keyboard focus (no 9 s auto-hide under the reader)`, await p.evaluate(() => !document.querySelector('.ts-pk-tip').hidden && document.activeElement === document.querySelector('.ts-pk-tip .ok')));
+    await p.keyboard.press('Enter'); await W(500);
+    ok(`${tag} "Got it" hides the hint and gives focus to the rail`, await p.evaluate(() => document.querySelector('.ts-pk-tip').hidden && !!document.activeElement.closest('.ts-pk-rail')));
     await p.mouse.wheel(0, 60); await W(250);
     const lab = await p.evaluate(() => { const n = document.querySelector('.ts-pk-nav'), l = n.querySelector('.ts-pk-label'); return { moving: n.classList.contains('is-moving'), text: l.textContent, op: +getComputedStyle(l).opacity }; });
     ok(`${tag} while the page scrolls, the section name shows beside the rail`, lab.moving && lab.text === 'Common reasons' && lab.op > 0.5, JSON.stringify(lab));
@@ -141,7 +149,7 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
       const probe = document.createElement('span'); probe.style.background = 'var(--pk-ground)'; document.querySelector('.ts-pk').appendChild(probe); const ground = getComputedStyle(probe).backgroundColor; probe.remove();
       return { shown: cs.display !== 'none' && cs.visibility === 'visible' && +cs.opacity === 1, gap: Math.round(r.top - i.bottom), dx: Math.round(Math.abs(i.right - r.right)), w: Math.round(i.width), bg: cs.backgroundColor, ground, shadow: cs.boxShadow, border: cs.borderTopWidth, before: !!(b.compareDocumentPosition(document.querySelector('.ts-pk-rail')) & Node.DOCUMENT_POSITION_FOLLOWING) }; });
     ok(`${tag} index icon: always shown, directly above the rail`, ixg.shown && ixg.gap >= 0 && 16 >= ixg.gap && 2 >= ixg.dx && ixg.w >= 44, JSON.stringify(ixg));
-    ok(`${tag} index icon: blended into the page (page background, no border or shadow)`, ixg.bg === ixg.ground && ixg.shadow === 'none' && ixg.border === '0px', JSON.stringify(ixg));
+    ok(`${tag} index icon: blended into the page (no background of its own, no border or shadow)`, (ixg.bg === 'rgba(0, 0, 0, 0)' || ixg.bg === 'transparent') && ixg.shadow === 'none' && ixg.border === '0px', JSON.stringify(ixg));
     ok(`${tag} index icon: comes right before the rail for the keyboard`, ixg.before);
     y0 = await Y();
     const ixAt = await p.$eval('.ts-pk-ix', e => { const r = e.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
@@ -184,6 +192,7 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     await slideTo(3, false); c = await card(); const cr = await p.$eval('.ts-pk-card', e => Math.round(e.getBoundingClientRect().left)); await touch('touchEnd'); await W(400);
     ok(`${tag} on the left, sliding previews as on the right (card beside the rail)`, c.on && c.name === 'Questions' && cr >= 40 && 80 >= cr, `left=${cr}`);
     ok(`${tag} on the left, no sideways page scroll`, await p.evaluate(() => innerWidth + 1 >= document.documentElement.scrollWidth));
+    ok(`${tag} on the left, the text column starts after the rail and icon`, await p.evaluate(() => { const c = document.querySelector('.entry-content'), col = c.getBoundingClientRect().left + parseFloat(getComputedStyle(c).paddingLeft), r = document.querySelector('.ts-pk-rail').getBoundingClientRect(), i = document.querySelector('.ts-pk-ix').getBoundingClientRect(); return col >= Math.max(r.right, i.right); }));
     const ixL = await p.$eval('.ts-pk-ix', e => { const r = e.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2, l: Math.round(r.left) }; });
     await touch('touchStart', ixL.x, ixL.y); await W(800); fs = await fanState(); await touch('touchEnd'); await W(500);
     ok(`${tag} on the left, the index icon and its names mirror to the left edge`, 8 >= ixL.l && fs.open && fs.items.every(i => i.l >= fs.railR - 2 && fs.vw >= i.r), JSON.stringify({ icon: ixL.l, items: fs.items.map(i => Math.round(i.l)) }));
@@ -193,6 +202,11 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     await slideTo(1); await p.tap('.ts-pk-card .side'); await W(500);
     ok(`${tag} "⇆ Right" moves it back`, await p.evaluate(() => !document.documentElement.classList.contains('ts-pk-left') && localStorage.getItem('ts-pk-side') === 'right' && document.querySelector('.ts-pk-rail').getBoundingClientRect().right >= innerWidth - 8));
     await p.evaluate(() => { const h = document.querySelectorAll('.entry-content .ts-jump a')[1]; const t = document.getElementById(h.getAttribute('href').slice(1)); scrollTo(0, t.getBoundingClientRect().top + scrollY - 100); }); await W(600);
+    await p.evaluate(() => { const a = document.createElement('a'); a.id = 'pk-inlink'; a.href = '#ts-guide-questions'; a.textContent = 'see the questions'; const para = document.querySelector('.entry-content p'); para.appendChild(a); }); 
+    await p.evaluate(() => scrollTo(0, document.getElementById('pk-inlink').getBoundingClientRect().top + scrollY - 300)); await W(400);
+    await p.evaluate(() => document.getElementById('pk-inlink').click()); await W(1600);
+    L = await landed('#ts-guide-questions'); ok(`${tag} an ordinary in-page link in the text lands the heading below the header and strip`, L.ok, JSON.stringify(L));
+    await p.evaluate(() => document.getElementById('pk-inlink').remove());
     ok(`${tag} the hidden row's links are out of the keyboard order`, await p.evaluate(() => [...document.querySelectorAll('.entry-content .ts-jump a')].every(a => { a.focus(); return document.activeElement !== a; })));
     ok(`${tag} no sideways page scroll`, await p.evaluate(() => innerWidth + 1 >= document.documentElement.scrollWidth));
     ok(`${tag} no JavaScript errors`, errors.length === 0, errors.join(' | '));

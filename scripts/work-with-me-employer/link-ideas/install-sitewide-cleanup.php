@@ -4,6 +4,7 @@
  * Ryan, 2026-11-08 (cloud session): "because we have the progress bar with the indexed items. It's unnecessary to have that incredibly minimal progress bar right
  * above it. That's on every page. Remove it ... You can also get rid of the scroll to the top button". Asked where: "Every page on staging39".
  * Nothing else changes: the rest of the Additional CSS is byte-identical, and only the one Astra setting `scroll-to-top-enable` is switched (true -> false).
+ * `ready` requires that setting to be exactly boolean true (as Astra stores it on staging39); "1", a missing key or anything else is CHANGED (a safe stop).
  *
  * Allow-list: localhost:8090 (the rehearsal copy) and staging39. Live needs Ryan's go and its own enable-live change.
  * Modes (first WP-CLI argument; run with --user=1):  <mode> [FILE]
@@ -34,7 +35,7 @@ $key = 'scroll-to-top-enable';
 $read = function () use ( $key ) {
 	$post  = wp_get_custom_css_post( 'astra' );
 	$css   = $post ? (string) $post->post_content : '';
-	$found = preg_match_all( '#\n?/\* ts-reading-progress:start[^*]*\*/.*?/\* ts-reading-progress:end \*/\n?#s', $css, $m, PREG_OFFSET_CAPTURE );
+	$found = preg_match_all( '#(\r?\n)?/\* ts-reading-progress:start[^*]*\*/.*?/\* ts-reading-progress:end \*/(\r?\n)?#s', $css, $m, PREG_OFFSET_CAPTURE );   // LF or CRLF
 	$opt   = get_option( 'astra-settings' );
 	$on    = is_array( $opt ) && array_key_exists( $key, $opt ) ? $opt[ $key ] : null;
 	$state = 'CHANGED';
@@ -43,7 +44,7 @@ $read = function () use ( $key ) {
 	} elseif ( 0 === $found && false === $on && false === strpos( $css, 'ts-reading-progress' ) ) {
 		$state = 'applied';
 	}
-	return array( 'state' => $state, 'css' => $css, 'block' => $found ? $m[0][0][0] : '', 'offset' => $found ? (int) $m[0][0][1] : -1, 'count' => (int) $found, 'on' => $on,
+	return array( 'state' => $state, 'css' => $css, 'block' => $found ? $m[0][0][0] : '', 'offset' => $found ? (int) $m[0][0][1] : -1, 'lead' => $found ? (string) $m[1][0][0] : '', 'trail' => $found ? (string) $m[2][0][0] : '', 'count' => (int) $found, 'on' => $on,
 		'report' => 'reading-progress blocks: ' . (int) $found . ', ' . $key . ': ' . var_export( $on, true ) );
 };
 $set_css = function ( $css ) {
@@ -83,12 +84,14 @@ if ( 'apply' === $mode ) {
 	if ( 'ready' !== $now['state'] ) {
 		WP_CLI::error( 'CHANGED: ' . $now['report'] . '. Nothing written.' );
 	}
-	// keep one line break where the block was, so the CSS around it is unchanged
-	$lead    = "\n" === substr( $now['block'], 0, 1 ) ? "\n" : '';
-	$new_css = substr( $now['css'], 0, $now['offset'] ) . ( $lead && "\n" === substr( $now['block'], -1 ) ? "\n" : '' ) . substr( $now['css'], $now['offset'] + strlen( $now['block'] ) );
+	// keep one line break (of the same kind, LF or CRLF) where the block was, so the CSS around it is unchanged
+	$new_css = substr( $now['css'], 0, $now['offset'] ) . ( '' !== $now['lead'] && '' !== $now['trail'] ? $now['trail'] : '' ) . substr( $now['css'], $now['offset'] + strlen( $now['block'] ) );
 	$file    = rtrim( $dir, '/' ) . '/sitewide-cleanup-before-' . gmdate( 'Ymd-His' ) . '-' . substr( md5( uniqid( '', true ) ), 0, 8 ) . '.json';
 	$snap    = array( 'home' => $home, 'created' => gmdate( 'c' ), 'css' => $now['css'], 'css_sha256' => hash( 'sha256', $now['css'] ), 'new_css_sha256' => hash( 'sha256', $new_css ), 'key' => $key, 'old' => $now['on'] );
-	if ( false === file_put_contents( $file, wp_json_encode( $snap, JSON_PRETTY_PRINT ) ) ) {
+	$old_umask = umask( 0077 );   // the snapshot (a full copy of the CSS) is private from the moment it exists
+	$written   = file_put_contents( $file, wp_json_encode( $snap, JSON_PRETTY_PRINT ) );
+	umask( $old_umask );
+	if ( false === $written ) {
 		WP_CLI::error( 'Could not write the snapshot; nothing changed.' );
 	}
 	chmod( $file, 0600 );
@@ -109,9 +112,12 @@ $snap = $file && is_file( $file ) ? json_decode( (string) file_get_contents( $fi
 if ( ! is_array( $snap ) || ( $snap['home'] ?? '' ) !== $home || ! isset( $snap['css'] ) || hash( 'sha256', (string) $snap['css'] ) !== ( $snap['css_sha256'] ?? '' ) || true !== ( $snap['old'] ?? null ) ) {
 	WP_CLI::error( 'Snapshot is missing, damaged, or from another site.' );
 }
-if ( 'applied' !== $now['state'] ) {
+if ( 'ready' === $now['state'] ) {
 	WP_CLI::success( 'Nothing to roll back: ' . $now['report'] . '.' );
 	return;
+}
+if ( 'applied' !== $now['state'] ) {   // someone changed the CSS or the setting since: stop rather than guess
+	WP_CLI::error( 'CHANGED: ' . $now['report'] . '. Nothing rolled back; stop and inspect.' );
 }
 if ( hash( 'sha256', $now['css'] ) !== ( $snap['new_css_sha256'] ?? '' ) ) {
 	WP_CLI::error( 'The Additional CSS was edited after the apply; refusing to overwrite it. Put the block back by hand from the snapshot ' . $file . '.' );
