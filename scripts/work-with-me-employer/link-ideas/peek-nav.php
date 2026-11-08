@@ -73,7 +73,7 @@ html.ts-pk-ready .entry-content [id]{scroll-margin-top:64px}
 /* theme content rules (.entry-content ol, li, a, p) must not reach these parts, which sit inside the content for keyboard order */
 html .ts-pk ol,html .ts-pk li{margin:0;padding:0;list-style:none;text-indent:0}
 html .ts-pk .ts-pk-rail{padding:8px 0}
-html .ts-pk a{text-decoration:none;border:0;box-shadow:none;background:none}
+html .ts-pk a{text-decoration:none!important;border:0!important;box-shadow:none!important;background:none!important}   /* staging39: a more specific theme rule underlined these links */
 html .ts-pk.ts-pk-top p{margin:0 0 .35rem}
 /* left-hand option: everything mirrored to the left edge */
 html.ts-pk-left .ts-pk-nav{right:auto;left:max(2px,env(safe-area-inset-left))}
