@@ -1,6 +1,7 @@
 {
-  "id": "inspect-staging39-css-20261108",
+  "id": "inspect-staging39-astra-20261108",
   "op": "inspect",
   "target": "staging39",
-  "query": "css"
+  "query": "option",
+  "arg": "astra-settings"
 }
