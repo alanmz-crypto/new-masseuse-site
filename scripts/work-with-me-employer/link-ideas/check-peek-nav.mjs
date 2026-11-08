@@ -25,7 +25,7 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     const seg = i => p.evaluate(k => { const r = document.querySelectorAll('.ts-pk-rail li')[k].getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; }, i);
     const slideTo = async (i, lift = true) => { const a = await seg(0), z = await seg(i); await touch('touchStart', a.x, a.y); for (let k = 1; k <= 8; k++) { await touch('touchMove', a.x, a.y + (z.y - a.y) * k / 8); await W(30); } if (lift) { await touch('touchEnd'); await W(600); } };
     const card = () => p.evaluate(() => { const c = document.querySelector('.ts-pk-card'); return { on: c.classList.contains('is-on'), pinned: c.classList.contains('is-pinned'), name: (c.querySelector('.open > b') || {}).textContent || '', heading: (c.querySelector('.shot strong') || {}).textContent || '', excerpt: (c.querySelector('.shot em') || {}).textContent || '', desc: (c.querySelector('.open .d') || {}).textContent || '', lines: c.querySelectorAll('.shot > span').length, inView: c.getBoundingClientRect().left >= 0 }; });
-    const strip = () => p.evaluate(() => { const t = document.querySelector('.ts-pk-top'); return t.querySelector('b').textContent + ' / ' + t.querySelector('span').textContent; });
+    const strip = () => p.evaluate(() => { const items = [...document.querySelectorAll('.ts-pk-top .tr span')], k = items.findIndex(x => x.classList.contains('is-now')); return (k < 0 ? '' : items[k].textContent) + ' / ' + (k + 1) + ' of ' + items.length; });   // the title in the middle, and its place
     const landed = sel => p.evaluate(s => { const h = document.querySelector(s).getBoundingClientRect().top, sb = document.querySelector('.ts-pk-top').getBoundingClientRect().bottom; return { h: Math.round(h), sb: Math.round(sb), ok: h >= sb - 2 && sb + 40 >= h }; }, sel);
     const hrefOf = i => p.evaluate(k => document.querySelectorAll('.entry-content .ts-jump a')[k].getAttribute('href'), i);
 
@@ -54,7 +54,14 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
       await mt.click(); await W(400);
     }
     ok(`${tag} the strip names the current topic and position`, (await strip()) === 'Common reasons / 2 of 5', await strip());
-    ok(`${tag} the strip shows progress per section`, st.fills[0] === 1 && st.fills[1] > 0 && 1 > st.fills[1] && st.fills[2] === 0, st.fills.join(' '));
+    const tr = await p.evaluate(() => { const t = document.querySelector('.ts-pk-top'), inn = t.querySelector('.in').getBoundingClientRect(), items = [...t.querySelectorAll('.tr span')].map(x => { const r = x.getBoundingClientRect(); return { t: x.textContent, now: x.classList.contains('is-now'), l: r.left, r: r.right, c: (r.left + r.right) / 2 }; }); const now = items.find(x => x.now);
+      return { bars: t.querySelectorAll('li, i').length, count: /\d+ of \d+/.test(t.textContent), mid: Math.round((inn.left + inn.right) / 2), nowC: now ? Math.round(now.c) : null, nowT: now && now.t, prevPeek: items[0].r > inn.left && items[0].r < now.l, nextPeek: items[2].l < inn.right && items[2].l > now.r, nextCut: items[2].r > inn.right || items[3].l > inn.right }; });
+    ok(`${tag} the strip shows only topic titles (no progress bars, no "2 of 5"; Ryan, 2026-11-08)`, tr.bars === 0 && !tr.count, JSON.stringify(tr));
+    ok(`${tag} the current topic's title sits in the middle of the strip`, tr.nowT === 'Common reasons' && Math.abs(tr.nowC - tr.mid) < 90, JSON.stringify(tr));
+    ok(`${tag} part of the previous and next titles shows on each side`, tr.prevPeek && tr.nextPeek, JSON.stringify(tr));
+    const x0 = await p.evaluate(() => new DOMMatrix(getComputedStyle(document.querySelector('.ts-pk-top .tr')).transform).m41); await p.mouse.wheel(0, 120); await W(400);
+    const x1 = await p.evaluate(() => new DOMMatrix(getComputedStyle(document.querySelector('.ts-pk-top .tr')).transform).m41); await p.mouse.wheel(0, -120); await W(400);
+    ok(`${tag} reading on slides the titles toward the next topic`, x1 < x0 - 2, `${Math.round(x0)} -> ${Math.round(x1)}`);
     ok(`${tag} the strip is display only`, st.pe === 'none' && st.controls === 0);
     const ov = await p.evaluate(() => { const rail = document.querySelector('.ts-pk-rail').getBoundingClientRect(), icon = document.querySelector('.ts-pk-ix').getBoundingClientRect(), edge = Math.min(rail.left, icon.left); let max = 0, worst = '';
       const c = document.querySelector('.entry-content'), cr = c.getBoundingClientRect(), column = cr.right - parseFloat(getComputedStyle(c).paddingRight);   // the text column's edge, where any line may reach
@@ -157,7 +164,7 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     ok(`${tag} the rail is one keyboard stop`, (await p.$$eval('.ts-pk-rail a', a => a.filter(x => x.getAttribute('tabindex') === '0').length)) === 1);
     await p.keyboard.press('ArrowDown'); await W(100);
     ok(`${tag} arrow keys move along the rail`, await p.evaluate(() => document.activeElement === document.querySelectorAll('.ts-pk-rail a')[2] && document.activeElement.getAttribute('tabindex') === '0'));
-    const thm = await p.evaluate(() => { const o = getComputedStyle(document.querySelector('.ts-pk-rail')), l = getComputedStyle(document.querySelector('.ts-pk-rail li')), so = getComputedStyle(document.querySelector('.ts-pk-top ol')), a = getComputedStyle(document.querySelector('.ts-pk-rail a')); return { ml: o.marginLeft, pl: o.paddingLeft, ls: o.listStyleType, lim: l.marginTop + ' ' + l.marginLeft, sol: so.marginLeft + ' ' + so.paddingLeft, td: a.textDecorationLine }; });
+    const thm = await p.evaluate(() => { const o = getComputedStyle(document.querySelector('.ts-pk-rail')), l = getComputedStyle(document.querySelector('.ts-pk-rail li')), so = getComputedStyle(document.querySelector('.ts-pk-top .tr')), a = getComputedStyle(document.querySelector('.ts-pk-rail a')); return { ml: o.marginLeft, pl: o.paddingLeft, ls: o.listStyleType, lim: l.marginTop + ' ' + l.marginLeft, sol: so.marginLeft + ' ' + so.paddingLeft, td: a.textDecorationLine }; });
     ok(`${tag} the theme's content styles do not reach the rail or strip`, thm.ml === '0px' && thm.pl === '0px' && thm.ls === 'none' && thm.lim === '0px 0px' && thm.sol === '0px 0px' && thm.td === 'none', JSON.stringify(thm));
     // index icon (Ryan, 2026-11-08: design 1 "Fan", always at the top of the rail, blended into the page)
     const fanState = () => p.evaluate(() => { const nav = document.querySelector('.ts-pk-nav'), segs = [...document.querySelectorAll('.ts-pk-rail li')].map(l => { const r = l.getBoundingClientRect(); return r.top + r.height / 2; }), rail = document.querySelector('.ts-pk-rail').getBoundingClientRect();
