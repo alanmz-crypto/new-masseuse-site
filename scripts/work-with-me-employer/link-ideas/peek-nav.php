@@ -210,6 +210,20 @@ add_action( 'wp_footer', function () {
       var outside = left ? cr.left : window.innerWidth - cr.right, reach = left ? nr.right : window.innerWidth - nr.left;
       var need = Math.max(0, Math.ceil(reach + 6 - outside));
       if (Math.abs(need - pad) > 0.5) root.style.setProperty('--pk-clear', need + 'px');
+      // some of the theme's blocks are wider than the column (their own margins): measure the text blocks themselves and pad a little more if one still reaches the rail
+      for (var round = 0; round < 3; round++) {
+        var edge = left ? Infinity : 0;
+        [].forEach.call(content.querySelectorAll('p,li,h1,h2,h3,h4,h5,h6,blockquote,figcaption,dt,dd,td,th'), function (el) {
+          if (el.closest('.ts-pk') || el.closest('.ts-jump')) return;
+          var r = el.getBoundingClientRect(); if (!r.width) return;
+          var cs = getComputedStyle(el), e2 = left ? r.left + (parseFloat(cs.paddingLeft) || 0) : r.right - (parseFloat(cs.paddingRight) || 0);
+          edge = left ? Math.min(edge, e2) : Math.max(edge, e2);
+        });
+        nr = nav.getBoundingClientRect();
+        var over = left ? (nr.right + 6) - edge : edge - (nr.left - 6);
+        if (!(over > 0.5) || need >= 80) break;
+        need = Math.min(80, need + Math.ceil(over)); root.style.setProperty('--pk-clear', need + 'px');   // capped, so an unusually wide element cannot squeeze the page
+      }
     }
     clearRail(); window.addEventListener('resize', clearRail);
 
