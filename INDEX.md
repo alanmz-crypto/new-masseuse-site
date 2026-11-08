@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-08 06:46 UTC  **PASS**  `apply-sitewide-cleanup-staging39-20261108`  [reports/2026-11-08/064638-apply-sitewide-cleanup-staging39-20261108.md](reports/2026-11-08/064638-apply-sitewide-cleanup-staging39-20261108.md)  (run 42456021976)
 - 2026-11-08 06:44 UTC  **PASS**  `dry-sitewide-cleanup-staging39-20261108`  [reports/2026-11-08/064447-dry-sitewide-cleanup-staging39-20261108.md](reports/2026-11-08/064447-dry-sitewide-cleanup-staging39-20261108.md)  (run 42455967685)
 - 2026-11-08 06:44 UTC  **PASS**  `rehearse-sitewide-cleanup-20261108`  [reports/2026-11-08/064412-rehearse-sitewide-cleanup-20261108.md](reports/2026-11-08/064412-rehearse-sitewide-cleanup-20261108.md)  (run 42455855191)
 - 2026-11-08 06:42 UTC  **PASS**  `apply-peek-nav-staging39-20261108-9`  [reports/2026-11-08/064226-apply-peek-nav-staging39-20261108-9.md](reports/2026-11-08/064226-apply-peek-nav-staging39-20261108-9.md)  (run 42455755873)
