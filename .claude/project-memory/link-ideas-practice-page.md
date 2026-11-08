@@ -193,3 +193,11 @@ snapshot `peek-nav-before-20261108-102027-0eb240af.json`; check **361/0**.
 (8 x 10 s); a failed rollback step leaves the old snippet, so the apply refuses (CHANGED) and nothing breaks, but a rollback that succeeds while the
 apply is blocked leaves the page on the no-JavaScript row until the apply goes through.
 **Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-102027-0eb240af.json'`.
+
+**Fifth Kiro review + title-row strip (2026-11-08):** Kiro's findings fixed in #1366 (staging39 376/0): fit()/place() measure from where the strip sticks and
+within the card's max-height; fit4 folds far rows into "+N more above/below", fit5 keeps only the open box's name and "Tap to go there"; card scrolls as a last
+resort; refit on rotation; focus to a newly opened box; rail clearance re-measured only on content width change. Then Ryan: drop the progress "scanning" at the
+top and keep only topic titles sliding by, the current one centred with part of the neighbours on each side, in relative space. Snippet **#1367**: the strip is a
+row of the section labels, current one bold in the middle, neighbours fading at the edges, sliding continuously toward the next title through the section; no bars,
+no count. Export `staging39-before-peek-nav-20261108-164427.sql`; snapshot `peek-nav-before-20261108-164442-bbf19019.json`; check **388/0**.
+**Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-164442-bbf19019.json'`.
