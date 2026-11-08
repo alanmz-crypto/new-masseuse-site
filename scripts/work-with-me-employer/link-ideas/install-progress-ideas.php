@@ -42,8 +42,10 @@ if ( ! is_file( $src ) ) {
 }
 $html    = rtrim( (string) file_get_contents( $src ) );
 $content = "<!-- wp:html -->\n" . $html . "\n<!-- /wp:html -->";
-if ( preg_match( '/\\[[^\\]\\n]*&[^\\]\\n]*\\]/', (string) strstr( $html, '<script>' ) ) ) {
-	WP_CLI::error( 'Internal error: the script has an ampersand inside [...], which WordPress escapes when it renders the page.' );
+$js = (string) substr( (string) strstr( $html, '<script>' ), 8 );
+$js = (string) substr( $js, 0, (int) strpos( $js, '</script>' ) );
+if ( '' === $js || false !== strpos( $js, '<' ) ) {
+	WP_CLI::error( 'Internal error: the script contains a less-than sign; WordPress\'s shortcode scanner then escapes its ampersands when it renders the page.' );
 }
 if ( 1 !== substr_count( $html, '<script>' ) || 1 !== substr_count( $html, '<style>' ) || false !== strpos( $html, '<!-- wp:' ) ) {
 	WP_CLI::error( 'Internal error: progress-ideas.html is not the reviewed single block.' );

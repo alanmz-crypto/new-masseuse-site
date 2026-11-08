@@ -220,6 +220,8 @@ html[data-ts-theme="dark"] .tsp-lab{--x-on:#8CCB5B;--x-on-text:#0E141C}
 <script>
 (function () {
   'use strict';
+  // No less-than sign anywhere in this script: WordPress's shortcode scanner reads one as the start of an HTML tag and escapes ampersands after it
+  // (it turned && into &#038;&#038; on staging39). Comparisons are written the other way round and markup in strings uses \u003c.
   var lab = document.getElementById('tsp-lab');
   if (!lab || !('requestAnimationFrame' in window)) return;
   lab.classList.add('is-js');
@@ -236,10 +238,10 @@ html[data-ts-theme="dark"] .tsp-lab{--x-on:#8CCB5B;--x-on-text:#0E141C}
   }
   /* where the reader is: the reading line sits just under the sticky bar */
   function line() { return Math.min(window.innerHeight * 0.3, 160); }
-  function where() { var y = line(), idx = -1; S.forEach(function (s, i) { if (s.el.getBoundingClientRect().top <= y) idx = i; }); return idx; }
+  function where() { var y = line(), idx = -1; S.forEach(function (s, i) { if (y >= s.el.getBoundingClientRect().top) idx = i; }); return idx; }
   function part(i) { var r = S[i].el.getBoundingClientRect(); return Math.max(0, Math.min(1, (line() - r.top) / r.height)); }
   function whole() { var a = S[0].el.getBoundingClientRect().top, b = S[S.length - 1].el.getBoundingClientRect().bottom; return Math.max(0, Math.min(1, (line() - a) / (b - a))); }
-  function fill(i) { return i < cur ? 1 : (i === cur ? part(i) : 0); }
+  function fill(i) { return cur > i ? 1 : (i === cur ? part(i) : 0); }
 
   /* jumping: smooth, the heading under the bar, focus on it, flash it, keep the address right */
   function go(id) {
@@ -258,11 +260,11 @@ html[data-ts-theme="dark"] .tsp-lab{--x-on:#8CCB5B;--x-on-text:#0E141C}
 
   /* 1. growing segments */
   var A = [].slice.call(lab.querySelectorAll('.tspA li'));
-  function drawA() { A.forEach(function (li, i) { li.style.setProperty('--len', S[i].len.toFixed(2)); li.classList.toggle('is-now', i === Math.max(cur, 0)); li.classList.toggle('is-done', i < cur); li.querySelector('i').style.setProperty('--p', fill(i).toFixed(3)); var a = li.querySelector('a'); if (i === cur) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); }); }
+  function drawA() { A.forEach(function (li, i) { li.style.setProperty('--len', S[i].len.toFixed(2)); li.classList.toggle('is-now', i === Math.max(cur, 0)); li.classList.toggle('is-done', cur > i); li.querySelector('i').style.setProperty('--p', fill(i).toFixed(3)); var a = li.querySelector('a'); if (i === cur) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); }); }
 
   /* 2. bar + sheet */
   var B = lab.querySelector('.tspB'), sheet = B.querySelector('.tsp-sheet'), sheetList = sheet.querySelector('ol');
-  sheetList.innerHTML = S.map(function (s, i) { return '<li><a href="#' + s.id + '"><span class="num">' + (i + 1) + '</span><span class="t">' + esc(s.name) + '</span><span class="m"></span><span class="d">' + esc(s.blurb) + '</span><span class="tsp-track"><i></i></span></a></li>'; }).join('');
+  sheetList.innerHTML = S.map(function (s, i) { return '\u003cli>\u003ca href="#' + s.id + '">\u003cspan class="num">' + (i + 1) + '\u003c/span>\u003cspan class="t">' + esc(s.name) + '\u003c/span>\u003cspan class="m">\u003c/span>\u003cspan class="d">' + esc(s.blurb) + '\u003c/span>\u003cspan class="tsp-track">\u003ci>\u003c/i>\u003c/span>\u003c/a>\u003c/li>'; }).join('');
   var Brows = [].slice.call(sheetList.querySelectorAll('a'));
   B.querySelector('.tspB-open').addEventListener('click', function () { drawB(); sheet.showModal(); var n = Brows[Math.max(cur, 0)]; if (n) n.focus(); });
   sheet.querySelector('.x').addEventListener('click', function () { sheet.close(); });
@@ -272,29 +274,29 @@ html[data-ts-theme="dark"] .tsp-lab{--x-on:#8CCB5B;--x-on-text:#0E141C}
     B.querySelector('.tspB-name').textContent = S[i0].name;
     B.querySelector('.tspB-count').textContent = (i0 + 1) + ' of ' + S.length + ' · ' + Math.round(whole() * 100) + '% of the page';
     B.querySelector('.tspB-total i').style.setProperty('--p', whole().toFixed(3));
-    Brows.forEach(function (a, i) { a.classList.toggle('is-now', i === cur); a.classList.toggle('is-done', i < cur); a.querySelector('.num').textContent = i < cur ? '✓' : (i + 1); a.querySelector('.m').textContent = S[i].mins + ' min'; a.querySelector('i').style.setProperty('--p', fill(i).toFixed(3)); if (i === cur) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
+    Brows.forEach(function (a, i) { a.classList.toggle('is-now', i === cur); a.classList.toggle('is-done', cur > i); a.querySelector('.num').textContent = cur > i ? '✓' : (i + 1); a.querySelector('.m').textContent = S[i].mins + ' min'; a.querySelector('i').style.setProperty('--p', fill(i).toFixed(3)); if (i === cur) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
   }
 
   /* 3. now / next */
   var C = lab.querySelector('.tspC'), Cnow = C.querySelector('.now'), Cnext = C.querySelector('.next'), Clist = C.querySelector('ol');
-  Clist.innerHTML = S.map(function (s) { return '<li><a href="#' + s.id + '"><b>' + esc(s.name) + '</b><small>' + esc(s.blurb) + '</small></a></li>'; }).join('');
+  Clist.innerHTML = S.map(function (s) { return '\u003cli>\u003ca href="#' + s.id + '">\u003cb>' + esc(s.name) + '\u003c/b>\u003csmall>' + esc(s.blurb) + '\u003c/small>\u003c/a>\u003c/li>'; }).join('');
   var Csteps = [].slice.call(Clist.querySelectorAll('li'));
   Cnow.addEventListener('click', function () { var o = !C.classList.contains('is-open'); C.classList.toggle('is-open', o); Cnow.setAttribute('aria-expanded', String(o)); });
   function drawC() {
     var i0 = Math.max(cur, 0);
     C.querySelector('.tspC-name').textContent = S[i0].name;
-    C.querySelector('.ring .fg').style.strokeDashoffset = (100.53 * (1 - (cur < 0 ? 0 : part(i0)))).toFixed(2);
+    C.querySelector('.ring .fg').style.strokeDashoffset = (100.53 * (1 - (0 > cur ? 0 : part(i0)))).toFixed(2);
     C.querySelector('.ring text').textContent = String(i0 + 1);
     var nx = S[cur + 1];
-    if (nx) { Cnext.hidden = false; Cnext.setAttribute('href', '#' + nx.id); Cnext.querySelector('small').textContent = cur < 0 ? 'Start' : 'Next'; Cnext.querySelector('b').textContent = nx.name; Cnext.setAttribute('aria-label', (cur < 0 ? 'Start: ' : 'Next: ') + nx.name); } else { Cnext.hidden = true; }
+    if (nx) { Cnext.hidden = false; Cnext.setAttribute('href', '#' + nx.id); Cnext.querySelector('small').textContent = 0 > cur ? 'Start' : 'Next'; Cnext.querySelector('b').textContent = nx.name; Cnext.setAttribute('aria-label', (0 > cur ? 'Start: ' : 'Next: ') + nx.name); } else { Cnext.hidden = true; }
     C.querySelector('.tspC-total i').style.setProperty('--p', whole().toFixed(3));
-    Csteps.forEach(function (li, i) { li.classList.toggle('is-now', i === cur); li.classList.toggle('is-done', i < cur); });
+    Csteps.forEach(function (li, i) { li.classList.toggle('is-now', i === cur); li.classList.toggle('is-done', cur > i); });
   }
 
   /* shared: slide a finger (or mouse) across a track of segments to preview, release to jump */
   function scrubber(list, axis, onPreview, onEnd) {
     var active = false, at = -1, moved = false;
-    function pick(e) { var lis = [].slice.call(list.children), best = -1; lis.forEach(function (li, i) { var r = li.getBoundingClientRect(); var v = axis === 'x' ? e.clientX : e.clientY, lo = axis === 'x' ? r.left : r.top, hi = axis === 'x' ? r.right : r.bottom; if (v >= lo - 3 && v <= hi + 3) best = i; }); if (best < 0) { var f = lis[0].getBoundingClientRect(); best = (axis === 'x' ? e.clientX < f.left : e.clientY < f.top) ? 0 : lis.length - 1; } return best; }
+    function pick(e) { var lis = [].slice.call(list.children), best = -1; lis.forEach(function (li, i) { var r = li.getBoundingClientRect(); var v = axis === 'x' ? e.clientX : e.clientY, lo = axis === 'x' ? r.left : r.top, hi = axis === 'x' ? r.right : r.bottom; if (v >= lo - 3 && hi + 3 >= v) best = i; }); if (0 > best) { var f = lis[0].getBoundingClientRect(); best = (axis === 'x' ? f.left > e.clientX : f.top > e.clientY) ? 0 : lis.length - 1; } return best; }
     list.addEventListener('pointerdown', function (e) { if (e.button > 0) return; active = true; moved = false; try { list.setPointerCapture(e.pointerId); } catch (err) {} at = pick(e); onPreview(at, e); e.preventDefault(); });
     list.addEventListener('pointermove', function (e) { if (!active) return; var n = pick(e); moved = true; if (n !== at) { at = n; if (navigator.vibrate) { try { navigator.vibrate(5); } catch (err) {} } } onPreview(at, e); });
     function end(e, jump) { if (!active) return; active = false; onEnd(); if (jump && at > -1) go(S[at].id); }
@@ -305,7 +307,7 @@ html[data-ts-theme="dark"] .tsp-lab{--x-on:#8CCB5B;--x-on-text:#0E141C}
 
   /* 4. scrubber */
   var D = lab.querySelector('.tspD'), Dlist = D.querySelector('ol'), bub = D.querySelector('.bubble');
-  Dlist.innerHTML = S.map(function (s) { return '<li><a href="#' + s.id + '" aria-label="' + esc(s.name) + '"><i></i></a></li>'; }).join('');
+  Dlist.innerHTML = S.map(function (s) { return '\u003cli>\u003ca href="#' + s.id + '" aria-label="' + esc(s.name) + '">\u003ci>\u003c/i>\u003c/a>\u003c/li>'; }).join('');
   var Dl = [].slice.call(Dlist.children);
   scrubber(Dlist, 'x', function (i, e) {
     Dl.forEach(function (li, k) { li.classList.toggle('is-hover', k === i); });
@@ -318,7 +320,7 @@ html[data-ts-theme="dark"] .tsp-lab{--x-on:#8CCB5B;--x-on-text:#0E141C}
 
   /* 5. edge rail */
   var E = lab.querySelector('.tspE'), Elist = E.querySelector('ol');
-  Elist.innerHTML = S.map(function (s, i) { return '<li><a href="#' + s.id + '" aria-label="' + esc(s.name) + '"><i></i></a><span class="tag" aria-hidden="true">' + (i + 1) + '. ' + esc(s.name) + '<small></small></span></li>'; }).join('');
+  Elist.innerHTML = S.map(function (s, i) { return '\u003cli>\u003ca href="#' + s.id + '" aria-label="' + esc(s.name) + '">\u003ci>\u003c/i>\u003c/a>\u003cspan class="tag" aria-hidden="true">' + (i + 1) + '. ' + esc(s.name) + '\u003csmall>\u003c/small>\u003c/span>\u003c/li>'; }).join('');
   var El = [].slice.call(Elist.children);
   scrubber(Elist, 'y', function (i) { E.classList.add('is-scrub'); El.forEach(function (li, k) { li.classList.toggle('is-hover', k === i); li.querySelector('small').textContent = k === i ? S[k].blurb : ''; }); },
     function () { E.classList.remove('is-scrub'); El.forEach(function (li) { li.classList.remove('is-hover'); li.querySelector('small').textContent = ''; }); });
@@ -345,7 +347,7 @@ html[data-ts-theme="dark"] .tsp-lab{--x-on:#8CCB5B;--x-on-text:#0E141C}
   }
   btns.forEach(function (b) { b.addEventListener('click', function () { show(+b.dataset.idea); }); });
   var start = 1; try { start = +new URL(location.href).searchParams.get('idea') || 1; } catch (e) {}
-  show(start >= 1 && start <= 5 ? start : 1);
+  show(start >= 1 && 5 >= start ? start : 1);
 })();
 </script>
 </div>
