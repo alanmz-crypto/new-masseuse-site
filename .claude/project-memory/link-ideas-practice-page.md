@@ -92,3 +92,11 @@ light + dark, real touch; previews for all five sections; Back exact; row taps; 
 **Undo:** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-030251-3fb7ea6c.json'`.
 **Next:** Ryan reviews on his phone. Rollout: widen `is_page()` to the other service pages (Therapeutic, Deep Tissue, Chair, Services), staging first, then live
 only on his go (enable-live change in the installer allow-list and push targets; live dry run; `request.sh live`).
+
+**Mock-up parity (2026-11-08):** Ryan: "I want you to keep all the features from your peek mock-up." Now snippet **#1350** (replaced #1349): strip in the page right
+under the row, sticking to the top as you read (display only; 44px right padding on phones/tablets so the rail never covers it); rail visible from page load at
+the mock-up sizes (48px, card 64px from the edge); the section name shows beside the rail while the page scrolls; the heading glows after a jump; the card has a
+one-line description (first sentence) plus the preview (real heading, first lines, three placeholder lines); the rail's screen-reader names include the
+description. Export `staging39-before-peek-nav-20261108-031610.sql`; snapshot `peek-nav-before-20261108-031625-f507cb73.json`; check
+`ui-peek-nav-staging39-20261108-2`: **123/0**.
+**Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-031625-f507cb73.json'`.
