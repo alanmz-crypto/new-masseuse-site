@@ -237,4 +237,6 @@ Ryan's approval before live); sections without a list fall back to whole opening
 "1.5"/"U.S."/quotes). Fan names size to the rail spacing. fit() now subtracts the card border. Staging39: #1375 lists (457/0), #1376 "etc." .
 **Template:** Ryan: this navigation (rail + read-only strip) is the template for every page. Kiro template-review handoff:
 `docs/inter-model/2026-11-08-peek-nav-kiro-template-review-handoff.md`.
+Staging39 now snippet **#1377** (no "You are in"; 461/0); snapshot `peek-nav-before-20261108-234541-8cf99e25.json`.
+**Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-234541-8cf99e25.json'`.
 
