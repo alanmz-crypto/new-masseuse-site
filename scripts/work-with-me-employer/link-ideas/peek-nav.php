@@ -126,6 +126,7 @@ html .ts-pk .ts-pk-chip.is-on{opacity:1;transform:none;transition-delay:0ms}
 html .ts-pk .ts-pk-chip.is-kept{pointer-events:auto;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;border:1.5px solid var(--pk-on)}
 html .ts-pk .ts-pk-fan li.is-over,html .ts-pk .ts-pk-chip.is-over{background:var(--pk-on);color:var(--pk-on-text);border-color:var(--pk-on)}   /* the finger is on it: lift and it stays */
 .ts-pk-nav.is-scrub .ts-pk-label{opacity:0}
+.ts-pk-nav.is-caught .ts-pk-you{transform:scale(1.6);background:var(--pk-on)}   /* the thumb has caught the dot: it now carries the page */
 .ts-pk-nav.is-index .ts-pk-label{opacity:0}
 @media (prefers-reduced-motion:reduce){html .ts-pk .ts-pk-fan li,html .ts-pk .ts-pk-chip,html .ts-pk .ts-pk-ix{transition-duration:.01ms!important;transition-delay:0ms!important}}
 /* the site header stays on top (Ryan, 2026-11-08: "make the header persistent too"); not on short landscape screens, where header, strip and rail would not fit */
@@ -482,14 +483,29 @@ add_action( 'wp_footer', function () {
     function hitFan(x, y) { for (var k = 0; k < fanItems.length; k++) { var r = fanItems[k].getBoundingClientRect(); if (x >= r.left - 6 && x <= r.right + 6 && y >= r.top - 5 && y <= r.bottom + 5) return k; } return -1; }
     function setOver(k) { if (k === over) return; over = k; fanItems.forEach(function (it, j) { it.classList.toggle('is-over', j === k); }); if (k > -1) buzz(); }
     function chipShow(k) { chipK = k; chip.firstChild.textContent = String(k + 1); chip.lastChild.textContent = S[k].label; }
-    function chipHide() { chipKept = false; chipOver = false; chipK = -1; chip.className = 'ts-pk-chip'; nav.classList.remove('is-scrub'); }
-    function scrubTo(y) {   // the rail stands for the whole page: the thumb's place on it is the reading position
-      var rr = rail.getBoundingClientRect(), w = Math.max(0, Math.min(1, (y - rr.top - 8) / Math.max(1, rr.height - 16)));
-      var a = bounds(0)[0] + window.scrollY, b = bounds(S.length - 1)[1] + window.scrollY;
-      window.scrollTo(0, Math.max(0, Math.round(a + w * (b - a) - line())));
+    function chipHide() { chipKept = false; chipOver = false; chipK = -1; chip.className = 'ts-pk-chip'; nav.classList.remove('is-scrub'); nav.classList.remove('is-caught'); }
+    // Ryan, 2026-11-08 ("catch the dot"; "too fast / jumpy"): the page waits until the thumb reaches the dot that marks where you are, then the dot
+    // follows the thumb (the rail stands for the whole page). The page glides toward that spot, at most 12% of the screen per frame, never in jumps.
+    var target = -1, easing = false, lastStep = -1;
+    function scrubTo(y) {
+      var rr = rail.getBoundingClientRect();
+      if (!handed.caught) {
+        if (y < rr.top + 8 + whole() * (rr.height - 16) - 8) return;   // not at the dot yet: the page stays
+        handed.caught = true; nav.classList.add('is-caught'); buzz();
+      }
+      var w = Math.max(0, Math.min(1, (y - rr.top - 8) / Math.max(1, rr.height - 16)));
+      var a = bounds(0)[0] + window.scrollY, b = bounds(S.length - 1)[1] + window.scrollY, max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+      target = Math.max(0, Math.min(max, Math.round(a + w * (b - a) - line()))); glide();
+    }
+    function glide() { if (!easing) { easing = true; lastStep = -1; requestAnimationFrame(step); } }
+    function step() {
+      var y0 = window.scrollY, d = target - y0;
+      if (Math.abs(d) < 1.5 || y0 === lastStep) { if (Math.abs(d) >= 1.5) window.scrollTo(0, target); easing = false; if (!handed) document.documentElement.style.scrollBehavior = ''; return; }   // arrived (or cannot move further)
+      var cap = window.innerHeight * 0.12, v = Math.max(-cap, Math.min(cap, d * 0.22));
+      lastStep = y0; window.scrollTo(0, Math.round(y0 + (Math.abs(v) < 1 ? (d > 0 ? 1 : -1) : v))); requestAnimationFrame(step);
     }
     function startScrub(y) {
-      chipHide(); setIndex(false); handed = { y: y }; nav.classList.add('is-scrub'); document.documentElement.style.scrollBehavior = 'auto';   // follow the thumb, not the theme's smooth scroll
+      chipHide(); setIndex(false); handed = { y: y, caught: false }; nav.classList.add('is-scrub'); document.documentElement.style.scrollBehavior = 'auto';   // follow the thumb, not the theme's smooth scroll
       chipShow(Math.max(cur, 0)); chip.style.top = you.style.top; chip.classList.add('is-on'); buzz(); scrubTo(y);
     }
     ixBtn.addEventListener('pointerdown', function (e) { if (e.button > 0 || !e.isPrimary) return; tipSeen(); chipHide(); ixPress = e.pointerId; handed = null; ixStart = { x: e.clientX, y: e.clientY }; lean = null; try { ixBtn.setPointerCapture(e.pointerId); } catch (err) {} setIndex(true); keep(false); clearTimeout(keepT); keepT = setTimeout(function () { if (ixPress !== null && !handed && over < 0) { keep(true); buzz(); } }, 2000); e.preventDefault(); });
@@ -511,7 +527,7 @@ add_action( 'wp_footer', function () {
       ixPress = null; ixPressedAt = performance.now(); clearTimeout(keepT);
       var h = handed, up = e.type === 'pointerup'; handed = null;
       if (h) {
-        document.documentElement.style.scrollBehavior = '';
+        nav.classList.remove('is-caught'); if (!easing) document.documentElement.style.scrollBehavior = '';   // a glide still under way finishes at the thumb's last spot
         if (chipOver && up) { chipKept = true; chipOver = false; chip.classList.remove('is-over'); chip.classList.add('is-kept'); swallowNextClick(true); return; }   // lifted on the name: it stays
         chipHide(); return;                                                                                                                                         // lifted on the rail: you stay where you scrolled to
       }

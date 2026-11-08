@@ -241,12 +241,19 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     y0 = await Y();
     const ixAt2 = await p.$eval('.ts-pk-ix', e => { const r = e.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
     const chipS = () => p.evaluate(() => { const c = document.querySelector('.ts-pk-chip'), r = c.getBoundingClientRect(); return { on: c.classList.contains('is-on'), over: c.classList.contains('is-over'), kept: c.classList.contains('is-kept'), name: c.lastChild.textContent, x: Math.round(r.left + r.width / 2), y: Math.round(r.top + r.height / 2), op: +getComputedStyle(c).opacity }; });
-    const scrubDown = async k => { const q = await seg(k); await touch('touchStart', ixAt2.x, ixAt2.y); await W(400); for (let j = 1; j <= 12; j++) { await touch('touchMove', ixAt2.x, ixAt2.y + (q.y - ixAt2.y) * j / 12); await W(40); } await W(300); return q; };
+    const scrubDown = async k => { const q = await seg(k); await touch('touchStart', ixAt2.x, ixAt2.y); await W(400); for (let j = 1; j <= 12; j++) { await touch('touchMove', ixAt2.x, ixAt2.y + (q.y - ixAt2.y) * j / 12); await W(40); } await W(900); return q; };
+    { const rt = await p.evaluate(() => document.querySelector('.ts-pk-rail').getBoundingClientRect().top), dotY = await p.evaluate(() => document.querySelector('.ts-pk-you').getBoundingClientRect().top + 5);
+      await touch('touchStart', ixAt2.x, ixAt2.y); await W(400); for (let j = 1; j <= 8; j++) { await touch('touchMove', ixAt2.x, ixAt2.y + (rt + 40 - ixAt2.y) * j / 8); await W(40); } await W(500);
+      ok(`${tag} index scrub: no jump when the thumb reaches the rail; the page waits for the thumb to catch the dot (Ryan, 2026-11-08)`, dotY > rt + 60 && (await Y()) === y0, JSON.stringify({ rt, dotY, y: await Y(), y0 }));
+      for (let j = 1; j <= 8; j++) { await touch('touchMove', ixAt2.x, rt + 40 + (dotY + 30 - rt - 40) * j / 8); await W(40); } await W(900);
+      const caught = await p.evaluate(() => document.querySelector('.ts-pk-nav').classList.contains('is-caught')), yC = await Y();
+      ok(`${tag} index scrub: past the dot, the page follows the thumb from where you were (no leap)`, caught && yC > y0 && yC < y0 + 1500, JSON.stringify({ caught, yC, y0 }));
+      await touch('touchEnd'); await W(900); await p.evaluate(y => scrollTo(0, y), y0); await W(900); }
     const q = await scrubDown(3);
     let ch = await chipS(); c = await card(); fs = await fanState(); let yS = await Y();
     ok(`${tag} index scrub: sliding down the rail from the icon scrolls the page`, yS > y0 + 200, JSON.stringify({ y0, yS }));
     ok(`${tag} index scrub: the names fold away and only one name shows, the section you are in`, !fs.open && !c.on && ch.on && ch.op > 0.9 && ch.name === (await p.evaluate(() => ((document.querySelector('.ts-pk-rail a[aria-current]') || {}).getAttribute?.('aria-label') || '').split(':')[0])) && ch.name === labels[3], JSON.stringify(ch));
-    const q2 = await seg(1); for (let j = 1; j <= 8; j++) { await touch('touchMove', ixAt2.x, q.y + (q2.y - q.y) * j / 8); await W(40); } await W(300);
+    const q2 = await seg(1); for (let j = 1; j <= 8; j++) { await touch('touchMove', ixAt2.x, q.y + (q2.y - q.y) * j / 8); await W(40); } await W(900);
     ch = await chipS(); const yS2 = await Y();
     ok(`${tag} index scrub: sliding back up scrolls back, and the name follows the section`, yS2 < yS && ch.name === labels[1], JSON.stringify({ yS, yS2, ch }));
     await touch('touchEnd'); await W(700);
@@ -298,7 +305,7 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     const ixL = await p.$eval('.ts-pk-ix', e => { const r = e.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2, l: Math.round(r.left) }; });
     await touch('touchStart', ixL.x, ixL.y); await W(800); fs = await fanState(); await touch('touchEnd'); await W(500);
     ok(`${tag} on the left, the index icon and its names mirror to the left edge`, 8 >= ixL.l && fs.open && fs.items.every(i => i.l >= fs.railR - 2 && fs.vw >= i.r), JSON.stringify({ icon: ixL.l, items: fs.items.map(i => Math.round(i.l)) }));
-    { const yL = await Y(), qL = await seg(3); await touch('touchStart', ixL.x, ixL.y); await W(400); for (let j = 1; j <= 12; j++) { await touch('touchMove', ixL.x, ixL.y + (qL.y - ixL.y) * j / 12); await W(40); } await W(300);
+    { const yL = await Y(), qL = await seg(3); await touch('touchStart', ixL.x, ixL.y); await W(400); for (let j = 1; j <= 12; j++) { await touch('touchMove', ixL.x, ixL.y + (qL.y - ixL.y) * j / 12); await W(40); } await W(900);
       const cl = await p.evaluate(() => { const c = document.querySelector('.ts-pk-chip'), r = c.getBoundingClientRect(), rl = document.querySelector('.ts-pk-rail').getBoundingClientRect(); return { on: c.classList.contains('is-on'), l: Math.round(r.left), railR: Math.round(rl.right) }; });
       const yL2 = await Y(); await touch('touchEnd'); await W(600);
       ok(`${tag} on the left, sliding down from the icon scrolls the page and its name shows to the right of the rail`, yL2 > yL + 200 && cl.on && cl.l >= cl.railR - 2, JSON.stringify({ yL, yL2, cl }));
