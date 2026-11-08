@@ -11,7 +11,9 @@ RUFF_VERSION=0.17.2
 bin="${RUNNER_TEMP:-$HOME/.cache}/bin"; mkdir -p "$bin"
 if ! "$bin/age" --version >/dev/null 2>&1; then
   t=$(mktemp -d)
-  curl -fsSL -o "$t/age.tgz" "https://github.com/FiloSottile/age/releases/download/$AGE_VERSION/age-$AGE_VERSION-linux-amd64.tar.gz"
+  # GitHub's release download can answer 504 for a few minutes (2026-11-08: every run failed here for ~10 minutes); retry before giving up.
+  # The sha256 check below still decides whether the file is the right one.
+  curl -fsSL --retry 8 --retry-delay 10 --retry-all-errors --connect-timeout 20 -o "$t/age.tgz" "https://github.com/FiloSottile/age/releases/download/$AGE_VERSION/age-$AGE_VERSION-linux-amd64.tar.gz"
   echo "$AGE_SHA256  $t/age.tgz" | sha256sum -c --quiet -
   tar -xzf "$t/age.tgz" -C "$t" && install -m 755 "$t/age/age" "$bin/age"; rm -rf "$t"
 fi
