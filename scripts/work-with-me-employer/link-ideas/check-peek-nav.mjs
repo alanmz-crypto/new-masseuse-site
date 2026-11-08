@@ -41,6 +41,11 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     ok(`${tag} the strip names the current topic and position`, (await strip()) === 'Common reasons / 2 of 5', await strip());
     ok(`${tag} the strip shows progress per section`, st.fills[0] === 1 && st.fills[1] > 0 && 1 > st.fills[1] && st.fills[2] === 0, st.fills.join(' '));
     ok(`${tag} the strip is display only`, st.pe === 'none' && st.controls === 0);
+    // first-time hint (Ryan, 2026-11-08: yes)
+    const tp = await p.evaluate(() => { const t = document.querySelector('.ts-pk-tip'); return { shown: !t.hidden && t.classList.contains('is-on'), text: t.textContent, wiggle: document.querySelector('.ts-pk-nav').classList.contains('is-hinting'), stored: localStorage.getItem('ts-pk-tip') }; });
+    ok(`${tag} first visit: a hint appears beside the rail once reading starts`, tp.shown && tp.text.includes('Slide your thumb') && tp.text.includes('Use it on the left') && tp.wiggle && tp.stored === 'seen', JSON.stringify(tp));
+    await p.tap('.ts-pk-tip .ok'); await W(400);
+    ok(`${tag} "Got it" hides the hint`, await p.evaluate(() => document.querySelector('.ts-pk-tip').hidden));
     await p.mouse.wheel(0, 60); await W(250);
     const lab = await p.evaluate(() => { const n = document.querySelector('.ts-pk-nav'), l = n.querySelector('.ts-pk-label'); return { moving: n.classList.contains('is-moving'), text: l.textContent, op: +getComputedStyle(l).opacity }; });
     ok(`${tag} while the page scrolls, the section name shows beside the rail`, lab.moving && lab.text === 'Common reasons' && lab.op > 0.5, JSON.stringify(lab));
@@ -92,6 +97,40 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     const cssText = await p.evaluate(() => document.getElementById('ts-peek-nav-css').textContent);
     ok(`${tag} older browsers get a solid strip background (color-mix fallback)`, cssText.includes('background:var(--pk-ground);background:color-mix') && cssText.includes('background:var(--pk-panel);background:color-mix'));
     ok(`${tag} the bottom guide button is hidden only when the rail is there`, cssText.split('#ts-section-guide-trigger').length === cssText.split('html.ts-pk-ready #ts-section-guide-trigger').length);
+    // second Kiro review (2026-11-08): taps that are already handled never reach what is underneath; Enter on ×; one keyboard stop
+    await p.evaluate(() => { const t = document.createElement('a'); t.id = 'pk-under'; t.href = '#pk-under'; t.style.cssText = 'position:fixed;inset:0;z-index:50'; window.__under = 0; t.addEventListener('click', e => { e.preventDefault(); window.__under++; }); document.body.appendChild(t); });
+    await slideTo(2); y0 = await Y();
+    const shotAt = await p.$eval('.ts-pk-card .shot', e => { const r = e.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
+    await touch('touchStart', shotAt.x, shotAt.y); await touch('touchEnd'); await W(1500);
+    ok(`${tag} a tap on the preview jumps and does not also click what is under the card`, (await Y()) !== y0 && (await p.evaluate(() => window.__under)) === 0, `under=${await p.evaluate(() => window.__under)}`);
+    await slideTo(1);
+    await touch('touchStart', 12, Math.round(st.vh * 0.5)); await W(700); await touch('touchEnd'); await W(500);
+    ok(`${tag} a slow outside press (700 ms) only closes the preview`, !(await card()).on && (await p.evaluate(() => window.__under)) === 0, `under=${await p.evaluate(() => window.__under)}`);
+    await touch('touchStart', 12, Math.round(st.vh * 0.5)); await touch('touchEnd'); await W(400);
+    ok(`${tag} ...and the next tap reaches the page again`, (await p.evaluate(() => window.__under)) === 1);
+    await p.evaluate(() => document.getElementById('pk-under').remove());
+    const hash0 = await p.evaluate(() => location.hash);
+    await p.evaluate(() => document.querySelectorAll('.ts-pk-rail a')[1].dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 }))); await W(300);
+    await p.focus('.ts-pk-card .x'); await p.keyboard.press('Enter'); await W(400);
+    ok(`${tag} Enter on × closes the preview without jumping, and focus returns to the rail`, !(await card()).on && (await p.evaluate(() => location.hash)) === hash0 && (await p.evaluate(() => document.activeElement === document.querySelectorAll('.ts-pk-rail a')[1])));
+    ok(`${tag} the rail is one keyboard stop`, (await p.$$eval('.ts-pk-rail a', a => a.filter(x => x.getAttribute('tabindex') === '0').length)) === 1);
+    await p.keyboard.press('ArrowDown'); await W(100);
+    ok(`${tag} arrow keys move along the rail`, await p.evaluate(() => document.activeElement === document.querySelectorAll('.ts-pk-rail a')[2] && document.activeElement.getAttribute('tabindex') === '0'));
+    const thm = await p.evaluate(() => { const o = getComputedStyle(document.querySelector('.ts-pk-rail')), l = getComputedStyle(document.querySelector('.ts-pk-rail li')), so = getComputedStyle(document.querySelector('.ts-pk-top ol')), a = getComputedStyle(document.querySelector('.ts-pk-rail a')); return { ml: o.marginLeft, pl: o.paddingLeft, ls: o.listStyleType, lim: l.marginTop + ' ' + l.marginLeft, sol: so.marginLeft + ' ' + so.paddingLeft, td: a.textDecorationLine }; });
+    ok(`${tag} the theme's content styles do not reach the rail or strip`, thm.ml === '0px' && thm.pl === '0px' && thm.ls === 'none' && thm.lim === '0px 0px' && thm.sol === '0px 0px' && thm.td === 'none', JSON.stringify(thm));
+    // left-hand option (Ryan, 2026-11-08: yes)
+    await slideTo(1); await p.tap('.ts-pk-card .side'); await W(500);
+    const lh = await p.evaluate(() => { const r = document.querySelector('.ts-pk-rail').getBoundingClientRect(); return { left: document.documentElement.classList.contains('ts-pk-left'), railLeft: Math.round(r.left), stored: localStorage.getItem('ts-pk-side'), card: document.querySelector('.ts-pk-card').classList.contains('is-on') }; });
+    ok(`${tag} "⇆ Left" in the preview moves the rail to the left edge and closes the preview`, lh.left && 8 >= lh.railLeft && lh.stored === 'left' && !lh.card, JSON.stringify(lh));
+    await slideTo(3, false); c = await card(); const cr = await p.$eval('.ts-pk-card', e => Math.round(e.getBoundingClientRect().left)); await touch('touchEnd'); await W(400);
+    ok(`${tag} on the left, sliding previews as on the right (card beside the rail)`, c.on && c.name === 'Questions' && cr >= 40 && 80 >= cr, `left=${cr}`);
+    ok(`${tag} on the left, no sideways page scroll`, await p.evaluate(() => innerWidth + 1 >= document.documentElement.scrollWidth));
+    await p.reload({ waitUntil: 'load' }); await W(500);
+    await p.evaluate(() => { const h = document.querySelectorAll('.entry-content .ts-jump a')[1]; const t = document.getElementById(h.getAttribute('href').slice(1)); scrollTo(0, t.getBoundingClientRect().top + scrollY - 100); }); await W(700);
+    ok(`${tag} after a reload the rail stays on the left, and the hint does not show again`, await p.evaluate(() => document.documentElement.classList.contains('ts-pk-left') && document.querySelector('.ts-pk-tip').hidden));
+    await slideTo(1); await p.tap('.ts-pk-card .side'); await W(500);
+    ok(`${tag} "⇆ Right" moves it back`, await p.evaluate(() => !document.documentElement.classList.contains('ts-pk-left') && localStorage.getItem('ts-pk-side') === 'right' && document.querySelector('.ts-pk-rail').getBoundingClientRect().right >= innerWidth - 8));
+    await p.evaluate(() => { const h = document.querySelectorAll('.entry-content .ts-jump a')[1]; const t = document.getElementById(h.getAttribute('href').slice(1)); scrollTo(0, t.getBoundingClientRect().top + scrollY - 100); }); await W(600);
     // the row at the top of the page
     await p.evaluate(() => scrollTo(0, document.querySelector('.entry-content .ts-jump').getBoundingClientRect().top + scrollY - 200)); await W(500);
     await p.tap('.entry-content .ts-jump a:text-is("What Research Says")'); await W(1700);

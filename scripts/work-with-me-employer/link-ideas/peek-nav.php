@@ -66,10 +66,44 @@ html[data-ts-theme="dark"] .ts-pk-card .hint{color:var(--pk-on)}
 .ts-pk-back[hidden]{display:none}
 /* keep the text clear of the rail on phones and tablets; the bottom "On this page" button is replaced by the rail */
 @media (max-height:500px){.ts-pk-card .shot>span,.ts-pk-card .here{display:none}.ts-pk-card .shot em{margin:0}}   /* landscape phones: the card fits the screen */
-@media (max-width:1100px){html.ts-pk-ready .entry-content{padding-right:26px}.ts-pk-top{padding-right:44px}}   /* the strip's text stays clear of the rail while it is still in the page */
+@media (max-width:1100px){html.ts-pk-ready:not(.ts-pk-left) .entry-content{padding-right:26px}html:not(.ts-pk-left) .ts-pk-top{padding-right:44px}}   /* the strip's text stays clear of the rail while it is still in the page */
 html.ts-pk-ready #ts-section-guide-trigger,html.ts-pk-ready #ts-section-guide-popover{display:none!important}   /* only once the rail is there */
 html.ts-pk-ready .entry-content [id]{scroll-margin-top:64px}
 @media (prefers-reduced-motion:reduce){.ts-pk *,.ts-pk-top,.ts-pk-nav,.ts-pk-card{transition:none!important}.ts-pk-card,.ts-pk-card.is-on{transform:none}}
+/* theme content rules (.entry-content ol, li, a, p) must not reach these parts, which sit inside the content for keyboard order */
+html .ts-pk ol,html .ts-pk li{margin:0;padding:0;list-style:none;text-indent:0}
+html .ts-pk .ts-pk-rail{padding:8px 0}
+html .ts-pk a{text-decoration:none;border:0;box-shadow:none;background:none}
+html .ts-pk.ts-pk-top p{margin:0 0 .35rem}
+/* left-hand option: everything mirrored to the left edge */
+html.ts-pk-left .ts-pk-nav{right:auto;left:max(2px,env(safe-area-inset-left))}
+html.ts-pk-left .ts-pk-label{right:auto;left:48px}
+html.ts-pk-left .ts-pk-you{right:auto;left:28px}
+html.ts-pk-left .ts-pk-card{right:auto;left:58px;transform:translateX(-10px) scale(.98)}
+html.ts-pk-left .ts-pk-card.is-on{transform:none}
+html.ts-pk-left .ts-pk-back{right:auto;left:max(10px,env(safe-area-inset-left))}
+html.ts-pk-left .ts-pk-tip{right:auto;left:58px}
+@media (max-width:1100px){html.ts-pk-ready.ts-pk-left .entry-content{padding-left:26px}html.ts-pk-left .ts-pk-top{padding-left:44px}}   /* the right side keeps the theme's own spacing */
+/* the side button in the preview */
+.ts-pk-card .hint{display:flex;align-items:center;justify-content:space-between;gap:.5rem}
+.ts-pk-card .side{display:none;flex:0 0 auto;min-height:36px;margin:0;padding:0 .7rem;border:1px solid var(--pk-rule);border-radius:999px;background:transparent;color:var(--pk-muted);font:inherit;font-size:.75rem;font-weight:700;cursor:pointer;touch-action:manipulation}
+.ts-pk-card .side:hover,.ts-pk-card .side:focus{background:var(--pk-stone);color:var(--pk-ink)}
+.ts-pk-card.is-pinned .side{display:inline-flex;align-items:center}
+/* first-time hint beside the rail (shown once per visitor) */
+.ts-pk-tip{position:fixed;right:58px;z-index:94;width:min(270px,calc(100vw - 78px));padding:.85rem 1rem;border-radius:16px;background:var(--pk-ink);color:var(--pk-panel);box-shadow:var(--pk-shadow);font-size:.88rem;line-height:1.4;opacity:0;transform:translateY(6px);transition:opacity .25s,transform .25s var(--pk-ease)}
+.ts-pk-tip.is-on{opacity:1;transform:none}
+.ts-pk-tip[hidden]{display:none}
+.ts-pk-tip p{margin:0 0 .65rem;color:inherit}
+.ts-pk-tip .row{display:flex;gap:.5rem;flex-wrap:wrap}
+.ts-pk-tip button{min-height:40px;margin:0;padding:0 .85rem;border:0;border-radius:999px;font:inherit;font-size:.82rem;font-weight:700;cursor:pointer;touch-action:manipulation}
+.ts-pk-tip .ok,.ts-pk-tip .ok:hover,.ts-pk-tip .ok:focus{background:var(--pk-on);color:var(--pk-on-text)}
+.ts-pk-tip .flip,.ts-pk-tip .flip:hover,.ts-pk-tip .flip:focus{background:transparent;color:var(--pk-panel);box-shadow:inset 0 0 0 1px rgba(255,255,255,.45)}
+.ts-pk-tip button:focus-visible,.ts-pk-card .side:focus-visible{outline:3px solid var(--pk-accent);outline-offset:2px}
+.ts-pk-nav.is-hinting .ts-pk-rail{animation:ts-pk-wiggle 1.1s var(--pk-ease) 2}
+@keyframes ts-pk-wiggle{0%,100%{transform:none}30%{transform:translateX(-7px)}60%{transform:translateX(3px)}}
+html.ts-pk-left .ts-pk-nav.is-hinting .ts-pk-rail{animation-name:ts-pk-wiggle-l}
+@keyframes ts-pk-wiggle-l{0%,100%{transform:none}30%{transform:translateX(7px)}60%{transform:translateX(-3px)}}
+@media (prefers-reduced-motion:reduce){.ts-pk-nav.is-hinting .ts-pk-rail{animation:none}.ts-pk-tip{transition:none;transform:none}}
 @media print{.ts-pk{display:none!important}}
 </style>
 	<?php
@@ -123,14 +157,32 @@ add_action( 'wp_footer', function () {
     row.parentNode.insertBefore(strip, row.nextSibling);   // in the page, right under the row; it sticks to the top as you read (display only)
     var box = document.createElement('div'); box.className = 'ts-pk';
     box.innerHTML = '<nav class="ts-pk-nav" aria-label="Sections on this page"><ol class="ts-pk-rail">' + S.map(function (s) { return '<li><a href="' + esc(s.href) + '" aria-label="' + esc(s.label) + '" draggable="false"><i></i></a></li>'; }).join('') + '</ol><span class="ts-pk-you" aria-hidden="true"></span><span class="ts-pk-label" aria-hidden="true"></span></nav>' +
-      '<div class="ts-pk-card" role="group" aria-label="Section preview" tabindex="-1"></div><button type="button" class="ts-pk-back" hidden></button>';
+      '<div class="ts-pk-card" role="group" aria-label="Section preview" tabindex="-1"></div><button type="button" class="ts-pk-back" hidden></button>' +
+      '<div class="ts-pk-tip" role="note" hidden><p>Slide your thumb along this bar to preview each section. Lift, then tap the preview to go there.</p><div class="row"><button type="button" class="ok">Got it</button><button type="button" class="flip"></button></div></div>';
     var host = strip.parentNode, okHost = true;
-    for (var an = host; an && an !== document.documentElement; an = an.parentElement) { var cs = getComputedStyle(an); if (cs.transform !== 'none' || cs.filter !== 'none' || cs.perspective !== 'none' || /paint|layout|strict|content/.test(cs.contain || '')) { okHost = false; break; } }
+    for (var an = host; an && an !== document.documentElement; an = an.parentElement) { var cs = getComputedStyle(an); if (cs.transform !== 'none' || cs.filter !== 'none' || cs.perspective !== 'none' || (cs.backdropFilter || cs.webkitBackdropFilter || 'none') !== 'none' || /transform|filter|perspective/.test(cs.willChange || '') || (cs.containerType && cs.containerType !== 'normal') || /paint|layout|strict|content/.test(cs.contain || '')) { okHost = false; break; } }   // any of these would make position:fixed relative to that ancestor
     if (okHost) host.insertBefore(box, strip.nextSibling); else document.body.appendChild(box);   // keyboard order: row, strip, rail, then the sections
     var top = strip, topSegs = [].slice.call(top.querySelectorAll('li')), nav = box.querySelector('.ts-pk-nav'), rail = nav.querySelector('.ts-pk-rail'),
       you = nav.querySelector('.ts-pk-you'), label = nav.querySelector('.ts-pk-label'), card = box.querySelector('.ts-pk-card'), back = box.querySelector('.ts-pk-back');
     segs = [].slice.call(rail.children);
+    var tip = box.querySelector('.ts-pk-tip');
     root.classList.add('ts-pk-ready');
+
+    // left-hand option (remembered on this device)
+    function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } return null; }
+    function sideName() { return root.classList.contains('ts-pk-left') ? 'right' : 'left'; }   // the side a flip would move to
+    function setSide(left) { root.classList.toggle('ts-pk-left', left); store('ts-pk-side', left ? 'left' : 'right'); tip.querySelector('.flip').textContent = 'Use it on the ' + sideName(); lengths(); ask(); }
+    root.classList.toggle('ts-pk-left', store('ts-pk-side') === 'left');
+    tip.querySelector('.flip').textContent = 'Use it on the ' + sideName();
+
+    // the rail is one keyboard stop: Tab reaches the current section's piece, arrow keys move between pieces
+    function rove(i) { segs.forEach(function (li, k) { li.firstChild.setAttribute('tabindex', k === i ? '0' : '-1'); }); }
+    rove(0);
+    rail.addEventListener('keydown', function (e) {
+      var li = e.target.closest('li'), i = segs.indexOf(li), n = -1;
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight') n = Math.min(segs.length - 1, i + 1); else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') n = Math.max(0, i - 1); else if (e.key === 'Home') n = 0; else if (e.key === 'End') n = segs.length - 1;
+      if (n < 0) return; e.preventDefault(); rove(n); segs[n].firstChild.focus();
+    });
 
     // where the reader is
     var cur = -1, from = null;
@@ -168,7 +220,7 @@ add_action( 'wp_footer', function () {
       var s = S[i], here = i === cur ? 'You are reading this section.' : (cur < 0 ? '' : 'You are in: ' + S[cur].label);
       return '<button type="button" class="x" aria-label="Close the preview">×</button><small>Section ' + (i + 1) + ' of ' + S.length + ' · ' + s.mins + ' min</small><b>' + esc(s.label) + '</b>' + (s.desc ? '<span class="d">' + esc(s.desc) + '</span>' : '') + '<span class="here">' + esc(here) + '</span>' +
         '<span class="shot"><strong>' + esc(s.heading) + '</strong>' + (s.excerpt ? '<em>' + esc(s.excerpt) + '</em>' : '') + '<span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span></span>' +
-        '<span class="hint">' + (pinned ? 'Tap to go there' : 'Lift to keep this preview') + '</span>';
+        '<span class="hint"><span>' + (pinned ? 'Tap to go there' : 'Lift to keep this preview') + '</span>' + (pinned ? '<button type="button" class="side" aria-label="Move the section bar to the ' + sideName() + ' side">⇆ ' + (sideName() === 'left' ? 'Left' : 'Right') + '</button>' : '') + '</span>';
     }
     function hover(i) { segs.forEach(function (li, k) { li.classList.toggle('is-hover', k === i); }); }
     function place(y) {   // beside the thumb; never past the bottom of the screen, then never above the strip
@@ -182,25 +234,40 @@ add_action( 'wp_footer', function () {
       if (key !== shown) { clearTimeout(clear); card.className = 'ts-pk-card is-on' + (pinned ? ' is-pinned' : ''); card.innerHTML = cardHTML(i, pinned); card.dataset.i = i; nav.classList.add('is-active'); hover(i); shown = key; }
       place(y);
     }
+    // "this tap is already handled": swallow the click the browser may still send (to the card, or to whatever is under it once the card is gone)
+    function swallowNextClick(lifted) {
+      var on = true, t = 0;
+      function sw(c) { c.preventDefault(); c.stopPropagation(); off(); }
+      function up() { clearTimeout(t); t = setTimeout(off, 450); }   // timed from the finger lifting, however long the press
+      function off() { if (!on) return; on = false; clearTimeout(t); document.removeEventListener('click', sw, true); document.removeEventListener('pointerup', up, true); document.removeEventListener('pointercancel', off, true); }
+      document.addEventListener('click', sw, true); document.addEventListener('pointercancel', off, true);   // a touch that becomes a scroll sends no click: disarm
+      if (lifted) up(); else document.addEventListener('pointerup', up, true);
+      setTimeout(off, 5000);
+    }
+    function focusSeg(i) { var a = segs[i] && segs[i].firstChild; if (a) { rove(i); a.focus({ preventScroll: true }); } }
     // a tap on the pinned card: acted on when the finger lifts (a short, still touch), so it never depends on the browser turning the touch into a click;
     // mouse and keyboard use the click
-    function activate(target) { if (!card.classList.contains('is-pinned')) return; var i = +card.dataset.i; hideCard(); if (!target.closest('.x')) jumpTo(i, true); }
+    function activate(target) {
+      if (!card.classList.contains('is-pinned')) return;
+      var i = +card.dataset.i, hadFocus = card.contains(document.activeElement); hideCard();
+      if (target.closest('.side')) { setSide(sideName() === 'left'); if (hadFocus) focusSeg(i); return; }
+      if (target.closest('.x')) { if (hadFocus) focusSeg(i); return; }   // closing keeps keyboard users on the rail
+      jumpTo(i, true);
+    }
     var cdn = null, cardTapAt = -1e9;
     card.addEventListener('pointerdown', function (e) { cdn = card.classList.contains('is-pinned') && e.pointerType !== 'mouse' && e.isPrimary ? { id: e.pointerId, x: e.clientX, y: e.clientY } : null; });
     card.addEventListener('pointerup', function (e) {
       var d = cdn; cdn = null; if (!d || e.pointerId !== d.id || Math.abs(e.clientX - d.x) > 10 || Math.abs(e.clientY - d.y) > 10) return;
-      cardTapAt = performance.now(); activate(e.target);
+      cardTapAt = performance.now(); swallowNextClick(true); activate(e.target);   // the click that follows would land on whatever is under the card once it closes
     });
     card.addEventListener('pointercancel', function () { cdn = null; });
     card.addEventListener('click', function (e) { if (performance.now() - cardTapAt < 700) { e.preventDefault(); return; } activate(e.target); });
-    card.addEventListener('keydown', function (e) { if (e.key === 'Enter' && card.classList.contains('is-pinned')) { var i = +card.dataset.i; hideCard(); jumpTo(i, true); } });
+    card.addEventListener('keydown', function (e) { if (e.key !== 'Enter' || !card.classList.contains('is-pinned') || e.target.closest('button')) return; var i = +card.dataset.i; hideCard(); jumpTo(i, true); });   // Enter on × or the side button is that button's own click
     document.addEventListener('pointerdown', function (e) {
       if (!card.classList.contains('is-pinned') || card.contains(e.target) || rail.contains(e.target)) return;
-      hideCard();
-      var swallow = function (c) { c.preventDefault(); c.stopPropagation(); document.removeEventListener('click', swallow, true); };   // this tap only closes the preview
-      document.addEventListener('click', swallow, true); setTimeout(function () { document.removeEventListener('click', swallow, true); }, 450);
+      hideCard(); swallowNextClick(false);   // this tap only closes the preview
     }, true);
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && card.classList.contains('is-on')) { var i = +card.dataset.i; hideCard(); var a = segs[i] && segs[i].querySelector('a'); if (a) a.focus(); } });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && card.classList.contains('is-on')) { var i = +card.dataset.i; hideCard(); focusSeg(i); } });
 
     // the rail gesture: slide to browse (the page does not move), lift to keep the preview
     var g = null;
@@ -208,10 +275,12 @@ add_action( 'wp_footer', function () {
     var pressedAt = -1e9;   // when a finger or mouse last lifted off the rail; the click that may follow it is not an activation
     rail.addEventListener('contextmenu', function (e) { e.preventDefault(); });   // a long press must not open the link menu (it would cancel the preview)
     rail.addEventListener('dragstart', function (e) { e.preventDefault(); });
-    rail.addEventListener('pointerdown', function (e) { if (e.button > 0 || !e.isPrimary || g) return; try { rail.setPointerCapture(e.pointerId); } catch (err) {} g = { id: e.pointerId, i: pickAt(e.clientY), y: e.clientY }; show(g.i, g.y, false); e.preventDefault(); });
+    rail.addEventListener('pointerdown', function (e) { if (e.button > 0 || !e.isPrimary || g) return; hideTip(); try { rail.setPointerCapture(e.pointerId); } catch (err) {} g = { id: e.pointerId, i: pickAt(e.clientY), y: e.clientY }; show(g.i, g.y, false); e.preventDefault(); });
     rail.addEventListener('pointermove', function (e) { if (!g || e.pointerId !== g.id) return; var i = pickAt(e.clientY); g.y = e.clientY; if (i !== g.i) { g.i = i; buzz(); } show(g.i, g.y, false); });
     rail.addEventListener('pointerup', function (e) { if (!g || e.pointerId !== g.id) return; var x = g; g = null; pressedAt = performance.now(); show(x.i, x.y, true); });
-    rail.addEventListener('pointercancel', function (e) { if (!g || e.pointerId !== g.id) return; g = null; pressedAt = performance.now(); hideCard(); });
+    function cancelPress(e) { if (!g || e.pointerId !== g.id) return; g = null; pressedAt = performance.now(); hideCard(); }
+    rail.addEventListener('pointercancel', cancelPress);
+    rail.addEventListener('lostpointercapture', function (e) { if (g && e.pointerId === g.id) setTimeout(function () { cancelPress(e); }, 0); });   // after pointerup g is already cleared, so only a real loss cancels
     rail.addEventListener('click', function (e) {   // a finger or mouse press is handled above; a click without one (keyboard Enter, VoiceOver/TalkBack double-tap) opens the preview and focuses it
       e.preventDefault(); e.stopPropagation();
       if (performance.now() - pressedAt < 600) { pressedAt = -1e9; return; }
@@ -236,7 +305,21 @@ add_action( 'wp_footer', function () {
       if (name !== lastLabel) { lastLabel = name; top.querySelector('b').textContent = name; top.querySelector('span').textContent = (Math.max(cur, 0) + 1) + ' of ' + S.length; label.textContent = name; }
       you.style.top = label.style.top = (rr.top - nr.top + 8 + w * (rr.height - 16)) + 'px';
       if (from && !back.hidden && !jumping && Math.abs(sy - from.y) < 40) { from = null; back.hidden = true; }   // the reader is back there already
+      if (cur > -1 && !rail.contains(document.activeElement)) rove(cur);
+      if (!tipDone && cur > -1) maybeTip();
     }
+
+    // first-time hint: once per visitor, when they start reading; it goes away by itself, on "Got it", or when they touch the rail
+    var tipDone = store('ts-pk-tip') === 'seen', tipT = 0;
+    function maybeTip() {
+      tipDone = true; store('ts-pk-tip', 'seen');
+      var rr = rail.getBoundingClientRect(); tip.hidden = false; tip.style.top = Math.max(12, rr.top + rr.height / 2 - tip.offsetHeight / 2) + 'px';
+      requestAnimationFrame(function () { tip.classList.add('is-on'); }); nav.classList.add('is-hinting');
+      tipT = setTimeout(hideTip, 9000);
+    }
+    function hideTip() { clearTimeout(tipT); if (tip.hidden) return; tip.classList.remove('is-on'); nav.classList.remove('is-hinting'); setTimeout(function () { tip.hidden = true; }, 260); }
+    tip.querySelector('.ok').addEventListener('click', hideTip);
+    tip.querySelector('.flip').addEventListener('click', function () { setSide(sideName() === 'left'); var rr = rail.getBoundingClientRect(); tip.style.top = Math.max(12, rr.top + rr.height / 2 - tip.offsetHeight / 2) + 'px'; nav.classList.remove('is-hinting'); void nav.offsetWidth; nav.classList.add('is-hinting'); clearTimeout(tipT); tipT = setTimeout(hideTip, 6000); });
     function ask() { if (!ticking) { ticking = true; window.requestAnimationFrame(draw); } }
     var still = 0;
     window.addEventListener('scroll', function () { ask(); nav.classList.add('is-moving'); clearTimeout(still); still = setTimeout(function () { nav.classList.remove('is-moving'); if (jumping) { jumping = false; clearTimeout(jumpT); ask(); } }, 900); }, { passive: true });   // the section name shows beside the rail while the page scrolls
