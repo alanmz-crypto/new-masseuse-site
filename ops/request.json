@@ -1,7 +1,10 @@
 {
-  "id": "rehearse-rail-ideas-20261108-2",
-  "op": "rehearse",
+  "id": "apply-rail-ideas-staging39-20261108-2",
+  "op": "run",
   "target": "staging39",
-  "installer": "link-ideas/install-rail-ideas.php",
-  "args": []
+  "script": "link-ideas/push-rail-ideas.sh",
+  "args": [
+    "--apply"
+  ],
+  "tests": "auto"
 }
