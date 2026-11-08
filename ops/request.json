@@ -1,11 +1,11 @@
 {
-  "id": "dump-thai-s39-1",
+  "id": "rollback-peek-nav-v24-s39-1",
   "op": "run",
   "target": "staging39",
-  "script": "link-ideas/dump-sections.mjs",
+  "script": "link-ideas/push-peek-nav.sh",
   "args": [
-    "https://staging39.thaisolitude.com",
-    "/thai-massage/"
+    "--rollback",
+    "$HOME/private-backups/peek-nav-before-20261108-224354-6f646262.json"
   ],
   "tests": "auto"
 }
