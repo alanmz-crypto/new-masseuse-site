@@ -1,11 +1,7 @@
 {
-  "id": "rollback-rail-ideas-v1-staging39-20261108",
-  "op": "run",
+  "id": "rehearse-rail-ideas-20261108-2",
+  "op": "rehearse",
   "target": "staging39",
-  "script": "link-ideas/push-rail-ideas.sh",
-  "args": [
-    "--rollback",
-    "$HOME/private-backups/rail-ideas-before-20261108-023010-860acf1b.json"
-  ],
-  "tests": "auto"
+  "installer": "link-ideas/install-rail-ideas.php",
+  "args": []
 }
