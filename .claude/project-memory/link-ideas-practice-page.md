@@ -100,3 +100,10 @@ one-line description (first sentence) plus the preview (real heading, first line
 description. Export `staging39-before-peek-nav-20261108-031610.sql`; snapshot `peek-nav-before-20261108-031625-f507cb73.json`; check
 `ui-peek-nav-staging39-20261108-2`: **123/0**.
 **Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-031625-f507cb73.json'`.
+
+**Kiro review (2026-11-08):** Kiro (web) reviewed `peek-nav.php` by reading it; outcomes per finding in `docs/inter-model/2026-11-08-peek-nav-kiro-review-response.md`.
+Now snippet **#1351** (replaced #1350). Export `staging39-before-peek-nav-20261108-040148.sql`; snapshot `peek-nav-before-20261108-040204-32ffad9a.json`;
+check `ui-peek-nav-staging39-20261108-4`: **167/0** (first attempt INVALID 202, one retry). Waiting for Ryan: left-hand option, desktop hover preview, first-time hint.
+**Lessons:** after a pointer-captured drag no click follows, so "was this click from a press" must be a short time window, not a flag; a tap right after a
+gesture can be dropped before it becomes a click, so act on a short still `pointerup` for touch and keep `click` for mouse/keyboard.
+**Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-040204-32ffad9a.json'`.
