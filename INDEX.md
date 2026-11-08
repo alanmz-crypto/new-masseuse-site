@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-08 05:22 UTC  **PASS**  `apply-index-ideas-staging39-20261108`  [reports/2026-11-08/052209-apply-index-ideas-staging39-20261108.md](reports/2026-11-08/052209-apply-index-ideas-staging39-20261108.md)  (run 42450411471)
 - 2026-11-08 05:20 UTC  **PASS**  `rehearse-index-ideas-20261108`  [reports/2026-11-08/052027-rehearse-index-ideas-20261108.md](reports/2026-11-08/052027-rehearse-index-ideas-20261108.md)  (run 42450290952)
 - 2026-11-08 05:12 UTC  **PASS**  `ui-peek-nav-staging39-20261108-7`  [reports/2026-11-08/051203-ui-peek-nav-staging39-20261108-7.md](reports/2026-11-08/051203-ui-peek-nav-staging39-20261108-7.md)  (run 42449579725)
 - 2026-11-08 05:08 UTC  **PASS**  `apply-peek-nav-staging39-20261108-6`  [reports/2026-11-08/050803-apply-peek-nav-staging39-20261108-6.md](reports/2026-11-08/050803-apply-peek-nav-staging39-20261108-6.md)  (run 42449462347)
