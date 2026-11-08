@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-08 02:28 UTC  **PASS**  `rehearse-rail-ideas-20261108`  [reports/2026-11-08/022835-rehearse-rail-ideas-20261108.md](reports/2026-11-08/022835-rehearse-rail-ideas-20261108.md)  (run 42438560666)
 - 2026-11-08 01:55 UTC  **PASS**  `ui-progress-ideas-staging39-20261108`  [reports/2026-11-08/015505-ui-progress-ideas-staging39-20261108.md](reports/2026-11-08/015505-ui-progress-ideas-staging39-20261108.md)  (run 42436157942)
 - 2026-11-08 01:52 UTC  **PASS**  `apply-progress-ideas-staging39-20261108-2`  [reports/2026-11-08/015241-apply-progress-ideas-staging39-20261108-2.md](reports/2026-11-08/015241-apply-progress-ideas-staging39-20261108-2.md)  (run 42436011290)
 - 2026-11-08 01:50 UTC  **PASS**  `rehearse-progress-ideas-20261108-2`  [reports/2026-11-08/015051-rehearse-progress-ideas-20261108-2.md](reports/2026-11-08/015051-rehearse-progress-ideas-20261108-2.md)  (run 42435884705)
