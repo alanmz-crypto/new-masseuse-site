@@ -1,11 +1,7 @@
 {
-  "id": "rollback-peek-nav-v22-s39-1",
-  "op": "run",
+  "id": "inspect-thai-s39-sum-1",
+  "op": "inspect",
   "target": "staging39",
-  "script": "link-ideas/push-peek-nav.sh",
-  "args": [
-    "--rollback",
-    "$HOME/private-backups/peek-nav-before-20261108-202316-cf244515.json"
-  ],
-  "tests": "auto"
+  "query": "page",
+  "arg": "thai-massage"
 }
