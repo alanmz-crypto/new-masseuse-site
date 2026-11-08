@@ -159,3 +159,9 @@ Not pinned below 501px of height (landscape phones), where header, strip and rai
 snapshot `peek-nav-before-20261108-065841-c543ce54.json`; check `ui-peek-nav-staging39-20261108-12`: **280/0** (the first run tapped the pinned header's logo
 in a test step and left the page; the test now taps the strip and the page margin).
 **Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-065841-c543ce54.json'`.
+**Menu flicker fixed (2026-11-08):** Ryan: "When i open the hamburger menu on this page it flickers, now." Cause (reproduced on staging39 by a new 40-frame check:
+header 328/421px alternating): the open Astra phone menu sits inside `#masthead`; `--pk-head` measured the whole header, and the menu's `max-height` used
+`--pk-head`, so each set the other. Now only the header bar is measured (header minus `.ast-mobile-header-content`). Snippet **#1360**; export
+`staging39-before-peek-nav-20261108-072416.sql`; snapshot `peek-nav-before-20261108-072428-8b5dda0b.json`; check `ui-peek-nav-staging39-20261108-13`: **282/0**
+(menu steady at 421/336, `--pk-head` 85px). **Lesson:** never size a child from a measurement of a parent that contains it.
+**Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-072428-8b5dda0b.json'`.
