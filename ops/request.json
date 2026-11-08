@@ -1,10 +1,11 @@
 {
-  "id": "ui-pill-nav-staging39-20261108-3",
+  "id": "rollback-pill-nav-v2-staging39-20261108",
   "op": "run",
   "target": "staging39",
-  "script": "link-ideas/check-pill-nav.mjs",
+  "script": "link-ideas/push-pill-nav.sh",
   "args": [
-    "https://staging39.thaisolitude.com"
+    "--rollback",
+    "$HOME/private-backups/pill-nav-before-20261108-010400-f14ff46f.json"
   ],
-  "tests": "none"
+  "tests": "auto"
 }
