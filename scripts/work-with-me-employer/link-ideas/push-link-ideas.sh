@@ -84,7 +84,7 @@ case "$phase" in
     need 'class="tsx-sec"' 6
     need "document.getElementById('tsx-lab')" 1          # the script arrived unfiltered
     need '.tsx-lab .tsx-pills{position:sticky' 1          # the style arrived unfiltered
-    sed -n '/<script>/,/<\/script>/p' "$tmp/p.html" | grep -c -F -e '&#8220;' -e '&#8217;' -e '&#038;' | sed 's/^/  texturized or escaped characters inside the scripts: /'
+    sed -n "/document.getElementById('tsx-lab')/,/<\/script>/p" "$tmp/p.html" | grep -o -E '.{0,70}&#(8220|8217|8216|038);.{0,40}' | sed 's/^/  altered: /' || true
     [ "$(sed -n "/document.getElementById('tsx-lab')/,/<\/script>/p" "$tmp/p.html" | grep -c -F -e '&#8220;' -e '&#8217;' -e '&#038;' -e '&#8216;')" = 0 ] && echo "  ok   the page script is unaltered" || { echo "  FAIL the page script was altered by WordPress"; bad=1; }
     [ "$bad" = 0 ] || { echo "CHECK FAILED (see the lines above)"; exit 1; }
     echo "public check: the page answers 200 with its heading, 5 ideas, 6 sample sections, and its style and script intact" ;;
