@@ -91,7 +91,7 @@ add_action( 'wp_footer', function () {
   // Taps on a pill: handled here first (capture), so no other script's jump hides the heading under the header and pills.
   function jump(t, smooth) {
     var y = t.getBoundingClientRect().top + window.scrollY - (head.offsetHeight + nav.offsetHeight + 12);
-    window.scrollTo({ top: Math.max(0, y), behavior: smooth && !calm.matches ? 'smooth' : 'auto' });
+    window.scrollTo({ top: Math.max(0, y), behavior: smooth && !calm.matches ? 'smooth' : 'instant' });
   }
   nav.addEventListener('click', function (e) {
     var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
@@ -104,13 +104,24 @@ add_action( 'wp_footer', function () {
     if (!t.hasAttribute('tabindex')) t.setAttribute('tabindex', '-1');
     t.focus({ preventScroll: true });
   }, true);
-  // Arriving with #section in the address: some heading ids are only set by the page's other scripts after load, so align it once they have run.
+  // Arriving with #section in the address: Astra's own smooth scroll runs after load and ignores the pinned header and pills, so once the page has
+  // stopped moving, line the heading up below the pills. Only for 4 s after load, and never after the visitor touches, scrolls or types.
   function arrive() {
     var h = location.hash ? decodeURIComponent(location.hash.slice(1)) : '';
-    var t = h ? document.getElementById(h) : null;
-    if (t && links.some(function (a) { return a.getAttribute('href') === '#' + h; })) jump(t, false);
+    if (!h || !links.some(function (a) { return a.getAttribute('href') === '#' + h; })) return;
+    var until = Date.now() + 4000, timer = 0, done = false;
+    function stop() { done = true; window.removeEventListener('scroll', idle); }
+    function fix() {
+      var t = document.getElementById(h); if (!t || done) return;
+      var top = t.getBoundingClientRect().top, nb = nav.getBoundingClientRect().bottom;
+      if (top < nb - 1 || top > nb + 40) jump(t, false);
+    }
+    function idle() { clearTimeout(timer); timer = setTimeout(function () { if (Date.now() > until) { stop(); return; } fix(); }, 180); }
+    ['wheel', 'touchstart', 'keydown', 'mousedown'].forEach(function (ev) { window.addEventListener(ev, stop, { once: true, passive: true }); });
+    window.addEventListener('scroll', idle, { passive: true });
+    idle();
   }
-  if (document.readyState === 'complete') { setTimeout(arrive, 150); } else { window.addEventListener('load', function () { setTimeout(arrive, 150); }); }
+  if (document.readyState === 'complete') { arrive(); } else { window.addEventListener('load', arrive); }
   var ticking = false;
   function ask() { if (!ticking) { ticking = true; window.requestAnimationFrame(update); } }
   window.addEventListener('scroll', ask, { passive: true });
