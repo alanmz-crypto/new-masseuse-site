@@ -111,18 +111,23 @@ html .ts-pk .ts-pk-nav.is-index .ts-pk-ix{color:var(--pk-on);transform:scale(.92
 .ts-pk-ix svg{display:block;width:22px;height:22px;margin:auto;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;pointer-events:none}
 html.ts-pk-left .ts-pk .ts-pk-ix{right:auto;left:0}
 .ts-pk-fan{position:absolute;inset:0;pointer-events:none}
-html .ts-pk .ts-pk-fan li{position:absolute;right:52px;top:0;display:flex;align-items:center;gap:.55rem;max-width:min(48vw,220px);min-height:34px;box-sizing:border-box;margin:-17px 0 0;padding:.3rem .6rem;border:1px solid var(--pk-rule);border-radius:10px;background:var(--pk-stone);color:var(--pk-ink);font-size:.82rem;font-weight:600;line-height:1.25;white-space:nowrap;opacity:0;box-shadow:0 8px 20px -14px rgba(0,0,0,.5);transform:translateX(26px) scale(.55);transform-origin:right center;transition:opacity .2s,transform .3s var(--pk-ease);transition-delay:var(--d-close,0ms)}   /* the same form as the closed boxes in the stack (.ts-pk-card .row) */
-html .ts-pk .ts-pk-fan li span{min-width:0;overflow:hidden;text-overflow:ellipsis}
-html .ts-pk .ts-pk-fan li b{display:grid;place-items:center;flex:0 0 auto;width:1.45rem;height:1.45rem;margin:0;border-radius:50%;background:var(--pk-panel);color:var(--pk-ink);font-size:.72rem;font-weight:800}
+html .ts-pk .ts-pk-fan li,html .ts-pk .ts-pk-chip{position:absolute;right:52px;top:0;display:flex;align-items:center;gap:.55rem;max-width:min(48vw,220px);min-height:34px;box-sizing:border-box;margin:-17px 0 0;padding:.3rem .6rem;border:1px solid var(--pk-rule);border-radius:10px;background:var(--pk-stone);color:var(--pk-ink);font-size:.82rem;font-weight:600;line-height:1.25;white-space:nowrap;opacity:0;box-shadow:0 8px 20px -14px rgba(0,0,0,.5);transform:translateX(26px) scale(.55);transform-origin:right center;transition:opacity .2s,transform .3s var(--pk-ease);transition-delay:var(--d-close,0ms)}   /* the same form as the closed boxes in the stack (.ts-pk-card .row) */
+html .ts-pk .ts-pk-fan li span,html .ts-pk .ts-pk-chip span{min-width:0;overflow:hidden;text-overflow:ellipsis}
+html .ts-pk .ts-pk-fan li b,html .ts-pk .ts-pk-chip b{display:grid;place-items:center;flex:0 0 auto;width:1.45rem;height:1.45rem;margin:0;border-radius:50%;background:var(--pk-panel);color:var(--pk-ink);font-size:.72rem;font-weight:800}
 html .ts-pk .ts-pk-fan li.is-done b{color:var(--pk-on)}
 html .ts-pk .ts-pk-fan li.is-now{border:1.5px solid var(--pk-on)}   /* where you are: the open box's green edge */
 html .ts-pk .ts-pk-nav.is-index .ts-pk-fan li{opacity:1;transform:none;transition-delay:var(--d-open,0ms)}
 html .ts-pk .ts-pk-nav.is-kept .ts-pk-fan li{pointer-events:auto;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}   /* kept open: tap a name to go there */
 html .ts-pk .ts-pk-nav.is-kept .ts-pk-ix{box-shadow:inset 0 0 0 2px var(--pk-on)}
-html.ts-pk-left .ts-pk .ts-pk-fan li{right:auto;left:52px;transform:translateX(-26px) scale(.55);transform-origin:left center}
-html.ts-pk-left .ts-pk .ts-pk-nav.is-index .ts-pk-fan li{transform:none}
+html.ts-pk-left .ts-pk .ts-pk-fan li,html.ts-pk-left .ts-pk .ts-pk-chip{right:auto;left:52px;transform:translateX(-26px) scale(.55);transform-origin:left center}
+html.ts-pk-left .ts-pk .ts-pk-nav.is-index .ts-pk-fan li,html.ts-pk-left .ts-pk .ts-pk-chip.is-on{transform:none}
+html .ts-pk .ts-pk-chip{pointer-events:none}
+html .ts-pk .ts-pk-chip.is-on{opacity:1;transform:none;transition-delay:0ms}
+html .ts-pk .ts-pk-chip.is-kept{pointer-events:auto;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;border:1.5px solid var(--pk-on)}
+html .ts-pk .ts-pk-fan li.is-over,html .ts-pk .ts-pk-chip.is-over{background:var(--pk-on);color:var(--pk-on-text);border-color:var(--pk-on)}   /* the finger is on it: lift and it stays */
+.ts-pk-nav.is-scrub .ts-pk-label{opacity:0}
 .ts-pk-nav.is-index .ts-pk-label{opacity:0}
-@media (prefers-reduced-motion:reduce){html .ts-pk .ts-pk-fan li,html .ts-pk .ts-pk-ix{transition-duration:.01ms!important;transition-delay:0ms!important}}
+@media (prefers-reduced-motion:reduce){html .ts-pk .ts-pk-fan li,html .ts-pk .ts-pk-chip,html .ts-pk .ts-pk-ix{transition-duration:.01ms!important;transition-delay:0ms!important}}
 /* the site header stays on top (Ryan, 2026-11-08: "make the header persistent too"); not on short landscape screens, where header, strip and rail would not fit */
 @media (min-height:501px){
 html.ts-pk-ready #masthead{position:sticky;top:0;z-index:96}
@@ -216,9 +221,9 @@ add_action( 'wp_footer', function () {
     row.parentNode.insertBefore(strip, row.nextSibling);   // in the page, right under the row; it sticks to the top as you read (display only)
     var box = document.createElement('div'); box.className = 'ts-pk';
     box.innerHTML = '<nav class="ts-pk-nav" aria-label="Sections on this page"><button type="button" class="ts-pk-ix" aria-expanded="false" aria-controls="ts-pk-fan" aria-label="Show all sections (press and hold)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 7h12M6 12h9M6 17h6"/></svg></button>' +
-      '<ol class="ts-pk-fan" id="ts-pk-fan" aria-label="All sections" aria-hidden="true">' + S.map(function (s, i) { return '<li><b>' + (i + 1) + '</b><span>' + esc(s.label) + '</span></li>'; }).join('') + '</ol><ol class="ts-pk-rail">' + S.map(function (s) { return '<li><a href="' + esc(s.href) + '" aria-label="' + esc(s.label) + '" draggable="false"><i></i></a></li>'; }).join('') + '</ol><span class="ts-pk-you" aria-hidden="true"></span><span class="ts-pk-label" aria-hidden="true"></span></nav>' +
+      '<ol class="ts-pk-fan" id="ts-pk-fan" aria-label="All sections" aria-hidden="true">' + S.map(function (s, i) { return '<li><b>' + (i + 1) + '</b><span>' + esc(s.label) + '</span></li>'; }).join('') + '</ol><ol class="ts-pk-rail">' + S.map(function (s) { return '<li><a href="' + esc(s.href) + '" aria-label="' + esc(s.label) + '" draggable="false"><i></i></a></li>'; }).join('') + '</ol><span class="ts-pk-you" aria-hidden="true"></span><span class="ts-pk-label" aria-hidden="true"></span><span class="ts-pk-chip" aria-hidden="true"><b></b><span></span></span></nav>' +
       '<div class="ts-pk-card" role="group" aria-label="Section preview" tabindex="-1"></div>' +
-      '<div class="ts-pk-tip" role="note" hidden><p>Slide your thumb along this bar to preview each section. Lift, then tap the preview to go there. Hold the icon above it to see them all, and slide down onto the bar to preview one.</p><div class="row"><button type="button" class="ok">Got it</button><button type="button" class="flip"></button></div></div>';
+      '<div class="ts-pk-tip" role="note" hidden><p>Slide your thumb along this bar to preview each section. Lift, then tap the preview to go there. Press the icon above it to see them all; slide down onto the bar to move through the page, and slide onto a name to keep it.</p><div class="row"><button type="button" class="ok">Got it</button><button type="button" class="flip"></button></div></div>';
     var host = strip.parentNode, okHost = true;
     for (var an = host; an && an !== document.documentElement; an = an.parentElement) { var cs = getComputedStyle(an); if (cs.transform !== 'none' || cs.filter !== 'none' || cs.perspective !== 'none' || (cs.backdropFilter || cs.webkitBackdropFilter || 'none') !== 'none' || /transform|filter|perspective/.test(cs.willChange || '') || (cs.containerType && cs.containerType !== 'normal') || /paint|layout|strict|content/.test(cs.contain || '')) { okHost = false; break; } }   // any of these would make position:fixed relative to that ancestor
     if (okHost) host.insertBefore(box, strip.nextSibling); else document.body.appendChild(box);   // keyboard order: row, strip, rail, then the sections
@@ -439,6 +444,7 @@ add_action( 'wp_footer', function () {
       var name = S[Math.max(cur, 0)].label;
       if (name !== lastLabel) { lastLabel = name; label.textContent = name; }
       you.style.top = label.style.top = (rr.top - nr.top + 8 + w * (rr.height - 16)) + 'px';
+      if (chipK > -1 && !chipKept) { var ck = Math.max(cur, 0); if (ck !== chipK) { chipShow(ck); buzz(); } chip.style.top = you.style.top; }   // scrubbing: only the section you are in
       if (cur !== lastRove && cur > -1 && !rail.contains(document.activeElement)) { rove(cur); lastRove = cur; }   // only when the section changes
       if (ixOpen) fanLayout();   // the fan stays current if the page moves while it is open (keyboard toggle)
       if (!tipDone && !tipWait && cur > -1) tipWait = setTimeout(function () { tipWait = 0; if (!tipDone && !card.classList.contains('is-on') && !ixOpen && !g && ixPress === null) maybeTip(); }, 1500);   // after 1.5 s of reading, never over a preview or the fan
@@ -456,44 +462,81 @@ add_action( 'wp_footer', function () {
       });
     }
     function setIndex(on) {
-      if (!on) { clearTimeout(keepT); keep(false); }
+      if (!on) { clearTimeout(keepT); keep(false); setOver(-1); }
       if (on === ixOpen) return; ixOpen = on;
       if (on) { hideCard(); hideTip(); fanLayout(); buzz(); }
       nav.classList.toggle('is-index', on); ixBtn.setAttribute('aria-expanded', String(on)); fan.setAttribute('aria-hidden', String(!on));
     }
     function keep(on) { kept = on; nav.classList.toggle('is-kept', on); }
     ixBtn.addEventListener('contextmenu', function (e) { e.preventDefault(); });
-    // press the icon: the names fan out. Without lifting, slide down onto the rail: the fan closes and the rail's preview takes over (Ryan, 2026-11-08);
-    // lifting there keeps the preview, exactly as a press that started on the rail
-    var handed = null;   // the rail gesture the icon press turned into: { i, y }
-    ixBtn.addEventListener('pointerdown', function (e) { if (e.button > 0 || !e.isPrimary) return; tipSeen(); ixPress = e.pointerId; handed = null; try { ixBtn.setPointerCapture(e.pointerId); } catch (err) {} setIndex(true); keep(false); clearTimeout(keepT); keepT = setTimeout(function () { if (ixPress !== null && !handed) { keep(true); buzz(); } }, 2000); e.preventDefault(); });
+    // Ryan, 2026-11-08: press the icon and the names fan out. Then, without lifting:
+    //   slide onto a name (it turns green) and lift: that name's box opens with its summary (tap it to go there);
+    //   slide down the rail: the page scrolls with the thumb and only the name of the section you are in shows beside it;
+    //     slide sideways onto that name (green) and lift: it stays (tap it for its box and summary); lift on the rail: you stay where you scrolled to.
+    //   hold still for 2 s: the names stay open after lifting (tap one for its box).
+    // A press that starts on the rail itself still previews without moving the page.
+    var handed = null, ixStart = null, lean = null;   // the page scrub the icon press turned into; where it started; whether it first headed for the names
+    var chip = nav.querySelector('.ts-pk-chip'), chipK = -1, chipKept = false, chipOver = false, over = -1;
+    function onLeft() { return document.documentElement.classList.contains('ts-pk-left'); }
+    function inRailBand(x) { var rr = rail.getBoundingClientRect(); return onLeft() ? x <= rr.right + 10 : x >= rr.left - 10; }
+    function hitFan(x, y) { for (var k = 0; k < fanItems.length; k++) { var r = fanItems[k].getBoundingClientRect(); if (x >= r.left - 6 && x <= r.right + 6 && y >= r.top - 5 && y <= r.bottom + 5) return k; } return -1; }
+    function setOver(k) { if (k === over) return; over = k; fanItems.forEach(function (it, j) { it.classList.toggle('is-over', j === k); }); if (k > -1) buzz(); }
+    function chipShow(k) { chipK = k; chip.firstChild.textContent = String(k + 1); chip.lastChild.textContent = S[k].label; }
+    function chipHide() { chipKept = false; chipOver = false; chipK = -1; chip.className = 'ts-pk-chip'; nav.classList.remove('is-scrub'); }
+    function scrubTo(y) {   // the rail stands for the whole page: the thumb's place on it is the reading position
+      var rr = rail.getBoundingClientRect(), w = Math.max(0, Math.min(1, (y - rr.top - 8) / Math.max(1, rr.height - 16)));
+      var a = bounds(0)[0] + window.scrollY, b = bounds(S.length - 1)[1] + window.scrollY;
+      window.scrollTo(0, Math.max(0, Math.round(a + w * (b - a) - line())));
+    }
+    function startScrub(y) {
+      chipHide(); setIndex(false); handed = { y: y }; nav.classList.add('is-scrub'); document.documentElement.style.scrollBehavior = 'auto';   // follow the thumb, not the theme's smooth scroll
+      chipShow(Math.max(cur, 0)); chip.style.top = you.style.top; chip.classList.add('is-on'); buzz(); scrubTo(y);
+    }
+    ixBtn.addEventListener('pointerdown', function (e) { if (e.button > 0 || !e.isPrimary) return; tipSeen(); chipHide(); ixPress = e.pointerId; handed = null; ixStart = { x: e.clientX, y: e.clientY }; lean = null; try { ixBtn.setPointerCapture(e.pointerId); } catch (err) {} setIndex(true); keep(false); clearTimeout(keepT); keepT = setTimeout(function () { if (ixPress !== null && !handed && over < 0) { keep(true); buzz(); } }, 2000); e.preventDefault(); });
     ixBtn.addEventListener('pointermove', function (e) {
       if (ixPress === null || e.pointerId !== ixPress) return;
-      var rr = rail.getBoundingClientRect();
+      var x = e.clientX, y = e.clientY, rr = rail.getBoundingClientRect();
       if (!handed) {
-        if (e.clientY < rr.top + 4) return;   // still on (or around) the icon: the fan stays out
-        clearTimeout(keepT); setIndex(false); handed = { i: pickAt(e.clientY), y: e.clientY }; buzz(); show(handed.i, handed.y, false); return;
+        var k = ixOpen ? hitFan(x, y) : -1; setOver(k);
+        if (!inRailBand(x)) lean = true;   // left the rail sideways: this press picks a name and never scrolls
+        if (k > -1 || lean || y < rr.top + 24 || Math.abs(x - ixStart.x) > (y - ixStart.y) * 0.12) return;   // scrolling starts only on a clearly straight slide down the rail
+        clearTimeout(keepT); setOver(-1); startScrub(y); return;
       }
-      var i = pickAt(e.clientY); handed.y = e.clientY; if (i !== handed.i) { handed.i = i; buzz(); } show(handed.i, handed.y, false);
+      var r = chip.getBoundingClientRect(), on = !inRailBand(x) && x >= r.left - 12 && x <= r.right + 12 && y >= r.top - 14 && y <= r.bottom + 14;
+      if (on !== chipOver) { chipOver = on; chip.classList.toggle('is-over', on); if (on) buzz(); }
+      if (!on && inRailBand(x)) { handed.y = y; scrubTo(y); }   // off the rail and off the name: the page waits
     });
     function ixRelease(e) {
       if (ixPress === null || e.pointerId !== ixPress) return;
       ixPress = null; ixPressedAt = performance.now(); clearTimeout(keepT);
-      var h = handed; handed = null;
-      if (h && e.type === 'pointerup') { show(h.i, h.y, true); return; }   // lifted on the rail: the preview stays, tap it to go there
-      if (h) { hideCard(); return; }                                           // cancelled while on the rail
-      if (kept && e.type === 'pointerup') return;                              // held 2 s: the fan stays open (tap a name, the rail, or anywhere else)
+      var h = handed, up = e.type === 'pointerup'; handed = null;
+      if (h) {
+        document.documentElement.style.scrollBehavior = '';
+        if (chipOver && up) { chipKept = true; chipOver = false; chip.classList.remove('is-over'); chip.classList.add('is-kept'); swallowNextClick(true); return; }   // lifted on the name: it stays
+        chipHide(); return;                                                                                                                                         // lifted on the rail: you stay where you scrolled to
+      }
+      if (over > -1 && up) { var k = over, r = fanItems[k].getBoundingClientRect(); setIndex(false); swallowNextClick(true); show(k, r.top + r.height / 2, true); return; }   // lifted on a name: its box opens
+      setOver(-1);
+      if (kept && up) return;                              // held 2 s: the names stay open (tap one, the rail, or anywhere else)
       setIndex(false);
     }
+    // a kept name from the scrub: tap it for its box and summary; a tap anywhere else lets it go
+    var chdn = null, chipTapAt = -1e9;
+    function chipGo() { if (!chipKept) return; var k = chipK, r = chip.getBoundingClientRect(); chipHide(); show(k, r.top + r.height / 2, true); }
+    chip.addEventListener('pointerdown', function (e) { chdn = chipKept && e.isPrimary ? { id: e.pointerId, x: e.clientX, y: e.clientY } : null; });
+    chip.addEventListener('pointerup', function (e) { var d = chdn; chdn = null; if (!d || e.pointerId !== d.id || Math.abs(e.clientX - d.x) > 10 || Math.abs(e.clientY - d.y) > 10) return; chipTapAt = performance.now(); swallowNextClick(true); chipGo(); });
+    chip.addEventListener('pointercancel', function () { chdn = null; });
+    chip.addEventListener('click', function (e) { e.preventDefault(); if (performance.now() - chipTapAt < 700) return; chipGo(); });
+    document.addEventListener('pointerdown', function (e) { if (!chipKept || chip.contains(e.target)) return; chipHide(); if (!rail.contains(e.target) && !ixBtn.contains(e.target)) swallowNextClick(false); }, true);
     ixBtn.addEventListener('pointerup', ixRelease); ixBtn.addEventListener('pointercancel', ixRelease); ixBtn.addEventListener('lostpointercapture', function (e) { if (ixPress !== null && e.pointerId === ixPress) setTimeout(function () { ixRelease({ pointerId: e.pointerId, type: 'pointercancel' }); }, 0); });
     ixBtn.addEventListener('click', function (e) { e.preventDefault(); if (performance.now() - ixPressedAt < 600) { ixPressedAt = -1e9; return; } setIndex(!ixOpen); if (ixOpen) keep(true); });   // opened without a press (keyboard, screen reader): kept open
     document.addEventListener('pointerdown', function (e) {
       if (!ixOpen || ixPress !== null || ixBtn.contains(e.target) || (kept && fan.contains(e.target))) return;
       setIndex(false); if (!rail.contains(e.target)) swallowNextClick(false);   // on the rail the touch carries on as a rail touch (its preview); elsewhere it only closes the fan
     }, true);
-    // kept open: a tap on a name goes to that section
+    // kept open: a tap on a name opens its box with the summary (tap that to go there)
     var fdn = null, fanTapAt = -1e9;
-    function fanGo(t) { var li = t.closest && t.closest('.ts-pk-fan li'); if (!li || !kept) return; var k = fanItems.indexOf(li); setIndex(false); jumpTo(k); }
+    function fanGo(t) { var li = t.closest && t.closest('.ts-pk-fan li'); if (!li || !kept) return; var k = fanItems.indexOf(li), r = li.getBoundingClientRect(); setIndex(false); show(k, r.top + r.height / 2, true); }
     fan.addEventListener('pointerdown', function (e) { fdn = kept && e.isPrimary ? { id: e.pointerId, x: e.clientX, y: e.clientY } : null; });
     fan.addEventListener('pointerup', function (e) { var d = fdn; fdn = null; if (!d || e.pointerId !== d.id || Math.abs(e.clientX - d.x) > 10 || Math.abs(e.clientY - d.y) > 10) return; fanTapAt = performance.now(); swallowNextClick(true); fanGo(e.target); });
     fan.addEventListener('pointercancel', function () { fdn = null; });

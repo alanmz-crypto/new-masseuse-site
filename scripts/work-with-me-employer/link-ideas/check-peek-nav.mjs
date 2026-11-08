@@ -225,32 +225,66 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     await p.evaluate(() => document.getElementById('pk-under2').remove());
     await holdKeep();
     const nameAt = await p.evaluate(() => { const r = document.querySelectorAll('.ts-pk-fan li')[3].getBoundingClientRect(); return { x: Math.round(r.left + r.width / 2), y: Math.round(r.top + r.height / 2) }; });
-    await touch('touchStart', nameAt.x, nameAt.y); await touch('touchEnd'); await W(1600);
-    L = await landed(await hrefOf(3));
-    ok(`${tag} index: kept open, tapping a name jumps to that section and closes the names`, L.ok && !(await fanState()).open, JSON.stringify(L));
+    await touch('touchStart', nameAt.x, nameAt.y); await touch('touchEnd'); await W(700);
+    c = await card();
+    ok(`${tag} index: kept open, tapping a name opens its box with the summary (the others as closed boxes), no jump`, c.on && c.pinned && c.name === labels[3] && c.sum.length > 60 && !(await fanState()).open && (await Y()) === y0 && (await p.$$eval('.ts-pk-card .row', r => r.length)) === labels.length - 1, JSON.stringify(c));
+    await p.tap('.ts-pk-card .open > b'); await W(1600);
+    L = await landed(await hrefOf(3)); ok(`${tag} index: ...and tapping that box then jumps there`, L.ok, JSON.stringify(L));
     await p.evaluate(y => scrollTo(0, y), y0); await W(900); y0 = await Y();
     await holdKeep();
     const sg = await seg(1); await touch('touchStart', sg.x, sg.y); await touch('touchEnd'); await W(700);
     c = await card(); fs = await fanState();
     ok(`${tag} index: kept open, touching the rail closes the names and opens that section's box with its summary`, !fs.open && c.on && c.name === labels[1] && c.sum.length > 60 && (await Y()) === y0, JSON.stringify({ fan: fs.open, c }));
     await touch('touchStart', 12, Math.round(st.vh * 0.5)); await touch('touchEnd'); await W(500);
-    // press the icon, then slide down onto the rail without lifting: the rail's preview takes over (Ryan, 2026-11-08)
+    // Ryan, 2026-11-08: press the icon, then slide down the rail without lifting: the page scrolls with the thumb, one name shows (the section you are in);
+    // slide sideways onto that name and lift: it stays (tap: its box; tap again: go there); lift on the rail: you stay where you scrolled to
     y0 = await Y();
     const ixAt2 = await p.$eval('.ts-pk-ix', e => { const r = e.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
-    const q = await seg(3);
-    await touch('touchStart', ixAt2.x, ixAt2.y); await W(400);
-    ok(`${tag} index slide: the names fan out first`, (await fanState()).open);
-    for (let k = 1; k <= 10; k++) { await touch('touchMove', ixAt2.x, ixAt2.y + (q.y - ixAt2.y) * k / 10); await W(30); }
-    c = await card(); fs = await fanState();
-    ok(`${tag} index slide: sliding onto the rail closes the fan and previews the section under the finger`, !fs.open && c.on && !c.pinned && c.name === 'Questions' && c.sum.length > 60, JSON.stringify({ fan: fs.open, c }));
-    ok(`${tag} index slide: the page does not move`, (await Y()) === y0);
-    const q2 = await seg(1); for (let k = 1; k <= 5; k++) { await touch('touchMove', ixAt2.x, q.y + (q2.y - q.y) * k / 5); await W(30); }
-    ok(`${tag} index slide: the preview follows the finger along the rail`, (await card()).name === 'Common reasons');
-    await touch('touchEnd'); await W(600);
-    c = await card(); ok(`${tag} index slide: lifting keeps the preview, no jump`, c.pinned && c.name === 'Common reasons' && (await Y()) === y0, JSON.stringify(c));
+    const chipS = () => p.evaluate(() => { const c = document.querySelector('.ts-pk-chip'), r = c.getBoundingClientRect(); return { on: c.classList.contains('is-on'), over: c.classList.contains('is-over'), kept: c.classList.contains('is-kept'), name: c.lastChild.textContent, x: Math.round(r.left + r.width / 2), y: Math.round(r.top + r.height / 2), op: +getComputedStyle(c).opacity }; });
+    const scrubDown = async k => { const q = await seg(k); await touch('touchStart', ixAt2.x, ixAt2.y); await W(400); for (let j = 1; j <= 12; j++) { await touch('touchMove', ixAt2.x, ixAt2.y + (q.y - ixAt2.y) * j / 12); await W(40); } await W(300); return q; };
+    const q = await scrubDown(3);
+    let ch = await chipS(); c = await card(); fs = await fanState(); let yS = await Y();
+    ok(`${tag} index scrub: sliding down the rail from the icon scrolls the page`, yS > y0 + 200, JSON.stringify({ y0, yS }));
+    ok(`${tag} index scrub: the names fold away and only one name shows, the section you are in`, !fs.open && !c.on && ch.on && ch.op > 0.9 && ch.name === (await p.evaluate(() => ((document.querySelector('.ts-pk-rail a[aria-current]') || {}).getAttribute?.('aria-label') || '').split(':')[0])) && ch.name === labels[3], JSON.stringify(ch));
+    const q2 = await seg(1); for (let j = 1; j <= 8; j++) { await touch('touchMove', ixAt2.x, q.y + (q2.y - q.y) * j / 8); await W(40); } await W(300);
+    ch = await chipS(); const yS2 = await Y();
+    ok(`${tag} index scrub: sliding back up scrolls back, and the name follows the section`, yS2 < yS && ch.name === labels[1], JSON.stringify({ yS, yS2, ch }));
+    await touch('touchEnd'); await W(700);
+    ch = await chipS(); c = await card();
+    ok(`${tag} index scrub: lifting on the rail leaves you where you scrolled to, with nothing open`, !ch.on && !c.on && Math.abs((await Y()) - yS2) <= 2, JSON.stringify({ ch, y: await Y(), yS2 }));
+    await p.evaluate(y => scrollTo(0, y), y0); await W(900);
+    // keep it: slide sideways onto the name
+    const q3 = await scrubDown(2); ch = await chipS(); const yK = await Y();
+    for (let j = 1; j <= 8; j++) { await touch('touchMove', ixAt2.x + (ch.x - ixAt2.x) * j / 8, q3.y + (ch.y - q3.y) * j / 8); await W(40); }
+    const chOver = await chipS();
+    ok(`${tag} index scrub: sliding onto the name lights it up, and the page waits`, chOver.over && Math.abs((await Y()) - yK) <= 2, JSON.stringify({ chOver, y: await Y(), yK }));
+    await touch('touchEnd'); await W(700);
+    ch = await chipS();
+    ok(`${tag} index scrub: lifting on the name keeps it open (no waiting), nothing else opens`, ch.on && ch.kept && ch.name === labels[2] && !(await card()).on && Math.abs((await Y()) - yK) <= 2, JSON.stringify(ch));
+    await touch('touchStart', ch.x, ch.y); await touch('touchEnd'); await W(700);
+    c = await card();
+    ok(`${tag} index scrub: tapping the kept name opens its box with the summary, no jump`, c.on && c.pinned && c.name === labels[2] && c.sum.length > 60 && !(await chipS()).on && Math.abs((await Y()) - yK) <= 2, JSON.stringify(c));
     await p.tap('.ts-pk-card .open > b'); await W(1600);
-    L = await landed(await hrefOf(1)); ok(`${tag} index slide: tapping the preview then jumps there`, L.ok, JSON.stringify(L));
-    await p.evaluate(y => scrollTo(0, y), y0); await W(800);
+    L = await landed(await hrefOf(2)); ok(`${tag} index scrub: ...and tapping that box jumps there`, L.ok, JSON.stringify(L));
+    await p.evaluate(y => scrollTo(0, y), y0); await W(900);
+    // a kept name lets go on a tap elsewhere, which does nothing else
+    const q4 = await scrubDown(2); ch = await chipS();
+    for (let j = 1; j <= 8; j++) { await touch('touchMove', ixAt2.x + (ch.x - ixAt2.x) * j / 8, q4.y + (ch.y - q4.y) * j / 8); await W(40); } await touch('touchEnd'); await W(600);
+    await p.evaluate(() => { const t = document.createElement('a'); t.id = 'pk-under3'; t.href = '#pk-under3'; t.style.cssText = 'position:fixed;inset:0;z-index:50'; window.__under3 = 0; t.addEventListener('click', e => { e.preventDefault(); window.__under3++; }); document.body.appendChild(t); });
+    const yT = await Y(); await touch('touchStart', 12, Math.round(st.vh * 0.5)); await touch('touchEnd'); await W(600);
+    ok(`${tag} index scrub: a tap elsewhere lets the kept name go and does nothing else`, !(await chipS()).on && (await p.evaluate(() => window.__under3)) === 0 && (await Y()) === yT, `under=${await p.evaluate(() => window.__under3)}`);
+    await p.evaluate(() => document.getElementById('pk-under3').remove());
+    await p.evaluate(y => scrollTo(0, y), y0); await W(900);
+    // slide from the icon straight onto a name in the list and lift: its box opens (no waiting)
+    await touch('touchStart', ixAt2.x, ixAt2.y); await W(500);
+    const nm = await p.evaluate(() => { const r = document.querySelectorAll('.ts-pk-fan li')[3].getBoundingClientRect(); return { x: Math.round(r.left + r.width / 2), y: Math.round(r.top + r.height / 2) }; });
+    for (let j = 1; j <= 12; j++) { await touch('touchMove', ixAt2.x + (nm.x - ixAt2.x) * j / 12, ixAt2.y + (nm.y - ixAt2.y) * j / 12); await W(40); }
+    const lit = await p.evaluate(() => document.querySelectorAll('.ts-pk-fan li')[3].classList.contains('is-over'));
+    ok(`${tag} index: sliding from the icon onto a name lights it up and does not scroll the page`, lit && (await Y()) === y0 && (await fanState()).open, JSON.stringify({ lit, y: await Y(), y0 }));
+    await touch('touchEnd'); await W(700);
+    c = await card();
+    ok(`${tag} index: lifting on that name opens its box with the summary, no jump`, c.on && c.pinned && c.name === labels[3] && c.sum.length > 60 && !(await fanState()).open && (await Y()) === y0, JSON.stringify(c));
+    await touch('touchStart', 12, Math.round(st.vh * 0.5)); await touch('touchEnd'); await W(500);
     await touch('touchStart', ixAt2.x, ixAt2.y); await W(300); await touch('touchMove', ixAt2.x - 6, ixAt2.y + 6); await W(100); await touch('touchEnd'); await W(600);
     ok(`${tag} index slide: a small wobble on the icon, then lifting, just closes the fan (no preview)`, !(await fanState()).open && !(await card()).on && (await Y()) === y0);
     // left-hand option (Ryan, 2026-11-08: yes)
@@ -264,6 +298,11 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     const ixL = await p.$eval('.ts-pk-ix', e => { const r = e.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2, l: Math.round(r.left) }; });
     await touch('touchStart', ixL.x, ixL.y); await W(800); fs = await fanState(); await touch('touchEnd'); await W(500);
     ok(`${tag} on the left, the index icon and its names mirror to the left edge`, 8 >= ixL.l && fs.open && fs.items.every(i => i.l >= fs.railR - 2 && fs.vw >= i.r), JSON.stringify({ icon: ixL.l, items: fs.items.map(i => Math.round(i.l)) }));
+    { const yL = await Y(), qL = await seg(3); await touch('touchStart', ixL.x, ixL.y); await W(400); for (let j = 1; j <= 12; j++) { await touch('touchMove', ixL.x, ixL.y + (qL.y - ixL.y) * j / 12); await W(40); } await W(300);
+      const cl = await p.evaluate(() => { const c = document.querySelector('.ts-pk-chip'), r = c.getBoundingClientRect(), rl = document.querySelector('.ts-pk-rail').getBoundingClientRect(); return { on: c.classList.contains('is-on'), l: Math.round(r.left), railR: Math.round(rl.right) }; });
+      const yL2 = await Y(); await touch('touchEnd'); await W(600);
+      ok(`${tag} on the left, sliding down from the icon scrolls the page and its name shows to the right of the rail`, yL2 > yL + 200 && cl.on && cl.l >= cl.railR - 2, JSON.stringify({ yL, yL2, cl }));
+      await p.evaluate(y => scrollTo(0, y), yL); await W(900); }
     await p.reload({ waitUntil: 'load' }); await W(500);
     await p.evaluate(() => { const h = document.querySelectorAll('.entry-content .ts-jump a')[1]; const t = document.getElementById(h.getAttribute('href').slice(1)); scrollTo(0, t.getBoundingClientRect().top + scrollY - 100); }); await W(700);
     ok(`${tag} after a reload the rail stays on the left, and the hint does not show again`, await p.evaluate(() => document.documentElement.classList.contains('ts-pk-left') && document.querySelector('.ts-pk-tip').hidden));
