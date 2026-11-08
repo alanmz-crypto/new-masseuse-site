@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Build a local mock of the Thai Massage page with the real peek-nav.php CSS and JavaScript, for testing without SiteGround.
-The mock copies the page's structure that the runtime relies on (an .entry-content with the server-rendered .ts-jump row, h2 targets,
+The mock copies the page's structure that the runtime relies on (a #masthead with a simple Astra-like phone menu inside it, an .entry-content with the server-rendered .ts-jump row, h2 targets,
 two heading ids that the section guide assigns only at runtime, a section-guide button) with placeholder text. It is NOT the real copy.
 
   python3 build-mock.py [OUT_DIR]          default OUT_DIR: ./site (next to this file)
@@ -32,7 +32,10 @@ guide = ('<script>document.addEventListener("DOMContentLoaded",function(){var h=
          'h[0].id="ts-guide-questions";h[1].id="ts-guide-research";});</script><button id="ts-section-guide-trigger">On this page</button>')
 page = ('<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' + css +
         '<style>body{margin:0;font-family:system-ui;background:#F5F4EF}.entry-content{padding:0 20px}#ts-section-guide-trigger{position:fixed;left:10px;bottom:10px}</style>'
-        '</head><body><header id="masthead" style="height:85px;background:#fff">header</header><div class="entry-content"><h1>Thai Massage (mock)</h1>'
+        '</head><body><header id="masthead" style="background:#fff"><div id="ast-mobile-header"><div style="height:85px;display:flex;align-items:center;justify-content:space-between;padding:0 16px">header'
+        '<button class="menu-toggle" type="button" aria-label="Menu" style="width:44px;height:44px">&#9776;</button></div>'
+        '<div class="ast-mobile-header-content" style="display:none;padding:8px 16px">' + ''.join(f'<p style="margin:0;padding:14px 0">Menu item {n}</p>' for n in range(1, 9)) + '</div></div></header>'
+        '<script>document.addEventListener("click",function(e){if(e.target.closest(".menu-toggle")){var c=document.querySelector(".ast-mobile-header-content");c.style.display=c.style.display==="none"?"block":"none";}});</script><div class="entry-content"><h1>Thai Massage (mock)</h1>'
         f'<p>{para}</p>{body}</div><footer style="height:400px;background:#222"></footer>{guide}{js}</body></html>')
 for d, html in [('thai-massage', page), ('therapeutic-massage', '<!doctype html><html><body><div class="entry-content">other page</div></body></html>')]:
     os.makedirs(os.path.join(out, d), exist_ok=True)
