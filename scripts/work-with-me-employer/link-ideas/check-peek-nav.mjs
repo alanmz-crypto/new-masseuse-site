@@ -24,7 +24,7 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     const Y = () => p.evaluate(() => Math.round(scrollY));
     const seg = i => p.evaluate(k => { const r = document.querySelectorAll('.ts-pk-rail li')[k].getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; }, i);
     const slideTo = async (i, lift = true) => { const a = await seg(0), z = await seg(i); await touch('touchStart', a.x, a.y); for (let k = 1; k <= 8; k++) { await touch('touchMove', a.x, a.y + (z.y - a.y) * k / 8); await W(30); } if (lift) { await touch('touchEnd'); await W(600); } };
-    const card = () => p.evaluate(() => { const c = document.querySelector('.ts-pk-card'); return { on: c.classList.contains('is-on'), pinned: c.classList.contains('is-pinned'), name: (c.querySelector('b') || {}).textContent || '', heading: (c.querySelector('.shot strong') || {}).textContent || '', excerpt: (c.querySelector('.shot em') || {}).textContent || '', desc: (c.querySelector('.d') || {}).textContent || '', lines: c.querySelectorAll('.shot > span').length, inView: c.getBoundingClientRect().left >= 0 }; });
+    const card = () => p.evaluate(() => { const c = document.querySelector('.ts-pk-card'); return { on: c.classList.contains('is-on'), pinned: c.classList.contains('is-pinned'), name: (c.querySelector('.open > b') || {}).textContent || '', heading: (c.querySelector('.shot strong') || {}).textContent || '', excerpt: (c.querySelector('.shot em') || {}).textContent || '', desc: (c.querySelector('.open .d') || {}).textContent || '', lines: c.querySelectorAll('.shot > span').length, inView: c.getBoundingClientRect().left >= 0 }; });
     const strip = () => p.evaluate(() => { const t = document.querySelector('.ts-pk-top'); return t.querySelector('b').textContent + ' / ' + t.querySelector('span').textContent; });
     const landed = sel => p.evaluate(s => { const h = document.querySelector(s).getBoundingClientRect().top, sb = document.querySelector('.ts-pk-top').getBoundingClientRect().bottom; return { h: Math.round(h), sb: Math.round(sb), ok: h >= sb - 2 && sb + 40 >= h }; }, sel);
     const hrefOf = i => p.evaluate(k => document.querySelectorAll('.entry-content .ts-jump a')[k].getAttribute('href'), i);
@@ -90,6 +90,22 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     ok(`${tag} the page does not move while browsing`, (await Y()) === y0);
     await touch('touchEnd'); await W(600);
     ok(`${tag} lifting keeps the preview, no jump`, (await card()).pinned && (await Y()) === y0);
+    // the stack (Ryan, 2026-11-08): closed boxes for the sections above and below the open one, numbered, with their headings
+    for (const k of [0, 2, 4]) {
+      await slideTo(k, false); await W(150);
+      const sk = await p.evaluate(() => { const c = document.querySelector('.ts-pk-card'), o = c.querySelector('.open'), rows = [...c.querySelectorAll('.row')], heads = [...document.querySelectorAll('.entry-content h2')].map(h => h.textContent.trim()), r = c.getBoundingClientRect(), orr = o.getBoundingClientRect();
+        return { stripBottom: document.querySelector('.ts-pk-top').getBoundingClientRect().bottom, clipped: c.scrollHeight > c.clientHeight + 1, hasName: !!c.querySelector('.open > b') && getComputedStyle(c.querySelector('.open > b')).display !== 'none', hasHint: !!c.querySelector('.open .hint') && getComputedStyle(c.querySelector('.open .hint')).display !== 'none', fit: c.className.match(/fit\d/g) || [], above: rows.filter(x => o.compareDocumentPosition(x) & Node.DOCUMENT_POSITION_PRECEDING).map(x => x.querySelector('b').textContent + ' ' + x.querySelector('span').textContent), below: rows.filter(x => o.compareDocumentPosition(x) & Node.DOCUMENT_POSITION_FOLLOWING).map(x => x.querySelector('b').textContent + ' ' + x.querySelector('span').textContent), heads, top: r.top, bottom: r.bottom, vh: innerHeight, openMid: orr.top + orr.height / 2 }; });
+      const want = n => sk.heads.filter(h => h.length).slice(0, 5)[n];
+      await touch('touchEnd'); await W(300);
+      ok(`${tag} stack, section ${k + 1} open: ${k} closed box(es) above and ${4 - k} below, each "number heading", in order`, sk.above.length === k && sk.below.length === 4 - k && sk.above.every((t, j) => t.startsWith((j + 1) + ' ')) && sk.below.every((t, j) => t.startsWith((k + 2 + j) + ' ')) && [...sk.above, ...sk.below].every(t => t.split(' ').slice(1).join(' ').length > 5), JSON.stringify({ above: sk.above, below: sk.below }));
+      ok(`${tag} stack, section ${k + 1} open: the whole stack is on screen, below the strip, nothing cut off`, sk.top >= sk.stripBottom && sk.vh >= sk.bottom && sk.clipped === false && sk.hasName && sk.hasHint, JSON.stringify({ top: Math.round(sk.top), strip: Math.round(sk.stripBottom), bottom: Math.round(sk.bottom), vh: sk.vh, clipped: sk.clipped, fit: sk.fit }));
+    }
+    await slideTo(2); y0 = await Y();
+    const row4 = await p.$eval('.ts-pk-card .row[data-k="3"]', e => { const r = e.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
+    await touch('touchStart', row4.x, row4.y); await touch('touchEnd'); await W(500);
+    c = await card(); ok(`${tag} stack: tapping a closed box opens it in the stack (no jump)`, c.pinned && c.name === 'Questions' && (await Y()) === y0, JSON.stringify(c));
+    ok(`${tag} stack: now 3 closed boxes above and 1 below`, await p.evaluate(() => { const c = document.querySelector('.ts-pk-card'), o = c.querySelector('.open'), rows = [...c.querySelectorAll('.row')]; return rows.filter(x => o.compareDocumentPosition(x) & Node.DOCUMENT_POSITION_PRECEDING).length === 3 && rows.filter(x => o.compareDocumentPosition(x) & Node.DOCUMENT_POSITION_FOLLOWING).length === 1; }));
+    await touch('touchStart', 12, Math.round((await p.evaluate(() => innerHeight)) * 0.6)); await touch('touchEnd'); await W(400);
     for (const k of [0, 1, 2, 4]) { await slideTo(k, false); const ck = await card(); await touch('touchEnd'); await W(300);
       ok(`${tag} preview of "${labels[k]}" has its description, heading and first lines`, ck.name === labels[k] && ck.desc.length > 20 && ck.heading.length > 5 && ck.excerpt.length > 30, JSON.stringify(ck)); }
     await touch('touchStart', 12, Math.round(st.vh * 0.6)); await touch('touchEnd'); await W(400);   // the page's left margin (the top is now the pinned header)
@@ -230,8 +246,8 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
   for (const k of [0, 4]) {
     const z = await p.evaluate(i => { const r = document.querySelectorAll('.ts-pk-rail li')[i].getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; }, k);
     await touch('touchStart', z.x, z.y); await touch('touchEnd'); await p.waitForTimeout(500);
-    const r = await p.evaluate(() => { const c = document.querySelector('.ts-pk-card').getBoundingClientRect(); return { top: Math.round(c.top), bottom: Math.round(c.bottom), vh: innerHeight }; });
-    ok(`landscape phone: the preview of section ${k + 1} fits on screen`, r.top >= 0 && r.vh >= r.bottom, JSON.stringify(r));
+    const r = await p.evaluate(() => { const el = document.querySelector('.ts-pk-card'), c = el.getBoundingClientRect(); return { top: Math.round(c.top), bottom: Math.round(c.bottom), vh: innerHeight, clipped: el.scrollHeight > el.clientHeight + 1, rows: el.querySelectorAll('.row').length }; });
+    ok(`landscape phone: the stack for section ${k + 1} fits on screen with all boxes, nothing cut off`, r.top >= 0 && r.vh >= r.bottom && !r.clipped && r.rows === 4, JSON.stringify(r));
     await touch('touchStart', 10, 10); await touch('touchEnd'); await p.waitForTimeout(500);
   }
   const rb = await p.evaluate(() => ({ rail: Math.round(document.querySelector('.ts-pk-rail').getBoundingClientRect().bottom), vh: innerHeight }));
@@ -245,6 +261,27 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
   const p = await ctx.newPage(); const r = await p.goto(base + '/thai-massage/', { waitUntil: 'load' }); if (!r || r.status() !== 200) { console.log(`INVALID no-JS answered ${r && r.status()}`); await b.close(); process.exit(2); }
   const nj = await p.evaluate(() => { const row = document.querySelector('.entry-content .ts-jump'); return { shown: !!row && getComputedStyle(row).display !== 'none' && row.getBoundingClientRect().height > 0, links: row ? [...row.querySelectorAll('a')].map(a => a.textContent).join('|') : '' }; });
   ok('without JavaScript the in-page link row still shows, with all five links (fallback)', nj.shown && nj.links === labels.join('|'), JSON.stringify(nj));
+  await ctx.close();
+}
+{ // Kiro, third review: a saved left side is measured correctly on load; using the rail before the hint means the hint never comes
+  const ctx = await b.newContext({ ...devices['iPhone 13'], deviceScaleFactor: 1 });
+  await ctx.addInitScript(() => { try { localStorage.setItem('ts-pk-side', 'left'); } catch (e) {} });
+  const { p } = await open(ctx, '/thai-massage/');
+  await p.evaluate(() => { const t = document.querySelectorAll('.entry-content .ts-jump a')[1]; const h = document.getElementById(t.getAttribute('href').slice(1)); scrollTo(0, h.getBoundingClientRect().top + scrollY - 100); }); await p.waitForTimeout(400);
+  const g = await p.evaluate(() => { const c = document.querySelector('.entry-content'), col = c.getBoundingClientRect().left + parseFloat(getComputedStyle(c).paddingLeft), r = document.querySelector('.ts-pk-rail').getBoundingClientRect(), i = document.querySelector('.ts-pk-ix').getBoundingClientRect(); return { left: document.documentElement.classList.contains('ts-pk-left'), gap: Math.round(col - Math.max(r.right, i.right)) }; });
+  ok('saved left-hand side: on load the text column starts just after the rail (not padded for the right)', g.left && g.gap >= 0 && 12 >= g.gap, JSON.stringify(g));
+  const cdp = await ctx.newCDPSession(p); const z = await p.evaluate(() => { const r = document.querySelectorAll('.ts-pk-rail li')[2].getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [z] }); await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] }); await p.waitForTimeout(400);
+  await p.mouse.wheel(0, 300); await p.waitForTimeout(2600);
+  ok('using the rail before the hint appears means the hint never comes', await p.evaluate(() => document.querySelector('.ts-pk-tip').hidden && localStorage.getItem('ts-pk-tip') === 'seen'));
+  await ctx.close();
+}
+{ // Kiro, third review: above 1100px too, no text under the rail
+  const ctx = await b.newContext({ viewport: { width: 1280, height: 860 } });
+  const { p } = await open(ctx, '/thai-massage/');
+  await p.evaluate(() => { const t = document.querySelectorAll('.entry-content .ts-jump a')[1]; const h = document.getElementById(t.getAttribute('href').slice(1)); scrollTo(0, h.getBoundingClientRect().top + scrollY - 100); }); await p.waitForTimeout(500);
+  const d = await p.evaluate(() => { const c = document.querySelector('.entry-content'), cr = c.getBoundingClientRect(), col = cr.right - parseFloat(getComputedStyle(c).paddingRight), r = document.querySelector('.ts-pk-rail').getBoundingClientRect(); let block = 0; document.querySelectorAll('.entry-content p, .entry-content li, .entry-content h2').forEach(el => { if (el.closest('.ts-pk') || el.closest('.ts-jump')) return; const b = el.getBoundingClientRect(); if (b.width) block = Math.max(block, b.right - (parseFloat(getComputedStyle(el).paddingRight) || 0)); }); return { clear: Math.round(r.left - Math.max(col, block)) }; });
+  ok('desktop (1280px): the text stays clear of the rail too', d.clear >= 0, JSON.stringify(d));
   await ctx.close();
 }
 const ctx = await b.newContext({ ...devices['iPhone 13'], deviceScaleFactor: 1 });
