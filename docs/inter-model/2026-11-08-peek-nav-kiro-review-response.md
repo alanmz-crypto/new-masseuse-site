@@ -35,3 +35,22 @@ and 167/0 three times in a row on the local mock. Safari / real devices are stil
 
 Found while fixing: on the tablet profile a quick tap on the pinned card right after lifting from the rail was sometimes never turned into a click by
 the browser (about 1 run in 4). The card now acts on a short, still touch when the finger lifts (mouse and keyboard keep using the click); 0 failures in 12 repeats.
+
+## Addendum: Kiro's browser re-run (same day)
+
+Kiro then ran its probes in Chromium against the mock and confirmed #2, #5, #6, #7 and #8, but on the **pre-fix code**: its baseline was the old 123-check
+`check-peek-nav.mjs` (commit `8b00f2c`). The fixes are in `d855049` and later (check now has 167 assertions). Re-running Kiro's own five probes against the
+current `peek-nav.php` on the mock gave:
+
+| # | Kiro on the old code | Current code |
+| --- | --- | --- |
+| 2 | outside tap also clicked the link (1 → 2) | the tap only closes the card (control 1 click; after the closing tap still 1) |
+| 6 | 21 rebuilds in 20 moves within one section | 1 rebuild |
+| 7 | landscape card 53 → 395 in a 342 px screen | 53 → 305 and 78 → 330 |
+| 8 | 3 history entries for 3 jumps | 0 |
+| 5 | no rail and the guide button still hidden | no rail and the guide button shown |
+
+So no pull request is needed for these. Useful next work for a reviewer: pull the latest `claude/wizardly-bell-xu0rta`, run `check-peek-nav.mjs` on the
+mock (167/0 expected; see `mock/build-mock.py`), and review the **new** code paths: the card's tap-on-`pointerup` activation, the 450 ms click swallow after an
+outside tap, the 600 ms "click after a press" window on the rail, and the moved DOM position (rail/card/Back inserted after the strip). Real-device checks
+(#1 long press, #3, #4, #9) remain open and need a phone.
