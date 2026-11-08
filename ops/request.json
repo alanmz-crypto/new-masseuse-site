@@ -1,11 +1,7 @@
 {
-  "id": "rollback-peek-nav-v15-s39-1",
-  "op": "run",
+  "id": "rehearse-peek-nav-22-1",
+  "op": "rehearse",
   "target": "staging39",
-  "script": "link-ideas/push-peek-nav.sh",
-  "args": [
-    "--rollback",
-    "$HOME/private-backups/peek-nav-before-20261108-102027-0eb240af.json"
-  ],
-  "tests": "auto"
+  "installer": "link-ideas/install-peek-nav.php",
+  "args": []
 }
