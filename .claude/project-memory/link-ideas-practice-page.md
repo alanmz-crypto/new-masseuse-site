@@ -182,3 +182,14 @@ snapshot `peek-nav-before-20261108-084212-e58e7d70.json`; check `ui-peek-nav-sta
 staging38. Third handoff: `docs/inter-model/2026-11-08-peek-nav-kiro-review-3-handoff.md`.
 **Lesson:** measure where text *can* reach (each block's content edge), not where it happens to wrap.
 **Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-084212-e58e7d70.json'`.
+
+**Stacked index boxes + fourth Kiro review (2026-11-08):** Ryan: when an index box opens from the rail, show the closed boxes for the sections above and
+below it (number + heading). Defaults chosen (Ryan did not answer): full page headings with "…", tapping a closed box opens it in the stack (no jump).
+Fit to screen in steps (fit1 placeholder lines/"You are in", fit2 mini preview, fit3 description + compact rows). Kiro fixes: saved side before the first
+measurement; rail/icon press = hint seen; clearRail scheduled (rAF, width change, content ResizeObserver), any width, theme padding kept when enough,
+measured from the text blocks only (staging39 blocks are inset ~20px). Snippet **#1365**; export `staging39-before-peek-nav-20261108-102015.sql`;
+snapshot `peek-nav-before-20261108-102027-0eb240af.json`; check **361/0**.
+**Ops lesson:** on 2026-11-08 ~09:15-10:20 UTC GitHub release downloads (age) answered 504 on Actions runners; `install-base-tools.sh` now retries
+(8 x 10 s); a failed rollback step leaves the old snippet, so the apply refuses (CHANGED) and nothing breaks, but a rollback that succeeds while the
+apply is blocked leaves the page on the no-JavaScript row until the apply goes through.
+**Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-102027-0eb240af.json'`.

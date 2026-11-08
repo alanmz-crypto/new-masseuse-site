@@ -82,3 +82,20 @@ The mock now includes a simple Astra-like phone menu inside `#masthead`. To see 
 > `install-sitewide-cleanup.php`. Report flaws first (most severe first, with file:line, how to reproduce and the smallest fix), then enhancements; say
 > which you reproduced and which are from reading only. Do not edit `ops/request.json` or `ops/live-request.json`, do not run `scripts/ci/request.sh`,
 > and do not touch `main`. Changes, if any, go on a new branch from `claude/wizardly-bell-xu0rta` with a pull request into it.
+
+## Addendum: outcomes of your third review (after this handoff), and the stacked boxes
+
+All on staging39 as snippet **#1365**; check **361 passed, 0 failed** on staging39 (run `ui-peek-nav-s39-26-…`) and on the mock.
+
+| Your # | Finding | Outcome |
+| --- | --- | --- |
+| 1 | `clearRail()` runs before the saved side is applied | **Fixed** (side applied first); checked by loading with the left side saved. That check then found a deeper over-padding on staging39 (the theme's text blocks sit ~20px inside the content edge, so measuring the column edge padded 21px too much). `clearRail()` now starts from the theme's own padding and adds only what the text blocks need; the mock has the same inset wrapper (the previous snippet fails it). |
+| 2 | The hint still appears after using the rail | **Fixed**: a rail or icon press marks it seen. Checked. |
+| 3 | Resize work | **Fixed**: at most once per frame, only when the width changes, and also on content layout changes (ResizeObserver). |
+| 4 | Text under the rail above 1100px | **Fixed**: no width limit; the theme's padding is kept whenever it is enough. Checked at 1280px. |
+| 5 | Narrower text column on phones | For Ryan (a slimmer rail is possible). |
+
+New (Ryan, 2026-11-08): **stacked index boxes**. When a box opens from the rail, closed boxes for the sections above and below it show its place on the
+page ("number + heading"); the open box sits beside the finger; tapping a closed box opens it in the stack (no jump); the stack fits between the strip and
+the bottom of the screen by dropping detail in steps (`fit1`-`fit3`), never the open box's name and "Tap to go there".
+Also: `scripts/ci/install-base-tools.sh` now retries the `age` download (GitHub release downloads answered 504 for about an hour on 2026-11-08).
