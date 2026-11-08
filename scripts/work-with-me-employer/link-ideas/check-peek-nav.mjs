@@ -67,7 +67,8 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     ok(`${tag} the bottom "On this page" button is replaced by the rail`, await p.evaluate(() => { const t = document.getElementById('ts-section-guide-trigger'); return !t || getComputedStyle(t).display === 'none'; }));
 
     let y0 = await Y();
-    await touch('touchStart', 120, 20); await touch('touchEnd'); await W(400);
+    const sty = await p.$eval('.ts-pk-top', e => { const r = e.getBoundingClientRect(); return Math.round(r.top + r.height / 2); });   // the strip now sits under the pinned header
+    await touch('touchStart', 120, sty); await touch('touchEnd'); await W(400);
     ok(`${tag} touching the strip does nothing`, (await Y()) === y0 && !(await card()).on);
     await slideTo(3, false);
     let c = await card();
@@ -77,7 +78,7 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     ok(`${tag} lifting keeps the preview, no jump`, (await card()).pinned && (await Y()) === y0);
     for (const k of [0, 1, 2, 4]) { await slideTo(k, false); const ck = await card(); await touch('touchEnd'); await W(300);
       ok(`${tag} preview of "${labels[k]}" has its description, heading and first lines`, ck.name === labels[k] && ck.desc.length > 20 && ck.heading.length > 5 && ck.excerpt.length > 30, JSON.stringify(ck)); }
-    await touch('touchStart', 12, Math.round(st.vh * 0.12)); await touch('touchEnd'); await W(400);
+    await touch('touchStart', 12, Math.round(st.vh * 0.6)); await touch('touchEnd'); await W(400);   // the page's left margin (the top is now the pinned header)
     ok(`${tag} tapping elsewhere closes the preview and keeps the place`, !(await card()).on && (await Y()) === y0);
     await slideTo(3); await p.tap('.ts-pk-card .shot'); await W(300);
     ok(`${tag} the heading glows briefly after the jump`, await p.evaluate(h => document.querySelector(h).classList.contains('ts-pk-flash'), await hrefOf(3)));
