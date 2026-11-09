@@ -1,10 +1,6 @@
 {
-  "id": "peek-template-design-20261109-1",
-  "op": "run",
+  "id": "peek-template-owned-20261109-1",
+  "op": "inspect",
   "target": "staging39",
-  "script": "link-ideas/capture-peek-review.mjs",
-  "args": [
-    "https://staging39.thaisolitude.com"
-  ],
-  "tests": "auto"
+  "query": "snippets"
 }
