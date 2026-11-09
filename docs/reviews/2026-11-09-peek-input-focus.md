@@ -90,7 +90,7 @@ The candidate core has 102,756 file bytes, SHA256
 `ddd7e3b9df4a3c6cd45b3f7c46bc56c4e2c1df6c4553846879681843e60f639f`;
 102,750 stored bytes, SHA256
 `a3a503f59dc8a557a24e5a03967481af824f29136668b1158d9cfa47ae3e537c`.
-The candidate practice page has 37,595 source bytes, SHA256
+The initial practice candidate (before the reading-line correction below) has 37,595 source bytes, SHA256
 `e5cf6d6613cd575b3953400fb340bdc38a02edec2e9775a43fa23dc68e930e6c`;
 37,629 wrapped stored bytes, SHA256
 `b0cfe89812390e3a20a1d0688992c5a84569152610ab977be671b10c069ab1a5`.
@@ -178,6 +178,57 @@ still rejects unknown concurrent changes. Independent review found no blocker.
 Targeted post and metadata cache reads and uncached ownership/taxonomy queries
 prevent stale data from concealing a full-state difference. Browser payload
 hashes and approved summaries are unchanged.
+
+CAS-source Gates [42714913771](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42714913771)
+passed **32/0 + 1 rendered-only skip**, 22:48:02 UTC, source
+`ca62df42dd0f06334677e7fe2b2262a0cc1e415a`.
+Fourth rehearsal [42714937933](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42714937933),
+source `e44dc3d441f9c44ecb9f186023b79beacb83b806`, finished 22:53:26 UTC **FAIL**.
+Actual WordPress content-only apply, idempotence, exact full-state rollback,
+baseline fingerprints and reapply all passed. Only `page rail-nav-ideas` moved.
+All ten pages stayed HTTP200; Home/client wording and no-new-PHP-error gates
+passed. Local snapshots `rail-input-before-20261109-224855-0d61b3ee.json` and
+`rail-input-before-20261109-224858-9ef2a686.json` are throwaway evidence only.
+
+Complete browser leaves confirmed **370/2** across three suites: Chromium
+keyboard **103/0**, Firefox keyboard **103/0**, native touch **164/2**. No INVALID
+or stderr output. Both title matrices correctly stopped before running. The
+two native failures are the phone light/dark practice strip naming the previous
+section after a correct Questions jump; tablet passes. Two actual keyboard
+preview captures were reviewed: visible focus, intact header/strips and existing
+card layout. This is partial proof, not a passed rehearsal or staging write.
+The raw log's isolated `95` also exists in the Actions log; it is consistent
+with filtering the known WP-CLI Colors.php line-95 deprecation, but unfiltered
+provenance is unavailable. Applied state hashes and independent idempotence
+fingerprint verification passed.
+
+**Additional correction explained before building:** the practice reading-line
+calculation counts the demo bar's height but omits its sticky offset beneath
+the site header/shared strip. Include the computed sticky top in that existing
+calculation, preserving jump placement, gestures and layout. Keep the failing
+native label assertion and add the smaller phone viewport to focused coverage.
+
+The corrected reading line was proved with native CDP touch at the actual
+iPhone13 viewport **390×664**: frozen v1 and the earlier candidate both landed
+Questions at 183.14 px but named Who can benefit; the new calculation names
+Questions at the identical landing position. Tablet already passed. Final local
+keyboard/mouse suites passed **121/0 each in Chromium and Firefox**, now checking
+the practice strip/count and `aria-current` after every chosen jump. The full
+retained native suite passed **166/0**, phone/tablet light/dark, all five ideas.
+These remain fixture results pending another actual-copy rehearsal.
+
+The revised page source is **37,716 bytes**, SHA256
+`41f1d5ff3635f9038f77838c546a4d595b695b2c1917298c2d9de3fa60759d5f`;
+wrapped stored content **37,750 bytes**, SHA256
+`eb50ba823a668423b0a3408093e707f5cdb59dec3794adcff89885f64a50e2fa`.
+Frozen v1, markup, CSS and visible wording remain exact. Core hash is unchanged.
+
+The Rail-only rehearsal now also restores the original snapshot **after** a
+complete browser pass, compares baseline A, reapplies and compares the already
+tested B without ID normalization. It refuses missing prerequisites and stops
+on recovery or fingerprint failure. This checks that frontend asset/SEO activity
+has not invalidated full-state recovery; no extra browser rerun is needed after
+an exact reapply. Only the existing WPCode-cache exclusion remains.
 
 ## Actual applies and recovery
 

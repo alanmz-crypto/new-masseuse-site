@@ -294,6 +294,30 @@ if [ -f "$extra" ]; then
   grep -E '^(FAIL|INVALID|Bundle [CDEF]:|CONTRAST|LAYOUT|MIN_CONTRAST|HEADING|HEIGHT|INFO|INLINE)' "$out/package-browser.log" || true
 fi
 
+if [ "$inst" = link-ideas/rail-input/install-rail-input.php ]; then
+  echo; echo "[4d] exact Rail recovery after rendered browser activity"
+  if [ "${package_browser_rc:-missing}" != 0 ] || [ -z "${snap:-}" ]; then
+    check "post-browser Rail recovery prerequisites (complete browser pass and original snapshot)" 1
+  else
+    inst_run rollback-after-browser rollback "/backups/$snap"; rendered_rollback_rc=$?
+    check "Rail full-state rollback after browser activity" "$rendered_rollback_rc"
+    if [ "$rendered_rollback_rc" -eq 0 ]; then
+      fp E
+      cmp -s <(nocache "$out/A.content") <(nocache "$out/E.content"); rendered_baseline_rc=$?
+      check "post-browser rollback matches baseline A (only existing WPCode cache exclusion)" "$rendered_baseline_rc"
+      if [ "$rendered_baseline_rc" -eq 0 ]; then
+        inst_run reapply-after-browser apply; rendered_reapply_rc=$?
+        check "Rail reapply after post-browser recovery" "$rendered_reapply_rc"
+        if [ "$rendered_reapply_rc" -eq 0 ]; then
+          fp F
+          cmp -s <(nocache "$out/B.content") <(nocache "$out/F.content")
+          check "post-browser reapply exactly matches tested B (no ID normalization)" $?
+        fi
+      fi
+    fi
+  fi
+fi
+
 echo; echo "[5] what the change touches (fingerprint A -> B; this is what staging will see move):"
 if cmp -s "$out/A.content" "$out/B.content"; then echo "  NOTHING moved: the installer found the change already present, or it changes something the fingerprint does not cover"
 else diff "$out/A.content" "$out/B.content" | grep '^>' | cut -f1-2 | sed 's/^> /  changed: /' | sort -u; fi

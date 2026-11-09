@@ -45,15 +45,18 @@ const landed = async (p, label) => {
     const target = document.getElementById('tsr-questions'), r = target.getBoundingClientRect();
     const bars = ['.tsr-top', '#ts-peek-title-strip', '#masthead'].map(s => document.querySelector(s)).filter(Boolean).map(n => n.getBoundingClientRect());
     return { hash: location.hash, top: r.top, bottom: r.bottom, ceiling: Math.max(0, ...bars.map(r => r.bottom)), viewport: innerHeight,
+      strip: document.querySelector('.tsr-top-name').textContent, count: document.querySelector('.tsr-top-count').textContent, current: document.querySelector('.tsr-rail [aria-current="true"]')?.getAttribute('href'),
       focus: document.activeElement === target.querySelector('h2'), cardClosed: !document.querySelector('.tsr-card').classList.contains('is-on'), drawerClosed: !document.querySelector('.tsr-drawer').open };
   });
   ok(label + ': original destination lands below both strips and owns focus', g.hash === '#tsr-questions' && g.top >= g.ceiling - 2 && g.top <= g.ceiling + 40 && g.bottom > g.ceiling && g.top < g.viewport && g.focus && g.cardClosed && g.drawerClosed, g);
+  ok(label + ': original strip and rail agree on the chosen section', g.strip === 'Questions' && g.count === '4 of 6' && g.current === '#tsr-questions', g);
 };
 try {
   // Fixed-width contexts avoid carrying browser pointer/modal state across a
-  // synthetic viewport resize. Each case tests a visitor's actual viewport.
-  for (const width of [390, 1280]) {
-    const ctx = await browser.newContext({ viewport: { width, height: 844 }, reducedMotion: 'reduce' });
+  // synthetic viewport resize. The phone uses iPhone13's 664px visible height,
+  // where the stacked header/bars extend beyond the old quarter-height line.
+  for (const [width, height] of [[390, 664], [1280, 844]]) {
+    const ctx = await browser.newContext({ viewport: { width, height }, reducedMotion: 'reduce' });
     await ctx.addInitScript(() => { try { localStorage.setItem('ts-pk-tip', 'seen'); } catch {} });
     const { p, errors } = await open(ctx);
     await p.waitForSelector('.tsr-lab.is-js'); await p.waitForSelector('#ts-peek-title-strip');

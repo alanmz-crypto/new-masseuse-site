@@ -185,7 +185,8 @@ html[data-ts-theme="dark"] .tsr-lab{--x-on:#8CCB5B;--x-on-text:#0E141C}
   function buzz() { if (navigator.vibrate) { try { navigator.vibrate(6); } catch (e) {} } }
 
   /* where the reader is */
-  function line() { return Math.max(window.innerHeight * 0.25, top.offsetHeight + 24); }
+  // The demo bar can stick below the site header and shared title strip.
+  function line() { return Math.max(window.innerHeight * 0.25, (parseFloat(getComputedStyle(top).top) || 0) + top.offsetHeight + 24); }
   function where() { var y = line(), idx = -1; S.forEach(function (s, i) { if (y >= s.el.getBoundingClientRect().top) idx = i; }); return idx; }
   function part(i) { var r = S[i].el.getBoundingClientRect(); return Math.max(0, Math.min(1, (line() - r.top) / r.height)); }
   function fill(i) { return cur > i ? 1 : (i === cur ? part(i) : 0); }
