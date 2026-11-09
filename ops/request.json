@@ -1,12 +1,12 @@
 {
-  "id": "peek-therapeutic-apply-20261109-1",
+  "id": "peek-therapeutic-public-20261109-1",
   "op": "run",
   "target": "staging39",
-  "script": "link-ideas/push-peek-nav.sh",
+  "script": "link-ideas/check-peek-pages.mjs",
   "args": [
-    "page",
-    "therapeutic-massage",
-    "--apply"
+    "https://staging39.thaisolitude.com",
+    "--capture-page",
+    "therapeutic-massage"
   ],
   "tests": "auto"
 }
