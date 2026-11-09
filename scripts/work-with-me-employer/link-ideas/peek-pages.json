@@ -11,7 +11,7 @@
   },
   "titleRail": {
     "scope": "visitor-pages-without-existing-rail",
-    "staging": "pending",
+    "staging": "enabled",
     "excludedContexts": [
       "admin",
       "feed"
