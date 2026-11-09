@@ -1,10 +1,6 @@
 {
-  "id": "peek-core-touch-public-20261109-1",
-  "op": "run",
+  "id": "peek-core-touch-stored-20261109-1",
+  "op": "inspect",
   "target": "staging39",
-  "script": "link-ideas/core-upgrade/check-public.mjs",
-  "args": [
-    "https://staging39.thaisolitude.com"
-  ],
-  "tests": "auto"
+  "query": "snippets"
 }
