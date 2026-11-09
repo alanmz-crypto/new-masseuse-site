@@ -139,10 +139,13 @@ with `lint-gists.py`'s validator, including the regulated wording tiers from
 `client-pages/wording_tiers.py`: **Therapeutic 27 items / six sections, Deep Tissue
 24 / five, Chair 30 / six; all passed** schema, planned-anchor, phrase-length,
 exact-duplicate, wording and coverage-marker checks. Counts include `etc.` items.
-Repeat the file-level lint after transferring them to the draft datasets. Draft
-data stays in the review lane, with approval provenance pointing to this document
-and the fresh capture. A clean lint is only a mechanical check; it does not grant
-wording approval.
+The populated JSON datasets now match these tables exactly, including coverage,
+and all three approval states remain `draft`. After transfer, the file-level
+`python3 -I -B scripts/work-with-me-employer/link-ideas/lint-gists.py` passed for
+all four page-data files, and `tests/gists-selftest.py` passed **40 checks**. These
+were rerun against the populated files. Approval provenance points to this
+document and the fresh capture. These mechanical checks neither grant wording
+approval nor verify the appearance of the proposed cards in a browser.
 
 Ryan's next decision is the exact wording for each page above. After approval,
 mark only that page's data approved, then run the guarded staging39-source

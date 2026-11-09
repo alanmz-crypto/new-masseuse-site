@@ -99,14 +99,14 @@ the mock-up sizes (48px, card 64px from the edge); the section name shows beside
 one-line description (first sentence) plus the preview (real heading, first lines, three placeholder lines); the rail's screen-reader names include the
 description. Export `staging39-before-peek-nav-20261108-031610.sql`; snapshot `peek-nav-before-20261108-031625-f507cb73.json`; check
 `ui-peek-nav-staging39-20261108-2`: **123/0**.
-**Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-031625-f507cb73.json'`.
+**Historical undo (not for the current shared core):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-031625-f507cb73.json'`.
 
 **Kiro review (2026-11-08):** Kiro (web) reviewed `peek-nav.php` by reading it; outcomes per finding in `docs/inter-model/2026-11-08-peek-nav-kiro-review-response.md`.
 Now snippet **#1351** (replaced #1350). Export `staging39-before-peek-nav-20261108-040148.sql`; snapshot `peek-nav-before-20261108-040204-32ffad9a.json`;
 check `ui-peek-nav-staging39-20261108-4`: **167/0** (first attempt INVALID 202, one retry). Waiting for Ryan: left-hand option, desktop hover preview, first-time hint.
 **Lessons:** after a pointer-captured drag no click follows, so "was this click from a press" must be a short time window, not a flag; a tap right after a
 gesture can be dropped before it becomes a click, so act on a short still `pointerup` for touch and keep `click` for mouse/keyboard.
-**Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-040204-32ffad9a.json'`.
+**Historical undo (not for the current shared core):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-040204-32ffad9a.json'`.
 
 **Left-hand option + first-time hint + second Kiro review (2026-11-08):** Ryan: "Yes to left-hand option and first-time hint". Now snippet **#1353**
 (replaced #1351; #1352 lived ten minutes and was replaced for a theme underline found by the new computed-style check). Export
@@ -115,7 +115,7 @@ Details per finding: `docs/inter-model/2026-11-08-peek-nav-kiro-review-response.
 **Lessons:** commit messages with double quotes break `git commit -m "..."` in a one-line command: write the message to a file and use `-F`; when that
 commit failed, `request.sh` still pushed and ran the previous commit (harmless here: "Already applied"). A resumed cloud session may have Docker stopped:
 `sudo -n dockerd &` brings back the three Docker gates of `check-all.sh`.
-**Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-050713-0f6a1da8.json'`.
+**Historical undo (not for the current shared core):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-050713-0f6a1da8.json'`.
 
 ## Index icon ideas (2026-11-08)
 Ryan: "Above the rail, directly above it, ... a simple, tasteful, minimalistic index icon that when you press will show all of the indexed items from the rail so
@@ -135,12 +135,12 @@ drawn in the page's muted text colour on the page background (no box, border or 
 Hold = every name fans out beside its rail piece (staggered, current one green, read ones ticked); lift = back in; click without a press toggles; Escape closes;
 long press blocked; mirrors with the left-hand option; one keyboard stop right before the rail. The first-time hint now also mentions the icon.
 Export `staging39-before-peek-nav-20261108-061042.sql`; snapshot `peek-nav-before-20261108-061058-bfb0e317.json`; check `ui-peek-nav-staging39-20261108-8`: **267/0**.
-**Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-061058-bfb0e317.json'`.
+**Historical undo (not for the current shared core):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-061058-bfb0e317.json'`.
 **Row removed (2026-11-08):** Ryan: "You can remove the in-page links beneath header." Now snippet **#1356**: with the runtime ready (`html.ts-pk-ready`) the
 server-rendered `.ts-jump` row is `display:none` and the strip sits in its place; without JavaScript the row still shows and works (checked with JavaScript
 off). The row stays in the HTML as the source of the section list. Export `staging39-before-peek-nav-20261108-062336.sql`; snapshot
 `peek-nav-before-20261108-062353-1c40c41c.json`; check `ui-peek-nav-staging39-20261108-9`: **272/0**.
-**Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-062353-1c40c41c.json'`.
+**Historical undo (not for the current shared core):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-062353-1c40c41c.json'`.
 **Back button, reading-progress bar and scroll-to-top removed (2026-11-08):** Ryan: the thin progress bar is "unnecessary ... That's on every page. Remove it";
 "get rid of the back to section button"; "get rid of the scroll to the top button"; where: "Every page on staging39".
 - Snippet **#1357** (replaced #1356): no "Back to ..." button. Snapshot `peek-nav-before-20261108-064135-d72debe4.json`; export `staging39-before-peek-nav-20261108-064124.sql`.
@@ -158,19 +158,19 @@ the rail starts below header + strip + icon on short screens, and the Astra phon
 Not pinned below 501px of height (landscape phones), where header, strip and rail would not fit. Export `staging39-before-peek-nav-20261108-065824.sql`;
 snapshot `peek-nav-before-20261108-065841-c543ce54.json`; check `ui-peek-nav-staging39-20261108-12`: **280/0** (the first run tapped the pinned header's logo
 in a test step and left the page; the test now taps the strip and the page margin).
-**Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-065841-c543ce54.json'`.
+**Historical undo (not for the current shared core):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-065841-c543ce54.json'`.
 **Menu flicker fixed (2026-11-08):** Ryan: "When i open the hamburger menu on this page it flickers, now." Cause (reproduced on staging39 by a new 40-frame check:
 header 328/421px alternating): the open Astra phone menu sits inside `#masthead`; `--pk-head` measured the whole header, and the menu's `max-height` used
 `--pk-head`, so each set the other. Now only the header bar is measured (header minus `.ast-mobile-header-content`). Snippet **#1360**; export
 `staging39-before-peek-nav-20261108-072416.sql`; snapshot `peek-nav-before-20261108-072428-8b5dda0b.json`; check `ui-peek-nav-staging39-20261108-13`: **282/0**
 (menu steady at 421/336, `--pk-head` 85px). **Lesson:** never size a child from a measurement of a parent that contains it.
-**Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-072428-8b5dda0b.json'`.
+**Historical undo (not for the current shared core):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-072428-8b5dda0b.json'`.
 **Index-to-rail slide (2026-11-08):** Ryan: "if you press the index, it behaves as you have created it. However, if you press the index and then slide to the rail
 without lifting your finger, then the rail options open up." Snippet **#1361**: the icon keeps the pointer (capture); once the finger crosses the rail's top edge the
 fan closes and the Peek preview follows the finger along the rail; lifting there pins it (tap to go); cancel hides it; lifting on the icon just closes the fan.
 The first-time hint mentions it. Export `staging39-before-peek-nav-20261108-074527.sql`; snapshot `peek-nav-before-20261108-074540-f4aa4369.json`;
 check `ui-peek-nav-staging39-20261108-14`: **310/0**. Note: the second Kiro review handoff predates this (it says 282).
-**Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-074540-f4aa4369.json'`.
+**Historical undo (not for the current shared core):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-074540-f4aa4369.json'`.
 
 **Third Kiro review (2026-11-08):** Kiro reviewed #1360 (before Ryan's slide gesture); Ryan: "I prefer my slide from icon idea to kiro's so choose mine."
 Finding 1 (staging not serving the Peek) not reproduced: the server check found it served anonymously; Kiro's load most likely fell in a roll-back-then-apply
@@ -181,7 +181,7 @@ Not taken: iOS left-edge (device first), header unpin below 600px (Ryan). Now sn
 snapshot `peek-nav-before-20261108-084212-e58e7d70.json`; check `ui-peek-nav-staging39-20261108-16`: **326/0**; cleanup installer rehearsal passed on a copy of
 staging38. Third handoff: `docs/inter-model/2026-11-08-peek-nav-kiro-review-3-handoff.md`.
 **Lesson:** measure where text *can* reach (each block's content edge), not where it happens to wrap.
-**Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-084212-e58e7d70.json'`.
+**Historical undo (not for the current shared core):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-084212-e58e7d70.json'`.
 
 **Stacked index boxes + fourth Kiro review (2026-11-08):** Ryan: when an index box opens from the rail, show the closed boxes for the sections above and
 below it (number + heading). Defaults chosen (Ryan did not answer): full page headings with "…", tapping a closed box opens it in the stack (no jump).
@@ -192,7 +192,7 @@ snapshot `peek-nav-before-20261108-102027-0eb240af.json`; check **361/0**.
 **Ops lesson:** on 2026-11-08 ~09:15-10:20 UTC GitHub release downloads (age) answered 504 on Actions runners; `install-base-tools.sh` now retries
 (8 x 10 s); a failed rollback step leaves the old snippet, so the apply refuses (CHANGED) and nothing breaks, but a rollback that succeeds while the
 apply is blocked leaves the page on the no-JavaScript row until the apply goes through.
-**Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-102027-0eb240af.json'`.
+**Historical undo (not for the current shared core):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-102027-0eb240af.json'`.
 
 **Fifth Kiro review + title-row strip (2026-11-08):** Kiro's findings fixed in #1366 (staging39 376/0): fit()/place() measure from where the strip sticks and
 within the card's max-height; fit4 folds far rows into "+N more above/below", fit5 keeps only the open box's name and "Tap to go there"; card scrolls as a last
@@ -200,7 +200,7 @@ resort; refit on rotation; focus to a newly opened box; rail clearance re-measur
 top and keep only topic titles sliding by, the current one centred with part of the neighbours on each side, in relative space. Snippet **#1367**: the strip is a
 row of the section labels, current one bold in the middle, neighbours fading at the edges, sliding continuously toward the next title through the section; no bars,
 no count. Export `staging39-before-peek-nav-20261108-164427.sql`; snapshot `peek-nav-before-20261108-164442-bbf19019.json`; check **388/0**.
-**Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-164442-bbf19019.json'`.
+**Historical undo (not for the current shared core):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-164442-bbf19019.json'`.
 
 **Summary box, fan form, kept-open fan (2026-11-08, Ryan):** (1) the open box no longer has a second window inside (the mini page preview and the
 one-line description are gone); instead a scrollable summary of the topic built only from the section's own sentences (regulated copy: nothing is
@@ -209,7 +209,7 @@ never jumps. Snippet #1368, staging39 check `ui-peek-nav-s39-29-1` **404/0**. (2
 boxes (stone, 10px corners, number in a light circle; the current one has the open box's green edge). (3) Held 2 s, the names stay open after lifting
 (buzz + green ring on the icon): tap a name to jump, touch the rail for that box and its summary, tap anywhere else to close; names capped at 48vw so
 about 40% of a phone's width stays free. Snippet **#1369**; snapshot `peek-nav-before-20261108-180339-b42020e0.json`; staging39 check `ui-peek-nav-s39-30-1` **428/0** (mock 428/0).
-**Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-180339-b42020e0.json'`.
+**Historical undo (not for the current shared core):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-180339-b42020e0.json'`.
 **Saved state (Ryan, before the next design):** `link-ideas/saved/20261108-1369/` (code copies of #1369 + restore steps); staging39 DB export `staging39-manual-20261108-182958.sql`, verified off-site. Hand-written summaries would need Ryan's (and Butsaba's) approval of new wording.
 
 **Index icon scrolls the page; slide onto a name to keep it (2026-11-08, Ryan + session synthesis):** press the icon (names fan out); slide straight down
@@ -219,18 +219,18 @@ go. Slide from the icon onto a list name and lift = its box opens. 2 s hold stil
 the rail still previews without moving the page. Scrolling starts only on a clearly straight slide (24px into the rail, <12% sideways); leaving the rail
 sideways first = picking a name (a diagonal to a far name passes over the wide rail). Snippet **#1370**; snapshot
 `peek-nav-before-20261108-191607-4d74fdf9.json`; staging39 check `ui-peek-nav-s39-31-1` **456/0**. Saved state to go back to: `link-ideas/saved/20261108-1369/`.
-**Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-191607-4d74fdf9.json'`.
+**Historical undo (not for the current shared core):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-191607-4d74fdf9.json'`.
 **Scroll fix (Ryan: "definitely issues with the scrolling"; chose "catch the dot"; "too fast / jumpy"):** the thumb always enters the rail at its top and
 the rail top stood for the page top, so starting mid-page leapt back near the top. Now the page waits until the thumb reaches the reading dot (it grows,
 turns green), then follows; the page glides toward the thumb (22% of the distance per frame, capped at 12% of the screen) instead of leaping. Snippet
 **#1371**; snapshot `peek-nav-before-20261108-195800-9df0c12b.json`; staging39 check `ui-peek-nav-s39-32-1` **464/0**.
-**Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-195800-9df0c12b.json'`.
+**Historical undo (not for the current shared core):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-195800-9df0c12b.json'`.
 **Scroll dropped (Ryan: "The scrolling is wonky" ... "Get rid of the scroll idea."):** sliding from the icon straight down onto the rail is the rail
 preview again (page still); kept: slide from the icon onto a name and lift = its box; 2 s hold keeps the list and a tap on a name opens its box; the
 preview takes over only on a clearly straight slide down (a diagonal to a far name crosses the wide rail). Lesson: a page scrub from a short rail fights
 the phone's own scrolling (absolute mapping leaps, easing lags) and duplicates a normal swipe, which already shows the section name beside the rail.
 Snippet **#1372**; snapshot `peek-nav-before-20261108-202316-cf244515.json`; staging39 check `ui-peek-nav-s39-33-1` **444/0**.
-**Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-202316-cf244515.json'`.
+**Historical undo (not for the current shared core):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-202316-cf244515.json'`.
 **Short-idea summaries, "etc.", no "You are in" (2026-11-08, Ryan):** each box lists the section's ideas as ~3-word phrases (GISTS by heading id; merged,
 no repeats in or across boxes; "etc." when a list holds ~60% or less; written from the rendered page via `dump-sections.mjs`; wording_tiers clean; for
 Ryan's approval before live); sections without a list fall back to whole opening paragraphs (`summarize()`, after Kiro found the sentence splitter cut
@@ -238,7 +238,7 @@ Ryan's approval before live); sections without a list fall back to whole opening
 **Template:** Ryan: this navigation (rail + read-only strip) is the template for every page. Kiro template-review handoff:
 `docs/inter-model/2026-11-08-peek-nav-kiro-template-review-handoff.md`.
 Staging39 now snippet **#1377** (no "You are in"; 461/0); snapshot `peek-nav-before-20261108-234541-8cf99e25.json`.
-**Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-234541-8cf99e25.json'`.
+**Historical undo (not for the current shared core):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-234541-8cf99e25.json'`.
 **Edge bug (Ryan, 2026-11-09, larger iPhone, rail right):** padding `.entry-content` moved full-width Spectra blocks by half the padding (text cut at the left
 edge on the right side; page 26px too wide on the left side). Fix: clearance on text blocks + strip, never the column. Lesson: never pad a column that
 holds full-width blocks; check `scrollWidth === clientWidth` and text edges on both sides. Staging39 #1378 (469/0); `probe-overflow.mjs` clean at 375/402/440.
@@ -248,14 +248,14 @@ data + gist lint (Kiro's structure); Ryan to decide Kiro's safer phrases.
 **Fan names pushed in (Ryan, 2026-11-09, both phones):** the text-clearance rule matched the navigation's own `li`s (fan, rail, summary bullets); now
 excludes `.ts-pk`/`.ts-jump`. Kiro's wording applied (hedged research phrases; dated Questions lines dropped). Staging39 **#1380**; snapshot
 `peek-nav-before-20261109-010037-0c493281.json`.
-**Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261109-010037-0c493281.json'`.
+**Historical undo (not for the current shared core):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261109-010037-0c493281.json'`.
 **Lesson (swaps):** during "rollback, rehearse, apply" (~6 min) the page shows the plain no-JavaScript row; tell Ryan not to judge a reload until the
 apply line appears.
 
 
 ## Shared template continuation (2026-11-09, Codex)
 
-Fresh rendered review and exact #1380 inspection completed; code hash matches
+Fresh rendered review and starting #1380 inspection completed; legacy code hash matched
 `b7314c8938a728bf64b6dac16c48bba722b4aea59b277c9f56f0760132322c01`.
 Implementation separates shared core and WordPress-stored `ts_pk_pages` page data;
 `.ts-jump` stays the sole navigation source. Thai wording is unchanged. Draft
@@ -265,10 +265,27 @@ row mapping and print have focused coverage. Legacy rollback hash protection was
 missing despite the older note above; the new installer checks complete state,
 and push rollback now takes a verified fresh off-site backup.
 
-Local validation and Actions rehearsals are in progress; no staging write by
-this continuation yet. The current #1380 snapshot remains
-`peek-nav-before-20261109-010037-0c493281.json`. Migration is Thai data first,
-then exact in-place core replacement, avoiding the old fallback-only interval.
+Shared core deployed in **#1380**, approved Thai data in **#1381**, staging39 only.
+Offline gates and both installer rehearsals passed. Core rehearsal must include
+`--with-uploads`: omitting layout assets caused three geometry failures; the
+unchanged code/assertions passed with uploads. Data/core writes each verified a
+fresh encrypted off-site export and snapshot; both exports restored (import 0).
+Core restore differences are only #1380/WPCode cache. Broad checks passed except
+the two expected Thai pixel views versus live (18/20 identical). Fresh public
+Chromium checks passed **74/0 manifest + 485/0 Thai regression** (42552255911).
+Six before/after images are byte-identical; all five rendered section captures
+and measured geometry match (42552270461). Final stored #1380/#1381 hashes
+confirmed (42553163541). Design tradeoffs remain the hint's hero obstruction,
+scrolling name bubble over text, and research's large rail share; no redesign
+was bundled into migration.
+
+Actual core snapshot: `peek-template-core-before-20261109-023645-fe38e498.json`.
+Actual data snapshot: `peek-template-page-thai-massage-before-20261109-023133-3e7b1cf5.json`.
+Reverse core first, then data, with the matching package and exact ownership
+checks. **All earlier rollback commands in this note are historical.** Do not use
+`peek-nav-before-20261109-010037-0c493281.json` to delete the shared core.
+Migration installed inert Thai data before changing #1380 in place, with no
+fallback-only interval. Main/live remain unchanged.
 Current evidence/status: [template record](../../docs/reviews/2026-11-09-peek-template.md).
 Draft wording: [three-page review](../../docs/reviews/2026-11-09-peek-summary-drafts.md).
 Services/short pages remain individual eligibility decisions; Safari/physical

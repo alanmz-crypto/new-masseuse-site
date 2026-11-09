@@ -20,7 +20,12 @@ rollout status; Services/short-page eligibility remains undecided.
 
 ## Guarded migration from #1380
 
-The original payload is frozen in `peek-nav-legacy.php`. Current starting code
+This section records the completed 2026-11-09 legacy-to-shared migration on
+staging39 (#1380 core, #1381 Thai data). Do not repeat it as a new upgrade:
+future payload revisions need their own reviewed exact-state migration. Current
+snapshots and verification are in the linked review record below.
+
+The original payload is frozen in `peek-nav-legacy.php`. Original legacy starting code
 SHA256: `b7314c8938a728bf64b6dac16c48bba722b4aea59b277c9f56f0760132322c01`.
 The core installer preserves the existing snippet ID/title/settings and snapshots
 its complete original post/meta/taxonomies. A changed or duplicate record stops
@@ -31,13 +36,16 @@ write (from the repository root):
 
 ```sh
 scripts/ci/request.sh rehearse --source staging39 --installer link-ideas/peek-page/install-peek-thai-data.php
-scripts/ci/request.sh rehearse --source staging39 --installer link-ideas/install-peek-nav.php
+scripts/ci/request.sh rehearse --source staging39 --installer link-ideas/install-peek-nav.php --with-uploads
 ```
 
 The core rehearsal adds the prerequisite Thai data only to its isolated copy,
 before its baseline. The data rehearsal has its own browser check: data alone is
 inert under the legacy runtime. The core rehearsal tests real copied page shapes;
 prepared-page browser fixtures do not register them in WordPress.
+Include uploads in the core rehearsal: they contain layout assets as well as
+images. The 2026-11-09 asset-incomplete copy produced three geometry failures;
+the unchanged package passed with uploads, without relaxing any assertions.
 
 Then dry-run and apply the Thai data, followed by the core:
 
