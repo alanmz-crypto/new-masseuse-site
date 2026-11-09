@@ -1,6 +1,6 @@
 # Peek: Kiro assessment fixes
 
-**Candidate in progress; not deployed.** Ryan requested “Fix the kiro assessment
+**Complete rehearsal passed; staging apply pending.** Ryan requested “Fix the kiro assessment
 issues.” Work is on `claude/wizardly-bell-xu0rta`, staging39 only. The baseline is
 `160360197c298c255eb18ea8179cb72869c87daf`; the
 [returned assessment](../inter-model/2026-11-09-peek-nav-kiro-assessment.md)
@@ -36,7 +36,7 @@ original meaning. Never apply an older rollback against the wrong current core.
   implementation. The close button retains its own 40 px area above the text.
 - F4: clearance includes the entire FAQ box and moves its interactive rectangle
   clear of the rail; text inside is not padded twice. Full-width containing
-  columns are unchanged. Actual control-edge checks must verify the result.
+  columns are unchanged. Actual control-edge checks pass on both sides.
 - F5: actual-text-range Services checks pass on both rail sides at 1280 px in
   the first fresh-copy Chromium run; the captures show clear text and controls.
 - J1: single-entry rails remain, with a shorter 120 px maximum rail. Search/404
@@ -213,6 +213,40 @@ Scale 1, requested visual dimensions and near-zero viewport offsets are now
 required in the enlarged outer-card case, which retains its mandatory native
 scroll assertion. Syntax/diff checks and independent review pass. These are
 test-only corrections; the full/stored candidate hashes remain unchanged.
+
+Fifth rehearsal `peek-kiro-fixes-rehearse-5`, run `42693471206`,
+source `5159801ee4f0000d014940f1451a0411ea0c28b4`. Actions Gates `42693471226`
+passed 31/0 with one rendered-only skip. It finished **20:47:38 UTC, PASS**:
+**14,249/0 across 14 complete browser suites**. Every nested wrapper completed;
+there is no INVALID or missing final suite. Copy apply/idempotence/exact rollback,
+rendered wording, PHP and published-page inventory passed. Only #1380 and the
+WPCode snippet-list cache changed on the throwaway copy.
+
+| Browser suite | Chromium | Firefox |
+|---|---:|---:|
+| Disclosure input/landing | 66/0 | 41/0 |
+| Kiro layout | 158/0 | 134/0 |
+| Title rails, actual routes + fixtures | 1605/0 | 1598/0 |
+| Title strip | 1339/0 | 1336/0 |
+| Page data + fixtures | 207/0 | 207/0 |
+| Clearance | 3340/0 | 3340/0 |
+| Native touch | 387/0 | — |
+| Retained Thai gestures | 491/0 | — |
+
+Actual Chair outer-scroll diagnostics confirm 390×180, scale 1, zero viewport
+offset, a 72.75 px title and a 21 px range. The native swipe moved the card
+0→21 px while page y704, summary position, hash and selection stayed unchanged.
+The current strict viewport guard passed; no coordinate-conversion change is
+needed for this verified run. Root reviewed the actual landscape research and
+Privacy touch-landing captures again. The independent full leaf audit confirms
+zero FAIL/INVALID and five empty stderr logs. All four changed selected captures
+(Thai research, Services left at 1280, Privacy keyboard/mouse) and seven key
+hash-identical captures were freshly viewed without a new blocker. Twenty-two
+selected images and the full 133-capture manifest are being retained.
+Transient rail labels may briefly cover body copy; enlarged-root text can wrap
+the existing brand, and compact landscape cards intentionally cover part of the
+strip. These limits are not claims about physical-device or OS text scaling.
+Throwaway-copy snapshots are not staging recovery snapshots.
 
 Independent review of the copy captures found the wider landscape research
 card readable, the full Privacy FAQ controls clear of the rail, and full Work
