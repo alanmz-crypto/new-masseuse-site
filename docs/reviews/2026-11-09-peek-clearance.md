@@ -64,6 +64,10 @@ Ordinary screens keep the below-strip placement. Long research words may wrap
 at enlarged text sizes; no approved words change. Actual-copy verification of
 these constrained cases remains required.
 
+A kept, focused research summary also needs its outer card scrollbar adjusted
+after rotation when the summary would become clipped. This adjustment preserves
+the summary's own scroll position, its DOM and focus, and never scrolls the page.
+
 ## Upgrade and recovery design
 
 The deployed shared version is frozen byte for byte as `peek-nav-shared-v1.php`:

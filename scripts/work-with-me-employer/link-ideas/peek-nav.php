@@ -464,7 +464,18 @@ add_action( 'wp_footer', function () {
       if (sum) sum.scrollTop = atEnd ? sum.scrollHeight : sumScroll;
       // Clamp the existing position, rather than recentering or rebuilding the
       // card: its chosen section, focus and reading position stay with the reader.
-      clampCard(y); moreHint();
+      clampCard(y);
+      var focused = document.activeElement;
+      if (focused && focused !== card && card.contains(focused)) {
+        var fr = focused.getBoundingClientRect(), cr = card.getBoundingClientRect(), edge = cr.top + card.clientTop;
+        // Rotation can clip a still-focused summary inside the outer scroller.
+        // Reveal it there only; never scroll the page or reset its own scrollbar.
+        if (fr.width > 0 && fr.height > 0) {
+          if (fr.height > card.clientHeight || fr.top < edge) card.scrollTop += fr.top - edge;
+          else if (fr.bottom > edge + card.clientHeight) card.scrollTop += fr.bottom - edge - card.clientHeight;
+        }
+      }
+      moreHint();
     }
     var shown = '', clear = 0;
     function hideCard() { card.className = 'ts-pk-card'; shown = ''; hover(-1); nav.classList.remove('is-active'); clearTimeout(clear); clear = setTimeout(function () { if (!shown) card.innerHTML = ''; }, 220); }   // empty it after the fade
