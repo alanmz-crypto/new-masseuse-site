@@ -1,5 +1,5 @@
 {
-  "id": "peek-kiro-fixes-rehearse-3",
+  "id": "peek-kiro-fixes-rehearse-4",
   "op": "rehearse",
   "target": "staging39",
   "installer": "link-ideas/core-kiro-fixes/install-peek-core-kiro-fixes.php",
