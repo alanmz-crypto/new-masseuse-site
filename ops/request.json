@@ -1,10 +1,10 @@
 {
-  "id": "peek-clearance-dry-20261109-1",
+  "id": "peek-touch-baseline-20261109-1",
   "op": "run",
   "target": "staging39",
-  "script": "link-ideas/push-peek-nav.sh",
+  "script": "link-ideas/check-peek-touch.mjs",
   "args": [
-    "core-upgrade"
+    "https://staging39.thaisolitude.com"
   ],
   "tests": "auto"
 }
