@@ -1,12 +1,10 @@
 {
-  "id": "peek-chair-public-20261109-1",
+  "id": "peek-services-final-chromium-20261109-1",
   "op": "run",
   "target": "staging39",
-  "script": "link-ideas/check-peek-pages.mjs",
+  "script": "link-ideas/check-peek-nav.mjs",
   "args": [
-    "https://staging39.thaisolitude.com",
-    "--capture-page",
-    "chair-massage"
+    "https://staging39.thaisolitude.com"
   ],
   "tests": "auto"
 }
