@@ -67,7 +67,7 @@ html .ts-pk .ts-pk-card .row b{display:grid;place-items:center;flex:0 0 auto;wid
 html .ts-pk .ts-pk-card .row span{min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .ts-pk-card .d{display:block;font-size:.86rem;line-height:1.4;color:var(--pk-ink);opacity:.9}
 /* the summary: the section's own opening sentences, scrollable inside the open box (no second window; touching or scrolling it never jumps) */
-.ts-pk-card .sum{display:block;margin:.5rem 0 0;padding:0 .35rem 0 0;max-height:9.8em;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;font-size:.86rem;line-height:1.45;color:var(--pk-ink);cursor:auto}
+.ts-pk-card .sum{display:block;margin:.5rem 0 0;padding:0 .35rem 0 0;max-height:9.8em;overflow-y:auto;overflow-wrap:anywhere;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;font-size:.86rem;line-height:1.45;color:var(--pk-ink);cursor:auto}
 html .ts-pk .ts-pk-card .sum p{margin:0 0 .55em;padding:0;font:inherit;line-height:inherit;color:inherit}
 html .ts-pk .ts-pk-card .sum p:last-child{margin-bottom:0}
 .ts-pk-card .sum.has-more{-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 1.8em),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 1.8em),transparent)}   /* more below: the last line fades (Kiro) */
@@ -294,7 +294,11 @@ add_action( 'wp_footer', function () {
       root.style.setProperty('--pk-strip', strip.offsetHeight + 'px');
     }
     measureHead();
-    if (head && 'ResizeObserver' in window) new ResizeObserver(measureHead).observe(head);
+    if ('ResizeObserver' in window) {
+      var headSize = new ResizeObserver(function () { measureHead(); ask(); });
+      if (head) headSize.observe(head);
+      headSize.observe(strip);
+    }
     window.addEventListener('resize', measureHead);
     // the text column stops 6px before the rail and its icon, whatever margin the theme gives the content at this width (measured, not guessed);
     // the theme's own padding stays whenever it is already enough
@@ -403,20 +407,64 @@ add_action( 'wp_footer', function () {
         '<span class="hint"><span>' + (pinned ? 'Tap to go there' : 'Lift to keep this preview') + '</span>' + (pinned ? '<button type="button" class="side" aria-label="Move the section bar to the ' + sideName() + ' side">⇆ ' + (sideName() === 'left' ? 'Left' : 'Right') + '</button>' : '') + '</span>';
     }
     function hover(i) { segs.forEach(function (li, k) { li.classList.toggle('is-hover', k === i); }); }
-    function stuckBottom() { return (parseFloat(getComputedStyle(top).top) || 0) + top.offsetHeight; }   // where the strip ends once it sticks (also before it has)
-    function moreHint() { var m = card.querySelector('.sum'); if (m) m.classList.toggle('has-more', m.scrollHeight - m.scrollTop - m.clientHeight > 2); }
-    function fit() {   // drop detail in steps until the whole stack fits between the stuck strip and the bottom of the screen (and within the card's own max-height)
-      card.classList.remove('fit1', 'fit2', 'fit3', 'fit4', 'fit5');
-      var avail = window.innerHeight - Math.max(8, stuckBottom() + 8) - 12, mh = parseFloat(getComputedStyle(card).maxHeight);
-      if (mh > 0) avail = Math.min(avail, mh - (card.offsetHeight - card.clientHeight));   // max-height includes the border; scrollHeight does not
-      // fit1-3 trim the open box; fit4 folds the far rows into "+N more"; fit5 leaves the open box alone
-      ['fit1', 'fit2', 'fit3', 'fit4', 'fit5'].some(function (c) { if (card.scrollHeight <= avail + 0.5) return true; card.classList.add(c); return false; });
-      var o = card.querySelector('.open'); if (o && card.scrollHeight > card.clientHeight + 1) card.scrollTop = Math.max(0, o.offsetTop - 4);   // never hidden
+    function cardSpaces() {
+      var r = top.getBoundingClientRect(), stickyTop = parseFloat(getComputedStyle(top).top) || 0;
+      var visible = r.top < window.innerHeight && r.bottom > 0, hr = head && head.getBoundingClientRect();
+      var headBottom = Math.max(0, stickyTop, hr && hr.top < window.innerHeight && hr.bottom > 0 ? hr.bottom : 0);
+      // At page top the availability banner still separates the strip from its
+      // sticky position. Clear the visible strip, including the card's focus ring.
+      // A strip entirely outside the viewport must not consume preview space.
+      var lower = { top: Math.max(headBottom, stickyTop + top.offsetHeight, visible ? r.bottom : 0) + 8, bottom: window.innerHeight - 12 };
+      var upper = visible && r.top - 8 > headBottom + 8 ? { top: headBottom + 8, bottom: r.top - 8 } : null;
+      return { lower: lower, upper: upper, key: [lower.top, lower.bottom, upper ? upper.top : 0, upper ? upper.bottom : 0].join('|') };
     }
-    function place(y) {   // the open box beside the thumb; never past the bottom of the screen, then never above the strip
+    function moreHint() { var m = card.querySelector('.sum'); if (m) m.classList.toggle('has-more', m.scrollHeight - m.scrollTop - m.clientHeight > 2); }
+    var fitted = null;
+    function fit() {   // use the same visible boundary for fitting and placement
+      card.style.maxHeight = '';
+      var spaces = cardSpaces(), bounds = spaces.lower, mh = parseFloat(getComputedStyle(card).maxHeight);
+      function fitIn(space) {
+        card.classList.remove('fit1', 'fit2', 'fit3', 'fit4', 'fit5');
+        var cap = Math.max(1, space.bottom - space.top);
+        if (mh > 0) cap = Math.min(cap, mh);
+        // Keep the existing scrollable-card fallback inside the selected space.
+        card.style.maxHeight = cap + 'px';
+        var avail = Math.max(0, cap - (card.offsetHeight - card.clientHeight));
+        // fit1-3 trim detail; fit4 folds far rows; fit5 leaves the open box alone.
+        ['fit1', 'fit2', 'fit3', 'fit4', 'fit5'].some(function (c) { if (card.scrollHeight <= avail + 0.5) return true; card.classList.add(c); return false; });
+        return card.scrollHeight <= avail + 0.5;
+      }
+      // A short landscape viewport may leave less room below the unpinned strip
+      // than above it. Use that larger free interval only after compact fitting
+      // below fails, without scrolling the page or changing the selected section.
+      if (!fitIn(bounds) && spaces.upper && spaces.upper.bottom - spaces.upper.top > bounds.bottom - bounds.top) {
+        bounds = spaces.upper; fitIn(bounds);
+      }
+      var o = card.querySelector('.open'); if (o && card.scrollHeight > card.clientHeight + 1) card.scrollTop = Math.max(0, o.offsetTop - 4);   // never hidden
+      fitted = { bounds: bounds, key: spaces.key, width: window.innerWidth, height: window.innerHeight };
+    }
+    function clampCard(y) {
+      var bounds = fitted.bounds;
+      card.style.top = Math.max(bounds.top, Math.min(bounds.bottom - card.offsetHeight, y)) + 'px';
+    }
+    function place(y) {   // the open box beside the thumb, within the chosen free interval
+      refitCard(false);
       var h = card.offsetHeight, o = card.querySelector('.open'), mid = o ? o.offsetTop + o.offsetHeight / 2 : h / 2;
-      var lo = Math.max(8, stuckBottom() + 8), hi = window.innerHeight - h - 12;
-      card.style.top = Math.max(Math.min(lo, hi), Math.min(hi, y - mid)) + 'px';
+      clampCard(y - mid);
+    }
+    function refitCard(force) {
+      if (!card.classList.contains('is-on')) return;
+      var spaces = cardSpaces();
+      if (!force && fitted && spaces.key === fitted.key && fitted.width === window.innerWidth && fitted.height === window.innerHeight) return;
+      var y = parseFloat(card.style.top), scroll = card.scrollTop, sum = card.querySelector('.sum');
+      var sumScroll = sum ? sum.scrollTop : 0, atEnd = sum && sumScroll > 0 && sum.scrollHeight - sumScroll - sum.clientHeight <= 2;
+      if (!isFinite(y)) y = card.getBoundingClientRect().top;
+      fit();
+      card.scrollTop = scroll;
+      if (sum) sum.scrollTop = atEnd ? sum.scrollHeight : sumScroll;
+      // Clamp the existing position, rather than recentering or rebuilding the
+      // card: its chosen section, focus and reading position stay with the reader.
+      clampCard(y); moreHint();
     }
     var shown = '', clear = 0;
     function hideCard() { card.className = 'ts-pk-card'; shown = ''; hover(-1); nav.classList.remove('is-active'); clearTimeout(clear); clear = setTimeout(function () { if (!shown) card.innerHTML = ''; }, 220); }   // empty it after the fade
@@ -510,6 +558,7 @@ add_action( 'wp_footer', function () {
       you.style.top = label.style.top = (rr.top - nr.top + 8 + w * (rr.height - 16)) + 'px';
       if (cur !== lastRove && cur > -1 && !rail.contains(document.activeElement)) { rove(cur); lastRove = cur; }   // only when the section changes
       if (ixOpen) fanLayout();   // the fan stays current if the page moves while it is open (keyboard toggle)
+      refitCard(false);
       if (!tipDone && !tipWait && cur > -1) tipWait = setTimeout(function () { tipWait = 0; if (!tipDone && !card.classList.contains('is-on') && !ixOpen && !g && ixPress === null) maybeTip(); }, 1500);   // after 1.5 s of reading, never over a preview or the fan
     }
 
@@ -605,7 +654,7 @@ add_action( 'wp_footer', function () {
     function ask() { if (!ticking) { ticking = true; window.requestAnimationFrame(draw); } }
     var still = 0;
     window.addEventListener('scroll', function () { ask(); nav.classList.add('is-moving'); clearTimeout(still); still = setTimeout(function () { nav.classList.remove('is-moving'); }, 900); }, { passive: true });   // the section name shows beside the rail while the page scrolls
-    window.addEventListener('resize', function () { lengths(); ask(); if (card.classList.contains('is-on')) { fit(); place(card.getBoundingClientRect().top + card.offsetHeight / 2); } });   // rotation or zoom with a card open: fit it again
+    window.addEventListener('resize', function () { lengths(); ask(); refitCard(true); });   // rotation or zoom: keep the open card inside the current visible bounds
     var lastCW = -1;
     if ('ResizeObserver' in window) new ResizeObserver(function (en) { lengths(); ask(); var w = Math.round(en[0].contentRect.width); if (w !== lastCW) { lastCW = w; scheduleClear(true); } }).observe(content);   // re-measure the rail clearance only when the width changes (an FAQ opening changes the height every frame)   // FAQ answers or late fonts move block edges   // FAQ answers opening change the lengths
 

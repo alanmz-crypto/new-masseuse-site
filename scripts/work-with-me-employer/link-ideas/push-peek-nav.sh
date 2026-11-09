@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Shared Peek core and per-page WPCode data; staging39 only, WordPress storage only.
-# Usage: push-peek-nav.sh [core | page SLUG] [--apply | --check | --rollback FILE]
-# Default core migrates the exact legacy snippet in place after Thai data is installed.
+# Usage: push-peek-nav.sh [core | core-upgrade | page SLUG] [--apply | --check | --rollback FILE]
+# Core preserves the original legacy -> frozen v1 migration; core-upgrade updates v1 in place.
 # Every write, including rollback, exports and verifies an encrypted offsite backup first.
 # shellcheck disable=SC2016  # the single-quoted commands below are meant to expand on the server, not here
 set -euo pipefail
@@ -18,6 +18,7 @@ SSH_AUTH_SOCK="$SSH_AUTH_SOCK" ssh-add -l >/dev/null 2>&1 || { echo "The ssh-age
 component=core; slug=""; mode=dry; snap=""
 case "${1:-}" in
   core) shift ;;
+  core-upgrade) component=core-upgrade; shift ;;
   page) component=page; slug="${2:-}"; [[ "$slug" =~ ^[a-z0-9]+(-[a-z0-9]+)*$ ]] || { echo "page needs a simple slug" >&2; exit 1; }; shift 2 ;;
 esac
 case "${1:-}" in
@@ -25,7 +26,7 @@ case "${1:-}" in
   --apply) [ "$#" -eq 1 ] || exit 1; mode=apply ;;
   --check) [ "$#" -eq 1 ] || exit 1; mode=check ;;
   --rollback) [ "$#" -eq 2 ] || exit 1; mode=rollback; snap=$2 ;;
-  *) echo "Usage: $0 [core | page SLUG] [--apply | --check | --rollback FILE]" >&2; exit 1 ;;
+  *) echo "Usage: $0 [core | core-upgrade | page SLUG] [--apply | --check | --rollback FILE]" >&2; exit 1 ;;
 esac
 if [ -n "$snap" ] && [[ ! "$snap" =~ ^(\$HOME|/home/[a-zA-Z0-9_-]+)/private-backups/peek-(nav|template-[a-z0-9-]+)-before-[a-zA-Z0-9.-]+\.json$ ]]; then
   echo "Snapshot must be a Peek before-snapshot inside private-backups." >&2; exit 1
@@ -37,14 +38,14 @@ ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o 
 
 echo "[1] Connecting and uploading the package to ~/wwm-package-peek-nav (outside every web root) ..."
 "${ssh_cmd[@]}" true 2>/dev/null || { echo "SSH login refused; check the ssh-agent holds the right key." >&2; exit 2; }
-tar -C "$here" -cf - install-peek-nav.php peek-nav.php peek-nav-legacy.php peek-data \
+tar -C "$here" -cf - install-peek-nav.php peek-nav.php peek-nav-legacy.php peek-nav-shared-v1.php peek-data \
   | "${ssh_cmd[@]}" 'mkdir -p "$HOME/wwm-package-peek-nav" && tar -xf - -C "$HOME/wwm-package-peek-nav"'
 
 read -r -d '' REMOTE <<'EOS' || true
 set -euo pipefail
 wp() { command wp --skip-plugins=sg-security "$@"; }   # SiteGround Security 1.6.9 + PHP 8.5 makes EVERY wp exit 0 on live (shutdown-handler bug); skipping that one plugin keeps exit codes true. See AGENTS.md and check-wp-exit-codes.sh.
 phase=$1; target=$2; component=$3; slug=$4; snap=${5:-}
-case "$component" in core) [ -z "$slug" ] || exit 1 ;; page) [[ "$slug" =~ ^[a-z0-9]+(-[a-z0-9]+)*$ ]] || exit 1 ;; *) exit 1 ;; esac
+case "$component" in core|core-upgrade) [ -z "$slug" ] || exit 1 ;; page) [[ "$slug" =~ ^[a-z0-9]+(-[a-z0-9]+)*$ ]] || exit 1 ;; *) exit 1 ;; esac
 case "$target" in staging39) want="staging39.thaisolitude.com" ;; *) echo "Remote refused: target must be staging39, got '$target'." >&2; exit 1 ;; esac
 command -v wp >/dev/null || { echo "wp-cli not found on the server" >&2; exit 1; }
 doc=""
@@ -64,7 +65,7 @@ echo "$target is ${doc#"$HOME"/}"
 mkdir -p "$HOME/private-backups"; chmod 700 "$HOME/private-backups"
 export WWM_BACKUP_DIR="$HOME/private-backups"
 installer="$HOME/wwm-package-peek-nav/install-peek-nav.php"
-run() { local m=$1; shift; if [ "$m" = rollback ]; then wp --path="$doc" --user=1 eval-file "$installer" "$m" "$@"; elif [ "$component" = page ]; then wp --path="$doc" --user=1 eval-file "$installer" "$m" page "$slug"; else wp --path="$doc" --user=1 eval-file "$installer" "$m" core; fi; }
+run() { local m=$1; shift; if [ "$m" = rollback ]; then wp --path="$doc" --user=1 eval-file "$installer" "$m" "$@"; elif [ "$component" = page ]; then wp --path="$doc" --user=1 eval-file "$installer" "$m" page "$slug"; else wp --path="$doc" --user=1 eval-file "$installer" "$m" "$component"; fi; }
 purge() { wp --path="$doc" --user=1 sg purge >/dev/null 2>&1 && echo "SiteGround cache purged" || echo "(sg purge unavailable; purge the cache in Site Tools if a page looks stale)"; }
 case "$phase" in
   preflight) run preflight ;;
@@ -81,11 +82,19 @@ case "$phase" in
     bad=0
     fetch() { local code; code=$(curl -s -o "$tmp/$1.html" -w '%{http_code}' --max-time 30 "https://$want$2" || true); echo "  $code $2"; [ "$code" = 200 ] || { echo "$2 does not answer 200 (202 = SiteGround's bot challenge = INVALID, retry later)."; exit 1; }; }
     need() { local n; n=$( { grep -o -F -- "$2" "$tmp/$1.html" || true; } | wc -l); if [ "$n" = "$3" ]; then echo "  ok   $1: $n x $2"; else echo "  FAIL $1: $n x $2 (want $3)"; bad=1; fi; }
-    core_state=$(wp --path="$doc" --user=1 eval-file "$installer" preflight core)
+    shared_core=0
+    if core_state=$(wp --path="$doc" --user=1 eval-file "$installer" preflight core-upgrade 2>/dev/null); then
+      # Both the exact v1 predecessor and the upgraded payload are shared cores.
+      shared_core=1
+    else
+      # Historical legacy/data-only recovery remains checkable. Unknown code fails both guards.
+      core_state=$(wp --path="$doc" --user=1 eval-file "$installer" preflight core)
+      [[ "$core_state" != *'core applied;'* ]] || shared_core=1
+    fi
     for pg in thai-massage therapeutic-massage deep-tissue-massage chair-massage services; do
       fetch "$pg" "/$pg/"
       expected=0; data_expected=0
-      if [[ "$core_state" == *'core applied'* ]]; then
+      if [ "$shared_core" = 1 ]; then
         if [ "$pg" != services ]; then
           page_state=$(wp --path="$doc" --user=1 eval-file "$installer" preflight page "$pg")
           if [[ "$page_state" == *' applied;'* ]]; then expected=1; data_expected=1; fi
