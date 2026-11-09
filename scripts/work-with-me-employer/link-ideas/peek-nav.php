@@ -74,7 +74,7 @@ html[data-ts-theme="dark"] .ts-pk-card .hint{color:var(--pk-on)}
 /* keep the text clear of the rail on phones and tablets; the bottom "On this page" button is replaced by the rail */
 /* Ryan, 2026-11-09: the clearance goes on the text blocks, not on the column. Padding the column moved its middle, and full-width theme blocks (placed from
    that middle) shifted by half of it: off the left edge with the rail on the right (text cut at the screen edge), past the right edge with it on the left */
-html.ts-pk-ready.ts-pk-pad:not(.ts-pk-left) .entry-content :is(p,li,h1,h2,h3,h4,h5,h6,blockquote,figcaption,dt,dd,td,th):not(:is(p,li,blockquote,dd,td,th) *){padding-right:var(--pk-clear)}
+html.ts-pk-ready.ts-pk-pad:not(.ts-pk-left) .entry-content :is(p,li,h1,h2,h3,h4,h5,h6,blockquote,figcaption,dt,dd,td,th):not(:is(p,li,blockquote,dd,td,th,.ts-pk,.ts-jump) *){padding-right:var(--pk-clear)}
 html.ts-pk-ready.ts-pk-pad:not(.ts-pk-left) .entry-content .ts-pk-top{padding-right:calc(12px + var(--pk-clear))}   /* the strip's titles stay clear of the rail while it is still in the page */
 html.ts-pk-ready .entry-content .ts-jump{display:none!important}   /* Ryan, 2026-11-08: "You can remove the in-page links beneath header." The strip, rail and index replace the row; without JavaScript (no ts-pk-ready) it still shows and works */
 html.ts-pk-ready #ts-section-guide-trigger,html.ts-pk-ready #ts-section-guide-popover{display:none!important}   /* only once the rail is there */
@@ -92,7 +92,7 @@ html.ts-pk-left .ts-pk-you{right:auto;left:28px}
 html.ts-pk-left .ts-pk-card{right:auto;left:58px;transform:translateX(-10px) scale(.98)}
 html.ts-pk-left .ts-pk-card.is-on{transform:none}
 html.ts-pk-left .ts-pk-tip{right:auto;left:58px}
-html.ts-pk-ready.ts-pk-pad.ts-pk-left .entry-content :is(p,li,h1,h2,h3,h4,h5,h6,blockquote,figcaption,dt,dd,td,th):not(:is(p,li,blockquote,dd,td,th) *){padding-left:var(--pk-clear)}
+html.ts-pk-ready.ts-pk-pad.ts-pk-left .entry-content :is(p,li,h1,h2,h3,h4,h5,h6,blockquote,figcaption,dt,dd,td,th):not(:is(p,li,blockquote,dd,td,th,.ts-pk,.ts-jump) *){padding-left:var(--pk-clear)}
 html.ts-pk-ready.ts-pk-pad.ts-pk-left .entry-content .ts-pk-top{padding-left:calc(12px + var(--pk-clear))}   /* the other side keeps the theme's own spacing */
 /* the side button in the preview */
 .ts-pk-card .hint{display:flex;align-items:center;justify-content:space-between;gap:.5rem}
@@ -209,9 +209,9 @@ add_action( 'wp_footer', function () {
       'thai-massage': {
         'ts-what-it-is': ['Movement meets massage', 'Pressure, rocking, stretching', 'Butsaba\'s specialty', 'Restful or active', 'Rooted in Thai self-care', 'UNESCO-listed heritage', 'Trained at Still Light'],
         'ts-common-reasons': ['Routines leave stiffness', 'Freer movement wanted', 'Some simply unwind', 'Tight areas get time'],
-        'ts-what-to-expect': ['Share health history', 'Warning signs: see doctor', 'Brief talk first', 'You set the pace', 'Check-ins throughout', 'Change anything, anytime', 'Aftercare tips'],
-        'ts-guide-questions': ['Wear loose clothing', 'Done on a mat', '60 or 90 minutes', 'Stretches never forced', 'Group bookings: Nov 14', 'Solo sessions: summer 2027', 'No home visits'],
-        'ts-guide-research': ['Evidence is limited', 'Trials are small, short', 'Reviews reported less pain', 'Big reviews stay cautious', 'Regular sessions may matter', 'Serious harm is rare', 'Massage beat sham devices', 'Other methods mostly tied', 'Not always ahead', 'Muscles recovered faster', 'Stress results mixed', 'Swedish relaxed more', 'Thai energized more', 'etc.']
+        'ts-what-to-expect': ['Share health history', 'Warning signs: see doctor', 'Brief talk first', 'You set the pace', 'Check-ins throughout', 'Change anything, anytime', 'Post-session guidance'],
+        'ts-guide-questions': ['Wear loose clothing', 'Done on a mat', '60 or 90 minutes', 'Stretches never forced', 'No individual home visits'],
+        'ts-guide-research': ['Evidence is limited', 'Trials are small, short', 'Studies reported less pain', 'Big reviews stay cautious', 'Regular sessions may matter', 'Rare serious effects reported', 'Compared with sham devices', 'Other methods mostly tied', 'Not always ahead', 'Recovery compared with rest', 'Stress results mixed', 'Swedish seen as relaxing', 'Thai seen as energizing', 'etc.']
       }
     };
     var PAGE = (location.pathname.replace(/\/+$/, '').split('/').pop() || '').toLowerCase(), MINE = Object.prototype.hasOwnProperty.call(GISTS, PAGE) ? GISTS[PAGE] : {};
