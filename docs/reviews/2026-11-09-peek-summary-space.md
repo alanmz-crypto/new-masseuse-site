@@ -107,6 +107,35 @@ retain the same-DOM/native-progress/page/hash/outer-scroll assertions. No runtim
 change is justified by this replay. Another successful fresh-copy gate remains
 required.
 
+## Third rehearsal: native touch passes; landscape stress case remains
+
+The [third actual-copy run](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42595399779),
+source `03748a861bb4249ca3adce282346fb0be51e1cd9`, finished
+**09:54:42 UTC, FAIL**. Its complete report was read. The runtime was unchanged;
+the visible-surface checker correction now completes native Chromium touch at
+**378/0 in 163s**. Eight conditional folded-row checks needed in the local
+386-check layout were not needed on these copied pages; no assertion was waived.
+Title checks again passed **1223/0 Chromium**, **1220/0 Firefox**; generic page
+checks **207/0** and clearance **3340/0** passed in each engine. Exact rollback,
+rendered wording, PHP and page-response gates passed, with copy changes limited
+to #1380/WPCode cache.
+
+The retained Thai regression returned **484/1**: its synthetic seven-section,
+enlarged-text landscape case failed the combined name/jump-hint visibility
+check for section seven. Which element fails and why remain under investigation;
+no runtime correction or exception is assumed. The matched quick suite did not
+run, and the retained wrapper reported **INVALID** for its missing final summary.
+The combined rehearsal remains **FAIL** despite the passing native-touch suite.
+
+The [read-only preflight](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42595445291)
+passed at **09:55:20 UTC**, source `4517794fca7c409619eb901f5bcd55f15893269b`:
+the 19 published paths and exact current core match the guarded transition.
+Its complete report confirms no WordPress write. The
+[combined record](2026-11-09-peek-title-strip-all-pages.md#third-candidate-offline-pass-rehearsal-failure-read-only-preflight-pass)
+holds the archive identity and full outcome. **Staging deployment remains
+blocked by the failed rehearsal**; this is not a resolution claim for the
+reported device delay.
+
 The combined `core-title-strip` transition updates #1380 in place from frozen
 v3 while preserving the four data records. No new deployment snapshot exists.
 Use the combined release record for the required fresh-copy, wording, visual,

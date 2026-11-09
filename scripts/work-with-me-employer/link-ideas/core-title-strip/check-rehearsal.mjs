@@ -52,5 +52,5 @@ for (const result of results) {
 // older wrapper's first-nonzero exit choice if another nested matrix was invalid.
 const code = results.some(result => result.code === 1 || result.failed) ? 1
   : (results.find(result => result.code !== 0 && result.code !== 2)?.code || (results.some(result => result.code === 2) ? 2 : 0));
-console.log(`INFO Peek title-strip rehearsal: ${code === 2 ? 'INVALID' : code ? 'FAILED' : 'PASSED'}, ${results.length} wrapper suites, ${Math.round((Date.now() - started) / 1000)}s; retained core-upgrade gates reused without edits.`);
+console.log(`INFO Peek title-strip rehearsal: ${code === 2 ? 'INVALID' : code ? 'FAILED' : 'PASSED'}, ${results.length} wrapper suites, ${Math.round((Date.now() - started) / 1000)}s; retained core-upgrade wrapper reused.`);
 process.exit(code);

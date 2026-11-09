@@ -328,3 +328,81 @@ after release. This is a controlled replay, not an actual-copy pass.
 The corrected native Chromium fixture suite passed **386/0 in 148s**. Syntax
 and whitespace checks passed. The runtime remains exactly the second candidate;
 this test correction still requires a fresh actual-copy rehearsal.
+
+## Third candidate: offline pass, rehearsal failure, read-only preflight pass
+
+Source `03748a861bb4249ca3adce282346fb0be51e1cd9` passed
+[Actions Gates](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42595399884)
+at **09:42:47 UTC**: **29 PASS, 1 SKIP, 0 FAIL, 0 INVALID**. The complete
+193-line job log was read (`/tmp/peek-titles-candidate-3-gates.log`). The only
+skip is URL-dependent rendered verification. This includes the checker-only
+visible-surface correction; the 86,567-byte runtime is unchanged.
+
+Fresh-copy request `peek-titles-rehearse-20261109-3`,
+[run 42595399779](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42595399779),
+finished **09:54:42 UTC, FAIL**, at the same `03748a861…` source. The complete
+237-line report was read (`/tmp/peek-titles-rehearse-3-text.md`). Root verified
+the retained 6,367,191-byte artifact, SHA256
+`082841f0050b6ce9141971311588907c94e8f4426e38bcaaf0940aedde5953d1`.
+Preflight, apply/idempotence, exact rollback/reapply, page responses, PHP and
+rendered regulated-copy gates passed again. Only #1380 and WPCode's cache
+changed in the throwaway copy; no staging WordPress state was written.
+
+The title matrices passed **1223/0 Chromium** and **1220/0 Firefox** across all
+19 published pages plus search/404. Generic page checks passed **207/0** in
+each engine, and clearance passed **3340/0** in each. Corrected native touch
+completed **378/0 in 163s**, including the formerly misdirected resize stroke.
+The eight-count difference from the local 386-check run is conditional
+folded-row checks not needed in these actual layouts, not removed assertions.
+
+The retained Thai regression then returned **484 passed, 1 failed**. Its
+synthetic seven-section, enlarged-text landscape case failed the combined
+requirement that section seven's open box show its name and `Tap to go there`.
+The report's boolean result does not identify which element fails visibility;
+the cause remains under investigation. The matched quick suite did not run,
+and the retained wrapper additionally reported **INVALID: no final suite
+summary**. The outer rehearsal preserved **FAIL**. No waiver or runtime change
+is established by this result, and no aggregate browser pass is claimed.
+
+The separate read-only preflight,
+[run 42595445291](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42595445291)
+at source `4517794fca7c409619eb901f5bcd55f15893269b`, finished
+**09:55:20 UTC, PASS**. Its complete report was read
+(`/tmp/peek-titles-dry-1-report.md`): all 19 published paths match the reviewed
+inventory and the exact current core guard reports `core-title-strip ready`.
+It uploaded the package outside the web root and wrote no WordPress state.
+This preflight does not override the failed rehearsal. **All staging writes
+remain blocked pending successful fresh-copy and visual gates**; there is no
+new deployment snapshot.
+
+
+## Enlarged-text fallback diagnosis
+
+Two independent local probes reproduced the exact injected seven-section/26px
+landscape case. The full three-line title is initially visible; the whole
+paragraph fallback now remains present at fit5 instead of being hidden. The
+252px outer card has a 56px scroll range. Its jump hint initially extends below
+the card. Native End exposes the entire hint; Home exposes every title line and
+the close control. A hit-tested title swipe also exposes the hint, with the page,
+address, selection and inner summary unchanged. A native hint tap reaches
+`#ts-extra-2`. [Probe evidence](assets/2026-11-09-peek-title-strip-all-pages/checks/seven-section-outer-scroll-probe.jsonl)
+includes both structural and captured-inline versions; external assets were
+blocked, so these are not fresh-copy results.
+
+Root viewed the initial and End screenshots. The tradeoff is acceptable only
+as the existing constrained outer-card fallback: full title and hint occupy
+different scroll positions while whole paragraphs remain available. The four
+registered-page clearance matrix does not prove this injected case. The focused
+checker change therefore preserves simultaneous visibility for ordinary cases,
+and permits this exact final-fit case only after native keys and touch prove
+reachability, containment, stable preview/focus/text and actual hint activation.
+The failed third rehearsal remains failed; no runtime change is justified by
+these probes. A successful full fresh-copy rehearsal is still required.
+
+The exact retained checker's three landscape blocks pass **18/0** locally,
+including the subsequent fan gesture and native hint activation. Independent
+review confirmed the exception is limited to the combined seven-section/26px
+last-section case and checks close/hint hit targets, all title lines, native
+keys/swipe, stable page/preview/inner text, and destination clearance. Focused
+Firefox keyboard and pointer parity also passed. The runtime is unchanged;
+this evidence does not replace the next complete actual-copy rehearsal.
