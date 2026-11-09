@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-09 00:39 UTC  **PASS**  `probe-overflow-s39-b-1`  [reports/2026-11-09/003950-probe-overflow-s39-b-1.md](reports/2026-11-09/003950-probe-overflow-s39-b-1.md)  (run 42541201315)
 - 2026-11-09 00:37 UTC  **PASS**  `ui-peek-nav-s39-39-1`  [reports/2026-11-09/003711-ui-peek-nav-s39-39-1.md](reports/2026-11-09/003711-ui-peek-nav-s39-39-1.md)  (run 42540436953)
 - 2026-11-09 00:29 UTC  **PASS**  `apply-peek-nav-s39-34-1`  [reports/2026-11-09/002911-apply-peek-nav-s39-34-1.md](reports/2026-11-09/002911-apply-peek-nav-s39-34-1.md)  (run 42540282021)
 - 2026-11-09 00:27 UTC  **PASS**  `rehearse-peek-nav-34-1`  [reports/2026-11-09/002710-rehearse-peek-nav-34-1.md](reports/2026-11-09/002710-rehearse-peek-nav-34-1.md)  (run 42540127332)
