@@ -1,12 +1,9 @@
 {
-  "id": "peek-therapeutic-public-20261109-1",
-  "op": "run",
+  "id": "peek-deep-rehearse-20261109-1",
+  "op": "rehearse",
   "target": "staging39",
-  "script": "link-ideas/check-peek-pages.mjs",
+  "installer": "link-ideas/peek-page/deep-tissue-massage/install-peek-page-data.php",
   "args": [
-    "https://staging39.thaisolitude.com",
-    "--capture-page",
-    "therapeutic-massage"
-  ],
-  "tests": "auto"
+    "--with-uploads"
+  ]
 }
