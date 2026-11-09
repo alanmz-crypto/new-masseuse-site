@@ -245,4 +245,10 @@ holds full-width blocks; check `scrollWidth === clientWidth` and text edges on b
 **Kiro template review outcomes:** page-keyed GISTS, non-heading targets (FAQ panels open), row validated and sorted, focus margin on content focusables
 (page scroll-padding scrolled to top when the header's menu got focus), quick tap keeps the fan, strip opacity .85. Mock 477/0. Next: shared core + per-page
 data + gist lint (Kiro's structure); Ryan to decide Kiro's safer phrases.
+**Fan names pushed in (Ryan, 2026-11-09, both phones):** the text-clearance rule matched the navigation's own `li`s (fan, rail, summary bullets); now
+excludes `.ts-pk`/`.ts-jump`. Kiro's wording applied (hedged research phrases; dated Questions lines dropped). Staging39 **#1380**; snapshot
+`peek-nav-before-20261109-010037-0c493281.json`.
+**Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261109-010037-0c493281.json'`.
+**Lesson (swaps):** during "rollback, rehearse, apply" (~6 min) the page shows the plain no-JavaScript row; tell Ryan not to judge a reload until the
+apply line appears.
 
