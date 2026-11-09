@@ -254,9 +254,19 @@ tail -n 2 "$out/client-gates.log"
 extra="$wwm/$(dirname "$inst")/check-rehearsal.mjs"
 if [ -f "$extra" ]; then
   echo; echo "[4c] package browser checks on the applied throwaway copy"
-  timeout 600 node "$extra" http://localhost:8090 > "$out/package-browser.log" 2>&1
+  browser_seconds=600
+  # This shared-core upgrade checks four actual pages in two engines plus native
+  # touch, then retains the timing-sensitive Thai gesture suite in isolation.
+  [ "$inst" != link-ideas/core-upgrade/install-peek-core-upgrade.php ] || browser_seconds=900
+  echo "  browser budget: ${browser_seconds}s (all package checks retained)"
+  timeout "$browser_seconds" node "$extra" http://localhost:8090 > "$out/package-browser.log" 2>&1
   package_browser_rc=$?
   check "package browser checks" "$package_browser_rc"
+  if [ "$inst" = link-ideas/core-upgrade/install-peek-core-upgrade.php ]; then
+    evidence="${RUNNER_TEMP:-$HOME/.cache}/ops-out"
+    mkdir -p "$evidence" && cp "$out/package-browser.log" "$evidence/peek-core-upgrade-browser.log"
+    check "complete core-upgrade browser log retained for review" $?
+  fi
   [ "$package_browser_rc" -eq 0 ] || tail -n 30 "$out/package-browser.log"
   grep -E '^(FAIL|INVALID|Bundle [CDEF]:|CONTRAST|LAYOUT|MIN_CONTRAST|HEADING|HEIGHT|INFO|INLINE)' "$out/package-browser.log" || true
 fi

@@ -6,6 +6,8 @@ Therapeutic/Chair order. The enabled pages follow peek-pages.json; the browser
 fixture checks may also inject the packaged core into prepared shapes explicitly.
 All jump targets are in the HTML so the no-JavaScript fallback is testable.
 The tiny dark theme exercises the core's colour branches, not the site's theme.
+Responsive root sizes reproduce the observed staging typography reflow so a
+768px-to-desktop resize genuinely changes the summary's scrolling endpoint.
 
   python3 build-mock.py [OUT_DIR] [--enabled-page SLUG]
   # --enabled-page adds one approved page for this local output only; repeatable.
@@ -91,6 +93,7 @@ def row_for(plan):
 
 mock_theme = '''<script>try{document.documentElement.dataset.tsTheme=localStorage.getItem('ts-theme')||'light';}catch(e){}</script>
 <style>
+html{font-size:15px}@media(max-width:921px){html{font-size:13.68px}}
 body{margin:0;font-family:system-ui;background:#F5F4EF;color:#1C2531}.entry-content{padding:0}.mock-inner{padding:0 20px}
 #masthead{background:#fff}#ts-section-guide-trigger{position:fixed;left:10px;bottom:10px}
 html[data-ts-theme="dark"]{--ts-ink:#E8EBEF;--ts-muted:#B5BECA;--ts-rule:#414B58;--ts-panel:#1B2430;--ts-ground:#111923;--ts-stone:#273340}

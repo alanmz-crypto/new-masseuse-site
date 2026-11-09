@@ -419,7 +419,12 @@ add_action( 'wp_footer', function () {
       return { lower: lower, upper: upper, key: [lower.top, lower.bottom, upper ? upper.top : 0, upper ? upper.bottom : 0].join('|') };
     }
     function moreHint() { var m = card.querySelector('.sum'); if (m) m.classList.toggle('has-more', m.scrollHeight - m.scrollTop - m.clientHeight > 2); }
-    var fitted = null;
+    var fitted = null, reading = null;
+    function rememberReading() {
+      var m = card.querySelector('.sum');
+      reading = m ? { node: m, top: m.scrollTop, atEnd: m.scrollTop > 0 && m.scrollHeight - m.scrollTop - m.clientHeight <= 2, width: m.clientWidth, height: m.clientHeight, total: m.scrollHeight } : null;
+    }
+    function sameReadingSize(m) { return m && reading && reading.node === m && reading.width === m.clientWidth && reading.height === m.clientHeight && reading.total === m.scrollHeight; }
     function fit() {   // use the same visible boundary for fitting and placement
       card.style.maxHeight = '';
       var spaces = cardSpaces(), bounds = spaces.lower, mh = parseFloat(getComputedStyle(card).maxHeight);
@@ -454,10 +459,13 @@ add_action( 'wp_footer', function () {
     }
     function refitCard(force) {
       if (!card.classList.contains('is-on')) return;
-      var spaces = cardSpaces();
-      if (!force && fitted && spaces.key === fitted.key && fitted.width === window.innerWidth && fitted.height === window.innerHeight) return;
-      var y = parseFloat(card.style.top), scroll = card.scrollTop, sum = card.querySelector('.sum');
-      var sumScroll = sum ? sum.scrollTop : 0, atEnd = sum && sumScroll > 0 && sum.scrollHeight - sumScroll - sum.clientHeight <= 2;
+      var spaces = cardSpaces(), sum = card.querySelector('.sum');
+      if (!force && fitted && spaces.key === fitted.key && fitted.width === window.innerWidth && fitted.height === window.innerHeight && (!sum || sameReadingSize(sum))) return;
+      var y = parseFloat(card.style.top), scroll = card.scrollTop;
+      // Responsive styles have already reflowed by the time resize fires. Keep
+      // the reading intent recorded before that reflow, especially an endpoint.
+      var saved = reading && reading.node === sum && !sameReadingSize(sum) ? reading : null;
+      var sumScroll = saved ? saved.top : (sum ? sum.scrollTop : 0), atEnd = saved ? saved.atEnd : sum && sumScroll > 0 && sum.scrollHeight - sumScroll - sum.clientHeight <= 2;
       if (!isFinite(y)) y = card.getBoundingClientRect().top;
       fit();
       card.scrollTop = scroll;
@@ -475,13 +483,13 @@ add_action( 'wp_footer', function () {
           else if (fr.bottom > edge + card.clientHeight) card.scrollTop += fr.bottom - edge - card.clientHeight;
         }
       }
-      moreHint();
+      moreHint(); rememberReading();
     }
     var shown = '', clear = 0;
-    function hideCard() { card.className = 'ts-pk-card'; shown = ''; hover(-1); nav.classList.remove('is-active'); clearTimeout(clear); clear = setTimeout(function () { if (!shown) card.innerHTML = ''; }, 220); }   // empty it after the fade
+    function hideCard() { card.className = 'ts-pk-card'; shown = ''; reading = null; hover(-1); nav.classList.remove('is-active'); clearTimeout(clear); clear = setTimeout(function () { if (!shown) card.innerHTML = ''; }, 220); }   // empty it after the fade
     function show(i, y, pinned) {
       var key = i + '|' + (pinned ? 1 : 0) + '|' + cur;
-      if (key !== shown) { clearTimeout(clear); card.className = 'ts-pk-card ts-pk-stack is-on' + (pinned ? ' is-pinned' : ''); card.innerHTML = cardHTML(i, pinned); card.dataset.i = i; nav.classList.add('is-active'); hover(i); shown = key; fit(); moreHint(); }
+      if (key !== shown) { clearTimeout(clear); card.className = 'ts-pk-card ts-pk-stack is-on' + (pinned ? ' is-pinned' : ''); card.innerHTML = cardHTML(i, pinned); card.dataset.i = i; nav.classList.add('is-active'); hover(i); shown = key; fit(); moreHint(); rememberReading(); }
       place(y);
     }
     // "this tap is already handled": swallow the click the browser may still send (to the card, or to whatever is under it once the card is gone)
@@ -511,7 +519,14 @@ add_action( 'wp_footer', function () {
       jumpTo(i);
     }
     var cdn = null, cardTapAt = -1e9;
-    card.addEventListener('scroll', function (e) { if (e.target.classList && e.target.classList.contains('sum')) moreHint(); }, true);
+    card.addEventListener('scroll', function (e) {
+      var m = e.target;
+      if (!m.classList || !m.classList.contains('sum')) return;
+      moreHint();
+      // A browser-generated clamp during responsive reflow is not a new reading
+      // choice. Refit restores the bookmark, then records its new dimensions.
+      if (fitted && fitted.width === window.innerWidth && fitted.height === window.innerHeight) rememberReading();
+    }, true);
     card.addEventListener('pointerdown', function (e) {
       if (e.pointerType === 'mouse' || !e.isPrimary) return;
       cdn = card.classList.contains('is-pinned') ? { id: e.pointerId, x: e.clientX, y: e.clientY, target: e.target, dragged: false } : null;

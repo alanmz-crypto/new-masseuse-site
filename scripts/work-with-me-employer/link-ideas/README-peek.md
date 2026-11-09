@@ -49,11 +49,16 @@ scripts/ci/request.sh rehearse --source staging39 --installer link-ideas/core-up
 scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args 'core-upgrade'
 # Only after the fresh-copy gates and actual copied-page review pass:
 scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args 'core-upgrade --apply'
+# Read-only aggregate checks and matched captures after applying:
+scripts/ci/request.sh run --target staging39 --script link-ideas/core-upgrade/check-public.mjs --args https://staging39.thaisolitude.com
 ```
 
 The rehearsal includes exact rollback/reapply, rendered regulated-copy gates,
 the actual-clearance matrix in Chromium/Firefox, native Chromium touch checks, and retained page/Thai gesture
-checks. Every staging write takes a fresh verified encrypted off-site backup.
+checks. This package alone has a 900-second browser allowance; its complete
+browser log is retained in the Actions artifact. The public wrapper retains
+complete per-suite streams and reports every count/verdict after its captures.
+Every staging write takes a fresh verified encrypted off-site backup.
 Review the apply, backup, restore and public browser reports afterward, and record
 the actual new snapshot in the correction record. No upgrade snapshot exists yet.
 

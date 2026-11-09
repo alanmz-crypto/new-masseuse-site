@@ -82,9 +82,17 @@ Control pointers are captured until release/cancellation; unrelated pointer IDs
 cannot clear the owner. Native browser touch checks compare old and proposed
 behavior; dispatched JavaScript pointer events alone do not establish that
 native page scrolling is prevented. The initial frozen-v1 local comparison
-passed 116/0: that Chromium structural fixture did **not** reproduce Ryan's page
-scrolling report. Public-page comparison and final native regression results
-must be reported separately, without claiming an unobserved reproduction.
+passed 116/0, and the final expanded identical local suites passed **126/0** for
+both frozen v1 and the correction. That Chromium structural fixture did **not**
+reproduce Ryan's page scrolling report.
+
+The [actual public native-touch baseline](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42573040003),
+source `00a6682e1f915fc1358715fcf133ba04ad023dc2`, finished 06:28:33 UTC:
+**126/0**, zero INVALID, 66 seconds, on the still-deployed old core. Thus Chromium
+simulation on the real theme also did not reproduce the reported defect. The
+correction removes native panning permission from topic controls and preserves
+tested scrolling/taps, but no physical-device resolution is claimed. Device and
+browser details were requested while the guarded rehearsal continued.
 
 ## Upgrade and recovery design
 
@@ -105,8 +113,13 @@ snapshots will be recorded only after the guarded write.
 
 The [Actions offline gate](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42571365218)
 passed at 06:10:44 UTC for `7ab9cfc4790a7e7256e29f535a192bef161adf5d`, including
-PHP, shellcheck, ruff, installer/recovery and regulated-wording checks. The later
-focused-summary adjustment is also subject to the final commit's automatic gates.
+PHP, shellcheck, ruff, installer/recovery and regulated-wording checks.
+The [first candidate's automatic Gates run](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42573039882),
+source `00a6682e1f915fc1358715fcf133ba04ad023dc2`, completed 06:27:25 UTC:
+**29 PASS, 1 SKIP, 0 FAIL, 0 INVALID**. Its full job log was independently read;
+only rendered-page verifiers were skipped because no URL was supplied. The tested
+core hash equals the first candidate hash below. All four data JSON files and
+`peek-pages.json` are byte-identical to prior completion commit `1a73c318`.
 Local source checks passed 184 installer/guard cases and 10 JSON-emission cases;
 local shellcheck/ruff were unavailable, so the Actions results supply those gates.
 An independent resize probe passed all 40 normal/enlarged-text states while
@@ -117,7 +130,7 @@ not actual staging renders.
 source `8e48502d4e0469c375bf758e5ab470da178133aa`, finished 06:15:22 UTC:
 `core-upgrade ready; nothing written.` It accepts the current exact v1 core and
 four approved data records. That preflight preceded the touch correction.
-The final proposed core has 70,135 code bytes and SHA256
+That first touch/clearance candidate had 70,135 code bytes and SHA256
 `f045d957e3e28fa8448dfd4089fa1f811ff158a40aa8c0524bb0aa482030f234`.
 
 Final local Chromium clearance passed **3340/0** in 100 seconds, including actual
@@ -143,3 +156,48 @@ uploads, rendered regulated-copy gates, exact rollback/reapply, source review an
 visual review of actual copied pages. Required afterward: all report sections,
 backup restore proof, public browser/capture review and stored-hash inspection.
 No new staging website write has occurred yet. Main/live remain unchanged.
+
+## Actual-copy findings and responsive correction
+
+The [first complete rehearsal](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42573090455),
+source `c2c3ae119d5ed23e994c3aff24348e2367e60999`, finished 06:34:25 UTC:
+**FAIL**, not a release pass. The fresh staging39 copy included uploads. Apply,
+idempotence, exact rollback, reapply, ten HTTP200 pages, rendered Home/client
+wording gates and PHP-error checks passed. Only #1380 and WPCode cache changed;
+all four data snippets stayed intact. Generic browser fixtures passed **207/0 in
+each engine**, and native Chromium touch passed **126/0**.
+
+Clearance matrices reported **3327/13 Chromium** and **3332/8 Firefox**. All 21
+failures concerned the research summary's reading position across 768↔1280
+resizes. Clearance, focused-node identity and summary text passed. The retained
+Thai suite correctly did not run after those failures. Rehearsal snapshots are
+throwaway-copy evidence, not staging recovery files.
+
+Actual theme typography reflows before the resize handler can read the old
+scrolling endpoint. The correction remembers the reading position while the
+summary scrolls and restores that intent after reflow; when dimensions have not
+changed it uses the live position. Programmatic reflow clamps cannot overwrite
+the bookmark. The mock now reproduces the observed responsive root font sizes.
+The full responsive local matrix passed **3340/0**; the final cache refinement
+then passed **16/16** focused end/middle resize states across all four pages.
+Review additionally reproduced stale intent after a late font change followed
+by a genuine Home keypress. Refit now also checks summary dimensions, and scroll
+events at an unchanged viewport can refresh the bookmark. Focused probes confirm
+Home remains at zero after both summary-only and inherited font changes, while
+all four pages retain their responsive end/middle positions and focus. There is
+no new scroll-triggered refit. The reviewed candidate is **71,321 code bytes**,
+SHA256 `357e1d447ecf21ce1fa130f08f917bf7965d074463905106182fd3db9f8c39d8`.
+
+An independent review of the 16 actual-copy captures confirms ordinary cards
+clear the strip, expose the CTA, and retain the full section stack. At the
+deliberately constrained Chair 844×320 viewport, the above-strip interval covers
+some banner content and initially clips about 5px of the hint; the retained
+outer-card scroll and keyboard paths reach it. This is a constrained-layout
+tradeoff, not a claim that everything fits simultaneously.
+
+Before changing the rehearsal runner, the user was told its time allowance would
+increase to retain every check. Only this exact core-upgrade package gets 900s;
+other packages retain 600s. The runner also saves the complete browser log in the
+Actions artifact before deleting its throwaway workspace. The public wrapper
+retains complete per-suite streams and repeats every verdict/count after matched
+captures; it is read-only and accepts only the exact staging39 origin.

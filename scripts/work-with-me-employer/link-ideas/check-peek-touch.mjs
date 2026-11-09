@@ -3,6 +3,7 @@
 // --baseline-v1 replaces only a LOCAL fixture's core with the frozen deployed v1.
 import { createRequire } from 'node:module';
 import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 const base = (process.argv[2] || '').replace(/\/$/, '');
 const flags = process.argv.slice(3), baseline = flags.includes('--baseline-v1');
 if (!['https://staging39.thaisolitude.com', 'http://localhost:8090', 'http://localhost:8091'].includes(base) || flags.some(flag => flag !== '--baseline-v1') || flags.length > 1 || (baseline && !base.startsWith('http://localhost:'))) throw new Error('Use staging39 or localhost:8090/8091; baseline replacement is local only');
@@ -35,6 +36,7 @@ try {
       await ctx.addInitScript(side => { localStorage.setItem('ts-pk-tip', 'seen'); localStorage.setItem('ts-pk-side', side); }, side);
       if (baseline) {
         const frozen = readFileSync(new URL('./peek-nav-shared-v1.php', import.meta.url), 'utf8');
+        if (createHash('sha256').update(frozen).digest('hex') !== '5941becfb3ff70e7359ae61a7c4a2cdd7e0a5b88869e58a5c2fd790bd5824cc3') throw new Error('Frozen shared-v1 baseline hash differs');
         const style = frozen.match(/<style id="ts-peek-nav-css">[\s\S]*?<\/style>/)[0];
         const runtime = frozen.match(/<script id="ts-peek-nav-runtime">[\s\S]*?<\/script>/)[0];
         await ctx.route(`${base}/${spec.slug}/`, async route => {
@@ -49,6 +51,10 @@ try {
       if (!response || response.status() !== 200 || /Robot Challenge/i.test(await p.title())) throw new Error(`INVALID ${label}: response ${response?.status()}`);
       await p.waitForSelector('html.ts-pk-ready .ts-pk-nav', { timeout: 10000 });
       await p.waitForFunction(() => document.fonts.status === 'loaded', null, { timeout: 10000 });
+      if (baseline) {
+        const expected = readFileSync(new URL('./peek-nav-shared-v1.php', import.meta.url), 'utf8').match(/<script id="ts-peek-nav-runtime">([\s\S]*?)<\/script>/)[1];
+        if (await p.locator('#ts-peek-nav-runtime').textContent() !== expected) throw new Error('Local baseline replacement did not serve frozen v1');
+      }
       const cdp = await ctx.newCDPSession(p);
       const touch = (type, at) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchEnd' ? [] : [{ ...at, radiusX: 1, radiusY: 1, force: 1, id: 1 }] });
       const tap = async at => { await touch('touchStart', at); await p.waitForTimeout(35); await touch('touchEnd'); await p.waitForTimeout(180); };

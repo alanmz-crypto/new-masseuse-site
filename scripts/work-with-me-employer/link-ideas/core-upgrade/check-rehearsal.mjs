@@ -1,5 +1,5 @@
 // Run independent read-only matrices concurrently, then the timing-sensitive
-// Thai gesture suite alone. Keep all gates inside the 600-second rehearsal cap.
+// Thai gesture suite alone. This package has a bounded 900-second rehearsal cap.
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 const base = process.argv[2];
