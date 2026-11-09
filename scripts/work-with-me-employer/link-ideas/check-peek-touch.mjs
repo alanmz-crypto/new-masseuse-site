@@ -158,9 +158,39 @@ try {
       await checkPanPolicy('short-resized');
       before = await state(p);
       const resized = await summarySurface(p, 5);
-      if (before.innerMax <= 1 || !usableSurface(resized, 32)) throw new Error(`INVALID ${label}: resized short summary lacks a visible, hit-tested inner scroll surface: ${JSON.stringify(resized)}`);
+      if (!usableSurface(resized, 32)) throw new Error(`INVALID ${label}: resized short summary lacks a visible, hit-tested summary surface: ${JSON.stringify(resized)}`);
       await drag(resized.start, [resized.end]); after = await state(p);
-      ok(`${label}/844x320: kept short summary gains native scrolling after resize`, resized.same && samePreview(before, after) && after.inner > before.inner + 1 && Math.abs(after.outer - before.outer) <= 1, { before, after, resized });
+      if (before.innerMax > 1) {
+        ok(`${label}/844x320: kept short summary gains native scrolling after resize`, resized.same && samePreview(before, after) && after.inner > before.inner + 1 && Math.abs(after.outer - before.outer) <= 1, { before, after, resized });
+      } else {
+        // The wider landscape card may now fit every short-summary line. That
+        // is a reading improvement, not an invalid scrolling test: verify all
+        // text is visible and the native swipe remains strictly contained.
+        const allVisible = await p.locator('.ts-pk-card .sum').evaluate((sum, visible) => {
+          const range = document.createRange(); range.selectNodeContents(sum);
+          const lines = [...range.getClientRects()].filter(line => line.width > 0 && line.height > 0);
+          return lines.length > 0 && lines.every(line => line.top >= visible.top - 1 && line.bottom <= visible.bottom + 1 && line.left >= visible.left - 1 && line.right <= visible.right + 1);
+        }, resized.visible);
+        ok(`${label}/844x320: kept short summary fits fully and contains native swipes`, resized.same && resized.action === 'none' && allVisible && sameControl(before, after), { before, after, resized, allVisible });
+        // Keep a real same-element no-overflow -> overflow -> no-overflow
+        // transition. Reduce only the viewport within bounded short-screen
+        // sizes, stopping at the first actual scroll range with a hit-tested
+        // surface. No text, style, or runtime replacement creates the range.
+        const attempts = [];
+        let transition = null;
+        for (const viewport of [300, 280, 260, 240, 220, 200, 180].map(height => ({ width: 844, height })).concat([{ width: 390, height: 220 }, { width: 320, height: 220 }, { width: 320, height: 200 }, { width: 320, height: 180 }])) {
+          await p.setViewportSize(viewport); await p.waitForTimeout(150);
+          const current = await state(p), surface = await summarySurface(p, 5);
+          attempts.push({ viewport, innerMax: current.innerMax, visibleHeight: surface.height, hit: surface.hits.every(hit => hit.summary) });
+          if (current.innerMax > 1 && usableSurface(surface, 32)) { transition = { viewport, before: current, surface }; break; }
+        }
+        if (!transition) throw new Error(`INVALID ${label}: bounded resize did not expose a genuine usable inner-scroll transition: ${JSON.stringify(attempts)}`);
+        await checkPanPolicy('short-overflow-transition');
+        before = transition.before;
+        await drag(transition.surface.start, [transition.surface.end]); after = await state(p);
+        console.log(`INFO touch ${label}: same-summary overflow transition ${JSON.stringify({ attempts, selected: transition.viewport, before, after })}`);
+        ok(`${label}/${transition.viewport.width}x${transition.viewport.height}: same short summary gains native scrolling when it actually overflows`, transition.surface.same && transition.surface.action === 'pan-y' && samePreview(before, after) && after.inner > before.inner + 1 && Math.abs(after.outer - before.outer) <= 1, { before, after, surface: transition.surface });
+      }
       if (!after.pinned || after.inner === undefined) throw new Error(`INVALID ${label}: cannot continue the same-summary resize round trip after the preview was lost; preceding assertion records the gesture failure`);
       await p.setViewportSize({ width: 390, height: 844 }); await p.waitForTimeout(150);
       await checkPanPolicy('short-returned');
@@ -202,15 +232,33 @@ try {
         await p.setViewportSize({ width: 844, height: 320 });
         await p.evaluate(() => { document.documentElement.style.fontSize = (parseFloat(getComputedStyle(document.documentElement).fontSize) * 2) + 'px'; });
         await reset(research);
-        await p.locator('.ts-pk-card').evaluate(card => { card.scrollTop = 0; });
-        const origin = await p.evaluate(() => {
+        const outerSurface = () => p.evaluate(() => {
           const card = document.querySelector('.ts-pk-card'), title = card.querySelector('.open > b'), c = card.getBoundingClientRect(), t = title.getBoundingClientRect();
           const x = Math.max(c.left + 12, t.left + Math.min(30, t.width / 2)), y = Math.min(c.bottom - 14, t.bottom - 6);
-          if (card.scrollHeight - card.clientHeight < 20 || y < Math.max(c.top, t.top) + 25 || !title.contains(document.elementFromPoint(x, y))) throw new Error('INVALID constrained card has no hit-testable title scroll surface');
-          return { x, y, end: Math.max(c.top + 12, y - 60) };
+          return { x, y, end: Math.max(c.top + 12, y - 60), range: card.scrollHeight - card.clientHeight, stroke: y - Math.max(c.top, t.top), hit: title.contains(document.elementFromPoint(x, y)) };
         });
+        await p.locator('.ts-pk-card').evaluate(card => { card.scrollTop = 0; });
+        let origin = await outerSurface(), outerViewport = { width: 844, height: 320 };
+        const attempts = [{ viewport: outerViewport, ...origin }];
+        // Widening the summary can also let all card chrome fit at double
+        // text. Prove a title swipe is contained there, then retain a genuine
+        // outer-scroll case by narrowing only the viewport, not the content.
+        if (origin.range <= 1 && origin.stroke >= 25 && origin.hit) {
+          before = await state(p); await drag({ x: origin.x, y: origin.y }, [{ x: origin.x, y: origin.end }]); after = await state(p);
+          ok(`${spec.slug}/844x320/${side}/double-text: fitted outer-card title swipe stays contained`, sameControl(before, after), { before, after, origin });
+        }
+        if (origin.range < 20 || origin.stroke < 25 || !origin.hit) {
+          for (const viewport of [{ width: 568, height: 240 }, { width: 390, height: 220 }, { width: 390, height: 200 }, { width: 390, height: 180 }, { width: 320, height: 220 }, { width: 320, height: 200 }, { width: 320, height: 180 }]) {
+            await p.setViewportSize(viewport); await p.waitForTimeout(150);
+            await p.locator('.ts-pk-card').evaluate(card => { card.scrollTop = 0; });
+            origin = await outerSurface(); outerViewport = viewport; attempts.push({ viewport, ...origin });
+            if (origin.range >= 20 && origin.stroke >= 25 && origin.hit) break;
+          }
+        }
+        if (origin.range < 20 || origin.stroke < 25 || !origin.hit) throw new Error(`INVALID constrained card has no genuine hit-testable outer scroll case in bounded viewports: ${JSON.stringify(attempts)}`);
         before = await state(p); await drag({ x: origin.x, y: origin.y }, [{ x: origin.x, y: origin.end }]); after = await state(p);
-        ok(`${spec.slug}/844x320/${side}/double-text: outer-card title swipe still scrolls its own card`, samePreview(before, after) && after.outer > before.outer + 5 && Math.abs(before.inner - after.inner) <= 1, { before, after });
+        console.log(`INFO touch ${spec.slug}/${side}/double-text: outer-scroll geometry ${JSON.stringify({ attempts, selected: outerViewport, before, after })}`);
+        ok(`${spec.slug}/${outerViewport.width}x${outerViewport.height}/${side}/double-text: outer-card title swipe still scrolls its own card`, samePreview(before, after) && after.outer > before.outer + 5 && Math.abs(before.inner - after.inner) <= 1, { before, after });
       }
       ok(`${label}: no JavaScript errors`, errors.length === 0, errors);
       await ctx.close();

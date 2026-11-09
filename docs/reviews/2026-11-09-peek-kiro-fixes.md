@@ -123,6 +123,46 @@ The same paced trace passes 63/0 with Escape (old reset 60/3), and the complete
 local Firefox fixture suite passes 581/0. Assertions and runtime bytes are
 unchanged. The complete third fresh-copy rehearsal remains required.
 
+The third full rehearsal `peek-kiro-fixes-rehearse-3`, run
+`42686456101`, source `b668c36273c873c6a17ba6a66a092e4724e606b6`.
+Actions Gates `42686456668` passed 31/0 with one rendered-only skip.
+The corrected local fixtures passed Firefox 581/0 and Chromium 584/0.
+It finished **19:56:05 UTC, FAIL / browser INVALID**. Disclosures passed
+Chromium 66/0, Firefox 41/0; layout 158/0, 134/0; title rails 1605/0, 1598/0;
+title strip 1339/0, 1336/0; page data 207/0, 207/0; clearance 3340/0, 3340/0.
+Touch stopped after 53/0; retained Thai regression did not run. The aggregate
+13,424 passed assertions and zero failed assertions is incomplete evidence,
+not a passing rehearsal. Copy/install/idempotence/rollback, rendered wording,
+PHP and inventory checks passed. Root and an independent reviewer read the
+report and full leaf logs.
+
+The stop exposed a test prerequisite: it required a rotated short summary to
+overflow at 844×320. The wider card now fits all its text, so `touch-action:none`
+is correct. The revised check must exercise contained native swipes when all
+text fits, then find a bounded smaller viewport with an actual usable scroll
+range on the same summary, require native inner scrolling, and return to the
+original no-pan state. Runtime bytes and the one-pixel containment tolerance
+remain unchanged. A complete fourth fresh-copy rehearsal is still required.
+
+The corrected local touch run reached 204/0 before another obsolete geometry
+prerequisite stopped it: Chair at 844×320 with doubled root text now fits its
+card controls (outer range 0; inner summary range 467 px). The retained outer
+scroll check now first proves a fitted title swipe stays contained, then uses
+a bounded smaller viewport with real outer overflow and a hit-tested title
+stroke. A local 390×180 probe exposes a 21 px outer range. Its assertion still
+requires native card movement with the summary and page unchanged. An
+independent run of the unchanged later rapid-switch/page-top subset passed
+120/0 on all four pages and both sides. These are local structural-fixture
+results only; the complete corrected run and actual-copy gate are still needed.
+
+The complete corrected local native-touch run then passed **395/0 in 154 s**
+against a mock whose style/runtime exactly match the current candidate. The
+Chair outer-card case moved 0→21 px while its summary stayed at 0 and the page
+stayed at y1095. Short-summary resize transitions, return-to-fit containment,
+all four pages' rapid switches and page-top fit completed. An independent
+review found no relaxed movement thresholds or manufactured scroll ranges.
+Syntax and diff checks pass; the next fresh-copy rehearsal remains mandatory.
+
 Independent review of the copy captures found the wider landscape research
 card readable, the full Privacy FAQ controls clear of the rail, and full Work
 With Me headings readable in both the current strip and stacked title boxes.
