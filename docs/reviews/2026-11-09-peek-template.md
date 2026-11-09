@@ -76,11 +76,19 @@ The core export restored with import exit 0 and 101/101 fingerprints. Only **#13
 
 The migration required no fallback-only swap and changed no plugin/theme files, main or live.
 
-## Current recovery record
+## Recovery for the original core migration
 
 Use the matching implementation package (`e3ad69a4` or a later documentation/operation-only commit with identical payloads). Expected shared core code SHA256 is `dda8aecd38e417ad37766d2df951c6bdc761bf44997e030bbef5a36e9321f573`. Check current ownership/state before preparing recovery. The older `peek-nav-before-20261109-010037-0c493281.json` is historical and **must not be used to remove the shared core**.
 
-If an authorized reversal is needed, restore the core first, then remove Thai data, using these actual snapshots. These commands are recorded, not executed:
+These snapshots reverse the original shared-core migration. Restoring the core
+affects every page using Peek: the legacy runtime serves Thai only, and other
+service pages return to their plain jump rows. To reverse just one newly deployed
+service page, use its page-data snapshot in the [service rollout record](2026-11-09-peek-service-rollout.md),
+leaving the shared core and other pages active.
+
+If an authorized reversal of the entire original migration is needed, restore
+the core first, then remove Thai data, using these actual snapshots. These
+commands are recorded, not executed:
 
 ```sh
 scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args 'core --rollback $HOME/private-backups/peek-template-core-before-20261109-023645-fe38e498.json'

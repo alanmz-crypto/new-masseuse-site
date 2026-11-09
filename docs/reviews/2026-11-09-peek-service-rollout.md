@@ -133,5 +133,73 @@ Therapeutic and Deep Tissue enabled, Chair/Services plain rows; all rows retaine
 All code/rendered-copy, HTTP, structured-data and PHP checks passed. Broad pixels
 were 14/20 identical, with six Thai/Therapeutic/Deep Tissue differences versus
 live and zero missing captures; this informational exit 1 is not an aggregate
-all-pass. The manifest now records Deep Tissue enabled; focused public review
-follows before Chair begins.
+all-pass. The manifest now records Deep Tissue enabled. An independent review of
+the complete apply/backup/restore report found no unexpected change.
+
+[Focused public verification passed](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42557406502),
+request `peek-deep-public-20261109-1`, finished 03:38:55 UTC: **190/0**.
+All five approved lists, current-page JSON, three-width card bounds, research-end
+keyboard scrolling, both rail sides, print and no-JavaScript links passed; Chair
+remained unchanged. Five of nine public captures match the rehearsal byte for
+byte. The four differences are confined to the rail; all card/content pixels and
+reported card bounds match. The existing rail pseudo-element transitions support
+capture timing as an explanation, but that cause was not separately reproduced.
+The primary reviewer viewed public desktop research-end and tablet research-start.
+An independent reviewer compared all four differing captures and found no visual
+blocker. No card/content defect was observed, and the core is unchanged.
+
+Saved public views: [phone first](assets/2026-11-09-peek-services/deep-tissue-massage/chromium-deep-tissue-massage-390-first.jpg),
+[phone research end](assets/2026-11-09-peek-services/deep-tissue-massage/chromium-deep-tissue-massage-390-research-end.jpg),
+[desktop research start](assets/2026-11-09-peek-services/deep-tissue-massage/chromium-deep-tissue-massage-1280-research-start.jpg),
+and [all nine comparison hashes/bounds](assets/2026-11-09-peek-services/deep-tissue-massage/comparison.json).
+
+## Chair
+
+[Fresh-copy rehearsal passed](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42557717328),
+request `peek-chair-rehearse-20261109-1`, finished 03:43:51 UTC. Its baseline
+included enabled Thai, Therapeutic and Deep Tissue, with uploads. Browser checks
+**232/0**; apply/idempotence/exact rollback/reapply, ten HTTP statuses, PHP and
+rendered-copy gates passed. Only the new page-data snippet/cache and expected
+associated rows changed in the copy. The WP-CLI library emitted a pre-existing
+deprecation during import; the applied copy introduced no new PHP errors.
+
+The primary reviewer viewed phone first/research-end, tablet first and desktop research-start.
+Six boxes fit, controls remain reachable, and research retains its small-study,
+missing-comparison and distinct chair/general-massage harm qualifications. The
+research end and unfaded `etc.` are reachable without moving the page.
+
+**Observed design follow-up:** on the phone at page top, Chair's first card starts
+at y=187.5 and slightly overlaps the lower edge of the display-only strip, which
+is still in normal flow below the availability banner. Header and card controls
+remain clear. The existing core and geometry check use the strip's *eventual
+sticky position* (bottom=121), not its initial rendered bottom (about 201). Thus
+the automated clearance assertion is narrower than initial-strip clearance.
+No missing item or inaccessible card/section control was observed. The Corporate
+CTA's complete hit area was not tested. This shared placement issue was explained
+before the staging write and is retained for a focused
+core design fix, not silently claimed as passing actual-strip clearance.
+The independent reviewer viewed all nine captures and confirmed this defect:
+at 768px the first card's focus ring also grazes the Corporate CTA text/underline,
+and the desktop first card covers right-side strip labels. The primary reviewer
+also checked the tablet first card. Both reviewers judged the staging rollout
+nonblocking because the site header/card controls and all section choices remain
+accessible; a future core correction should clamp to the actual rendered strip
+rectangle, with matching assertions, before claiming full initial-strip clearance.
+
+[Staging preflight passed](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42557766307),
+request `peek-chair-dry-20261109-1`, finished 03:44:22 UTC.
+[Staging apply completed](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42558224458),
+request `peek-chair-apply-20261109-1`, finished 03:50:18 UTC: **#1384**.
+Fresh export `staging39-before-peek-nav-20261109-034655.sql` (4,445,490 bytes,
+SHA prefix `de79c9c14e14`) and actual snapshot
+**`peek-template-page-chair-massage-before-20261109-034709-6a5b55dd.json`**
+(SHA prefix `bf2445f413f6`) were verified encrypted off-site and read back.
+Restore import 0, 103/104 fingerprints: only new #1384, WPCode cache and associated
+posts/meta/term-relationship row counts differ. Public markers show one core/data
+pair on all four service pages, none on Services; plain rows remain everywhere.
+
+All code/rendered-copy, HTTP, structured-data and PHP checks passed. Broad pixels
+remain 14/20 identical, six differences on Thai/Therapeutic/Deep Tissue versus
+live, zero missing. Chair is not in this broad twenty-view set; its focused public
+check supplies that page's rendered evidence. This informational exit 1 is not
+an aggregate all-pass. The manifest now records all four pages enabled.
