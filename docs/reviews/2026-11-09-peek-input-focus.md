@@ -269,6 +269,27 @@ staging purge/render and full-snapshot verification still need their own proof.
 
 ## Actual applies and recovery
 
+Observer-source Gates [42719432850](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42719432850)
+passed **32/0 + 1 rendered-only skip**, source `8c127c7f31d03c39976ebae6f45a0c2444f4940c`.
+The final staging wrapper now requires verified encrypted off-site backups before
+warming and again before applying. It proves exact unchanged-page stability
+through a second purge/render, binds the returned observation and actual install
+snapshot, and verifies the full applied state again after rendering. Every apply
+attempt syncs available snapshots before output parsing, including failed applies;
+failure stops later rendering. Rollback verifies the exact original snapshot state
+after purge/render. No remote process substitution is used on SiteGround.
+
+The updated PHP harness passes **149 checks**. The new permanent executable
+wrapper harness passes **139 cases**, exercising the actual outer and remote Bash
+with local command doubles, failure at each reached gate, snapshot binding,
+malformed output, failed-apply backup synchronization, original error preservation,
+and literal `$HOME` paths. This is offline ordering evidence, not a deployment or
+rendered-page result. Both independent source reviews found no remaining blocker.
+The final local `check-all.sh` has 26 PASS, four Docker-mount-related FAIL
+(PHP lint and three PHP harness gates cannot read mounted files here), and three
+SKIP (missing shellcheck/ruff, no rendered URL). Streamed PHP harness evidence
+above is separate; Actions must complete the full gates before deployment.
+
 No apply or new staging recovery snapshot is recorded yet. Never substitute a
 throwaway-copy snapshot or an older core snapshot. The next update must record
 the actual guarded apply, fresh verified encrypted off-site backup, exact

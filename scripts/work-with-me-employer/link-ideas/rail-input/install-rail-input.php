@@ -2,7 +2,7 @@
 /**
  * Repair keyboard/focus input on the existing staging39 Rail practice page.
  * Exact v1 -> current page-content transition; never creates or deletes a page.
- * preflight | apply | rollback FILE | verify FILE. The push wrapper backs up every write.
+ * preflight | apply | rollback FILE | verify FILE [original]. The push wrapper backs up every write.
  * Preserve the complete post, metadata, taxonomy and dates except post_content.
  */
 if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) ) { exit( 'Run with WP-CLI.' ); }
@@ -12,7 +12,8 @@ if ( ! in_array( $home, array( 'http://' . $local_host, 'http://staging39.thaiso
 if ( 'astra' !== get_stylesheet() || ! current_user_can( 'manage_options' ) || ! current_user_can( 'unfiltered_html' ) ) { WP_CLI::error( 'Requires Astra and an administrator (--user=1).' ); }
 $args = isset( $args ) && is_array( $args ) ? $args : array(); $mode = $args[0] ?? 'preflight';
 $file_mode = in_array( $mode, array( 'rollback', 'verify' ), true );
-if ( ! in_array( $mode, array( 'preflight', 'apply', 'rollback', 'verify' ), true ) || count( $args ) > ( $file_mode ? 2 : 1 ) || ( $file_mode && count( $args ) !== 2 ) ) { WP_CLI::error( 'Use preflight, apply, rollback FILE, or verify FILE.' ); }
+$verify_original = 'verify' === $mode && count( $args ) === 3 && $args[2] === 'original';
+if ( ! in_array( $mode, array( 'preflight', 'apply', 'rollback', 'verify' ), true ) || ( $file_mode ? ( count( $args ) !== 2 && ! $verify_original ) : count( $args ) > 1 ) ) { WP_CLI::error( 'Use preflight, apply, rollback FILE, or verify FILE [original].' ); }
 $old_html = file_get_contents( __DIR__ . '/../rail-ideas-v1.html' );
 $new_html = file_get_contents( __DIR__ . '/../rail-ideas.html' );
 if ( false === $old_html || hash( 'sha256', $old_html ) !== '26f3472e8032cb89d99b923c23999fc6281537a32d0eed07a54f61347af8d38d' || false === $new_html || $old_html === $new_html ) { WP_CLI::error( 'Frozen v1 is missing/changed or the new page does not differ; nothing changed.' ); }
@@ -105,8 +106,9 @@ if ( $file_mode ) {
 	if ( $valid ) { $allowed = $old; $allowed['post']['post_content'] = $new_content; $valid = $allowed === $new; }
 	if ( ! $valid ) { WP_CLI::error( 'Snapshot invalid, damaged or from another site/page/payload; nothing changed.' ); }
 	if ( 'verify' === $mode ) {
-		if ( $current !== $new ) { WP_CLI::error( 'Applied full-state verification failed; nothing changed. ' . $difference( $new, $current ) ); }
-		WP_CLI::success( 'Exact applied Rail state verified read-only; full_state_sha256=' . hash( 'sha256', wp_json_encode( $current ) ) . '. Snapshot: ' . $path ); return;
+		$verify_expected = $verify_original ? $old : $new; $verify_label = $verify_original ? 'original' : 'applied';
+		if ( $current !== $verify_expected ) { WP_CLI::error( $verify_label . ' full-state verification failed; nothing changed. ' . $difference( $verify_expected, $current ) ); }
+		WP_CLI::success( 'Exact ' . $verify_label . ' Rail state verified read-only; full_state_sha256=' . hash( 'sha256', wp_json_encode( $current ) ) . '. Snapshot: ' . $path ); return;
 	}
 	if ( $current === $old ) { WP_CLI::success( 'Exact original page already restored; nothing changed.' ); return; }
 	if ( $current !== $new ) { WP_CLI::error( 'Complete page state changed since apply; nothing changed. ' . $difference( $new, $current ) ); }

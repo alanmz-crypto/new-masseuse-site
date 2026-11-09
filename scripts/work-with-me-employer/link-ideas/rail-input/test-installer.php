@@ -75,7 +75,7 @@ $original = $db;
 check( hash( 'sha256', $content ) === '0203ac81f0eca37b7d2f217d154beda0f0485faae55072fd75276829c4c77748', 'exact inspected frozen content' );
 foreach ( array( 'https://thaisolitude.com', 'https://staging38.thaisolitude.com', 'http://localhost:8091', 'https://staging39.thaisolitude.com:443', 'https://staging39.thaisolitude.com/other', 'https://staging39.thaisolitude.com.evil.test' ) as $bad ) { $home = $bad; refusal( array( 'apply' ), 'refuse exact origin ' . $bad ); }
 $home = 'http://localhost:8090'; $theme = 'other'; refusal( array( 'apply' ), 'non-Astra refused' ); $theme = 'astra'; $admin = false; refusal( array( 'apply' ), 'non-admin refused' ); $admin = true;
-foreach ( array( array( 'unknown' ), array( 'apply', 'extra' ), array( 'rollback' ), array( 'rollback', 'x', 'extra' ), array( 'verify' ), array( 'verify', 'x', 'extra' ) ) as $args ) { refusal( $args, 'bad mode/argument count' ); }
+foreach ( array( array( 'unknown' ), array( 'apply', 'extra' ), array( 'rollback' ), array( 'rollback', 'x', 'extra' ), array( 'verify' ), array( 'verify', 'x', 'extra' ), array( 'verify', 'x', 'original', 'extra' ) ) as $args ) { refusal( $args, 'bad mode/argument count' ); }
 invoke( array() ); check( $db === $original && str_contains( $message, 'Preflight ready' ), 'default preflight read-only' );
 foreach ( array( array(), array( 'record', 'extra' ), array( 'compare' ), array( 'compare', 'x', 'waive' ) ) as $args ) { observe_refusal( $args, 'observation refuses invalid mode/argument count' ); }
 $observation_queries = $queries; observe( array( 'record' ) ); $cold_path = observation_path(); $cold = json_decode( file_get_contents( $cold_path ), true ); $cold_hash = hash_file( 'sha256', $cold_path );
@@ -157,6 +157,7 @@ check( $last_changed === $generation + 1 && $save_hooks === 0 && in_array( array
 check( true === $snapshot['complete'] && ( fileperms( $path ) & 0777 ) === 0600, 'completed private snapshot persisted' );
 $verify_queries = $queries; $snapshot_hash = hash_file( 'sha256', $path ); invoke( array( 'verify', $path ) );
 check( $db === $applied && $queries === $verify_queries && hash_file( 'sha256', $path ) === $snapshot_hash && str_contains( $message, 'verified read-only' ), 'verify proves exact applied state without SQL or snapshot writes' );
+refusal( array( 'verify', $path, 'original' ), 'original verification refuses the applied state' );
 observe_refusal( array( 'record' ), 'observation cannot rebase an applied page' );
 refusal( array( 'verify', $cold_path ), 'installer verify refuses an observation in place of its complete install snapshot' );
 $writes = $updates; invoke( array( 'apply' ) ); check( $db === $applied && $updates === $writes, 'idempotent apply writes nothing' );
@@ -195,6 +196,9 @@ $truncated = $testdir . '/backups/truncated.json'; file_put_contents( $truncated
 $generation = $last_changed; invoke( array( 'rollback', $path ) ); check( $db === $original, 'exact full-state rollback' );
 check( $wpdb->last_args === array( $content, 1348, $applied[1348]['post']['post_content'] ) && $last_changed === $generation + 1 && $save_hooks === 0, 'rollback uses exact reverse content CAS and refreshes cache without save hooks' );
 refusal( array( 'verify', $path ), 'verify refuses the original restored state as not applied' );
+$verify_queries = $queries; invoke( array( 'verify', $path, 'original' ) );
+check( $db === $original && $queries === $verify_queries && hash_file( 'sha256', $path ) === $snapshot_hash && str_contains( $message, 'Exact original Rail state verified read-only' ), 'original verification proves restored full state without SQL or snapshot writes' );
+foreach ( array( '_uag_page_assets', 'unknown_setting' ) as $key ) { $db[1348]['meta'][$key][0] .= 'changed'; refusal( array( 'verify', $path, 'original' ), 'original verification refuses post-render drift: ' . $key ); $db = $original; }
 $writes = $updates; invoke( array( 'rollback', $path ) ); check( $db === $original && $writes === $updates, 'idempotent rollback writes nothing' );
 invoke( array( 'apply' ) ); check( $db === $applied, 'reapply exactly reproduces reviewed state' );
 // Original creation snapshots must never delete the later update or changed v1.
