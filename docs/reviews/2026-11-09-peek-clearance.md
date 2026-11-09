@@ -1,5 +1,11 @@
 # Peek: title-strip clearance and touch ownership
 
+**Deployed on staging39, 2026-11-09 07:11 UTC.** Core #1380 now has the
+clearance, control-touch and reading-position correction. Approved data #1381–1384
+are unchanged. Exact stored hashes are verified. The final public browser run was
+**INVALID (HTTP202 hosting challenge, zero assertions)**; no retry is queued.
+Fresh-copy browser and visual checks passed; physical-device confirmation remains open.
+
 Scope: shared preview-card placement and touch ownership on staging39 only, on branch
 `claude/wizardly-bell-xu0rta`. Ryan's “Next step” continues the explicitly recorded
 first-card/title-strip correction. His follow-up also requires a finger sliding
@@ -96,7 +102,7 @@ browser details were requested while the guarded rehearsal continued.
 
 ## Upgrade and recovery design
 
-The deployed shared version is frozen byte for byte as `peek-nav-shared-v1.php`:
+The previously deployed shared v1 is frozen byte for byte as `peek-nav-shared-v1.php`:
 file SHA256 `5941becfb3ff70e7359ae61a7c4a2cdd7e0a5b88869e58a5c2fd790bd5824cc3`.
 Its code hash is the #1380 hash above. The original `core` migration remains tied
 to that frozen payload so historical snapshot meaning is preserved.
@@ -106,10 +112,10 @@ version. It snapshots complete old/new states and binds the four unchanged data
 records. It refuses changed or foreign state and uses the existing verified
 encrypted off-site backup sequence. Its separate rehearsal adapter has no
 preparation hook: the baseline must be the real four-page staging state.
-There is no snippet swap or planned fallback-only interval. Actual upgrade
-snapshots will be recorded only after the guarded write.
+There is no snippet swap or planned fallback-only interval. The actual upgrade
+snapshot is recorded below.
 
-## Verification in progress
+## Verification before final rehearsal
 
 The [Actions offline gate](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42571365218)
 passed at 06:10:44 UTC for `7ab9cfc4790a7e7256e29f535a192bef161adf5d`, including
@@ -155,7 +161,7 @@ Required before staging: offline gates, a fresh staging39-copy rehearsal with
 uploads, rendered regulated-copy gates, exact rollback/reapply, source review and
 visual review of actual copied pages. Required afterward: all report sections,
 backup restore proof, public browser/capture review and stored-hash inspection.
-No new staging website write has occurred yet. Main/live remain unchanged.
+No new staging website write had occurred at that point. Main/live remain unchanged.
 
 ## Actual-copy findings and responsive correction
 
@@ -201,3 +207,129 @@ other packages retain 600s. The runner also saves the complete browser log in th
 Actions artifact before deleting its throwaway workspace. The public wrapper
 retains complete per-suite streams and repeats every verdict/count after matched
 captures; it is read-only and accepts only the exact staging39 origin.
+
+The [final candidate's automatic Gates](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42576069430)
+finished 06:56:29 UTC at `bd4b3fb0b15223dc9ca491120d55c7b2d05a1c23`:
+**29 PASS, 1 SKIP, 0 FAIL, 0 INVALID**. The only skip is rendered-page verification
+without a URL; the fresh-copy rehearsal supplies that gate. The entire job log
+was independently reviewed. Its core exactly matches the 71,321-byte candidate
+above, and all four data JSON files plus the manifest remain byte-identical to
+`1a73c318`.
+
+## Passing fresh-copy rehearsal
+
+The [repeat rehearsal](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42576069364)
+at the same exact candidate commit finished **07:07:54 UTC, PASS**. It copied
+staging39 with uploads (268MB files, 661,493-byte compressed database), checked
+the real four-page starting state without a preparation hook, and passed apply,
+idempotence, exact rollback, reapply, HTTP200 pages, no-new-PHP-errors and rendered
+Home/client regulated-copy gates. Fingerprints changed only **#1380** and the
+WPCode snippet cache. The before-snapshots in this report belong to the throwaway
+copy and must not be used as staging recovery files.
+
+Browser results, with zero failures or INVALID results:
+
+| Suite on the actual copy | Result |
+| --- | --- |
+| Clearance, Chromium | 3340/0 |
+| Clearance, Firefox | 3340/0 |
+| Page/structure fixtures, Chromium | 207/0 |
+| Page/structure fixtures, Firefox | 207/0 |
+| Native Chromium touch | 126/0 |
+| Retained Thai gesture suite | 485/0 |
+
+The browser package completed in **598 seconds**. The retained artifact's full
+browser log confirms the Thai total (the report's filtered output omits that
+older suite's unprefixed total). Root read the complete operation report and the
+retained suite summaries; the independent visual reviewer viewed all 16 fresh
+captures. Root also reviewed fresh Thai phone first/research and Chair tablet captures. No new
+visual blocker was found; the constrained-height tradeoff above remains explicit.
+Seven captures are byte-identical to the preceding copy; the remaining nine
+differ only on the rail. Timing is a plausible cause, not an isolated diagnosis.
+
+## Guarded staging deployment and recovery
+
+[Final read-only preflight](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42577490238)
+finished 07:09:50 UTC at `f290fcce11c447ab767f3057b153e7cd0ba4dc93`:
+`core-upgrade ready; nothing written.`
+
+[Staging apply](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42577650950),
+source `67f09e27f4faaa78705ea22b2534a4d4300fab1e`, finished **07:15:10 UTC, PASS**.
+Root and an independent reviewer read every section, including informational
+nonzero results rather than treating the report's overall PASS as every-test PASS.
+
+- Fresh SQL: `staging39-before-peek-nav-20261109-071106.sql`, **4,455,207 bytes**,
+  plaintext SHA256 prefix `94fa78bb2ee2`; encrypted off-site copy read back and
+  verified **before** the write.
+- Actual staging snapshot: **`peek-template-core-upgrade-before-20261109-071122-958bff3b.json`**,
+  plaintext SHA256 prefix `f02193e90e10`; encrypted off-site copy also verified.
+- #1380 updated in place at 07:11 UTC, WordPress storage only; cache purged.
+  No fallback-only interval or page-data write occurred.
+- Origin checks: all four service routes HTTP200 with exactly one core/data
+  emission and the retained plain jump row; Services retains only its plain row.
+- Post-change: rendered wording, posture, HTTP200 pages, structured data and PHP
+  log checks passed. Pixels versus live are **14 identical / 6 different**, zero
+  missing captures; the differences are the Thai/Therapeutic/Deep desktop/mobile
+  views. This comparison is not an aggregate pixel pass; live has no Peek rollout.
+- Restore proof: import exit **0**, **104 fingerprints on each side**; only snippet
+  **#1380** and the WPCode cache differ. Data #1381–1384, pages, CSS, SEO and row
+  counts are unchanged. Its exit3 reports those intended differences.
+
+After checking current ownership and complete state, use this upgrade's actual
+snapshot with the matching reviewed package to restore frozen shared v1:
+
+```sh
+scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args 'core-upgrade --rollback $HOME/private-backups/peek-template-core-upgrade-before-20261109-071122-958bff3b.json'
+```
+
+This command is recorded, **not run**. The wrapper takes another fresh verified
+off-site backup before any reversal. Changed core or page data makes reversal
+refuse. Reverse this upgrade before using the older shared-core migration
+snapshot; never use the legacy deletion snapshot against the shared core.
+
+## Final verification and remaining access limit
+
+[Public browser run](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42578241317),
+source `14c294ea456f757b379d7ccdc3150f846afb5320`, finished **07:17:03 UTC, INVALID**.
+SiteGround returned HTTP202 to the initial Thai request in each suite. Every
+suite stopped; **zero assertions and zero captures** were produced. Matched
+captures were skipped. This establishes no public browser result and is not a
+feature failure. The complete report was read; no repeat of the blocked request
+is queued. The earlier native-touch baseline did not reproduce the reported
+scrolling, so the physical-device outcome remains unverified.
+
+[Stored-snippet inspection](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42578355744),
+source `2e2a1f2ceace32c287d5f6e5306c9100d6165d4e`, finished **07:17:32 UTC, PASS**.
+Published #1380 has **71,321 code bytes**, SHA256
+`357e1d447ecf21ce1fa130f08f917bf7965d074463905106182fd3db9f8c39d8`, exactly matching
+the rehearsed source. All four published data hashes are unchanged:
+
+| Snippet | SHA256 |
+| --- | --- |
+| #1381 Thai | `fd67d8f8548706bd8597af87e85380581a18f846a1bf71de4401db80b5f0a7e0` |
+| #1382 Therapeutic | `3b12f5e09f6937f41f04122cbed3c6ef6244c9359115ce36ed31d2d6b7336ffd` |
+| #1383 Deep Tissue | `c88e05ae019076e9a173dc239ffa2b091007864087067ef0444efca2acc00101` |
+| #1384 Chair | `b99558619488cf1506c8b0e8ca2c59066068eaa0727233c90b51f599798a121c` |
+
+The saved evidence distinguishes the 12 actual public baseline captures from
+the 16 passing rehearsal captures. There are no post-deployment popup captures:
+
+| View | Public before | Fresh staging-copy after |
+| --- | --- | --- |
+| Thai, phone, first box | [Before](assets/2026-11-09-peek-clearance/before/clearance-thai-massage-390-right-top-1.jpg) | [After](assets/2026-11-09-peek-clearance/rehearsal-after/clearance-thai-massage-390-right-top-1.jpg) |
+| Chair, tablet, first box | [Before](assets/2026-11-09-peek-clearance/before/clearance-chair-massage-768-right-top-1.jpg) | [After](assets/2026-11-09-peek-clearance/rehearsal-after/clearance-chair-massage-768-right-top-1.jpg) |
+| Chair, desktop, first box | [Before](assets/2026-11-09-peek-clearance/before/clearance-chair-massage-1280-right-top-1.jpg) | [After](assets/2026-11-09-peek-clearance/rehearsal-after/clearance-chair-massage-1280-right-top-1.jpg) |
+
+Very short landscape retains the tested constrained fallback described above.
+Safari, physical touch and actual VoiceOver/TalkBack remain unverified. Services
+and short-page eligibility remain separate decisions. Main/live are unchanged.
+
+I finished: the shared touch/clearance correction is deployed on staging39 with
+fresh-copy browser/visual gates, verified backups, exact rollback proof and stored hashes.
+Next step: reload staging39 and retry the reported swipe on the original device.
+Next lane: Ryan's device confirmation; public automation once hosting access returns.
+See my work: the operation reports and before/rehearsal-after captures in this record.
+Arc: none (ad-hoc)
+
+TL;DR: topic controls now block native panning while summaries keep local scrolling;
+the tested correction is deployed, with public browser verification blocked by HTTP202.

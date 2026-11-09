@@ -22,13 +22,17 @@ semantic accuracy, overlap or percentage coverage. Approval must follow rendered
 source review. `peek-pages.json` records the browser expectations and explicit
 rollout status; Services/short-page eligibility remains undecided.
 
-## Current core correction: awaiting rehearsal and deployment
+## Current core correction: deployed on staging39
 
-The title-strip clearance and closed-topic touch corrections are implemented, but still await a fresh
-staging39-copy rehearsal, rendered-copy and visual review, and guarded deployment.
+The title-strip clearance, closed-topic touch and reading-position corrections
+were deployed to #1380 at 07:11 UTC on 2026-11-09 after the fresh staging39-copy
+rehearsal, rendered-copy gates, exact rollback and visual review passed.
 The [current correction record](../../../docs/reviews/2026-11-09-peek-clearance.md)
-holds the actual baseline evidence and verification status. Its pre-fix public
+holds the actual baseline evidence, final public verification status and recovery snapshot. Its pre-fix public
 check reproduced strip/card overlap; that diagnostic failure is not a release pass.
+The exact deployed core/data hashes are verified. Final public browser checks
+were INVALID HTTP202 with zero assertions/captures; no retry is queued. The
+fresh-copy browser/visual results do not establish physical-device resolution.
 
 `core-upgrade` updates the uniquely owned #1380 in place from the exact deployed
 shared version frozen in `peek-nav-shared-v1.php` to the reviewed `peek-nav.php`.
@@ -60,7 +64,8 @@ browser log is retained in the Actions artifact. The public wrapper retains
 complete per-suite streams and reports every count/verdict after its captures.
 Every staging write takes a fresh verified encrypted off-site backup.
 Review the apply, backup, restore and public browser reports afterward, and record
-the actual new snapshot in the correction record. No upgrade snapshot exists yet.
+the actual new snapshot in the correction record. The actual staging snapshot is
+`peek-template-core-upgrade-before-20261109-071122-958bff3b.json`.
 
 Recovery must name `core-upgrade --rollback FILE` explicitly in the push arguments;
 the wrapper's preparatory preflight uses that component. Use the matching reviewed
@@ -157,11 +162,11 @@ The current rollout record holds final aggregate-check status and actual per-pag
 snapshots. A page-only reversal removes only its data and restores its plain jump
 row without changing the shared core or other pages.
 
-Known shared-placement defect: Chair's first preview overlaps the strip before it
-sticks, and its tablet focus ring grazes the Corporate CTA. No inaccessible
-card/section control was observed in that rollout. Its geometry checker used the
-strip's eventual sticky position. The correction and actual-rectangle assertions
-above await fresh-copy verification and deployment. Start/end research captures
+The service rollout exposed a shared-placement defect: Chair's first preview
+overlapped the initial strip and grazed the tablet CTA. The deployed correction
+above uses the actual strip rectangle; its fresh-copy matrices passed 3340/0 in
+each browser. Very short landscape screens retain the documented scrollable-card
+fallback. Start/end research captures
 and exact item checks do not claim visual review of every intermediate position.
 
 ## Local browser checks

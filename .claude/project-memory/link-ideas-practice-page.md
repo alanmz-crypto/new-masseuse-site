@@ -1,6 +1,6 @@
 ---
 name: link-ideas-practice-page
-description: 2026-11-08 practice page /in-page-link-ideas/ on staging39 only, with five working replacements for the "On this page" link row; nothing chosen yet; never live as is
+description: Peek navigation on staging39 only; shared core and four approved service-page data snippets, with current evidence and guarded recovery records; original practice-page history retained
 metadata:
   type: project
 ---
@@ -289,22 +289,45 @@ some Deep Tissue/Chair rail pixels differ. The cause was not isolated; timing
 remains a hypothesis. Exact item checks and research-start/end captures do
 not claim visual review of every intermediate scroll position.
 
-**Open shared placement defect:** Chair's first card overlaps the initial
-display-only strip; at 768px its focus ring grazes the Corporate CTA. Header,
-card and section controls remain accessible in the observed states. The core and
-checker use the strip's eventual sticky position, so their passing bounds checks
-do not establish actual-strip clearance. A focused core correction and matching
-assertions remain open; no redesign was bundled into this data rollout.
+**Shared placement defect observed during the data rollout:** Chair's first card
+overlapped the initial display-only strip; at 768px its focus ring grazed the Corporate CTA. Header,
+card and section controls remained accessible in the observed states. That core
+and checker used the strip's eventual sticky position, so passing bounds checks
+did not establish actual-strip clearance. The later correction is recorded below;
+no redesign was bundled into the data rollout.
+
+**Clearance/touch correction deployed; apply job finished 2026-11-09 07:15:10 UTC:**
+[apply run 42577650950](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42577650950)
+updated #1380 in place to 71,321 code bytes, SHA256
+`357e1d447ecf21ce1fa130f08f917bf7965d074463905106182fd3db9f8c39d8`.
+Actual strip/header clearance, kept-summary resize state and closed-control touch
+ownership passed the fresh-copy gates before deployment. All four page-data
+records and approved wording remain unchanged; no fallback-only interval occurred.
+Fresh export `staging39-before-peek-nav-20261109-071106.sql` and actual snapshot
+`peek-template-core-upgrade-before-20261109-071122-958bff3b.json` were verified
+encrypted off-site; restore import returned 0, with only #1380/WPCode-cache differences.
+[Stored inspection 42578355744](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42578355744)
+passed at 07:17:32 UTC: #1380 matches the exact hash/bytes above and all four data
+hashes are unchanged. [Public run 42578241317](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42578241317)
+finished 07:17:03 UTC **INVALID HTTP202** on the initial Thai request, with zero
+assertions/captures and no retry queued. The
+[current correction/recovery record](../../docs/reviews/2026-11-09-peek-clearance.md)
+holds the full evidence. Chromium's native-touch baseline on the old core did not
+reproduce Ryan's reported page scroll; physical-device resolution remains unverified.
 
 Original core snapshot: `peek-template-core-before-20261109-023645-fe38e498.json`.
 Original Thai data snapshot: `peek-template-page-thai-massage-before-20261109-023133-3e7b1cf5.json`.
-Reversing that core migration affects every page using Peek. For one service page,
+Reverse the later `core-upgrade` first, using its actual snapshot and explicit
+`core-upgrade --rollback FILE` arguments; the original `core` migration remains
+tied to frozen `peek-nav-shared-v1.php`. Reversing that original migration affects
+every page using Peek. For one service page,
 use only its actual page-data snapshot in the service rollout record, leaving the
 core and other pages active. **All earlier rollback commands in this note are historical.** Do not use
 `peek-nav-before-20261109-010037-0c493281.json` to delete the shared core.
 Migration installed inert Thai data before changing #1380 in place, with no
 fallback-only interval. Main/live remain unchanged.
-Current evidence/status: [service rollout record](../../docs/reviews/2026-11-09-peek-service-rollout.md).
+Current evidence/status: [clearance/touch correction](../../docs/reviews/2026-11-09-peek-clearance.md).
+Earlier page-data rollout: [service rollout record](../../docs/reviews/2026-11-09-peek-service-rollout.md).
 Original core migration/recovery: [template record](../../docs/reviews/2026-11-09-peek-template.md).
 Approved wording: [three-page review](../../docs/reviews/2026-11-09-peek-summary-drafts.md).
 Services/short pages remain individual eligibility decisions; Safari/physical

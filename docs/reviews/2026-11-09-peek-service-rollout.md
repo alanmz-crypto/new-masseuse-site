@@ -15,10 +15,17 @@ data #1381, and shared core #1380 is unchanged by this rollout.
 
 Each focused run also checks the other pages against their deployed state at
 that point. These are separate runs, not per-page assertion totals to add together.
-**Open design defect:** the first Chair card can overlap the initial title strip
-and graze the tablet Corporate CTA. Passing checks cover the eventual sticky
-position; they do not establish initial-strip clearance. Details and captures are
-below. Safari, physical devices and actual assistive technology remain unverified.
+**Defect observed during this rollout:** the first Chair card overlapped the
+initial title strip and grazed the tablet Corporate CTA. Those passing checks
+covered the eventual sticky position, not initial-strip clearance; historical
+details and captures remain below. The separate
+[clearance/touch correction](2026-11-09-peek-clearance.md) was deployed in place
+to #1380, preserving all four data records; its apply job finished 07:15:10 UTC.
+Stored inspection passed at 07:17:32 UTC (exact core hash/71,321 bytes; four data
+hashes unchanged). Public verification was **INVALID HTTP202** at 07:17:03 UTC
+on the initial Thai request: zero assertions/captures, no retry queued. That record
+holds fresh-copy proof, the actual upgrade snapshot and recovery. Safari, physical
+devices and actual assistive technology remain unverified.
 
 ## Approval and starting evidence
 
@@ -288,16 +295,22 @@ returns that page to its plain jump row while preserving the shared core and
 other enabled pages. Update the manifest only after verifying an actual reversal.
 The original core-migration rollback affects all Peek pages and belongs to the
 [separate migration recovery record](2026-11-09-peek-template.md#recovery-for-the-original-core-migration).
+The later clearance/touch upgrade must be reversed first using its own actual
+snapshot and explicit `core-upgrade --rollback FILE` arguments; see the
+[current correction/recovery record](2026-11-09-peek-clearance.md).
 Never use an old snapshot to delete a newer payload; future data/core revisions
 need their own reviewed exact-state migration.
 
 ## Remaining design and validation work
 
-Address the actual initial strip rectangle in a separate shared-placement change;
-the observed Chair overlap remains open. Retain the settled gestures and assess
-header/strip/card fit while the page transitions into its sticky state. The
-existing research scroll preserves all approved items, with only start/end
-positions visually reviewed. Those checks do not establish every intermediate
+The separate clearance/touch correction is deployed after fresh-copy rehearsal
+and visual review, with stored hashes confirmed. Final public verification is
+blocked by the initial HTTP202 challenge; no browser assertion or capture ran,
+and no retry is queued. Follow its linked record for the evidence. The correction
+addresses actual strip/header rectangles and preserves research
+reading state across resize. The initial Chromium native-touch baseline did not
+reproduce Ryan's page-scroll report, so device confirmation remains open. The
+historical research captures in this rollout do not establish every intermediate
 scroll position, physical touch behavior, Safari or actual VoiceOver/TalkBack.
 
 Services and short-page eligibility remain individual decisions, not automatic
@@ -308,14 +321,14 @@ this rollout changes no page-body text. Main/live remain unchanged.
 I finished: the three approved wording sets deployed and independently reviewed
 on staging39, with exact rollback rehearsals, fresh verified backups, restore
 proofs, public Chromium/Firefox checks and stored-hash confirmation.
-Next step: address the shared first-card/initial-strip placement defect with its
-own reviewed core change and actual-rectangle checks.
+Next step: focused public browser verification remains blocked by HTTP202;
+follow the separate correction record. No retry is queued.
 Next lane: Safari/physical-device/assistive-technology validation and individual
 Services/short-page eligibility decisions.
 See my work: the public captures, comparison hashes, actual recovery snapshots
 and operation reports linked in this record.
 Arc: none (ad-hoc)
 
-TL;DR: all four massage pages use Peek on staging39. Approved content and settled
-gestures are preserved; the observed initial-strip overlap remains explicit.
-Main/live are untouched.
+TL;DR: all four massage pages use Peek on staging39. This record preserves the
+approved data rollout; the later clearance/touch upgrade has its own evidence
+and recovery record. Main/live are untouched.

@@ -12,12 +12,25 @@ assertions to accommodate missing layout assets. The earlier **74/0 manifest +
 485/0 Thai regression** and six identical before/after images describe the
 original Thai-only migration, not final four-page verification.
 
-**Open design defect:** Chair's first preview overlaps the strip before it sticks;
-at 768px its focus ring also grazes the Corporate CTA. Card/section controls remain
-accessible in the reviewed states, but the current checker measures the eventual
-sticky position. Actual-strip placement and matching assertions need a focused
-core correction. Services/short-page eligibility, Safari, physical devices and
-actual assistive technology remain open. Main/live are untouched.
+**Later clearance/touch correction deployed; apply job finished 07:15:10 UTC:** the guarded
+[core upgrade](../reviews/2026-11-09-peek-clearance.md) updated #1380 in place after
+passing fresh-copy rehearsal and visual review. It measures the actual visible
+strip/header, preserves kept-summary reading state across resize, and gives closed
+topic controls ownership of touch drags. All four data records remain unchanged;
+there was no fallback-only interval. Fresh export and actual snapshot
+`peek-template-core-upgrade-before-20261109-071122-958bff3b.json` were verified
+encrypted off-site; restore import returned 0 with only #1380/cache differences.
+Stored inspection passed at 07:17:32 UTC: exact #1380 hash/71,321 bytes and four
+unchanged data hashes. Public browser verification was **INVALID HTTP202** at
+07:17:03 UTC on the initial Thai request: zero assertions/captures, no retry queued.
+Follow the correction record for evidence and exact recovery. Chromium native
+touch on the old core did not reproduce Ryan's reported page scrolling, so no
+physical-device resolution is claimed. Services/short-page eligibility, Safari,
+physical devices and actual assistive technology remain open. Main/live are untouched.
+
+The original `core` migration targets frozen `peek-nav-shared-v1.php`. Reverse
+the later upgrade with its actual snapshot and explicit `core-upgrade --rollback`
+arguments before attempting that historical migration's recovery.
 
 The original handoff below, including its Thai-only state and swap/rollback
 commands, is historical. Do not rerun the completed migrations or use core
