@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-09 19:56 UTC  **FAIL**  `peek-kiro-fixes-rehearse-3`  [reports/2026-11-09/195611-peek-kiro-fixes-rehearse-3.md](reports/2026-11-09/195611-peek-kiro-fixes-rehearse-3.md)  (run 42686456101)
 - 2026-11-09 19:37 UTC  **FAIL**  `peek-kiro-fixes-rehearse-2`  [reports/2026-11-09/193736-peek-kiro-fixes-rehearse-2.md](reports/2026-11-09/193736-peek-kiro-fixes-rehearse-2.md)  (run 42684101436)
 - 2026-11-09 19:20 UTC  **FAIL**  `peek-kiro-fixes-rehearse-1`  [reports/2026-11-09/192003-peek-kiro-fixes-rehearse-1.md](reports/2026-11-09/192003-peek-kiro-fixes-rehearse-1.md)  (run 42681652458)
 - 2026-11-09 17:49 UTC  **PASS**  `peek-title-rails-stored-20261109-1`  [reports/2026-11-09/174943-peek-title-rails-stored-20261109-1.md](reports/2026-11-09/174943-peek-title-rails-stored-20261109-1.md)  (run 42667209210)
