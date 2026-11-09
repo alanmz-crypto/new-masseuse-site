@@ -80,7 +80,7 @@ It runs **only on staging39**, on `/thai-massage/`. Live is untouched; live is R
 
 ## 4. Open work, in order
 
-1. **Confirm #1380 on staging39:** the `ui-peek-nav-s39-41-1` report should show 485 passed. If anything failed, read it first.
+1. **#1380 on staging39 is confirmed:** `ui-peek-nav-s39-41-1` gave **485 passed, 0 failed**.
 2. **The template structure** (Kiro's proposal, template-review handoff section 3, which Ryan has not objected to):
    - one shared core snippet;
    - one small data snippet per page (`ts_pk_pages` filter, current page's data printed as JSON);
