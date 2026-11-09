@@ -11,8 +11,9 @@ The feature branch was pulled at
 `903adaff3f756ef4126bd9e4093f2d9c36014bc2`. GitHub repository metadata confirmed
 read/push/admin permission. A fresh Thai-page GET from the current execution
 environment returned HTTP200 at the start of this follow-up. A subsequent
-Playwright capture batch stopped on its first Home request with HTTP202 and
-zero images; it was not retried. One separate Home response obtained with a TLS
+Playwright capture batch stopped on its first Home request at **16:15:49 UTC**
+with HTTP202 and zero images (`/tmp/peek-title-rail-baseline/report.json`); it was
+not retried. One separate Home response obtained with a TLS
 override supplies no reliable rendered-browser review. A successful HTTP request
 does not establish browser access or a feature pass.
 
@@ -114,4 +115,48 @@ Replacement verification streamed the reviewed source into the pinned container
 with networking disabled and asserted **129 PHP files, zero syntax failures**;
 installer/recovery **487/0**, current-page emission **24/0**, structured-data and
 headers/CSP tests passed. This does not relabel the original command as passing.
-Complete Actions Gates and the fresh rendered-copy rehearsal remain required.
+These local replacements did not complete the rendered-copy requirement; the
+subsequent Actions result is recorded below.
+
+## Retained local evidence
+
+These are **structural-fixture results**, not a rendered staging39-copy or
+physical-device result. The [compact native probe](assets/2026-11-09-peek-title-rails/checks/native-adversarial-compact.jsonl)
+retains all **31 PASS assertions**, original geometry and focus identities. Only
+20 long `BODY` focus-text strings containing repeated inline runtime were replaced
+with their UTF-8 byte counts and SHA256 hashes; every other original value was
+checked for exact retention. Its metadata records the full source path
+`/tmp/peek-title-rail-adversarial-final.jsonl`, **1,460,297 bytes**, SHA256
+`9f1c24aaad403783e567553141934e7f7e67d32e9f26854f9d1fb0c7379d12fc`.
+The logged `runtimeSHA` identifies the whole PHP file, including its opening tag;
+the deployed-code hash excludes that tag, as recorded above.
+
+The [final focus trace](assets/2026-11-09-peek-title-rails/checks/focus-trace-final.jsonl)
+is copied byte for byte: **2,287 bytes**, SHA256
+`70031ae779349c68defb42082e422a642d21ea0e681490f1bced065bd3365fb7`.
+The new ID-less title-rail target retains H2 focus after compatibility mouse
+events. The existing Thai target receives focus, then loses it to `BODY` after
+the compatibility mousedown; its hash and destination remain correct. This
+locally reproduced behavior is unchanged by the candidate and remains an open
+focus/accessibility issue, not a new regression or a physical-device finding.
+
+Root reviewed these three unchanged fixture images: [seven compact sections](assets/2026-11-09-peek-title-rails/checks/services-seven-structural.png),
+[long complete title](assets/2026-11-09-peek-title-rails/checks/long-heading-structural.png)
+and [single no-heading entry](assets/2026-11-09-peek-title-rails/checks/no-heading-structural.png).
+The compact cards retain their title and jump controls without summary space.
+They do not replace the required actual-page review.
+
+## Actions Gates and first rehearsal request
+
+[Actions Gates 42656502403](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42656502403)
+passed at **16:37:23 UTC** for source
+`9996b172bcbf9cbb4354431189d965edb1d87a70`: **29 PASS, 1 SKIP, 0 FAIL,
+0 INVALID**. The complete 193-line job log was read
+(`/tmp/peek-title-rails-actions-gates-1.log`). Shellcheck, ruff, pinned PHP,
+ownership/recovery/current-page emission, wording and builder gates passed.
+Only URL-dependent rendered verification was skipped.
+
+The [first fresh-copy rehearsal, 42656502274](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42656502274)
+is running; no rehearsal verdict or actual-page capture review is claimed yet.
+Staging writes remain pending the rendered-copy and visual gates plus a fresh
+verified off-site backup. No new staging snapshot exists.

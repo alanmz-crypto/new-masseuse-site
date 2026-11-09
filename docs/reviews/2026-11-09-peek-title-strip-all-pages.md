@@ -548,10 +548,11 @@ arguments to restore frozen v3. Only then can the actual `core-summary-touch`
 snapshot restore v2, `core-upgrade` restore v1 and the original `core` snapshot
 restore legacy. An older snapshot cannot reverse the deployed title-strip payload.
 
-Before any future runtime change, freeze this deployed payload as shared v4 and
-pin `core-title-strip` to that exact file. Use a new exact transition for a later
-version so this actual snapshot keeps its recovery meaning. No v4 freeze is
-claimed by this record.
+The [title-rail follow-up](2026-11-09-peek-title-rails.md) has now frozen this
+deployed payload as shared v4 and pinned `core-title-strip` to that exact file.
+Its separate transition starts from v4, preserving this actual snapshot's recovery
+meaning. If a later title-rail candidate is applied, reverse its own transition
+to v4 before using the recovery above.
 
 The reported initial scrolling delay was not reproduced as loading latency.
 Safari, physical devices and actual assistive technology still need validation;

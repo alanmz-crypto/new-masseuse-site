@@ -190,7 +190,8 @@ contains the complete reports and actual backup identities.
 For recovery, use explicit
 `core-title-strip --rollback $HOME/private-backups/peek-template-core-title-strip-before-20261109-102452-90630a29.json`
 arguments to restore v3 before any older transition, after a
-fresh verified backup and full-state checks. Freeze this payload as v4 and pin
-this transition before any future runtime change. The reported loading delay
+fresh verified backup and full-state checks. The [title-rail follow-up](2026-11-09-peek-title-rails.md)
+has frozen this payload as v4 and pinned this transition; reverse any later
+applied title-rail transition to v4 before this recovery. The reported loading delay
 has not been reproduced or declared resolved; Safari, physical-device and
 assistive-technology validation remain open.
