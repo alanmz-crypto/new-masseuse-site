@@ -1,10 +1,8 @@
 {
-  "id": "peek-design-s39-20261109-1",
+  "id": "peek-template-gates-20261109-1",
   "op": "run",
   "target": "staging39",
-  "script": "link-ideas/capture-peek-review.mjs",
-  "args": [
-    "https://staging39.thaisolitude.com"
-  ],
+  "script": "check-all.sh",
+  "args": [],
   "tests": "auto"
 }
