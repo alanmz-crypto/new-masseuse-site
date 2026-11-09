@@ -1,10 +1,11 @@
 {
-  "id": "probe-overflow-s39-1",
+  "id": "rollback-peek-nav-v27-s39-1",
   "op": "run",
   "target": "staging39",
-  "script": "link-ideas/probe-overflow.mjs",
+  "script": "link-ideas/push-peek-nav.sh",
   "args": [
-    "https://staging39.thaisolitude.com"
+    "--rollback",
+    "$HOME/private-backups/peek-nav-before-20261108-234541-8cf99e25.json"
   ],
   "tests": "auto"
 }
