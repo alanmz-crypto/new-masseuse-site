@@ -1,9 +1,10 @@
 {
-  "id": "peek-short-rehearse-20261109-1",
-  "op": "rehearse",
+  "id": "peek-short-dry-20261109-1",
+  "op": "run",
   "target": "staging39",
-  "installer": "link-ideas/core-summary-touch/install-peek-core-summary-touch.php",
+  "script": "link-ideas/push-peek-nav.sh",
   "args": [
-    "--with-uploads"
-  ]
+    "core-summary-touch"
+  ],
+  "tests": "auto"
 }
