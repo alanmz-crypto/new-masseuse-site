@@ -9,7 +9,15 @@ metadata:
 A phone cloud session (https://claude.ai/code, repo `alanmz-crypto/new-masseuse-site`) sees ONLY this repository: not his computer, not his global `~/.claude/CLAUDE.md`, not his local Claude memory, not convmem. Everything that must not be lost is therefore written here and in the notes this index points to.
 First message to send in a fresh phone session: **"Read .claude/project-memory/open-items.md and tell me what is due."**
 
-**2026-11-09 Peek assessment received; fixes pending:** Ryan returned Kiro's
+**2026-11-09 Peek fixes in progress, not deployed:** Ryan asked to fix the Kiro
+assessment issues. The [candidate and verification record](../../docs/reviews/2026-11-09-peek-kiro-fixes.md)
+tracks event corrections, usable short-screen summary space, full FAQ clearance,
+wrapped title rows and smaller single-entry rails. Original wording and all-page
+rails stay. Exact deployed core is now frozen as v5; the old title-rail transition
+is pinned and the new `core-kiro-fixes` transition starts at v5. Direct access
+returned HTTP202; fresh-copy Actions evidence is required before any write.
+
+**2026-11-09 Peek assessment received:** Ryan returned Kiro's
 assessment. The [assessment and Codex verification](../../docs/inter-model/2026-11-09-peek-nav-kiro-assessment.md)
 record two independently reproduced staging39 Privacy defects: native touch can
 land about 839 px above the viewport, and Enter on the preview toggles the target
@@ -18,8 +26,8 @@ open state; normal and reduced motion both need coverage. The new layout probe
 stopped on HTTP202 with zero cases, so Therapeutic's small landscape reading
 area and FAQ/text overlap remain partly based on Kiro's evidence and source.
 Keep the all-page rails; do not silently adopt Kiro's two-entry eligibility rule.
-No runtime/wording/ops/site changes in this assessment. Freeze current core as v5
-and pin its existing transition before future runtime edits; v5 is still absent.
+No runtime/wording/ops/site changes were made during the assessment itself.
+The subsequent fix candidate and v5 freeze are tracked above.
 Physical-device, assistive-technology and rapid-switch questions remain open.
 
 **2026-11-01 current release lane (supersedes older status):**

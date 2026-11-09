@@ -87,6 +87,14 @@ peek_test() {
   docker run --rm --network none --entrypoint php -v "$here/work-with-me-employer/link-ideas:/pkg:ro" "$img" /pkg/tests/core-data-test.php
 }
 if [ -n "$img" ] && command -v docker >/dev/null; then gate "Peek installer ownership, recovery and current-page JSON (offline)" peek_test; else skip "Peek installer and JSON tests" "docker or the pinned image is not available"; fi
+peek_js_syntax() {
+  local file
+  while IFS= read -r file; do node --check "$file" || return 1; done < <(find "$here/work-with-me-employer/link-ideas" -name '*.mjs' -not -path '*/node_modules/*' | sort)
+}
+if command -v node >/dev/null; then
+  gate "Peek browser checker and wrapper syntax (offline)" peek_js_syntax
+  gate "Peek wrapper evidence, invalid and failure guards (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/tests/wrapper-selftest.py"
+else skip "Peek browser checker syntax and wrapper guards" "node is not installed"; fi
 # the generated Thai content must be what the builder produces (a hand edit or a stale build is caught here)
 gate "Thai evidence content matches its builder" python3 -I -B "$here/work-with-me-employer/thai/build-thai-evidence.py" --check
 gate "Therapeutic evidence content matches its builder" python3 -I -B "$here/work-with-me-employer/therapeutic/build-therapeutic-evidence.py" --check

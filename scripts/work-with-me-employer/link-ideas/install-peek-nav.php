@@ -1,7 +1,7 @@
 <?php
 /**
- * Peek template: exact legacy -> shared v1 -> shared v2 -> shared v3 -> shared v4 -> current, or page data.
- * wp eval-file install-peek-nav.php preflight|apply [core|core-upgrade|core-summary-touch|core-title-strip|core-title-rail|page SLUG]
+ * Peek template: exact legacy -> shared v1 -> shared v2 -> shared v3 -> shared v4 -> shared v5 -> current, or page data.
+ * wp eval-file install-peek-nav.php preflight|apply [core|core-upgrade|core-summary-touch|core-title-strip|core-title-rail|core-kiro-fixes|page SLUG]
  * wp eval-file install-peek-nav.php rollback FILE (component comes from snapshot).
  * Default core keeps the generic Actions rehearsal interface. WordPress storage only.
  * Exact localhost:8090 / staging39 origins; push takes verified offsite backups.
@@ -15,7 +15,7 @@ if ( ! in_array( $home, array( 'http://localhost:8090', 'http://staging39.thaiso
 if ( 'astra' !== get_stylesheet() || ! current_user_can( 'manage_options' ) || ! current_user_can( 'unfiltered_html' ) || ! function_exists( 'wpcode' ) || ! class_exists( 'WPCode_Snippet' ) ) { WP_CLI::error( 'Requires Astra, WPCode and an administrator (--user=1).' ); }
 $args = isset( $args ) && is_array( $args ) ? $args : array();
 $mode = $args[0] ?? 'preflight';
-if ( ! in_array( $mode, array( 'preflight', 'apply', 'rollback' ), true ) ) { WP_CLI::error( 'Use preflight|apply [core|core-upgrade|core-summary-touch|core-title-strip|core-title-rail|page SLUG], or rollback FILE.' ); }
+if ( ! in_array( $mode, array( 'preflight', 'apply', 'rollback' ), true ) ) { WP_CLI::error( 'Use preflight|apply [core|core-upgrade|core-summary-touch|core-title-strip|core-title-rail|core-kiro-fixes|page SLUG], or rollback FILE.' ); }
 $backup_dir = (string) getenv( 'WWM_BACKUP_DIR' );
 $private = realpath( $backup_dir ); $webroot = realpath( ABSPATH );
 $private_ok = isset( $backup_dir[0] ) && '/' === $backup_dir[0] && $private && $webroot && is_dir( $private ) && is_writable( $private ) && $private !== $webroot && 0 !== strpos( $private . '/', rtrim( $webroot, '/' ) . '/' );
@@ -32,9 +32,9 @@ if ( 'rollback' === $mode ) {
     $component = $args[1] ?? 'core'; $slug = $args[2] ?? '';
     if ( count( $args ) > ( 'page' === $component ? 3 : 2 ) ) { WP_CLI::error( 'Unexpected installer arguments; nothing changed.' ); }
 }
-if ( ! in_array( $component, array( 'core', 'core-upgrade', 'core-summary-touch', 'core-title-strip', 'core-title-rail', 'page' ), true ) || ( 'page' !== $component && '' !== $slug ) || ( 'page' === $component && ( ! is_string( $slug ) || ! preg_match( '/^[a-z0-9]+(?:-[a-z0-9]+)*$/D', $slug ) ) ) ) { WP_CLI::error( 'Use core, core-upgrade, core-summary-touch, core-title-strip, core-title-rail or page SLUG; nothing changed.' ); }
+if ( ! in_array( $component, array( 'core', 'core-upgrade', 'core-summary-touch', 'core-title-strip', 'core-title-rail', 'core-kiro-fixes', 'page' ), true ) || ( 'page' !== $component && '' !== $slug ) || ( 'page' === $component && ( ! is_string( $slug ) || ! preg_match( '/^[a-z0-9]+(?:-[a-z0-9]+)*$/D', $slug ) ) ) ) { WP_CLI::error( 'Use core, core-upgrade, core-summary-touch, core-title-strip, core-title-rail, core-kiro-fixes or page SLUG; nothing changed.' ); }
 $is_core = 'page' !== $component;
-$is_upgrade = in_array( $component, array( 'core-upgrade', 'core-summary-touch', 'core-title-strip', 'core-title-rail' ), true );
+$is_upgrade = in_array( $component, array( 'core-upgrade', 'core-summary-touch', 'core-title-strip', 'core-title-rail', 'core-kiro-fixes' ), true );
 $legacy_title = 'TSPeekNav practice (Thai, staging39)';
 $legacy_note = 'Created by link-ideas/install-peek-nav.php (2026-11-08); exact owned-snippet rollback only.';
 $legacy_file = file_get_contents( __DIR__ . '/peek-nav-legacy.php' );
@@ -56,7 +56,11 @@ $shared_v4_file = file_get_contents( __DIR__ . '/peek-nav-shared-v4.php' );
 if ( false === $shared_v4_file || hash( 'sha256', $shared_v4_file ) !== '5e52139adfd46e655d67ce2d910db00836248dfcc1d43b247371a809a3f6c0d2' ) { WP_CLI::error( 'Frozen shared v4 payload differs; nothing changed.' ); }
 $shared_v4_code = substr( $shared_v4_file, 6 );
 if ( hash( 'sha256', $shared_v4_code ) !== '4162d3b40cfa54807f0a7b3851233aaca7482686ccab7a0a2e343f8afa665af5' ) { WP_CLI::error( 'Frozen shared v4 code hash differs; nothing changed.' ); }
-$before_code = 'core-title-rail' === $component ? $shared_v4_code : ( 'core-title-strip' === $component ? $shared_v3_code : ( 'core-summary-touch' === $component ? $shared_v2_code : ( 'core-upgrade' === $component ? $shared_v1_code : $legacy_code ) ) );
+$shared_v5_file = file_get_contents( __DIR__ . '/peek-nav-shared-v5.php' );
+if ( false === $shared_v5_file || hash( 'sha256', $shared_v5_file ) !== '602df3dca522b4f6be7db173202c8f64acec3806cffd00705f46fb27ee4815f6' ) { WP_CLI::error( 'Frozen shared v5 payload differs; nothing changed.' ); }
+$shared_v5_code = substr( $shared_v5_file, 6 );
+if ( hash( 'sha256', $shared_v5_code ) !== 'c7ed404ebe3e19d24e7a91b91bb996505efb80027fd183245d1c7137f188991e' ) { WP_CLI::error( 'Frozen shared v5 code hash differs; nothing changed.' ); }
+$before_code = 'core-kiro-fixes' === $component ? $shared_v5_code : ( 'core-title-rail' === $component ? $shared_v4_code : ( 'core-title-strip' === $component ? $shared_v3_code : ( 'core-summary-touch' === $component ? $shared_v2_code : ( 'core-upgrade' === $component ? $shared_v1_code : $legacy_code ) ) ) );
 $data_code = static function ( $page_slug, $must_be_approved = false ) {
     $file = __DIR__ . '/peek-data/' . $page_slug . '.json';
     $data = is_file( $file ) ? json_decode( file_get_contents( $file ), true ) : null;
@@ -70,7 +74,7 @@ $data_code = static function ( $page_slug, $must_be_approved = false ) {
 };
 try {
     if ( $is_core ) {
-        $file = 'core' === $component ? $shared_v1_file : ( 'core-upgrade' === $component ? $shared_v2_file : ( 'core-summary-touch' === $component ? $shared_v3_file : ( 'core-title-strip' === $component ? $shared_v4_file : file_get_contents( __DIR__ . '/peek-nav.php' ) ) ) );
+        $file = 'core' === $component ? $shared_v1_file : ( 'core-upgrade' === $component ? $shared_v2_file : ( 'core-summary-touch' === $component ? $shared_v3_file : ( 'core-title-strip' === $component ? $shared_v4_file : ( 'core-title-rail' === $component ? $shared_v5_file : file_get_contents( __DIR__ . '/peek-nav.php' ) ) ) ) );
         if ( false === $file || 0 !== strpos( $file, "<?php\n" ) || substr_count( $file, 'id="ts-peek-nav-runtime"' ) !== 1 || substr_count( $file, 'id="ts-peek-nav-css"' ) !== 1 || false === strpos( $file, 'ts_pk_pages' ) ) { throw new \RuntimeException( 'Shared core payload is missing or malformed.' ); }
         $code = substr( $file, 6 ); $title = $legacy_title; $note = $legacy_note;
         if ( $is_upgrade && $code === $before_code ) { throw new \RuntimeException( 'Core upgrade must have a distinct reviewed payload.' ); }
@@ -166,7 +170,7 @@ if ( $legacy_rollback ) {
     WP_CLI::success( 'Exact owned legacy snippet removed; plain jump row remains.' ); return;
 }
 $manifest = $is_upgrade ? array( 'code_sha256' => hash( 'sha256', $code ), 'before_sha256' => hash( 'sha256', $before_code ) ) : array( 'code_sha256' => hash( 'sha256', $code ), 'legacy_sha256' => 'core' === $component ? hash( 'sha256', $legacy_code ) : null );
-$bundle = 'core-title-rail' === $component ? 'peek-core-title-rail-v1' : ( 'core-title-strip' === $component ? 'peek-core-title-strip-v1' : ( 'core-summary-touch' === $component ? 'peek-core-summary-touch-v1' : ( 'core-upgrade' === $component ? 'peek-core-upgrade-v1' : 'peek-template-v1' ) ) );
+$bundle = 'core-kiro-fixes' === $component ? 'peek-core-kiro-fixes-v1' : ( 'core-title-rail' === $component ? 'peek-core-title-rail-v1' : ( 'core-title-strip' === $component ? 'peek-core-title-strip-v1' : ( 'core-summary-touch' === $component ? 'peek-core-summary-touch-v1' : ( 'core-upgrade' === $component ? 'peek-core-upgrade-v1' : 'peek-template-v1' ) ) ) );
 if ( 'rollback' === $mode ) {
     $old = $snapshot['old'] ?? null; $new = $snapshot['new'] ?? null;
     $valid = ( $snapshot['bundle'] ?? '' ) === $bundle && true === ( $snapshot['complete'] ?? false ) && ( $snapshot['payloads'] ?? null ) === $manifest && hash( 'sha256', wp_json_encode( $old ) ) === ( $snapshot['old_sha256'] ?? '' ) && hash( 'sha256', wp_json_encode( $new ) ) === ( $snapshot['new_sha256'] ?? '' ) && $matches( $new, $code );

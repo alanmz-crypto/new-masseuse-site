@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Shared Peek core and per-page WPCode data; staging39 only, WordPress storage only.
-# Usage: push-peek-nav.sh [core | core-upgrade | core-summary-touch | core-title-strip | core-title-rail | page SLUG] [--apply | --check | --rollback FILE]
-# Frozen migrations: core legacy -> v1, core-upgrade v1 -> v2, core-summary-touch v2 -> v3, core-title-strip v3 -> v4; core-title-rail v4 -> current.
+# Usage: push-peek-nav.sh [core | core-upgrade | core-summary-touch | core-title-strip | core-title-rail | core-kiro-fixes | page SLUG] [--apply | --check | --rollback FILE]
+# Frozen migrations: core legacy -> v1, core-upgrade v1 -> v2, core-summary-touch v2 -> v3, core-title-strip v3 -> v4; core-title-rail v4 -> v5; core-kiro-fixes v5 -> current.
 # Every write, including rollback, exports and verifies an encrypted offsite backup first.
 # shellcheck disable=SC2016  # the single-quoted commands below are meant to expand on the server, not here
 set -euo pipefail
@@ -22,6 +22,7 @@ case "${1:-}" in
   core-summary-touch) component=core-summary-touch; shift ;;
   core-title-strip) component=core-title-strip; shift ;;
   core-title-rail) component=core-title-rail; shift ;;
+  core-kiro-fixes) component=core-kiro-fixes; shift ;;
   page) component=page; slug="${2:-}"; [[ "$slug" =~ ^[a-z0-9]+(-[a-z0-9]+)*$ ]] || { echo "page needs a simple slug" >&2; exit 1; }; shift 2 ;;
 esac
 case "${1:-}" in
@@ -29,7 +30,7 @@ case "${1:-}" in
   --apply) [ "$#" -eq 1 ] || exit 1; mode=apply ;;
   --check) [ "$#" -eq 1 ] || exit 1; mode=check ;;
   --rollback) [ "$#" -eq 2 ] || exit 1; mode=rollback; snap=$2 ;;
-  *) echo "Usage: $0 [core | core-upgrade | core-summary-touch | core-title-strip | core-title-rail | page SLUG] [--apply | --check | --rollback FILE]" >&2; exit 1 ;;
+  *) echo "Usage: $0 [core | core-upgrade | core-summary-touch | core-title-strip | core-title-rail | core-kiro-fixes | page SLUG] [--apply | --check | --rollback FILE]" >&2; exit 1 ;;
 esac
 if [ -n "$snap" ] && [[ ! "$snap" =~ ^(\$HOME|/home/[a-zA-Z0-9_-]+)/private-backups/peek-(nav|template-[a-z0-9-]+)-before-[a-zA-Z0-9.-]+\.json$ ]]; then
   echo "Snapshot must be a Peek before-snapshot inside private-backups." >&2; exit 1
@@ -41,14 +42,14 @@ ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o 
 
 echo "[1] Connecting and uploading the package to ~/wwm-package-peek-nav (outside every web root) ..."
 "${ssh_cmd[@]}" true 2>/dev/null || { echo "SSH login refused; check the ssh-agent holds the right key." >&2; exit 2; }
-tar -C "$here" -cf - install-peek-nav.php peek-nav.php peek-nav-legacy.php peek-nav-shared-v1.php peek-nav-shared-v2.php peek-nav-shared-v3.php peek-nav-shared-v4.php peek-data title-strip-pages.json \
+tar -C "$here" -cf - install-peek-nav.php peek-nav.php peek-nav-legacy.php peek-nav-shared-v1.php peek-nav-shared-v2.php peek-nav-shared-v3.php peek-nav-shared-v4.php peek-nav-shared-v5.php peek-data title-strip-pages.json \
   | "${ssh_cmd[@]}" 'mkdir -p "$HOME/wwm-package-peek-nav" && tar -xf - -C "$HOME/wwm-package-peek-nav"'
 
 read -r -d '' REMOTE <<'EOS' || true
 set -euo pipefail
 wp() { command wp --skip-plugins=sg-security "$@"; }   # SiteGround Security 1.6.9 + PHP 8.5 makes EVERY wp exit 0 on live (shutdown-handler bug); skipping that one plugin keeps exit codes true. See AGENTS.md and check-wp-exit-codes.sh.
 phase=$1; target=$2; component=$3; slug=$4; snap=${5:-}
-case "$component" in core|core-upgrade|core-summary-touch|core-title-strip|core-title-rail) [ -z "$slug" ] || exit 1 ;; page) [[ "$slug" =~ ^[a-z0-9]+(-[a-z0-9]+)*$ ]] || exit 1 ;; *) exit 1 ;; esac
+case "$component" in core|core-upgrade|core-summary-touch|core-title-strip|core-title-rail|core-kiro-fixes) [ -z "$slug" ] || exit 1 ;; page) [[ "$slug" =~ ^[a-z0-9]+(-[a-z0-9]+)*$ ]] || exit 1 ;; *) exit 1 ;; esac
 case "$target" in staging39) want="staging39.thaisolitude.com" ;; *) echo "Remote refused: target must be staging39, got '$target'." >&2; exit 1 ;; esac
 command -v wp >/dev/null || { echo "wp-cli not found on the server" >&2; exit 1; }
 doc=""
@@ -102,14 +103,14 @@ PHP
 inventory() { WWM_PEEK_REVIEWED_PAGES="${1:-}" wp --path="$doc" --user=1 eval "$INVENTORY"; }
 reviewed_inventory() { inventory "$HOME/wwm-package-peek-nav/title-strip-pages.json" >/dev/null; echo "Published page paths match reviewed title-strip browser coverage."; }
 case "$phase" in
-  preflight) if [ "$component" = core-title-strip ] || [ "$component" = core-title-rail ]; then reviewed_inventory; fi; run preflight ;;
+  preflight) if [ "$component" = core-title-strip ] || [ "$component" = core-title-rail ] || [ "$component" = core-kiro-fixes ]; then reviewed_inventory; fi; run preflight ;;
   prepare)
     dump="$HOME/private-backups/${target}-before-peek-nav-$(date +%Y%m%d-%H%M%S).sql"
     ( umask 077; wp --path="$doc" db export "$dump" >/dev/null )
     [ -s "$dump" ] || { echo "Database export is empty; stopping before any change." >&2; exit 1; }
     echo "fresh database export: ${dump#"$HOME"/} ($(stat -c%s "$dump") bytes)"
     run preflight ;;
-  apply) if [ "$component" = core-title-strip ] || [ "$component" = core-title-rail ]; then reviewed_inventory; fi; run apply; purge ;;
+  apply) if [ "$component" = core-title-strip ] || [ "$component" = core-title-rail ] || [ "$component" = core-kiro-fixes ]; then reviewed_inventory; fi; run apply; purge ;;
   verify)
     # Public checks, made from the server itself (not challenged by SiteGround's bot protection). Each page is fetched once.
     tmp=$(mktemp -d); trap 'rm -rf "$tmp" "$cfgs"' EXIT
@@ -117,7 +118,10 @@ case "$phase" in
     fetch() { local code; code=$(curl -s -o "$tmp/$1.html" -w '%{http_code}' --max-time 30 "https://$want$2" || true); echo "  $code $2"; [ "$code" = 200 ] || { echo "$2 does not answer 200 (202 = SiteGround's bot challenge = INVALID, retry later)."; exit 1; }; }
     need() { local n; n=$(awk -v needle="$2" '{ line=$0; while ((at=index(line,needle))>0) { total++; line=substr(line,at+length(needle)); } } END { print total+0 }' "$tmp/$1.html"); if [ "$n" = "$3" ]; then echo "  ok   $1: $n x $2"; else echo "  FAIL $1: $n x $2 (want $3)"; bad=1; fi; }
     shared_core=0; sitewide_strip=0
-    if core_state=$(wp --path="$doc" --user=1 eval-file "$installer" preflight core-title-rail 2>/dev/null); then
+    if core_state=$(wp --path="$doc" --user=1 eval-file "$installer" preflight core-kiro-fixes 2>/dev/null); then
+      # Frozen v5 and the reviewed fixes retain sitewide core/config emission.
+      shared_core=1; sitewide_strip=1
+    elif core_state=$(wp --path="$doc" --user=1 eval-file "$installer" preflight core-title-rail 2>/dev/null); then
       # Both ready (frozen v4) and applied render the core/config sitewide.
       # Rails are client-rendered; the browser gates verify their actual scope.
       shared_core=1; sitewide_strip=1

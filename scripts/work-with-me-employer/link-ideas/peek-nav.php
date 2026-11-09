@@ -24,11 +24,11 @@ add_action( 'wp_head', function () {
 	}
 	?>
 <style id="ts-peek-nav-css">
-.ts-pk{--pk-ink:var(--ts-ink,#1C2531);--pk-muted:var(--ts-muted,#4A5563);--pk-rule:var(--ts-rule,#D5D6CF);--pk-panel:var(--ts-panel,#FAF9F6);--pk-ground:var(--ts-ground,#F5F4EF);--pk-stone:var(--ts-stone,#ECEBE4);--pk-on:var(--ts-green,var(--ast-global-color-0,#377A00));--pk-on-text:#fff;--pk-accent:var(--ts-accent,#C8963E);--pk-ease:cubic-bezier(.2,.8,.2,1);--pk-shadow:0 16px 44px -16px rgba(0,0,0,.45)}
-html[data-ts-theme="dark"] .ts-pk{--pk-on:#8CCB5B;--pk-on-text:#0E141C}
+.ts-pk{--pk-ink:var(--ts-ink,#1C2531);--pk-muted:var(--ts-muted,#4A5563);--pk-rule:var(--ts-rule,#D5D6CF);--pk-panel:var(--ts-panel,#FAF9F6);--pk-ground:var(--ts-ground,#F5F4EF);--pk-stone:var(--ts-stone,#ECEBE4);--pk-on:var(--ts-green,var(--ast-global-color-0,#377A00));--pk-on-text:#fff;--pk-accent:var(--ts-accent,#C8963E);--pk-preview:var(--ts-accent-deep,#805900);--pk-ease:cubic-bezier(.2,.8,.2,1);--pk-shadow:0 16px 44px -16px rgba(0,0,0,.45)}
+html[data-ts-theme="dark"] .ts-pk{--pk-on:#8CCB5B;--pk-on-text:#0E141C;--pk-preview:#E4B35D}
 .ts-pk,.ts-pk *,.ts-pk *::before{box-sizing:border-box}
 /* top strip: display only */
-.ts-pk-top{position:sticky;top:var(--pk-head,0px);z-index:90;margin:0 -12px 1.25rem;padding:.45rem 12px .55rem;background:var(--pk-ground);background:color-mix(in srgb,var(--pk-ground) 94%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--pk-rule);pointer-events:none;-webkit-user-select:none;user-select:none}
+.ts-pk-top{position:sticky;top:var(--pk-head,0px);z-index:90;margin:0 -12px 1.25rem;padding:.45rem 12px .55rem;background:var(--pk-ground);border-bottom:1px solid var(--pk-rule);pointer-events:none;-webkit-user-select:none;user-select:none}
 body.admin-bar .ts-pk-top{top:calc(var(--wp-admin--admin-bar--height,32px) + var(--pk-head,0px))}
 @media (max-width:600px){body.admin-bar .ts-pk-top{top:var(--pk-head,0px)}}
 /* the strip: only topic titles, sliding by as you read: the current one in the middle, part of the neighbours on each side (Ryan, 2026-11-08) */
@@ -36,6 +36,9 @@ body.admin-bar .ts-pk-top{top:calc(var(--wp-admin--admin-bar--height,32px) + var
 .ts-pk-top .tr{position:absolute;left:0;top:0;display:flex;align-items:center;gap:1.75rem;height:100%;white-space:nowrap;will-change:transform}
 .ts-pk-top .tr span{font-size:.86rem;line-height:1.3;font-weight:600;color:var(--pk-muted);opacity:.85;transition:opacity .25s,color .25s}
 .ts-pk-top .tr span.is-now{color:var(--pk-ink);font-weight:800;opacity:1}
+.ts-pk-top .before{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);display:flex;align-items:center;justify-content:center;text-align:center;font-size:.86rem;line-height:1.3;font-weight:800;color:var(--pk-ink);visibility:hidden}
+.ts-pk-top.is-before .before{visibility:visible}
+.ts-pk-top.is-before .tr{visibility:hidden}
 /* Title-only pages keep their existing navigation. Long source headings wrap
    inside the readable centre; the four established rails keep their geometry. */
 .ts-pk-top.is-title-only{margin-left:0;margin-right:0}
@@ -75,7 +78,7 @@ html.ts-pk-title-ready .ts-pk-title-content :is(.tsx-lab,.tsp-lab,.tsr-lab) :is(
 .ts-pk-card b{display:block;font-size:1.05rem;margin:.15rem 2rem .1rem 0}
 /* the stack: closed boxes for the sections above and below the open one, so its place on the page shows (Ryan, 2026-11-08) */
 html .ts-pk .ts-pk-card.ts-pk-stack{padding:.4rem}
-.ts-pk-card .open{position:relative;margin:.3rem 0;padding:.75rem .9rem;border:1.5px solid var(--pk-on);border-radius:14px;background:var(--pk-panel)}
+.ts-pk-card .open{position:relative;margin:.3rem 0;padding:.75rem .9rem;border:1.5px solid var(--pk-preview);border-radius:14px;background:var(--pk-panel)}
 .ts-pk-card .open:first-child{margin-top:0}.ts-pk-card .open:last-child{margin-bottom:0}
 html .ts-pk .ts-pk-card .row{display:flex;align-items:center;gap:.55rem;width:100%;min-height:34px;margin:0;padding:.3rem .6rem;border:0;border-radius:10px;background:var(--pk-stone);color:var(--pk-ink);box-shadow:none;font:inherit;font-size:.82rem;font-weight:600;line-height:1.25;text-align:left;cursor:pointer;touch-action:none;-webkit-tap-highlight-color:transparent}
 html .ts-pk .ts-pk-card .row:hover,html .ts-pk .ts-pk-card .row:focus{background:var(--pk-stone);color:var(--pk-ink);box-shadow:none}
@@ -108,7 +111,7 @@ html[data-ts-theme="dark"] .ts-pk-card .hint{color:var(--pk-on)}
 /* keep the text clear of the rail on phones and tablets; the bottom "On this page" button is replaced by the rail */
 /* Ryan, 2026-11-09: the clearance goes on the text blocks, not on the column. Padding the column moved its middle, and full-width theme blocks (placed from
    that middle) shifted by half of it: off the left edge with the rail on the right (text cut at the screen edge), past the right edge with it on the left */
-@media screen{html.ts-pk-ready.ts-pk-pad:not(.ts-pk-left) .ts-pk-title-content :is(p,li,h1,h2,h3,h4,h5,h6,blockquote,figcaption,dt,dd,td,th,:where(.ts-pk-title-rail) form):not(:is(p,li,blockquote,dd,td,th,:where(.ts-pk-title-rail) form,.ts-pk,.ts-jump,nav,[role="navigation"],[role="tablist"],.tsx-picker,.tsp-picker,.tsr-picker,.tsi-picker) *){padding-right:var(--pk-clear)}}
+@media screen{html.ts-pk-ready.ts-pk-pad:not(.ts-pk-left) .ts-pk-title-content :is(p,li,h1,h2,h3,h4,h5,h6,blockquote,figcaption,dt,dd,td,th,:where(.ts-pk-title-rail) form):not(:is(p,li,blockquote,dd,td,th,:where(.ts-pk-title-rail) form,.uagb-faq-item,.ts-pk,.ts-jump,nav,[role="navigation"],[role="tablist"],.tsx-picker,.tsp-picker,.tsr-picker,.tsi-picker) *){padding-right:var(--pk-clear)}}
 @media screen{html.ts-pk-ready.ts-pk-pad:not(.ts-pk-left) .ts-pk-title-content .ts-pk-top{padding-right:calc(12px + var(--pk-clear))}   /* the strip's titles stay clear of the rail while it is still in the page */}
 html.ts-pk-ready .entry-content .ts-jump{display:none!important}   /* Ryan, 2026-11-08: "You can remove the in-page links beneath header." The strip, rail and index replace the row; without JavaScript (no ts-pk-ready) it still shows and works */
 html.ts-pk-ready #ts-section-guide-trigger,html.ts-pk-ready #ts-section-guide-popover{display:none!important}   /* only once the rail is there */
@@ -126,7 +129,7 @@ html.ts-pk-left .ts-pk-you{right:auto;left:28px}
 html.ts-pk-left .ts-pk-card{right:auto;left:58px;transform:translateX(-10px) scale(.98)}
 html.ts-pk-left .ts-pk-card.is-on{transform:none}
 html.ts-pk-left .ts-pk-tip{right:auto;left:58px}
-@media screen{html.ts-pk-ready.ts-pk-pad.ts-pk-left .ts-pk-title-content :is(p,li,h1,h2,h3,h4,h5,h6,blockquote,figcaption,dt,dd,td,th,:where(.ts-pk-title-rail) form):not(:is(p,li,blockquote,dd,td,th,:where(.ts-pk-title-rail) form,.ts-pk,.ts-jump,nav,[role="navigation"],[role="tablist"],.tsx-picker,.tsp-picker,.tsr-picker,.tsi-picker) *){padding-left:var(--pk-clear)}}
+@media screen{html.ts-pk-ready.ts-pk-pad.ts-pk-left .ts-pk-title-content :is(p,li,h1,h2,h3,h4,h5,h6,blockquote,figcaption,dt,dd,td,th,:where(.ts-pk-title-rail) form):not(:is(p,li,blockquote,dd,td,th,:where(.ts-pk-title-rail) form,.uagb-faq-item,.ts-pk,.ts-jump,nav,[role="navigation"],[role="tablist"],.tsx-picker,.tsp-picker,.tsr-picker,.tsi-picker) *){padding-left:var(--pk-clear)}}
 @media screen{html.ts-pk-ready.ts-pk-pad.ts-pk-left .ts-pk-title-content .ts-pk-top{padding-left:calc(12px + var(--pk-clear))}   /* the other side keeps the theme's own spacing */}
 /* the side button in the preview */
 .ts-pk-card .hint{display:flex;align-items:center;justify-content:space-between;gap:.5rem}
@@ -160,7 +163,7 @@ html .ts-pk .ts-pk-fan li{position:absolute;right:52px;top:0;display:flex;align-
 html .ts-pk .ts-pk-fan li span{min-width:0;overflow:hidden;text-overflow:ellipsis}
 html .ts-pk .ts-pk-fan li b{display:grid;place-items:center;flex:0 0 auto;width:1.45rem;height:1.45rem;margin:0;border-radius:50%;background:var(--pk-panel);color:var(--pk-ink);font-size:.72rem;font-weight:800}
 html .ts-pk .ts-pk-fan li.is-done b{color:var(--pk-on)}
-html .ts-pk .ts-pk-fan li.is-now{border:1.5px solid var(--pk-on)}   /* where you are: the open box's green edge */
+html .ts-pk .ts-pk-fan li.is-now{border:1.5px solid var(--pk-on)}   /* green marks reading position; the preview uses its own amber edge */
 html .ts-pk .ts-pk-nav.is-tight .ts-pk-fan li{height:var(--pk-fan-h,34px);min-height:0;padding:0 .5rem;font-size:.75rem;gap:.4rem}   /* rail pieces closer than a name is tall (Kiro, sixth review) */
 html .ts-pk .ts-pk-nav.is-tight .ts-pk-fan li b{width:min(1.2rem,calc(var(--pk-fan-h,34px) - 6px));height:min(1.2rem,calc(var(--pk-fan-h,34px) - 6px));font-size:.66rem}
 html .ts-pk .ts-pk-nav.is-index .ts-pk-fan li{opacity:1;transform:none;transition-delay:var(--d-open,0ms)}
@@ -192,15 +195,27 @@ html .ts-pk .ts-pk-card.fit1 .more{display:block}
 html .ts-pk .ts-pk-card.fit4 .sum{max-height:6.6em}
 html .ts-pk .ts-pk-card.fit5 .row,html .ts-pk .ts-pk-card.fit5 .more{display:none}
 html .ts-pk .ts-pk-card.fit5 .open small,html .ts-pk .ts-pk-card.fit5 .side,html .ts-pk .ts-pk-card.fit5 .sum{display:none}
-html .ts-pk .ts-pk-card.fit5 .open > b{font-size:.95rem;margin-top:0}
+html .ts-pk .ts-pk-card.fit5{padding:.25rem}
+html .ts-pk .ts-pk-card.fit5 .open{margin:.15rem 0}
+html .ts-pk .ts-pk-card.fit5 .open > b{font-size:.95rem;margin-top:0;min-height:40px;display:flex;align-items:center}
 html .ts-pk .ts-pk-card.fit5 .sum{display:block;max-height:4.4em;margin-top:.15rem}   /* gist and whole-paragraph summaries retain a scroll surface on the smallest fit */
 html .ts-pk .ts-pk-card.fit5 .hint{margin-top:.3rem;padding-top:.3rem}   /* very short screens or very large text retain the name, summary and jump hint */
 html .ts-pk .ts-pk-card.ts-pk-stack{overflow-y:auto;overscroll-behavior:contain}   /* last resort: the card scrolls, and fit() brings the open box into view */
 /* A form is a text/control block, not the full-width column around it. */
 @media screen{html.ts-pk-ready .ts-pk-title-rail form{box-sizing:border-box}}
+/* Move the complete disclosure box, not just its text: its full-width button
+   must remain tappable. The surrounding full-width column is unchanged. */
+@media screen{
+html.ts-pk-ready.ts-pk-pad .ts-pk-title-content .uagb-faq-item{box-sizing:border-box;max-width:calc(100% - var(--pk-clear))}
+html.ts-pk-ready.ts-pk-pad:not(.ts-pk-left) .ts-pk-title-content .uagb-faq-item{margin-right:var(--pk-clear)}
+html.ts-pk-ready.ts-pk-pad.ts-pk-left .ts-pk-title-content .uagb-faq-item{margin-left:var(--pk-clear)}
+}
 /* Newly added rails show names and navigation only, never paragraph previews. */
 .ts-pk-titles[hidden]{display:none!important}
+.ts-pk-titles.is-single .ts-pk-nav{bottom:auto;height:min(120px,24vh)}
+@media screen and (max-height:500px){.ts-pk:not(.ts-pk-titles) .ts-pk-card{width:min(440px,calc(100vw - 78px));max-height:calc(100dvh - 24px)}}
 .ts-pk-titles .ts-pk-card b{overflow-wrap:anywhere}
+html .ts-pk-titles .ts-pk-card .row span{white-space:normal;overflow:visible;overflow-wrap:anywhere}
 @media print{.ts-pk{display:none!important}html.ts-pk-ready .entry-content .ts-jump{display:block!important}}
 </style>
 	<?php
@@ -213,6 +228,11 @@ add_action( 'wp_footer', function () {
 	$page = get_queried_object();
 	$title = is_page() && $page && ! empty( $page->post_title ) ? $page->post_title : wp_get_document_title();
 	$title = html_entity_decode( wp_strip_all_tags( (string) $title ), ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+	// Search/404 identity should not repeat the site's branding in every box.
+	if ( ! is_page() && function_exists( 'get_bloginfo' ) ) {
+		$site_name = html_entity_decode( wp_strip_all_tags( (string) get_bloginfo( 'name' ) ), ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+		if ( '' !== $site_name ) { $title = preg_replace( '/\s+[-|–—]\s+' . preg_quote( $site_name, '/' ) . '$/u', '', $title ); }
+	}
 	$flags = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
 	$config = wp_json_encode( array( 'title' => $title, 'mode' => is_search() ? 'fixed' : 'sections' ), $flags );
 	if ( false === $config ) { return; }
@@ -236,11 +256,15 @@ add_action( 'wp_footer', function () {
     out.sort(function (a, b) { var x = byHref(a.href), y = byHref(b.href); return x === y ? 0 : (x.compareDocumentPosition(y) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1); });
     return out;
   }
+  function pageIdentity() {
+    try { var config = JSON.parse(document.getElementById('ts-peek-nav-config').textContent); if (typeof config.title === 'string' && config.title.trim()) return config.title.trim(); } catch (e) {}
+    return document.title;
+  }
   // All modes share the same strip, pinned-header measurement and reading line.
   function titleStrip(content, sections, resolve, row, titleOnly) {
     var root = document.documentElement, strip = document.createElement('div');
     strip.id = 'ts-peek-title-strip'; strip.className = 'ts-pk ts-pk-top' + (titleOnly ? ' is-title-only' : ''); strip.setAttribute('aria-hidden', 'true');
-    strip.innerHTML = '<div class="in"><div class="tr"></div></div>';
+    strip.innerHTML = '<div class="in"><span class="before">' + esc(pageIdentity()) + '</span><div class="tr"></div></div>';
     if (row) row.parentNode.insertBefore(strip, row.nextSibling); else content.insertBefore(strip, content.firstChild);
     var topIn = strip.querySelector('.in'), topTr = strip.querySelector('.tr'), items = [], head = document.getElementById('masthead');
     root.classList.add('ts-pk-title-ready');
@@ -254,14 +278,16 @@ add_action( 'wp_footer', function () {
       root.style.setProperty('--pk-title-end', ((parseFloat(getComputedStyle(strip).top) || 0) + strip.offsetHeight) + 'px');
     }
     function layout() {
+      var height = 0;
       if (titleOnly) {
         var width = Math.max(1, topIn.clientWidth * (items.length === 1 ? 1 : 0.68));
         items.forEach(function (item) { item.style.maxWidth = width + 'px'; });
         // Reserve the active weight's full wrapped height before painting, so
         // becoming current cannot cut a long title's last line off.
-        var height = items.reduce(function (h, item) { item.style.fontWeight = '800'; var next = Math.ceil(item.getBoundingClientRect().height); item.style.removeProperty('font-weight'); return Math.max(h, next); }, 0);
-        topIn.style.height = Math.max(parseFloat(getComputedStyle(root).fontSize) * 1.55, height) + 'px';
+        height = items.reduce(function (h, item) { item.style.fontWeight = '800'; var next = Math.ceil(item.getBoundingClientRect().height); item.style.removeProperty('font-weight'); return Math.max(h, next); }, 0);
       }
+      height = Math.max(height, Math.ceil(strip.querySelector('.before').getBoundingClientRect().height));
+      topIn.style.height = Math.max(parseFloat(getComputedStyle(root).fontSize) * 1.55, height) + 'px';
       measureHead();
     }
     function setSections(next) {
@@ -282,6 +308,7 @@ add_action( 'wp_footer', function () {
       return { cur: cur, fills: fills, whole: whole, shift: topIn.clientWidth / 2 - x, near: near };
     }
     function paint(state) {
+      strip.classList.toggle('is-before', state.cur < 0);
       topTr.style.transform = 'translateX(' + state.shift.toFixed(1) + 'px)';
       items.forEach(function (t, k) { t.classList.toggle('is-now', k === state.near); });
     }
@@ -364,7 +391,10 @@ add_action( 'wp_footer', function () {
       // Reuse the existing rail arrival contract only for load-time fragments
       // and an animated FAQ jump. Stop after four seconds or any visitor input.
       stopPending();
-      var timer = 0, expiry = 0, done = false, sizes = null, inputs = ['wheel', 'touchstart', 'pointerdown', 'keydown', 'mousedown', 'hashchange', 'popstate'];
+      var timer = 0, expiry = 0, done = false, sizes = null, inputs = ['wheel', 'touchstart', 'pointerdown', 'keydown', 'hashchange', 'popstate'];
+      // Pointer Events already report a new mouse press. The compatibility
+      // mousedown after this handled touch is not new visitor input.
+      if (!('PointerEvent' in window)) inputs.push('mousedown');
       function stop() {
         if (done) return; done = true; clearTimeout(timer); clearTimeout(expiry);
         window.removeEventListener('scroll', idle);
@@ -429,7 +459,7 @@ add_action( 'wp_footer', function () {
   function sectionSource(content, row, keepRowTargets) {
     var config = null;
     try { config = JSON.parse(document.getElementById('ts-peek-nav-config').textContent); } catch (e) {}
-    var fallback = config && typeof config.title === 'string' && config.title.trim() ? config.title.trim() : document.title;
+    var fallback = pageIdentity();
     function visible(node) {
       if (!node || !content.contains(node) || node.closest('.ts-pk,.ts-jump,nav,header,footer,dialog,[role="navigation"],[role="banner"],[role="contentinfo"],[role="dialog"],[hidden],[inert],[aria-hidden="true"],.screen-reader-text,.sr-only')) return false;
       var r = node.getBoundingClientRect(); if (r.width < 2 || r.height < 2) return false;
@@ -568,7 +598,7 @@ add_action( 'wp_footer', function () {
       return S.map(function (s) { var tag = s.href ? 'a' : 'button'; return '<li><' + tag + (s.href ? ' href="' + attr(s.href) + '" draggable="false"' : ' type="button"') + ' data-ts-pk-section aria-label="' + attr(s.label) + '"><i></i></' + tag + '></li>'; }).join('');
     }
     function fanHTML() { return S.map(function (s, i) { return '<li><b>' + (i + 1) + '</b><span>' + esc(s.label) + '</span></li>'; }).join(''); }
-    var box = document.createElement('div'); box.className = 'ts-pk' + (hasData ? '' : ' ts-pk-titles');
+    var box = document.createElement('div'); box.className = 'ts-pk' + (hasData ? '' : ' ts-pk-titles') + (S.length === 1 ? ' is-single' : '');
     box.innerHTML = '<nav class="ts-pk-nav" aria-label="Sections on this page"><button type="button" class="ts-pk-ix" aria-expanded="false" aria-controls="ts-pk-fan" aria-label="Show all sections (press and hold)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 7h12M6 12h9M6 17h6"/></svg></button>' +
       '<ol class="ts-pk-fan" id="ts-pk-fan" aria-label="All sections" aria-hidden="true">' + fanHTML() + '</ol><ol class="ts-pk-rail">' + railHTML() + '</ol><span class="ts-pk-you" aria-hidden="true"></span><span class="ts-pk-label" aria-hidden="true"></span></nav>' +
       '<div class="ts-pk-card" role="group" aria-label="Section preview" tabindex="-1"></div>' +
@@ -590,10 +620,10 @@ add_action( 'wp_footer', function () {
       // measure where the text really ends on the rail's side, and give the text blocks only what is missing (the column itself is never padded)
       for (var round = 0; round < 3; round++) {
         var edge = left ? Infinity : -Infinity;
-        [].forEach.call(content.querySelectorAll((collect ? 'form,' : '') + 'p,li,h1,h2,h3,h4,h5,h6,blockquote,figcaption,dt,dd,td,th'), function (el) {
-          if (el.closest('.ts-pk,.ts-jump,nav,[role="navigation"],[role="tablist"],.tsx-picker,.tsp-picker,.tsr-picker,.tsi-picker') || (collect && el.parentElement.closest('form'))) return;
+        [].forEach.call(content.querySelectorAll((collect ? 'form,' : '') + '.uagb-faq-item,p,li,h1,h2,h3,h4,h5,h6,blockquote,figcaption,dt,dd,td,th'), function (el) {
+          if (el.closest('.ts-pk,.ts-jump,nav,[role="navigation"],[role="tablist"],.tsx-picker,.tsp-picker,.tsr-picker,.tsi-picker') || el.parentElement.closest('.uagb-faq-item') || (collect && el.parentElement.closest('form'))) return;
           var r = el.getBoundingClientRect(); if (!r.width) return;
-          var cs = getComputedStyle(el), e2 = left ? r.left + (parseFloat(cs.paddingLeft) || 0) : r.right - (parseFloat(cs.paddingRight) || 0);
+          var cs = getComputedStyle(el), boxed = el.classList.contains('uagb-faq-item'), e2 = left ? r.left + (boxed ? 0 : parseFloat(cs.paddingLeft) || 0) : r.right - (boxed ? 0 : parseFloat(cs.paddingRight) || 0);
           edge = left ? Math.min(edge, e2) : Math.max(edge, e2);
         });
         if (!isFinite(edge)) break;
@@ -692,7 +722,7 @@ add_action( 'wp_footer', function () {
       return '<button type="button" class="x" aria-label="Close the preview">×</button><small>Section ' + (i + 1) + ' of ' + S.length + (hasData ? ' · ' + s.mins + ' min' : '') + '</small><b>' + esc(s.label) + '</b>' +
         (!hasData ? '' : s.gist ? '<div class="sum is-gist" tabindex="0" role="region" aria-label="Summary of ' + attr(s.label) + '"><ul>' + s.gist.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul></div>'
          : s.summary.length ? '<div class="sum" tabindex="0" role="region" aria-label="Summary of ' + attr(s.label) + '">' + s.summary.map(function (t) { return '<p>' + esc(t) + '</p>'; }).join('') + '</div>' : '') +
-        '<span class="hint"><span>' + (pinned ? 'Tap to go there' : 'Lift to keep this preview') + '</span>' + (pinned ? '<button type="button" class="side" aria-label="Move the section bar to the ' + sideName() + ' side">⇆ ' + (sideName() === 'left' ? 'Left' : 'Right') + '</button>' : '') + '</span>';
+        '<span class="hint"><span>' + (pinned ? 'Tap to go there' : 'Lift to keep this preview') + '</span>' + (pinned ? '<button type="button" class="side" aria-label="Move the section bar to the ' + sideName() + ' side">' + (sideName() === 'left' ? 'Left' : 'Right') + '</button>' : '') + '</span>';
     }
     function hover(i) { segs.forEach(function (li, k) { li.classList.toggle('is-hover', k === i); }); }
     function cardSpaces() {
@@ -704,7 +734,8 @@ add_action( 'wp_footer', function () {
       // A strip entirely outside the viewport must not consume preview space.
       var lower = { top: Math.max(headBottom, stickyTop + top.offsetHeight, visible ? r.bottom : 0) + 8, bottom: window.innerHeight - 12 };
       var upper = visible && r.top - 8 > headBottom + 8 ? { top: headBottom + 8, bottom: r.top - 8 } : null;
-      return { lower: lower, upper: upper, key: [lower.top, lower.bottom, upper ? upper.top : 0, upper ? upper.bottom : 0].join('|') };
+      var expanded = { top: headBottom + 8, bottom: window.innerHeight - 12 };
+      return { lower: lower, upper: upper, expanded: expanded, key: [lower.top, lower.bottom, upper ? upper.top : 0, upper ? upper.bottom : 0].join('|') };
     }
     function moreHint() {
       var m = card.querySelector('.sum');
@@ -724,9 +755,10 @@ add_action( 'wp_footer', function () {
     function sameReadingSize(m) { return m && reading && reading.node === m && reading.width === m.clientWidth && reading.height === m.clientHeight && reading.total === m.scrollHeight; }
     function fit() {   // use the same visible boundary for fitting and placement
       card.style.maxHeight = '';
-      var spaces = cardSpaces(), bounds = spaces.lower, mh = parseFloat(getComputedStyle(card).maxHeight);
+      var spaces = cardSpaces(), bounds = spaces.lower, mh = parseFloat(getComputedStyle(card).maxHeight), summary = card.querySelector('.sum');
       function fitIn(space) {
         card.classList.remove('fit1', 'fit2', 'fit3', 'fit4', 'fit5');
+        if (summary) summary.style.removeProperty('max-height');
         var cap = Math.max(1, space.bottom - space.top);
         if (mh > 0) cap = Math.min(cap, mh);
         // Keep the existing scrollable-card fallback inside the selected space.
@@ -735,6 +767,13 @@ add_action( 'wp_footer', function () {
         // Fold distant rows first; then trim summary height and compact nearby
         // controls. Only the smallest fit leaves the open box alone.
         ['fit1', 'fit2', 'fit3', 'fit4', 'fit5'].some(function (c) { if (card.scrollHeight <= avail + 0.5) return true; card.classList.add(c); return false; });
+        if (summary && (card.classList.contains('fit5') || (summary.scrollHeight > summary.clientHeight + 1 && summary.clientHeight < 120))) {
+          // Reading space takes priority over the neighboring rows. Use the
+          // space actually left after the compact title and jump controls.
+          card.classList.add('fit5');
+          var chrome = card.scrollHeight - summary.clientHeight;
+          summary.style.maxHeight = Math.max(1, avail - chrome) + 'px';
+        }
         return card.scrollHeight <= avail + 0.5;
       }
       // A short landscape viewport may leave less room below the unpinned strip
@@ -742,6 +781,11 @@ add_action( 'wp_footer', function () {
       // below fails, without scrolling the page or changing the selected section.
       if (!fitIn(bounds) && spaces.upper && spaces.upper.bottom - spaces.upper.top > bounds.bottom - bounds.top) {
         bounds = spaces.upper; fitIn(bounds);
+      }
+      // On short screens an open reading card may cover the strip, but never
+      // the visible site header. The page and strip return unchanged on close.
+      if (summary && window.innerHeight <= 500 && summary.scrollHeight > summary.clientHeight + 1 && summary.clientHeight < 120 && spaces.expanded.bottom - spaces.expanded.top > bounds.bottom - bounds.top) {
+        bounds = spaces.expanded; fitIn(bounds);
       }
       var o = card.querySelector('.open'); if (o && card.scrollHeight > card.clientHeight + 1) card.scrollTop = Math.max(0, o.offsetTop - 4);   // never hidden
       fitted = { bounds: bounds, key: spaces.key, width: window.innerWidth, height: window.innerHeight };
@@ -850,7 +894,7 @@ add_action( 'wp_footer', function () {
     card.addEventListener('pointercancel', cancelCardTouch);
     card.addEventListener('lostpointercapture', function (e) { if (e.target === card) cancelCardTouch(e); });
     card.addEventListener('click', function (e) { if (performance.now() - cardTapAt < 700) { e.preventDefault(); return; } activate(e.target); });
-    card.addEventListener('keydown', function (e) { if (e.key !== 'Enter' || !card.classList.contains('is-pinned') || e.target.closest('button')) return; var i = +card.dataset.i; hideCard(); jumpTo(i); });   // Enter on × or the side button is that button's own click
+    card.addEventListener('keydown', function (e) { if (e.key !== 'Enter' || !card.classList.contains('is-pinned') || e.target.closest('button')) return; e.preventDefault(); var i = +card.dataset.i; hideCard(); jumpTo(i); });   // Enter on × or the side button is that button's own click
     document.addEventListener('pointerdown', function (e) {
       if (!card.classList.contains('is-pinned') || card.contains(e.target) || rail.contains(e.target)) return;
       hideCard(); swallowNextClick(false);   // this tap only closes the preview
@@ -892,7 +936,7 @@ add_action( 'wp_footer', function () {
       var focusedRow = wasCardFocus && active.closest('.row'), rowTarget = focusedRow ? el(+focusedRow.dataset.k) : null, oldSelectedIndex = +card.dataset.i;
       var focusPart = active && active.closest('.x,.side'), focusClass = focusPart && (focusPart.classList.contains('x') ? '.x' : '.side');
       hideCard(); setIndex(false);
-      S = next; describe(); rail.innerHTML = railHTML(); fan.innerHTML = fanHTML();
+      S = next; box.classList.toggle('is-single', S.length === 1); describe(); rail.innerHTML = railHTML(); fan.innerHTML = fanHTML();
       segs = [].slice.call(rail.children); fanItems = [].slice.call(fan.children);
       title.setSections(S); lengths(); lastRove = -2; lastLabel = '';
       var selectedIndex = S.findIndex(function (s) { return s.target === selected; }), focusedIndex = S.findIndex(function (s) { return s.target === focusedTarget; });

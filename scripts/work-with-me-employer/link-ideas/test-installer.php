@@ -64,6 +64,8 @@ function invoke_title_rehearsal( $args ) { $GLOBALS['message'] = ''; require __D
 function title_rehearsal_refusal( $args, $label ) { $before = $GLOBALS['db']; $error = null; try { invoke_title_rehearsal( $args ); } catch ( Throwable $e ) { $error = $e; } check( $error !== null && $GLOBALS['db'] === $before, 'title-strip adapter: ' . $label ); }
 function invoke_rail_rehearsal( $args ) { $GLOBALS['message'] = ''; require __DIR__ . '/core-title-rail/install-peek-core-title-rail.php'; return $GLOBALS['message']; }
 function rail_rehearsal_refusal( $args, $label ) { $before = $GLOBALS['db']; $error = null; try { invoke_rail_rehearsal( $args ); } catch ( Throwable $e ) { $error = $e; } check( $error !== null && $GLOBALS['db'] === $before, 'title-rail adapter: ' . $label ); }
+function invoke_kiro_rehearsal( $args ) { $GLOBALS['message'] = ''; require __DIR__ . '/core-kiro-fixes/install-peek-core-kiro-fixes.php'; return $GLOBALS['message']; }
+function kiro_rehearsal_refusal( $args, $label ) { $before = $GLOBALS['db']; $error = null; try { invoke_kiro_rehearsal( $args ); } catch ( Throwable $e ) { $error = $e; } check( $error !== null && $GLOBALS['db'] === $before, 'kiro-fixes adapter: ' . $label ); }
 function invoke_package( $package, $args ) { require $package . '/install-peek-nav.php'; }
 function snapshot_path() { preg_match( '/Before-snapshot: (.+)$/', $GLOBALS['message'], $m ); if ( ! isset( $m[1] ) ) { throw new RuntimeException( 'No completed snapshot: ' . $GLOBALS['message'] ); } return $m[1]; }
 function snap_write( $data, $name ) { $p = $GLOBALS['testdir'] . '/backups/' . $name . '.json'; file_put_contents( $p, json_encode( $data ) ); return $p; }
@@ -252,7 +254,7 @@ invoke( array( 'rollback', $upgrade_snap ) ); invoke( array( 'rollback', $core_s
 check( $db[1380] === $legacy && array_diff_key( $db, array( 1380 => true ) ) === $data_before, 'original migration recovery still works after upgrade reversal with all page data preserved' );
 // Frozen baseline corruption is tested in a disposable package, never by editing source.
 $package = $testdir . '/package'; mkdir( $package );
-foreach ( array( 'install-peek-nav.php', 'peek-nav-legacy.php', 'peek-nav-shared-v1.php', 'peek-nav-shared-v2.php', 'peek-nav-shared-v3.php', 'peek-nav-shared-v4.php', 'peek-nav.php' ) as $name ) { copy( __DIR__ . '/' . $name, $package . '/' . $name ); }
+foreach ( array( 'install-peek-nav.php', 'peek-nav-legacy.php', 'peek-nav-shared-v1.php', 'peek-nav-shared-v2.php', 'peek-nav-shared-v3.php', 'peek-nav-shared-v4.php', 'peek-nav-shared-v5.php', 'peek-nav.php' ) as $name ) { copy( __DIR__ . '/' . $name, $package . '/' . $name ); }
 $db = $upgrade_before; file_put_contents( $package . '/peek-nav-shared-v1.php', "\n// changed", FILE_APPEND ); $error = null;
 try { invoke_package( $package, array( 'apply', 'core-upgrade' ) ); } catch ( Throwable $e ) { $error = $e; }
 check( $error !== null && str_contains( $error->getMessage(), 'Frozen shared v1 payload differs' ) && $db === $upgrade_before, 'altered frozen v1 file hash stops upgrade before any write' );
@@ -265,6 +267,9 @@ check( $error !== null && str_contains( $error->getMessage(), 'Frozen shared v3 
 copy( __DIR__ . '/peek-nav-shared-v3.php', $package . '/peek-nav-shared-v3.php' ); file_put_contents( $package . '/peek-nav-shared-v4.php', "\n// changed", FILE_APPEND ); $error = null;
 try { invoke_package( $package, array( 'apply', 'core-title-rail' ) ); } catch ( Throwable $e ) { $error = $e; }
 check( $error !== null && str_contains( $error->getMessage(), 'Frozen shared v4 payload differs' ) && $db === $upgrade_before, 'altered frozen v4 file hash stops title-rail upgrade before any write' );
+copy( __DIR__ . '/peek-nav-shared-v4.php', $package . '/peek-nav-shared-v4.php' ); file_put_contents( $package . '/peek-nav-shared-v5.php', "\n// changed", FILE_APPEND ); $error = null;
+try { invoke_package( $package, array( 'apply', 'core-kiro-fixes' ) ); } catch ( Throwable $e ) { $error = $e; }
+check( $error !== null && str_contains( $error->getMessage(), 'Frozen shared v5 payload differs' ) && $db === $upgrade_before, 'altered frozen v5 file hash stops Kiro fixes before any write' );
 foreach ( glob( $package . '/*' ) as $f ) { unlink( $f ); } rmdir( $package ); $clock = '2026-11-09 05:00:00';
 // A second explicit transition binds v2, leaving both earlier recoveries intact.
 $db = $upgraded; $summary_before = $db; $clock = '2026-11-09 07:30:00';
@@ -474,7 +479,7 @@ $expected_drift = $rail_before; $expected_drift[ $drift_id ]['post']['post_modif
 try { invoke( array( 'apply', 'core-title-rail' ) ); } catch ( Throwable $e ) { $error = $e; }
 check( $error !== null && $db === $expected_drift, 'title-rail concurrent page drift restores core without overwriting independent change' );
 $db = $rail_before; invoke_rail_rehearsal( array( 'apply' ) ); $rail_snap = snapshot_path(); $rail_applied = $db;
-check( $db[1380]['post']['post_content'] === substr( file_get_contents( __DIR__ . '/peek-nav.php' ), 6 ) && $db[1380]['post']['post_modified'] === $clock && array_diff_key( $db, array( 1380 => true ) ) === $data_before, 'title-rail changes only core payload/dates and preserves all page records' );
+check( $db[1380]['post']['post_content'] === substr( file_get_contents( __DIR__ . '/peek-nav-shared-v5.php' ), 6 ) && $db[1380]['post']['post_modified'] === $clock && array_diff_key( $db, array( 1380 => true ) ) === $data_before, 'title-rail changes only core payload/dates and preserves all page records' );
 invoke_rail_rehearsal( array( 'apply' ) ); check( $db === $rail_applied, 'title-rail apply is idempotent' );
 foreach ( array( $legacy_path, $core_snap, $upgrade_snap, $summary_snap, $title_snap ) as $earlier_snapshot ) { refusal( array( 'rollback', $earlier_snapshot ), 'earlier snapshot cannot reverse title-rail payload' ); }
 refusal( array( 'apply', 'core-title-strip' ), 'title-strip cannot overwrite title-rail payload' );
@@ -515,6 +520,98 @@ invoke( array( 'rollback', $summary_snap ) );
 check( $db === $summary_before, 'existing v2-to-v3 snapshot restores exact v2 after both later reversals' );
 invoke( array( 'rollback', $upgrade_snap ) ); check( $db === $upgrade_before, 'existing v1-to-v2 recovery remains exact after all newer reversals' );
 invoke( array( 'rollback', $core_snap ) ); check( $db[1380] === $legacy && array_diff_key( $db, array( 1380 => true ) ) === $data_before, 'all five exact reversals preserve legacy recovery and every page record' );
+// Kiro corrections are a separate exact v5 transition. Historical snapshots stay pinned.
+$db = $rail_applied; $kiro_before = $db; $clock = '2026-11-09 19:00:00';
+check( hash( 'sha256', $db[1380]['post']['post_content'] ) === 'c7ed404ebe3e19d24e7a91b91bb996505efb80027fd183245d1c7137f188991e', 'title-rail still produces exact deployed shared v5' );
+invoke_kiro_rehearsal( array() ); check( $db === $kiro_before && str_contains( $message, 'core-kiro-fixes ready;' ), 'Kiro fixes default preflight is read-only and ready' );
+foreach ( array( 'https://thaisolitude.com', 'https://staging38.thaisolitude.com', 'https://staging39.thaisolitude.com/other', 'https://staging39.thaisolitude.com:443' ) as $bad ) { $home = $bad; refusal( array( 'apply', 'core-kiro-fixes' ), 'Kiro fixes refuse foreign/inexact origin ' . $bad ); }
+$home = 'https://staging39.thaisolitude.com'; kiro_rehearsal_refusal( array( 'apply' ), 'staging origin refused' );
+$home = 'http://localhost:8090'; $environment_type = 'staging'; kiro_rehearsal_refusal( array( 'apply' ), 'non-local environment refused' ); $environment_type = 'local';
+kiro_rehearsal_refusal( array( 'other' ), 'unknown mode refused' );
+kiro_rehearsal_refusal( array( 'apply', 'core-title-rail' ), 'target override refused' );
+kiro_rehearsal_refusal( array( 'rollback' ), 'missing snapshot refused' );
+kiro_rehearsal_refusal( array( 'rollback', $rail_snap, 'extra' ), 'extra rollback arguments refused' );
+foreach ( array( $core_snap, $upgrade_snap, $summary_snap, $title_snap, $rail_snap, $page_snap ) as $other_snapshot ) { kiro_rehearsal_refusal( array( 'rollback', $other_snapshot ), 'earlier/other-component snapshot refused' ); }
+foreach ( array( 'legacy', 'v1', 'v2', 'v3', 'v4', 'missing', 'code', 'title', 'status', 'meta', 'terms', 'duplicate', 'id' ) as $mutation ) {
+    $db = $kiro_before;
+    if ( $mutation === 'legacy' ) { $db[1380] = $legacy; }
+    if ( $mutation === 'v1' ) { $db[1380] = $upgrade_before[1380]; }
+    if ( $mutation === 'v2' ) { $db[1380] = $summary_before[1380]; }
+    if ( $mutation === 'v3' ) { $db[1380] = $title_before[1380]; }
+    if ( $mutation === 'v4' ) { $db[1380] = $rail_before[1380]; }
+    if ( $mutation === 'missing' ) { unset( $db[1380] ); }
+    if ( $mutation === 'code' ) { $db[1380]['post']['post_content'] .= '// drift'; }
+    if ( $mutation === 'title' ) { $db[1380]['post']['post_title'] .= ' edited'; }
+    if ( $mutation === 'status' ) { $db[1380]['post']['post_status'] = 'draft'; }
+    if ( $mutation === 'meta' ) { $db[1380]['meta']['_wpcode_priority'] = array( '11' ); }
+    if ( $mutation === 'terms' ) { $db[1380]['terms']['wpcode_location'] = array( 'footer' ); }
+    if ( $mutation === 'duplicate' || $mutation === 'id' ) { $db[9999] = $db[1380]; $db[9999]['id'] = $db[9999]['post']['ID'] = 9999; }
+    if ( $mutation === 'id' ) { unset( $db[1380] ); }
+    refusal( array( 'apply', 'core-kiro-fixes' ), 'Kiro fixes refuse core ' . $mutation );
+}
+foreach ( $data_before as $page_id => $record ) {
+    foreach ( array( 'missing', 'code', 'meta', 'terms', 'status', 'duplicate' ) as $mutation ) {
+        $db = $kiro_before;
+        if ( $mutation === 'missing' ) { unset( $db[ $page_id ] ); }
+        if ( $mutation === 'code' ) { $db[ $page_id ]['post']['post_content'] .= '// independently changed'; }
+        if ( $mutation === 'meta' ) { $db[ $page_id ]['meta']['_wpcode_priority'] = array( '11' ); }
+        if ( $mutation === 'terms' ) { $db[ $page_id ]['terms']['wpcode_location'] = array( 'footer' ); }
+        if ( $mutation === 'status' ) { $db[ $page_id ]['post']['post_status'] = 'draft'; }
+        if ( $mutation === 'duplicate' ) { $db[9999] = $record; $db[9999]['id'] = $db[9999]['post']['ID'] = 9999; }
+        refusal( array( 'apply', 'core-kiro-fixes' ), 'Kiro fixes refuse page ' . $page_id . ' ' . $mutation );
+    }
+}
+$db = $kiro_before;
+foreach ( array( 'fail_write', 'fail_cache', 'fail_snapshot_complete' ) as $failure ) { $GLOBALS[ $failure ] = true; refusal( array( 'apply', 'core-kiro-fixes' ), 'Kiro fixes ' . $failure . ' recovers exact v5 and every page' ); }
+$mutate_page_on_refresh = static function () use ( $drift_id ) { $GLOBALS['db'][ $drift_id ]['post']['post_modified'] = '2026-11-09 19:01:00'; };
+$expected_drift = $kiro_before; $expected_drift[ $drift_id ]['post']['post_modified'] = '2026-11-09 19:01:00'; $error = null;
+try { invoke( array( 'apply', 'core-kiro-fixes' ) ); } catch ( Throwable $e ) { $error = $e; }
+check( $error !== null && $db === $expected_drift, 'Kiro fixes concurrent page drift restores core without overwriting independent change' );
+$db = $kiro_before; invoke_kiro_rehearsal( array( 'apply' ) ); $kiro_snap = snapshot_path(); $kiro_applied = $db;
+check( $db[1380]['post']['post_content'] === substr( file_get_contents( __DIR__ . '/peek-nav.php' ), 6 ) && $db[1380]['post']['post_modified'] === $clock && array_diff_key( $db, array( 1380 => true ) ) === $data_before, 'Kiro fixes change only core payload/dates and preserve all page records' );
+invoke_kiro_rehearsal( array( 'apply' ) ); check( $db === $kiro_applied, 'Kiro fixes apply is idempotent' );
+foreach ( array( $legacy_path, $core_snap, $upgrade_snap, $summary_snap, $title_snap, $rail_snap ) as $earlier_snapshot ) { refusal( array( 'rollback', $earlier_snapshot ), 'earlier snapshot cannot reverse Kiro fixes payload' ); }
+refusal( array( 'apply', 'core-title-rail' ), 'frozen title-rail transition cannot overwrite Kiro fixes payload' );
+$kiro_snapshot = json_decode( file_get_contents( $kiro_snap ), true );
+check( $kiro_snapshot['bundle'] === 'peek-core-kiro-fixes-v1' && $kiro_snapshot['payloads']['before_sha256'] === 'c7ed404ebe3e19d24e7a91b91bb996505efb80027fd183245d1c7137f188991e', 'Kiro snapshot binds its own transition and exact deployed v5 predecessor' );
+foreach ( array( 'bundle', 'component', 'before-hash', 'new-hash', 'old-state', 'new-state', 'pages', 'pages-hash', 'incomplete', 'home' ) as $mutation ) {
+    $s = $kiro_snapshot;
+    if ( $mutation === 'bundle' ) { $s['bundle'] = 'peek-core-title-rail-v1'; }
+    if ( $mutation === 'component' ) { $s['component'] = 'core-title-rail'; }
+    if ( $mutation === 'before-hash' ) { $s['payloads']['before_sha256'] = str_repeat( '0', 64 ); }
+    if ( $mutation === 'new-hash' ) { $s['payloads']['code_sha256'] = str_repeat( '0', 64 ); }
+    if ( $mutation === 'old-state' ) { $s['old'] = $rail_before[1380]; $s['old_sha256'] = hash( 'sha256', json_encode( $s['old'] ) ); }
+    if ( $mutation === 'new-state' ) { $s['new']['post']['post_author'] = '99'; $s['new_sha256'] = hash( 'sha256', json_encode( $s['new'] ) ); }
+    if ( $mutation === 'pages' ) { $s['pages']['thai-massage']['post']['post_modified'] = '2000-01-01 00:00:00'; $s['pages_sha256'] = hash( 'sha256', json_encode( $s['pages'] ) ); }
+    if ( $mutation === 'pages-hash' ) { $s['pages_sha256'] = str_repeat( '0', 64 ); }
+    if ( $mutation === 'incomplete' ) { $s['complete'] = false; }
+    if ( $mutation === 'home' ) { $s['home'] = 'https://staging39.thaisolitude.com'; }
+    refusal( array( 'rollback', snap_write( $s, 'kiro-' . $mutation ) ), 'Kiro fixes refuse snapshot ' . $mutation );
+}
+foreach ( array( 'code', 'date', 'title', 'status', 'meta', 'terms', 'duplicate' ) as $mutation ) {
+    $db = $kiro_applied;
+    if ( $mutation === 'code' ) { $db[1380]['post']['post_content'] .= '// changed'; }
+    if ( $mutation === 'date' ) { $db[1380]['post']['post_modified'] = '2027-01-01 00:00:00'; }
+    if ( $mutation === 'title' ) { $db[1380]['post']['post_title'] .= ' edited'; }
+    if ( $mutation === 'status' ) { $db[1380]['post']['post_status'] = 'draft'; }
+    if ( $mutation === 'meta' ) { $db[1380]['meta']['_wpcode_priority'] = array( '11' ); }
+    if ( $mutation === 'terms' ) { $db[1380]['terms']['wpcode_location'] = array( 'footer' ); }
+    if ( $mutation === 'duplicate' ) { $db[9999] = $db[1380]; $db[9999]['id'] = $db[9999]['post']['ID'] = 9999; }
+    refusal( array( 'rollback', $kiro_snap ), 'Kiro fixes rollback refuses current core ' . $mutation );
+}
+foreach ( $data_before as $page_id => $record ) { $db = $kiro_applied; $db[ $page_id ]['post']['post_modified'] = '2027-01-01 00:00:00'; refusal( array( 'rollback', $kiro_snap ), 'Kiro fixes rollback refuses changed complete page state ' . $page_id ); }
+$db = $kiro_applied; invoke_kiro_rehearsal( array( 'rollback', $kiro_snap ) ); check( $db === $kiro_before, 'Kiro fixes rollback restores exact v5 post/settings/dates and all data' );
+invoke_kiro_rehearsal( array( 'rollback', $kiro_snap ) ); check( $db === $kiro_before, 'Kiro fixes rollback is idempotent' );
+invoke_kiro_rehearsal( array( 'apply' ) ); check( $db === $kiro_applied, 'Kiro fixes reapply exactly matches first result' );
+$without_page = $kiro_applied; unset( $without_page[ $drift_id ] ); $db = $without_page;
+invoke( array( 'preflight', 'core-kiro-fixes' ) ); check( $db === $without_page && str_contains( $message, 'core-kiro-fixes applied;' ), 'Kiro fixes core remains inspectable after a separate page-only removal' );
+invoke( array( 'apply', 'core-kiro-fixes' ) ); check( $db === $without_page, 'idempotent Kiro fixes apply never recreates separately removed data' );
+refusal( array( 'rollback', $kiro_snap ), 'Kiro fixes rollback refuses separately removed page data' );
+$db = $kiro_applied; invoke( array( 'rollback', $kiro_snap ) ); invoke( array( 'rollback', $rail_snap ) );
+check( $db === $rail_before, 'existing v4-to-v5 snapshot restores exact v4 after Kiro fixes reversal' );
+invoke( array( 'rollback', $title_snap ) ); check( $db === $title_before, 'existing v3-to-v4 recovery stays exact after Kiro and title-rail reversals' );
+invoke( array( 'rollback', $summary_snap ) ); invoke( array( 'rollback', $upgrade_snap ) ); invoke( array( 'rollback', $core_snap ) );
+check( $db[1380] === $legacy && array_diff_key( $db, array( 1380 => true ) ) === $data_before, 'all six exact reversals preserve legacy recovery and every page record' );
 // Execute the actual read-only origin inventory program from the push wrapper.
 // Changing published coverage must block a forward deployment, without adding a runtime map.
 $push_source = file_get_contents( __DIR__ . '/push-peek-nav.sh' );
@@ -566,7 +663,7 @@ $inventory_pages = $published_inventory; $inventory_pages[2]['permalink'] = $inv
 $inventory_pages = $published_inventory; $inventory_pages[2]['post_name'] = ''; inventory_refusal( '', 'refuses empty slug before shell field parsing' );
 $inventory_pages = $published_inventory; $inventory_pages[2]['post_name'] = "new\tchild"; inventory_refusal( '', 'refuses tab-separated slug injection' );
 $inventory_pages = $published_inventory;
-// Exercise the real phase dispatch: both sitewide forward transitions require
+// Exercise the real phase dispatch: all sitewide forward transitions require
 // reviewed coverage before touching WP; recovery remains possible after route edits.
 $phase_start = strpos( $push_source, "case \"\$phase\" in\n" ); $phase_end = strpos( $push_source, "\nEOS\n", $phase_start );
 if ( false === $phase_start || false === $phase_end ) { throw new RuntimeException( 'Missing remote phase dispatch.' ); }
@@ -580,7 +677,7 @@ function phase_check( $phase, $component, $coverage ) {
     fclose( $pipes[0] ); $out = stream_get_contents( $pipes[1] ); $err = stream_get_contents( $pipes[2] ); fclose( $pipes[1] ); fclose( $pipes[2] );
     return array( proc_close( $proc ), $out, $err );
 }
-foreach ( array( 'core-title-strip', 'core-title-rail' ) as $component ) {
+foreach ( array( 'core-title-strip', 'core-title-rail', 'core-kiro-fixes' ) as $component ) {
     foreach ( array( 'preflight', 'apply' ) as $phase ) {
         $result = phase_check( $phase, $component, 'changed' );
         check( 0 !== $result[0] && ! str_contains( $result[1], 'RUN ' ), $component . ' ' . $phase . ' refuses changed published coverage before installer call' );
@@ -600,8 +697,12 @@ cfgs=$(mktemp); doc=/unused; installer=/unused; want=staging39.thaisolitude.com
 wp() {
   local part="${*: -1}"
   case "$part" in
+    core-kiro-fixes)
+      if [ "$model" = latest ]; then echo 'Success: core-kiro-fixes applied; nothing written.'
+      elif [ "$model" = v5 ] && [ -z "$missing_data" ]; then echo 'Success: core-kiro-fixes ready; nothing written.'
+      else return 1; fi ;;
     core-title-rail)
-      if [ "$model" = latest ]; then echo 'Success: core-title-rail applied; nothing written.'
+      if [ "$model" = v5 ]; then echo 'Success: core-title-rail applied; nothing written.'
       elif [ "$model" = v4 ] && [ -z "$missing_data" ]; then echo 'Success: core-title-rail ready; nothing written.'
       else return 1; fi ;;
     core-title-strip)
@@ -638,14 +739,14 @@ curl() {
   done
   route=${url#https://staging39.thaisolitude.com}; pg=${route#/}; pg=${pg%/}
   case "$pg" in thai-massage|therapeutic-massage|deep-tissue-massage|chair-massage) jump=1; if [ "$render_mode" != legacy ] && [ "$pg" != "$missing_data" ]; then has_data=1; has_core=1; fi ;; services) jump=1 ;; esac
-  case "$render_mode" in latest|v4) has_core=1 ;; esac
+  case "$render_mode" in latest|v5|v4) has_core=1 ;; esac
   if [ "$render_mode" = legacy ] && [ "$pg" = thai-massage ]; then has_core=1; fi
   if [ "$fault" = missing-core ] && [ "$pg" = parent/unlisted ]; then has_core=0; fi
   if [ "$fault" = extra-data ] && [ "$pg" = services ]; then has_data=1; fi
   if [ "$fault" = removed-jump ] && [ "$pg" = services ]; then jump=0; fi
   {
     if [ "$has_core" = 1 ]; then printf '<style id="ts-peek-nav-css"></style><script id="ts-peek-nav-runtime"></script>'; fi
-    case "$render_mode" in latest|v4) printf '<script id="ts-peek-nav-config"></script>' ;; esac
+    case "$render_mode" in latest|v5|v4) printf '<script id="ts-peek-nav-config"></script>' ;; esac
     if [ "$has_data" = 1 ]; then printf '<script id="ts-peek-nav-data"></script>'; fi
     if [ "$jump" = 1 ]; then printf '<nav class="ts-jump"></nav>'; fi
     if [ "$fault" = duplicate-core ] && [ "$pg" = '' ]; then printf '<script id="ts-peek-nav-runtime"></script>'; fi
@@ -662,8 +763,8 @@ function origin_check( $model, $render_mode, $missing_data = '', $fault = '' ) {
     fclose( $pipes[0] ); $out = stream_get_contents( $pipes[1] ); $err = stream_get_contents( $pipes[2] ); fclose( $pipes[1] ); fclose( $pipes[2] );
     return array( proc_close( $proc ), $out, $err );
 }
-foreach ( array( 'latest', 'v4', 'v3', 'v2', 'v1', 'legacy' ) as $version ) { $result = origin_check( $version, $version ); check( 0 === $result[0] && str_contains( $result[1], '200 /parent/unlisted/' ), 'origin verifier checks all actual pages with exact ' . $version . ' scope' ); }
-foreach ( array( 'latest', 'v4', 'v3' ) as $version ) { $result = origin_check( $version, $version, 'chair-massage' ); check( 0 === $result[0], 'origin verifier preserves separate page removal under ' . $version ); }
+foreach ( array( 'latest', 'v5', 'v4', 'v3', 'v2', 'v1', 'legacy' ) as $version ) { $result = origin_check( $version, $version ); check( 0 === $result[0] && str_contains( $result[1], '200 /parent/unlisted/' ), 'origin verifier checks all actual pages with exact ' . $version . ' scope' ); }
+foreach ( array( 'latest', 'v5', 'v4', 'v3' ) as $version ) { $result = origin_check( $version, $version, 'chair-massage' ); check( 0 === $result[0], 'origin verifier preserves separate page removal under ' . $version ); }
 $result = origin_check( 'v3', 'latest' ); check( 0 !== $result[0] && str_contains( $result[1], 'FAIL' ), 'ready predecessor cannot be mistaken for applied sitewide core' );
 $result = origin_check( 'unknown', 'latest' ); check( 0 !== $result[0] && ! str_contains( $result[1], '200 ' ), 'unknown core fails before any origin fetch' );
 foreach ( array( 'missing-core', 'extra-data', 'duplicate-core', 'removed-jump', 'challenge' ) as $fault ) {

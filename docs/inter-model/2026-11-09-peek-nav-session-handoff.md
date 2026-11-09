@@ -1,12 +1,18 @@
 # Session handoff: the Peek navigation (for the next Claude Code session)
 
+**Fix candidate in progress:** Ryan requested the Kiro issues be fixed. The
+[fix record](../reviews/2026-11-09-peek-kiro-fixes.md) tracks the candidate and
+required fresh-copy gates; no new staging deployment yet. The deployed core is
+frozen as v5, the previous title-rail transition is pinned, and the candidate
+uses the new `core-kiro-fixes` transition.
+
 **Assessment returned; fixes pending:** The [Kiro report and Codex verification](2026-11-09-peek-nav-kiro-assessment.md)
 record independently reproduced touch overshoot and keyboard double-toggle on
 Privacy. Existing passing checks missed the relevant initial disclosure state.
 Further layout verification stopped on HTTP202; do not claim the reported
 landscape and overlap findings were independently reproduced by Codex. This
-review changed records only. Preserve all-page rails; freeze current core as v5
-and pin its existing transition before any future runtime edit.
+review changed records only. Preserve all-page rails; the subsequent v5 freeze
+and fix work are tracked above.
 
 **Current: title-only Peek rails deployed on staging39; public browser and
 stored-code checks passed.** The [title-rail record](../reviews/2026-11-09-peek-title-rails.md)

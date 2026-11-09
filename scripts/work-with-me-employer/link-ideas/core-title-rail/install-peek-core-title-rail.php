@@ -1,5 +1,5 @@
 <?php
-// Exact deployed v4 -> rails without new summary data; untouched localhost baseline.
+// Exact frozen v4 -> frozen v5 rails without new summary data; untouched localhost baseline.
 $allowed_host = 'localhost:8090';
 if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) || 'http://' . $allowed_host !== untrailingslashit( home_url() ) || 'local' !== wp_get_environment_type() ) { throw new \RuntimeException( 'Isolated localhost:8090 rehearsal only.' ); }
 $args = isset( $args ) && is_array( $args ) ? $args : array();

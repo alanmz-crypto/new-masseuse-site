@@ -1,9 +1,15 @@
 # Peek shared template
 
+**Kiro fix candidate in progress, not deployed:** see the
+[fix and verification record](../../../docs/reviews/2026-11-09-peek-kiro-fixes.md).
+`peek-nav.php` now contains that candidate. The deployed baseline below is frozen
+as `peek-nav-shared-v5.php`; `core-title-rail` is pinned to v4→v5 and the new
+`core-kiro-fixes` transition is v5→candidate. No older snapshot changes meaning.
+
 Staging39 only. Title-only Peek rails are deployed to visitor pages without an
 existing rail. Final public browser checks and exact stored-code inspection passed;
 see the [current title-rail record](../../../docs/reviews/2026-11-09-peek-title-rails.md).
-The current `peek-nav.php` has 97,130 code bytes, SHA256
+The deployed v5 baseline has 97,130 code bytes, SHA256
 `c7ed404ebe3e19d24e7a91b91bb996505efb80027fd183245d1c7137f188991e`.
 It retains the all-page read-only title strip, larger summary areas and four
 approved service-page summary rails. Frozen `peek-nav-shared-v4.php` is the
@@ -51,7 +57,7 @@ Progress modes A–D gain the title rail; mode E hides it and releases its rail
 readiness/padding while the demo rail is active. Without PointerEvent support,
 the strip and ordinary links remain. No new summary text or data snippet is added.
 
-`core-title-rail` applied the exact frozen v4→current transition to #1380 in place
+`core-title-rail` applied the exact frozen v4→v5 transition to #1380 in place
 at **17:37:37 UTC**. Apply **42666333809**, source `267c93e94f2b81ae63843be8f2e806805a061bd3`,
 finished **17:41:06 UTC, PASS**. There was no fallback-only interval, and all four
 page-data records were retained. Before this write, Actions Gates passed
@@ -92,8 +98,9 @@ For recovery, first take a fresh verified encrypted off-site backup and check
 complete current ownership/state with the matching reviewed package. Use explicit
 `core-title-rail --rollback $HOME/private-backups/peek-template-core-title-rail-before-20261109-173737-cae68f35.json`
 arguments to restore v4 before any older route below. `core-title-strip` remains
-pinned to exact frozen v3→v4. Before any future runtime edit, freeze this deployed
-payload as shared v5 and pin this transition to it; v5 does not exist yet.
+pinned to exact frozen v3→v4. The deployed payload is now frozen as shared v5
+and this transition is pinned. After a future Kiro-fixes apply, restore v5
+through its own new snapshot before using this older title-rail rollback.
 Page-only data removal under the current core leaves a title-only rail and strip;
 the original jump row remains available without JavaScript.
 

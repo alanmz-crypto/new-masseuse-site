@@ -91,7 +91,11 @@ const reachCardEnds = async p => {
 const checkCard = async (p, label, row, data, i, allRows = false) => {
   const g = await snapshot(p), viewport = { left: 0, top: 0, right: g.viewport.width, bottom: g.viewport.height };
   const wanted = data.items.filter(item => item[1] === row[i].href.slice(1)).map(item => item[0]);
-  ok(`${label}: card clears the actual strip/header and stays on screen`, g.pinned && inside(g.card, viewport) && !overlaps(g.card, g.strip) && !overlaps(g.card, g.header), g);
+  // A summary on a short screen may temporarily cover the display-only strip
+  // to provide reading space. The site header and viewport remain strict;
+  // taller screens still keep both header and title strip clear.
+  const shortSummary = g.viewport.height <= 500 && g.summary && g.summary.height > 0;
+  ok(`${label}: card clears the header and stays on screen${shortSummary ? ' (short-screen summary may cover strip)' : ' below the strip'}`, g.pinned && inside(g.card, viewport) && (shortSummary || !overlaps(g.card, g.strip)) && !overlaps(g.card, g.header), g);
   const visible = inside(g.title, g.card) && inside(g.hint, g.card) && inside(g.summary, g.card) && inside(g.title, viewport) && inside(g.hint, viewport) && inside(g.summary, viewport);
   // Normal portrait states remain strict. In deliberately constrained states,
   // prove the existing outer-card fallback works with actual keyboard scrolling.

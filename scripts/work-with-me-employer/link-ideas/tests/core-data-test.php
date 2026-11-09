@@ -4,6 +4,7 @@
 $hooks = array(); $current_slug = 'thai-massage'; $admin = false; $feed = false; $page_view = true; $search_view = false;
 $page_title = '<b>Thai &amp; Massage</b> &lt;/script&gt;&lt;script&gt;alert("title")&lt;/script&gt;';
 $document_title = 'Document &amp; fallback';
+$site_name = 'Thai Solitude';
 $payload = array( 'schema' => 1, 'slug' => 'thai-massage', 'approval' => array( 'status' => 'approved', 'source' => 'test' ), 'items' => array( array( '</script><script>alert("x")</script>&', 'ts-one' ) ), 'coverage' => array( 'ts-one' => 'most' ) );
 $pages = array( 'thai-massage' => $payload, 'chair-massage' => array( 'secret-other-page' => 'must not leak' ) );
 function is_admin() { return $GLOBALS['admin']; }
@@ -12,6 +13,7 @@ function is_page() { return $GLOBALS['page_view']; }
 function is_search() { return $GLOBALS['search_view']; }
 function get_queried_object() { return null === $GLOBALS['current_slug'] ? null : (object) array( 'post_name' => $GLOBALS['current_slug'], 'post_title' => $GLOBALS['page_title'] ); }
 function wp_get_document_title() { return $GLOBALS['document_title']; }
+function get_bloginfo( $show ) { if ( $show !== 'name' ) { throw new Exception( 'Unexpected site identity field' ); } return $GLOBALS['site_name']; }
 function wp_strip_all_tags( $text ) { return trim( strip_tags( preg_replace( '@<(script|style)[^>]*?>.*?</\\1>@si', '', $text ) ) ); }
 function apply_filters( $name, $value ) { if ( 'ts_pk_pages' !== $name ) { throw new Exception( 'Wrong filter' ); } return $GLOBALS['pages']; }
 function add_action( $name, $fn, $priority ) { $GLOBALS['hooks'][ $name ][] = $fn; }
@@ -67,6 +69,28 @@ $page_view = false; $search_view = true;
 $output = render( 'wp_footer' );
 check( 'search uses fixed document title safely', script_json( $output, 'ts-peek-nav-config' ) === array( 'title' => 'Search </script><script>alert("fallback")</script> & "quotes"', 'mode' => 'fixed' ) && ! str_contains( $output, '<script>alert(' ) );
 check( 'search receives CSS and runtime without page data', str_contains( render( 'wp_head' ), 'id="ts-peek-nav-css"' ) && str_contains( $output, 'id="ts-peek-nav-runtime"' ) && ! str_contains( $output, 'id="ts-peek-nav-data"' ) );
+// Search and 404 use the document title; remove only the exact terminal site
+// identity, keeping query text, custom page headings and JSON escaping intact.
+foreach ( array( '-', '|', '–', '—' ) as $separator ) {
+    $document_title = 'Search results for “Thai Solitude” ' . $separator . ' Thai Solitude';
+    check( 'search removes terminal brand after ' . $separator . ' without altering the query', script_json( render( 'wp_footer' ), 'ts-peek-nav-config' ) === array( 'title' => 'Search results for “Thai Solitude”', 'mode' => 'fixed' ) );
+}
+$document_title = 'Search &lt;/script&gt;&lt;script&gt;alert("fallback")&lt;/script&gt; &amp; "quotes" - Thai Solitude';
+$output = render( 'wp_footer' );
+check( 'cleaned search identity still safely round trips script-like query text', script_json( $output, 'ts-peek-nav-config' ) === array( 'title' => 'Search </script><script>alert("fallback")</script> & "quotes"', 'mode' => 'fixed' ) && ! str_contains( $output, '<script>alert(' ) );
+$document_title = 'Thai Solitude - Search results';
+check( 'site name before rather than after the identity stays intact', script_json( render( 'wp_footer' ), 'ts-peek-nav-config' )['title'] === $document_title );
+$document_title = 'Search results - Thai Solitude archive';
+check( 'partial brand suffix is not removed', script_json( render( 'wp_footer' ), 'ts-peek-nav-config' )['title'] === $document_title );
+$site_name = 'Thai &amp; Solitude [A/B]?'; $document_title = 'Search results - Thai &amp; Solitude [A/B]?';
+check( 'configured brand entities and regular-expression punctuation are literal', script_json( render( 'wp_footer' ), 'ts-peek-nav-config' )['title'] === 'Search results' );
+$site_name = ''; $document_title = 'Search results - Thai Solitude';
+check( 'empty site identity never strips a document-title suffix', script_json( render( 'wp_footer' ), 'ts-peek-nav-config' )['title'] === $document_title );
+$site_name = 'Thai Solitude'; $search_view = false; $current_slug = null; $document_title = 'Page not found - Thai Solitude';
+$output = render( 'wp_footer' );
+check( '404 identity loses the site suffix while retaining its sections-mode rail config', script_json( $output, 'ts-peek-nav-config' ) === array( 'title' => 'Page not found', 'mode' => 'sections' ) && str_contains( $output, 'id="ts-peek-nav-runtime"' ) && ! str_contains( $output, 'id="ts-peek-nav-data"' ) );
+$page_view = true; $current_slug = 'unregistered'; $page_title = 'A guide - Thai Solitude';
+check( 'authored page title keeps an intentional site-name suffix', script_json( render( 'wp_footer' ), 'ts-peek-nav-config' ) === array( 'title' => $page_title, 'mode' => 'sections' ) );
 $page_view = true; $search_view = false;
 $current_slug = 'thai-massage'; $admin = true;
 check( 'admin emits nothing', render( 'wp_head' ) === '' && render( 'wp_footer' ) === '' );
