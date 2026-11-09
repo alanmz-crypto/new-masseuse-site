@@ -1,5 +1,5 @@
 {
-  "id": "peek-template-owned-20261109-1",
+  "id": "peek-rollout-access-20261109-1",
   "op": "inspect",
   "target": "staging39",
   "query": "snippets"
