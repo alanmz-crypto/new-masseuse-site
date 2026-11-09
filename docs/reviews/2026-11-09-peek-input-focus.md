@@ -149,6 +149,36 @@ staging recovery snapshot. Complete artifact/log reviewed; staging unchanged.
 Add changed-field/type/hash diagnostics without raw values or relaxed equality
 to identify the actual WordPress side effect in the next isolated rehearsal.
 
+Diagnostic-source Gates [42713676176](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42713676176)
+passed **32/0 + 1 rendered-only skip**, 22:39:31 UTC, source
+`be124988d73ca5e66edc4c411064444b6134999b`. The expanded diagnostic harness
+passed 99 checks with no raw stored values exposed.
+Third rehearsal [42713697500](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42713697500),
+source `696d1020a762644a73980e21c039787337720a82`, finished 22:41:09 UTC **FAIL**.
+It reproduced the same guarded local failure and identified only these changes:
+`_uag_css_file_name` and `_uag_page_assets` removed; SureRank's
+`surerank_seo_checks_last_updated` changed. No content-field difference appeared.
+Again, no recovery/browser/rendered-copy proof followed. Complete artifact
+reviewed; the local snapshot `rail-input-before-20261109-224106-2f5b6814.json`
+is not a staging snapshot.
+
+**Simplification explained before building:** because this update changes only
+the inline script, use a byte-exact content-only compare-and-swap through
+WordPress's database interface, then invalidate the page content cache. Avoid
+general page-save hooks that rewrite Spectra assets and SureRank timestamps.
+Keep the exact full-state preflight/read-back, unchanged metadata/dates/terms,
+private snapshot and refusal on unknown recovery state. This requires another
+fresh actual-copy apply/idempotence/rollback/reapply and rendered test run.
+
+Revised installer lint and **93 mock checks passed**. This replaces the previous
+save-hook/date-filter checks with byte-sensitive compare-and-swap, zero/error/
+unexpected row counts, fresh cached-state detection, late duplicate ownership,
+recognized failure recovery and exact reverse rollback. The diagnostic guard
+still rejects unknown concurrent changes. Independent review found no blocker.
+Targeted post and metadata cache reads and uncached ownership/taxonomy queries
+prevent stale data from concealing a full-state difference. Browser payload
+hashes and approved summaries are unchanged.
+
 ## Actual applies and recovery
 
 No apply or new staging recovery snapshot is recorded yet. Never substitute a

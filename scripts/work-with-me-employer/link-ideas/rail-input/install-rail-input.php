@@ -29,14 +29,16 @@ if ( $without_script( $old_html ) !== $without_script( $new_html ) ) { WP_CLI::e
 $manifest = array( 'old_content_sha256' => hash( 'sha256', $old_content ), 'new_content_sha256' => hash( 'sha256', $new_content ) );
 $taxonomies = get_object_taxonomies( 'page' ); sort( $taxonomies );
 $capture = static function () use ( $old_content, $new_content, $taxonomies ) {
+	// Refresh this page's read caches without running broad clean/save hooks.
+	wp_cache_delete( 1348, 'posts' ); wp_cache_delete( 1348, 'post_meta' );
 	$found = array();
-	foreach ( get_posts( array( 'post_type' => 'page', 'post_status' => array_values( get_post_stati() ), 'numberposts' => -1, 'suppress_filters' => true ) ) as $post ) {
+	foreach ( get_posts( array( 'post_type' => 'page', 'post_status' => array_values( get_post_stati() ), 'numberposts' => -1, 'suppress_filters' => true, 'cache_results' => false ) ) as $post ) {
 		if ( (int) $post->ID === 1348 || $post->post_name === 'rail-nav-ideas' || $post->post_title === 'Side rail ideas' || $post->post_content === $old_content || $post->post_content === $new_content || '1' === (string) get_post_meta( $post->ID, '_ts_rail_ideas', true ) ) { $found[] = (int) $post->ID; }
 	}
 	if ( $found !== array( 1348 ) ) { throw new \RuntimeException( 'Missing, replaced or duplicate Rail practice page; expected only reviewed page #1348.' ); }
 	$post = get_post( 1348, ARRAY_A, 'raw' ); $meta = get_post_meta( 1348 ); ksort( $meta ); $terms = array();
 	if ( ! is_array( $post ) ) { throw new \RuntimeException( 'Rail practice page is unreadable.' ); }
-	foreach ( $taxonomies as $taxonomy ) { $values = wp_get_object_terms( 1348, $taxonomy, array( 'fields' => 'slugs' ) ); if ( is_wp_error( $values ) ) { throw new \RuntimeException( 'Page taxonomy is unreadable.' ); } sort( $values ); $terms[ $taxonomy ] = $values; }
+	foreach ( $taxonomies as $taxonomy ) { $values = wp_get_object_terms( 1348, $taxonomy, array( 'fields' => 'slugs', 'cache_results' => false ) ); if ( is_wp_error( $values ) ) { throw new \RuntimeException( 'Page taxonomy is unreadable.' ); } sort( $values ); $terms[ $taxonomy ] = $values; }
 	return array( 'id' => 1348, 'post' => $post, 'meta' => $meta, 'terms' => $terms );
 };
 $matches = static function ( $record, $content ) {
@@ -72,17 +74,17 @@ $difference = static function ( $expected, $actual ) {
 	return implode( '; ', $changes ) . ( count( $changes ) >= $limit ? '; diagnostic limit reached' : '' );
 };
 $write = static function ( $before, $after ) use ( $capture, $difference ) {
+	global $wpdb;
 	$allowed = $before; $allowed['post']['post_content'] = $after['post']['post_content'];
 	if ( $allowed !== $after ) { throw new \RuntimeException( 'Transition is not content-only: ' . $difference( $allowed, $after ) ); }
 	$observed = $capture();
 	if ( $observed !== $before ) { throw new \RuntimeException( 'Complete page state changed before the content-only write: ' . $difference( $before, $observed ) ); }
-	$dates = static function ( $data, $postarr ) use ( $before ) { if ( (int) ( $postarr['ID'] ?? 0 ) === 1348 && ( $data['post_type'] ?? '' ) === 'page' ) { $data['post_modified'] = $before['post']['post_modified']; $data['post_modified_gmt'] = $before['post']['post_modified_gmt']; } return $data; };
-	// Keep existing revisions intact; the complete private snapshot is this update's rollback.
-	$revisions = static fn( $count, $post ) => (int) $post->ID === 1348 ? 0 : $count;
-	add_filter( 'wp_insert_post_data', $dates, PHP_INT_MAX, 2 ); add_filter( 'wp_revisions_to_keep', $revisions, PHP_INT_MAX, 2 );
-	try { $result = wp_update_post( wp_slash( array( 'ID' => 1348, 'post_content' => $after['post']['post_content'] ) ), true ); }
-	finally { remove_filter( 'wp_insert_post_data', $dates, PHP_INT_MAX ); remove_filter( 'wp_revisions_to_keep', $revisions, PHP_INT_MAX ); }
-	if ( is_wp_error( $result ) || ! $result ) { throw new \RuntimeException( 'Content save returned failure; checking the original state.' ); }
+	// Script-only change: save hooks were observed deleting UAG assets and changing
+	// SEO metadata. A byte-exact content CAS preserves all other WordPress storage.
+	$sql = $wpdb->prepare( "UPDATE {$wpdb->posts} SET post_content = %s WHERE ID = %d AND BINARY post_content = BINARY %s", $after['post']['post_content'], 1348, $before['post']['post_content'] );
+	try { $result = $wpdb->query( $sql ); }
+	finally { wp_cache_delete( 1348, 'posts' ); wp_cache_delete( 1348, 'post_meta' ); wp_cache_set_posts_last_changed(); }
+	if ( 1 !== $result ) { throw new \RuntimeException( 'Content compare-and-swap did not update exactly one row; checking the original state.' ); }
 	$observed = $capture();
 	if ( $observed !== $after ) { throw new \RuntimeException( 'Content save/full-state read-back failed: ' . $difference( $after, $observed ) ); }
 };

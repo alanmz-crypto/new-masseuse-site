@@ -5,8 +5,9 @@ $testdir = sys_get_temp_dir() . '/rail-input-installer-' . bin2hex( random_bytes
 mkdir( $testdir ); mkdir( $testdir . '/web' ); mkdir( $testdir . '/backups' );
 define( 'ABSPATH', $testdir . '/web/' ); define( 'ARRAY_A', 'ARRAY_A' );
 putenv( 'WWM_BACKUP_DIR=' . $testdir . '/backups' );
-$home = 'http://localhost:8090'; $theme = 'astra'; $admin = true; $filters = array(); $db = array(); $updates = 0; $deletes = 0; $captures = 0; $race = false;
-$fail_write = false; $fail_after_write = false; $fail_snapshot_complete = false; $save_drift = false; $message = ''; $pass = 0;
+$home = 'http://localhost:8090'; $theme = 'astra'; $admin = true; $db = array(); $updates = 0; $deletes = 0; $captures = 0; $race = false;
+$fail_write = false; $fail_db_error = false; $wrong_row_count = false; $fail_after_write = false; $fail_snapshot_complete = false; $concurrent_drift = false; $cas_race = ''; $message = ''; $pass = 0;
+$cache = array(); $cache_events = array(); $queries = 0; $last_changed = 0; $save_hooks = 0;
 class WP_CLI { static function error( $m ) { throw new RuntimeException( $m ); } static function success( $m ) { $GLOBALS['message'] = $m; } static function log( $m ) {} }
 function home_url() { return $GLOBALS['home']; }
 function untrailingslashit( $s ) { return rtrim( $s, '/' ); }
@@ -17,40 +18,53 @@ function get_object_taxonomies( $type ) { return array( 'page_topic' ); }
 function get_post_stati() { return array( 'publish', 'draft', 'trash' ); }
 function get_posts( $args ) {
 	$GLOBALS['captures']++;
-	if ( $GLOBALS['race'] && $GLOBALS['captures'] === 2 ) { $GLOBALS['db'][1348]['meta']['independent'] = array( 'new editor value' ); }
+	if ( $GLOBALS['race'] && $GLOBALS['captures'] === 2 ) { if ( $GLOBALS['race'] === 'duplicate' ) { $GLOBALS['db'][9999] = $GLOBALS['db'][1348]; $GLOBALS['db'][9999]['id'] = $GLOBALS['db'][9999]['post']['ID'] = 9999; } else { $GLOBALS['db'][1348]['meta']['independent'] = array( 'new editor value' ); } }
+	if ( ! isset( $args['name'] ) && ( $args['cache_results'] ?? true ) !== false ) { throw new RuntimeException( 'Ownership enumeration must bypass the query cache.' ); }
 	$pages = array_filter( $GLOBALS['db'], static function ( $r ) use ( $args ) { $statuses = $args['post_status'] === 'any' ? array( 'publish', 'draft' ) : (array) $args['post_status']; return $r['post']['post_type'] === 'page' && in_array( $r['post']['post_status'], $statuses, true ) && ( ! isset( $args['name'] ) || $r['post']['post_name'] === $args['name'] ); } );
 	return array_map( static fn( $r ) => (object) $r['post'], array_values( $pages ) );
 }
-function get_post( $id, $out = null, $context = null ) { $p = $GLOBALS['db'][$id]['post'] ?? null; return $out === ARRAY_A ? $p : ( $p ? (object) $p : null ); }
-function get_post_meta( $id, $key = '', $single = false ) { $m = $GLOBALS['db'][$id]['meta'] ?? array(); return $key === '' ? $m : ( $single ? ( $m[$key][0] ?? '' ) : ( $m[$key] ?? array() ) ); }
-function wp_get_object_terms( $id, $taxonomy, $args ) { return $GLOBALS['db'][$id]['terms'][$taxonomy] ?? array(); }
+function get_post( $id, $out = null, $context = null ) { $p = $GLOBALS['cache']['posts'][$id] ??= ( $GLOBALS['db'][$id]['post'] ?? null ); return $out === ARRAY_A ? $p : ( $p ? (object) $p : null ); }
+function get_post_meta( $id, $key = '', $single = false ) { $m = $GLOBALS['cache']['post_meta'][$id] ??= ( $GLOBALS['db'][$id]['meta'] ?? array() ); return $key === '' ? $m : ( $single ? ( $m[$key][0] ?? '' ) : ( $m[$key] ?? array() ) ); }
+function wp_get_object_terms( $id, $taxonomy, $args ) { if ( ( $args['cache_results'] ?? true ) !== false ) { throw new RuntimeException( 'Terms must bypass the relationship query cache.' ); } return $GLOBALS['db'][$id]['terms'][$taxonomy] ?? array(); }
 function is_wp_error( $v ) { return false; }
 function wp_json_encode( $v, $flags = 0 ) { if ( $GLOBALS['fail_snapshot_complete'] && is_array( $v ) && ( $v['complete'] ?? false ) === true ) { $GLOBALS['fail_snapshot_complete'] = false; return false; } return json_encode( $v, $flags ); }
 function wp_slash( $v ) { return is_array( $v ) ? array_map( 'wp_slash', $v ) : ( is_string( $v ) ? addslashes( $v ) : $v ); }
 function wp_unslash( $v ) { return is_array( $v ) ? array_map( 'wp_unslash', $v ) : ( is_string( $v ) ? stripslashes( $v ) : $v ); }
 function wp_strip_all_tags( $s ) { return strip_tags( $s ); }
-function add_filter( $tag, $callback, $priority = 10, $count = 1 ) { $GLOBALS['filters'][$tag][$priority][] = $callback; }
-function remove_filter( $tag, $callback, $priority ) { foreach ( $GLOBALS['filters'][$tag][$priority] as $i => $c ) { if ( $c === $callback ) { unset( $GLOBALS['filters'][$tag][$priority][$i] ); } } }
-function apply_filters( $tag, $value, ...$extra ) { $groups = $GLOBALS['filters'][$tag] ?? array(); ksort( $groups ); foreach ( $groups as $callbacks ) { foreach ( $callbacks as $c ) { $value = $c( $value, ...$extra ); } } return $value; }
-function wp_update_post( $arr, $error = false ) {
-	if ( $GLOBALS['fail_write'] ) { $GLOBALS['fail_write'] = false; return 0; }
-	$arr = wp_unslash( $arr ); $id = $arr['ID']; $p = array_merge( $GLOBALS['db'][$id]['post'], $arr );
-	$p['post_modified'] = $p['post_modified_gmt'] = '2099-01-01 00:00:00';
-	check( apply_filters( 'wp_revisions_to_keep', 5, (object) array( 'ID' => 1348 ) ) === 0, 'owned update does not create a revision' );
-	check( apply_filters( 'wp_revisions_to_keep', 5, (object) array( 'ID' => 900 ) ) === 5, 'other pages retain revision policy' );
-	$GLOBALS['db'][$id]['post'] = apply_filters( 'wp_insert_post_data', $p, $arr ); $GLOBALS['updates']++;
-	if ( $GLOBALS['save_drift'] ) { $GLOBALS['db'][$id]['post']['post_parent'] = '0'; $GLOBALS['db'][$id]['post']['comment_status'] = 'SYNTHETIC_PRIVATE_SAVE_VALUE'; $GLOBALS['db'][$id]['meta']['unknown_setting'][0] = 'SYNTHETIC_PRIVATE_META_VALUE'; $GLOBALS['db'][$id]['meta']['new_hook_setting'] = array( 'SYNTHETIC_PRIVATE_ADDED_VALUE' ); $GLOBALS['db'][$id]['terms']['page_topic'][] = 'SYNTHETIC_PRIVATE_TERM_VALUE'; }
-	if ( $GLOBALS['fail_after_write'] ) { $GLOBALS['fail_after_write'] = false; throw new RuntimeException( 'Forced failure after recognized write' ); }
-	return $id;
+function wp_update_post( $arr, $error = false ) { $GLOBALS['save_hooks']++; throw new RuntimeException( 'General save hooks must not run.' ); }
+function clean_post_cache( $id ) { $GLOBALS['save_hooks']++; throw new RuntimeException( 'General cache hooks must not run.' ); }
+function wp_cache_delete( $id, $group ) { if ( $id !== 1348 || ! in_array( $group, array( 'posts', 'post_meta' ), true ) ) { throw new RuntimeException( 'Unexpected cache invalidation scope.' ); } $GLOBALS['cache_events'][] = array( $id, $group ); unset( $GLOBALS['cache'][$group][$id] ); return true; }
+function wp_cache_set_posts_last_changed() { $GLOBALS['last_changed']++; }
+class Rail_Test_WPDB {
+	public $posts = 'wp_posts'; public $prepared = array(); public $last_args = array();
+	function prepare( $format, ...$args ) {
+		if ( $format !== 'UPDATE wp_posts SET post_content = %s WHERE ID = %d AND BINARY post_content = BINARY %s' || count( $args ) !== 3 || $args[1] !== 1348 || ! is_string( $args[0] ) || ! is_string( $args[2] ) ) { throw new RuntimeException( 'Only prepared byte-exact content CAS on page 1348 is allowed.' ); }
+		$key = 'prepared:' . count( $this->prepared ); $this->prepared[$key] = $args; $this->last_args = $args; return $key;
+	}
+	function query( $statement ) {
+		if ( ! isset( $this->prepared[$statement] ) ) { throw new RuntimeException( 'Unprepared query refused.' ); }
+		$GLOBALS['queries']++; list( $new, $id, $old ) = $this->prepared[$statement];
+		if ( $GLOBALS['fail_write'] ) { $GLOBALS['fail_write'] = false; return 0; }
+		if ( $GLOBALS['fail_db_error'] ) { $GLOBALS['fail_db_error'] = false; return false; }
+		if ( $GLOBALS['cas_race'] === 'case' ) { $GLOBALS['db'][$id]['post']['post_content'] = preg_replace( '/wp:html/', 'WP:html', $old, 1 ); }
+		if ( $GLOBALS['cas_race'] === 'trailing_space' ) { $GLOBALS['db'][$id]['post']['post_content'] = $old . ' '; }
+		if ( ( $GLOBALS['db'][$id]['post']['post_content'] ?? null ) !== $old ) { return 0; }
+		$GLOBALS['db'][$id]['post']['post_content'] = $new; $GLOBALS['updates']++;
+		if ( $GLOBALS['concurrent_drift'] ) { $GLOBALS['db'][$id]['post']['post_parent'] = '0'; $GLOBALS['db'][$id]['post']['comment_status'] = 'SYNTHETIC_PRIVATE_SAVE_VALUE'; $GLOBALS['db'][$id]['meta']['unknown_setting'][0] = 'SYNTHETIC_PRIVATE_META_VALUE'; $GLOBALS['db'][$id]['meta']['new_hook_setting'] = array( 'SYNTHETIC_PRIVATE_ADDED_VALUE' ); $GLOBALS['db'][$id]['terms']['page_topic'][] = 'SYNTHETIC_PRIVATE_TERM_VALUE'; }
+		if ( $GLOBALS['fail_after_write'] ) { $GLOBALS['fail_after_write'] = false; throw new RuntimeException( 'Forced failure after recognized write' ); }
+		if ( $GLOBALS['wrong_row_count'] ) { $GLOBALS['wrong_row_count'] = false; return 2; }
+		return 1;
+	}
 }
+$wpdb = new Rail_Test_WPDB();
 function wp_delete_post( $id, $force ) { $p = $GLOBALS['db'][$id] ?? null; unset( $GLOBALS['db'][$id] ); $GLOBALS['deletes']++; return $p; }
 function check( $ok, $label ) { if ( ! $ok ) { throw new RuntimeException( 'FAIL: ' . $label ); } $GLOBALS['pass']++; }
-function invoke( $args, $legacy = false ) { $GLOBALS['message'] = ''; $GLOBALS['captures'] = 0; if ( $legacy ) { require __DIR__ . '/../install-rail-ideas.php'; } else { require __DIR__ . '/install-rail-input.php'; } return $GLOBALS['message']; }
+function invoke( $args, $legacy = false ) { $GLOBALS['message'] = ''; $GLOBALS['captures'] = 0; $GLOBALS['cache'] = array(); if ( $legacy ) { require __DIR__ . '/../install-rail-ideas.php'; } else { require __DIR__ . '/install-rail-input.php'; } return $GLOBALS['message']; }
 function refusal( $args, $label, $legacy = false ) { $before = $GLOBALS['db']; $writes = $GLOBALS['updates'] + $GLOBALS['deletes']; $error = null; try { invoke( $args, $legacy ); } catch ( Throwable $e ) { $error = $e; } check( $error !== null && $GLOBALS['db'] === $before && $writes === $GLOBALS['updates'] + $GLOBALS['deletes'], $label ); }
 function snap_write( $snap, $name ) { $file = $GLOBALS['testdir'] . '/backups/' . $name . '.json'; file_put_contents( $file, json_encode( $snap ) ); return $file; }
 function snapshot_path() { if ( ! preg_match( '/Before-snapshot: (.+)$/', $GLOBALS['message'], $m ) ) { throw new RuntimeException( 'Snapshot path missing' ); } return $m[1]; }
 $content = "<!-- wp:html -->\n" . rtrim( file_get_contents( __DIR__ . '/../rail-ideas-v1.html' ) ) . "\n<!-- /wp:html -->";
-$record = array( 'id' => 1348, 'post' => array( 'ID' => 1348, 'post_type' => 'page', 'post_status' => 'publish', 'post_name' => 'rail-nav-ideas', 'post_title' => 'Side rail ideas', 'post_content' => $content, 'post_author' => '1', 'post_parent' => 0, 'post_excerpt' => '', 'comment_status' => 'closed', 'ping_status' => 'closed', 'post_date' => '2026-11-07 18:42:14', 'post_date_gmt' => '2026-11-08 02:42:14', 'post_modified' => '2026-11-07 18:42:14', 'post_modified_gmt' => '2026-11-08 02:42:14', 'guid' => 'http://localhost:8090/?page_id=1348' ), 'meta' => array( '_ts_rail_ideas' => array( '1' ), 'site-post-title' => array( 'disabled' ), 'surerank_settings_general' => array( 'a:1:{s:5:"title";s:11:"Keep my SEO";}' ), 'unknown_setting' => array( 'preserve', 'both values' ) ), 'terms' => array( 'page_topic' => array( 'practice' ) ) );
+$record = array( 'id' => 1348, 'post' => array( 'ID' => 1348, 'post_type' => 'page', 'post_status' => 'publish', 'post_name' => 'rail-nav-ideas', 'post_title' => 'Side rail ideas', 'post_content' => $content, 'post_author' => '1', 'post_parent' => 0, 'post_excerpt' => '', 'comment_status' => 'closed', 'ping_status' => 'closed', 'post_date' => '2026-11-07 18:42:14', 'post_date_gmt' => '2026-11-08 02:42:14', 'post_modified' => '2026-11-07 18:42:14', 'post_modified_gmt' => '2026-11-08 02:42:14', 'guid' => 'http://localhost:8090/?page_id=1348' ), 'meta' => array( '_ts_rail_ideas' => array( '1' ), 'site-post-title' => array( 'disabled' ), 'surerank_settings_general' => array( 'a:1:{s:5:"title";s:11:"Keep my SEO";}' ), 'surerank_seo_checks_last_updated' => array( '1794081134' ), '_uag_css_file_name' => array( 'uag-css-1348.css' ), '_uag_page_assets' => array( 'a:0:{}' ), 'unknown_setting' => array( 'preserve', 'both values' ) ), 'terms' => array( 'page_topic' => array( 'practice' ) ) );
 ksort( $record['meta'] ); $db[1348] = $record;
 $db[900] = array( 'post' => array( 'ID' => 900, 'post_type' => 'page', 'post_status' => 'publish', 'post_name' => 'unrelated', 'post_title' => 'Unrelated', 'post_content' => 'Untouched content' ), 'meta' => array(), 'terms' => array() );
 $original = $db;
@@ -77,22 +91,31 @@ foreach ( array( 'id', 'slug', 'title', 'status', 'trash', 'code', 'owner', 'own
 $db = $original;
 foreach ( array( '', '.', ABSPATH ) as $dir ) { putenv( 'WWM_BACKUP_DIR=' . $dir ); refusal( array( 'apply' ), 'private directory required: ' . $dir ); }
 putenv( 'WWM_BACKUP_DIR=' . $testdir . '/backups' );
-$fail_write = true; refusal( array( 'apply' ), 'failed update leaves original intact' );
-foreach ( array( 'fail_after_write', 'fail_snapshot_complete' ) as $flag ) {
+foreach ( array( 'fail_write', 'fail_db_error' ) as $flag ) { $GLOBALS[$flag] = true; $generation = $last_changed; refusal( array( 'apply' ), $flag . ' leaves original intact' ); check( $last_changed === $generation + 1, 'failed CAS still invalidates query cache before recovery read' ); }
+foreach ( array( 'fail_after_write', 'fail_snapshot_complete', 'wrong_row_count' ) as $flag ) {
 	$GLOBALS[$flag] = true; $error = null; try { invoke( array( 'apply' ) ); } catch ( Throwable $e ) { $error = $e; }
 	check( $error !== null && $db === $original, $flag . ' restores complete original state' );
 }
 $race = true; $writes = $updates; $error = null; try { invoke( array( 'apply' ) ); } catch ( Throwable $e ) { $error = $e; }
 check( $error !== null && $updates === $writes && $db[1348]['post']['post_content'] === $content && $db[1348]['meta']['independent'] === array( 'new editor value' ), 'concurrent independent edit is retained without overwrite' ); $race = false; $db = $original;
-$save_drift = true; $writes = $updates; $error = null; try { invoke( array( 'apply' ) ); } catch ( Throwable $e ) { $error = $e; }
-check( $error !== null && $updates === $writes + 1 && $db[1348]['meta']['new_hook_setting'] === array( 'SYNTHETIC_PRIVATE_ADDED_VALUE' ), 'save-hook drift refuses recovery overwrite of an unknown state' );
+$race = 'duplicate'; $writes = $updates; $error = null; try { invoke( array( 'apply' ) ); } catch ( Throwable $e ) { $error = $e; }
+check( $error !== null && $updates === $writes && isset( $db[9999] ) && $db[1348] === $original[1348], 'fresh ownership enumeration sees a late duplicate and writes nothing' ); $race = false; $db = $original;
+foreach ( array( 'case', 'trailing_space' ) as $cas_race ) {
+	$writes = $updates; $generation = $last_changed; $error = null; try { invoke( array( 'apply' ) ); } catch ( Throwable $e ) { $error = $e; }
+	$changed_content = $cas_race === 'case' ? preg_replace( '/wp:html/', 'WP:html', $content, 1 ) : $content . ' ';
+	check( $error !== null && $updates === $writes && $db[1348]['post']['post_content'] === $changed_content && $last_changed === $generation + 1, 'byte-exact CAS refuses concurrent ' . $cas_race . ' change without overwriting it' ); $db = $original;
+}
+$cas_race = ''; $concurrent_drift = true; $writes = $updates; $error = null; try { invoke( array( 'apply' ) ); } catch ( Throwable $e ) { $error = $e; }
+check( $error !== null && $updates === $writes + 1 && $db[1348]['meta']['new_hook_setting'] === array( 'SYNTHETIC_PRIVATE_ADDED_VALUE' ), 'fresh post/meta read sees concurrent drift despite prior cached values and refuses recovery overwrite' );
 $diagnostic = $error ? $error->getMessage() : '';
 foreach ( array( 'state["post"]["post_parent"]', 'state["post"]["comment_status"]', 'state["meta"]["unknown_setting"][0]', 'state["meta"]["new_hook_setting"]', 'state["terms"]["page_topic"][1]' ) as $path ) { check( str_contains( $diagnostic, $path ), 'diagnostic identifies changed field path: ' . $path ); }
 check( str_contains( $diagnostic, 'expected integer sha256=' ) && str_contains( $diagnostic, 'actual string sha256=' ) && str_contains( $diagnostic, 'expected absent actual array sha256=' ) && ! str_contains( $diagnostic, 'SYNTHETIC_PRIVATE' ), 'diagnostic preserves datatype and absent-value distinctions without exposing any stored value' );
-$save_drift = false; $db = $original;
-invoke( array( 'apply' ) ); $path = snapshot_path(); $applied = $db; $snapshot = json_decode( file_get_contents( $path ), true );
+$concurrent_drift = false; $db = $original;
+$generation = $last_changed; invoke( array( 'apply' ) ); $path = snapshot_path(); $applied = $db; $snapshot = json_decode( file_get_contents( $path ), true );
 $expected = $original; $expected[1348]['post']['post_content'] = "<!-- wp:html -->\n" . rtrim( file_get_contents( __DIR__ . '/../rail-ideas.html' ) ) . "\n<!-- /wp:html -->";
 check( $applied === $expected, 'only content changed; original dates/ID/meta/SEO/terms/other page stay exact' );
+check( $wpdb->last_args === array( $expected[1348]['post']['post_content'], 1348, $content ), 'prepared parameters preserve complete source bytes, quotes, backslashes and percent signs' );
+check( $last_changed === $generation + 1 && $save_hooks === 0 && in_array( array( 1348, 'posts' ), $cache_events, true ) && in_array( array( 1348, 'post_meta' ), $cache_events, true ), 'targeted object/query caches refreshed without general save or cache hooks' );
 check( true === $snapshot['complete'] && ( fileperms( $path ) & 0777 ) === 0600, 'completed private snapshot persisted' );
 $writes = $updates; invoke( array( 'apply' ) ); check( $db === $applied && $updates === $writes, 'idempotent apply writes nothing' );
 foreach ( array( 'code', 'title', 'status', 'slug', 'meta', 'terms', 'date', 'author', 'excerpt', 'duplicate', 'duplicate_trash' ) as $mutation ) {
@@ -124,7 +147,8 @@ foreach ( array( 'home', 'bundle', 'hash', 'incomplete', 'id', 'payload', 'old_m
 }
 $outside = $testdir . '/outside.json'; file_put_contents( $outside, json_encode( $snapshot ) ); refusal( array( 'rollback', $outside ), 'outside snapshot refused' );
 $truncated = $testdir . '/backups/truncated.json'; file_put_contents( $truncated, '{"bundle":' ); refusal( array( 'rollback', $truncated ), 'truncated snapshot refused' );
-invoke( array( 'rollback', $path ) ); check( $db === $original, 'exact full-state rollback' );
+$generation = $last_changed; invoke( array( 'rollback', $path ) ); check( $db === $original, 'exact full-state rollback' );
+check( $wpdb->last_args === array( $content, 1348, $applied[1348]['post']['post_content'] ) && $last_changed === $generation + 1 && $save_hooks === 0, 'rollback uses exact reverse content CAS and refreshes cache without save hooks' );
 $writes = $updates; invoke( array( 'rollback', $path ) ); check( $db === $original && $writes === $updates, 'idempotent rollback writes nothing' );
 invoke( array( 'apply' ) ); check( $db === $applied, 'reapply exactly reproduces reviewed state' );
 // Original creation snapshots must never delete the later update or changed v1.
