@@ -1,5 +1,5 @@
 {
-  "id": "peek-rail-input-rehearse-1",
+  "id": "peek-rail-input-rehearse-2",
   "op": "rehearse",
   "target": "staging39",
   "installer": "link-ideas/rail-input/install-rail-input.php",
