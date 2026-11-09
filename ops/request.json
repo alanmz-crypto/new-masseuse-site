@@ -1,8 +1,8 @@
 {
-  "id": "ui-peek-nav-s39-39-1",
+  "id": "probe-overflow-s39-b-1",
   "op": "run",
   "target": "staging39",
-  "script": "link-ideas/check-peek-nav.mjs",
+  "script": "link-ideas/probe-overflow.mjs",
   "args": [
     "https://staging39.thaisolitude.com"
   ],
