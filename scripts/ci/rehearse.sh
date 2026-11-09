@@ -199,6 +199,19 @@ errs() { [ -f "$log" ] && sed -E 's/^\[[^]]*\] //' "$log" | grep -E 'PHP (Fatal|
 fails=0
 check() { if [ "$2" -eq 0 ]; then echo "  -> PASS  $1"; else echo "  -> FAIL  $1"; fails=$((fails + 1)); fi; }
 inst_run() { local name=$1; shift; echo; echo "[$name] wp eval-file $inst $*"; wpc --user=1 eval-file "/wwm/$inst" "$@" 2>&1 | grep -v 'phar:///usr/local/bin/wp/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php' | tee "$out/$name.log" | sed 's/^/    /'; return "${PIPESTATUS[0]}"; }   # that one line is WP-CLI's own PHP 8.5 deprecation, not the installer's
+core_focus_snapshot_from_log() {
+  local path
+  path=$(sed -nE 's@^Success: .*Before-snapshot: (/backups/peek-template-core-input-focus-before-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}\.json)$@\1@p' "$1")
+  [[ "$path" =~ ^/backups/peek-template-core-input-focus-before-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}\.json$ ]] || return 1
+  printf '%s\n' "$path"
+}
+core_focus_verify() {
+  local label=$1 snapshot=$2; shift 2
+  echo; echo "[$label] exact core-input-focus snapshot verification $snapshot $*"
+  wpc --user=1 eval-file /wwm/link-ideas/install-peek-nav.php verify "$snapshot" "$@" 2>&1 | tee "$out/$label.log" | sed 's/^/    /'
+  local status=("${PIPESTATUS[@]}")
+  [ "${status[0]}" -eq 0 ] && [ "${status[1]}" -eq 0 ] && [ "${status[2]}" -eq 0 ]
+}
 
 if [ "$inst" = link-ideas/rail-input/install-rail-input.php ]; then
   echo; echo "[2c] observe unchanged Rail page before the baseline"
@@ -251,7 +264,12 @@ inst_run apply-again apply; check "apply a second time" $?
 fp B2; cmp -s "$out/B.content" "$out/B2.content"; check "applying twice changes nothing more (idempotent)" $?
 snap_pattern='*.json'
 [ "$inst" != link-ideas/rail-input/install-rail-input.php ] || snap_pattern='rail-input-before-*.json'
-snap=$(find "$bk" -maxdepth 1 -name "$snap_pattern" -printf '%T@ %f\n' | sort -rn | head -1 | cut -d' ' -f2-)
+if [ "$inst" = link-ideas/core-input-focus/install-peek-core-input-focus.php ]; then
+  core_focus_first_snapshot=$(core_focus_snapshot_from_log "$out/apply.log") || core_focus_first_snapshot=""
+  snap=${core_focus_first_snapshot##*/}
+else
+  snap=$(find "$bk" -maxdepth 1 -name "$snap_pattern" -printf '%T@ %f\n' | sort -rn | head -1 | cut -d' ' -f2-)
+fi
 if [ -z "$snap" ]; then echo "  no before-snapshot was written to WWM_BACKUP_DIR"; check "apply wrote a before-snapshot" 1; else
   inst_run rollback rollback "/backups/$snap"; check "rollback with $snap" $?
   # WPCode's own snippet-list cache option stores each snippet's "modified" time, so an in-place edit of a snippet followed by a rollback always changes it (2026-10-25, Work With Me availability update);
@@ -262,7 +280,15 @@ if [ -z "$snap" ]; then echo "  no before-snapshot was written to WWM_BACKUP_DIR
   inst_run re-apply apply; check "apply again after the rollback" $?
   # A change that CREATES posts (a page, a snippet) gets new database ids when it is applied again after a rollback (2026-10-24, Corporate & Group Massage): compare with the id numbers of snippet and SEO rows set aside (and WPCode's own snippet-list cache option, whose content lists those ids); the snippets' and pages' content hashes still compare.
   idn() { sed -E '/^option\twpcode_snippets\t/d; s/^snippet\t[0-9]+\t/snippet\t#\t/; s/^seo\t[0-9]+:/seo\t#:/' "$1"; }
-  fp D; cmp -s <(idn "$out/B.content") <(idn "$out/D.content"); check "re-applied state equals the first applied state (B; ids of re-created snippets and SEO rows set aside)" $?
+  fp D
+  if [ "$inst" = link-ideas/core-input-focus/install-peek-core-input-focus.php ]; then
+    cmp -s <(nocache "$out/B.content") <(nocache "$out/D.content"); check "input-focus reapply exactly matches B (no ID normalization)" $?
+    # Each core apply intentionally sets new modified dates. The active state is
+    # bound to re-apply's actual returned snapshot, never the first apply or latest file.
+    core_focus_active_snapshot=$(core_focus_snapshot_from_log "$out/re-apply.log") || core_focus_active_snapshot=""
+  else
+    cmp -s <(idn "$out/B.content") <(idn "$out/D.content"); check "re-applied state equals the first applied state (B; ids of re-created snippets and SEO rows set aside)" $?
+  fi
 fi
 
 echo; echo "[4] the 10 pages after the change, and PHP errors"
@@ -288,6 +314,16 @@ tail -n 2 "$out/client-gates.log"
 
 # Optional package-owned browser gate. It runs only on the isolated applied
 # copy, before cleanup, and must pass before any staging write is authorized.
+if [ "$inst" = link-ideas/core-input-focus/install-peek-core-input-focus.php ]; then
+  [ "$fails" -eq 0 ] || { echo "REHEARSAL FAILED: earlier required input-focus gates failed; browser not started."; exit 1; }
+  if [ -z "${core_focus_active_snapshot:-}" ]; then
+    check "input-focus re-apply returned one actual complete snapshot" 1
+    echo "REHEARSAL FAILED: input-focus active snapshot is missing or ambiguous; browser not started."; exit 1
+  fi
+  core_focus_verify verify-before-browser "$core_focus_active_snapshot"; core_focus_before_rc=$?
+  check "exact input-focus core and four page states before browser" "$core_focus_before_rc"
+  [ "$core_focus_before_rc" -eq 0 ] || { echo "REHEARSAL FAILED: input-focus full-state verification failed; browser not started."; exit 1; }
+fi
 extra="$wwm/$(dirname "$inst")/check-rehearsal.mjs"
 if [ -f "$extra" ]; then
   echo; echo "[4c] package browser checks on the applied throwaway copy"
@@ -349,6 +385,46 @@ if [ "$inst" = link-ideas/rail-input/install-rail-input.php ]; then
           fp F
           cmp -s <(nocache "$out/B.content") <(nocache "$out/F.content")
           check "post-browser reapply exactly matches tested B (no ID normalization)" $?
+        fi
+      fi
+    fi
+  fi
+fi
+
+if [ "$inst" = link-ideas/core-input-focus/install-peek-core-input-focus.php ]; then
+  echo; echo "[4e] exact input-focus recovery after rendered browser activity"
+  if [ "$fails" -ne 0 ] || [ "${package_browser_rc:-missing}" != 0 ] || [ -z "${core_focus_active_snapshot:-}" ]; then
+    check "post-browser input-focus recovery prerequisites (complete browser pass and actual re-apply snapshot)" 1
+  else
+    core_focus_verify verify-after-browser "$core_focus_active_snapshot"; core_focus_after_rc=$?
+    check "exact input-focus core and four page states after browser" "$core_focus_after_rc"
+    if [ "$core_focus_after_rc" -eq 0 ]; then
+      inst_run rollback-after-browser rollback "$core_focus_active_snapshot"; core_focus_rollback_rc=$?
+      check "input-focus full-state rollback after browser" "$core_focus_rollback_rc"
+      if [ "$core_focus_rollback_rc" -eq 0 ]; then
+        core_focus_verify verify-original-after-browser "$core_focus_active_snapshot" original; core_focus_original_rc=$?
+        check "input-focus exact original core and four page states restored" "$core_focus_original_rc"
+        if [ "$core_focus_original_rc" -eq 0 ]; then
+          fp E
+          cmp -s <(nocache "$out/A.content") <(nocache "$out/E.content"); core_focus_baseline_rc=$?
+          check "input-focus post-browser rollback matches A (no ID normalization)" "$core_focus_baseline_rc"
+          if [ "$core_focus_baseline_rc" -eq 0 ]; then
+            inst_run reapply-after-browser apply; core_focus_reapply_rc=$?
+            check "input-focus reapply after post-browser recovery" "$core_focus_reapply_rc"
+            if [ "$core_focus_reapply_rc" -eq 0 ]; then
+              core_focus_final_snapshot=$(core_focus_snapshot_from_log "$out/reapply-after-browser.log"); core_focus_snapshot_rc=$?
+              check "input-focus final reapply returned one actual complete snapshot" "$core_focus_snapshot_rc"
+              if [ "$core_focus_snapshot_rc" -eq 0 ]; then
+                core_focus_verify verify-final-reapply "$core_focus_final_snapshot"; core_focus_final_rc=$?
+                check "input-focus final applied core and four page states match their new snapshot" "$core_focus_final_rc"
+                if [ "$core_focus_final_rc" -eq 0 ]; then
+                  fp F
+                  cmp -s <(nocache "$out/B.content") <(nocache "$out/F.content")
+                  check "input-focus post-browser reapply exactly matches B (no ID normalization)" $?
+                fi
+              fi
+            fi
+          fi
         fi
       fi
     fi

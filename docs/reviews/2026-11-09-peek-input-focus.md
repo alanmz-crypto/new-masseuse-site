@@ -269,6 +269,73 @@ staging purge/render and full-snapshot verification still need their own proof.
 
 ## Actual applies and recovery
 
+Final Rail-wrapper Gates [42721576901](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42721576901)
+passed **33/0 + 1 rendered-only skip** at 23:35:52 UTC, source
+`e6d28098ccdbbe33b5aeb3df266a035b5f119412`. Sixth Rail copy rehearsal
+[42721599833](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42721599833)
+uses request source `1d038a84906917b5324d15b5310fe7c03424b96b`; it finished
+23:44:23 UTC **PASS**. All five suites passed **2,632/0**; full leaf logs and
+44 captures audited, zero FAIL/INVALID and empty stderr. The unchanged original
+page's first GET changed only `_uag_page_assets` (708 to 713 raw bytes), and the
+second GET preserved its entire warm state. Warm full-state SHA256
+`bf54da645d20d2bc61f261ef13b792502cf6c3a603fec52daef6e745e7459b68`
+remained exact at preflight/apply. Applied full-state SHA256
+`f1800142c2e2b5000ece5c7c82d2e80cd514445bd5158be5e0bcbc58bd87a4d5`
+remained exact after browser activity. Both rollback cycles restored A and the
+final reapply reproduced B without ID normalization. This proves the cache
+movement precedes this content change; the underlying plugin trigger is not
+identified. The original copy snapshot was
+`rail-input-before-20261109-233737-bd1c2e73.json`, never staging recovery.
+
+Rail dry run [42722968261](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42722968261)
+passed at 23:45:42 UTC, request `peek-rail-input-dry-1`, source
+`b780a9247b3ca6052896f9d245d91465f17413e3`. The original complete staging state
+matched the cold copy. Apply attempt [42723171410](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42723171410),
+request `peek-rail-input-apply-1`, source `aa336b21d4035fba41fb4b0ea7d4fbaf42d595bc`,
+finished 23:47:26 UTC **FAIL before purge/render or content writes**. Cold SQL
+`staging39-before-rail-input-cold-20261109-234709-88168.sql` (4,530,739 bytes)
+was SHA-verified and encrypted off-site. Read-only observation
+`rail-input-observe-20261109-234726-256baa80.json` was saved. Its returned canonical
+private path failed comparison with literal `$HOME/private-backups`. The raw
+artifact has no ANSI/CR and the exact parser yields one valid path; the remaining
+parent-equality clause failed. No settled dump, apply snapshot, post-change test
+or restore proof exists for this attempt. Canonicalize the private directory for
+the comparison; preserve unique-path/private-location guards and prove it in a
+new dry run before retrying.
+The wrapper now resolves the existing private directory with `pwd -P`, exports
+that same path to PHP, and compares the returned parent against it. The exact
+filename and unique-return guards remain. Its executable harness passes
+**146 cases**, including home symlink/trailing-slash cases, a foreign canonical
+parent refusal before purge, and a negative control reproducing the old literal
+home-path failure. Canonical/configured paths are logged by the new dry run.
+
+The shared-core deployment review found the old public checker also accepted
+frozen v6, and did not bind its result to an actual recovery snapshot. Explained
+before building: scope a dedicated deployment wrapper to `core-input-focus`,
+retaining historical component dispatch. It requires verified encrypted backup,
+syncs snapshots even after a failed apply before any purge/render, binds the
+unique actual snapshot, requires purge success, compares exact served runtime
+and CSS bytes on every published route, and verifies the complete core and all
+four data records before/after rendering. Snapshot-free `--check` is refused for
+this new lane; use `--verify FILE`. Recovery checks frozen v6 and exact original
+snapshot state. This changes deployment verification, not runtime behavior.
+
+The shared PHP harness now passes **851 checks**, including 118 read-only
+snapshot-verifier cases and 27 actual embedded PHP renderer cases. The separate
+executable core wrapper harness passes **150 cases**, including failed-apply
+sync/error preservation and historical dispatch regression. Three PHP files lint;
+independent source review found no blocker. The new wrapper test is a permanent
+offline gate. Fresh Actions Gates and the complete core copy rehearsal remain
+required before deployment.
+The core copy sequence now binds the first, active re-apply and final reapply to
+their own returned snapshots: each core apply intentionally changes modified
+dates. It verifies exact core/four-page state before and after the browser pass,
+then restores A and reapplies B without ID normalization. Earlier gate failures
+stop before browser execution; failed recovery prerequisites stop later writes.
+The two existing Rail blocks remain byte-identical. Its executable orchestration
+harness passes **39 cases**. Final local full gates: **28 PASS, four known Docker
+mount FAIL, three SKIP**; Actions must still run all mounted PHP gates.
+
 Observer-source Gates [42719432850](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42719432850)
 passed **32/0 + 1 rendered-only skip**, source `8c127c7f31d03c39976ebae6f45a0c2444f4940c`.
 The final staging wrapper now requires verified encrypted off-site backups before

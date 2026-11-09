@@ -6,6 +6,7 @@ mkdir( $testdir ); mkdir( $testdir . '/web' ); mkdir( $testdir . '/backups' );
 define( 'ABSPATH', $testdir . '/web/' ); define( 'ARRAY_A', 'ARRAY_A' );
 putenv( 'WWM_BACKUP_DIR=' . $testdir . '/backups' );
 $db = array(); $next_id = 2000; $filters = array(); $home = 'http://localhost:8090'; $environment_type = 'local'; $clock = '2026-11-09 05:00:00'; $mutate_page_on_refresh = null; $fail_write = false; $fail_cache = false; $fail_snapshot_complete = false; $page = 'thai-massage'; $admin = false; $feed = false;
+$write_calls = 0; $cache_refreshes = 0;
 class WP_CLI { static function error( $m ) { throw new RuntimeException( $m ); } static function success( $m ) { $GLOBALS['message'] = $m; } }
 function home_url() { return $GLOBALS['home']; }
 function untrailingslashit( $s ) { return rtrim( $s, '/' ); }
@@ -13,7 +14,7 @@ function wp_parse_url( $s, $component = -1 ) { return parse_url( $s, $component 
 function get_stylesheet() { return 'astra'; }
 function current_user_can( $s ) { return true; }
 function wp_get_environment_type() { return $GLOBALS['environment_type']; }
-function wpcode() { static $o; return $o ??= (object) array( 'cache' => new class { function cache_all_loaded_snippets() { if ( $GLOBALS['fail_cache'] ) { $GLOBALS['fail_cache'] = false; throw new RuntimeException( 'Forced cache failure' ); } if ( is_callable( $GLOBALS['mutate_page_on_refresh'] ) ) { $callback = $GLOBALS['mutate_page_on_refresh']; $GLOBALS['mutate_page_on_refresh'] = null; $callback(); } } } ); }
+function wpcode() { static $o; return $o ??= (object) array( 'cache' => new class { function cache_all_loaded_snippets() { $GLOBALS['cache_refreshes']++; if ( $GLOBALS['fail_cache'] ) { $GLOBALS['fail_cache'] = false; throw new RuntimeException( 'Forced cache failure' ); } if ( is_callable( $GLOBALS['mutate_page_on_refresh'] ) ) { $callback = $GLOBALS['mutate_page_on_refresh']; $GLOBALS['mutate_page_on_refresh'] = null; $callback(); } } } ); }
 function get_object_taxonomies( $t ) { return array( 'wpcode_type', 'wpcode_location' ); }
 function get_post_stati() { return array( 'publish', 'draft', 'trash' ); }
 function get_posts( $args ) { if ( ( $args['post_type'] ?? '' ) === 'page' ) { return array_map( static fn( $p ) => (object) $p, array_filter( $GLOBALS['inventory_pages'], static fn( $p ) => ( $p['post_status'] ?? 'publish' ) === ( $args['post_status'] ?? 'publish' ) ) ); } return array_map( static fn( $r ) => (object) $r['post'], array_values( $GLOBALS['db'] ) ); }
@@ -39,17 +40,18 @@ function get_queried_object() { return (object) array( 'post_name' => $GLOBALS['
 function wp_get_document_title() { return 'Visitor page'; }
 function wp_strip_all_tags( $text ) { return trim( strip_tags( preg_replace( '@<(script|style)[^>]*?>.*?</\\1>@si', '', $text ) ) ); }
 function wp_update_post( $arr, $error = false ) {
+    $GLOBALS['write_calls']++;
     if ( $GLOBALS['fail_write'] ) { $GLOBALS['fail_write'] = false; return 0; }
     $arr = wp_unslash( $arr ); $id = $arr['ID']; $p = array_merge( $GLOBALS['db'][ $id ]['post'], $arr );
     $p['post_modified'] = $p['post_modified_gmt'] = current_time( 'mysql' );
     $GLOBALS['db'][ $id ]['post'] = apply_filters( 'wp_insert_post_data', $p, $arr ); return $id;
 }
-function wp_delete_post( $id, $force ) { $p = $GLOBALS['db'][ $id ] ?? null; unset( $GLOBALS['db'][ $id ] ); return $p; }
+function wp_delete_post( $id, $force ) { $GLOBALS['write_calls']++; $p = $GLOBALS['db'][ $id ] ?? null; unset( $GLOBALS['db'][ $id ] ); return $p; }
 function record( $id, $title, $code, $note ) {
     $meta = array( '_wpcode_auto_insert' => array( '1' ), '_wpcode_priority' => array( '10' ), '_wpcode_note' => array( $note ), '_wpcode_shortcode_attributes' => array( 'a:0:{}' ) ); ksort( $meta );
     return array( 'id' => $id, 'post' => array( 'ID' => $id, 'post_type' => 'wpcode', 'post_status' => 'publish', 'post_title' => $title, 'post_content' => $code, 'post_modified' => '2026-11-09 01:00:37', 'post_modified_gmt' => '2026-11-09 01:00:37', 'post_author' => '1', 'post_name' => 'historical-name' ), 'meta' => $meta, 'terms' => array( 'wpcode_location' => array( 'everywhere' ), 'wpcode_type' => array( 'php' ) ) );
 }
-class WPCode_Snippet { function __construct( private $args ) {} function save() { $id = $GLOBALS['next_id']++; $GLOBALS['db'][ $id ] = record( $id, $this->args['title'], $this->args['code'], $this->args['note'] ); return $id; } }
+class WPCode_Snippet { function __construct( private $args ) {} function save() { $GLOBALS['write_calls']++; $id = $GLOBALS['next_id']++; $GLOBALS['db'][ $id ] = record( $id, $this->args['title'], $this->args['code'], $this->args['note'] ); return $id; } }
 $pass = 0;
 function check( $ok, $label ) { if ( ! $ok ) { throw new RuntimeException( 'FAIL: ' . $label ); } $GLOBALS['pass']++; }
 function invoke( $args ) { $GLOBALS['message'] = ''; require __DIR__ . '/install-peek-nav.php'; return $GLOBALS['message']; }
@@ -71,6 +73,12 @@ function focus_rehearsal_refusal( $args, $label ) { $before = $GLOBALS['db']; $e
 function invoke_package( $package, $args ) { require $package . '/install-peek-nav.php'; }
 function snapshot_path() { preg_match( '/Before-snapshot: (.+)$/', $GLOBALS['message'], $m ); if ( ! isset( $m[1] ) ) { throw new RuntimeException( 'No completed snapshot: ' . $GLOBALS['message'] ); } return $m[1]; }
 function snap_write( $data, $name ) { $p = $GLOBALS['testdir'] . '/backups/' . $name . '.json'; file_put_contents( $p, json_encode( $data ) ); return $p; }
+function backup_hashes() { $out = array(); foreach ( glob( $GLOBALS['testdir'] . '/backups/*' ) as $file ) { $out[ $file ] = array( hash_file( 'sha256', $file ), fileperms( $file ) ); } return $out; }
+function focus_verify_check( $args, $should_pass, $label ) {
+    $before = $GLOBALS['db']; $writes = $GLOBALS['write_calls']; $refreshes = $GLOBALS['cache_refreshes']; $files = backup_hashes(); $error = null;
+    try { invoke( $args ); } catch ( Throwable $e ) { $error = $e; }
+    check( ( $should_pass ? null === $error && str_contains( $GLOBALS['message'], 'core and all four page-data records verified read-only' ) : null !== $error ) && $GLOBALS['db'] === $before && $GLOBALS['write_calls'] === $writes && $GLOBALS['cache_refreshes'] === $refreshes && backup_hashes() === $files, 'read-only focus verification: ' . $label );
+}
 $legacy = record( 1380, 'TSPeekNav practice (Thai, staging39)', substr( file_get_contents( __DIR__ . '/peek-nav-legacy.php' ), 6 ), 'Created by link-ideas/install-peek-nav.php (2026-11-08); exact owned-snippet rollback only.' );
 $db[1380] = $legacy; $original = $db;
 foreach ( array( 'https://thaisolitude.com', 'https://staging38.thaisolitude.com', 'https://staging39.thaisolitude.com/other', 'https://staging39.thaisolitude.com:443', 'https://staging39.thaisolitude.com.evil.test' ) as $bad ) { $home = $bad; refusal( array( 'apply' ), 'refuse exact origin ' . $bad ); }
@@ -671,6 +679,69 @@ foreach ( array( $legacy_path, $core_snap, $upgrade_snap, $summary_snap, $title_
 refusal( array( 'apply', 'core-kiro-fixes' ), 'pinned Kiro transition cannot overwrite input-focus payload' );
 $focus_snapshot = json_decode( file_get_contents( $focus_snap ), true );
 check( $focus_snapshot['bundle'] === 'peek-core-input-focus-v1' && $focus_snapshot['payloads']['before_sha256'] === 'dec11c9e50cacba8986068e98748e966333aebe3366701f1f0e94e5e790113a1' && $focus_snapshot['old'] === $kiro_snapshot['new'], 'input-focus snapshot binds its own transition and the exact Kiro result including dates' );
+// Snapshot-bound verification must never substitute preflight's permissive
+// already-applied status for exact core dates and all four complete page records.
+focus_verify_check( array( 'verify', $focus_snap ), true, 'exact applied core and pages; no writes, cache refresh or snapshot changes' );
+focus_verify_check( array( 'verify', $focus_snap, 'original' ), false, 'applied state cannot be claimed as the original' );
+$db = $focus_before;
+focus_verify_check( array( 'verify', $focus_snap, 'original' ), true, 'exact original core and pages; no writes, cache refresh or snapshot changes' );
+focus_verify_check( array( 'verify', $focus_snap ), false, 'original state cannot be claimed as applied' );
+$db = $focus_applied;
+foreach ( array( array( 'verify' ), array( 'verify', $focus_snap, 'other' ), array( 'verify', $focus_snap, 'original', 'extra' ), array( 'verify', $testdir . '/missing.json' ), array( 'verify', $bad_path ), array( 'verify', $truncated ) ) as $verify_args ) { focus_verify_check( $verify_args, false, 'invalid arguments, missing, outside or truncated snapshot refused' ); }
+foreach ( array( $legacy_path, $core_snap, $upgrade_snap, $summary_snap, $title_snap, $rail_snap, $kiro_snap, $page_snap ) as $other_snapshot ) { focus_verify_check( array( 'verify', $other_snapshot ), false, 'historical/other-component snapshot cannot enter focus verification' ); }
+foreach ( array( 'bundle', 'component', 'slug', 'missing-slug', 'home', 'incomplete', 'before-payload', 'new-payload', 'old-hash', 'new-hash', 'old-content-rehashed', 'new-author-rehashed', 'ids-rehashed', 'pages-hash', 'pages-missing', 'page-date-rehashed' ) as $mutation ) {
+    $s = $focus_snapshot;
+    if ( $mutation === 'bundle' ) { $s['bundle'] = 'peek-core-kiro-fixes-v1'; }
+    if ( $mutation === 'component' ) { $s['component'] = 'core-kiro-fixes'; }
+    if ( $mutation === 'slug' ) { $s['slug'] = 'thai-massage'; }
+    if ( $mutation === 'missing-slug' ) { unset( $s['slug'] ); }
+    if ( $mutation === 'home' ) { $s['home'] = 'https://staging39.thaisolitude.com'; }
+    if ( $mutation === 'incomplete' ) { $s['complete'] = false; }
+    if ( $mutation === 'before-payload' ) { $s['payloads']['before_sha256'] = str_repeat( '0', 64 ); }
+    if ( $mutation === 'new-payload' ) { $s['payloads']['code_sha256'] = str_repeat( '0', 64 ); }
+    if ( $mutation === 'old-hash' ) { $s['old_sha256'] = str_repeat( '0', 64 ); }
+    if ( $mutation === 'new-hash' ) { $s['new_sha256'] = str_repeat( '0', 64 ); }
+    if ( $mutation === 'old-content-rehashed' ) { $s['old']['post']['post_content'] .= '// changed'; $s['old_sha256'] = hash( 'sha256', json_encode( $s['old'] ) ); }
+    if ( $mutation === 'new-author-rehashed' ) { $s['new']['post']['post_author'] = '99'; $s['new_sha256'] = hash( 'sha256', json_encode( $s['new'] ) ); }
+    if ( $mutation === 'ids-rehashed' ) { foreach ( array( 'old', 'new' ) as $which ) { $s[ $which ]['id'] = $s[ $which ]['post']['ID'] = 9999; $s[ $which . '_sha256' ] = hash( 'sha256', json_encode( $s[ $which ] ) ); } }
+    if ( $mutation === 'pages-hash' ) { $s['pages_sha256'] = str_repeat( '0', 64 ); }
+    if ( $mutation === 'pages-missing' ) { unset( $s['pages']['chair-massage'] ); $s['pages_sha256'] = hash( 'sha256', json_encode( $s['pages'] ) ); }
+    if ( $mutation === 'page-date-rehashed' ) { $s['pages']['thai-massage']['post']['post_modified'] = '2000-01-01 00:00:00'; $s['pages_sha256'] = hash( 'sha256', json_encode( $s['pages'] ) ); }
+    $verify_bad = snap_write( $s, 'focus-verify-' . $mutation );
+    focus_verify_check( array( 'verify', $verify_bad ), false, 'damaged or mismatched snapshot ' . $mutation );
+}
+foreach ( array( 'applied' => $focus_applied, 'original' => $focus_before ) as $verify_state => $baseline ) {
+    $verify_args = 'original' === $verify_state ? array( 'verify', $focus_snap, 'original' ) : array( 'verify', $focus_snap );
+    foreach ( array( 'missing', 'code', 'date', 'gmt-date', 'author', 'meta', 'terms', 'duplicate', 'duplicate-trash', 'id' ) as $mutation ) {
+        $db = $baseline;
+        if ( $mutation === 'missing' ) { unset( $db[1380] ); }
+        if ( $mutation === 'code' ) { $db[1380]['post']['post_content'] .= '// changed'; }
+        if ( $mutation === 'date' ) { $db[1380]['post']['post_modified'] = '2027-01-01 00:00:00'; }
+        if ( $mutation === 'gmt-date' ) { $db[1380]['post']['post_modified_gmt'] = '2027-01-01 00:00:00'; }
+        if ( $mutation === 'author' ) { $db[1380]['post']['post_author'] = '99'; }
+        if ( $mutation === 'meta' ) { $db[1380]['meta']['unknown'] = array( 'new' ); }
+        if ( $mutation === 'terms' ) { $db[1380]['terms']['wpcode_location'] = array( 'footer' ); }
+        if ( in_array( $mutation, array( 'duplicate', 'duplicate-trash', 'id' ), true ) ) { $db[9999] = $db[1380]; $db[9999]['id'] = $db[9999]['post']['ID'] = 9999; }
+        if ( $mutation === 'duplicate-trash' ) { $db[9999]['post']['post_status'] = 'trash'; }
+        if ( $mutation === 'id' ) { unset( $db[1380] ); }
+        focus_verify_check( $verify_args, false, $verify_state . ' core ' . $mutation . ' drift refused' );
+    }
+    foreach ( $data_before as $page_id => $record ) {
+        foreach ( array( 'missing', 'code', 'date', 'author', 'meta', 'terms', 'duplicate', 'duplicate-trash' ) as $mutation ) {
+            $db = $baseline;
+            if ( $mutation === 'missing' ) { unset( $db[ $page_id ] ); }
+            if ( $mutation === 'code' ) { $db[ $page_id ]['post']['post_content'] .= '// changed'; }
+            if ( $mutation === 'date' ) { $db[ $page_id ]['post']['post_modified'] = '2027-01-01 00:00:00'; }
+            if ( $mutation === 'author' ) { $db[ $page_id ]['post']['post_author'] = '99'; }
+            if ( $mutation === 'meta' ) { $db[ $page_id ]['meta']['unknown'] = array( 'new' ); }
+            if ( $mutation === 'terms' ) { $db[ $page_id ]['terms']['wpcode_location'] = array( 'footer' ); }
+            if ( $mutation === 'duplicate' || $mutation === 'duplicate-trash' ) { $db[9999] = $record; $db[9999]['id'] = $db[9999]['post']['ID'] = 9999; }
+            if ( $mutation === 'duplicate-trash' ) { $db[9999]['post']['post_status'] = 'trash'; }
+            focus_verify_check( $verify_args, false, $verify_state . ' page ' . $page_id . ' ' . $mutation . ' drift refused' );
+        }
+    }
+}
+$db = $focus_applied;
 kiro_rehearsal_refusal( array( 'rollback', $focus_snap ), 'new input-focus snapshot cannot enter historical Kiro adapter' );
 foreach ( array( 'bundle', 'component', 'before-hash', 'new-hash', 'old-state', 'new-state', 'pages', 'pages-hash', 'incomplete', 'home' ) as $mutation ) {
     $s = $focus_snapshot;
@@ -903,5 +974,7 @@ $page = 'thai-massage';
 add_filter( 'ts_pk_pages', static function ( $pages ) { $pages['thai-massage']['items'][] = array( '</script><script>alert("x")</script>&\'雪', 'ts-what-it-is' ); return $pages; }, 99 );
 $html = render(); preg_match( '/id="ts-peek-nav-data">(.*?)<\/script>/s', $html, $m ); $decoded = json_decode( $m[1], true );
 check( ! str_contains( $m[1], '<' ) && ! str_contains( $m[1], '&' ) && $decoded['items'][count( $decoded['items'] ) - 1][0] === '</script><script>alert("x")</script>&\'雪', 'JSON script safely round-trips hostile markup Unicode quotes' );
+require __DIR__ . '/core-input-focus/test-render.php';
+$pass += run_focus_render_tests();
 foreach ( glob( $testdir . '/backups/*' ) as $f ) { unlink( $f ); } unlink( $bad_path ); rmdir( $testdir . '/backups' ); rmdir( $testdir . '/web' ); rmdir( $testdir );
 echo 'Peek installer/emission: ' . $pass . " checks passed\n";

@@ -53,7 +53,9 @@ done < "$cfgs"
 [ -n "$doc" ] || { echo "No install reports exact staging39; nothing changed." >&2; exit 1; }
 echo "$target is ${doc#"$HOME"/}"
 mkdir -p "$HOME/private-backups"; chmod 700 "$HOME/private-backups"
-export WWM_BACKUP_DIR="$HOME/private-backups"
+private_dir=$(cd "$HOME/private-backups" && pwd -P)
+export WWM_BACKUP_DIR="$private_dir"
+printf 'Private backup directory: configured=%s canonical=%s\n' "$HOME/private-backups" "$private_dir"
 package="$HOME/wwm-package-rail-input"
 run() { wp --path="$doc" --user=1 eval-file "$package/rail-input/install-rail-input.php" "$@"; }
 observe() { wp --path="$doc" --user=1 eval-file "$package/rail-input/observe-state.php" "$@"; }
@@ -63,10 +65,14 @@ original_ready() {
 }
 purge() { wp --path="$doc" --user=1 sg purge >/dev/null 2>&1 || { echo "SiteGround purge failed; no cache-parity claim is possible." >&2; exit 1; }; echo "SiteGround cache purged"; }
 record_observation() {
-  local output found
+  local output found count=0
   output=$(observe record); printf '%s\n' "$output"
   found=$(sed -n 's/^Success: .*Observation: \(\/home\/[a-zA-Z0-9_-]*\/private-backups\/rail-input-observe-[0-9]\{8\}-[0-9]\{6\}-[a-f0-9]\{8\}\.json\)$/\1/p' <<<"$output")
-  [ -n "$found" ] && [[ "$found" != *$'\n'* ]] && [ "${found%/*}" = "$HOME/private-backups" ] || { echo "No unique observation path returned; stopping." >&2; exit 1; }
+  [ -z "$found" ] || count=$(printf '%s\n' "$found" | awk 'END { print NR }')
+  [ "$count" -eq 1 ] && [ "${found%/*}" = "$private_dir" ] || {
+    printf 'Observation refused: candidates=%s basename=%q configured=%q canonical=%q\n' "$count" "${found##*/}" "$HOME/private-backups" "$private_dir" >&2
+    echo "No unique observation path in the canonical private directory; stopping." >&2; exit 1
+  }
   observation_path=$found
 }
 render() {

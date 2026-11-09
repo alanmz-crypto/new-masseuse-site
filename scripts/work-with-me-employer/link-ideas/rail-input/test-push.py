@@ -59,6 +59,7 @@ if name=='wp':
     words=[a for a in args if not a.startswith('--')]
     if words[:3]==['option','get','home']:
         event('discover'); print(os.environ.get('RAIL_HOME_URL','https://staging39.thaisolitude.com')); sys.exit(0)
+    assert os.environ.get('WWM_BACKUP_DIR')==os.environ['RAIL_EXPECT_PRIVATE'], 'canonical backup root not exported'
     if words[:2]==['db','export']:
         event('export:'+os.environ['RAIL_PHASE'].removeprefix('prepare-'))
         Path(words[2]).write_text('' if os.environ.get('RAIL_EMPTY_DUMP') else 'mock database export\n'); sys.exit(0)
@@ -71,6 +72,8 @@ if name=='wp':
             event('record:'+which)
             if os.environ.get('RAIL_RECORD_OUTPUT')=='missing': sys.exit(0)
             path=os.environ['RAIL_COLD' if which=='cold' else 'RAIL_WARM']
+            if os.environ.get('RAIL_RECORD_OUTPUT')=='wrong-parent':
+                path=str(Path(path).parents[2]/'foreign-home'/'private-backups'/Path(path).name)
             print('Success: Observation saved. Observation: '+path)
             if os.environ.get('RAIL_RECORD_OUTPUT')=='duplicate': print('Success: Observation saved. Observation: '+path)
         else:
@@ -197,19 +200,24 @@ REMOTE_CASES = {
 }
 
 
-def run_remote(phase, expected, *, fail_at=0, options=None, valid=True, target='staging39', duplicate=False, literal_home=False):
+def run_remote(phase, expected, *, fail_at=0, options=None, valid=True, target='staging39', duplicate=False, literal_home=False, home_alias=False, trailing_slash=False, old_home_compare=False):
     global passed
     with tempfile.TemporaryDirectory(prefix='rail-push-remote-') as temp:
         base, package, trace, env = fixture(temp)
-        home = base / 'remote-home'
+        canonical_home = base / ('canonical-home' if home_alias else 'remote-home')
+        canonical_home.mkdir()
+        home = base / 'configured-home' if home_alias else canonical_home
+        if home_alias:
+            home.symlink_to(canonical_home, target_is_directory=True)
+        configured_home = str(home) + ('/' if trailing_slash else '')
         site = home / 'www' / 'staging39'
         site.mkdir(parents=True)
         (site / 'wp-config.php').write_text('fixture\n')
         if duplicate:
             (home / 'www' / 'duplicate').mkdir()
             (home / 'www' / 'duplicate' / 'wp-config.php').write_text('fixture\n')
-        private = home / 'private-backups'
-        env.update(RAIL_TEST_HOME=str(home), RAIL_PHASE=phase,
+        private = canonical_home / 'private-backups'
+        env.update(RAIL_TEST_HOME=configured_home, RAIL_EXPECT_PRIVATE=str(private), RAIL_PHASE=phase,
                    RAIL_COLD=str(private / COLD_NAME), RAIL_WARM=str(private / WARM_NAME),
                    RAIL_SNAP=str(private / SNAP_NAME), RAIL_FAIL_AT=str(fail_at))
         env.update(options or {})
@@ -218,7 +226,13 @@ def run_remote(phase, expected, *, fail_at=0, options=None, valid=True, target='
         # storage prefix changes. The date/name/unique-return checks stay exact.
         old_prefix = r'\/home\/[a-zA-Z0-9_-]*'
         assert old_prefix in body
-        body = body.replace(old_prefix, str(home).replace('/', r'\/'))
+        # Keep the user-name level variable, just like production, so an
+        # otherwise-valid foreign parent must fail the canonical equality guard.
+        body = body.replace(old_prefix, str(base).replace('/', r'\/') + r'\/[a-zA-Z0-9_-]*')
+        if old_home_compare:
+            current = '[ "${found%/*}" = "$private_dir" ]'
+            assert current in body
+            body = body.replace(current, '[ "${found%/*}" = "$RAIL_TEST_HOME/private-backups" ]')
         snap = env['RAIL_WARM'] if phase in ['prepare-settled', 'apply'] else env['RAIL_SNAP']
         if literal_home:
             snap = '$HOME/private-backups/'+SNAP_NAME
@@ -227,6 +241,12 @@ def run_remote(phase, expected, *, fail_at=0, options=None, valid=True, target='
         actual = [json.loads(line) for line in trace.read_text().splitlines()] if trace.exists() else []
         assert (result.returncode == 0) == valid, ('remote exit', phase, options, fail_at, result.returncode, result.stdout, result.stderr)
         assert actual == expected, ('remote order', phase, options, fail_at, expected, actual, result.stdout, result.stderr)
+        if home_alias or trailing_slash:
+            assert f'Private backup directory: configured={configured_home}/private-backups canonical={private}' in result.stdout, result.stdout
+            if not valid:
+                count = 0 if env.get('RAIL_RECORD_OUTPUT') == 'missing' else 2 if env.get('RAIL_RECORD_OUTPUT') == 'duplicate' else 1
+                assert f'Observation refused: candidates={count} basename=' in result.stderr, result.stderr
+                assert f'canonical={private}' in result.stderr, result.stderr
         if valid and phase == 'settle-original':
             assert result.stdout.splitlines()[-1] == 'Settled-observation: '+env['RAIL_WARM']
         passed += 1
@@ -251,6 +271,18 @@ for status in ['202', '403', '500', '000']:
 for output in ['missing', 'duplicate']:
     run_remote('settle-original', REMOTE_CASES['settle-original'][:3],
                options={'RAIL_RECORD_OUTPUT': output}, valid=False)
+# SiteGround can expose HOME through an alias or with a trailing slash while
+# PHP realpath() returns /home/customer. Execute those actual shell paths.
+run_remote('settle-original', REMOTE_CASES['settle-original'], home_alias=True)
+run_remote('settle-original', REMOTE_CASES['settle-original'], trailing_slash=True)
+run_remote('settle-original', REMOTE_CASES['settle-original'], home_alias=True, trailing_slash=True)
+for output in ['wrong-parent', 'duplicate', 'missing']:
+    run_remote('settle-original', REMOTE_CASES['settle-original'][:3], home_alias=True,
+               options={'RAIL_RECORD_OUTPUT': output}, valid=False)
+# Negative control: restoring only the pre-fix literal HOME parent comparison
+# reproduces the refusal for canonical output, with no purge/render/write reached.
+run_remote('settle-original', REMOTE_CASES['settle-original'][:3], home_alias=True,
+           old_home_compare=True, valid=False)
 run_remote('apply', [], target='live', valid=False)
 run_remote('apply', ['discover'], options={'RAIL_HOME_URL': 'https://thaisolitude.com'}, valid=False)
 run_remote('apply', ['discover', 'discover'], duplicate=True, valid=False)

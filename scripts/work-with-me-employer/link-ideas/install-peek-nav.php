@@ -3,6 +3,7 @@
  * Peek template: exact legacy -> shared v1 -> shared v2 -> shared v3 -> shared v4 -> shared v5 -> shared v6 -> current, or page data.
  * wp eval-file install-peek-nav.php preflight|apply [core|core-upgrade|core-summary-touch|core-title-strip|core-title-rail|core-kiro-fixes|core-input-focus|page SLUG]
  * wp eval-file install-peek-nav.php rollback FILE (component comes from snapshot).
+ * wp eval-file install-peek-nav.php verify FILE [original] (core-input-focus only, read-only).
  * Default core keeps the generic Actions rehearsal interface. WordPress storage only.
  * Exact localhost:8090 / staging39 origins; push takes verified offsite backups.
  */
@@ -15,16 +16,19 @@ if ( ! in_array( $home, array( 'http://localhost:8090', 'http://staging39.thaiso
 if ( 'astra' !== get_stylesheet() || ! current_user_can( 'manage_options' ) || ! current_user_can( 'unfiltered_html' ) || ! function_exists( 'wpcode' ) || ! class_exists( 'WPCode_Snippet' ) ) { WP_CLI::error( 'Requires Astra, WPCode and an administrator (--user=1).' ); }
 $args = isset( $args ) && is_array( $args ) ? $args : array();
 $mode = $args[0] ?? 'preflight';
-if ( ! in_array( $mode, array( 'preflight', 'apply', 'rollback' ), true ) ) { WP_CLI::error( 'Use preflight|apply [core|core-upgrade|core-summary-touch|core-title-strip|core-title-rail|core-kiro-fixes|core-input-focus|page SLUG], or rollback FILE.' ); }
+if ( ! in_array( $mode, array( 'preflight', 'apply', 'rollback', 'verify' ), true ) ) { WP_CLI::error( 'Use preflight|apply [core|core-upgrade|core-summary-touch|core-title-strip|core-title-rail|core-kiro-fixes|core-input-focus|page SLUG], rollback FILE, or verify FILE [original] for core-input-focus.' ); }
+$snapshot_mode = in_array( $mode, array( 'rollback', 'verify' ), true );
+$verify_original = 'verify' === $mode && count( $args ) === 3 && 'original' === $args[2];
 $backup_dir = (string) getenv( 'WWM_BACKUP_DIR' );
 $private = realpath( $backup_dir ); $webroot = realpath( ABSPATH );
 $private_ok = isset( $backup_dir[0] ) && '/' === $backup_dir[0] && $private && $webroot && is_dir( $private ) && is_writable( $private ) && $private !== $webroot && 0 !== strpos( $private . '/', rtrim( $webroot, '/' ) . '/' );
 $snapshot = null; $path = null; $legacy_rollback = false;
-if ( 'rollback' === $mode ) {
+if ( $snapshot_mode ) {
     $path = isset( $args[1] ) ? realpath( $args[1] ) : false;
-    if ( count( $args ) !== 2 || ! $private_ok || ! $path || ! is_file( $path ) || 0 !== strpos( $path, $private . '/' ) ) { WP_CLI::error( 'Rollback requires a snapshot inside the private WWM_BACKUP_DIR.' ); }
+    if ( ( count( $args ) !== 2 && ! $verify_original ) || ! $private_ok || ! $path || ! is_file( $path ) || 0 !== strpos( $path, $private . '/' ) ) { WP_CLI::error( 'Rollback/verify requires a snapshot inside the private WWM_BACKUP_DIR and exact arguments.' ); }
     $snapshot = json_decode( file_get_contents( $path ), true );
     if ( ! is_array( $snapshot ) || ( $snapshot['home'] ?? '' ) !== $home ) { WP_CLI::error( 'Snapshot invalid or from another site; nothing changed.' ); }
+    if ( 'verify' === $mode && ( ( $snapshot['bundle'] ?? '' ) !== 'peek-core-input-focus-v1' || ( $snapshot['component'] ?? '' ) !== 'core-input-focus' || ( $snapshot['slug'] ?? null ) !== '' ) ) { WP_CLI::error( 'Read-only verification requires this core-input-focus snapshot; nothing changed.' ); }
     $legacy_rollback = ! isset( $snapshot['bundle'] ) && isset( $snapshot['code_sha256'], $snapshot['snippet_id'] );
     $component = $legacy_rollback ? 'core' : ( $snapshot['component'] ?? '' );
     $slug = $snapshot['slug'] ?? '';
@@ -128,7 +132,7 @@ if ( $is_upgrade ) {
     if ( ! $current || $current['id'] !== 1380 ) { WP_CLI::error( 'Core upgrade requires the uniquely owned snippet #1380; nothing changed.' ); }
     // An already-applied core can still be inspected after a separate page-only rollback.
     // Actual upgrades and reversals require all four exact page states.
-    if ( 'applied' !== $state || 'rollback' === $mode ) {
+    if ( 'applied' !== $state || $snapshot_mode ) {
         try { $page_records = $capture_pages(); } catch ( \Throwable $e ) { WP_CLI::error( $e->getMessage() . ' Nothing changed.' ); }
     }
 }
@@ -175,13 +179,18 @@ if ( $legacy_rollback ) {
 }
 $manifest = $is_upgrade ? array( 'code_sha256' => hash( 'sha256', $code ), 'before_sha256' => hash( 'sha256', $before_code ) ) : array( 'code_sha256' => hash( 'sha256', $code ), 'legacy_sha256' => 'core' === $component ? hash( 'sha256', $legacy_code ) : null );
 $bundle = 'core-input-focus' === $component ? 'peek-core-input-focus-v1' : ( 'core-kiro-fixes' === $component ? 'peek-core-kiro-fixes-v1' : ( 'core-title-rail' === $component ? 'peek-core-title-rail-v1' : ( 'core-title-strip' === $component ? 'peek-core-title-strip-v1' : ( 'core-summary-touch' === $component ? 'peek-core-summary-touch-v1' : ( 'core-upgrade' === $component ? 'peek-core-upgrade-v1' : 'peek-template-v1' ) ) ) ) );
-if ( 'rollback' === $mode ) {
+if ( $snapshot_mode ) {
     $old = $snapshot['old'] ?? null; $new = $snapshot['new'] ?? null;
     $valid = ( $snapshot['bundle'] ?? '' ) === $bundle && true === ( $snapshot['complete'] ?? false ) && ( $snapshot['payloads'] ?? null ) === $manifest && hash( 'sha256', wp_json_encode( $old ) ) === ( $snapshot['old_sha256'] ?? '' ) && hash( 'sha256', wp_json_encode( $new ) ) === ( $snapshot['new_sha256'] ?? '' ) && $matches( $new, $code );
     if ( $is_core ) { $allowed = $old; if ( is_array( $allowed ) ) { foreach ( array( 'post_content', 'post_modified', 'post_modified_gmt' ) as $key ) { $allowed['post'][ $key ] = $new['post'][ $key ] ?? null; } } $valid = $valid && $matches( $old, $before_code ) && $allowed === $new; }
     else { $valid = $valid && null === $old; }
     if ( $is_upgrade ) { $valid = $valid && ( $snapshot['pages'] ?? null ) === $page_records && hash( 'sha256', wp_json_encode( $page_records ) ) === ( $snapshot['pages_sha256'] ?? '' ); }
     if ( ! $valid ) { WP_CLI::error( 'Snapshot damaged, incomplete or from another payload; nothing changed.' ); }
+    if ( 'verify' === $mode ) {
+        $expected = $verify_original ? $old : $new; $label = $verify_original ? 'original' : 'applied';
+        if ( $old['id'] !== 1380 || $new['id'] !== 1380 || $current !== $expected ) { WP_CLI::error( 'Exact core-input-focus ' . $label . ' full state differs from its snapshot; nothing changed.' ); }
+        WP_CLI::success( 'Exact core-input-focus ' . $label . ' core and all four page-data records verified read-only; core_state_sha256=' . hash( 'sha256', wp_json_encode( $current ) ) . ' pages_sha256=' . hash( 'sha256', wp_json_encode( $page_records ) ) . '. Snapshot: ' . $path ); return;
+    }
     if ( $current === $old ) { if ( null === $old && get_post( $new['id'] ) ) { WP_CLI::error( 'Snapshot ID is occupied by a renamed/changed record; nothing deleted.' ); } WP_CLI::success( 'Exact original state already restored.' ); return; }
     if ( $current !== $new ) { WP_CLI::error( 'Complete snippet state changed since apply; nothing changed.' ); }
     try { if ( $is_core ) { $transition( $new, $old ); } else { $delete( $new ); } } catch ( \Throwable $e ) { WP_CLI::error( $e->getMessage() . ' Snapshot: ' . $path ); }

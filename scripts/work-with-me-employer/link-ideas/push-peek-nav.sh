@@ -7,6 +7,9 @@
 set -euo pipefail
 
 here=$(cd "$(dirname "$0")" && pwd)
+# The input-focus lane binds public verification and rollback to its own snapshot.
+# Earlier components keep their established wrapper behavior below.
+if [ "${1:-}" = core-input-focus ]; then shift; exec "$here/push-peek-input-focus.sh" "$@"; fi
 creds="${S26_CREDS:-$here/../../../remote_execution.txt}"
 [ -f "$creds" ] || { echo "Missing credentials file: $creds" >&2; exit 1; }
 field() { sed -n "s/^$1:[[:space:]]*//p" "$creds" | head -1; }
