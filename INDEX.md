@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-09 22:35 UTC  **FAIL**  `peek-rail-input-rehearse-2`  [reports/2026-11-09/223514-peek-rail-input-rehearse-2.md](reports/2026-11-09/223514-peek-rail-input-rehearse-2.md)  (run 42712817404)
 - 2026-11-09 22:31 UTC  **INVALID**  `peek-rail-input-rehearse-1`  [reports/2026-11-09/223121-peek-rail-input-rehearse-1.md](reports/2026-11-09/223121-peek-rail-input-rehearse-1.md)  (run 42712427137)
 - 2026-11-09 22:10 UTC  **PASS**  `peek-input-rail-inspect-1`  [reports/2026-11-09/221059-peek-input-rail-inspect-1.md](reports/2026-11-09/221059-peek-input-rail-inspect-1.md)  (run 42709406091)
 - 2026-11-09 21:19 UTC  **PASS**  `peek-kiro-fixes-public-1`  [reports/2026-11-09/211906-peek-kiro-fixes-public-1.md](reports/2026-11-09/211906-peek-kiro-fixes-public-1.md)  (run 42699275642)
