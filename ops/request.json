@@ -1,9 +1,8 @@
 {
-  "id": "peek-rail-input-rehearse-6",
-  "op": "rehearse",
+  "id": "peek-rail-input-dry-1",
+  "op": "run",
   "target": "staging39",
-  "installer": "link-ideas/rail-input/install-rail-input.php",
-  "args": [
-    "--with-uploads"
-  ]
+  "script": "link-ideas/push-rail-input.sh",
+  "args": [],
+  "tests": "auto"
 }
