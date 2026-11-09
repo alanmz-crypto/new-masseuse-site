@@ -1,5 +1,9 @@
 # Session handoff: the Peek navigation (for the next Claude Code session)
 
+**Next review:** Ryan said the latest result looks good and requested an independent
+[Kiro assessment for Codex](2026-11-09-peek-nav-kiro-assessment-handoff.md).
+That handoff is review-only; the assessment has not yet been returned.
+
 **Current: title-only Peek rails deployed on staging39; public browser and
 stored-code checks passed.** The [title-rail record](../reviews/2026-11-09-peek-title-rails.md)
 tracks the actual deployment and earlier failed attempts. Shared rails use

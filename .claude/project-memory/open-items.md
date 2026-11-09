@@ -9,6 +9,14 @@ metadata:
 A phone cloud session (https://claude.ai/code, repo `alanmz-crypto/new-masseuse-site`) sees ONLY this repository: not his computer, not his global `~/.claude/CLAUDE.md`, not his local Claude memory, not convmem. Everything that must not be lost is therefore written here and in the notes this index points to.
 First message to send in a fresh phone session: **"Read .claude/project-memory/open-items.md and tell me what is due."**
 
+**2026-11-09 Peek assessment handoff:** Ryan said the latest staging result looks
+good and requested Kiro's assessment for Codex. The
+[current Kiro brief](../../docs/inter-model/2026-11-09-peek-nav-kiro-assessment-handoff.md)
+asks for independent rendered-page/design, interaction, accessibility and source
+review of the integrated Peek. Assessment pending; no new implementation or
+website operation is authorized by this handoff. Positive visual feedback does
+not close the recorded device, focus or responsiveness questions.
+
 **2026-11-01 current release lane (supersedes older status):**
 A/B/C are LIVE through Ryan's own #68/#69/#64 merges/runs. A 262 browser passes;
 B strict 12-page semantic/card verification zero expectations; C origin 12/restore
