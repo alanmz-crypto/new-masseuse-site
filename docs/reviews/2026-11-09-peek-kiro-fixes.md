@@ -93,6 +93,36 @@ zoom between cases, and checks actual visible card/rail bounds at scale 1. Its
 one-pixel touch-ownership limit is unchanged. Enlarged text remains an
 approximation, not a claim about OS text scaling.
 
+The second rehearsal `peek-kiro-fixes-rehearse-2`, run
+`42684101436`, source `054f9a5035ecf20752608fb1a4e0326d95b29062`.
+Its offline Gates run `42684101386` passed 31/0 with one rendered-only skip.
+The candidate full file is 102,655 bytes, SHA256
+`ce21afe60e2c1bdd6286ddc1f9a1e3d14d999bfa967dc4109e4ef5f78426b2fa`;
+stored code is 102,649 bytes, SHA256
+`dec11c9e50cacba8986068e98748e966333aebe3366701f1f0e94e5e790113a1`.
+It finished **19:37:34 UTC, FAIL**. Root and a separate reviewer read the report
+and complete artifact logs. New suites passed: disclosures Chromium 66/0,
+Firefox 41/0; layout Chromium 158/0, Firefox 134/0. Retained title rails passed
+Chromium 1605/0 but Firefox had 1595/3, all in the local FAQ fixture at 1280 px:
+a preview baseline at y0 was compared with y336. Remaining suites were skipped;
+3,599/3 executed is not an aggregate pass. Rollback/reapply, rendered wording,
+PHP and published-page inventory passed; only #1380/WPCode cache changed.
+
+Actual enlarged-text screenshots now show the complete card and jump hint;
+tablet rail/header are visible and the strict one-pixel preview-motion checks
+pass. Landscape research shows roughly five complete lines at the page top
+and eight when scrolled. Overflow diagnostics locate the enlarged page width
+in the existing availability link (`.ts-corp-band__link`), outside Peek; the
+visible viewport remains 390×664 at scale 1 and the card now respects it.
+A controlled Firefox trace reproduced all three failures: the old FAQ settle
+called align at 4284 ms, moving y0 to334, before the first new preview pointerdown
+at 4389 ms. The test had programmatically reset scroll while that earlier jump
+still owned its four-second settling window. A genuine Escape before the next
+viewport/reset establishes a new interaction; runtime settling stays unchanged.
+The same paced trace passes 63/0 with Escape (old reset 60/3), and the complete
+local Firefox fixture suite passes 581/0. Assertions and runtime bytes are
+unchanged. The complete third fresh-copy rehearsal remains required.
+
 Independent review of the copy captures found the wider landscape research
 card readable, the full Privacy FAQ controls clear of the rail, and full Work
 With Me headings readable in both the current strip and stacked title boxes.
@@ -100,4 +130,8 @@ Home now accurately says Home over its hero. These are actual-copy observations.
 
 Staging remains unchanged; no new staging backup/apply/snapshot has occurred.
 Physical-device Safari/Android, OS text scale and real assistive technology
-remain unverified.
+remain unverified. All 22 current approved summary-rail destinations are visible
+H2 headings, outside disclosures; the legacy 600 ms closed-FAQ branch therefore
+is not exercised by those maps. Sharing the two jump engines remains a separate
+maintainability task. The earlier Thai touch-focus-to-BODY caveat and Rail
+practice-page Firefox Enter caveat are not claimed fixed by this work.

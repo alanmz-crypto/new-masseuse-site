@@ -20,6 +20,15 @@ let pass = 0, fail = 0, visited = 0, captures = 0;
 const started = Date.now();
 const ok = (name, value, detail) => { value ? pass++ : fail++; console.log(`${value ? 'PASS' : 'FAIL'} title-rail ${engine}/${name}${!value && detail !== undefined ? ' ' + JSON.stringify(detail) : ''}`); };
 const settle = p => p.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+const resetViewport = async (p, width) => {
+  // A preceding FAQ jump may still own its bounded arrival settling. Cancel it
+  // with real visitor input before this check resets the viewport and scroll;
+  // programmatic scrollTo alone does not cancel a visitor's pending jump.
+  await p.keyboard.press('Escape');
+  await p.setViewportSize({ width, height: 844 });
+  await p.evaluate(() => scrollTo({ top: 0, behavior: 'instant' }));
+  await settle(p);
+};
 const state = p => p.evaluate(() => ({ y: scrollY, x: scrollX, max: Math.max(0, document.documentElement.scrollHeight - innerHeight), url: location.href, hash: location.hash, history: history.length }));
 const still = (a, b) => a.url === b.url && a.history === b.history && Math.abs(a.y - b.y) <= 1 && Math.abs(a.x - b.x) <= 1;
 let browser;
@@ -334,7 +343,7 @@ try {
       if (['/work-with-me/', '/personal-automation/', '/?s=massage'].includes(page.path)) nojsSources.set(page.path, await originalContent(p));
       const name = page.path === '/' ? 'home' : page.path.replace(/[^a-zA-Z0-9]+/g, '-').replace(/^-|-$/g, '');
       for (const width of [390, 768, 1280]) {
-        await p.setViewportSize({ width, height: 844 }); await p.evaluate(() => scrollTo({ top: 0, behavior: 'instant' })); await settle(p);
+        await resetViewport(p, width);
         const expected = await source(p), label = `${name}/${width}`;
         if (approved.has(page.path)) {
           const actual = await rail(p);
@@ -395,7 +404,7 @@ try {
         ok('local no-PointerEvent: existing native link still reaches its target', await p.evaluate(() => { const r = document.getElementById('last').getBoundingClientRect(); return location.hash === '#last' && r.bottom > 0 && r.top < innerHeight; }));
       } else {
         for (const width of [390, 768, 1280]) {
-          await p.setViewportSize({ width, height: 844 }); await p.evaluate(() => scrollTo({ top: 0, behavior: 'instant' })); await settle(p);
+          await resetViewport(p, width);
           const expected = await source(p); await exercise(p, `local-${spec.name}/${width}`, expected, width, width === 390);
           if (spec.name === 'faq' && width === 390) await nativeFAQ(p, expected, '#faq', 'local native closed-FAQ');
           if (spec.name === 'progress') await progressSwitch(p, `local-progress/${width}`);
