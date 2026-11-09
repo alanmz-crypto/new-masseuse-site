@@ -1,10 +1,9 @@
 {
-  "id": "peek-touch-baseline-20261109-1",
-  "op": "run",
+  "id": "peek-core-rehearse-20261109-3",
+  "op": "rehearse",
   "target": "staging39",
-  "script": "link-ideas/check-peek-touch.mjs",
+  "installer": "link-ideas/core-upgrade/install-peek-core-upgrade.php",
   "args": [
-    "https://staging39.thaisolitude.com"
-  ],
-  "tests": "auto"
+    "--with-uploads"
+  ]
 }
