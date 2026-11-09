@@ -1,6 +1,6 @@
 # Peek: Kiro assessment fixes
 
-**Complete rehearsal passed; staging apply pending.** Ryan requested “Fix the kiro assessment
+**Deployed on staging39; public verification pending a hosting challenge.** Ryan requested “Fix the kiro assessment
 issues.” Work is on `claude/wizardly-bell-xu0rta`, staging39 only. The baseline is
 `160360197c298c255eb18ea8179cb72869c87daf`; the
 [returned assessment](../inter-model/2026-11-09-peek-nav-kiro-assessment.md)
@@ -242,7 +242,12 @@ Privacy touch-landing captures again. The independent full leaf audit confirms
 zero FAIL/INVALID and five empty stderr logs. All four changed selected captures
 (Thai research, Services left at 1280, Privacy keyboard/mouse) and seven key
 hash-identical captures were freshly viewed without a new blocker. Twenty-two
-selected images and the full 133-capture manifest are being retained.
+selected images and the full 133-capture manifest are retained. Twelve selected
+captures were freshly viewed in this run; the other ten exactly match prior
+reviewed captures. Image bytes/hashes and the runtime hash were verified.
+[Complete capture and log manifest](assets/2026-11-09-peek-kiro-fixes/rehearsal/capture-manifest.json),
+[landscape research](assets/2026-11-09-peek-kiro-fixes/rehearsal/kiro-layout-therapeutic-right-landscape-top.jpg),
+[Privacy touch landing](assets/2026-11-09-peek-kiro-fixes/rehearsal/peek-disclosure-touch-no-preference-right.jpg).
 Transient rail labels may briefly cover body copy; enlarged-root text can wrap
 the existing brand, and compact landscape cards intentionally cover part of the
 strip. These limits are not claims about physical-device or OS text scaling.
@@ -253,7 +258,42 @@ card readable, the full Privacy FAQ controls clear of the rail, and full Work
 With Me headings readable in both the current strip and stacked title boxes.
 Home now accurately says Home over its hero. These are actual-copy observations.
 
-Staging remains unchanged; no new staging backup/apply/snapshot has occurred.
+## Actual deployment and recovery
+
+`peek-kiro-fixes-apply-1`, run `42697003089`, source
+`8f4a3fb415b73cfe8c81071419c6da428f5b032a`, wrote #1380 at **20:52:52 UTC** and
+finished **20:54:46 UTC, PASS**. The update was in place, in WordPress storage,
+with no fallback-only interval. All 19 published origin routes passed core/data
+scope checks, including the existing service jump rows. Apply-source Gates
+`42697003372` passed 31/0 with one rendered-only skip.
+
+- Fresh SQL: `staging39-before-peek-nav-20261109-205236.sql`, 4,519,440 bytes,
+  SHA256 prefix `cd6f32c1920a`. Server/runner checksums matched; its encrypted
+  4,520,728-byte off-site object was read back identically at 20:52:44.990 UTC,
+  before the write at 20:52:52.561 UTC.
+- Actual snapshot: `peek-template-core-kiro-fixes-before-20261109-205252-9078fe24.json`,
+  SHA256 prefix `3d55f4d1ca91`. Server/runner checksums and the encrypted
+  226,976-byte off-site object's read-back matched at 20:52:59.673 UTC.
+- Restore proof used that fresh SQL: import exit 0, 104 restored and 104 actual
+  fingerprints. Only snippet #1380 and `wpcode_snippets` cache differed.
+  The informational exit 3 reports those intended differences.
+
+The automatic `post-change-test.sh` subsection was **INVALID, HTTP202** at
+20:54:27 UTC. None of its code/rendered/pages/schema/pixel/PHP checks ran.
+Overall apply PASS does not certify that subsection. A single later retry is
+planned after a pause; independent stored-code and focused public checks remain
+pending. The full report and timestamped job log were independently audited.
+
+For recovery, first use `core-kiro-fixes --rollback` with this actual new snapshot
+under `$HOME/private-backups/`, after current full-state checks and the script's
+fresh verified backup. That restores v5. Only then may the earlier actual
+`core-title-rail` snapshot `peek-template-core-title-rail-before-20261109-173737-cae68f35.json`
+restore v4. Never run an older rollback against the current core. Before a future
+runtime edit, freeze this exact payload as v6 and pin `core-kiro-fixes` to v5→v6;
+v6 is not yet frozen. Main and live were not changed.
+
+## Remaining validation limits
+
 Physical-device Safari/Android, OS text scale and real assistive technology
 remain unverified. All 22 current approved summary-rail destinations are visible
 H2 headings, outside disclosures; the legacy 600 ms closed-FAQ branch therefore
