@@ -228,3 +228,21 @@ all open-title text line boxes fit within the card. Retained title-strip fixture
 passed **230/0 in each engine**; the independent native-touch suite passed31/0.
 Search target/focus identity and four actual landed views will be retained in the
 next copy report. The Work seventh title is checked fully open at all three widths.
+
+The independent candidate2 native replay passed **31/0 +48/0 local assertions**.
+Both DejaVu side positions stayed atY198 during all sampled title/side/close/hint
+swipes and side taps; four-service smoke states matched candidate1 exactly.
+The [compact evidence manifest](assets/2026-11-09-peek-title-rails/checks/candidate2-native-evidence.json)
+records hashes and scope. Earlier probe mistakes are retained: hidden hint text
+was mistakenly measured as a source paragraph; the side action was incorrectly
+expected to leave its card open; and a SECTION destination was incorrectly
+expected to retain focus instead of its original H2. These probe corrections
+required no further runtime edits and are not presented as runtime fixes.
+
+[Candidate2 Actions Gates42658841182](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42658841182)
+passed **16:51:41 UTC** for
+`362e92fa87da1e1aa93ba0de39e32b12d8da52c0`: **29 PASS,1 SKIP,0 FAIL,0 INVALID**.
+The full job log was read and retained at `/tmp/peek-title-rails-actions-gates-2.log`.
+Only URL-dependent rendered verification was skipped. The separate
+[fresh-copy rehearsal42658841171](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42658841171)
+uses the same source and is still running; no staging write has been requested.
