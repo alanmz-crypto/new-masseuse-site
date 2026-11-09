@@ -1,13 +1,33 @@
 # Peek shared template
 
-**Current: Kiro fixes deployed to staging39; public and stored checks passed.**
-See the [fix and verification record](../../../docs/reviews/2026-11-09-peek-kiro-fixes.md).
-`peek-nav.php` is the current payload: 102,649 stored code bytes, SHA256
+**Input and keyboard focus follow-up in progress; no website write in this phase.**
+The [new phase record](../../../docs/reviews/2026-11-09-peek-input-focus.md) tracks the remaining summary touch-focus and
+Rail practice keyboard issues. The deployed Kiro core is now frozen as
+`peek-nav-shared-v6.php`; `core-kiro-fixes` pins v5→v6. Source `peek-nav.php`
+contains the pending `core-input-focus` candidate, starting from v6, not the
+deployed payload. The existing actual Kiro snapshot retains its meaning.
+
+The sequence is the Rail practice page **#1348 first**, updated in place for
+Enter/Close/Stay/Escape behavior, then the shared core's summary touch-focus
+correction. Never delete/recreate the practice page through the old installer;
+the new `rail-input` route will preserve complete page state in a private
+snapshot. Read-only inspection **42709406091** passed **22:10:57 UTC**:
+published #1348 is 36,892 bytes, SHA256
+`0203ac81f0eca37b7d2f217d154beda0f0485faae55072fd75276829c4c77748`, exactly the
+frozen v1 source wrapper. It did not inspect metadata/terms; the new update must
+check and preserve those. Local Chromium/Firefox probes are fixture evidence,
+not staging verification. WebKit could not run because required libraries are
+missing; no Safari/device result is claimed. Offline gates, fresh actual-copy
+rehearsals, wording checks and exact rollback proof remain required before
+writes. No new staging recovery snapshot exists yet. Main/live stay untouched.
+
+**Current deployed core: Kiro fixes, frozen v6; public and stored checks passed.**
+See the [completed fix record](../../../docs/reviews/2026-11-09-peek-kiro-fixes.md).
+`peek-nav-shared-v6.php` is the deployed payload: 102,649 stored code bytes, SHA256
 `dec11c9e50cacba8986068e98748e966333aebe3366701f1f0e94e5e790113a1`.
-The previous baseline is frozen as `peek-nav-shared-v5.php`; `core-title-rail`
-pins v4→v5 and `core-kiro-fixes` starts at v5. Before any future runtime edit,
-freeze this current payload as v6 and pin `core-kiro-fixes` to v5→v6; v6 is not
-yet frozen. No older snapshot changes meaning.
+`core-title-rail` pins v4→v5 and `core-kiro-fixes` now pins v5→v6. The mutable
+`peek-nav.php` and separate `core-input-focus` route contain the pending next
+version. No older snapshot changes meaning; no new core apply has occurred.
 
 Staging39 only. Title-only rails remain on visitor pages without an existing
 rail, including one-entry pages; they now use a shorter 120 px maximum there.
@@ -41,7 +61,7 @@ enabled on pages without existing rails, with explicit practice-page exceptions.
 approved summaries, not an allow-list for title strips or title-only rails.
 The independently collected published-page inventory drives browser coverage.
 
-## Current Kiro fixes: deployed; public and stored checks passed
+## Current deployed Kiro fixes: frozen v6; public and stored checks passed
 
 Privacy disclosure jumps now ignore a handled touch's compatibility mouse
 press during settling; genuine new input still cancels. The preview consumes
@@ -108,6 +128,10 @@ complete current ownership/state with the matching package. Use explicit
 `core-kiro-fixes --rollback $HOME/private-backups/peek-template-core-kiro-fixes-before-20261109-205252-9078fe24.json`
 to restore v5 FIRST. Only then may the older title-rail snapshot below restore
 v4. Each older transition retains its own snapshot and frozen endpoints.
+This remains the current deployed-core recovery until input-focus is applied.
+After that future apply, reverse `core-input-focus` with its actual new staging
+snapshot to v6 first; no such staging snapshot exists yet. The practice-page
+update has its own independent `rail-input` full-state restoration route.
 
 Safari, physical devices, actual assistive technology and OS text scaling
 remain unverified. Thai touch-focus-to-BODY and Rail-practice Firefox Enter

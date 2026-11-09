@@ -32,7 +32,7 @@ skip() { echo "SKIP  $1 ($2)"; }
 img=$(sed -n 's/^[[:space:]]*image:[[:space:]]*\(wordpress:cli[^[:space:]]*\).*/\1/p' "$root/docker-compose.yml" | head -1)
 php_lint() {
   docker run --rm --network none --entrypoint sh -v "$here:/s:ro" "$img" -c \
-    'n=0; bad=0; for f in $(find /s -name "*.php" | sort); do n=$((n+1)); php -l "$f" >/dev/null 2>/tmp/e || { cat /tmp/e; bad=$((bad+1)); }; done; echo "$n files, $bad failing"; [ "$bad" -eq 0 ]'
+    'n=0; bad=0; for f in $(find /s -name "*.php" | sort); do n=$((n+1)); php -l "$f" >/dev/null 2>/tmp/e || { cat /tmp/e; bad=$((bad+1)); }; done; echo "$n files, $bad failing"; [ "$n" -gt 0 ] && [ "$bad" -eq 0 ]'
 }
 if [ -n "$img" ] && command -v docker >/dev/null; then gate "php -l (pinned image)" php_lint; else skip "php -l" "docker or the pinned wordpress:cli image is not available"; fi
 
@@ -84,7 +84,8 @@ gate "Peek summary schema, planned anchors and regulated wording" python3 -I -B 
 gate "Peek summary lint refusal tests" python3 -I -B "$here/work-with-me-employer/link-ideas/tests/gists-selftest.py"
 peek_test() {
   docker run --rm --network none --entrypoint php -v "$here/work-with-me-employer/link-ideas:/pkg:ro" "$img" /pkg/test-installer.php &&
-  docker run --rm --network none --entrypoint php -v "$here/work-with-me-employer/link-ideas:/pkg:ro" "$img" /pkg/tests/core-data-test.php
+  docker run --rm --network none --entrypoint php -v "$here/work-with-me-employer/link-ideas:/pkg:ro" "$img" /pkg/tests/core-data-test.php &&
+  docker run --rm --network none --entrypoint php -v "$here/work-with-me-employer/link-ideas:/pkg:ro" "$img" /pkg/rail-input/test-installer.php
 }
 if [ -n "$img" ] && command -v docker >/dev/null; then gate "Peek installer ownership, recovery and current-page JSON (offline)" peek_test; else skip "Peek installer and JSON tests" "docker or the pinned image is not available"; fi
 peek_js_syntax() {
@@ -94,6 +95,7 @@ peek_js_syntax() {
 if command -v node >/dev/null; then
   gate "Peek browser checker and wrapper syntax (offline)" peek_js_syntax
   gate "Peek wrapper evidence, invalid and failure guards (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/tests/wrapper-selftest.py"
+  gate "Peek input wrapper evidence, complete logs and stop guards (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/tests/input-wrappers-selftest.py"
 else skip "Peek browser checker syntax and wrapper guards" "node is not installed"; fi
 # the generated Thai content must be what the builder produces (a hand edit or a stale build is caught here)
 gate "Thai evidence content matches its builder" python3 -I -B "$here/work-with-me-employer/thai/build-thai-evidence.py" --check

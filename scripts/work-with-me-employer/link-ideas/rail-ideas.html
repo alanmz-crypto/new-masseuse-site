@@ -217,6 +217,11 @@ html[data-ts-theme="dark"] .tsr-lab{--x-on:#8CCB5B;--x-on-text:#0E141C}
   }
   function place(y) { var h = card.offsetHeight, top = Math.max(12, Math.min(window.innerHeight - h - 70, y - h / 2)); card.style.top = top + 'px'; }
   function hideCard() { card.className = 'tsr-card'; card.innerHTML = ''; hover(-1); nav.classList.remove('is-active'); }
+  function dismissCard() {
+    var hadFocus = card.contains(document.activeElement), i = +card.dataset.i;
+    hideCard();
+    if (hadFocus && segs[i]) segs[i].querySelector('a').focus({ preventScroll: true });
+  }
 
   /* one gesture engine for the rail: start, move (with how far the thumb has pulled in), end */
   var g = null;
@@ -236,9 +241,17 @@ html[data-ts-theme="dark"] .tsr-lab{--x-on:#8CCB5B;--x-on-text:#0E141C}
   function end(ok) { if (!g) return; var x = g; g = null; H[idea].end(x, ok); }
   rail.addEventListener('pointerup', function () { end(true); });
   rail.addEventListener('pointercancel', function () { end(false); });
-  rail.addEventListener('click', function (e) {   // presses are handled above; a keyboard Enter (detail 0) asks the idea what to do
+  rail.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter') return;
+    var a = e.target.closest('a'), li = a && a.closest('li'), i = [].indexOf.call(segs, li);
+    if (0 > i || !rail.contains(a)) return;
+    // Firefox's keyboard-generated link click can have detail 1. Own Enter
+    // before focus changes, and suppress the same key's default activation.
+    e.preventDefault(); e.stopPropagation(); H[idea].key(i);
+  });
+  rail.addEventListener('click', function (e) {   // pointer presses are handled above; retain non-pointer click activation
     e.preventDefault(); e.stopPropagation();
-    if (e.detail === 0) { var li = e.target.closest('li'); H[idea].key([].indexOf.call(segs, li)); }
+    if (e.detail === 0) { var li = e.target.closest('li'), i = [].indexOf.call(segs, li); if (i >= 0) H[idea].key(i); }
   }, true);
 
   /* the five ideas */
@@ -280,13 +293,13 @@ html[data-ts-theme="dark"] .tsr-lab{--x-on:#8CCB5B;--x-on-text:#0E141C}
   card.addEventListener('click', function (e) {
     var i = +card.dataset.i;
     if (e.target.closest('.go')) { hideCard(); go(i); return; }
-    if (e.target.closest('.stay') || e.target.closest('.x')) { hideCard(); return; }
+    if (e.target.closest('.stay') || e.target.closest('.x')) { dismissCard(); return; }
     if (card.classList.contains('peek') && card.classList.contains('is-pinned')) { hideCard(); go(i); }
   });
   card.setAttribute('tabindex', '-1');
-  card.addEventListener('keydown', function (e) { if (e.key === 'Enter' && card.classList.contains('peek')) { var i = +card.dataset.i; hideCard(); go(i); } });
+  card.addEventListener('keydown', function (e) { if (e.key === 'Enter' && e.target === card && card.classList.contains('peek')) { e.preventDefault(); var i = +card.dataset.i; hideCard(); go(i); } });
   document.addEventListener('pointerdown', function (e) { if (card.classList.contains('is-pinned') && !card.contains(e.target) && !rail.contains(e.target)) hideCard(); });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && card.classList.contains('is-on')) hideCard(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && card.classList.contains('is-on')) { e.preventDefault(); dismissCard(); } });
 
   /* 5. the drawer */
   var dlist = drawer.querySelector('ol');

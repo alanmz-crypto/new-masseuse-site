@@ -190,18 +190,13 @@ const demoControls = async (p, path, label) => {
   if (path === '/rail-nav-ideas/') {
     const link = p.locator('.tsr-rail a[href="#tsr-questions"]'), href = await link.getAttribute('href');
     const beforePreview = await state(p);
-    await p.evaluate(() => { window.__peekLegacyKeyClick = null; document.addEventListener('click', event => { window.__peekLegacyKeyClick = { detail: event.detail, trusted: event.isTrusted, href: event.target.closest('a')?.getAttribute('href') }; }, { capture: true, once: true }); });
     await link.focus(); await link.press('Enter'); await p.waitForTimeout(100);
     const go = p.locator('.tsr-card.is-pinned .go'), ready = await go.isVisible();
-    const preview = await p.evaluate(() => ({ card: document.querySelector('.tsr-card').className, text: document.querySelector('.tsr-card').textContent, focus: document.activeElement?.outerHTML.slice(0, 400), keyClick: window.__peekLegacyKeyClick }));
-    if (engine === 'firefox' && !ready && preview.keyClick?.detail === 1 && preview.keyClick.href === href && preview.card === 'tsr-card') {
-      // Confirmed on unchanged staging in Actions42591357575 and local legacy
-      // source: this demo accepts only detail0, whereas Firefox Enter sends1.
-      // Record the existing defect; do not claim keyboard support passed.
-      console.log(`INFO title firefox/${label}: known baseline practice-rail Enter defect remains; pointer preview/Go is separately required ${JSON.stringify(preview)}`);
-    } else ok(`${label}: existing rail keyboard preview still offers its Go action`, ready, preview);
+    const preview = await p.evaluate(() => ({ card: document.querySelector('.tsr-card').className, text: document.querySelector('.tsr-card').textContent, focus: document.activeElement?.outerHTML.slice(0, 400), goFocused: document.activeElement === document.querySelector('.tsr-card.is-pinned .go') }));
+    ok(`${label}: existing rail keyboard preview offers and focuses its Go action`, ready && preview.goFocused, preview);
     ok(`${label}: opening the existing rail keyboard preview keeps page and address still before Go`, still(beforePreview, await state(p)), { before: beforePreview, after: await state(p), ...preview });
     await p.keyboard.press('Escape');
+    ok(`${label}: dismissing the existing keyboard preview restores its rail focus without moving the page`, await link.evaluate(a => document.activeElement === a) && still(beforePreview, await state(p)), await state(p));
     const beforePointer = await state(p);
     await link.click(); await p.waitForTimeout(100);
     const pointerReady = await go.isVisible();

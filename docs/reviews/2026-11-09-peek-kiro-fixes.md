@@ -1,5 +1,12 @@
 # Peek: Kiro assessment fixes
 
+**Follow-up in progress:** the [input and keyboard focus phase](2026-11-09-peek-input-focus.md)
+addresses the older summary-touch and Rail practice keyboard caveats. No website
+write has occurred in that phase. This completed deployment is now frozen as
+`peek-nav-shared-v6.php`, with `core-kiro-fixes` pinned v5→v6; the mutable
+`peek-nav.php` is the pending `core-input-focus` candidate, starting from v6.
+The actual deployment, test results and snapshot below remain unchanged.
+
 **Deployed on staging39; stored verification and focused public checks passed.** Ryan requested “Fix the kiro assessment
 issues.” Work is on `claude/wizardly-bell-xu0rta`, staging39 only. The baseline is
 `160360197c298c255eb18ea8179cb72869c87daf`; the
@@ -376,9 +383,13 @@ For recovery, first use `core-kiro-fixes --rollback` with this actual new snapsh
 under `$HOME/private-backups/`, after current full-state checks and the script's
 fresh verified backup. That restores v5. Only then may the earlier actual
 `core-title-rail` snapshot `peek-template-core-title-rail-before-20261109-173737-cae68f35.json`
-restore v4. Never run an older rollback against the current core. Before a future
-runtime edit, freeze this exact payload as v6 and pin `core-kiro-fixes` to v5→v6;
-v6 is not yet frozen. Main and live were not changed.
+restore v4. Never run an older rollback against the wrong current core. This
+payload is now frozen as v6 and `core-kiro-fixes` is pinned v5→v6. The pending
+`core-input-focus` route has no actual staging apply or recovery snapshot yet.
+After that future apply, restore v6 through its own actual snapshot before this
+older chain. The practice-page correction is a separate in-place `rail-input`
+update with private full-state restoration, never an old delete/recreate route.
+Main and live were not changed.
 
 ## Remaining validation limits
 

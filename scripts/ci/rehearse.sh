@@ -261,12 +261,16 @@ if [ -f "$extra" ]; then
   case "$inst" in
     link-ideas/core-upgrade/install-peek-core-upgrade.php) browser_seconds=900; browser_evidence=peek-core-upgrade-browser.log ;;
     link-ideas/core-summary-touch/install-peek-core-summary-touch.php) browser_seconds=900; browser_evidence=peek-core-summary-touch-browser.log ;;
-    link-ideas/core-title-strip/install-peek-core-title-strip.php|link-ideas/core-title-rail/install-peek-core-title-rail.php|link-ideas/core-kiro-fixes/install-peek-core-kiro-fixes.php)
+    link-ideas/core-title-strip/install-peek-core-title-strip.php|link-ideas/core-title-rail/install-peek-core-title-rail.php|link-ideas/core-kiro-fixes/install-peek-core-kiro-fixes.php|link-ideas/core-input-focus/install-peek-core-input-focus.php|link-ideas/rail-input/install-rail-input.php)
       browser_seconds=900; browser_evidence=peek-core-title-strip-browser.log
       if [ "$inst" = link-ideas/core-title-rail/install-peek-core-title-rail.php ]; then
         browser_seconds=1500; browser_evidence=peek-core-title-rail-browser.log
       elif [ "$inst" = link-ideas/core-kiro-fixes/install-peek-core-kiro-fixes.php ]; then
         browser_seconds=1800; browser_evidence=peek-core-kiro-fixes-browser.log
+      elif [ "$inst" = link-ideas/core-input-focus/install-peek-core-input-focus.php ]; then
+        browser_seconds=2100; browser_evidence=peek-core-input-focus-browser.log
+      elif [ "$inst" = link-ideas/rail-input/install-rail-input.php ]; then
+        browser_seconds=900; browser_evidence=rail-input-browser.log
       fi
       # Enumerate this fresh copy, including unlisted/practice pages. The title
       # matrix must not silently test only a fixed menu or sitemap subset.

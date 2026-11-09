@@ -859,7 +859,7 @@ add_action( 'wp_footer', function () {
     function swallowNextClick(lifted, keepTouchFocus) {
       var on = true, t = 0;
       function sw(c) { if (revealingQuestion && c.target === revealingQuestion && !c.isTrusted) return; c.preventDefault(); c.stopPropagation(); off(); }
-      // A title-only card can disappear on pointerup before the compatibility
+      // A navigation card can disappear on pointerup before the compatibility
       // mousedown. Its default action would blur the destination just focused
       // by the jump. Reserve that same touch's mouse events; a fresh pointer
       // press is a new interaction and disarms this additional reservation.
@@ -908,7 +908,8 @@ add_action( 'wp_footer', function () {
       var d = cdn; if (!d || e.pointerId !== d.id) return; cdn = null;
       // A control owns a touch from its start. Sliding across it neither pans the
       // page nor turns the compatibility click into an accidental box activation.
-      cardTapAt = performance.now(); swallowNextClick(true, !!collect);
+      // Navigation owns its focus change; a summary tap keeps native reading focus.
+      cardTapAt = performance.now(); swallowNextClick(true, !d.target.closest('.sum'));
       if (d.dragged || Math.abs(e.clientX - d.x) > 10 || Math.abs(e.clientY - d.y) > 10) return;
       activate(d.target);   // the click that follows would land on whatever is under the card once it closes
     });

@@ -9,7 +9,8 @@ const base = (process.argv[2] || '').replace(/\/$/, '');
 if (!['https://staging39.thaisolitude.com', 'http://localhost:8090'].includes(base)) throw new Error('staging39 or localhost:8090 only');
 let pass = 0, fail = 0;
 const ok = (name, cond, detail = '') => { if (cond) pass++; else fail++; console.log(`${cond ? 'PASS' : 'FAIL'} ${name}${detail !== '' ? `  [${detail}]` : ''}`); };
-const b = await chromium.launch();
+const executable = process.env.TS_BROWSER_EXECUTABLE || process.env.CHROMIUM_PATH;
+const b = await chromium.launch(executable ? { executablePath: executable } : {});
 for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['iPad Mini']]]) {
   for (const theme of ['light', 'dark']) {
     const tag = `${size}/${theme}`;
@@ -49,12 +50,14 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     let y0;
 
     // the top strip: display only
-    const st = await p.evaluate(() => { const t = document.querySelector('.tsr-top'), r = t.getBoundingClientRect(), cs = getComputedStyle(t); return { top: Math.round(r.top), h: Math.round(r.height), pe: cs.pointerEvents, controls: t.querySelectorAll('a,button,input,[tabindex]').length, hidden: t.getAttribute('aria-hidden'), fills: [...t.querySelectorAll('li i')].map(i => +i.style.getPropertyValue('--p')) }; });
-    ok(`${tag} top strip stays at the top while reading`, st.top === 0 && st.h > 20 && 70 >= st.h, JSON.stringify(st));
+    const st = await p.evaluate(() => { const t = document.querySelector('.tsr-top'), r = t.getBoundingClientRect(), cs = getComputedStyle(t), shared = document.getElementById('ts-peek-title-strip'); return { top: r.top, ceiling: shared ? shared.getBoundingClientRect().bottom : 0, h: r.height, pe: cs.pointerEvents, controls: t.querySelectorAll('a,button,input,[tabindex]').length, hidden: t.getAttribute('aria-hidden'), fills: [...t.querySelectorAll('li i')].map(i => +i.style.getPropertyValue('--p')) }; });
+    // The later shared title strip sits above this original demo bar. Measure
+    // that actual occupied edge; requiring viewport y0 tests the pre-strip site.
+    ok(`${tag} top strip stays directly below the shared strip while reading`, Math.abs(st.top - st.ceiling) <= 1 && st.h > 20 && 70 >= st.h, JSON.stringify(st));
     ok(`${tag} top strip names the current topic and position`, (await strip()) === 'Common reasons / 2 of 6', await strip());
     ok(`${tag} top strip shows progress per section`, st.fills[0] === 1 && st.fills[1] > 0 && 1 > st.fills[1] && st.fills[2] === 0, st.fills.join(' '));
     ok(`${tag} top strip is display only (no controls, ignores touches, hidden from screen readers since the rail has the links)`, st.pe === 'none' && st.controls === 0 && st.hidden === 'true', JSON.stringify(st));
-    y0 = await Y(); await touch('touchStart', 120, 20); await touch('touchEnd'); await W(500);
+    y0 = await Y(); await touch('touchStart', 120, st.top + Math.min(10, st.h / 2)); await touch('touchEnd'); await W(500);
     ok(`${tag} touching the top strip does nothing`, (await Y()) === y0 && !(await card()).on);
 
     // 1. slide, lift, choose
@@ -125,5 +128,5 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
   }
 }
 await b.close();
-console.log(`\nchromium: ${pass} passed, ${fail} failed`);
+console.log(`INFO Rail input native touch: ${pass} passed, ${fail} failed; simulated Chromium touch, not physical-device validation.`);
 process.exit(fail ? 1 : 0);

@@ -5,7 +5,28 @@ metadata:
   type: project
 ---
 
-**Current status:** [Kiro fixes deployed to staging39; public and stored checks passed](../../docs/reviews/2026-11-09-peek-kiro-fixes.md).
+**Input and keyboard focus follow-up in progress; no website write in this phase.**
+The [new phase record](../../docs/reviews/2026-11-09-peek-input-focus.md) tracks the remaining summary touch-focus and
+Rail practice keyboard issues. The deployed Kiro core is now frozen as
+`peek-nav-shared-v6.php`; `core-kiro-fixes` pins v5→v6. Source `peek-nav.php`
+contains the pending `core-input-focus` candidate, starting from v6, not the
+deployed payload. The existing actual Kiro snapshot retains its meaning.
+
+The sequence is the Rail practice page **#1348 first**, updated in place for
+Enter/Close/Stay/Escape behavior, then the shared core's summary touch-focus
+correction. Never delete/recreate the practice page through the old installer;
+the new `rail-input` route will preserve complete page state in a private
+snapshot. Read-only inspection **42709406091** passed **22:10:57 UTC**:
+published #1348 is 36,892 bytes, SHA256
+`0203ac81f0eca37b7d2f217d154beda0f0485faae55072fd75276829c4c77748`, exactly the
+frozen v1 source wrapper. It did not inspect metadata/terms; the new update must
+check and preserve those. Local Chromium/Firefox probes are fixture evidence,
+not staging verification. WebKit could not run because required libraries are
+missing; no Safari/device result is claimed. Offline gates, fresh actual-copy
+rehearsals, wording checks and exact rollback proof remain required before
+writes. No new staging recovery snapshot exists yet. Main/live stay untouched.
+
+**Deployed baseline:** [Kiro fixes, frozen v6; public and stored checks passed](../../docs/reviews/2026-11-09-peek-kiro-fixes.md).
 The earlier practice and deployment stages below are historical; current recovery
 starts with the new Kiro-fixes snapshot in the continuation section.
 
@@ -349,7 +370,7 @@ Detailed visual review, full evidence and recovery are in the
 The reported page-scroll leak was not reproduced by native Chromium probes;
 Safari/physical-device resolution remains unverified.
 
-**Current: Kiro fixes deployed on staging39; public and stored checks passed.**
+**Current deployed core: Kiro fixes, frozen v6; public and stored checks passed.**
 The [fix and verification record](../../docs/reviews/2026-11-09-peek-kiro-fixes.md)
 tracks corrected Privacy touch/Enter jumps, larger short-screen reading areas,
 FAQ/text clearance, wrapped titles, shorter single-entry rails and opaque strips.
@@ -359,7 +380,7 @@ this tradeoff was explained before implementation. No icon scrolling or broad
 jump-engine refactor was added.
 
 Apply **42697003089**, source `8f4a3fb415b73cfe8c81071419c6da428f5b032a`, wrote #1380
-at **20:52:52 UTC** and finished **20:54:46 UTC, PASS**. Current code: **102,649
+at **20:52:52 UTC** and finished **20:54:46 UTC, PASS**. Current deployed code: **102,649
 bytes**, SHA256 `dec11c9e50cacba8986068e98748e966333aebe3366701f1f0e94e5e790113a1`.
 Actions Gates passed **31/0 + 1 rendered-only skip**. Fresh-copy **42693471206**
 passed **14,249/0 across 14 complete suites**, including native touch 387/0 and
@@ -399,9 +420,12 @@ retain their original identities, titles, bytes and full hashes.
 
 After a fresh verified backup and complete current-state/ownership checks,
 reverse `core-kiro-fixes` using that actual new snapshot to frozen v5 FIRST.
-Only then may the older title-rail snapshot below restore v4. Frozen v5 and
-pinned v4→v5 already exist. Before any future runtime edit, freeze the current
-payload as v6 and pin `core-kiro-fixes` to v5→v6; v6 is not yet frozen.
+Only then may the older title-rail snapshot below restore v4. Frozen v5/v6 and
+pinned v4→v5→v6 now exist. The pending input-focus route has no actual staging
+snapshot yet and does not alter this current recovery. After its future apply,
+reverse its own actual snapshot to v6 before this older core chain. Practice
+page recovery belongs to the separate full-state `rail-input` route, never the
+old create/delete installer.
 Thai touch-focus-to-BODY and Rail-practice Firefox Enter are not claimed fixed.
 Safari, physical devices, actual assistive technology and OS text scaling
 remain unverified; rapid-switch delay is not claimed fixed. Main/live untouched.
@@ -486,7 +510,8 @@ rail and strip; its native jump row remains available without JavaScript.
 `peek-nav-before-20261109-010037-0c493281.json` to delete the shared core.
 Migration installed inert Thai data before changing #1380 in place, with no
 fallback-only interval. Main/live remain unchanged.
-Current deployment/status: [Kiro fixes](../../docs/reviews/2026-11-09-peek-kiro-fixes.md).
+Ongoing phase: [input and keyboard focus](../../docs/reviews/2026-11-09-peek-input-focus.md).
+Current deployment: [Kiro fixes, frozen v6](../../docs/reviews/2026-11-09-peek-kiro-fixes.md).
 Previous baseline: [title-only rails](../../docs/reviews/2026-11-09-peek-title-rails.md).
 Earlier baseline: [all-page title strip](../../docs/reviews/2026-11-09-peek-title-strip-all-pages.md).
 Earlier baseline: [short-summary touch correction](../../docs/reviews/2026-11-09-peek-short-summary-touch.md).

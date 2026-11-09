@@ -7,7 +7,7 @@
  * (Copied from install-progress-ideas.php, which created /progress-nav-ideas/.) Nothing else is touched (no snippet, CSS, menu or other page).
  * Ryan, 2026-11-08 (cloud session): "https://staging39.thaisolitude.com use this staging ... Create a practice page and give me examples of the most modern GUI ideas I could use
  * instead of the current links that I am using for in-page links ... 5 ideas ... It needs to be real code that really works so that we know we can use it on the final version."
- * The page holds one HTML block (rail-ideas.html: its own CSS and plain JavaScript, no plugin); the sample sections are placeholders with no wording.
+ * The original page holds one HTML block (frozen rail-ideas-v1.html). Later input updates use rail-input/install-rail-input.php in place.
  *
  * Allow-list: localhost:8090 (the rehearsal copy) and staging39. Never live: this is a practice page.
  * Modes (first WP-CLI argument; run with --user=1):  <mode> [FILE]
@@ -37,10 +37,12 @@ if ( ! in_array( $mode, array( 'preflight', 'apply', 'rollback' ), true ) ) {
 
 $slug  = 'rail-nav-ideas';
 $title = 'Side rail ideas';
-$src   = __DIR__ . '/rail-ideas.html';
+$src   = __DIR__ . '/rail-ideas-v1.html';
 if ( ! is_file( $src ) ) {
-	WP_CLI::error( 'rail-ideas.html is missing next to the installer.' );
+	WP_CLI::error( 'Frozen rail-ideas-v1.html is missing next to the installer.' );
 }
+$source_bytes = (string) file_get_contents( $src );
+if ( hash( 'sha256', $source_bytes ) !== '26f3472e8032cb89d99b923c23999fc6281537a32d0eed07a54f61347af8d38d' ) { WP_CLI::error( 'Frozen Rail v1 source changed; nothing written.' ); }
 $html    = rtrim( (string) file_get_contents( $src ) );
 $content = "<!-- wp:html -->\n" . $html . "\n<!-- /wp:html -->";
 $js = (string) substr( (string) strstr( $html, '<script>' ), 8 );
@@ -57,13 +59,13 @@ if ( preg_match( '/\b(we|our|us|ours|studio)\b/i', $visible ) || preg_match( '/\
 	WP_CLI::error( 'The visible text uses a word this site never uses.' );
 }
 
-$read = function () use ( $slug, $content ) {
-	$pages = get_posts( array( 'post_type' => 'page', 'name' => $slug, 'post_status' => 'any', 'numberposts' => 5, 'suppress_filters' => true ) );
+$read = function () use ( $slug, $title, $content ) {
+	$pages = get_posts( array( 'post_type' => 'page', 'name' => $slug, 'post_status' => array_values( get_post_stati() ), 'numberposts' => 5, 'suppress_filters' => true ) );
 	if ( ! $pages ) {
 		return array( 'state' => 'ready', 'id' => 0, 'report' => 'no page with slug ' . $slug );
 	}
 	$p  = $pages[0];
-	$ok = 1 === count( $pages ) && 'publish' === $p->post_status && (string) $p->post_content === $content && '1' === (string) get_post_meta( $p->ID, '_ts_rail_ideas', true );
+	$ok = 1 === count( $pages ) && 'publish' === $p->post_status && $title === $p->post_title && (string) $p->post_content === $content && '1' === (string) get_post_meta( $p->ID, '_ts_rail_ideas', true ) && 'disabled' === (string) get_post_meta( $p->ID, 'site-post-title', true );
 	return array( 'state' => $ok ? 'applied' : 'CHANGED', 'id' => (int) $p->ID, 'report' => count( $pages ) . ' page(s) with slug ' . $slug . ', #' . $p->ID . ' ' . $p->post_status . ( $ok ? ', exactly as written' : ', NOT as this installer writes it' ) );
 };
 $now = $read();
@@ -121,14 +123,15 @@ if ( 'apply' === $mode ) {
 // rollback FILE
 $file = isset( $args[1] ) ? (string) $args[1] : '';
 $snap = $file && is_file( $file ) ? json_decode( (string) file_get_contents( $file ), true ) : null;
-if ( ! is_array( $snap ) || ( $snap['home'] ?? '' ) !== $home || ( $snap['slug'] ?? '' ) !== $slug || empty( $snap['page_id'] ) ) {
+if ( ! is_array( $snap ) || ( $snap['home'] ?? '' ) !== $home || ( $snap['slug'] ?? '' ) !== $slug || ! is_int( $snap['page_id'] ?? null ) || $snap['page_id'] < 1 || ( $snap['content_sha256'] ?? '' ) !== hash( 'sha256', $content ) ) {
 	WP_CLI::error( 'Snapshot is missing, incomplete (the apply may not have finished), or from another site.' );
 }
-// the page this snapshot names, carrying this installer's marker (any earlier version of rail-ideas.html): it is ours to delete
-if ( 'ready' === $now['state'] || (int) $now['id'] !== (int) $snap['page_id'] || '1' !== (string) get_post_meta( (int) $snap['page_id'], '_ts_rail_ideas', true ) ) {
-	WP_CLI::success( 'Nothing to roll back: the page this snapshot names is not there with this installer\'s marker (' . $now['report'] . ').' );
+// A later in-place update or hand edit must never be removed by this creation snapshot.
+if ( 'ready' === $now['state'] ) {
+	WP_CLI::success( 'Nothing to roll back: the original practice page is absent.' );
 	return;
 }
+if ( 'applied' !== $now['state'] || (int) $now['id'] !== $snap['page_id'] ) { WP_CLI::error( 'Page changed or belongs to another snapshot; nothing deleted.' ); }
 wp_delete_post( (int) $snap['page_id'], true );
 $check = $read();
 if ( 'ready' !== $check['state'] ) {
@@ -136,4 +139,4 @@ if ( 'ready' !== $check['state'] ) {
 }
 WP_CLI::success( 'Rollback done: page #' . $snap['page_id'] . ' (/' . $slug . '/) is deleted; nothing else was ever changed.' );
 
-// ref: ./rail-ideas.html — the reviewed page block; ./install-progress-ideas.php — the installer this was copied from; ../chair-massage/install-chair-massage.php — the preflight/apply/rollback pattern this follows
+// ref: ./rail-ideas-v1.html — frozen original block; ./rail-input/install-rail-input.php — later in-place update
