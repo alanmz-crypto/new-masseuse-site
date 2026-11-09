@@ -1,9 +1,11 @@
 {
-  "id": "peek-deep-rehearse-20261109-1",
-  "op": "rehearse",
+  "id": "peek-deep-dry-20261109-1",
+  "op": "run",
   "target": "staging39",
-  "installer": "link-ideas/peek-page/deep-tissue-massage/install-peek-page-data.php",
+  "script": "link-ideas/push-peek-nav.sh",
   "args": [
-    "--with-uploads"
-  ]
+    "page",
+    "deep-tissue-massage"
+  ],
+  "tests": "auto"
 }
