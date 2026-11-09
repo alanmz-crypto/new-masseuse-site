@@ -1,11 +1,13 @@
 # Peek shared template
 
-Staging39 only. The current `peek-nav.php` is a candidate that adds title-only
-Peek rails to visitor pages without an existing rail. It is not deployed; see
-the [title-rail record](../../../docs/reviews/2026-11-09-peek-title-rails.md).
-The deployed baseline is frozen `peek-nav-shared-v4.php`: all-page read-only
-title strips, larger summary areas and four approved service-page summary rails.
-Its final focused public browser check was blocked by SiteGround HTTP202.
+Staging39 only. Title-only Peek rails are deployed to visitor pages without an
+existing rail. Final public browser checks and exact stored-code inspection passed;
+see the [current title-rail record](../../../docs/reviews/2026-11-09-peek-title-rails.md).
+The current `peek-nav.php` has 97,130 code bytes, SHA256
+`c7ed404ebe3e19d24e7a91b91bb996505efb80027fd183245d1c7137f188991e`.
+It retains the all-page read-only title strip, larger summary areas and four
+approved service-page summary rails. Frozen `peek-nav-shared-v4.php` is the
+preceding deployed payload, not the current runtime.
 
 Existing `.ts-jump` rows remain the sole navigation/destination source where they
 exist. Safely encoded `ts-peek-nav-config` JSON supplies the page-title fallback;
@@ -28,15 +30,15 @@ Run `python3 -I -B lint-gists.py` and `tests/gists-selftest.py`; both are in
 `scripts/check-all.sh`, with PHP ownership/recovery/JSON tests. Lint cannot decide
 semantic accuracy, overlap or percentage coverage. Approval must follow rendered
 source review. `peek-pages.json` records the browser expectations and explicit
-rollout status. `titleStrip` is enabled; `titleRail` is pending for visitor pages
-without existing rails, with explicit practice-page exceptions. The old
+rollout status. `titleStrip` is enabled for all visitor HTML; `titleRail` is
+enabled on pages without existing rails, with explicit practice-page exceptions. The old
 `railEligibilityPending` list is removed. The four `pages` entries describe
 approved summaries, not an allow-list for title strips or title-only rails.
 The independently collected published-page inventory drives browser coverage.
 
-## Candidate title-only rails: full gates and deployment pending
+## Current title-only rails: deployed; public and stored checks passed
 
-The candidate reuses Peek's rail/index gestures and preview/jump controls with
+The shared core reuses Peek's rail/index gestures and preview/jump controls with
 `.ts-pk-titles` boxes containing titles only. Existing row labels/targets come
 first, including closed native details; otherwise visible main H2 headings supply
 sections, with a single page-title entry for no-heading or fixed-search pages.
@@ -49,17 +51,57 @@ Progress modes A–D gain the title rail; mode E hides it and releases its rail
 readiness/padding while the demo rail is active. Without PointerEvent support,
 the strip and ordinary links remain. No new summary text or data snippet is added.
 
-`core-title-rail` is the new exact v4→candidate transition. `core-title-strip` is
-now pinned to frozen v3→v4, preserving its actual 10:24:52 snapshot. Full offline,
-fresh-copy, rendered-wording, browser/visual and backup gates remain required;
-this candidate has no staging apply or actual recovery snapshot yet. There is no
-planned fallback-only interval. Once applied, reverse `core-title-rail` with its
-own actual snapshot to restore v4 before using any older recovery route.
+`core-title-rail` applied the exact frozen v4→current transition to #1380 in place
+at **17:37:37 UTC**. Apply **42666333809**, source `267c93e94f2b81ae63843be8f2e806805a061bd3`,
+finished **17:41:06 UTC, PASS**. There was no fallback-only interval, and all four
+page-data records were retained. Before this write, Actions Gates passed
+**29 PASS / 1 SKIP / 0 FAIL / 0 INVALID**; fresh-copy rehearsal **42662818962**
+passed **13,836/0** across ten suites. All 40 actual title-rail captures were
+compared/reviewed, including both-side Search controls at three widths. The
+current record preserves the failed first rehearsal and second rehearsal's
+manual Search-form overlap finding; the third corrected that overlap.
 
-## Current title strip and summary space: deployed; public browser check blocked
+Fresh SQL export `staging39-before-peek-nav-20261109-173723.sql` (4,497,790 bytes,
+SHA256 prefix `6bcb28a1f60b`) was verified encrypted off-site before the write.
+Actual snapshot `peek-template-core-title-rail-before-20261109-173737-cae68f35.json`
+(SHA256 prefix `d236a7d633bd`) was also verified encrypted off-site. All 19 origin
+scope checks passed; rendered wording, posture, pages, PHP and schema (27/27)
+passed. The broad live comparison had 20/20 pixel differences, so it is not an
+aggregate pass. Restore import returned 0; all 104 restored/current fingerprints
+were compared, with changes only to #1380 and WPCode cache. All 20 actual deployed
+full-page captures were reviewed without a new persistent layout blocker; these
+closed-state views do not prove gestures or open-card behavior.
+
+Public run **42667176429** (source `f4a03e677a07e6e488c8aa5b7546c5e306db94ef`)
+finished **17:49:09 UTC, PASS**: **11,829/0** across nine unique suites in 358 seconds.
+Title rails passed **1022/0 Chromium, 1018/0 Firefox**; title strips **1110/0, 1107/0**,
+each over 21 actual routes. Retained clearance passed **3340/0** in each engine,
+native Chromium touch **378/0**, pages **172/0**, and matched capture subset **342/0**.
+This public run encountered no HTTP202 denial. Stored inspection **42667209210**
+(source `eb1ed7143e78a5b1ca7798ddd490189b35ce5872`) passed at **17:49:42 UTC**:
+published #1380 exactly matches the 97,130-byte/hash payload above; #1381–1384
+retain their original bytes/hashes. The current record tracks the retained-log
+and final public capture review.
+
+Safari, physical devices and actual assistive technology remain unverified.
+The existing Thai touch-focus loss and old Rail practice page's Firefox Enter
+behavior remain open; the required practice pointer preview/Go checks passed.
+The reported rapid-switch/loading delay was not reproduced or claimed fixed.
+
+For recovery, first take a fresh verified encrypted off-site backup and check
+complete current ownership/state with the matching reviewed package. Use explicit
+`core-title-rail --rollback $HOME/private-backups/peek-template-core-title-rail-before-20261109-173737-cae68f35.json`
+arguments to restore v4 before any older route below. `core-title-strip` remains
+pinned to exact frozen v3→v4. Before any future runtime edit, freeze this deployed
+payload as shared v5 and pin this transition to it; v5 does not exist yet.
+Page-only data removal under the current core leaves a title-only rail and strip;
+the original jump row remains available without JavaScript.
+
+## Previous title-strip and summary-space deployment: frozen shared v4
 
 The [all-page title-strip record](../../../docs/reviews/2026-11-09-peek-title-strip-all-pages.md)
-tracks deployment, evidence and recovery. Existing `.ts-jump` labels remain the
+tracks that earlier deployment, evidence and recovery. The behavior and results
+in this section describe v4. Existing `.ts-jump` labels remain the
 first title source. Pages without a usable row use visible content headings,
 then their page/document title when no heading is available. Search pages keep
 their page title fixed because results form columns, not sequential sections.
@@ -97,8 +139,8 @@ apply run **42600617720** finished **10:28:23 UTC, PASS**. Exact stored inspecti
 and all four data identities/hashes are unchanged. The complete fresh-copy
 Chromium/Firefox suites and 19 origin scope checks passed. Public run
 **42601203134** was **INVALID HTTP202** at **10:30:14 UTC**: zero assertions,
-routes or captures; the quick subset was skipped. Public browser verification
-remains pending access, with no immediate retry queued.
+routes or captures; the quick subset was skipped. That earlier attempt provided
+no public browser verification, and no immediate retry was queued.
 
 The new localhost-only adapter has no preparation hook. It checks the untouched
 staging39 copy with uploads, exact rollback/reapply, title matrices in Chromium
@@ -120,8 +162,9 @@ backup. The actual export `staging39-before-peek-nav-20261109-102438.sql` and
 snapshot `peek-template-core-title-strip-before-20261109-102452-90630a29.json`
 were verified encrypted off-site. Restore import returned 0 with 104/104
 fingerprints differing only on #1380/cache. The broad live comparison had 20/20
-pixel differences, not an aggregate pass. Recovery must first use the matching
-reviewed package, current full-state checks and explicit
+pixel differences, not an aggregate pass. After the current title-rail transition
+is reversed to v4, recovery uses the matching reviewed package, current full-state
+checks and explicit
 `core-title-strip --rollback $HOME/private-backups/peek-template-core-title-strip-before-20261109-102452-90630a29.json`
 arguments to restore v3.
 Only then can `core-summary-touch` restore v2, `core-upgrade` restore v1, and
@@ -129,11 +172,10 @@ Only then can `core-summary-touch` restore v2, `core-upgrade` restore v1, and
 reverse this new payload. `core-summary-touch` now pins v2 to frozen v3,
 preserving the actual 07:59:57 snapshot's meaning.
 
-The deployed payload is now frozen as `peek-nav-shared-v4.php`, and
-`core-title-strip` is pinned to exact v3→v4. The candidate uses the separate
-`core-title-rail` transition so the actual snapshot above retains its recovery
-meaning. If that candidate is applied, reverse it to v4 first. Safari, physical
-devices and actual assistive technology
+This previous payload is frozen as `peek-nav-shared-v4.php`, and
+`core-title-strip` is pinned to exact v3→v4. Reverse the current `core-title-rail`
+transition to v4 first so the actual snapshot above retains its recovery meaning.
+Safari, physical devices and actual assistive technology
 remain unverified; the reported loading delay was not reproduced.
 
 ## Completed short-summary touch correction: frozen shared v3
@@ -307,11 +349,12 @@ requires reversing any core upgrade first. Then restore the legacy core using
 `core --rollback FILE`, and remove Thai data using `page thai-massage --rollback FILE`,
 with each component's actual snapshot. Core reversal affects every Peek page.
 For one service page, reverse only its page data using its actual snapshot in the
-current rollout record. The completed migration had no fallback-only swap;
-deliberate page-data removal under the shared core restores that page's plain row.
-Under the deployed all-page core, page-only removal also retains its read-only strip.
+current rollout record. The completed migration had no fallback-only swap.
+Under that original core, page-data removal restored the plain row. Under the
+current deployed core, removal leaves a title-only rail and read-only strip;
+the original plain jump row remains the no-JavaScript fallback.
 
-Do not deploy another page until its wording/rollout is approved. An independently
+Do not deploy summaries for another page until its wording/rollout is approved. An independently
 edited or newer data/core payload is deliberately refused; a future version needs
 its own reviewed exact-state migration, not deletion using an old snapshot.
 
@@ -342,9 +385,9 @@ Public captures were reviewed before proceeding to the next page. The local-only
 or WordPress data. `--capture-page` adds first/research-start/research-end captures
 at three widths and checks card bounds and access to the final research item.
 The current rollout record holds final aggregate-check status and actual per-page
-snapshots. A page-only reversal removes only its data and restores its plain jump
-row without changing the shared core or other pages; the all-page core
-retains the title strip on that page.
+snapshots. A page-only reversal removes only its data without changing the shared
+core or other pages. Under the current core, that page keeps a title-only rail
+and strip; its original plain jump row remains available without JavaScript.
 
 The service rollout exposed a shared-placement defect: Chair's first preview
 overlapped the initial strip and grazed the tablet CTA. The deployed correction

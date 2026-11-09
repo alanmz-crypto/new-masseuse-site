@@ -1,0 +1,268 @@
+{
+  "evidence": "Actual copied-site title-rail captures from passing rehearsal3 and completed visual review. No staging deployment or public-after-apply verification is claimed.",
+  "run": 42662818962,
+  "source_commit": "751083e3afddb67a2f56e2cea374a6046b88e3f4",
+  "finished_utc": "2026-11-09T17:31:25Z",
+  "rehearsal_result": "PASS",
+  "browser_log_audit": "PASS;13836 actual PASS lines,0FAIL,0INVALID;10 unique suites",
+  "visual_review": "PASS;11 common images byte-identical to reviewed copy2,23 changed common images and6 new Search form views inspected by visual-review agent;root separately viewed6 Search form views.",
+  "source_capture_directory": "/tmp/peek-title-rails-rehearse-3-captures",
+  "actual_routes_checked": 21,
+  "source_total_captures": 114,
+  "source_actual_captures": 98,
+  "source_fixture_captures": 16,
+  "actual_title_rail_captures_retained": 40,
+  "other_captures_not_retained_here": 74,
+  "source_artifact": {
+    "path": "/tmp/peek-title-rails-rehearse-3.zip",
+    "bytes": 13171598,
+    "sha256": "c139caefb19fa990fdf6a49b6d1396d773635586041bc796d92d4f3765f0794d"
+  },
+  "comparison_to_rehearsal2": {
+    "identical": 11,
+    "changed": 23,
+    "new": 6
+  },
+  "images": [
+    {
+      "file": "title-rail-about-1280.jpg",
+      "bytes": 90731,
+      "sha256": "5e98386877cebfdcbce940346d19eba56930d9289addadbb1779353d85e4ccc1",
+      "comparison_to_rehearsal2": "identical"
+    },
+    {
+      "file": "title-rail-about-390.jpg",
+      "bytes": 43970,
+      "sha256": "af96c99ad18a552406b3bb80dcf905266a295bd7cca964b5aa0f0ecb1e4ffe17",
+      "comparison_to_rehearsal2": "changed"
+    },
+    {
+      "file": "title-rail-accessibility-1280.jpg",
+      "bytes": 119392,
+      "sha256": "740262cb8c416caab393cceb9e898b09dba67571f31c4353c47fa51e6e085244",
+      "comparison_to_rehearsal2": "changed"
+    },
+    {
+      "file": "title-rail-accessibility-390.jpg",
+      "bytes": 55220,
+      "sha256": "592a057d45ca052a50e433a7f39f8c298d4a5ed55e446d13db6c28e22da82ce6",
+      "comparison_to_rehearsal2": "identical"
+    },
+    {
+      "file": "title-rail-contact-1280.jpg",
+      "bytes": 70109,
+      "sha256": "205a4f55d844c1560d8c9250ff6db179088430d407a71518b282f47ce6e6216c",
+      "comparison_to_rehearsal2": "changed"
+    },
+    {
+      "file": "title-rail-contact-390.jpg",
+      "bytes": 32693,
+      "sha256": "5512fee6ffc1aedd7e6d23ea63e80007e2edabfe31f7c5b393b9774ddd562c04",
+      "comparison_to_rehearsal2": "changed"
+    },
+    {
+      "file": "title-rail-corporate-massage-portland-1280.jpg",
+      "bytes": 83986,
+      "sha256": "e73e3d4b1f53a872db308452ef2e91ca19211a8edc9947a6e8bca31d041569c7",
+      "comparison_to_rehearsal2": "changed"
+    },
+    {
+      "file": "title-rail-corporate-massage-portland-390.jpg",
+      "bytes": 39290,
+      "sha256": "5dd36fd9a74ebed6c08e9ea59d9db32009eff6b3d4b4025b533f78ea631e9aa9",
+      "comparison_to_rehearsal2": "identical"
+    },
+    {
+      "file": "title-rail-home-1280.jpg",
+      "bytes": 99189,
+      "sha256": "720e18c4077bd729a1232e22815f3548a92b6ae164d16e6ccf1e0a6e26788b6e",
+      "comparison_to_rehearsal2": "changed"
+    },
+    {
+      "file": "title-rail-home-390.jpg",
+      "bytes": 50095,
+      "sha256": "99bb974e5c75eb175e4993246860a8d0bdb9147a5340c1030c106069b5a022b9",
+      "comparison_to_rehearsal2": "changed"
+    },
+    {
+      "file": "title-rail-in-page-link-ideas-1280.jpg",
+      "bytes": 72021,
+      "sha256": "3c7e74d22dc2f48dbab92bf33ec2aa966883bd5f3395727c9650b394992732ab",
+      "comparison_to_rehearsal2": "identical"
+    },
+    {
+      "file": "title-rail-in-page-link-ideas-390.jpg",
+      "bytes": 31758,
+      "sha256": "aca52a7b5d920312b1bdcc3cf9cecf241199ed398f51d570294a49e3cec54b60",
+      "comparison_to_rehearsal2": "identical"
+    },
+    {
+      "file": "title-rail-peek-title-missing-page-verification-20261109-1280.jpg",
+      "bytes": 67645,
+      "sha256": "0d2109f76fa757ebcf8d0b2b6c9c927f266a6043d8695231c95b572b72cb2d03",
+      "comparison_to_rehearsal2": "changed"
+    },
+    {
+      "file": "title-rail-peek-title-missing-page-verification-20261109-390.jpg",
+      "bytes": 39889,
+      "sha256": "8d460c8c8ff8e5f7d0285bce351209a8663504105cb6e84be3068b1e20c161c3",
+      "comparison_to_rehearsal2": "changed"
+    },
+    {
+      "file": "title-rail-personal-automation-1280.jpg",
+      "bytes": 117153,
+      "sha256": "85856e75c8a3aa80111b72d66ca5fb9e0cfe55b414502909e671ca9eb0997626",
+      "comparison_to_rehearsal2": "changed"
+    },
+    {
+      "file": "title-rail-personal-automation-390.jpg",
+      "bytes": 54281,
+      "sha256": "dcf527027ef75fb8457e22b02f5e68b63e88f51bf63e8228b4339ee87bfcaac3",
+      "comparison_to_rehearsal2": "changed"
+    },
+    {
+      "file": "title-rail-personal-automation-privacy-1280.jpg",
+      "bytes": 145285,
+      "sha256": "f19f33238095d559dffaeaff39d680229360584090b5a22f894a97def5c2cbeb",
+      "comparison_to_rehearsal2": "changed"
+    },
+    {
+      "file": "title-rail-personal-automation-privacy-390.jpg",
+      "bytes": 51122,
+      "sha256": "03949a5ce75d8ec1c8e70c74ccc4425f2baa01e045dd3af78205d864c65b3af6",
+      "comparison_to_rehearsal2": "changed"
+    },
+    {
+      "file": "title-rail-personal-automation-terms-1280.jpg",
+      "bytes": 113697,
+      "sha256": "55b54417995e14f545e6709af8ca506714a088d440282fcc9e6ead7f1fc0c1bb",
+      "comparison_to_rehearsal2": "changed"
+    },
+    {
+      "file": "title-rail-personal-automation-terms-390.jpg",
+      "bytes": 52679,
+      "sha256": "8218c75f2bb4157bc2e0fecff1b4a5a538d8706defa175446a13d013e3c94a0d",
+      "comparison_to_rehearsal2": "identical"
+    },
+    {
+      "file": "title-rail-privacy-policy-1280.jpg",
+      "bytes": 108593,
+      "sha256": "61d5c36c113d31f6592ea3e08cbac90f6d57b064264161195d94fbfe5817e7ef",
+      "comparison_to_rehearsal2": "changed"
+    },
+    {
+      "file": "title-rail-privacy-policy-390-landed.jpg",
+      "bytes": 55448,
+      "sha256": "f7352e4a4433f115ff54b7e79c13156fbe3f51bcd8cc0f5df280b9be8e29a8c6",
+      "comparison_to_rehearsal2": "identical"
+    },
+    {
+      "file": "title-rail-privacy-policy-390.jpg",
+      "bytes": 50372,
+      "sha256": "ead08c6a2a96a06dc80618e999a3b8acc7f241c61c35f67a83bc2da109af6689",
+      "comparison_to_rehearsal2": "identical"
+    },
+    {
+      "file": "title-rail-progress-nav-ideas-1280.jpg",
+      "bytes": 70570,
+      "sha256": "067a9db31cb0cc7cc64a488bca81076e67eac745e320386a6cc8c5930989741b",
+      "comparison_to_rehearsal2": "identical"
+    },
+    {
+      "file": "title-rail-progress-nav-ideas-390.jpg",
+      "bytes": 32052,
+      "sha256": "f8ddb40297c888cdb7ec555c2f42efe1326e769f8d89ec164aa1c52c52057649",
+      "comparison_to_rehearsal2": "changed"
+    },
+    {
+      "file": "title-rail-s-massage-1280-form-left-form-landed.jpg",
+      "bytes": 92760,
+      "sha256": "ed77549af78d8530488c812551db1dafc073eea290a784ad6c843eab67e8a2ab",
+      "comparison_to_rehearsal2": "new"
+    },
+    {
+      "file": "title-rail-s-massage-1280-form-right-form-landed.jpg",
+      "bytes": 104580,
+      "sha256": "6ab6a4182c0e1bd2050e853e955d7b561e2e26840bc744d17b9d48643a627b87",
+      "comparison_to_rehearsal2": "new"
+    },
+    {
+      "file": "title-rail-s-massage-1280-landed.jpg",
+      "bytes": 92348,
+      "sha256": "7bcde019325da6fd1f56e9273dac2de36504e1c4f9f3c67971642feadaad492a",
+      "comparison_to_rehearsal2": "changed"
+    },
+    {
+      "file": "title-rail-s-massage-1280.jpg",
+      "bytes": 82028,
+      "sha256": "4b995845de724d08abaa22cfe42538996ea823532d1c8bad2cb28179bf08bb02",
+      "comparison_to_rehearsal2": "changed"
+    },
+    {
+      "file": "title-rail-s-massage-390-form-left-form-landed.jpg",
+      "bytes": 35106,
+      "sha256": "38ea3a1ac92f0b36212a7c2566358deb0f1b38fbad5a7675161a1ee8596819f3",
+      "comparison_to_rehearsal2": "new"
+    },
+    {
+      "file": "title-rail-s-massage-390-form-right-form-landed.jpg",
+      "bytes": 35327,
+      "sha256": "6687b1524bc262f78f0b1075c2f1a8b10635a84f04db33938a00ecba2289e0ef",
+      "comparison_to_rehearsal2": "new"
+    },
+    {
+      "file": "title-rail-s-massage-390-landed.jpg",
+      "bytes": 35551,
+      "sha256": "df03221bb08bdbebd1b96b49579c1c54a7864478e79006c7302775d7d6be9f4b",
+      "comparison_to_rehearsal2": "identical"
+    },
+    {
+      "file": "title-rail-s-massage-390.jpg",
+      "bytes": 35806,
+      "sha256": "0d55897b808a7e56f78c0566663b5ef6a6a11e254d45d8d62ffcad0094804131",
+      "comparison_to_rehearsal2": "changed"
+    },
+    {
+      "file": "title-rail-s-massage-768-form-left-form-landed.jpg",
+      "bytes": 50041,
+      "sha256": "2c4efc921602ecfcdcd919471436214d3ac3b2fd96eebf36f3073add469032d8",
+      "comparison_to_rehearsal2": "new"
+    },
+    {
+      "file": "title-rail-s-massage-768-form-right-form-landed.jpg",
+      "bytes": 50063,
+      "sha256": "d4f55e1689cbce5469a3e5ad8c7d13d4751ab2ba959f9a8ebd587058de4b7a3f",
+      "comparison_to_rehearsal2": "new"
+    },
+    {
+      "file": "title-rail-s-massage-768-landed.jpg",
+      "bytes": 49802,
+      "sha256": "980ab1d39cdcac9c2425a2c4883d0c9424c3baf29aff9e9b83f6c956c0e37dd7",
+      "comparison_to_rehearsal2": "changed"
+    },
+    {
+      "file": "title-rail-services-1280.jpg",
+      "bytes": 82153,
+      "sha256": "acd4d7d75f30cc0276d7fe394dab87c1444b7073f1ef409b7c859bf4bab098ae",
+      "comparison_to_rehearsal2": "changed"
+    },
+    {
+      "file": "title-rail-services-390.jpg",
+      "bytes": 37912,
+      "sha256": "024f908236aaaf2434d117a37f57083a030efd12fe894305c79483e5aa5beecd",
+      "comparison_to_rehearsal2": "identical"
+    },
+    {
+      "file": "title-rail-work-with-me-1280.jpg",
+      "bytes": 101794,
+      "sha256": "b825180bdad18fef816801a4180a71a13e59f4e0482c057ba447a960cc9d57a3",
+      "comparison_to_rehearsal2": "changed"
+    },
+    {
+      "file": "title-rail-work-with-me-390.jpg",
+      "bytes": 38238,
+      "sha256": "16723023cf5a15100869df1bbf28e878692c10793cb581f4b0993ab08c31c979",
+      "comparison_to_rehearsal2": "changed"
+    }
+  ]
+}

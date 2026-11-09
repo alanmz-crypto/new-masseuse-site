@@ -1,5 +1,9 @@
 # Peek: more room to scroll every summary
 
+**Historical v4 sizing record.** The later [title-only rails update](2026-11-09-peek-title-rails.md)
+is now deployed on staging39 and preserves this summary behavior. Restore that
+update to v4 with its own actual snapshot before using the older recovery route.
+
 **Deployed staging39; public browser check blocked by HTTP202.** This correction is included in the
 [all-page title-strip update](2026-11-09-peek-title-strip-all-pages.md), on
 staging39 only. Its starting point was frozen shared v3 from the

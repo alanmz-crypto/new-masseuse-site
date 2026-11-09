@@ -1,21 +1,44 @@
 # Session handoff: the Peek navigation (for the next Claude Code session)
 
-**Current candidate: title-only Peek rails on pages without existing rails; not
-deployed.** The [title-rail record](../reviews/2026-11-09-peek-title-rails.md)
-tracks Ryan's new request and the pending full gates. Reuse existing jump-row
-labels/targets, otherwise visible H2 headings or one page-title entry, without
-new summaries, IDs or hashes. Keep Rail/Index practice rails; Progress A–D gains
-the shared rail, while E hides it and releases its rail padding for the demo.
-Four approved data sets and settled gestures remain unchanged. The manifest now
-separates enabled `titleStrip`, pending `titleRail` and four approved summary pages.
+**Current: title-only Peek rails deployed on staging39; public browser and
+stored-code checks passed.** The [title-rail record](../reviews/2026-11-09-peek-title-rails.md)
+tracks the actual deployment and earlier failed attempts. Shared rails use
+existing jump-row labels/targets, otherwise visible H2 headings or one page-title
+entry, without new summaries, IDs or hashes. Rail/Index practice rails are kept;
+Progress A–D uses the shared rail, while E hides it and releases its rail padding
+for the demo. The four approved data sets and settled gestures remain unchanged.
 
-The deployed code is frozen as `peek-nav-shared-v4.php`; `core-title-strip` now
-pins exact v3→v4. The new `core-title-rail` transition starts from v4 and has no
-staging apply or actual snapshot yet. After any future apply, reverse that
-transition using its own actual snapshot first, before the baseline recovery
-below. Fresh-copy, wording, visual, offline and verified-backup gates still apply.
+Apply **42666333809**, source `267c93e94f2b81ae63843be8f2e806805a061bd3`, wrote #1380
+at **17:37:37 UTC** and finished **17:41:06 UTC, PASS**. The payload has **97,130 code
+bytes**, SHA256 `c7ed404ebe3e19d24e7a91b91bb996505efb80027fd183245d1c7137f188991e`.
+Actions Gates passed **29 PASS / 1 SKIP / 0 FAIL / 0 INVALID**; fresh-copy rehearsal
+**42662818962** passed **13,836/0** across ten suites, with 40 actual title-rail
+captures compared/reviewed. Origin scope passed on all 19 published pages;
+rendered wording/posture/pages/PHP and schema 27/27 passed. The broad live pixel
+comparison had 20/20 differences, not an aggregate pass. All 20 actual deployed
+full-page captures were reviewed without a new persistent layout blocker.
+Public run **42667176429** finished **17:49:09 UTC, PASS**: **11,829/0** across nine
+unique suites; both title matrices covered 21 actual routes in Chromium/Firefox.
+Stored inspection **42667209210** passed **17:49:42 UTC**: published #1380 exactly
+matches the bytes/hash above and #1381–1384 retain their original bytes/hashes.
+The current record tracks the full suite counts and final capture/log review.
+Safari, physical devices and actual assistive technology remain unverified.
+Existing Thai touch-focus loss and the old Rail practice page's Firefox Enter
+issue remain open; practice pointer preview/Go passed. The reported rapid-switch
+or loading delay was not reproduced or claimed fixed.
 
-**Deployed staging39; public browser check blocked by HTTP202.** The all-page
+Fresh export `staging39-before-peek-nav-20261109-173723.sql` and actual snapshot
+`peek-template-core-title-rail-before-20261109-173737-cae68f35.json` were verified
+encrypted off-site. Restore import returned 0; 104/104 fingerprints differ only
+on #1380/WPCode cache. No fallback-only interval occurred. After a fresh verified
+backup and full current-state checks, use the matching package and explicit
+`core-title-rail --rollback $HOME/private-backups/peek-template-core-title-rail-before-20261109-173737-cae68f35.json`
+arguments to restore v4 FIRST. The older `core-title-strip` route pins frozen
+v3→v4. Before any future runtime change, freeze the current payload as shared v5
+and pin the new transition; v5 does not exist yet. Page-only data removal leaves
+a title-only rail and strip, with the original jump row available without JavaScript.
+
+**Previous deployment: all-page title strip and summary space, frozen shared v4.** The all-page
 read-only title strip and globally enlarged scrolling summaries were written to
 #1380 at **10:24:52 UTC**; apply run **42600617720** finished **10:28:23 UTC, PASS**.
 Short, no-heading, unlisted and practice pages are included. Search uses a fixed
@@ -23,14 +46,14 @@ page title; other pages use existing row labels, visible headings or their page
 identity. Title-only pages receive no invented destinations, summaries or rail.
 The four approved data records and settled rail/index gestures remain intact.
 
-The [current deployment/recovery record](../reviews/2026-11-09-peek-title-strip-all-pages.md)
+The [earlier deployment/recovery record](../reviews/2026-11-09-peek-title-strip-all-pages.md)
 holds the complete fresh-copy PASS, 58 reviewed/comparison captures, 19 origin
 scope checks and actual backup identities. The [summary-space record](../reviews/2026-11-09-peek-summary-space.md)
 explains larger summaries, earlier folding of distant rows and the constrained
 outer-card fallback. The reported initial loading delay was not reproduced.
 Public run **42601203134** finished **10:30:14 UTC, INVALID HTTP202**: zero
-assertions, actual routes or captures, with the quick subset skipped. Public
-browser verification remains pending access; no immediate retry is queued.
+assertions, actual routes or captures, with the quick subset skipped. That earlier
+attempt provided no public browser verification; no immediate retry was queued.
 Stored inspection **42601221631** passed **10:30:40 UTC**: exact #1380 SHA256
 `4162d3b40cfa54807f0a7b3851233aaca7482686ccab7a0a2e343f8afa665af5`,
 **86,567 bytes**, and all four unchanged data identities/hashes.
@@ -39,12 +62,13 @@ Fresh export `staging39-before-peek-nav-20261109-102438.sql` and actual snapshot
 `peek-template-core-title-strip-before-20261109-102452-90630a29.json` were verified
 encrypted off-site. Restore import returned 0, with only #1380/cache differences.
 There was no fallback-only interval. Recovery requires a fresh verified backup,
-current full-state checks and the matching package: first use explicit
+current full-state checks and the matching package: after restoring v4 through
+the newer title-rail snapshot above, use explicit
 `core-title-strip --rollback $HOME/private-backups/peek-template-core-title-strip-before-20261109-102452-90630a29.json`
-arguments to restore frozen v3 before any older transition, after reversing any
-later applied title-rail transition to v4. The v4 freeze and v3→v4 pin are complete;
-new versions use separate exact transitions. Services/short-page title rails now
-follow the pending scope above; new summary wording remains subject to approval.
+arguments to restore frozen v3 before any older transition. The v4 freeze and
+v3→v4 pin are complete; new versions use separate exact transitions.
+Services/short-page title rails now follow the deployed scope above; new summary
+wording remains subject to approval.
 Safari, physical devices and actual assistive technology remain open. Main/live
 remain untouched.
 
@@ -89,14 +113,14 @@ unchanged data hashes. Public browser verification was **INVALID HTTP202** at
 07:17:03 UTC on the initial Thai request: zero assertions/captures, no retry queued.
 Follow the correction record for evidence and exact recovery. Chromium native
 touch on the old core did not reproduce Ryan's reported page scrolling, so no
-physical-device resolution is claimed. Services/short-page rail eligibility, Safari,
+physical-device resolution is claimed. New summary wording, Safari,
 physical devices and actual assistive technology remain open. Main/live are untouched.
 
 The original `core` migration targets frozen `peek-nav-shared-v1.php`;
 `core-upgrade` is now pinned to v1→frozen `peek-nav-shared-v2.php`, preserving its
 07:11:22 snapshot. `core-summary-touch` now pins v2→frozen `peek-nav-shared-v3.php`,
-preserving the 07:59:57 snapshot. Reverse the current title-strip update to v3 first;
-then reverse the summary-touch update using its
+preserving the 07:59:57 snapshot. Reverse the current title-rail update to v4 first,
+then the title-strip update to v3, then the summary-touch update using its
 own actual snapshot and explicit `core-summary-touch --rollback FILE` arguments.
 Only then may `core-upgrade --rollback FILE` restore v1, followed by the original
 `core --rollback FILE` recovery to legacy. Never substitute an older snapshot.

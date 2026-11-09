@@ -1,5 +1,9 @@
 # Peek title strip on every page
 
+**Historical v4 deployment record.** The later [title-only rails update](2026-11-09-peek-title-rails.md)
+is now deployed on staging39. Its own actual snapshot must restore v4 before
+using this record's older recovery route. The results below describe this earlier update.
+
 **Deployed staging39; public browser check blocked by HTTP202.** The guarded
 apply and exact stored-code inspection passed. The complete fresh-copy browser
 suite passed before deployment; the final public run tested nothing because

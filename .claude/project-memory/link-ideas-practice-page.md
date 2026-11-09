@@ -341,38 +341,62 @@ captures match rehearsal pixels; five images are byte-identical and eleven diffe
 only on the rail. [Stored inspection 42583499757](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42583499757)
 passed at 08:09:31 UTC: exact #1380 hash/71,826 bytes and four unchanged data hashes.
 Detailed visual review, full evidence and recovery are in the
-[current record](../../docs/reviews/2026-11-09-peek-short-summary-touch.md).
+[earlier record](../../docs/reviews/2026-11-09-peek-short-summary-touch.md).
 The reported page-scroll leak was not reproduced by native Chromium probes;
 Safari/physical-device resolution remains unverified.
 
-**Current candidate: title-only rails where no rail already exists; not deployed.**
-The [title-rail record](../../docs/reviews/2026-11-09-peek-title-rails.md) tracks the
-new shared rail using existing jump labels/targets, otherwise visible H2 headings
-or one page-title entry. No new summaries, destination IDs or hashes are added;
-the four approved data sets and settled gestures remain unchanged. Keep the
-Rail/Index practice rails. Progress A–D gets the shared rail; E hides it and
-releases its rail padding while the demo rail is active. `peek-pages.json` records
-this pending `titleRail` scope separately from enabled strips and summary pages.
-The exact v4→candidate `core-title-rail` route still needs full offline, fresh-copy,
-wording, visual and verified-backup gates. No staging apply or actual snapshot
-exists for it; after any apply, reverse it with its own actual snapshot to v4
-before the older recovery below.
+**Current: title-only rails deployed on staging39; public/stored checks passed.**
+The [title-rail record](../../docs/reviews/2026-11-09-peek-title-rails.md) holds the
+actual deployment and failed-attempt history. Shared rails use existing jump
+labels/targets, otherwise visible H2 headings or one page-title entry. No new
+summaries, IDs or hashes were added; four approved data sets and settled gestures
+remain unchanged. Rail/Index practice rails are preserved. Progress A–D uses the
+shared rail; E hides it and releases its rail padding while the demo rail is active.
 
-**Deployed staging39; public browser check blocked by HTTP202.** The all-page
+Apply **42666333809** wrote #1380 at **17:37:37 UTC** and finished **17:41:06 UTC,
+PASS**: **97,130 code bytes**, SHA256
+`c7ed404ebe3e19d24e7a91b91bb996505efb80027fd183245d1c7137f188991e`.
+Actions Gates passed **29 PASS / 1 SKIP / 0 FAIL / 0 INVALID**; fresh-copy rehearsal
+**42662818962** passed **13,836/0** across ten suites. All 40 actual title-rail
+captures were compared/reviewed. Nineteen origin scope checks and rendered
+wording/posture/pages/PHP/schema passed. The broad live comparison had 20/20
+pixel differences, not an aggregate pass. All 20 actual deployed full-page views
+were reviewed without a new persistent layout blocker. Public **42667176429**
+finished **17:49:09 UTC, PASS**: **11,829/0** across nine unique suites, with 21
+actual routes in both title matrices/engines. Stored **42667209210** passed at
+**17:49:42 UTC**: published #1380 exactly matches the bytes/hash above and all
+four data records retain their original bytes/hashes. The current record tracks
+full suite counts and final capture/log review. Safari, physical devices and
+actual assistive technology remain unverified. Existing Thai touch-focus loss
+and old Rail practice Firefox Enter behavior remain open; practice pointer
+preview/Go passed. The reported rapid-switch/loading delay was not reproduced
+or claimed fixed.
+
+Fresh export `staging39-before-peek-nav-20261109-173723.sql` and actual snapshot
+`peek-template-core-title-rail-before-20261109-173737-cae68f35.json` were verified
+encrypted off-site. Restore import returned 0; all 104/104 fingerprints were
+compared, with differences only on #1380/WPCode cache. No fallback-only interval
+occurred. After a fresh verified backup and complete ownership/state checks,
+use the matching package and explicit
+`core-title-rail --rollback $HOME/private-backups/peek-template-core-title-rail-before-20261109-173737-cae68f35.json`
+arguments to restore v4 FIRST. Before any future runtime change, freeze the
+current payload as shared v5 and pin this transition; v5 does not exist yet.
+
+**Previous deployment: all-page title strip and summary space, frozen shared v4.** The all-page
 title strip and larger usable summaries were written to #1380 at **10:24:52 UTC**;
 apply run **42600617720** finished **10:28:23 UTC, PASS**. Short, no-heading,
 unlisted and practice pages are included; search keeps its page title fixed.
 Title-only pages receive no invented destinations, summaries or rail. The four
 approved JSON files and data snippets remain unchanged. Distant closed rows fold
 before summary space shrinks, with nearby controls at intermediate fits and
-whole-paragraph fallbacks throughout. See the [current deployment/recovery record](../../docs/reviews/2026-11-09-peek-title-strip-all-pages.md)
+whole-paragraph fallbacks throughout. See the [earlier deployment/recovery record](../../docs/reviews/2026-11-09-peek-title-strip-all-pages.md)
 and [summary-space evidence](../../docs/reviews/2026-11-09-peek-summary-space.md)
 for exact fit behavior, full fresh-copy PASS, reviewed captures and 19 passing
 origin scope checks. The reported loading delay was not reproduced.
 
 Public run **42601203134** finished **10:30:14 UTC, INVALID HTTP202**: zero
-assertions/routes/captures; the quick subset was skipped. Public browser checks
-remain pending access, with no immediate retry queued. Stored inspection
+assertions/routes/captures; the quick subset was skipped. That earlier attempt
+provided no public browser verification, with no immediate retry queued. Stored inspection
 **42601221631** passed **10:30:40 UTC**: #1380 has **86,567 bytes**, SHA256
 `4162d3b40cfa54807f0a7b3851233aaca7482686ccab7a0a2e343f8afa665af5`,
 and all four data identities/hashes are unchanged. The fresh export
@@ -381,12 +405,12 @@ and all four data identities/hashes are unchanged. The fresh export
 encrypted off-site. Restore import returned 0, with only #1380/cache differences.
 The update was in place with no fallback-only interval. Its payload is now
 frozen as `peek-nav-shared-v4.php`; `core-title-strip` pins exact v3→v4, preserving
-the actual snapshot. The new title-rail candidate uses its own exact transition.
+the actual snapshot. The later title-rail update uses its own exact transition.
 
 Original core snapshot: `peek-template-core-before-20261109-023645-fe38e498.json`.
 Original Thai data snapshot: `peek-template-page-thai-massage-before-20261109-023133-3e7b1cf5.json`.
 After a fresh verified backup and current full-state checks, and after reversing
-any later applied title-rail transition to v4, use the matching package with explicit
+the current title-rail transition to v4, use the matching package with explicit
 `core-title-strip --rollback $HOME/private-backups/peek-template-core-title-strip-before-20261109-102452-90630a29.json`
 arguments to restore v3. Then reverse `core-summary-touch` with its own actual
 snapshot to restore v2. Then `core-upgrade --rollback FILE` restores v1 from frozen v2;
@@ -394,17 +418,19 @@ the original `core` migration remains tied to frozen `peek-nav-shared-v1.php`.
 Reversing that original migration affects
 every page using Peek. For one service page,
 use only its actual page-data snapshot in the service rollout record, leaving the
-core and other pages active. **All earlier rollback commands in this note are historical.** Do not use
+core and other pages active. Under the current core, that page keeps a title-only
+rail and strip; its native jump row remains available without JavaScript.
+**All earlier rollback commands in this note are historical.** Do not use
 `peek-nav-before-20261109-010037-0c493281.json` to delete the shared core.
 Migration installed inert Thai data before changing #1380 in place, with no
 fallback-only interval. Main/live remain unchanged.
-Current candidate: [title-only rails](../../docs/reviews/2026-11-09-peek-title-rails.md).
-Deployed baseline/status: [all-page title strip](../../docs/reviews/2026-11-09-peek-title-strip-all-pages.md).
-Previous baseline: [short-summary touch correction](../../docs/reviews/2026-11-09-peek-short-summary-touch.md).
+Current deployment/status: [title-only rails](../../docs/reviews/2026-11-09-peek-title-rails.md).
+Previous baseline: [all-page title strip](../../docs/reviews/2026-11-09-peek-title-strip-all-pages.md).
+Earlier baseline: [short-summary touch correction](../../docs/reviews/2026-11-09-peek-short-summary-touch.md).
 Earlier core correction: [clearance/touch record](../../docs/reviews/2026-11-09-peek-clearance.md).
 Earlier page-data rollout: [service rollout record](../../docs/reviews/2026-11-09-peek-service-rollout.md).
 Original core migration/recovery: [template record](../../docs/reviews/2026-11-09-peek-template.md).
 Approved wording: [three-page review](../../docs/reviews/2026-11-09-peek-summary-drafts.md).
-Services/short-page title rails follow the pending scope above; new summaries
+Services/short-page title rails follow the deployed scope above; new summaries
 still require wording approval. The title strip includes every visitor page.
 Safari, physical devices and actual assistive technology remain untested.

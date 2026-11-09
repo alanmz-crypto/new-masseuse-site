@@ -1,0 +1,132 @@
+{
+  "evidence": "Actual deployed staging39 full-page closed-state captures from automatic post-change comparison. All20 reviewed;2 representative images retained here;all20 remain in the full Actions artifact. This does not establish open-card/gesture behavior or attribute every live-reference difference to this update.",
+  "run": 42666333809,
+  "artifact_id": 13697715744,
+  "artifact_bytes": 29659179,
+  "artifact_sha256": "7ebdfa7f948b9ec08e49412f2ecbfaf4f440ad7510c34859c444288a603c54f3",
+  "source_commit": "267c93e94f2b81ae63843be8f2e806805a061bd3",
+  "captured_utc": "2026-11-09T17:38:33Z",
+  "visual_review": "20/20 staging candidate views reviewed by visual agent;root separately viewed About and Privacy mobile. No persistent new layout blocker. Transient labels sometimes cover parts of the read-only strip/hero in the captured instant.",
+  "images": [
+    {
+      "file": "about-d.png",
+      "bytes": 470073,
+      "sha256": "f320f213ff6cd5b503d5cf8dba4d727f029b865c2340d0700a5c6a18f8153fbe",
+      "retained_here": false
+    },
+    {
+      "file": "about-m.png",
+      "bytes": 344465,
+      "sha256": "8cf19865e7d58fd0e7b8920d91eec6e187321580337876d385be81a6605b7da4",
+      "retained_here": true
+    },
+    {
+      "file": "accessibility-d.png",
+      "bytes": 263294,
+      "sha256": "72dbcef13a024c55575031083cf1afbcf3e9e6367d90ed33b3dd2cdcd3120be8",
+      "retained_here": false
+    },
+    {
+      "file": "accessibility-m.png",
+      "bytes": 214150,
+      "sha256": "bdf9b2322907ae06d88c772b002208b93cdd2278d9aa5a12beaa3f5f08db6401",
+      "retained_here": false
+    },
+    {
+      "file": "contact-d.png",
+      "bytes": 366871,
+      "sha256": "5cbde5972008b5d90e39a87594d5ae1ef619e4a57e4fb3fbd22a4ec7015822fc",
+      "retained_here": false
+    },
+    {
+      "file": "contact-m.png",
+      "bytes": 248750,
+      "sha256": "026f5477b4ca2b4d427040a6e4b82b1efdac0f6ef6ee09a56b0dc452266cb526",
+      "retained_here": false
+    },
+    {
+      "file": "deep-tissue-massage-d.png",
+      "bytes": 1018284,
+      "sha256": "209566f63cdb5c9f17e92f126a62e3929daabf7fd475efe0f3ff540b2ae614dd",
+      "retained_here": false
+    },
+    {
+      "file": "deep-tissue-massage-m.png",
+      "bytes": 1008215,
+      "sha256": "378bccd6c7379730c21b38202bebd328bf11aa53a8fd9936d64518f014646bef",
+      "retained_here": false
+    },
+    {
+      "file": "home-d.png",
+      "bytes": 1385765,
+      "sha256": "e09d94bb496fe947dc5764c3a99def06bcc905ef98840584dc0b0371d08293bc",
+      "retained_here": false
+    },
+    {
+      "file": "home-m.png",
+      "bytes": 1100530,
+      "sha256": "fd9c83eac2d209f233d924f4bf22870f29ef37160d59cc8a500a2ae6eee24460",
+      "retained_here": false
+    },
+    {
+      "file": "privacy-policy-d.png",
+      "bytes": 219928,
+      "sha256": "fb4e7bc497707a19cc3c0d027fd22c3bbf5fcce0a311cdd30b36d002002a0df6",
+      "retained_here": false
+    },
+    {
+      "file": "privacy-policy-m.png",
+      "bytes": 176160,
+      "sha256": "78cb1f7f09b5f79a994cd7c3e63fd26a89c5c2d65c1fba2f75bf9a3c95ccc222",
+      "retained_here": true
+    },
+    {
+      "file": "services-d.png",
+      "bytes": 976466,
+      "sha256": "ad0a31426188087a608c79d879ff5ca6be54426b6fd0d3a66dba4e120bd5e0e4",
+      "retained_here": false
+    },
+    {
+      "file": "services-m.png",
+      "bytes": 1205024,
+      "sha256": "02d82a69ddb47c0c7fc177c2e220566d7995c56c905764b1a5cf9e09f6064059",
+      "retained_here": false
+    },
+    {
+      "file": "thai-massage-d.png",
+      "bytes": 1038503,
+      "sha256": "9a8a4f0d561ff0e7d3e460df735893fbdac7e87c95a5c4425261394ff909cd84",
+      "retained_here": false
+    },
+    {
+      "file": "thai-massage-m.png",
+      "bytes": 1119566,
+      "sha256": "320b6211f6b58cc0aeeed58534143eb43cd638b71b229c08bd5bd3f6c1e3613f",
+      "retained_here": false
+    },
+    {
+      "file": "therapeutic-massage-d.png",
+      "bytes": 1305162,
+      "sha256": "4cc4309afc8894c2572038bebe0595c0d35d9be238b5828b5f097b4560f8cb85",
+      "retained_here": false
+    },
+    {
+      "file": "therapeutic-massage-m.png",
+      "bytes": 1389572,
+      "sha256": "c16fcd2743a90064838adad140e58d46b73a39f131d8ba1b8ec0208a4161fd6c",
+      "retained_here": false
+    },
+    {
+      "file": "work-with-me-d.png",
+      "bytes": 1023844,
+      "sha256": "357c2ecf6fc36debed39ec8ac39bd5953685b14700a986d2fede01f5c56dfbe1",
+      "retained_here": false
+    },
+    {
+      "file": "work-with-me-m.png",
+      "bytes": 640844,
+      "sha256": "78b94a4a2ef9d395b703b072de0c457e6d54792470183a7e8787980e5feecf1c",
+      "retained_here": false
+    }
+  ]
+}
