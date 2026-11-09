@@ -7,7 +7,8 @@
  */
 if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) ) { exit( 'Run with WP-CLI.' ); }
 $home = untrailingslashit( home_url() );
-if ( ! in_array( $home, array( 'http://localhost:8090', 'http://staging39.thaisolitude.com', 'https://staging39.thaisolitude.com' ), true ) ) { WP_CLI::error( 'Only exact localhost:8090 and staging39 origins are allowed; nothing changed.' ); }
+$local_host = 'localhost:8090';
+if ( ! in_array( $home, array( 'http://' . $local_host, 'http://staging39.thaisolitude.com', 'https://staging39.thaisolitude.com' ), true ) ) { WP_CLI::error( 'Only exact localhost:8090 and staging39 origins are allowed; nothing changed.' ); }
 if ( 'astra' !== get_stylesheet() || ! current_user_can( 'manage_options' ) || ! current_user_can( 'unfiltered_html' ) ) { WP_CLI::error( 'Requires Astra and an administrator (--user=1).' ); }
 $args = isset( $args ) && is_array( $args ) ? $args : array(); $mode = $args[0] ?? 'preflight';
 if ( ! in_array( $mode, array( 'preflight', 'apply', 'rollback' ), true ) || count( $args ) > ( 'rollback' === $mode ? 2 : 1 ) || ( 'rollback' === $mode && count( $args ) !== 2 ) ) { WP_CLI::error( 'Use preflight, apply, or rollback FILE.' ); }

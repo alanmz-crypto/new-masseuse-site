@@ -120,6 +120,19 @@ The full retained native-touch suite remains required in the actual rehearsal.
 The PHP-lint gate now refuses a zero-file scan, so an inaccessible mount cannot
 produce a misleading PASS in future runs. This guard does not fix local mounts.
 
+Actions Gates [42712388379](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42712388379)
+passed at 22:30:49 UTC on source `3b42594053d926ee09a4cb78a55d2749bfffb872`:
+**32 PASS / 0 FAIL / 1 rendered-only SKIP**. Full PHP harnesses, positive-file
+PHP lint, shellcheck and ruff passed in Actions.
+
+First rehearsal [42712427137](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42712427137),
+request `peek-rail-input-rehearse-1`, source `cd9837921eba4938f1e349368d826fd77a810dc6`,
+finished 22:31:19 UTC **INVALID before copy/setup**. Its static eligibility check
+requires a separately quoted `localhost:8090`; the new installer listed the
+equivalent full HTTP origin. Declare the local host explicitly and concatenate
+the same exact origin. No allowed address changes; no site write or rehearsal
+conclusion follows from this invalid attempt.
+
 ## Actual applies and recovery
 
 No apply or new staging recovery snapshot is recorded yet. Never substitute a
