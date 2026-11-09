@@ -1,8 +1,9 @@
 {
-  "id": "peek-rollout-gates-20261109-1",
-  "op": "run",
+  "id": "peek-therapeutic-rehearse-20261109-1",
+  "op": "rehearse",
   "target": "staging39",
-  "script": "check-all.sh",
-  "args": [],
-  "tests": "auto"
+  "installer": "link-ideas/peek-page/therapeutic-massage/install-peek-page-data.php",
+  "args": [
+    "--with-uploads"
+  ]
 }
