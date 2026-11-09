@@ -1,10 +1,8 @@
 {
-  "id": "peek-rail-input-apply-1",
+  "id": "peek-rail-input-dry-2",
   "op": "run",
   "target": "staging39",
   "script": "link-ideas/push-rail-input.sh",
-  "args": [
-    "--apply"
-  ],
+  "args": [],
   "tests": "auto"
 }
