@@ -1,10 +1,6 @@
 {
-  "id": "peek-titles-public-20261109-1",
-  "op": "run",
+  "id": "peek-titles-stored-20261109-1",
+  "op": "inspect",
   "target": "staging39",
-  "script": "link-ideas/core-title-strip/check-public.mjs",
-  "args": [
-    "https://staging39.thaisolitude.com"
-  ],
-  "tests": "auto"
+  "query": "snippets"
 }
