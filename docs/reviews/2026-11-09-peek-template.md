@@ -2,9 +2,14 @@
 
 Work is confined to staging39 and `claude/wizardly-bell-xu0rta`. No live change or main merge/push is authorized. This record separates observed evidence from design judgment and pending verification.
 
-Subsequent phase: Ryan approved the three service-page wording sets in chat.
-Their [separate rollout record](2026-11-09-peek-service-rollout.md) tracks current
-deployment; the Thai-only migration and approval-pending status below are historical.
+Subsequent phase completed on staging39: all four service pages use shared core
+**#1380**, with Thai data **#1381**, Therapeutic **#1382**, Deep Tissue **#1383** and
+Chair **#1384**. Ryan approved the exact three new wording sets. Their
+[separate rollout record](2026-11-09-peek-service-rollout.md) holds actual page
+snapshots, public results and final aggregate verification. The Thai-only migration
+counts below are historical. Chair's initial-strip overlap and tablet Corporate
+CTA focus-ring graze remain an open shared-placement defect; the current geometry
+checker measures the eventual sticky position, not initial-strip clearance.
 
 ## Fresh starting evidence
 
@@ -38,11 +43,15 @@ A safer migration installs inert Thai data first, then changes the exact existin
 
 ## Rollout decisions
 
-Thai remains the only enabled page. Therapeutic and Chair have six sections, with Questions before What to Expect; Deep Tissue has five. They require their own wording approval. [Draft wording and rendered-source review](2026-11-09-peek-summary-drafts.md) records that separate decision.
+At the original migration, Thai was the only enabled page. Therapeutic and Chair
+have six sections, with Questions before What to Expect; Deep Tissue has five.
+Their exact wording was subsequently approved and all three are now deployed on
+staging39. The [approved wording review](2026-11-09-peek-summary-drafts.md) and
+current rollout record distinguish that later work from this migration.
 
 Services and short pages are pending individual assessment, not automatically excluded or enabled. Seven service choices can make destination-finding useful despite short text. Conversely, a compact two-panel page may already work well with its plain row. A 1,500-word cutoff cannot decide this by itself.
 
-## Verification and deployment
+## Original core migration verification and deployment
 
 Local Chromium: fresh Thai gesture regression **485/0** and manifest/structural fixture checks **194/0**. These are mock/fixture results, not public-page testing. Local pinned PHP 8.5.11: 60 installer checks plus 10 core-data checks. Gist validation: 40 checks. Local Firefox could not start because its bundled executable is absent; Actions installs both engines.
 
@@ -99,10 +108,12 @@ Each reversal takes a new verified off-site backup and refuses a changed/incompl
 
 Safari, physical devices, VoiceOver and TalkBack remain unverified. Synthetic clicks are not screen-reader tests.
 
-I finished: the shared template, guarded migration and independent before/after verification on staging39.
-Next step: Ryan reviews the three page-specific wording drafts.
-Next lane: approved pages get their own staged rehearsal/card review; Services and short-page eligibility remain separate decisions.
-See my work: this record, its captures, comparison hashes and linked operation reports.
+I finished: the shared migration and subsequent approved four-page rollout on staging39.
+Next step: consult the service rollout record for final aggregate verification and open design work.
+Next lane: shared-placement correction, device validation and Services/short-page eligibility decisions.
+See my work: this original migration record and the linked current service rollout record.
 Arc: none (ad-hoc)
 
-TL;DR: Thai now uses the shared core and approved page data with its rendered design and gestures preserved; the other three pages are prepared but await wording approval.
+TL;DR: all four service pages now use the shared core and approved page data on
+staging39; the current rollout record preserves their results, recovery scope and
+the open placement defect. Main/live are unchanged.

@@ -1,0 +1,93 @@
+{
+  "public_run": 42558629539,
+  "rehearsal_run": 42557717328,
+  "captures": [
+    {
+      "file": "chromium-chair-massage-1280-first.jpg",
+      "public_sha256": "cba954395c5321b1fc714f2f66c6f35d932545d6b71ba59d9dbac32f63b01ab3",
+      "rehearsal_sha256": "cba954395c5321b1fc714f2f66c6f35d932545d6b71ba59d9dbac32f63b01ab3",
+      "byte_identical": true,
+      "pixel_difference_bounds": null,
+      "card_and_content_pixels_identical": true
+    },
+    {
+      "file": "chromium-chair-massage-1280-research-end.jpg",
+      "public_sha256": "9003837dd46f8f12ef0995e3ac94f1efa0344221814c25235308fe46729e962c",
+      "rehearsal_sha256": "9003837dd46f8f12ef0995e3ac94f1efa0344221814c25235308fe46729e962c",
+      "byte_identical": true,
+      "pixel_difference_bounds": null,
+      "card_and_content_pixels_identical": true
+    },
+    {
+      "file": "chromium-chair-massage-1280-research-start.jpg",
+      "public_sha256": "6870400a6fc303f2bcc4260001ab2d2d643275273cb1509e04f2d5e8ea235398",
+      "rehearsal_sha256": "4ec52ce9b8ac5d9a02a088d827e4519bcb77e99617c05ba5cc6b75b951ef0dbe",
+      "byte_identical": false,
+      "pixel_difference_bounds": [
+        1247,
+        575,
+        1265,
+        721
+      ],
+      "card_and_content_pixels_identical": true
+    },
+    {
+      "file": "chromium-chair-massage-390-first.jpg",
+      "public_sha256": "b0390c13c47b284d680e2712528cde633c52179d3b9a9c666edd15d247b83eb4",
+      "rehearsal_sha256": "b0390c13c47b284d680e2712528cde633c52179d3b9a9c666edd15d247b83eb4",
+      "byte_identical": true,
+      "pixel_difference_bounds": null,
+      "card_and_content_pixels_identical": true
+    },
+    {
+      "file": "chromium-chair-massage-390-research-end.jpg",
+      "public_sha256": "e631333b14864231cbb9bc46c6892f5e9cce52ba6d436f1125e2ce7a8a6445d7",
+      "rehearsal_sha256": "e631333b14864231cbb9bc46c6892f5e9cce52ba6d436f1125e2ce7a8a6445d7",
+      "byte_identical": true,
+      "pixel_difference_bounds": null,
+      "card_and_content_pixels_identical": true
+    },
+    {
+      "file": "chromium-chair-massage-390-research-start.jpg",
+      "public_sha256": "a2ee63e03351eaf6baef2e6403831ee47f8602ef6d8ef061886a60e6e0d4753a",
+      "rehearsal_sha256": "a2ee63e03351eaf6baef2e6403831ee47f8602ef6d8ef061886a60e6e0d4753a",
+      "byte_identical": true,
+      "pixel_difference_bounds": null,
+      "card_and_content_pixels_identical": true
+    },
+    {
+      "file": "chromium-chair-massage-768-first.jpg",
+      "public_sha256": "619dcabb79fbbaf04954e8c77edd7cfd58ba52e13b54ceb3baf7899ef559316f",
+      "rehearsal_sha256": "a8fcf50ef5cc7a230015bc155cd96a24b8fceff6349126bd67c3e740a7dadafa",
+      "byte_identical": false,
+      "pixel_difference_bounds": [
+        735,
+        255,
+        753,
+        321
+      ],
+      "card_and_content_pixels_identical": true
+    },
+    {
+      "file": "chromium-chair-massage-768-research-end.jpg",
+      "public_sha256": "9fee805eaa2ec504afabf3ab9b369b70952fd5e278110f5775822c6d69d66e68",
+      "rehearsal_sha256": "9fee805eaa2ec504afabf3ab9b369b70952fd5e278110f5775822c6d69d66e68",
+      "byte_identical": true,
+      "pixel_difference_bounds": null,
+      "card_and_content_pixels_identical": true
+    },
+    {
+      "file": "chromium-chair-massage-768-research-start.jpg",
+      "public_sha256": "672020e097b6893a1856299562dbbda5307e06c8ef9c1c9fb491d41d0308321f",
+      "rehearsal_sha256": "f86bd450d789e4cd41f8f55639bcd80d348dec502da49546ad06d21557977b50",
+      "byte_identical": false,
+      "pixel_difference_bounds": [
+        735,
+        479,
+        753,
+        721
+      ],
+      "card_and_content_pixels_identical": true
+    }
+  ]
+}

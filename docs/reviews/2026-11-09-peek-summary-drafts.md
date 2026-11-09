@@ -3,9 +3,10 @@
 **Ryan approved all three wording sets in chat on 2026-11-09**, after they were
 reproduced inline for review. His reply began "Approved:" and quoted the review's
 introductory line. The exact item arrays and coverage maps below are unchanged;
-only approval metadata moved from `draft` to `approved`. Deployment still requires
-each page's staging39-source rehearsal and rendered-card review. Follow the
-[rollout record](2026-11-09-peek-service-rollout.md) for actual deployment status.
+only approval metadata moved from `draft` to `approved`. All three are now deployed
+on staging39 after page-specific rehearsals, rendered-card review and public checks.
+Follow the [rollout record](2026-11-09-peek-service-rollout.md) for actual snapshots,
+results and final aggregate verification.
 Thai's already approved summaries are outside this copy change.
 
 ## Evidence and limits
@@ -20,11 +21,12 @@ dump, including FAQ answers and research. The captured text confirms their
 current section IDs and order; it is more current evidence than the earlier
 source-only proposals.
 
-This is a content review of that rendered evidence, not a claim that these draft
-cards have been tested in a browser. The capture does not establish Safari,
-VoiceOver, TalkBack or physical-device behavior. New summaries still need visual
-review in the cards after wording approval, including the longer research items.
-The historical Thai 485/0 report is not testing of these drafts.
+This original content review is distinct from the later browser/card verification
+recorded in the rollout report. The source capture and historical Thai 485/0
+report are not tests of these three cards. Their later exact-item checks,
+research-start/end captures and keyboard scrolling establish the recorded
+states, not visual review of every intermediate scroll position. Safari,
+VoiceOver, TalkBack and physical-device behavior remain unverified.
 
 The builder sources used for comparison are
 [`build-therapeutic-evidence.py`](../../scripts/work-with-me-employer/therapeutic/build-therapeutic-evidence.py),
@@ -149,15 +151,20 @@ were rerun against the populated files. Approval provenance points to this
 document and the fresh capture. These mechanical checks neither grant wording
 approval nor verify the appearance of the proposed cards in a browser.
 
-The next step is the guarded staging39-source rehearsal and rendered-card checks
-for each approved page before its rollout. The shared core retains whole-paragraph
-fallback for any future unapproved data and the plain jump row without JavaScript.
+The approved-page rollout is complete on staging39: Therapeutic **#1382**, Deep
+Tissue **#1383**, Chair **#1384**, using shared core **#1380** alongside Thai data
+**#1381**. The shared core retains whole-paragraph fallback for any future
+unapproved data and the plain jump row without JavaScript. Chair's initial-strip
+overlap and tablet Corporate CTA focus-ring graze remain an open shared-placement
+defect; passing geometry checks use the eventual sticky position. That issue,
+Services/short-page eligibility and actual-device/browser coverage remain separate
+from the completed wording approval and data rollout.
 
-I finished: exact wording approval recorded for all three pages.
-Next step: page-specific rehearsals and rendered-card review.
-Next lane: guarded staging39 rollout.
-See my work: this review and the linked capture report.
+I finished: exact approved wording and completed staging39 rollout recorded.
+Next step: consult the rollout record for final aggregate verification and open design work.
+Next lane: shared-placement correction, device validation and page-eligibility decisions.
+See my work: the linked rollout record and this approved wording review.
 Arc: none (ad-hoc)
 
-TL;DR: all three wording sets are approved with research qualifications intact;
-deployment evidence is tracked separately in the rollout record.
+TL;DR: all three approved wording sets are deployed on staging39 with research
+qualifications intact; verification limits and the placement defect remain explicit.

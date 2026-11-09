@@ -4,6 +4,22 @@ Scope: Therapeutic, Deep Tissue and Chair on staging39 only, using the existing
 shared core #1380. No main/live write, core redesign or Services/short-page
 eligibility decision is included.
 
+All three approved sets are now deployed and publicly reviewed. Thai remains on
+data #1381, and shared core #1380 is unchanged by this rollout.
+
+| Page on staging39 | Data snippet | Focused public run |
+| --- | --- | --- |
+| [Therapeutic](https://staging39.thaisolitude.com/therapeutic-massage/) | #1382 | 168 passed, 0 failed |
+| [Deep Tissue](https://staging39.thaisolitude.com/deep-tissue-massage/) | #1383 | 190 passed, 0 failed |
+| [Chair](https://staging39.thaisolitude.com/chair-massage/) | #1384 | 232 passed, 0 failed |
+
+Each focused run also checks the other pages against their deployed state at
+that point. These are separate runs, not per-page assertion totals to add together.
+**Open design defect:** the first Chair card can overlap the initial title strip
+and graze the tablet Corporate CTA. Passing checks cover the eventual sticky
+position; they do not establish initial-strip clearance. Details and captures are
+below. Safari, physical devices and actual assistive technology remain unverified.
+
 ## Approval and starting evidence
 
 Ryan approved all three exact wording sets after the inline review in chat on
@@ -31,7 +47,7 @@ At that starting inspection, no data snippet for these three new pages existed.
 The simplification was explained before implementation: reuse the generic
 installer and browser checker, with tiny localhost-only page rehearsal adapters.
 Each page must prove apply, idempotence, exact rollback and reapply on a fresh
-staging39 copy including uploads. Approved cards will be checked at 390, 768 and
+staging39 copy including uploads. Approved cards were checked at 390, 768 and
 1280px, including research scrolling and screenshot review. The manifest records
 actual deployed pages; a rehearsal-only expectation override allows testing the
 one proposed page without pretending the other pages are already deployed.
@@ -203,3 +219,103 @@ remain 14/20 identical, six differences on Thai/Therapeutic/Deep Tissue versus
 live, zero missing. Chair is not in this broad twenty-view set; its focused public
 check supplies that page's rendered evidence. This informational exit 1 is not
 an aggregate all-pass. The manifest now records all four pages enabled.
+
+[Focused public verification passed](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42558629539),
+request `peek-chair-public-20261109-1`, finished 03:52:51 UTC: **232/0**.
+All six exact approved lists and current-page JSON, card bounds against the
+eventual sticky position, research-end keyboard scrolling, both rail sides, print
+and no-JavaScript links passed. This does not close the initial-strip overlap
+described above. Six of nine captures are byte-identical to the rehearsal; the
+three differences are confined to rail pixels. All card/content pixels match.
+The primary reviewer viewed public phone research-start, including small-study,
+missing-comparison and no-difference qualifications. The complete apply report
+also received an independent backup/restore review with no unexpected changes.
+
+Saved public views: [phone first](assets/2026-11-09-peek-services/chair-massage/chromium-chair-massage-390-first.jpg),
+[tablet first/overlap](assets/2026-11-09-peek-services/chair-massage/chromium-chair-massage-768-first.jpg),
+[phone research end](assets/2026-11-09-peek-services/chair-massage/chromium-chair-massage-390-research-end.jpg),
+[desktop research start](assets/2026-11-09-peek-services/chair-massage/chromium-chair-massage-1280-research-start.jpg),
+and [all nine comparison hashes/bounds](assets/2026-11-09-peek-services/chair-massage/comparison.json).
+
+## Final cross-page verification
+
+[Final public Chromium check passed](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42558669623),
+request `peek-services-final-chromium-20261109-1`, source
+`81c0ceafb425a6ad305c463b5412d1acc5234717`, finished 04:01:18 UTC:
+**172/0** manifest checks across all four enabled pages plus **485/0** retained
+Thai gesture checks. The operation report keeps only the last 400 of 660 lines;
+an independent reviewer read full job `128970299925` and confirmed both summaries,
+657 PASS assertions and no FAIL/INVALID lines. Generic checks cover each page's
+approved data, actual row order, both rail sides, print and no-JavaScript links.
+The Thai suite retains gestures, no icon scrolling, keyboard paths, large-text
+and landscape variants. Its synthetic activations do not establish real assistive
+technology or physical-device behavior, and do not resolve the initial-strip
+placement issue above.
+
+[Final public Firefox check passed](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42558828529),
+request `peek-services-final-firefox-20261109-1`, source
+`7314e607efa629a6551011834b4a3362a59143ff`, finished 04:02:56 UTC: **172/0**.
+Both final generic runs cover the actual four pages at 390/768px. Three-width
+card/research-end evidence belongs to the earlier focused Chromium runs; the
+485-assertion detailed gesture suite is Thai/Chromium only. Every operation report
+was read; no INVALID result is used as verification.
+
+[Final stored-snippet inspection passed](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42559557625),
+request `peek-services-final-snippets-20261109-1`, finished 04:03:23 UTC. Core
+**#1380** (66,253 bytes) and Thai data **#1381** (4,376 bytes) retain their starting
+SHA256 hashes exactly. New published data: Therapeutic **#1382** (3,728 bytes),
+Deep Tissue **#1383** (3,408 bytes), Chair **#1384** (3,923 bytes).
+[Full recorded hashes](assets/2026-11-09-peek-services/snippet-hashes.json).
+All deployed changes in this phase are WordPress-stored page data; the shared
+core, approved Thai wording, existing page bodies and remote plugin/theme files
+were unchanged. No fallback-only core-swap interval occurred.
+
+## Page-only recovery
+
+Use the matching package (`854fd1dd` or a later commit with identical core,
+installer and approved data payloads), inspect current ownership/state, and use
+the actual snapshot for that page. These commands are recorded, not executed:
+
+```sh
+scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args 'page therapeutic-massage --rollback $HOME/private-backups/peek-template-page-therapeutic-massage-before-20261109-031828-8e66b89d.json'
+scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args 'page deep-tissue-massage --rollback $HOME/private-backups/peek-template-page-deep-tissue-massage-before-20261109-033248-2548d1fd.json'
+scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args 'page chair-massage --rollback $HOME/private-backups/peek-template-page-chair-massage-before-20261109-034709-6a5b55dd.json'
+```
+
+Each reversal takes a fresh verified encrypted off-site backup and refuses a
+changed, incomplete or foreign snapshot state. Removing a page's registration
+returns that page to its plain jump row while preserving the shared core and
+other enabled pages. Update the manifest only after verifying an actual reversal.
+The original core-migration rollback affects all Peek pages and belongs to the
+[separate migration recovery record](2026-11-09-peek-template.md#recovery-for-the-original-core-migration).
+Never use an old snapshot to delete a newer payload; future data/core revisions
+need their own reviewed exact-state migration.
+
+## Remaining design and validation work
+
+Address the actual initial strip rectangle in a separate shared-placement change;
+the observed Chair overlap remains open. Retain the settled gestures and assess
+header/strip/card fit while the page transitions into its sticky state. The
+existing research scroll preserves all approved items, with only start/end
+positions visually reviewed. Those checks do not establish every intermediate
+scroll position, physical touch behavior, Safari or actual VoiceOver/TalkBack.
+
+Services and short-page eligibility remain individual decisions, not automatic
+exclusions or rollout. The pre-existing Chair duration discrepancy (10–20 minutes
+in the introduction, 10–15 in the FAQ) remains a separate owner wording decision;
+this rollout changes no page-body text. Main/live remain unchanged.
+
+I finished: the three approved wording sets deployed and independently reviewed
+on staging39, with exact rollback rehearsals, fresh verified backups, restore
+proofs, public Chromium/Firefox checks and stored-hash confirmation.
+Next step: address the shared first-card/initial-strip placement defect with its
+own reviewed core change and actual-rectangle checks.
+Next lane: Safari/physical-device/assistive-technology validation and individual
+Services/short-page eligibility decisions.
+See my work: the public captures, comparison hashes, actual recovery snapshots
+and operation reports linked in this record.
+Arc: none (ad-hoc)
+
+TL;DR: all four massage pages use Peek on staging39. Approved content and settled
+gestures are preserved; the observed initial-strip overlap remains explicit.
+Main/live are untouched.

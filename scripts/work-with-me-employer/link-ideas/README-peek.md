@@ -8,8 +8,10 @@ code and data; the browser never requests repository JSON files.
 `peek-data/<slug>.json` stores `[text, anchor]` items, approval provenance and an
 editorial coverage classification. Anchors identify existing sections, not a
 second navigation order. Thai wording is approved; Ryan approved the Therapeutic,
-Deep Tissue and Chair sets in chat on 2026-11-09. Their actual staging rollout is
-tracked separately in the [service rollout record](../../../docs/reviews/2026-11-09-peek-service-rollout.md).
+Deep Tissue and Chair sets in chat on 2026-11-09. All four service pages are deployed
+on staging39: core #1380, Thai data #1381, Therapeutic #1382, Deep Tissue #1383,
+Chair #1384. Actual snapshots, per-page results and final aggregate verification
+are in the [service rollout record](../../../docs/reviews/2026-11-09-peek-service-rollout.md).
 Unapproved phrases are stripped before public JSON emission,
 and the runtime uses whole source paragraphs. No mechanical sentence splitting
 is used for the summary fallback.
@@ -33,8 +35,9 @@ The core installer preserves the existing snippet ID/title/settings and snapshot
 its complete original post/meta/taxonomies. A changed or duplicate record stops
 the operation. Old legacy rollback snapshots must match their code hash too.
 
-Complete offline gates and BOTH staging39-copy rehearsals before either staging
-write (from the repository root):
+The completed migration ran offline gates and BOTH staging39-copy rehearsals
+before either staging write. Historical commands (not a sequence to rerun against
+the already-applied baseline):
 
 ```sh
 scripts/ci/request.sh rehearse --source staging39 --installer link-ideas/peek-page/install-peek-thai-data.php
@@ -49,7 +52,7 @@ Include uploads in the core rehearsal: they contain layout assets as well as
 images. The 2026-11-09 asset-incomplete copy produced three geometry failures;
 the unchanged package passed with uploads, without relaxing any assertions.
 
-Then dry-run and apply the Thai data, followed by the core:
+It then dry-ran and applied Thai data, followed by the core:
 
 ```sh
 scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args 'page thai-massage'
@@ -62,21 +65,24 @@ scripts/ci/request.sh run --target staging39 --script link-ideas/check-peek-nav.
 Every write, including rollback, takes and verifies a fresh encrypted off-site
 backup first. Read every report section: an overall operation PASS does not make
 informational post-change differences pass. INVALID establishes no verification.
-Record actual snapshots, not guessed names. Reverse core first (restores the
-exact legacy record), then page data, with the respective actual snapshots via
-`push-peek-nav.sh --rollback FILE`. No fallback-only interval is planned for this
-in-place migration; deliberate page-data removal under the shared core restores
-the plain jump row.
+Record actual snapshots, not guessed names. Reversing this original migration
+restores the legacy core first, then removes Thai data, with the respective actual snapshots via
+`push-peek-nav.sh --rollback FILE`; core reversal affects every Peek page.
+For one service page, reverse only its page data using its actual snapshot in the
+current rollout record. The completed migration had no fallback-only swap;
+deliberate page-data removal under the shared core restores that page's plain row.
 
 Do not deploy another page until its wording/rollout is approved. An independently
 edited or newer data/core payload is deliberately refused; a future version needs
 its own reviewed exact-state migration, not deletion using an old snapshot.
 
-## Approved service-page rollout
+## Completed approved service-page rollout
 
 The three approved pages use the same installer; their rehearsal adapters only
-fix a page identity on an isolated copy. Repeat this sequence for
-`therapeutic-massage`, `deep-tissue-massage`, then `chair-massage`:
+fix a page identity on an isolated copy. The following sequence was completed for
+`therapeutic-massage`, `deep-tissue-massage`, then `chair-massage`. Do not rerun it
+against their already-applied baselines; future payload revisions need their own
+reviewed migration. Historical Therapeutic example:
 
 ```sh
 scripts/ci/request.sh rehearse --source staging39 --installer link-ideas/peek-page/therapeutic-massage/install-peek-page-data.php --with-uploads
@@ -84,21 +90,28 @@ scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.s
 scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args 'page therapeutic-massage --apply'
 ```
 
-Read the complete rehearsal and inspect its approved-card captures before the
-write. Read every backup/public/restore section after the write. Then change only
-that page's manifest state to `enabled`, commit it and run:
+Each rehearsal and its approved-card captures were reviewed before the write;
+every backup/public/restore section was reviewed afterward. Each page's manifest
+state was then changed to `enabled` before its public check, for example:
 
 ```sh
 scripts/ci/request.sh run --target staging39 --script link-ideas/check-peek-pages.mjs --args 'https://staging39.thaisolitude.com --capture-page therapeutic-massage'
 ```
 
-Review the public captures before proceeding to the next page. The local-only
+Public captures were reviewed before proceeding to the next page. The local-only
 `--enabled-page` option changes rehearsal expectations, never public expectations
 or WordPress data. `--capture-page` adds first/research-start/research-end captures
 at three widths and checks card bounds and access to the final research item.
-After all pages, run the complete `check-peek-nav.mjs` public check once. Record
-actual per-page snapshots; a page-only reversal removes only its data and restores
-its plain jump row without changing the shared core or other pages.
+The current rollout record holds final aggregate-check status and actual per-page
+snapshots. A page-only reversal removes only its data and restores its plain jump
+row without changing the shared core or other pages.
+
+Known shared-placement defect: Chair's first preview overlaps the strip before it
+sticks, and its tablet focus ring grazes the Corporate CTA. No inaccessible
+card/section control was observed. The geometry checker uses the strip's eventual
+sticky position; a focused core correction and actual-rectangle assertions remain
+open. Start/end research captures and exact item checks do not claim visual review
+of every intermediate scroll position.
 
 ## Local browser checks
 

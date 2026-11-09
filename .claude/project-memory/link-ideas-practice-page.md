@@ -259,14 +259,16 @@ Fresh rendered review and starting #1380 inspection completed; legacy code hash 
 `b7314c8938a728bf64b6dac16c48bba722b4aea59b277c9f56f0760132322c01`.
 Implementation separates shared core and WordPress-stored `ts_pk_pages` page data;
 `.ts-jump` stays the sole navigation source. Thai wording is unchanged. Therapeutic/Deep Tissue/Chair lists were reviewed against fresh rendered text
-and subsequently approved by Ryan in chat. Their separate staged rollout is
-tracked in [the service rollout record](../../docs/reviews/2026-11-09-peek-service-rollout.md).
+and subsequently approved by Ryan in chat. All four service pages are now deployed
+on staging39: core **#1380**, Thai data **#1381**, Therapeutic **#1382**, Deep Tissue
+**#1383**, Chair **#1384**. Their actual snapshots, per-page evidence and final
+aggregate verification are tracked in [the service rollout record](../../docs/reviews/2026-11-09-peek-service-rollout.md).
 Any unapproved data is still stripped from public JSON. Native details, reordered
 row mapping and print have focused coverage. Legacy rollback hash protection was
 missing despite the older note above; the new installer checks complete state,
 and push rollback now takes a verified fresh off-site backup.
 
-Shared core deployed in **#1380**, approved Thai data in **#1381**, staging39 only.
+**Original Thai-only migration evidence (before the three-page rollout):**
 Offline gates and both installer rehearsals passed. Core rehearsal must include
 `--with-uploads`: omitting layout assets caused three geometry failures; the
 unchanged code/assertions passed with uploads. Data/core writes each verified a
@@ -280,14 +282,30 @@ confirmed (42553163541). Design tradeoffs remain the hint's hero obstruction,
 scrolling name bubble over text, and research's large rail share; no redesign
 was bundled into migration.
 
-Actual core snapshot: `peek-template-core-before-20261109-023645-fe38e498.json`.
-Actual data snapshot: `peek-template-page-thai-massage-before-20261109-023133-3e7b1cf5.json`.
-Reverse core first, then data, with the matching package and exact ownership
-checks. **All earlier rollback commands in this note are historical.** Do not use
+**Completed service rollout:** public checks passed at each rollout stage:
+Therapeutic **168/0**, Deep Tissue **190/0**, Chair **232/0**. All 27 public captures
+are saved with comparison records. Card/content pixels match their rehearsals;
+some Deep Tissue/Chair rail pixels differ. The cause was not isolated; timing
+remains a hypothesis. Exact item checks and research-start/end captures do
+not claim visual review of every intermediate scroll position.
+
+**Open shared placement defect:** Chair's first card overlaps the initial
+display-only strip; at 768px its focus ring grazes the Corporate CTA. Header,
+card and section controls remain accessible in the observed states. The core and
+checker use the strip's eventual sticky position, so their passing bounds checks
+do not establish actual-strip clearance. A focused core correction and matching
+assertions remain open; no redesign was bundled into this data rollout.
+
+Original core snapshot: `peek-template-core-before-20261109-023645-fe38e498.json`.
+Original Thai data snapshot: `peek-template-page-thai-massage-before-20261109-023133-3e7b1cf5.json`.
+Reversing that core migration affects every page using Peek. For one service page,
+use only its actual page-data snapshot in the service rollout record, leaving the
+core and other pages active. **All earlier rollback commands in this note are historical.** Do not use
 `peek-nav-before-20261109-010037-0c493281.json` to delete the shared core.
 Migration installed inert Thai data before changing #1380 in place, with no
 fallback-only interval. Main/live remain unchanged.
-Current evidence/status: [template record](../../docs/reviews/2026-11-09-peek-template.md).
+Current evidence/status: [service rollout record](../../docs/reviews/2026-11-09-peek-service-rollout.md).
+Original core migration/recovery: [template record](../../docs/reviews/2026-11-09-peek-template.md).
 Approved wording: [three-page review](../../docs/reviews/2026-11-09-peek-summary-drafts.md).
 Services/short pages remain individual eligibility decisions; Safari/physical
 devices and actual assistive technology remain untested.

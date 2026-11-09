@@ -1,18 +1,27 @@
 # Session handoff: the Peek navigation (for the next Claude Code session)
 
-**Continuation update, 2026-11-09 (Codex):** the shared-core structure in section 4
-is implemented and deployed on staging39: core **#1380**, approved Thai data
-**#1381**. The old swap/rollback commands below are historical. Read the
-[current review, evidence and actual recovery snapshots](../reviews/2026-11-09-peek-template.md)
+**Continuation update, 2026-11-09 (Codex):** all four service pages are deployed on
+staging39: shared core **#1380**, Thai data **#1381**, Therapeutic **#1382**, Deep
+Tissue **#1383**, Chair **#1384**. Ryan approved the exact three new wording sets.
+Their public checks passed at the respective rollout stages: **168/0**, **190/0**,
+**232/0**. Read the [current rollout evidence, actual page snapshots and final aggregate status](../reviews/2026-11-09-peek-service-rollout.md),
+[original core migration and its recovery scope](../reviews/2026-11-09-peek-template.md)
 and [shared-template instructions](../../scripts/work-with-me-employer/link-ideas/README-peek.md)
 before any operation. Core rehearsals need `--with-uploads`; do not weaken geometry
-assertions to accommodate missing layout assets. Fresh public Chromium checks
-passed **74/0 manifest + 485/0 Thai regression**; six before/after images are
-byte-identical, and stored snippet hashes are confirmed. Safari/physical devices
-and actual assistive technology remain unverified.
-[Three-page wording](../reviews/2026-11-09-peek-summary-drafts.md) was subsequently
-approved by Ryan in chat; follow the [service rollout record](../reviews/2026-11-09-peek-service-rollout.md)
-for current page deployment status. Main/live are untouched.
+assertions to accommodate missing layout assets. The earlier **74/0 manifest +
+485/0 Thai regression** and six identical before/after images describe the
+original Thai-only migration, not final four-page verification.
+
+**Open design defect:** Chair's first preview overlaps the strip before it sticks;
+at 768px its focus ring also grazes the Corporate CTA. Card/section controls remain
+accessible in the reviewed states, but the current checker measures the eventual
+sticky position. Actual-strip placement and matching assertions need a focused
+core correction. Services/short-page eligibility, Safari, physical devices and
+actual assistive technology remain open. Main/live are untouched.
+
+The original handoff below, including its Thai-only state and swap/rollback
+commands, is historical. Do not rerun the completed migrations or use core
+recovery to reverse only one page; use the current rollout record instead.
 
 Written 2026-11-09 by the Claude Code cloud session that built the Peek navigation over 2026-11-08/09, because its context is running out. Ryan asked
 for this handoff to go to a higher-tier model, which **continues the work and keeps assessing it**. Read this first, then the files in section 6.
