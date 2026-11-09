@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-09 03:38 UTC  **PASS**  `peek-deep-public-20261109-1`  [reports/2026-11-09/033855-peek-deep-public-20261109-1.md](reports/2026-11-09/033855-peek-deep-public-20261109-1.md)  (run 42557406502)
 - 2026-11-09 03:36 UTC  **PASS**  `peek-deep-apply-20261109-1`  [reports/2026-11-09/033634-peek-deep-apply-20261109-1.md](reports/2026-11-09/033634-peek-deep-apply-20261109-1.md)  (run 42556939986)
 - 2026-11-09 03:29 UTC  **PASS**  `peek-deep-dry-20261109-1`  [reports/2026-11-09/032922-peek-deep-dry-20261109-1.md](reports/2026-11-09/032922-peek-deep-dry-20261109-1.md)  (run 42556529503)
 - 2026-11-09 03:28 UTC  **PASS**  `peek-deep-rehearse-20261109-1`  [reports/2026-11-09/032857-peek-deep-rehearse-20261109-1.md](reports/2026-11-09/032857-peek-deep-rehearse-20261109-1.md)  (run 42556394798)
