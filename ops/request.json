@@ -1,9 +1,11 @@
 {
-  "id": "peek-kiro-fixes-rehearse-5",
-  "op": "rehearse",
+  "id": "peek-kiro-fixes-apply-1",
+  "op": "run",
   "target": "staging39",
-  "installer": "link-ideas/core-kiro-fixes/install-peek-core-kiro-fixes.php",
+  "script": "link-ideas/push-peek-nav.sh",
   "args": [
-    "--with-uploads"
-  ]
+    "core-kiro-fixes",
+    "--apply"
+  ],
+  "tests": "auto"
 }
