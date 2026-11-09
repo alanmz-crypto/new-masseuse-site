@@ -43,11 +43,47 @@ matrix 207/0. These are local structural tests, not actual page appearance.
 The fixture suite retains explicit unapproved-data fallback coverage after all
 production pages become approved. Two independent source reviews found no blocker.
 
-Actions offline gates and page rehearsals are next. No new page has been
-deployed by this phase yet. Each write will require a fresh verified encrypted
-off-site backup, followed by report review, restore proof and public verification.
-Actual snapshots will be recorded here, never inferred from rehearsal names.
+[Actions offline gates passed](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42555080039),
+request `peek-rollout-gates-20261109-1`, source `eb33f945286b900cb65a64d5baaa9a9a777a9734`,
+finished 03:13:03 UTC. All code, ownership and wording gates passed; no rendered
+verifier was claimed in this offline run.
+
+Each write requires a fresh verified encrypted off-site backup, followed by report
+review, restore proof and public verification. Actual snapshots are recorded
+below, never inferred from rehearsal names.
 
 The plain jump row remains until each page's data is installed, then remains the
 no-JavaScript fallback. There is no core swap or planned fallback-only interruption
 to Thai. Safari, physical devices and actual VoiceOver/TalkBack remain unverified.
+
+## Therapeutic
+
+[Fresh-copy rehearsal passed](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42555107195),
+request `peek-therapeutic-rehearse-20261109-1`, finished 03:16:18 UTC. Uploads
+included; apply/idempotence/exact rollback/reapply, ten page statuses, PHP and
+rendered regulated-copy gates all passed. Browser checks **168/0**. Only the new
+page-data snippet and WPCode cache changed, with the expected associated rows.
+The primary reviewer viewed actual phone first/research-end cards and desktop
+research-start: six-section stack fits; research qualifications and `etc.` are
+reachable without losing the jump control or moving the page. Long closed section
+headings use the existing ellipsis treatment; no wording or core redesign made.
+
+[Staging preflight passed](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42555329218),
+request `peek-therapeutic-dry-20261109-1`, finished 03:16:50 UTC.
+[Staging apply completed](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42555606018),
+request `peek-therapeutic-apply-20261109-1`, finished 03:22:13 UTC: **#1382**.
+Fresh export `staging39-before-peek-nav-20261109-031813.sql` (4,427,596 bytes,
+SHA prefix `604aa232ec19`) and actual snapshot
+**`peek-template-page-therapeutic-massage-before-20261109-031828-8e66b89d.json`**
+(SHA prefix `02eee4541ddd`) were verified encrypted off-site and read back.
+Restore import 0, 101/102 fingerprints: only new #1382, WPCode cache and associated
+posts/meta/term-relationship row counts differ. Existing snippets, page copy,
+CSS and SEO remain unchanged. Public markers passed for Thai/Therapeutic enabled
+and Deep Tissue/Chair/Services plain rows.
+
+All code/rendered-copy, HTTP, structured-data and PHP checks passed. The broad
+pixel comparison was 16/20 identical with four expected Thai/Therapeutic differences
+versus live and zero missing captures; its exit 1 is not an aggregate all-pass.
+The manifest now records Therapeutic enabled. Focused public card verification
+is next. The independent second reviewer also viewed all nine rehearsal captures
+and found no visual blocker; no claim is made about every intermediate scroll position.
