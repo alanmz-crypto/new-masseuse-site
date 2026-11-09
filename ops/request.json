@@ -1,11 +1,6 @@
 {
-  "id": "peek-services-final-firefox-20261109-1",
-  "op": "run",
+  "id": "peek-services-final-snippets-20261109-1",
+  "op": "inspect",
   "target": "staging39",
-  "script": "link-ideas/check-peek-pages.mjs",
-  "args": [
-    "https://staging39.thaisolitude.com",
-    "--firefox"
-  ],
-  "tests": "auto"
+  "query": "snippets"
 }
