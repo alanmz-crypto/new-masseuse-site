@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-09 04:02 UTC  **PASS**  `peek-services-final-firefox-20261109-1`  [reports/2026-11-09/040257-peek-services-final-firefox-20261109-1.md](reports/2026-11-09/040257-peek-services-final-firefox-20261109-1.md)  (run 42558828529)
 - 2026-11-09 04:01 UTC  **PASS**  `peek-services-final-chromium-20261109-1`  [reports/2026-11-09/040119-peek-services-final-chromium-20261109-1.md](reports/2026-11-09/040119-peek-services-final-chromium-20261109-1.md)  (run 42558669623)
 - 2026-11-09 03:52 UTC  **PASS**  `peek-chair-public-20261109-1`  [reports/2026-11-09/035252-peek-chair-public-20261109-1.md](reports/2026-11-09/035252-peek-chair-public-20261109-1.md)  (run 42558629539)
 - 2026-11-09 03:50 UTC  **PASS**  `peek-chair-apply-20261109-1`  [reports/2026-11-09/035018-peek-chair-apply-20261109-1.md](reports/2026-11-09/035018-peek-chair-apply-20261109-1.md)  (run 42558224458)
