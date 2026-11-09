@@ -1,10 +1,11 @@
 {
-  "id": "peek-short-dry-20261109-1",
+  "id": "peek-short-apply-20261109-1",
   "op": "run",
   "target": "staging39",
   "script": "link-ideas/push-peek-nav.sh",
   "args": [
-    "core-summary-touch"
+    "core-summary-touch",
+    "--apply"
   ],
   "tests": "auto"
 }
