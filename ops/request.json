@@ -1,6 +1,9 @@
 {
-  "id": "peek-short-start-20261109-1",
-  "op": "inspect",
+  "id": "peek-short-rehearse-20261109-1",
+  "op": "rehearse",
   "target": "staging39",
-  "query": "snippets"
+  "installer": "link-ideas/core-summary-touch/install-peek-core-summary-touch.php",
+  "args": [
+    "--with-uploads"
+  ]
 }
