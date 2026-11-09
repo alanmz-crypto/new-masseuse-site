@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-09 10:20 UTC  **PASS**  `peek-titles-rehearse-20261109-4`  [reports/2026-11-09/102018-peek-titles-rehearse-20261109-4.md](reports/2026-11-09/102018-peek-titles-rehearse-20261109-4.md)  (run 42598380371)
 - 2026-11-09 09:55 UTC  **PASS**  `peek-titles-dry-20261109-1`  [reports/2026-11-09/095520-peek-titles-dry-20261109-1.md](reports/2026-11-09/095520-peek-titles-dry-20261109-1.md)  (run 42595445291)
 - 2026-11-09 09:54 UTC  **FAIL**  `peek-titles-rehearse-20261109-3`  [reports/2026-11-09/095442-peek-titles-rehearse-20261109-3.md](reports/2026-11-09/095442-peek-titles-rehearse-20261109-3.md)  (run 42595399779)
 - 2026-11-09 09:29 UTC  **FAIL**  `peek-titles-rehearse-20261109-2`  [reports/2026-11-09/092907-peek-titles-rehearse-20261109-2.md](reports/2026-11-09/092907-peek-titles-rehearse-20261109-2.md)  (run 42592835511)
