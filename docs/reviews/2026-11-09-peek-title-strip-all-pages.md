@@ -278,11 +278,15 @@ resize check at 844×320 observed the page move 30px and the card close. The nex
 read then encountered a missing summary (`scrollHeight` on null), making the
 unfinished touch stream and retained wrapper **INVALID**. The outer rehearsal
 correctly preserved **FAIL**; those missing results do not erase the observed
-failure. The detailed Thai regression and matched quick suite did not run.
+failure. The detailed Thai regression did not run. The matched quick suite is
+a public-only diagnostic subset, not part of any rehearsal wrapper.
 
-All **58 captures** (42 title views and 16 clearance views) were independently
-reviewed; root also viewed Therapeutic's research box, Chair at 844×320, and the
-search grid directly. The actual Therapeutic research summary is **226.53px
+All **58 captures** (42 title views and 16 clearance views) were retained.
+Independent review covered the two changed search views and all 16 newly
+available clearance/summary views, following review of all 42 first-candidate
+views against the baseline. Root additionally viewed selected Therapeutic,
+Chair at 844×320, search, Thai, Deep Tissue and Work captures. The actual
+Therapeutic research summary is **226.53px
 high / 227px client height** at 390×844, with its title, neighboring rows and
 jump hint accessible. This confirms the larger rendered area, not successful
 completion of the interrupted touch gate or resolution on the reporting device.
@@ -359,8 +363,8 @@ The retained Thai regression then returned **484 passed, 1 failed**. Its
 synthetic seven-section, enlarged-text landscape case failed the combined
 requirement that section seven's open box show its name and `Tap to go there`.
 The report's boolean result does not identify which element fails visibility;
-the cause remains under investigation. The matched quick suite did not run,
-and the retained wrapper additionally reported **INVALID: no final suite
+the cause was still under investigation at this stage. The retained wrapper
+additionally reported **INVALID: no final suite
 summary**. The outer rehearsal preserved **FAIL**. No waiver or runtime change
 is established by this result, and no aggregate browser pass is claimed.
 
@@ -371,9 +375,9 @@ at source `4517794fca7c409619eb901f5bcd55f15893269b`, finished
 (`/tmp/peek-titles-dry-1-report.md`): all 19 published paths match the reviewed
 inventory and the exact current core guard reports `core-title-strip ready`.
 It uploaded the package outside the web root and wrote no WordPress state.
-This preflight does not override the failed rehearsal. **All staging writes
-remain blocked pending successful fresh-copy and visual gates**; there is no
-new deployment snapshot.
+This preflight did not override the failed rehearsal. At that stage all staging
+writes remained blocked pending successful fresh-copy and visual gates; no
+deployment snapshot was created.
 
 
 ## Enlarged-text fallback diagnosis
@@ -406,3 +410,62 @@ last-section case and checks close/hint hit targets, all title lines, native
 keys/swipe, stable page/preview/inner text, and destination clearance. Focused
 Firefox keyboard and pointer parity also passed. The runtime is unchanged;
 this evidence does not replace the next complete actual-copy rehearsal.
+
+
+The subsequent complete Thai run on the structural mock returned **485/1**.
+Its only failure tried to focus the unchanged hardcoded `row[data-k="3"]` while
+that mock's fit1–fit3 layout had folded it (`display:none`). Neighboring rows0/2
+remained visible; native keyboard activation of visible row2 moved focus to its
+open preview successfully. This is a measured fixture-geometry difference, not
+an assumed font cause, and is not recorded as a passing full mock suite. The
+third actual-copy run passed that unchanged keyboard assertion. No assertion or
+runtime was altered for this mock-only mismatch; the complete fourth actual-copy
+run remains required. Logs: `/tmp/peek-thai-final-full-local.log`,
+`/tmp/peek-thai-local-keyboard-diagnosis.log`, and
+`/tmp/peek-thai-local-visible-keyboard.log`.
+
+## Fourth rehearsal: complete pass; staging apply still pending
+
+Source `28b440122d13bb7496dea185ba7a1ad0a586aab3` passed
+[Actions Gates](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42598380439)
+at **10:06:55 UTC**: **29 PASS, 1 SKIP, 0 FAIL, 0 INVALID**. The full job log
+was read; only URL-dependent rendered verification was skipped.
+
+[Rehearsal 4](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42598380371)
+used that source and finished **10:20:13 UTC, PASS**. The complete 206-line
+report was read, and the full browser log is retained. Root verified the
+6,346,283-byte artifact, SHA256
+`6f2ed2470df1e8d6f714137cbf98f8eb7f3f4080fd92a141b13ec1c3cace5af3`.
+Exact rollback/reapply, idempotence, PHP, rendered regulated wording and the
+complete 19-page inventory passed. Only #1380/WPCode cache changed in the copy.
+
+| Browser suite | Chromium | Firefox |
+|---|---:|---:|
+| Title strip, 19 published pages plus search/404 | 1223 passed, 0 failed | 1220 passed, 0 failed |
+| Generic page/rail checks | 207 passed, 0 failed | 207 passed, 0 failed |
+| Clearance and summary reachability | 3340 passed, 0 failed | 3340 passed, 0 failed |
+| Native touch | 378 passed, 0 failed | Not a Firefox suite |
+| Retained Thai gestures/stress cases | 486 passed, 0 failed | Not a Firefox suite |
+
+The full wrapper completed in **710s**. The exact seven-section stress case
+now proves native End/Home, a hit-tested swipe, complete title/close/hint
+reachability, unchanged page/summary state, and actual hint activation. The
+unchanged following keyboard-focus assertion also passes on the actual copy.
+These checker corrections leave the 86,567-byte runtime unchanged; the earlier
+failed runs remain recorded as failures. The `--quick` 342-check subset belongs
+to post-deployment public verification only; it was never a rehearsal step.
+
+All 58 images are retained under
+[rehearsal captures](assets/2026-11-09-peek-title-strip-all-pages/rehearsal/).
+All 58 were compared against earlier evidence: 40 are byte-identical to the
+second copy, 12 have only rail/focus-outline differences, and the six changed
+title views were inspected. Changed desktop title views were also checked
+against the fully reviewed first-copy set. Root directly viewed Therapeutic,
+Contact and Home. No visual blocker remains; the enlarged research summaries
+preserve their qualifications, and the exact actual-copy stress evidence
+satisfies the conditional outer-scroll fallback requirement. The 09:55:20 read-only
+preflight applies to this unchanged payload. **No staging write has occurred**:
+the guarded apply with fresh verified off-site backup still precedes deployment. No staging recovery snapshot exists for this update.
+Evidence: `/tmp/peek-titles-candidate-4-gates.log`,
+`/tmp/peek-titles-rehearse-4-text.md`, and
+`/tmp/peek-titles-rehearse-4-artifact/peek-core-title-strip-browser.log`.

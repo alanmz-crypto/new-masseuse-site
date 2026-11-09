@@ -84,7 +84,8 @@ finished **09:29:02 UTC, FAIL**, on that same source. Exact rollback/reapply,
 rendered wording, page responses and PHP checks passed. The actual copied pages
 passed clearance **3340/0** and generic page/rail checks **207/0** in each browser;
 title checks passed **1223/0 Chromium** and **1220/0 Firefox**. All 58 captures
-were independently reviewed, including the 16 clearance/summary views. The
+were retained; independent review covered the two changed search views and all
+16 new clearance/summary views, after the first candidate's 42-view review. The
 actual Therapeutic research box at 390×844 has a **226.53px summary rectangle
 and 227px client height**, confirming the increased space with real page assets.
 
@@ -95,7 +96,8 @@ the reported geometry confirmed that its start point `(636, 181.3125)` fell
 below the clipped card's bottom `179.84375` and hit the page's corporate band;
 it reproduced the 30px movement and closure. This used captured inline HTML
 with imposed measured boundaries, not a new actual-copy pass. The detailed
-Thai and matched quick suites did not run.
+Thai suite did not run. The matched quick subset is public-only, not part of
+the rehearsal wrapper.
 Passing geometry and captures cannot substitute for this unfinished native gate
 or establish resolution of the reported rapid-switch delay.
 
@@ -122,9 +124,9 @@ to #1380/WPCode cache.
 
 The retained Thai regression returned **484/1**: its synthetic seven-section,
 enlarged-text landscape case failed the combined name/jump-hint visibility
-check for section seven. Which element fails and why remain under investigation;
-no runtime correction or exception is assumed. The matched quick suite did not
-run, and the retained wrapper reported **INVALID** for its missing final summary.
+check for section seven. Which element failed and why were then under investigation;
+no runtime correction or exception was assumed. The retained wrapper reported
+**INVALID** for its missing final summary.
 The combined rehearsal remains **FAIL** despite the passing native-touch suite.
 
 The [read-only preflight](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42595445291)
@@ -132,9 +134,34 @@ passed at **09:55:20 UTC**, source `4517794fca7c409619eb901f5bcd55f15893269b`:
 the 19 published paths and exact current core match the guarded transition.
 Its complete report confirms no WordPress write. The
 [combined record](2026-11-09-peek-title-strip-all-pages.md#third-candidate-offline-pass-rehearsal-failure-read-only-preflight-pass)
-holds the archive identity and full outcome. **Staging deployment remains
-blocked by the failed rehearsal**; this is not a resolution claim for the
+holds the archive identity and full outcome. Staging deployment remained
+blocked at that stage by the failed rehearsal; this is not a resolution claim for the
 reported device delay.
+
+## Fourth rehearsal: complete pass; deployment pending
+
+Source `28b440122d13bb7496dea185ba7a1ad0a586aab3` passed
+[Actions Gates](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42598380439)
+at **10:06:55 UTC**, with **29 PASS, 1 SKIP, 0 FAIL, 0 INVALID**; the only
+skip was URL-dependent rendered verification. The
+[fourth actual-copy rehearsal](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42598380371)
+then finished **10:20:13 UTC, PASS**, after **710s** of browser checks.
+The complete report was read. Title checks passed **1223/0 Chromium** and
+**1220/0 Firefox**, generic pages **207/0** and clearance **3340/0** in each,
+native Chromium touch **378/0**, and retained Thai regression **486/0**.
+The exact stress case now proves native End/Home/swipe reachability and hint
+activation; the unchanged keyboard-focus assertion also passes on the copy.
+No runtime change was required for these checker corrections.
+
+Exact rollback/reapply, rendered wording, PHP and all 19 published-page inventory
+checks passed. Only #1380/WPCode cache changed in the throwaway copy. The
+[combined record](2026-11-09-peek-title-strip-all-pages.md#fourth-rehearsal-complete-pass-staging-apply-still-pending)
+holds the verified artifact identity and full evidence. Its 58 retained captures
+are undergoing the final visual review; no claim of reviewing every image is
+made yet. The earlier read-only preflight matches this unchanged payload.
+The 342-check quick subset is for post-deployment public verification and was
+never part of the rehearsal wrapper. **No staging write has occurred**; visual
+review and the guarded apply/verified off-site backup remain before deployment.
 
 The combined `core-title-strip` transition updates #1380 in place from frozen
 v3 while preserving the four data records. No new deployment snapshot exists.
