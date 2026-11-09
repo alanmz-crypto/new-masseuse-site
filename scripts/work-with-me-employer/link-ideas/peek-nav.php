@@ -439,15 +439,21 @@ add_action( 'wp_footer', function () {
       }
       return true;
     }
+    function readingStart() {
+      // The strip is inserted inside content. A page-title destination belongs
+      // to the first original reading block, not that navigation's own parent.
+      // Keep the actual node and address, including on fixed-title search pages.
+      return [].slice.call(content.children).filter(visible)[0] || content;
+    }
     return function () {
       // Search cards can share a row; they are parallel results, not sequential
       // page sections. The WordPress query supplies their fixed page identity.
-      if (config && config.mode === 'fixed') return [{ label: fallback, target: content, href: null }];
+      if (config && config.mode === 'fixed') return [{ label: fallback, target: readingStart(), href: null }];
       var list = row ? rowSections(row).map(function (s) { return { label: s.label, target: byHref(s.href), href: s.href }; }) : [].slice.call(content.querySelectorAll('h2')).map(function (h) { return { label: h.innerText.replace(/\s+/g, ' ').trim(), target: h, href: h.id ? '#' + encodeURIComponent(h.id) : null }; });
       // An explicit jump row may intentionally address a closed disclosure;
       // discovered headings belong to the rail only while they are visible.
       list = list.filter(function (s) { return s.label && (keepRowTargets && row ? content.contains(s.target) : visible(s.target)); });
-      return list.length ? list : [{ label: fallback, target: content, href: null }];
+      return list.length ? list : [{ label: fallback, target: readingStart(), href: null }];
     };
   }
   function titleOnly(content, row) {
@@ -575,7 +581,7 @@ add_action( 'wp_footer', function () {
     // the text column stops 6px before the rail and its icon, whatever margin the theme gives the content at this width (measured, not guessed);
     // the theme's own padding stays whenever it is already enough
     function clearRail() {
-      var left = root.classList.contains('ts-pk-left'), need = 0;
+      var left = root.classList.contains('ts-pk-left'), need = 0, pageX = window.scrollX, pageY = window.scrollY;
       root.classList.remove('ts-pk-pad');   // start from the theme's own spacing (no paint happens in between)
       if (box.hidden) return;
       // measure where the text really ends on the rail's side, and give the text blocks only what is missing (the column itself is never padded)
@@ -592,6 +598,10 @@ add_action( 'wp_footer', function () {
         if (!(over > 0.5) || need >= 80) break;
         need = Math.min(80, need + Math.ceil(over)); root.style.setProperty('--pk-clear', need + 'px'); root.classList.add('ts-pk-pad');   // capped
       }
+      // Measuring without padding can briefly shorten a near-bottom page and
+      // clamp its scroll position, even though final text wrapping is unchanged.
+      // Restore the title-rail reader's position after the final layout flush.
+      if (collect) { void content.offsetHeight; if (window.scrollX !== pageX || window.scrollY !== pageY) window.scrollTo({ left: pageX, top: pageY, behavior: 'instant' }); }
     }
     // at most once per frame, and on resize only when the width really changed (phone toolbars resize the page while scrolling)
     var clearQ = 0, lastW = -1;

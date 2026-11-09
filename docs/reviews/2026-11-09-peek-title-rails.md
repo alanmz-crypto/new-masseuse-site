@@ -63,8 +63,8 @@ The deployed code has been frozen as `peek-nav-shared-v4.php`; its code bytes an
 hash match the stored baseline above. The proposed `core-title-rail` transition
 starts from exact v4, while `core-title-strip` is now pinned to v3→v4 so its
 actual 10:24:52 snapshot retains its recovery meaning. New installer checks and
-runtime behavior are still under implementation/review. There is no new staging
-snapshot or claimed rehearsal/deployment result.
+runtime behavior are still under implementation/review. The first rehearsal
+failed as recorded below; there is no staging apply or new staging snapshot.
 
 Read-only data compatibility checks passed: all four summary files pass the
 existing lint, all **40 mutation checks** pass, and the four JSON files are byte
@@ -146,7 +146,7 @@ and [single no-heading entry](assets/2026-11-09-peek-title-rails/checks/no-headi
 The compact cards retain their title and jump controls without summary space.
 They do not replace the required actual-page review.
 
-## Actions Gates and first rehearsal request
+## Actions Gates and first rehearsal failure
 
 [Actions Gates 42656502403](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42656502403)
 passed at **16:37:23 UTC** for source
@@ -157,6 +157,74 @@ ownership/recovery/current-page emission, wording and builder gates passed.
 Only URL-dependent rendered verification was skipped.
 
 The [first fresh-copy rehearsal, 42656502274](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42656502274)
-is running; no rehearsal verdict or actual-page capture review is claimed yet.
-Staging writes remain pending the rendered-copy and visual gates plus a fresh
-verified off-site backup. No new staging snapshot exists.
+used that source and finished **16:40:21 UTC, FAIL**. The complete 203-line decoded
+report was read (`/tmp/peek-title-rails-rehearse-1-text.md`). Exact rollback/reapply,
+idempotence, rendered regulated wording, PHP and published-page inventory checks
+passed. Only #1380 and WPCode cache changed in the throwaway copy. Its `/backups/`
+snapshots are disposable rehearsal artifacts, not staging recovery snapshots.
+
+The title-rail matrices returned **1364 passed, 7 failed in Chromium** and
+**1357 passed, 7 failed in Firefox**, each covering **21 actual routes**. Chromium
+produced **44 captures: 30 actual-page views and 14 local fixtures**. The retained
+title-strip/core suites were **skipped** because the new matrices failed; their
+earlier fixture results do not substitute for this missing rendered-copy gate.
+
+Each engine failed the Privacy mobile jump-clearance assertion, Search jump
+clearance at three widths, Search's no-JavaScript content assertion, and two
+single-ID-less-fixture assertions for side switching and keyboard index opening.
+Runtime work is addressing the one-entry fallback's first reading target and
+transient clearance clamping. Checker corrections under review cover bounded FAQ
+settling, explicit UTF-8 fixture encoding and Search's actual H1 outside `main`.
+These are pending corrections, not a passing result; the failed run remains failed.
+
+All **30 actual-page captures were reviewed**, with no additional visual blocker
+reported. Work With Me's desktop seventh closed row uses an ellipsis; its full
+title remains an explicit browser-check requirement when opened. This visual
+judgment does not waive the failed navigation/clearance checks. Images are retained
+unchanged in the clearly labeled [failed first-rehearsal folder](assets/2026-11-09-peek-title-rails/rehearsal-1-failed/),
+with per-image hashes in its [capture manifest](assets/2026-11-09-peek-title-rails/rehearsal-1-failed/capture-manifest.json).
+The source artifact is **5,563,004 bytes**, SHA256
+`fb43ca453529cbe8803ce331a4ba950d0f59ed2cf850e67e9857fe4a4de470ed`.
+
+## Read-only preflight after the failed rehearsal
+
+[Dry run 42656886956](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42656886956),
+source `a444ac9076fb49a38f1ce2aeee55229d7528308f`, finished
+**16:40:57 UTC, PASS**. Its complete report was read
+(`/tmp/peek-title-rails-dry-1-text.md`): published paths match the reviewed
+inventory, and the exact core guard reports ready. It uploaded the package outside
+the web root and wrote no WordPress state. This preflight does not override the
+failed rehearsal. Staging writes remain blocked pending a complete passing
+fresh-copy/visual gate and a fresh verified off-site backup; no new staging
+recovery snapshot exists.
+
+## Corrected candidate for a second fresh-copy rehearsal
+
+The current core has **96,717 code bytes**, SHA256
+`a580559856501092595ed3d623a74e05e133463706e118ec0338fc28948d92af`
+(full PHP file:96,723 bytes,
+`382c7805cae8495e4a88c0bf81b9250c4bd44e92225a4632f7255f62e14e482c`).
+A single page-title destination now uses the first visible original reading block,
+excluding Peek/navigation nodes, with no invented ID or address change. Measuring
+rail clearance preserves the title-rail reader's position after temporary padding
+removal: DejaVu Sans reproduced a179–180px jump on a short page even though final
+line wrapping and scroll limits were unchanged. The four summary pages retain
+their preceding behavior.
+
+The checker now waits for an aligned, stable animated FAQ landing within3.2s,
+retaining its focus/hash/clearance requirements. It compares original headings
+and links with JavaScript disabled rather than assuming Search's H1 is inside
+main. Fixture encoding is explicitly UTF-8, and the short-page fixture uses the
+font that exposed the real clearance clamp.
+
+Current local title-rail fixtures: **440/0 Chromium,437/0 Firefox**, with14 local
+Chromium images and no actual routes. PHP syntax, **487/0 installer guards** and
+**24/0 current-page emission** passed on the exact candidate in pinned PHP.
+These local passes do not replace the complete fresh-copy rehearsal or establish
+that Privacy/Search now pass on their actual page structures.
+
+The final local rerun retained **440/0 Chromium,437/0 Firefox**, now also checking
+all open-title text line boxes fit within the card. Retained title-strip fixtures
+passed **230/0 in each engine**; the independent native-touch suite passed31/0.
+Search target/focus identity and four actual landed views will be retained in the
+next copy report. The Work seventh title is checked fully open at all three widths.

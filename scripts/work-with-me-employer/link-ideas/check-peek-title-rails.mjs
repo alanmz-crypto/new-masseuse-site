@@ -20,7 +20,7 @@ let pass = 0, fail = 0, visited = 0, captures = 0;
 const started = Date.now();
 const ok = (name, value, detail) => { value ? pass++ : fail++; console.log(`${value ? 'PASS' : 'FAIL'} title-rail ${engine}/${name}${!value && detail !== undefined ? ' ' + JSON.stringify(detail) : ''}`); };
 const settle = p => p.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
-const state = p => p.evaluate(() => ({ y: scrollY, x: scrollX, url: location.href, hash: location.hash, history: history.length }));
+const state = p => p.evaluate(() => ({ y: scrollY, x: scrollX, max: Math.max(0, document.documentElement.scrollHeight - innerHeight), url: location.href, hash: location.hash, history: history.length }));
 const still = (a, b) => a.url === b.url && a.history === b.history && Math.abs(a.y - b.y) <= 1 && Math.abs(a.x - b.x) <= 1;
 let browser;
 try { browser = await playwright[engine].launch(engine === 'chromium' && process.env.TS_BROWSER_EXECUTABLE ? { executablePath: process.env.TS_BROWSER_EXECUTABLE } : {}); }
@@ -66,7 +66,13 @@ const source = p => p.evaluate(() => {
     return { node: document.getElementById(id), label: norm(a.textContent), href: a.getAttribute('href') };
   }).filter(item => item.node) : [...content.querySelectorAll('h2')].filter(visible).map(node => ({ node, label: norm(node.innerText), href: node.id ? '#' + encodeURIComponent(node.id) : null }));
   items.sort((a, b) => a.node === b.node ? 0 : a.node.compareDocumentPosition(b.node) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1);
-  if (config.mode === 'fixed' || !items.length) items = [{ node: content, label: config.title, href: null }];
+  if (config.mode === 'fixed' || !items.length) {
+    // The shared strip is inserted inside the main container. A whole-page
+    // destination starts at its first original visible reading block, not at
+    // that container's rectangle (which includes the strip itself).
+    const readingStart = [...content.children].find(visible) || content;
+    items = [{ node: readingStart, label: config.title, href: null }];
+  }
   window.__peekTitleRailSource = items;
   return { labels: items.map(item => item.label), hrefs: items.map(item => item.href), ids: items.map(item => item.node.id), row: !!row, mode: config.mode };
 });
@@ -87,35 +93,57 @@ const checkCard = async (p, expected, index, label) => {
   const actual = await p.evaluate(() => {
     const card = document.querySelector('.ts-pk-card'), open = card.querySelector('.open'), strip = document.getElementById('ts-peek-title-strip'), head = document.getElementById('masthead');
     const rect = node => { const r = node.getBoundingClientRect(); return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, height: r.height }; };
+    const title = open?.querySelector(':scope > b'), range = document.createRange();
+    if (title) range.selectNodeContents(title);
+    const cardRect = card.getBoundingClientRect(), lines = title ? [...range.getClientRects()] : [];
     return { pinned: card.classList.contains('is-pinned'), index: Number(card.dataset.i), title: open?.querySelector(':scope > b')?.textContent, small: open?.querySelector('small')?.textContent,
       sums: card.querySelectorAll('.sum,p,.d').length, rows: [...card.querySelectorAll('.row span')].map(node => node.textContent), card: rect(card), strip: rect(strip), header: head && rect(head),
       hint: open?.querySelector('.hint') && rect(open.querySelector('.hint')), titleRect: open?.querySelector(':scope > b') && rect(open.querySelector(':scope > b')), viewport: { width: innerWidth, height: innerHeight },
+      titleLinesVisible: lines.length > 0 && lines.every(r => r.left >= cardRect.left - 1 && r.right <= cardRect.right + 1 && r.top >= cardRect.top - 1 && r.bottom <= cardRect.bottom + 1),
       scroll: { top: card.scrollTop, height: card.scrollHeight, client: card.clientHeight } };
   });
   ok(`${label}: opens the selected title with section count and no summary or reading-time copy`, actual.pinned && actual.index === index && actual.title === expected.labels[index] && actual.small === `Section ${index + 1} of ${expected.labels.length}` && actual.sums === 0 && actual.rows.every(text => expected.labels.includes(text)), actual);
   const { card: c, strip: s, header: h, viewport: v } = actual;
   const intersects = (a, b) => a.left < b.right && a.right > b.left && a.top < b.bottom - 1 && a.bottom > b.top + 1;
   ok(`${label}: preview clears the actual visible title/header and viewport edges`, c.height > 0 && c.left >= -1 && c.right <= v.width + 1 && c.top >= 0 && c.bottom <= v.height + 1 && (s.bottom <= 0 || s.top >= v.height || !intersects(c, s)) && (!h || h.bottom <= 0 || h.top >= v.height || !intersects(c, h)), actual);
-  ok(`${label}: ordinary portrait title and jump hint are visible`, actual.titleRect && actual.hint && actual.titleRect.top >= c.top - 1 && actual.titleRect.bottom <= c.bottom + 1 && actual.hint.top >= c.top - 1 && actual.hint.bottom <= c.bottom + 1, actual);
+  ok(`${label}: ordinary portrait title and jump hint are visible`, actual.titleRect && actual.hint && actual.titleLinesVisible && actual.titleRect.top >= c.top - 1 && actual.titleRect.bottom <= c.bottom + 1 && actual.hint.top >= c.top - 1 && actual.hint.bottom <= c.bottom + 1, actual);
 };
 const jump = async (p, expected, index, label, pointer = false) => {
   const before = await state(p);
   if (pointer) await p.locator('.ts-pk-card .open > b').click();
   else { await p.locator('.ts-pk-card').focus(); await p.keyboard.press('Enter'); }
   await settle(p); await p.waitForTimeout(100);
-  const actual = await p.evaluate(index => {
+  const measure = () => p.evaluate(index => {
     const target = window.__peekTitleRailSource[index].node, r = target.getBoundingClientRect(), stripNode = document.getElementById('ts-peek-title-strip'), strip = stripNode.getBoundingClientRect();
     const max = Math.max(0, document.documentElement.scrollHeight - innerHeight), offset = Math.max((parseFloat(getComputedStyle(stripNode).top) || 0) + stripNode.offsetHeight + 12, parseFloat(getComputedStyle(target).scrollMarginTop) || 0);
     const focusTarget = /^H[1-6]$/.test(target.tagName) ? target : target.querySelector('h1,h2,h3,h4,h5,h6,.ts-faq-disclosure') || target;
     let details = true; for (let node = target; node; node = node.parentElement) if (node.tagName === 'DETAILS' && !node.open) details = false;
-    return { focus: document.activeElement === focusTarget, hash: location.hash, history: history.length, y: scrollY, max, expectedY: Math.max(0, Math.min(max, scrollY + r.top - offset)),
-      target: { top: r.top, bottom: r.bottom, height: r.height }, strip: strip.bottom, offset, viewport: innerHeight, details, pinned: document.querySelector('.ts-pk-card').classList.contains('is-pinned') };
+    return { focus: document.activeElement === focusTarget, hash: location.hash, history: history.length, y: scrollY, max, expectedY: Math.max(0, Math.min(max, scrollY + r.top - offset)), faq: !!target.closest('.uagb-faq-item'),
+      target: { top: r.top, bottom: r.bottom, height: r.height }, targetNode: { tag: target.tagName, id: target.id, class: target.className }, focusNode: { tag: focusTarget.tagName, id: focusTarget.id, class: focusTarget.className, text: focusTarget.textContent.replace(/\s+/g, ' ').trim().slice(0, 180) }, strip: strip.bottom, offset, viewport: innerHeight, details, pinned: document.querySelector('.ts-pk-card').classList.contains('is-pinned') };
   }, index);
+  let actual = await measure();
+  if (actual.faq) {
+    // The real Spectra accordion moves the destination while its answer and a
+    // preceding answer animate. The navigation's bounded settle starts after
+    // 180ms; a fixed100ms observation reports that intermediate frame as final.
+    // Require an aligned, stable landing within3.2s, without sending any input.
+    let stable = 0;
+    for (let attempt = 0; attempt < 40 && stable < 3; attempt++) {
+      await p.waitForTimeout(80);
+      const next = await measure();
+      const aligned = Math.abs(next.y - next.expectedY) <= 6 && next.target.top >= next.strip - 2;
+      stable = aligned && Math.abs(next.y - actual.y) <= 1 && Math.abs(next.target.top - actual.target.top) <= 1 && Math.abs(next.target.height - actual.target.height) <= 1 ? stable + 1 : 0;
+      actual = next;
+    }
+    ok(`${label}: animated FAQ reaches a stable aligned landing within its bounded settle`, stable >= 3, actual);
+  }
   const hash = expected.hrefs[index] || before.hash;
   ok(`${label}: explicit activation focuses its original destination and preserves ID-less addresses`, actual.focus && actual.hash === hash && actual.history === before.history && actual.details && !actual.pinned, { ...actual, expectedHash: hash });
   // A genuinely short page cannot always align a target under the strip. In
   // that case the browser must be at its true scroll limit and show the target.
   ok(`${label}: jump lands below the strip or at the measured scroll limit`, actual.target.height > 0 && actual.target.bottom > actual.strip - 1 && actual.target.top < actual.viewport && Math.abs(actual.y - actual.expectedY) <= 6 && (actual.target.top >= actual.strip - 2 || actual.expectedY === 0 || actual.expectedY === actual.max), actual);
+  if (expected.mode === 'fixed') console.log(`INFO title-rail ${engine}/${label}: original reading-block destination ${JSON.stringify({ target: actual.targetNode, focus: actual.focusNode, geometry: actual.target, strip: actual.strip, y: actual.y, hash: actual.hash })}`);
+  if (/^(s-massage\/(390|768|1280)|privacy-policy\/390)$/.test(label)) await capture(p, label.replaceAll('/', '-') + '-landed');
 };
 const indexAndSide = async (p, expected, label) => {
   await p.keyboard.press('Escape');
@@ -127,11 +155,15 @@ const indexAndSide = async (p, expected, label) => {
   await p.locator('.ts-pk-fan li').last().click(); await settle(p);
   ok(`${label}: selecting an index name opens its preview without a page jump`, still(before, await state(p)) && await p.locator('.ts-pk-card').getAttribute('data-i') === String(expected.labels.length - 1));
   const wasLeft = await p.evaluate(() => document.documentElement.classList.contains('ts-pk-left'));
+  const beforeSide = await state(p);
   await p.locator('.ts-pk-card .side').click(); await settle(p);
-  ok(`${label}: side control changes the rail side without moving the page`, await p.evaluate(() => document.documentElement.classList.contains('ts-pk-left')) !== wasLeft && still(before, await state(p)));
+  const afterSide = await state(p);
+  ok(`${label}: side control changes the rail side without moving the page`, await p.evaluate(() => document.documentElement.classList.contains('ts-pk-left')) !== wasLeft && still(beforeSide, afterSide), { before: beforeSide, after: afterSide });
   await preview(p, 0); await checkCard(p, expected, 0, label + '/opposite-side'); await p.keyboard.press('Escape');
+  const beforeKeyboard = await state(p);
   await p.locator('.ts-pk-ix').focus(); await p.keyboard.press('Enter'); await settle(p);
-  ok(`${label}: keyboard icon opens the index without page navigation`, await p.locator('.ts-pk-ix').getAttribute('aria-expanded') === 'true' && still(before, await state(p)));
+  const afterKeyboard = await state(p);
+  ok(`${label}: keyboard icon opens the index without page navigation`, await p.locator('.ts-pk-ix').getAttribute('aria-expanded') === 'true' && still(beforeKeyboard, afterKeyboard), { before: beforeKeyboard, after: afterKeyboard });
   await p.keyboard.press('Escape');
   ok(`${label}: Escape closes the index and keeps keyboard focus on its button`, await p.locator('.ts-pk-ix').evaluate(node => document.activeElement === node && node.getAttribute('aria-expanded') === 'false'));
 };
@@ -220,11 +252,22 @@ const progressSwitch = async (p, label) => {
   // view; their address must still remain unchanged across the switch.
   ok(`${label}: practice mode switches retain the page address`, before.url === (await state(p)).url);
 };
+const originalContent = p => p.evaluate(() => {
+  const main = document.querySelector('#main,main,[role="main"]') || document.querySelector('#primary,#content') || document.body;
+  const norm = text => text.replace(/\s+/g, ' ').trim();
+  return {
+    headings: [...main.querySelectorAll('h1,h2,h3,h4,h5,h6')].filter(node => !node.closest('.ts-pk')).map(node => norm(node.textContent)),
+    links: [...main.querySelectorAll('a[href]')].filter(node => !node.closest('.ts-pk')).map(node => [node.getAttribute('href'), norm(node.textContent)]),
+    visibleHeading: [...document.querySelectorAll('h1,h2,h3,h4,h5,h6')].some(node => !node.closest('.ts-pk,header#masthead,footer') && node.getClientRects().length > 0),
+    visibleLink: [...main.querySelectorAll('a[href]')].some(node => !node.closest('.ts-pk') && node.getClientRects().length > 0),
+    peek: !!document.querySelector('.ts-pk-nav,.ts-pk-card,#ts-peek-title-strip')
+  };
+});
 try {
   if (!fixturesOnly) {
     const inventory = JSON.parse(readFileSync(process.env.TS_PEEK_TITLE_INVENTORY || new URL('./title-strip-pages.json', import.meta.url), 'utf8')).pages;
     if (!Array.isArray(inventory) || inventory.length < 19 || new Set(inventory.map(page => page.id)).size !== inventory.length || new Set(inventory.map(page => page.path)).size !== inventory.length || inventory.some(page => !Number.isInteger(page.id) || !/^\/(?!\/)/.test(page.path) || !page.title)) throw new Error('INVALID incomplete published-page inventory');
-    const ctx = await context();
+    const ctx = await context(), nojsSources = new Map();
     if (!local) {
       const response = await ctx.request.get(base + '/wp-json/wp/v2/pages?per_page=100&_fields=id,link');
       if (response.status() !== 200) throw new Error(`INVALID published-page inventory response ${response.status()}`);
@@ -236,6 +279,7 @@ try {
     }
     for (const page of [...inventory, { path: '/?s=massage' }, { path: '/peek-title-missing-page-verification-20261109/', status: 404 }]) {
       const { p, errors } = await open(ctx, page.path, page.status || 200); visited++;
+      if (['/work-with-me/', '/personal-automation/', '/?s=massage'].includes(page.path)) nojsSources.set(page.path, await originalContent(p));
       const name = page.path === '/' ? 'home' : page.path.replace(/[^a-zA-Z0-9]+/g, '-').replace(/^-|-$/g, '');
       for (const width of [390, 768, 1280]) {
         await p.setViewportSize({ width, height: 844 }); await p.evaluate(() => scrollTo({ top: 0, behavior: 'instant' })); await settle(p);
@@ -261,7 +305,8 @@ try {
     for (const path of ['/work-with-me/', '/personal-automation/', '/?s=massage']) {
       const p = await nojs.newPage(), response = await p.goto(base + path, { waitUntil: 'load' });
       if (response?.status() !== 200) throw new Error(`INVALID no-JS ${path}: response ${response?.status()}`);
-      ok(`${path}: no-JavaScript preserves original content and ordinary links`, await p.evaluate(() => !document.querySelector('.ts-pk-nav,.ts-pk-card,#ts-peek-title-strip') && !!document.querySelector('main h1,#main h1') && [...document.querySelectorAll('main a[href],#main a[href]')].some(node => node.getClientRects().length > 0)));
+      const actual = await originalContent(p), expected = nojsSources.get(path);
+      ok(`${path}: no-JavaScript preserves original headings and ordinary links without invented UI`, !actual.peek && actual.visibleHeading && actual.visibleLink && JSON.stringify(actual.headings) === JSON.stringify(expected.headings) && JSON.stringify(actual.links) === JSON.stringify(expected.links), { actual, expected });
       await p.close();
     }
     await nojs.close();
@@ -272,11 +317,14 @@ try {
     const section = (id, label) => `<section><h2${id ? ` id="${id}"` : ''}>${label}</h2>${paragraph}</section>`;
     const specs = [
       { name: 'zero', html: '<h1>A short original page</h1><p>Only a short paragraph.</p>' },
-      { name: 'one-idless', html: section('', 'One existing heading') },
+      // DejaVu reproduces the runner's4-line paragraphs. At the page bottom,
+      // removing rail padding temporarily changes them to3 lines and clamps Y;
+      // side switching must restore that position after final layout.
+      { name: 'one-idless', css: 'body{font-family:"DejaVu Sans",sans-serif}', html: section('', 'One existing heading') },
       { name: 'headings', html: '<nav><h2>Navigation title</h2></nav><h2 hidden>Hidden heading</h2><details><summary>Closed content</summary><h2>Closed heading</h2></details>' + section('', 'First heading without an ID') + section('second', 'Second original heading') + section('third', 'Third original heading') },
       { name: 'row-details', html: '<nav class="ts-jump"><a href="#last">Last row label</a><a href="#missing">Missing</a><a href="#first">First row label</a><a href="#inside">Closed row label</a></nav>' + section('first', 'First source heading') + '<details><summary>Outer</summary><details><summary>Inner</summary>' + section('inside', 'Inside source heading') + '</details></details>' + section('last', 'Last source heading') },
       { name: 'fixed', mode: 'fixed', html: section('first', 'A search result') + section('last', 'Another search result') },
-      { name: 'faq', html: '<nav class="ts-jump"><a href="#first">First</a><a href="#faq">Original FAQ label</a></nav>' + section('first', 'First') + '<div class="uagb-faq-item" id="faq"><h2><button class="uagb-faq-questions-button" onclick="this.closest(\'.uagb-faq-item\').classList.toggle(\'uagb-faq-item-active\')">Original FAQ title</button></h2><div class="answer">' + paragraph + '</div></div><style>.uagb-faq-item:not(.uagb-faq-item-active) .answer{display:none}</style>' + section('after', 'Following content') },
+      { name: 'faq', html: '<nav class="ts-jump"><a href="#first">First</a><a href="#faq">Original FAQ label</a></nav>' + section('first', 'First') + '<div class="uagb-faq__outer-wrap"><div class="uagb-faq-item uagb-faq-item-active"><h2><button class="uagb-faq-questions-button">Preceding question</button></h2><div class="answer">' + paragraph + '</div></div><div class="uagb-faq-item" id="faq"><h2><button class="uagb-faq-questions-button">Original FAQ title</button></h2><div class="answer">' + paragraph + '</div></div></div><style>.uagb-faq-item .answer{height:0;overflow:hidden;transition:height .3s linear}.uagb-faq-item-active .answer{height:190px}</style><script>document.querySelectorAll(".uagb-faq-questions-button").forEach(button=>button.addEventListener("click",()=>{const item=button.closest(".uagb-faq-item"),wasOpen=item.classList.contains("uagb-faq-item-active");document.querySelectorAll(".uagb-faq-item").forEach(node=>node.classList.remove("uagb-faq-item-active"));if(!wasOpen)item.classList.add("uagb-faq-item-active")}));</script>' + section('after', 'Following content') },
       { name: 'progress', html: readFileSync(new URL('./progress-ideas.html', import.meta.url), 'utf8') },
       { name: 'no-pointer', noPointer: true, html: '<nav class="ts-jump"><a href="#first">First</a><a href="#last">Last</a></nav>' + section('first', 'First') + section('last', 'Last') }
     ];
@@ -284,7 +332,7 @@ try {
       const ctx = await context();
       if (spec.noPointer) await ctx.addInitScript(() => { delete window.PointerEvent; });
       const path = '/__peek-title-rail-' + spec.name + '/';
-      await ctx.route(base + path, route => route.fulfill({ status: 200, contentType: 'text/html', body: '<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;font-family:system-ui}#masthead{height:85px;background:white}.entry-content{padding:0 20px}h2{font-size:1.5rem}p{line-height:1.6}</style>' + css + '</head><body><header id="masthead">Header</header><main><div class="entry-content">' + spec.html + '</div></main><footer>Original footer</footer><script id="ts-peek-nav-config" type="application/json">' + JSON.stringify({ title: 'Complete original page title', mode: spec.mode || 'sections' }) + '</script>' + js + '</body></html>' }));
+      await ctx.route(base + path, route => route.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', body: '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;font-family:system-ui}#masthead{height:85px;background:white}.entry-content{padding:0 20px}h2{font-size:1.5rem}p{line-height:1.6}' + (spec.css || '') + '</style>' + css + '</head><body><header id="masthead">Header</header><main><div class="entry-content">' + spec.html + '</div></main><footer>Original footer</footer><script id="ts-peek-nav-config" type="application/json">' + JSON.stringify({ title: 'Complete original page title', mode: spec.mode || 'sections' }) + '</script>' + js + '</body></html>' }));
       const { p, errors } = await open(ctx, path);
       if (spec.noPointer) {
         if (await p.evaluate(() => 'PointerEvent' in window)) throw new Error('INVALID no-PointerEvent fixture: API could not be removed');
