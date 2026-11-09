@@ -1,6 +1,8 @@
 {
-  "id": "peek-short-stored-20261109-1",
-  "op": "inspect",
+  "id": "peek-titles-inventory-20261109-1",
+  "op": "run",
   "target": "staging39",
-  "query": "snippets"
+  "script": "link-ideas/inspect-title-pages.sh",
+  "args": [],
+  "tests": "auto"
 }
