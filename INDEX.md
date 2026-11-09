@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-09 03:13 UTC  **PASS**  `peek-rollout-gates-20261109-1`  [reports/2026-11-09/031303-peek-rollout-gates-20261109-1.md](reports/2026-11-09/031303-peek-rollout-gates-20261109-1.md)  (run 42555080039)
 - 2026-11-09 03:02 UTC  **PASS**  `peek-rollout-access-20261109-1`  [reports/2026-11-09/030243-peek-rollout-access-20261109-1.md](reports/2026-11-09/030243-peek-rollout-access-20261109-1.md)  (run 42554148440)
 - 2026-11-09 02:51 UTC  **PASS**  `peek-template-owned-20261109-1`  [reports/2026-11-09/025119-peek-template-owned-20261109-1.md](reports/2026-11-09/025119-peek-template-owned-20261109-1.md)  (run 42553163541)
 - 2026-11-09 02:50 UTC  **PASS**  `peek-template-design-20261109-1`  [reports/2026-11-09/025031-peek-template-design-20261109-1.md](reports/2026-11-09/025031-peek-template-design-20261109-1.md)  (run 42552270461)
