@@ -1,11 +1,7 @@
 {
-  "id": "peek-review-s39-20261109-1",
-  "op": "run",
+  "id": "peek-owned-s39-20261109-1",
+  "op": "inspect",
   "target": "staging39",
-  "script": "tools/shots-inline.mjs",
-  "args": [
-    "https://staging39.thaisolitude.com",
-    "/thai-massage/"
-  ],
-  "tests": "auto"
+  "query": "snippet",
+  "arg": "1380"
 }
