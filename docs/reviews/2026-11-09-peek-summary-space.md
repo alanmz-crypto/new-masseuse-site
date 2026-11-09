@@ -1,8 +1,8 @@
 # Peek: more room to scroll every summary
 
-**Candidate only; not deployed.** This correction is included in the pending
+**Deployed staging39; public browser check blocked by HTTP202.** This correction is included in the
 [all-page title-strip update](2026-11-09-peek-title-strip-all-pages.md), on
-staging39 only. The deployed starting point remains frozen shared v3 from the
+staging39 only. Its starting point was frozen shared v3 from the
 [short-summary containment correction](2026-11-09-peek-short-summary-touch.md).
 All four approved page-data files are unchanged.
 
@@ -13,7 +13,7 @@ summary. The global sizing/fitting change was explained before implementation.
 
 ## Evidence and diagnosis
 
-The [actual deployed Therapeutic research capture](assets/2026-11-09-peek-short-summary-touch/public/clearance-therapeutic-massage-390-right-top-6.jpg)
+The [pre-change Therapeutic research capture](assets/2026-11-09-peek-short-summary-touch/public/clearance-therapeutic-massage-390-right-top-6.jpg)
 shows the small scrolling region below five closed topic rows. The source caps
 the summary at 9.8em and reduces it to 6.6em and 4.4em before folding distant
 rows. Increasing only the initial cap can therefore make the summary smaller:
@@ -138,7 +138,7 @@ holds the archive identity and full outcome. Staging deployment remained
 blocked at that stage by the failed rehearsal; this is not a resolution claim for the
 reported device delay.
 
-## Fourth rehearsal: complete pass; deployment pending
+## Fourth rehearsal: complete pass before deployment
 
 Source `28b440122d13bb7496dea185ba7a1ad0a586aab3` passed
 [Actions Gates](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42598380439)
@@ -155,15 +155,42 @@ No runtime change was required for these checker corrections.
 
 Exact rollback/reapply, rendered wording, PHP and all 19 published-page inventory
 checks passed. Only #1380/WPCode cache changed in the throwaway copy. The
-[combined record](2026-11-09-peek-title-strip-all-pages.md#fourth-rehearsal-complete-pass-staging-apply-still-pending)
+[combined record](2026-11-09-peek-title-strip-all-pages.md#fourth-rehearsal-complete-pass-before-staging-apply)
 holds the verified artifact identity and full evidence. Its 58 retained captures
-are undergoing the final visual review; no claim of reviewing every image is
-made yet. The earlier read-only preflight matches this unchanged payload.
+were compared against earlier evidence: 40 match the second copy byte for byte,
+11 differ only on the rail, one differs at a focus-outline corner and six changed
+title views were inspected. Changed desktop title views were also checked against
+the fully reviewed first-copy set; root directly viewed Therapeutic, Contact and
+Home. No visual blocker remained. The earlier read-only preflight matched this
+unchanged payload.
 The 342-check quick subset is for post-deployment public verification and was
-never part of the rehearsal wrapper. **No staging write has occurred**; visual
-review and the guarded apply/verified off-site backup remain before deployment.
+never part of the rehearsal wrapper. No staging write occurred during rehearsal.
 
-The combined `core-title-strip` transition updates #1380 in place from frozen
-v3 while preserving the four data records. No new deployment snapshot exists.
-Use the combined release record for the required fresh-copy, wording, visual,
-backup and recovery gates; do not reuse an older snapshot for this payload.
+## Deployment and remaining verification
+
+The combined `core-title-strip` transition wrote #1380 at **10:24:52 UTC**;
+[apply run 42600617720](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42600617720)
+finished **10:28:23 UTC, PASS**. The deployed 86,567-byte code has SHA256
+`4162d3b40cfa54807f0a7b3851233aaca7482686ccab7a0a2e343f8afa665af5`.
+It preserves all four data records and had no fallback-only interval. The fresh
+export and actual snapshot
+`peek-template-core-title-strip-before-20261109-102452-90630a29.json`
+were verified encrypted off-site. All 19 origin routes passed scope checks;
+wording/PHP checks and restore import passed, with only #1380/cache differences.
+The broad 20-image comparison against live had 20 differences, not a pixel pass.
+
+The final public browser run **42601203134** finished **10:30:14 UTC, INVALID
+HTTP202**: SiteGround's challenge prevented all assertions, routes and captures;
+the quick subset was skipped and no immediate retry was queued. Public browser
+verification remains pending access. Stored inspection **42601221631** passed
+at **10:30:40 UTC**, confirming the exact deployed core and all four unchanged
+data hashes. The [combined deployment/recovery record](2026-11-09-peek-title-strip-all-pages.md#staging-deployment-and-final-verification)
+contains the complete reports and actual backup identities.
+
+For recovery, use explicit
+`core-title-strip --rollback $HOME/private-backups/peek-template-core-title-strip-before-20261109-102452-90630a29.json`
+arguments to restore v3 before any older transition, after a
+fresh verified backup and full-state checks. Freeze this payload as v4 and pin
+this transition before any future runtime change. The reported loading delay
+has not been reproduced or declared resolved; Safari, physical-device and
+assistive-technology validation remain open.

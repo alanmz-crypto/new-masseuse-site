@@ -345,33 +345,38 @@ Detailed visual review, full evidence and recovery are in the
 The reported page-scroll leak was not reproduced by native Chromium probes;
 Safari/physical-device resolution remains unverified.
 
-**Current follow-up: all-page title strip and larger usable summaries; rehearsal/deployment pending.**
-Ryan includes short, no-heading, unlisted and practice pages. The candidate
-separates title readiness from rail readiness: existing row labels, visible
-content headings or the page/document title supply the read-only strip without
-new destination IDs or summary wording. Only registered service pages receive
-page-data JSON and the existing rail; admin/feed output stays empty. The four
-approved JSON files remain unchanged. `peek-pages.json` records title scope
-separately from pending rail eligibility. See the
-[all-page title-strip record](../../docs/reviews/2026-11-09-peek-title-strip-all-pages.md)
-for current evidence. No deployment snapshot exists yet. The exact new
-`core-title-strip` transition starts from frozen shared v3, preserving #1380 and
-all four data states in place; no fallback-only interval is planned. It must pass
-fresh-copy, rendered-copy and visual gates before the guarded staging write.
-Ryan's newer request is included in this combined candidate: give existing Peek
-summaries more scrolling space globally, folding distant closed rows before
-shrinking the summary while retaining the nearest rows and whole-paragraph
-fallback. The [summary-space record](../../docs/reviews/2026-11-09-peek-summary-space.md)
-holds fit details and current tests. Approved words and settled touch/scroll
-paths remain intact; no new rail or summaries appear on title-only pages.
-Structural fixture results are not actual-copy/device verification, and no
-loading delay has been reproduced.
+**Deployed staging39; public browser check blocked by HTTP202.** The all-page
+title strip and larger usable summaries were written to #1380 at **10:24:52 UTC**;
+apply run **42600617720** finished **10:28:23 UTC, PASS**. Short, no-heading,
+unlisted and practice pages are included; search keeps its page title fixed.
+Title-only pages receive no invented destinations, summaries or rail. The four
+approved JSON files and data snippets remain unchanged. Distant closed rows fold
+before summary space shrinks, with nearby controls at intermediate fits and
+whole-paragraph fallbacks throughout. See the [current deployment/recovery record](../../docs/reviews/2026-11-09-peek-title-strip-all-pages.md)
+and [summary-space evidence](../../docs/reviews/2026-11-09-peek-summary-space.md)
+for exact fit behavior, full fresh-copy PASS, reviewed captures and 19 passing
+origin scope checks. The reported loading delay was not reproduced.
+
+Public run **42601203134** finished **10:30:14 UTC, INVALID HTTP202**: zero
+assertions/routes/captures; the quick subset was skipped. Public browser checks
+remain pending access, with no immediate retry queued. Stored inspection
+**42601221631** passed **10:30:40 UTC**: #1380 has **86,567 bytes**, SHA256
+`4162d3b40cfa54807f0a7b3851233aaca7482686ccab7a0a2e343f8afa665af5`,
+and all four data identities/hashes are unchanged. The fresh export
+`staging39-before-peek-nav-20261109-102438.sql` and actual snapshot
+`peek-template-core-title-strip-before-20261109-102452-90630a29.json` were verified
+encrypted off-site. Restore import returned 0, with only #1380/cache differences.
+The update was in place with no fallback-only interval. Before future runtime
+changes, freeze this payload as shared v4 and pin the transition to it; use a new
+exact transition for a later version. This freeze has not yet been performed.
 
 Original core snapshot: `peek-template-core-before-20261109-023645-fe38e498.json`.
 Original Thai data snapshot: `peek-template-page-thai-massage-before-20261109-023133-3e7b1cf5.json`.
-After any title-strip deployment, reverse `core-title-strip` to v3 using its
-own actual snapshot first. Then reverse `core-summary-touch` with its own actual
-snapshot first. Then `core-upgrade --rollback FILE` restores v1 from frozen v2;
+After a fresh verified backup and current full-state checks, first use the
+matching package with explicit
+`core-title-strip --rollback $HOME/private-backups/peek-template-core-title-strip-before-20261109-102452-90630a29.json`
+arguments to restore v3. Then reverse `core-summary-touch` with its own actual
+snapshot to restore v2. Then `core-upgrade --rollback FILE` restores v1 from frozen v2;
 the original `core` migration remains tied to frozen `peek-nav-shared-v1.php`.
 Reversing that original migration affects
 every page using Peek. For one service page,
@@ -380,8 +385,8 @@ core and other pages active. **All earlier rollback commands in this note are hi
 `peek-nav-before-20261109-010037-0c493281.json` to delete the shared core.
 Migration installed inert Thai data before changing #1380 in place, with no
 fallback-only interval. Main/live remain unchanged.
-Current candidate/status: [all-page title strip](../../docs/reviews/2026-11-09-peek-title-strip-all-pages.md).
-Deployed baseline: [short-summary touch correction](../../docs/reviews/2026-11-09-peek-short-summary-touch.md).
+Current deployment/status: [all-page title strip](../../docs/reviews/2026-11-09-peek-title-strip-all-pages.md).
+Previous baseline: [short-summary touch correction](../../docs/reviews/2026-11-09-peek-short-summary-touch.md).
 Earlier core correction: [clearance/touch record](../../docs/reviews/2026-11-09-peek-clearance.md).
 Earlier page-data rollout: [service rollout record](../../docs/reviews/2026-11-09-peek-service-rollout.md).
 Original core migration/recovery: [template record](../../docs/reviews/2026-11-09-peek-template.md).

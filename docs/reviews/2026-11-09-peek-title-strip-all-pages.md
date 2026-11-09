@@ -1,6 +1,11 @@
 # Peek title strip on every page
 
-**In progress, staging39 only.** Ryan requested: “Put a title strip on every page.
+**Deployed staging39; public browser check blocked by HTTP202.** The guarded
+apply and exact stored-code inspection passed. The complete fresh-copy browser
+suite passed before deployment; the final public run tested nothing because
+SiteGround served its bot challenge. See the deployment and recovery record below.
+
+Ryan requested: “Put a title strip on every page.
 All.” They then reported a small scrolling target and sluggish scrolling after
 rapidly changing summary boxes, clarifying that the larger usable scrolling area
 should apply to all scrollable boxes. Both requests are included here. Existing
@@ -132,20 +137,21 @@ must provide the former and the fresh-copy gate the latter. Pinned PHP traversed
 current-page emission checks **22/0**. An initial temporary Docker-adapter
 permission failure was corrected and is not counted as verification.
 
-## Deployment and recovery boundary
+## Pre-deployment recovery plan
 
-The current payload is frozen in `peek-nav-shared-v3.php`, file SHA256
+The predecessor payload was frozen in `peek-nav-shared-v3.php`, file SHA256
 `6535607a90787db678fad058ab5c6a1e105ac790b3020ab49a6fd4a8634abab4`.
 The previous `core-summary-touch` transition remains pinned to that exact v3,
 preserving the meaning of actual snapshot
 `peek-template-core-summary-touch-before-20261109-075957-5ef2bd29.json`.
 
-The new `core-title-strip` transition updates exact v3 in #1380 in place, binding
-the four unchanged data records and complete snippet state. Its own actual
-snapshot must be recorded after apply. Recovery reverses this new transition to
-v3 first, then any separately intended older transitions with their own snapshots.
-No older snapshot can reverse the new payload. No fallback-only interval is
-planned. WordPress storage only; main/live remain untouched.
+The planned `core-title-strip` transition updated exact v3 in #1380 in place,
+binding the four unchanged data records and complete snippet state. Its actual
+snapshot is now recorded in the deployment section below. Recovery reverses this
+transition to v3 first, then any separately intended older transitions with their
+own snapshots. No older snapshot can reverse the new payload. The plan required
+no fallback-only interval and changes only in WordPress storage; main/live remain
+untouched.
 
 Before deployment: read-only complete inventory and rendered design review,
 offline gates, fresh staging39-copy rehearsal with uploads, rendered regulated
@@ -424,7 +430,7 @@ run remains required. Logs: `/tmp/peek-thai-final-full-local.log`,
 `/tmp/peek-thai-local-keyboard-diagnosis.log`, and
 `/tmp/peek-thai-local-visible-keyboard.log`.
 
-## Fourth rehearsal: complete pass; staging apply still pending
+## Fourth rehearsal: complete pass before staging apply
 
 Source `28b440122d13bb7496dea185ba7a1ad0a586aab3` passed
 [Actions Gates](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42598380439)
@@ -464,8 +470,94 @@ against the fully reviewed first-copy set. Root directly viewed Therapeutic,
 Contact and Home. No visual blocker remains; the enlarged research summaries
 preserve their qualifications, and the exact actual-copy stress evidence
 satisfies the conditional outer-scroll fallback requirement. The 09:55:20 read-only
-preflight applies to this unchanged payload. **No staging write has occurred**:
-the guarded apply with fresh verified off-site backup still precedes deployment. No staging recovery snapshot exists for this update.
+preflight applied to this unchanged payload. No staging write occurred during
+these rehearsals; the guarded deployment and its actual snapshot are recorded below.
 Evidence: `/tmp/peek-titles-candidate-4-gates.log`,
 `/tmp/peek-titles-rehearse-4-text.md`, and
 `/tmp/peek-titles-rehearse-4-artifact/peek-core-title-strip-browser.log`.
+
+## Staging deployment and final verification
+
+[Apply run 42600617720](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42600617720),
+source `ec309c3857f37cbdaaff86383d9febaf4c049f9b`, wrote #1380 at
+**10:24:52 UTC** and finished **10:28:23 UTC, PASS**. The complete 303-line
+report was read. The deployed code is **86,567 bytes**, SHA256
+`4162d3b40cfa54807f0a7b3851233aaca7482686ccab7a0a2e343f8afa665af5`,
+unchanged from the successful fourth rehearsal. The change was in place, with
+no fallback-only interval and no changes to the four approved data records.
+
+Before writing, the fresh export
+`staging39-before-peek-nav-20261109-102438.sql` (**4,467,396 bytes**, plaintext
+SHA256 prefix `bac6b3bc6290`) was encrypted, stored off-site and read back
+identically. The actual recovery snapshot is
+`peek-template-core-title-strip-before-20261109-102452-90630a29.json`
+(plaintext SHA256 prefix `b5f18a58eb7a`); its **184,796-byte encrypted copy**
+also passed off-site readback verification.
+
+All **19 published origin routes returned HTTP200**, each with one core CSS,
+runtime and title configuration. Only the four approved service pages emitted
+page-data JSON. The original five service jump rows remained present. Rendered
+wording, posture, page responses and PHP checks passed; structured data was
+**27/27 identical, zero parse failures**. The broad comparison against live had
+**0/20 identical images, 20 differences, zero missing/problem captures** and
+returned exit 1: this is not an aggregate pixel pass. Restore import returned
+**0**; both copies had **104 fingerprints**, differing only in #1380 and the
+WPCode cache. The expected changed-state comparison returned exit 3.
+
+The apply artifact's **20 actual public staging screenshots** were independently
+reviewed at 390px and 1280px across Home, About, Accessibility, Contact, Deep
+Tissue, Privacy, Services, Thai, Therapeutic and Work With Me. They show readable
+title strips with no visible header/content collisions and rendered page content,
+images and footers. Services retains a taller opening with its three-line jump
+row; Work With Me's active mobile title wraps to two lines. No summary is open in
+these captures. This is basic post-deployment rendering evidence for those ten
+routes, not evidence of summary gestures, scrolling, title tracking or all 19
+routes. The later focused run remains INVALID.
+
+The original **29,508,415-byte** artifact **13665154310** has SHA256
+`852266139f931da7f35ada793bea5fc161052886e2f5ea9503f3a627d98dc381`.
+Three verbatim top-region crops, also directly viewed by root, are retained:
+[Home desktop](assets/2026-11-09-peek-title-strip-all-pages/post-deploy-basic/home-desktop-top.png),
+[Therapeutic mobile](assets/2026-11-09-peek-title-strip-all-pages/post-deploy-basic/therapeutic-mobile-top.png)
+and [Contact mobile](assets/2026-11-09-peek-title-strip-all-pages/post-deploy-basic/contact-mobile-top.png).
+These crops stop at 900px and do not represent full-page or interaction coverage.
+
+[Public browser run 42601203134](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42601203134),
+source `ec67609474bc676ac7f88546081e2cdb17ff89bc`, finished
+**10:30:14 UTC, INVALID**. SiteGround's HTTP202 challenge blocked the inventory
+and initial Thai requests: **zero assertions, zero actual routes, zero captures**.
+The matched quick subset was skipped. The complete 75-line report was read;
+no immediate retry was queued against the unchanged denial. Final public browser
+verification remains pending access, and no final focused-suite captures exist.
+The apply's separate 20 staging comparison captures are described above.
+
+[Stored inspection 42601221631](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42601221631),
+source `079fd6c3a5e4ee720d4c8a833bb9ebb0ea39641f`, finished
+**10:30:40 UTC, PASS**. Its complete report confirms published #1380 has the
+exact byte count and SHA256 above. All four data snippet identities, byte counts
+and code hashes remain unchanged. This confirms deployment, not a public-browser
+pass. Full copied-site tests, origin scope checks and tested backup/restore remain
+separate evidence. Main and live were untouched.
+
+## Recovery and remaining work
+
+Any recovery requires a fresh verified off-site backup, current ownership/full-state
+checks and the matching reviewed package. Reverse this update first with explicit
+`core-title-strip --rollback $HOME/private-backups/peek-template-core-title-strip-before-20261109-102452-90630a29.json`
+arguments to restore frozen v3. Only then can the actual `core-summary-touch`
+snapshot restore v2, `core-upgrade` restore v1 and the original `core` snapshot
+restore legacy. An older snapshot cannot reverse the deployed title-strip payload.
+
+Before any future runtime change, freeze this deployed payload as shared v4 and
+pin `core-title-strip` to that exact file. Use a new exact transition for a later
+version so this actual snapshot keeps its recovery meaning. No v4 freeze is
+claimed by this record.
+
+The reported initial scrolling delay was not reproduced as loading latency.
+Safari, physical devices and actual assistive technology still need validation;
+Services and short-page rail eligibility remain separate decisions. Their
+read-only title strips are enabled. The earlier failed rehearsals and local
+**485/1** fixture result above remain recorded, not relabeled as passes.
+
+Reports: `/tmp/peek-titles-apply-1-text.md`,
+`/tmp/peek-titles-public-1-text.md`, `/tmp/peek-titles-stored-1-report.md`.

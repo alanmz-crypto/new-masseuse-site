@@ -1,27 +1,39 @@
 # Session handoff: the Peek navigation (for the next Claude Code session)
 
-**Current work: all-page title strip and larger usable summaries; not yet deployed.**
-Ryan's scope includes short, no-heading, unlisted and practice pages. The
-[all-page title-strip record](../reviews/2026-11-09-peek-title-strip-all-pages.md)
-tracks the pending candidate and verification. Title-only pages receive safe
-page/document-title JSON and the shared runtime, with visible content headings
-when available; they receive no invented destinations, summaries or rail.
-The four approved data files and settled rail/index behavior stay unchanged.
-Ryan's newer request also enlarges the scrolling area globally for existing
-Peek summaries, folding distant closed rows before reducing summary space and
-retaining the nearest rows and whole-paragraph fallback. See the
-[summary-space record](../reviews/2026-11-09-peek-summary-space.md) for fit details
-and current tests. This adds no rail or summaries to title-only pages. Local
-structural fixtures do not establish actual-copy or device results, and the
-reported initial delay has not been reproduced as a loading latency.
-`peek-pages.json` separates the all-page strip from pending rail eligibility.
-Fresh staging39-copy rehearsal with uploads, rendered wording/visual review,
-guarded dry run and verified off-site backup still precede any staging write.
-No new deployment snapshot exists yet. The new `core-title-strip` route is exact
-frozen v3→the combined candidate; after applying, reverse it to v3 with its own actual snapshot
-before attempting any earlier recovery. Main/live remain untouched.
+**Deployed staging39; public browser check blocked by HTTP202.** The all-page
+read-only title strip and globally enlarged scrolling summaries were written to
+#1380 at **10:24:52 UTC**; apply run **42600617720** finished **10:28:23 UTC, PASS**.
+Short, no-heading, unlisted and practice pages are included. Search uses a fixed
+page title; other pages use existing row labels, visible headings or their page
+identity. Title-only pages receive no invented destinations, summaries or rail.
+The four approved data records and settled rail/index gestures remain intact.
 
-**Current deployed baseline: short open summaries (frozen shared v3).** The
+The [current deployment/recovery record](../reviews/2026-11-09-peek-title-strip-all-pages.md)
+holds the complete fresh-copy PASS, 58 reviewed/comparison captures, 19 origin
+scope checks and actual backup identities. The [summary-space record](../reviews/2026-11-09-peek-summary-space.md)
+explains larger summaries, earlier folding of distant rows and the constrained
+outer-card fallback. The reported initial loading delay was not reproduced.
+Public run **42601203134** finished **10:30:14 UTC, INVALID HTTP202**: zero
+assertions, actual routes or captures, with the quick subset skipped. Public
+browser verification remains pending access; no immediate retry is queued.
+Stored inspection **42601221631** passed **10:30:40 UTC**: exact #1380 SHA256
+`4162d3b40cfa54807f0a7b3851233aaca7482686ccab7a0a2e343f8afa665af5`,
+**86,567 bytes**, and all four unchanged data identities/hashes.
+
+Fresh export `staging39-before-peek-nav-20261109-102438.sql` and actual snapshot
+`peek-template-core-title-strip-before-20261109-102452-90630a29.json` were verified
+encrypted off-site. Restore import returned 0, with only #1380/cache differences.
+There was no fallback-only interval. Recovery requires a fresh verified backup,
+current full-state checks and the matching package: first use explicit
+`core-title-strip --rollback $HOME/private-backups/peek-template-core-title-strip-before-20261109-102452-90630a29.json`
+arguments to restore frozen v3 before any older transition. Before future runtime
+changes, freeze this deployed payload as v4 and pin this transition to it; use a
+new exact transition for later versions. No v4 freeze is claimed yet.
+`peek-pages.json` marks the title strip enabled separately from undecided rail
+eligibility. Services/short-page rails, Safari, physical devices and actual
+assistive technology remain open. Main/live remain untouched.
+
+**Previous deployed baseline: short open summaries (frozen shared v3).** The
 [short-summary touch record](../reviews/2026-11-09-peek-short-summary-touch.md)
 tracks the exact `core-summary-touch` transition from frozen shared v2, written
 to #1380 at 07:59:57 UTC; its apply job finished 08:04:07 UTC. The correction reserves short-summary swipes
@@ -68,7 +80,7 @@ physical devices and actual assistive technology remain open. Main/live are unto
 The original `core` migration targets frozen `peek-nav-shared-v1.php`;
 `core-upgrade` is now pinned to v1→frozen `peek-nav-shared-v2.php`, preserving its
 07:11:22 snapshot. `core-summary-touch` now pins v2→frozen `peek-nav-shared-v3.php`,
-preserving the 07:59:57 snapshot. Reverse any later title-strip update to v3 first;
+preserving the 07:59:57 snapshot. Reverse the current title-strip update to v3 first;
 then reverse the summary-touch update using its
 own actual snapshot and explicit `core-summary-touch --rollback FILE` arguments.
 Only then may `core-upgrade --rollback FILE` restore v1, followed by the original

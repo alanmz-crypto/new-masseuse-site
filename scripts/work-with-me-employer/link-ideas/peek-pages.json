@@ -3,7 +3,7 @@
   "regression": "thai-massage",
   "titleStrip": {
     "scope": "all-visitor-html",
-    "staging": "pending",
+    "staging": "enabled",
     "excludedContexts": [
       "admin",
       "feed"
