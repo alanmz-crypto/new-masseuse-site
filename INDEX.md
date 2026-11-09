@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-09 03:50 UTC  **PASS**  `peek-chair-apply-20261109-1`  [reports/2026-11-09/035018-peek-chair-apply-20261109-1.md](reports/2026-11-09/035018-peek-chair-apply-20261109-1.md)  (run 42558224458)
 - 2026-11-09 03:44 UTC  **PASS**  `peek-chair-dry-20261109-1`  [reports/2026-11-09/034423-peek-chair-dry-20261109-1.md](reports/2026-11-09/034423-peek-chair-dry-20261109-1.md)  (run 42557766307)
 - 2026-11-09 03:43 UTC  **PASS**  `peek-chair-rehearse-20261109-1`  [reports/2026-11-09/034352-peek-chair-rehearse-20261109-1.md](reports/2026-11-09/034352-peek-chair-rehearse-20261109-1.md)  (run 42557717328)
 - 2026-11-09 03:38 UTC  **PASS**  `peek-deep-public-20261109-1`  [reports/2026-11-09/033855-peek-deep-public-20261109-1.md](reports/2026-11-09/033855-peek-deep-public-20261109-1.md)  (run 42557406502)
