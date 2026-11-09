@@ -1,6 +1,10 @@
 {
-  "id": "peek-kiro-fixes-stored-1",
-  "op": "inspect",
+  "id": "peek-kiro-fixes-post-retry-1",
+  "op": "run",
   "target": "staging39",
-  "query": "snippets"
+  "script": "post-change-test.sh",
+  "args": [
+    "staging39"
+  ],
+  "tests": "auto"
 }
