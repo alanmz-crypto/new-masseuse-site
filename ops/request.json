@@ -1,7 +1,11 @@
 {
-  "id": "peek-core-rehearse-20261109-1",
-  "op": "rehearse",
+  "id": "peek-data-dry-20261109-1",
+  "op": "run",
   "target": "staging39",
-  "installer": "link-ideas/install-peek-nav.php",
-  "args": []
+  "script": "link-ideas/push-peek-nav.sh",
+  "args": [
+    "page",
+    "thai-massage"
+  ],
+  "tests": "auto"
 }
