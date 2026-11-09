@@ -33,6 +33,7 @@ function add_action( $tag, $callback, $priority = 10 ) { add_filter( $tag, $call
 function do_action( $tag ) { $groups = $GLOBALS['filters'][ $tag ] ?? array(); ksort( $groups ); foreach ( $groups as $callbacks ) { foreach ( $callbacks as $c ) { $c(); } } }
 function is_admin() { return $GLOBALS['admin']; }
 function is_feed() { return $GLOBALS['feed']; }
+function is_search() { return false; }
 function is_page( $slug = null ) { return $slug === null ? (bool) $GLOBALS['page'] : $GLOBALS['page'] === $slug; }
 function get_queried_object() { return (object) array( 'post_name' => $GLOBALS['page'], 'post_title' => 'Page ' . $GLOBALS['page'] ); }
 function wp_get_document_title() { return 'Visitor page'; }

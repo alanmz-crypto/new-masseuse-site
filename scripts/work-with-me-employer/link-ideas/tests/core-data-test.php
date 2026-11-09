@@ -1,7 +1,7 @@
 <?php
 // Offline behavior test: title-only visitors, safe current-page JSON, draft privacy
 // and excluded contexts. No WordPress or site writes.
-$hooks = array(); $current_slug = 'thai-massage'; $admin = false; $feed = false; $page_view = true;
+$hooks = array(); $current_slug = 'thai-massage'; $admin = false; $feed = false; $page_view = true; $search_view = false;
 $page_title = '<b>Thai &amp; Massage</b> &lt;/script&gt;&lt;script&gt;alert("title")&lt;/script&gt;';
 $document_title = 'Document &amp; fallback';
 $payload = array( 'schema' => 1, 'slug' => 'thai-massage', 'approval' => array( 'status' => 'approved', 'source' => 'test' ), 'items' => array( array( '</script><script>alert("x")</script>&', 'ts-one' ) ), 'coverage' => array( 'ts-one' => 'most' ) );
@@ -9,6 +9,7 @@ $pages = array( 'thai-massage' => $payload, 'chair-massage' => array( 'secret-ot
 function is_admin() { return $GLOBALS['admin']; }
 function is_feed() { return $GLOBALS['feed']; }
 function is_page() { return $GLOBALS['page_view']; }
+function is_search() { return $GLOBALS['search_view']; }
 function get_queried_object() { return null === $GLOBALS['current_slug'] ? null : (object) array( 'post_name' => $GLOBALS['current_slug'], 'post_title' => $GLOBALS['page_title'] ); }
 function wp_get_document_title() { return $GLOBALS['document_title']; }
 function wp_strip_all_tags( $text ) { return trim( strip_tags( preg_replace( '@<(script|style)[^>]*?>.*?</\\1>@si', '', $text ) ) ); }
@@ -27,7 +28,7 @@ require __DIR__ . '/../peek-nav.php';
 check( 'duplicate inclusion registers only one pair of hooks', count( $hooks['wp_head'] ) === 1 && count( $hooks['wp_footer'] ) === 1 );
 $output = render( 'wp_footer' );
 check( 'current page emits title config once', substr_count( $output, 'id="ts-peek-nav-config"' ) === 1 );
-check( 'page title is plain text with entities decoded', script_json( $output, 'ts-peek-nav-config' ) === array( 'title' => 'Thai & Massage </script><script>alert("title")</script>' ) );
+check( 'page title is plain text with entities decoded and sections mode', script_json( $output, 'ts-peek-nav-config' ) === array( 'title' => 'Thai & Massage </script><script>alert("title")</script>', 'mode' => 'sections' ) );
 check( 'current page emits data once', substr_count( $output, 'id="ts-peek-nav-data"' ) === 1 );
 check( 'other page data stays private', ! str_contains( $output, 'secret-other-page' ) );
 check( 'script-closing text safely encoded', ! str_contains( $output, '<script>alert(' ) && str_contains( $output, '\u003C' ) );
@@ -39,12 +40,12 @@ preg_match( '/<script type="application\/json" id="ts-peek-nav-data">(.*?)<\/scr
 $draft = json_decode( $match[1], true );
 check( 'draft text absent from public JSON', $draft['items'] === array() && ! str_contains( $match[1], 'alert' ) );
 check( 'draft still receives core for whole-paragraph fallback', str_contains( $output, 'id="ts-peek-nav-runtime"' ) );
-check( 'draft status does not change the title config', script_json( $output, 'ts-peek-nav-config' ) === array( 'title' => 'Thai & Massage </script><script>alert("title")</script>' ) );
+check( 'draft status does not change the title config', script_json( $output, 'ts-peek-nav-config' ) === array( 'title' => 'Thai & Massage </script><script>alert("title")</script>', 'mode' => 'sections' ) );
 $current_slug = 'unregistered';
 $page_title = 'Practice &amp; unlisted';
 $output = render( 'wp_footer' );
 check( 'unregistered page receives CSS and runtime', str_contains( render( 'wp_head' ), 'id="ts-peek-nav-css"' ) && str_contains( $output, 'id="ts-peek-nav-runtime"' ) );
-check( 'unregistered page emits only its title config', script_json( $output, 'ts-peek-nav-config' ) === array( 'title' => 'Practice & unlisted' ) && ! str_contains( $output, 'id="ts-peek-nav-data"' ) );
+check( 'unregistered page emits only its title config in sections mode', script_json( $output, 'ts-peek-nav-config' ) === array( 'title' => 'Practice & unlisted', 'mode' => 'sections' ) && ! str_contains( $output, 'id="ts-peek-nav-data"' ) );
 check( 'unregistered output contains no registered payload', ! str_contains( $output, 'secret-other-page' ) && ! str_contains( $output, 'alert("title")' ) );
 $current_slug = 'thai-massage'; $pages['thai-massage']['schema'] = 2;
 $output = render( 'wp_footer' );
@@ -54,14 +55,19 @@ check( 'mismatched registration never emits page data', ! str_contains( render( 
 $pages['thai-massage'] = $payload; $page_view = false;
 $output = render( 'wp_footer' );
 check( 'non-page visitor receives CSS and runtime', str_contains( render( 'wp_head' ), 'id="ts-peek-nav-css"' ) && str_contains( $output, 'id="ts-peek-nav-runtime"' ) );
-check( 'non-page visitor uses document title without page data', script_json( $output, 'ts-peek-nav-config' ) === array( 'title' => 'Document & fallback' ) && ! str_contains( $output, 'id="ts-peek-nav-data"' ) );
+check( 'non-page visitor uses document title in sections mode without page data', script_json( $output, 'ts-peek-nav-config' ) === array( 'title' => 'Document & fallback', 'mode' => 'sections' ) && ! str_contains( $output, 'id="ts-peek-nav-data"' ) );
 $current_slug = null;
-check( 'missing queried object uses document title', script_json( render( 'wp_footer' ), 'ts-peek-nav-config' ) === array( 'title' => 'Document & fallback' ) );
+check( 'missing queried object uses document title', script_json( render( 'wp_footer' ), 'ts-peek-nav-config' ) === array( 'title' => 'Document & fallback', 'mode' => 'sections' ) );
 $page_view = true; $current_slug = 'unregistered'; $page_title = '';
-check( 'empty page title uses document title', script_json( render( 'wp_footer' ), 'ts-peek-nav-config' ) === array( 'title' => 'Document & fallback' ) );
+check( 'empty page title uses document title', script_json( render( 'wp_footer' ), 'ts-peek-nav-config' ) === array( 'title' => 'Document & fallback', 'mode' => 'sections' ) );
 $document_title = 'Search &lt;/script&gt;&lt;script&gt;alert("fallback")&lt;/script&gt; &amp; "quotes"';
 $output = render( 'wp_footer' );
-check( 'document fallback safely round trips script-like text', script_json( $output, 'ts-peek-nav-config' ) === array( 'title' => 'Search </script><script>alert("fallback")</script> & "quotes"' ) && ! str_contains( $output, '<script>alert(' ) );
+check( 'document fallback safely round trips script-like text', script_json( $output, 'ts-peek-nav-config' ) === array( 'title' => 'Search </script><script>alert("fallback")</script> & "quotes"', 'mode' => 'sections' ) && ! str_contains( $output, '<script>alert(' ) );
+$page_view = false; $search_view = true;
+$output = render( 'wp_footer' );
+check( 'search uses fixed document title safely', script_json( $output, 'ts-peek-nav-config' ) === array( 'title' => 'Search </script><script>alert("fallback")</script> & "quotes"', 'mode' => 'fixed' ) && ! str_contains( $output, '<script>alert(' ) );
+check( 'search receives CSS and runtime without page data', str_contains( render( 'wp_head' ), 'id="ts-peek-nav-css"' ) && str_contains( $output, 'id="ts-peek-nav-runtime"' ) && ! str_contains( $output, 'id="ts-peek-nav-data"' ) );
+$page_view = true; $search_view = false;
 $current_slug = 'thai-massage'; $admin = true;
 check( 'admin emits nothing', render( 'wp_head' ) === '' && render( 'wp_footer' ) === '' );
 $admin = false; $feed = true;

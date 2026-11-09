@@ -54,7 +54,7 @@ const inspect = p => p.evaluate(() => {
     return { node: document.getElementById(id), label: norm(a.textContent) };
   }).filter(item => item.node && (rail || visible(item.node))) : [...content.querySelectorAll('h2')].filter(visible).map(node => ({ node, label: norm(node.innerText) }));
   expected.sort((a, b) => a.node === b.node ? 0 : a.node.compareDocumentPosition(b.node) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1);
-  if (!expected.length) expected = [{ node: content, label: config.title }];
+  if (config.mode === 'fixed' || !expected.length) expected = [{ node: content, label: config.title }];
   window.__peekTitleExpected = expected;
   const actual = [...strip.querySelectorAll('.tr > span')].map(node => node.textContent);
   return { expected: expected.map(item => item.label), actual, config, rail,
@@ -90,8 +90,15 @@ const track = async (p, label, count) => {
     if (candidate.y < 0 || candidate.y > candidate.max) continue;
     await p.evaluate(y => scrollTo({ top: y, behavior: 'instant' }), candidate.y); await settle(p);
     const current = await p.locator('#ts-peek-title-strip .is-now').textContent();
-    const expected = await p.evaluate(index => window.__peekTitleExpected[index].label, index);
-    ok(`${label}: scrolling to heading${index + 1} selects its title`, current === expected, { expected, current });
+    const group = await p.evaluate(index => {
+      const items = window.__peekTitleExpected, top = items[index].node.getBoundingClientRect().top;
+      // A responsive results grid can put several headings on the same line.
+      // They cross together; document order breaks that tie, as it does in the
+      // complete title list. Untied headings still require their exact title.
+      const tied = items.filter(item => Math.abs(item.node.getBoundingClientRect().top - top) <= 1);
+      return { expected: tied.at(-1).label, tied: tied.map(item => item.label), top };
+    }, index);
+    ok(`${label}: scrolling to heading${index + 1} selects its reading-line title`, current === group.expected, { ...group, current });
     ok(`${label}: scrolling changes no address or history`, sameAddress(original, await state(p)));
   }
   // Sticky UI belongs to the main-content container, not the following footer.
@@ -114,15 +121,26 @@ const menu = async (p, label) => {
   const toggle = p.locator('#masthead .menu-toggle:visible').first();
   if (!await toggle.count()) throw new Error(`INVALID ${label}: expected mobile menu toggle`);
   await p.evaluate(() => scrollTo({ top: Math.min(600, document.documentElement.scrollHeight - innerHeight), behavior: 'instant' })); await settle(p);
+  const readingPosition = () => p.locator('.ts-pk-title-content').evaluate(content => { const r = content.getBoundingClientRect(); return { top: r.top, left: r.left }; });
+  const readingBefore = await readingPosition();
   const before = await state(p); await toggle.focus(); await settle(p);
   ok(`${label}: focusing the pinned mobile menu keeps the page still`, still(before, await state(p)));
   await toggle.click(); await p.waitForTimeout(150);
-  const visible = await p.evaluate(() => {
+  const actual = await p.evaluate(() => {
     const panels = [...document.querySelectorAll('#masthead .ast-mobile-header-content')];
-    return panels.some(panel => { const r = panel.getBoundingClientRect(); return r.height > 0 && getComputedStyle(panel).display !== 'none' && r.top >= 0 && r.bottom <= innerHeight + 1; });
+    return { expanded: [...document.querySelectorAll('#masthead .menu-toggle')].map(button => button.getAttribute('aria-expanded')), body: document.body.className,
+      panels: panels.map(panel => { const r = panel.getBoundingClientRect(); return { top: r.top, bottom: r.bottom, height: r.height, display: getComputedStyle(panel).display }; }), viewport: innerHeight };
   });
-  ok(`${label}: mobile menu opens within the viewport without a page jump`, visible && still(before, await state(p)));
+  const after = await state(p);
+  ok(`${label}: mobile menu opens within the viewport`, actual.expanded.includes('true') && actual.panels.some(panel => panel.height > 0 && panel.display !== 'none' && panel.top >= 0 && panel.bottom <= actual.viewport + 1), actual);
+  const readingAfter = await readingPosition();
+  // Astra's in-flow dropdown grows the sticky header. Both baseline browsers
+  // compensate with scroll anchoring (600→936→600), keeping the reading content
+  // at the exact viewport position; numeric scrollY alone is the wrong oracle.
+  ok(`${label}: opening the pinned mobile menu preserves the reading position and address`, sameAddress(before, after) && Math.abs(readingBefore.top - readingAfter.top) <= 2 && Math.abs(readingBefore.left - readingAfter.left) <= 1, { before, after, readingBefore, readingAfter, ...actual });
   await toggle.click(); await p.waitForTimeout(100);
+  const closed = await state(p), readingClosed = await readingPosition();
+  ok(`${label}: closing the menu restores the original scroll and reading position`, still(before, closed) && Math.abs(readingBefore.top - readingClosed.top) <= 2 && await toggle.getAttribute('aria-expanded') === 'false', { before, closed, readingBefore, readingClosed });
 };
 const existingAnchor = async (p, selector, label, faq = false, extraBar = null) => {
   const link = p.locator(selector).first(), href = await link.getAttribute('href');
@@ -160,11 +178,24 @@ const demoControls = async (p, path, label) => {
   if (path === '/rail-nav-ideas/') {
     const link = p.locator('.tsr-rail a[href="#tsr-questions"]'), href = await link.getAttribute('href');
     const beforePreview = await state(p);
+    await p.evaluate(() => { window.__peekLegacyKeyClick = null; document.addEventListener('click', event => { window.__peekLegacyKeyClick = { detail: event.detail, trusted: event.isTrusted, href: event.target.closest('a')?.getAttribute('href') }; }, { capture: true, once: true }); });
     await link.focus(); await link.press('Enter'); await p.waitForTimeout(100);
     const go = p.locator('.tsr-card.is-pinned .go'), ready = await go.isVisible();
-    ok(`${label}: existing rail preview still offers its Go action`, ready);
-    ok(`${label}: opening the existing rail preview keeps page and address still before Go`, still(beforePreview, await state(p)));
-    if (ready) {
+    const preview = await p.evaluate(() => ({ card: document.querySelector('.tsr-card').className, text: document.querySelector('.tsr-card').textContent, focus: document.activeElement?.outerHTML.slice(0, 400), keyClick: window.__peekLegacyKeyClick }));
+    if (engine === 'firefox' && !ready && preview.keyClick?.detail === 1 && preview.keyClick.href === href && preview.card === 'tsr-card') {
+      // Confirmed on unchanged staging in Actions42591357575 and local legacy
+      // source: this demo accepts only detail0, whereas Firefox Enter sends1.
+      // Record the existing defect; do not claim keyboard support passed.
+      console.log(`INFO title firefox/${label}: known baseline practice-rail Enter defect remains; pointer preview/Go is separately required ${JSON.stringify(preview)}`);
+    } else ok(`${label}: existing rail keyboard preview still offers its Go action`, ready, preview);
+    ok(`${label}: opening the existing rail keyboard preview keeps page and address still before Go`, still(beforePreview, await state(p)), { before: beforePreview, after: await state(p), ...preview });
+    await p.keyboard.press('Escape');
+    const beforePointer = await state(p);
+    await link.click(); await p.waitForTimeout(100);
+    const pointerReady = await go.isVisible();
+    ok(`${label}: existing rail pointer preview still offers its Go action`, pointerReady, await p.locator('.tsr-card').getAttribute('class'));
+    ok(`${label}: opening the existing rail pointer preview keeps page and address still before Go`, still(beforePointer, await state(p)));
+    if (pointerReady) {
       await go.click(); await p.waitForTimeout(700); await settle(p);
       const landed = await p.evaluate(href => {
         const target = document.getElementById(href.slice(1)).getBoundingClientRect(), old = document.querySelector('.tsr-top').getBoundingClientRect(), shared = document.getElementById('ts-peek-title-strip').getBoundingClientRect();
@@ -203,6 +234,7 @@ try {
         await p.setViewportSize({ width, height: 844 }); await p.evaluate(() => scrollTo({ top: 0, behavior: 'instant' })); await settle(p);
         const actual = await inspect(p), prefix = `${label}/${width}`;
         ok(`${prefix}: one read-only title strip uses the actual heading order or complete page title`, actual.ready && actual.strips === 1 && actual.configs === 1 && JSON.stringify(actual.actual) === JSON.stringify(actual.expected), actual);
+        ok(`${prefix}: search keeps its complete page title while ordinary pages follow their sections`, actual.config.mode === (page.path.startsWith('/?s=') ? 'fixed' : 'sections'), actual.config);
         ok(`${prefix}: title strip is not interactive or in the tab sequence`, actual.interactive === 0 && actual.pointer === 'none' && actual.position === 'sticky', actual);
         const rail = enabled.has(page.path);
         ok(`${prefix}: only approved service pages expose data and a rail`, actual.rail === rail && actual.railReady === rail && actual.data === (rail ? 1 : 0), actual);
@@ -221,10 +253,10 @@ try {
           const target = page.path === '/privacy-policy/' ? '#ts-client-privacy' : actual.row.at(-1);
           await existingAnchor(p, `.ts-jump a[href="${target}"]`, prefix + '/jump-row', page.path === '/privacy-policy/');
         }
-        if ([390, 768].includes(width) && page.path === '/work-with-me/') {
+        if ([390, 768].includes(width) && ['/work-with-me/', '/corporate-massage-portland/'].includes(page.path)) {
           await p.evaluate(() => scrollTo({ top: 0, behavior: 'instant' })); await settle(p);
           const href = await p.$$eval('.entry-content a[href^="#"]', links => links.find(a => !a.closest('.ts-pk,.ts-jump,nav') && a.getBoundingClientRect().height > 0 && document.getElementById(decodeURIComponent(a.hash.slice(1))))?.getAttribute('href'));
-          if (!href) throw new Error('INVALID Work With Me: existing hero anchor not found');
+          if (!href) throw new Error(`INVALID ${page.path}: existing hero anchor not found`);
           await existingAnchor(p, `.entry-content a[href="${href}"]:not(.ts-pk a,.ts-jump a,nav a)`, prefix + '/hero-link');
         }
         if (width === 390 && actual.row.length && !rail) nojsRoutes.push({ path: page.path, links: actual.row });
@@ -261,13 +293,15 @@ try {
       { name: 'zero', html: '<h1>Fixture heading</h1><p>A short page.</p>', expected: [title] },
       { name: 'one', html: block('one', title), expected: [title] },
       { name: 'headings', noPointer: true, html: '<nav><h2>Navigation heading</h2></nav><header><h2>Embedded header</h2></header><footer><h2>Embedded footer</h2></footer><div hidden><h2>Hidden heading</h2></div><div aria-hidden="true"><h2>Aria-hidden heading</h2></div><div style="height:0;overflow:hidden"><h2>Collapsed heading</h2></div><details><summary>Closed detail</summary><h2>Closed-detail heading</h2></details>' + block('first', 'First content heading') + block('second', 'Second content heading') + block('third', 'Third content heading'), expected: ['First content heading', 'Second content heading', 'Third content heading'] },
-      { name: 'row', html: '<nav class="ts-jump"><ul><li><a href="#third">Last label</a></li><li><a href="#missing">Missing</a></li><li><a href="#first">First label</a></li><li><a href="#hidden">Hidden label</a></li></ul></nav>' + block('first', 'First source heading') + '<div hidden><h2 id="hidden">Hidden source heading</h2></div>' + block('third', 'Last source heading'), expected: ['First label', 'Last label'] }
+      { name: 'row', html: '<nav class="ts-jump"><ul><li><a href="#third">Last label</a></li><li><a href="#missing">Missing</a></li><li><a href="#first">First label</a></li><li><a href="#hidden">Hidden label</a></li></ul></nav>' + block('first', 'First source heading') + '<div hidden><h2 id="hidden">Hidden source heading</h2></div>' + block('third', 'Last source heading'), expected: ['First label', 'Last label'] },
+      { name: 'grid', html: '<style>.results{display:grid;grid-template-columns:1fr;gap:20px}@media(min-width:1000px){.results{grid-template-columns:1fr 1fr}}</style><div class="results">' + ['First result', 'Second result', 'Third result', 'Fourth result'].map((text, index) => '<section>' + block('result-' + index, text) + '</section>').join('') + '</div>', expected: ['First result', 'Second result', 'Third result', 'Fourth result'] },
+      { name: 'fixed-search', mode: 'fixed', html: block('result-one', 'First search result') + block('result-two', 'Second search result'), expected: [title] }
     ];
     for (const spec of cases) {
       const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
       if (spec.noPointer) await ctx.addInitScript(() => { delete window.PointerEvent; });
       const path = '/__peek-title-fixture-' + spec.name + '/';
-      await ctx.route(base + path, route => route.fulfill({ status: 200, contentType: 'text/html', body: '<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;font-family:system-ui}#masthead{height:85px;background:white}.entry-content{padding:0 20px}</style>' + css + '</head><body><header id="masthead">Header</header><main><div class="entry-content">' + spec.html + '</div></main><footer style="height:800px"></footer><script type="application/json" id="ts-peek-nav-config">' + JSON.stringify({ title }) + '</script>' + js + '</body></html>' }));
+      await ctx.route(base + path, route => route.fulfill({ status: 200, contentType: 'text/html', body: '<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;font-family:system-ui}#masthead{height:85px;background:white}.entry-content{padding:0 20px}</style>' + css + '</head><body><header id="masthead">Header</header><main><div class="entry-content">' + spec.html + '</div></main><footer style="height:800px"></footer><script type="application/json" id="ts-peek-nav-config">' + JSON.stringify({ title, mode: spec.mode || 'sections' }) + '</script>' + js + '</body></html>' }));
       const { p, errors } = await open(ctx, path);
       if (spec.noPointer && await p.evaluate(() => 'PointerEvent' in window)) throw new Error('INVALID local no-PointerEvent scenario: browser API property could not be removed');
       for (const width of [390, 768, 1280]) {

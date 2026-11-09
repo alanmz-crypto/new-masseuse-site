@@ -153,3 +153,97 @@ gesture/touch checks. Afterward: read every apply/backup/restore section, actual
 public browser verification, exact stored hashes and final screenshots. INVALID
 results establish no verification. Safari, physical devices and actual assistive
 technology remain separate validation work.
+
+## Candidate Actions gate
+
+Candidate commit `377eb19c9bab523b31bd36d05a6502c4602b27e4` passed
+[Actions Gates](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42589914194)
+at **09:00:04 UTC**: **29 PASS, 1 SKIP, 0 FAIL, 0 INVALID**. The only skip is
+rendered-page verification because this offline gate has no URL. Root read the
+complete job log. This includes shellcheck and ruff unavailable in the local run.
+The actual-copy rehearsal was requested separately at source
+`3403c6ccff9fe065d9847e011608b4ff606af5fa`.
+
+
+## First actual-copy rehearsal: failed; no staging write
+
+[Rehearsal1](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42589939262)
+finished **09:03:04 UTC, FAIL**. Root read the complete 219-line operation report
+and verified the retained artifact:4,719,086 bytes, SHA256
+`44a6aaeacd12e626f6a7305fe02f38429faf635c3a280859c9fc0cca31d167ce`.
+The copy used staging39's actual DB and 268 MB files/uploads. Preflight, apply,
+idempotence, exact rollback/reapply, page responses, PHP and rendered wording
+all passed. Only #1380 and WPCode's cache changed in the copy. Its `/backups/`
+snapshots are disposable rehearsal artifacts, not staging recovery snapshots.
+
+The title matrices rendered all 19 published routes plus search/404. Chromium
+returned **1092/12**, Firefox **1083/18**, with 42 actual captures. Retained
+rail/summary/Thai suites were deliberately **not run** after these failures.
+The failures expose ordinary theme link jumps landing beneath the new pinned
+header/strip, an About menu assertion needing diagnostic separation, a search
+grid assumption, and a legacy Firefox rail-demo preview issue requiring baseline
+evidence. No overall browser pass or new summary verification is claimed.
+
+All42 initial-view captures were independently reviewed, with root also viewing
+Work, About and the search grid. Strips are readable, leave the existing rows
+available, and preserve full-width panels and mobile CTA docks. Those top views
+cannot establish open-menu, scrolled-demo or open-summary behavior.
+
+Before further implementation, Ryan was told that title-only pages would reuse
+Peek's existing in-page link handling to clear the pinned stack. Root separately
+judged parallel search-result cards unsuitable as sequential sections; the
+announced simplification keeps a strip with the search-page title there. Normal
+pages retain section tracking. Staging remains unchanged while these corrections
+and diagnostic checks are prepared.
+
+
+## Read-only baseline diagnosis after the failed rehearsal
+
+[Behavior inspection](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42591357575)
+finished **09:11:48 UTC**, source `ce6258090e9fd4bd1fdeb1cdd4c1ba0e26b2c971`.
+The operation succeeded as an observation, not a candidate pass/fail gate. Root
+read every report section/record. Artifact 143,269 bytes has verified SHA256
+`5623d395cce586203c344cf4316d2df1b0be07d732763f59c2146703a4dccb32`.
+No candidate code was injected; no website storage was changed.
+
+On existing pinned Thai, both Chromium and Firefox report scrollY 600→936→600
+when the 336px menu opens and closes. The content's viewport position remains
+exactly unchanged, and the open menu spans 85–421px inside 844px. The correct gate
+therefore checks visible reading position, menu reachability and unchanged
+address, plus restoration on close. It must not disable browser scroll anchoring
+just to freeze a numeric coordinate.
+
+The old rail practice demo's Firefox Enter emits click detail 1, which its legacy
+handler rejects; all three widths reproduce the same failure on unchanged
+staging. Chromium Enter and both engines' pointer preview/Go work. Candidate
+checks retain an explicit known-baseline observation only for that exact Firefox
+state, while requiring pointer preview/Go and unchanged page/address. This does
+not claim a Firefox keyboard pass or change the deployed Peek keyboard paths.
+The public Astra 4.14.1 script was retained exactly: 26,933 bytes, SHA256
+`fe3e5e84d82d3f30b11185995b22935293b7b7234298ddf480b5249a326b9bd7`.
+
+Local Firefox was subsequently installed for meaningful fixture comparisons.
+New PHP title-mode emission checks pass 24/0; earlier statements that it was
+unavailable describe the first local run, not the current environment.
+
+
+## Corrected candidate before the second rehearsal
+
+The reviewed runtime is 86,567 code bytes, SHA256
+`4162d3b40cfa54807f0a7b3851233aaca7482686ccab7a0a2e343f8afa665af5`.
+Title-only content links retain their exact encoded fragment and reveal native
+closed details/FAQ content, then align below the shared stack. Ordinary links
+scroll once. Animated FAQ and initial-fragment correction has the existing
+four-second limit, observes only that FAQ group's item sizes where necessary,
+and cancels on pointer/touch/wheel/key/mouse/history input. Input before page
+load also suppresses a later arrival correction. Repeated FAQ activation was
+reproduced locally and corrected; the four rail paths remain unchanged.
+
+Focused local Chromium/Firefox probes pass for encoded links, closed details,
+animated and repeated FAQ activation, initial fragments and cancellation, with
+zero JavaScript errors. Updated title fixtures are 181/0 per engine; demo gates
+are 39/0 with explicit baseline Firefox keyboard observations; the exact menu
+gate is 8/0 across both engines using saved markup and captured Astra source.
+These remain local fixtures, with external styles/fonts omitted in the menu
+probe. Installer checks 382/0 and PHP emission 24/0 pass. The fresh-copy gate also
+covers the actual Corporate booking-options hero anchor, alongside Work.

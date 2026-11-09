@@ -203,7 +203,7 @@ add_action( 'wp_footer', function () {
 	$title = is_page() && $page && ! empty( $page->post_title ) ? $page->post_title : wp_get_document_title();
 	$title = html_entity_decode( wp_strip_all_tags( (string) $title ), ENT_QUOTES | ENT_HTML5, 'UTF-8' );
 	$flags = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
-	$config = wp_json_encode( array( 'title' => $title ), $flags );
+	$config = wp_json_encode( array( 'title' => $title, 'mode' => is_search() ? 'fixed' : 'sections' ), $flags );
 	if ( false === $config ) { return; }
 	echo '<script type="application/json" id="ts-peek-nav-config">' . $config . '</script>';
 	$data = ts_pk_page_data();
@@ -319,6 +319,90 @@ add_action( 'wp_footer', function () {
     }
     measure(); return measure;
   }
+  function titleNavigation(content, title, refresh) {
+    var calm = window.matchMedia('(prefers-reduced-motion: reduce)'), stopPending = function () {}, mayArrive = true;
+    function below(target) {
+      // The owned practice pages add their old bar to scroll-margin. Ordinary
+      // content uses the same shared header/strip boundary as the four rails.
+      return Math.max((parseFloat(getComputedStyle(title.strip).top) || 0) + title.strip.offsetHeight + 12, parseFloat(getComputedStyle(target).scrollMarginTop) || 0);
+    }
+    function reveal(target) {
+      for (var node = target; node && content.contains(node); node = node.parentElement) { if (node.tagName === 'DETAILS') node.open = true; }
+      var faq = target.closest('.uagb-faq-item');
+      if (faq && !faq.classList.contains('uagb-faq-item-active')) {
+        var question = faq.querySelector('.uagb-faq-questions-button');
+        if (question) question.click();
+      }
+      // A second activation may arrive while an already-active answer is
+      // still animating and moving the destination.
+      return !!faq;
+    }
+    function align(target, behavior) {
+      if (!target.isConnected) return;
+      refresh();
+      window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - below(target), behavior: behavior });
+    }
+    function settle(target) {
+      // Reuse the existing rail arrival contract only for load-time fragments
+      // and an animated FAQ jump. Stop after four seconds or any visitor input.
+      stopPending();
+      var timer = 0, expiry = 0, done = false, sizes = null, inputs = ['wheel', 'touchstart', 'pointerdown', 'keydown', 'mousedown', 'hashchange', 'popstate'];
+      function stop() {
+        if (done) return; done = true; clearTimeout(timer); clearTimeout(expiry);
+        window.removeEventListener('scroll', idle);
+        if (sizes) sizes.disconnect();
+        inputs.forEach(function (event) { window.removeEventListener(event, stop, true); });
+      }
+      function idle() {
+        clearTimeout(timer); timer = setTimeout(function () {
+          if (done || !target.isConnected) { stop(); return; }
+          refresh(); if (Math.abs(target.getBoundingClientRect().top - below(target)) > 6) align(target, 'instant');
+        }, 180);
+      }
+      stopPending = stop; expiry = setTimeout(stop, 4000);
+      inputs.forEach(function (event) { window.addEventListener(event, stop, { once: true, passive: true, capture: true }); });
+      var faq = target.closest('.uagb-faq-item'), group = faq && faq.closest('.uagb-faq__outer-wrap');
+      if (faq && 'ResizeObserver' in window) {
+        // Closing the preceding answer can move this target without scrolling.
+        // Observe the items, since one closing/one opening may keep group size
+        // constant. These observers share the same expiry and cancellation.
+        sizes = new ResizeObserver(idle);
+        [].forEach.call(group ? group.querySelectorAll('.uagb-faq-item') : [faq], function (item) { sizes.observe(item); });
+      }
+      window.addEventListener('scroll', idle, { passive: true }); idle();
+    }
+    content.addEventListener('click', function (event) {
+      var link = event.target.closest ? event.target.closest('a[href^="#"]') : null;
+      if (!link || link.closest('.ts-pk,.tsx-lab,.tsp-lab,.tsr-lab,.tsi-lab') || event.defaultPrevented || event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+      var href = link.getAttribute('href'), target = href.length > 1 ? byHref(href) : null;
+      if (!target || !content.contains(target)) return;
+      // Astra's anchor handler ignores scroll-margin. Capture the existing link
+      // before it reaches the theme; retain its exact encoded fragment.
+      event.preventDefault(); event.stopPropagation(); stopPending(); mayArrive = false;
+      var animated = reveal(target); align(target, calm.matches ? 'auto' : 'smooth');
+      var focus = /^H[1-6]$/.test(target.tagName) ? target : target.querySelector('h1,h2,h3,h4,h5,h6,.ts-faq-disclosure') || target;
+      if (!focus.hasAttribute('tabindex') && !focus.matches('a[href],button,input,select,textarea,summary')) {
+        focus.setAttribute('tabindex', '-1');
+        focus.addEventListener('blur', function () { if (focus.getAttribute('tabindex') === '-1') focus.removeAttribute('tabindex'); }, { once: true });
+      }
+      focus.focus({ preventScroll: true });
+      try { history.replaceState(null, '', href); } catch (e) {}
+      if (animated) settle(target);
+    }, true);
+    function arrive() {
+      if (!mayArrive) return;
+      var target = location.hash.length > 1 ? byHref(location.hash) : null;
+      if (!target || !content.contains(target) || target.closest('.ts-pk')) return;
+      reveal(target); refresh(); settle(target);
+    }
+    if (document.readyState === 'complete') arrive(); else {
+      var earlyInputs = ['wheel', 'touchstart', 'pointerdown', 'keydown', 'mousedown', 'hashchange', 'popstate'];
+      function clearEarly() { earlyInputs.forEach(function (event) { window.removeEventListener(event, touched, true); }); }
+      function touched() { mayArrive = false; clearEarly(); }
+      earlyInputs.forEach(function (event) { window.addEventListener(event, touched, { once: true, passive: true, capture: true }); });
+      window.addEventListener('load', function () { clearEarly(); arrive(); }, { once: true });
+    }
+  }
   function titleOnly(content, row) {
     var config = null;
     try { config = JSON.parse(document.getElementById('ts-peek-nav-config').textContent); } catch (e) {}
@@ -335,6 +419,9 @@ add_action( 'wp_footer', function () {
       return true;
     }
     function collect() {
+      // Search cards can share a row; they are parallel results, not sequential
+      // page sections. The WordPress query supplies their fixed page identity.
+      if (config && config.mode === 'fixed') return [{ label: fallback, target: content }];
       var list = row ? rowSections(row).map(function (s) { return { label: s.label, target: byHref(s.href) }; }) : [].slice.call(content.querySelectorAll('h2')).map(function (h) { return { label: h.innerText.replace(/\s+/g, ' ').trim(), target: h }; });
       list = list.filter(function (s) { return s.label && visible(s.target); });
       return list.length ? list : [{ label: fallback, target: content }];
@@ -355,6 +442,7 @@ add_action( 'wp_footer', function () {
       if (changes.some(function (change) { var node = change.target.nodeType === 1 ? change.target : change.target.parentElement; return node && !node.closest('.ts-pk'); })) askTitle();
     }).observe(content, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['class', 'style', 'hidden', 'inert', 'aria-hidden', 'open', 'id'] });
     drawTitle();
+    titleNavigation(content, title, drawTitle);
   }
   var tries = 0;
   function init() {

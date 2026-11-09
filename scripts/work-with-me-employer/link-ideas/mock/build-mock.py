@@ -111,7 +111,7 @@ header = ('<header id="masthead"><div id="ast-mobile-header"><div style="height:
 
 def page(slug, plan, body=None, enabled=False):
     title = slug.replace('-', ' ').title() + ' (structural mock)'
-    config = json.dumps({'title': title}, ensure_ascii=True).replace('<', '\\u003c').replace('>', '\\u003e').replace('&', '\\u0026')
+    config = json.dumps({'title': title, 'mode': 'sections'}, ensure_ascii=True).replace('<', '\\u003c').replace('>', '\\u003e').replace('&', '\\u0026')
     config_script = f'<script type="application/json" id="ts-peek-nav-config">{config}</script>'
     data_script = ''
     if enabled:
