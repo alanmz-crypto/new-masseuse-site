@@ -18,9 +18,9 @@ const ok = (label, value, detail = {}) => { value ? pass++ : fail++; console.log
 const browser = await chromium.launch(process.env.TS_BROWSER_EXECUTABLE ? { executablePath: process.env.TS_BROWSER_EXECUTABLE } : {});
 const state = p => p.evaluate(() => {
   const card = document.querySelector('.ts-pk-card'), sum = card?.querySelector('.sum');
-  return { y: scrollY, hash: location.hash, index: Number(card?.dataset.i), pinned: card?.classList.contains('is-pinned'), left: document.documentElement.classList.contains('ts-pk-left'), outer: card?.scrollTop, outerMax: card ? card.scrollHeight - card.clientHeight : null, inner: sum?.scrollTop, innerMax: sum ? sum.scrollHeight - sum.clientHeight : null };
+  return { x: scrollX, y: scrollY, hash: location.hash, index: Number(card?.dataset.i), pinned: card?.classList.contains('is-pinned'), left: document.documentElement.classList.contains('ts-pk-left'), outer: card?.scrollTop, outerMax: card ? card.scrollHeight - card.clientHeight : null, inner: sum?.scrollTop, innerMax: sum ? sum.scrollHeight - sum.clientHeight : null };
 });
-const samePage = (a, b) => Math.abs(a.y - b.y) <= 1 && a.hash === b.hash;
+const samePage = (a, b) => Math.abs(a.x - b.x) <= 1 && Math.abs(a.y - b.y) <= 1 && a.hash === b.hash;
 const samePreview = (a, b) => samePage(a, b) && a.index === b.index && b.pinned && a.left === b.left;
 const sameControl = (a, b) => samePreview(a, b) && Math.abs(a.outer - b.outer) <= 1 && Math.abs(a.inner - b.inner) <= 1;
 const point = (p, selector) => p.locator(selector).evaluate(element => {
@@ -110,6 +110,58 @@ try {
       const row = await p.$$eval('.ts-jump a', links => links.map(a => a.getAttribute('href')));
       const research = row.indexOf('#' + data.research_anchor);
       if (research < 0) throw new Error(`INVALID ${label}: no research target`);
+      const short = row.indexOf(spec.slug === 'thai-massage' ? '#ts-common-reasons' : '#ts-what-it-is');
+      if (short < 0) throw new Error(`INVALID ${label}: no reviewed short-summary target`);
+      const checkPanPolicy = async phase => {
+        const policy = await p.evaluate(() => {
+          const card = document.querySelector('.ts-pk-card'), sum = card.querySelector('.sum');
+          return [card, sum].map(el => ({ range: el.scrollHeight - el.clientHeight, action: getComputedStyle(el).touchAction }));
+        });
+        ok(`${label}/${phase}: browser pan permission follows each actual scroll range`, policy.every(item => item.action === (item.range > 1 ? 'pan-y' : 'none')), policy);
+      };
+      await reset(short); await checkPanPolicy('short');
+      const shortOrigin = async surface => surface === 'padding' ? p.locator('.ts-pk-card .open').evaluate(open => {
+        const r = open.getBoundingClientRect(), x = r.left + 5, y = r.top + r.height / 2;
+        if (document.elementFromPoint(x, y) !== open) throw new Error('Open-card padding is not a distinct touch surface');
+        return { x, y };
+      }) : point(p, surface === 'summary' ? '.ts-pk-card .sum' : surface === 'title' ? '.ts-pk-card .open > b' : '.ts-pk-card .hint > span');
+      // A short summary cannot consume a swipe. Exercise its ordinary open-box
+      // surfaces with body scroll available in both directions, not at page top.
+      for (const surface of ['summary', 'title', 'padding', 'hint']) {
+        for (const [direction, dx, dy] of [['up', 0, -75], ['down', 0, 75], ['horizontal', 65, 0]]) {
+          await reset(short); before = await state(p);
+          const room = await p.evaluate(() => document.documentElement.scrollHeight - innerHeight - scrollY);
+          if (before.innerMax > 1 || before.outerMax > 1 || before.y < 100 || room < 100) throw new Error(`INVALID ${label}: short-summary containment requires no card overflow and available page scroll`);
+          const from = await shortOrigin(surface);
+          await drag(from, [{ x: from.x + dx, y: from.y + dy }]); after = await state(p);
+          ok(`${label}: non-overflow ${surface} ${direction} swipe stays in the open box`, sameControl(before, after), { before, after });
+        }
+      }
+      await reset(short);
+      await p.locator('.ts-pk-card .sum').evaluate(sum => { window.__peekShortSummary = sum; });
+      await p.setViewportSize({ width: 844, height: 320 }); await p.waitForTimeout(150);
+      await checkPanPolicy('short-resized');
+      before = await state(p);
+      const resized = await p.locator('.ts-pk-card .sum').evaluate(sum => {
+        const r = sum.getBoundingClientRect(), margin = Math.min(5, r.height / 5);
+        return { same: sum === window.__peekShortSummary, start: { x: r.left + r.width / 2, y: r.bottom - margin }, end: { x: r.left + r.width / 2, y: r.top + margin }, height: r.height };
+      });
+      if (before.innerMax <= 1 || resized.height < 20) throw new Error(`INVALID ${label}: resized short summary did not become a usable inner scroller`);
+      await drag(resized.start, [resized.end]); after = await state(p);
+      ok(`${label}/844x320: kept short summary gains native scrolling after resize`, resized.same && samePreview(before, after) && after.inner > before.inner + 1 && Math.abs(after.outer - before.outer) <= 1, { before, after, resized });
+      await p.setViewportSize({ width: 390, height: 844 }); await p.waitForTimeout(150);
+      await checkPanPolicy('short-returned');
+      before = await state(p);
+      const returned = await p.locator('.ts-pk-card .sum').evaluate(sum => sum === window.__peekShortSummary);
+      const fromShort = await shortOrigin('summary'); await drag(fromShort, [{ x: fromShort.x, y: fromShort.y - 75 }]); after = await state(p);
+      ok(`${label}: same summary stops panning again when it fits after resize`, returned && before.innerMax <= 1 && before.outerMax <= 1 && sameControl(before, after), { before, after });
+      before = await state(p); await tap(await point(p, '.ts-pk-card .sum')); after = await state(p);
+      ok(`${label}: short-summary tap still reads without jumping`, sameControl(before, after), { before, after });
+      before = await state(p); await tap(await point(p, `.ts-pk-card .row[data-k="${research}"]`)); after = await state(p);
+      ok(`${label}: tapping research after a short summary opens the long preview`, samePage(before, after) && after.pinned && after.index === research, { before, after });
+      const longPath = await p.locator('.ts-pk-card .sum').evaluate(sum => { const r = sum.getBoundingClientRect(); return [{ x: r.left + r.width / 2, y: r.bottom - 16 }, { x: r.left + r.width / 2, y: r.top + 16 }]; });
+      before = await state(p); await drag(longPath[0], [longPath[1]]); after = await state(p);
+      ok(`${label}: long summary after short preview retains its native scroll`, before.innerMax > 20 && samePreview(before, after) && after.inner > before.inner + 10, { before, after });
       await reset(research);
       const sumSelector = '.ts-pk-card .open .sum';
       const sumPath = async direction => p.locator(sumSelector).evaluate((sum, direction) => {
@@ -125,6 +177,7 @@ try {
         await p.locator(sumSelector).evaluate((sum, edge) => { sum.scrollTop = edge === 'bottom' ? sum.scrollHeight : 0; }, edge);
         before = await state(p); path = await sumPath(edge === 'bottom' ? 'up' : 'down'); await drag(path[0], [path[1]]); after = await state(p);
         ok(`${label}: summary overscroll at ${edge} does not escape to the page`, samePreview(before, after) && Math.abs(before.inner - after.inner) <= 1, { before, after });
+        if (edge === 'bottom') await checkPanPolicy('long-at-bottom');
       }
       before = await state(p); await tap(await point(p, sumSelector)); after = await state(p);
       ok(`${label}: a summary tap reads without jumping`, samePreview(before, after), { before, after });

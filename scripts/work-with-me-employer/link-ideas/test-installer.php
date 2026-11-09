@@ -54,6 +54,8 @@ function invoke_page_rehearsal( $page_slug, $args ) { $GLOBALS['message'] = ''; 
 function page_rehearsal_refusal( $page_slug, $args, $label ) { $before = $GLOBALS['db']; $error = null; try { invoke_page_rehearsal( $page_slug, $args ); } catch ( Throwable $e ) { $error = $e; } check( $error !== null && $GLOBALS['db'] === $before, $page_slug . ': ' . $label ); }
 function invoke_upgrade_rehearsal( $args ) { $GLOBALS['message'] = ''; require __DIR__ . '/core-upgrade/install-peek-core-upgrade.php'; return $GLOBALS['message']; }
 function upgrade_rehearsal_refusal( $args, $label ) { $before = $GLOBALS['db']; $error = null; try { invoke_upgrade_rehearsal( $args ); } catch ( Throwable $e ) { $error = $e; } check( $error !== null && $GLOBALS['db'] === $before, 'core upgrade adapter: ' . $label ); }
+function invoke_summary_rehearsal( $args ) { $GLOBALS['message'] = ''; require __DIR__ . '/core-summary-touch/install-peek-core-summary-touch.php'; return $GLOBALS['message']; }
+function summary_rehearsal_refusal( $args, $label ) { $before = $GLOBALS['db']; $error = null; try { invoke_summary_rehearsal( $args ); } catch ( Throwable $e ) { $error = $e; } check( $error !== null && $GLOBALS['db'] === $before, 'summary-touch adapter: ' . $label ); }
 function invoke_package( $package, $args ) { require $package . '/install-peek-nav.php'; }
 function snapshot_path() { preg_match( '/Before-snapshot: (.+)$/', $GLOBALS['message'], $m ); if ( ! isset( $m[1] ) ) { throw new RuntimeException( 'No completed snapshot: ' . $GLOBALS['message'] ); } return $m[1]; }
 function snap_write( $data, $name ) { $p = $GLOBALS['testdir'] . '/backups/' . $name . '.json'; file_put_contents( $p, json_encode( $data ) ); return $p; }
@@ -155,7 +157,7 @@ foreach ( array( 'therapeutic-massage', 'deep-tissue-massage', 'chair-massage' )
     $recreated['id'] = $new_record['id']; $recreated['post']['ID'] = $new_record['post']['ID'];
     check( $recreated === $new_record && array_intersect_key( $db, $baseline ) === $baseline, $page_slug . ': reapply matches first state except new ID' );
 }
-// Upgrade is a distinct exact v1 -> current transition; historical migration stays frozen.
+// Original upgrade remains exact v1 -> frozen v2; its snapshot meaning never changes.
 $db = $applied;
 foreach ( array( 'therapeutic-massage', 'deep-tissue-massage', 'chair-massage' ) as $page_slug ) { invoke( array( 'apply', 'page', $page_slug ) ); }
 $upgrade_before = $db; $data_before = array_diff_key( $db, array( 1380 => true ) ); $clock = '2026-11-09 06:00:00';
@@ -201,7 +203,7 @@ $expected_drift = $upgrade_before; $expected_drift[ $drift_id ]['post']['post_mo
 try { invoke( array( 'apply', 'core-upgrade' ) ); } catch ( Throwable $e ) { $error = $e; }
 check( $error !== null && $db === $expected_drift, 'concurrent page drift restores core and never overwrites independent data change' );
 $db = $upgrade_before; invoke_upgrade_rehearsal( array( 'apply' ) ); $upgrade_snap = snapshot_path(); $upgraded = $db;
-check( $db[1380]['post']['post_content'] === substr( file_get_contents( __DIR__ . '/peek-nav.php' ), 6 ) && $db[1380]['post']['post_modified'] === $clock && array_diff_key( $db, array( 1380 => true ) ) === $data_before, 'upgrade changes only core code/dates and preserves all page records' );
+check( $db[1380]['post']['post_content'] === substr( file_get_contents( __DIR__ . '/peek-nav-shared-v2.php' ), 6 ) && $db[1380]['post']['post_modified'] === $clock && array_diff_key( $db, array( 1380 => true ) ) === $data_before, 'upgrade changes only core code/dates and preserves all page records' );
 invoke( array( 'apply', 'core-upgrade' ) ); check( $db === $upgraded, 'upgrade apply is idempotent' );
 $without_page = $upgraded; unset( $without_page[ $drift_id ] ); $db = $without_page;
 invoke( array( 'preflight', 'core-upgrade' ) ); check( $db === $without_page && str_contains( $message, 'core-upgrade applied;' ), 'read-only core status remains valid after a separate page-only removal' );
@@ -242,11 +244,91 @@ invoke( array( 'rollback', $upgrade_snap ) ); invoke( array( 'rollback', $core_s
 check( $db[1380] === $legacy && array_diff_key( $db, array( 1380 => true ) ) === $data_before, 'original migration recovery still works after upgrade reversal with all page data preserved' );
 // Frozen baseline corruption is tested in a disposable package, never by editing source.
 $package = $testdir . '/package'; mkdir( $package );
-foreach ( array( 'install-peek-nav.php', 'peek-nav-legacy.php', 'peek-nav-shared-v1.php', 'peek-nav.php' ) as $name ) { copy( __DIR__ . '/' . $name, $package . '/' . $name ); }
+foreach ( array( 'install-peek-nav.php', 'peek-nav-legacy.php', 'peek-nav-shared-v1.php', 'peek-nav-shared-v2.php', 'peek-nav.php' ) as $name ) { copy( __DIR__ . '/' . $name, $package . '/' . $name ); }
 $db = $upgrade_before; file_put_contents( $package . '/peek-nav-shared-v1.php', "\n// changed", FILE_APPEND ); $error = null;
 try { invoke_package( $package, array( 'apply', 'core-upgrade' ) ); } catch ( Throwable $e ) { $error = $e; }
 check( $error !== null && str_contains( $error->getMessage(), 'Frozen shared v1 payload differs' ) && $db === $upgrade_before, 'altered frozen v1 file hash stops upgrade before any write' );
+copy( __DIR__ . '/peek-nav-shared-v1.php', $package . '/peek-nav-shared-v1.php' ); file_put_contents( $package . '/peek-nav-shared-v2.php', "\n// changed", FILE_APPEND ); $error = null;
+try { invoke_package( $package, array( 'apply', 'core-summary-touch' ) ); } catch ( Throwable $e ) { $error = $e; }
+check( $error !== null && str_contains( $error->getMessage(), 'Frozen shared v2 payload differs' ) && $db === $upgrade_before, 'altered frozen v2 file hash stops summary-touch upgrade before any write' );
 foreach ( glob( $package . '/*' ) as $f ) { unlink( $f ); } rmdir( $package ); $clock = '2026-11-09 05:00:00';
+// A second explicit transition binds v2, leaving both earlier recoveries intact.
+$db = $upgraded; $summary_before = $db; $clock = '2026-11-09 07:30:00';
+check( hash( 'sha256', $db[1380]['post']['post_content'] ) === '357e1d447ecf21ce1fa130f08f917bf7965d074463905106182fd3db9f8c39d8', 'original upgrade still produces exact deployed shared v2' );
+invoke_summary_rehearsal( array() ); check( $db === $summary_before && str_contains( $message, 'core-summary-touch ready;' ), 'summary-touch default preflight is read-only and ready' );
+foreach ( array( 'https://thaisolitude.com', 'https://staging38.thaisolitude.com', 'https://staging39.thaisolitude.com/other' ) as $bad ) { $home = $bad; refusal( array( 'apply', 'core-summary-touch' ), 'summary-touch refuses foreign/inexact origin ' . $bad ); }
+$home = 'https://staging39.thaisolitude.com'; summary_rehearsal_refusal( array( 'apply' ), 'staging origin refused' );
+$home = 'http://localhost:8090'; $environment_type = 'staging'; summary_rehearsal_refusal( array( 'apply' ), 'non-local environment refused' ); $environment_type = 'local';
+summary_rehearsal_refusal( array( 'other' ), 'unknown mode refused' );
+summary_rehearsal_refusal( array( 'apply', 'core-upgrade' ), 'target override refused' );
+foreach ( array( $core_snap, $upgrade_snap, $page_snap ) as $other_snapshot ) { summary_rehearsal_refusal( array( 'rollback', $other_snapshot ), 'earlier/other-component snapshot refused' ); }
+foreach ( array( 'legacy', 'v1', 'missing', 'code', 'title', 'status', 'meta', 'terms', 'duplicate', 'id' ) as $mutation ) {
+    $db = $summary_before;
+    if ( $mutation === 'legacy' ) { $db[1380] = $legacy; }
+    if ( $mutation === 'v1' ) { $db[1380] = $upgrade_before[1380]; }
+    if ( $mutation === 'missing' ) { unset( $db[1380] ); }
+    if ( $mutation === 'code' ) { $db[1380]['post']['post_content'] .= '// drift'; }
+    if ( $mutation === 'title' ) { $db[1380]['post']['post_title'] .= ' edited'; }
+    if ( $mutation === 'status' ) { $db[1380]['post']['post_status'] = 'draft'; }
+    if ( $mutation === 'meta' ) { $db[1380]['meta']['_wpcode_priority'] = array( '11' ); }
+    if ( $mutation === 'terms' ) { $db[1380]['terms']['wpcode_location'] = array( 'footer' ); }
+    if ( $mutation === 'duplicate' || $mutation === 'id' ) { $db[9999] = $db[1380]; $db[9999]['id'] = $db[9999]['post']['ID'] = 9999; }
+    if ( $mutation === 'id' ) { unset( $db[1380] ); }
+    refusal( array( 'apply', 'core-summary-touch' ), 'summary-touch refuses core ' . $mutation );
+}
+foreach ( $data_before as $page_id => $record ) {
+    foreach ( array( 'missing', 'code', 'meta', 'duplicate' ) as $mutation ) {
+        $db = $summary_before;
+        if ( $mutation === 'missing' ) { unset( $db[ $page_id ] ); }
+        if ( $mutation === 'code' ) { $db[ $page_id ]['post']['post_content'] .= '// independently changed'; }
+        if ( $mutation === 'meta' ) { $db[ $page_id ]['meta']['_wpcode_priority'] = array( '11' ); }
+        if ( $mutation === 'duplicate' ) { $db[9999] = $record; $db[9999]['id'] = $db[9999]['post']['ID'] = 9999; }
+        refusal( array( 'apply', 'core-summary-touch' ), 'summary-touch refuses page ' . $page_id . ' ' . $mutation );
+    }
+}
+$db = $summary_before;
+foreach ( array( 'fail_write', 'fail_cache', 'fail_snapshot_complete' ) as $failure ) { $GLOBALS[ $failure ] = true; refusal( array( 'apply', 'core-summary-touch' ), 'summary-touch ' . $failure . ' recovers exact v2 and every page' ); }
+$mutate_page_on_refresh = static function () use ( $drift_id ) { $GLOBALS['db'][ $drift_id ]['post']['post_modified'] = '2026-11-09 07:31:00'; };
+$expected_drift = $summary_before; $expected_drift[ $drift_id ]['post']['post_modified'] = '2026-11-09 07:31:00'; $error = null;
+try { invoke( array( 'apply', 'core-summary-touch' ) ); } catch ( Throwable $e ) { $error = $e; }
+check( $error !== null && $db === $expected_drift, 'summary-touch concurrent page drift restores core without overwriting independent change' );
+$db = $summary_before; invoke_summary_rehearsal( array( 'apply' ) ); $summary_snap = snapshot_path(); $summary_applied = $db;
+check( $db[1380]['post']['post_content'] === substr( file_get_contents( __DIR__ . '/peek-nav.php' ), 6 ) && $db[1380]['post']['post_modified'] === $clock && array_diff_key( $db, array( 1380 => true ) ) === $data_before, 'summary-touch changes only core payload/dates and preserves all page records' );
+invoke_summary_rehearsal( array( 'apply' ) ); check( $db === $summary_applied, 'summary-touch apply is idempotent' );
+foreach ( array( $legacy_path, $core_snap, $upgrade_snap ) as $earlier_snapshot ) { refusal( array( 'rollback', $earlier_snapshot ), 'earlier snapshot cannot reverse latest summary-touch payload' ); }
+refusal( array( 'apply', 'core-upgrade' ), 'earlier upgrade cannot overwrite latest summary-touch payload' );
+$summary_snapshot = json_decode( file_get_contents( $summary_snap ), true );
+foreach ( array( 'bundle', 'component', 'before-hash', 'old-state', 'new-state', 'pages', 'pages-hash', 'incomplete' ) as $mutation ) {
+    $s = $summary_snapshot;
+    if ( $mutation === 'bundle' ) { $s['bundle'] = 'peek-core-upgrade-v1'; }
+    if ( $mutation === 'component' ) { $s['component'] = 'core-upgrade'; }
+    if ( $mutation === 'before-hash' ) { $s['payloads']['before_sha256'] = str_repeat( '0', 64 ); }
+    if ( $mutation === 'old-state' ) { $s['old'] = $upgrade_before[1380]; $s['old_sha256'] = hash( 'sha256', json_encode( $s['old'] ) ); }
+    if ( $mutation === 'new-state' ) { $s['new']['post']['post_author'] = '99'; $s['new_sha256'] = hash( 'sha256', json_encode( $s['new'] ) ); }
+    if ( $mutation === 'pages' ) { $s['pages']['thai-massage']['post']['post_modified'] = '2000-01-01 00:00:00'; $s['pages_sha256'] = hash( 'sha256', json_encode( $s['pages'] ) ); }
+    if ( $mutation === 'pages-hash' ) { $s['pages_sha256'] = str_repeat( '0', 64 ); }
+    if ( $mutation === 'incomplete' ) { $s['complete'] = false; }
+    refusal( array( 'rollback', snap_write( $s, 'summary-' . $mutation ) ), 'summary-touch refuses snapshot ' . $mutation );
+}
+foreach ( array( 'code', 'date', 'meta', 'duplicate' ) as $mutation ) {
+    $db = $summary_applied;
+    if ( $mutation === 'code' ) { $db[1380]['post']['post_content'] .= '// changed'; }
+    if ( $mutation === 'date' ) { $db[1380]['post']['post_modified'] = '2027-01-01 00:00:00'; }
+    if ( $mutation === 'meta' ) { $db[1380]['meta']['_wpcode_priority'] = array( '11' ); }
+    if ( $mutation === 'duplicate' ) { $db[9999] = $db[1380]; $db[9999]['id'] = $db[9999]['post']['ID'] = 9999; }
+    refusal( array( 'rollback', $summary_snap ), 'summary-touch rollback refuses current core ' . $mutation );
+}
+foreach ( $data_before as $page_id => $record ) { $db = $summary_applied; $db[ $page_id ]['post']['post_modified'] = '2027-01-01 00:00:00'; refusal( array( 'rollback', $summary_snap ), 'summary-touch rollback refuses changed complete page state ' . $page_id ); }
+$db = $summary_applied; invoke_summary_rehearsal( array( 'rollback', $summary_snap ) ); check( $db === $summary_before, 'summary-touch rollback restores exact v2 post/settings/dates and all data' );
+invoke_summary_rehearsal( array( 'rollback', $summary_snap ) ); check( $db === $summary_before, 'summary-touch rollback is idempotent' );
+invoke_summary_rehearsal( array( 'apply' ) ); check( $db === $summary_applied, 'summary-touch reapply exactly matches first result' );
+$without_page = $summary_applied; unset( $without_page[ $drift_id ] ); $db = $without_page;
+invoke( array( 'preflight', 'core-summary-touch' ) ); check( $db === $without_page && str_contains( $message, 'core-summary-touch applied;' ), 'latest core remains inspectable after a separate page-only removal' );
+refusal( array( 'rollback', $summary_snap ), 'latest core rollback refuses separately removed page data' );
+$db = $summary_applied; invoke( array( 'rollback', $summary_snap ) ); invoke( array( 'rollback', $upgrade_snap ) );
+check( $db === $upgrade_before, 'existing v1-to-v2 snapshot restores exact v1 after summary-touch reversal' );
+invoke( array( 'rollback', $core_snap ) ); check( $db[1380] === $legacy && array_diff_key( $db, array( 1380 => true ) ) === $data_before, 'all three exact reversals preserve historical legacy recovery and every page record' );
+$clock = '2026-11-09 05:00:00';
 // Execute the real generated page snippets and core against minimal rendering hooks.
 $db = $original; invoke( array( 'apply', 'page', 'thai-massage' ) );
 invoke( array( 'apply', 'page', 'therapeutic-massage' ) );

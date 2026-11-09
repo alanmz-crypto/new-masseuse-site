@@ -52,7 +52,8 @@ body.admin-bar .ts-pk-top{top:calc(var(--wp-admin--admin-bar--height,32px) + var
 /* peek card */
 .ts-pk-card{position:fixed;right:58px;z-index:92;width:min(300px,calc(100vw - 78px));max-height:calc(100vh - 90px);max-height:calc(100dvh - 90px);overflow:hidden;padding:.85rem 1rem;border:1px solid var(--pk-rule);border-radius:18px;background:var(--pk-panel);color:var(--pk-ink);box-shadow:var(--pk-shadow);pointer-events:none;opacity:0;transform:translateX(10px) scale(.98);transition:opacity .15s,transform .2s var(--pk-ease);font-size:1rem;line-height:1.4}
 .ts-pk-card.is-on{opacity:1;transform:none}
-.ts-pk-card.is-pinned{pointer-events:auto;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}   /* a quick tap right after lifting must not be held back for double-tap detection */
+.ts-pk-card.is-pinned{pointer-events:auto;cursor:pointer;touch-action:none;-webkit-tap-highlight-color:transparent}   /* a box with no scroll range must not pan the page behind it */
+.ts-pk-card.is-pinned.can-scroll{touch-action:pan-y}   /* the constrained outer-card fallback keeps its own native scrolling */
 .ts-pk-card small{display:block;font-size:.72rem;color:var(--pk-muted);text-transform:uppercase;letter-spacing:.08em}
 .ts-pk-card b{display:block;font-size:1.05rem;margin:.15rem 2rem .1rem 0}
 /* the stack: closed boxes for the sections above and below the open one, so its place on the page shows (Ryan, 2026-11-08) */
@@ -67,7 +68,8 @@ html .ts-pk .ts-pk-card .row b{display:grid;place-items:center;flex:0 0 auto;wid
 html .ts-pk .ts-pk-card .row span{min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .ts-pk-card .d{display:block;font-size:.86rem;line-height:1.4;color:var(--pk-ink);opacity:.9}
 /* the summary: the section's own opening sentences, scrollable inside the open box (no second window; touching or scrolling it never jumps) */
-.ts-pk-card .sum{display:block;margin:.5rem 0 0;padding:0 .35rem 0 0;max-height:9.8em;overflow-y:auto;overflow-wrap:anywhere;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;font-size:.86rem;line-height:1.45;color:var(--pk-ink);cursor:auto}
+.ts-pk-card .sum{display:block;margin:.5rem 0 0;padding:0 .35rem 0 0;max-height:9.8em;overflow-y:auto;overflow-wrap:anywhere;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:none;font-size:.86rem;line-height:1.45;color:var(--pk-ink);cursor:auto}
+.ts-pk-card .sum.can-scroll{touch-action:pan-y}
 html .ts-pk .ts-pk-card .sum p{margin:0 0 .55em;padding:0;font:inherit;line-height:inherit;color:inherit}
 html .ts-pk .ts-pk-card .sum p:last-child{margin-bottom:0}
 .ts-pk-card .sum.has-more{-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 1.8em),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 1.8em),transparent)}   /* more below: the last line fades (Kiro) */
@@ -418,7 +420,16 @@ add_action( 'wp_footer', function () {
       var upper = visible && r.top - 8 > headBottom + 8 ? { top: headBottom + 8, bottom: r.top - 8 } : null;
       return { lower: lower, upper: upper, key: [lower.top, lower.bottom, upper ? upper.top : 0, upper ? upper.bottom : 0].join('|') };
     }
-    function moreHint() { var m = card.querySelector('.sum'); if (m) m.classList.toggle('has-more', m.scrollHeight - m.scrollTop - m.clientHeight > 2); }
+    function moreHint() {
+      var m = card.querySelector('.sum');
+      // Set pan permission after fitting, before the next gesture. Containment
+      // alone cannot reserve a swipe for a box with no internal scroll range.
+      card.classList.toggle('can-scroll', card.scrollHeight - card.clientHeight > 1);
+      if (m) {
+        m.classList.toggle('can-scroll', m.scrollHeight - m.clientHeight > 1);
+        m.classList.toggle('has-more', m.scrollHeight - m.scrollTop - m.clientHeight > 2);
+      }
+    }
     var fitted = null, reading = null;
     function rememberReading() {
       var m = card.querySelector('.sum');

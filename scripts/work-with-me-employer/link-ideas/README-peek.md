@@ -22,20 +22,65 @@ semantic accuracy, overlap or percentage coverage. Approval must follow rendered
 source review. `peek-pages.json` records the browser expectations and explicit
 rollout status; Services/short-page eligibility remains undecided.
 
-## Current core correction: deployed on staging39
+## Current short-summary touch correction: pending rehearsal and deployment
+
+The next correction lets an open summary absorb swipes when its text fits,
+while long summaries and the constrained outer card retain their own native
+scrolling. Card and summary pan permission follow each element's measured scroll
+range, including after resize. Approved wording, layout and rail/index gestures
+remain unchanged. The
+[short-summary correction record](../../../docs/reviews/2026-11-09-peek-short-summary-touch.md)
+holds the reported behavior, source assessment and current verification status.
+Fresh-copy rehearsal and staging deployment are still pending; no new staging
+snapshot exists yet. Local Chromium did not reproduce the reported page scroll,
+so physical-device resolution is not claimed.
+
+`core-summary-touch` updates exact frozen shared v2 in `peek-nav-shared-v2.php`
+to the reviewed `peek-nav.php`, keeping #1380 and all four data records intact.
+Frozen v2 code SHA256:
+`357e1d447ecf21ce1fa130f08f917bf7965d074463905106182fd3db9f8c39d8`.
+The candidate has 71,826 code bytes, SHA256
+`a20e7a69141843d08dbc0104f1eb7c4ae81ff99b0c7c6594ed1690d23fc0f4ac`.
+Its separate `peek-core-summary-touch-v1` snapshot bundle binds complete old/new
+core states and unchanged page-data states. Changed or foreign state refuses.
+The update is in place, with no planned fallback-only interval.
+
+Run offline gates first. The new localhost-only adapter has no preparation hook;
+it imports the existing full browser suite map and retains the same 900-second
+allowance and complete log. Review each report before advancing:
+
+```sh
+scripts/ci/request.sh rehearse --source staging39 --installer link-ideas/core-summary-touch/install-peek-core-summary-touch.php --with-uploads
+scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args 'core-summary-touch'
+# Only after fresh-copy, rendered-wording and visual gates pass:
+scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args 'core-summary-touch --apply'
+# Read-only aggregate checks after applying, using the shared suite wrapper:
+scripts/ci/request.sh run --target staging39 --script link-ideas/core-upgrade/check-public.mjs --args https://staging39.thaisolitude.com
+```
+
+Every write, including recovery, requires the existing fresh verified encrypted
+off-site backup. Record the actual new snapshot only after apply. Recovery must
+use the matching package and explicit `core-summary-touch --rollback FILE` with
+that snapshot, restoring exact v2 first. Only then may the separate `core-upgrade`
+snapshot restore v1; only after that may the original `core` snapshot restore the
+legacy core. The older snapshots cannot reverse this new payload. Complete
+state drift, including a later page-data removal, makes recovery refuse.
+
+## Completed clearance/touch correction: frozen shared v2
 
 The title-strip clearance, closed-topic touch and reading-position corrections
 were deployed to #1380 at 07:11 UTC on 2026-11-09 after the fresh staging39-copy
 rehearsal, rendered-copy gates, exact rollback and visual review passed.
-The [current correction record](../../../docs/reviews/2026-11-09-peek-clearance.md)
+The [preceding correction record](../../../docs/reviews/2026-11-09-peek-clearance.md)
 holds the actual baseline evidence, final public verification status and recovery snapshot. Its pre-fix public
 check reproduced strip/card overlap; that diagnostic failure is not a release pass.
 The exact deployed core/data hashes are verified. Final public browser checks
 were INVALID HTTP202 with zero assertions/captures; no retry is queued. The
 fresh-copy browser/visual results do not establish physical-device resolution.
 
-`core-upgrade` updates the uniquely owned #1380 in place from the exact deployed
-shared version frozen in `peek-nav-shared-v1.php` to the reviewed `peek-nav.php`.
+`core-upgrade` remains the exact transition from `peek-nav-shared-v1.php` to
+frozen `peek-nav-shared-v2.php` in uniquely owned #1380. It no longer follows the
+mutable `peek-nav.php`, preserving the meaning of the actual 07:11:22 snapshot.
 Frozen shared-v1 code SHA256:
 `dda8aecd38e417ad37766d2df951c6bdc761bf44997e030bbef5a36e9321f573`.
 The upgrade preserves the snippet's identity/settings and all four page-data
@@ -44,9 +89,9 @@ the four unchanged data states, using a separate `peek-core-upgrade-v1` bundle.
 Changed, missing or duplicate ownership/data stops an actual upgrade or reversal.
 There is no snippet swap or planned fallback-only interval.
 
-The dedicated rehearsal adapter has no preparation hook: it must exercise the
-untouched four-page staging39 baseline, with uploads. Run offline gates first;
-then this is the guarded route, with each report reviewed before the next step:
+The dedicated rehearsal adapter had no preparation hook: it exercised the
+untouched four-page staging39 baseline, with uploads. These are historical
+commands for that completed transition, not the new summary-touch route:
 
 ```sh
 scripts/ci/request.sh rehearse --source staging39 --installer link-ideas/core-upgrade/install-peek-core-upgrade.php --with-uploads
@@ -59,7 +104,7 @@ scripts/ci/request.sh run --target staging39 --script link-ideas/core-upgrade/ch
 
 The rehearsal includes exact rollback/reapply, rendered regulated-copy gates,
 the actual-clearance matrix in Chromium/Firefox, native Chromium touch checks, and retained page/Thai gesture
-checks. This package alone has a 900-second browser allowance; its complete
+checks. Both exact core-upgrade adapters have a 900-second browser allowance; the complete
 browser log is retained in the Actions artifact. The public wrapper retains
 complete per-suite streams and reports every count/verdict after its captures.
 Every staging write takes a fresh verified encrypted off-site backup.
@@ -71,6 +116,7 @@ Recovery must name `core-upgrade --rollback FILE` explicitly in the push argumen
 the wrapper's preparatory preflight uses that component. Use the matching reviewed
 package and actual upgrade snapshot after checking current ownership and complete state. Any later
 core or page-data drift, including a page-only removal, makes that reversal refuse.
+If the later summary-touch update is deployed, reverse it to exact v2 first.
 Reverse this upgrade before attempting the historical shared-v1-to-legacy recovery
 below. Neither an old migration snapshot nor a legacy deletion snapshot can undo
 the upgraded payload.
@@ -80,7 +126,7 @@ the upgraded payload.
 This section records the completed 2026-11-09 legacy-to-shared migration on
 staging39 (#1380 core, #1381 Thai data). Do not repeat it as a new upgrade:
 `core` remains tied to frozen `peek-nav-shared-v1.php`, preserving the original
-snapshot's meaning. Current revisions use the separate upgrade route above.
+snapshot's meaning. Current revisions use their separate exact upgrade routes above.
 Original snapshots and verification are in the
 [template record](../../../docs/reviews/2026-11-09-peek-template.md).
 
@@ -191,7 +237,8 @@ It injects no runtime or page data; local mocks remain structural evidence only.
 `--quick` is a Thai/Chair diagnostic subset, not the full rehearsal gate. Public
 staging39 runs use the same checker after deployment and require capture review.
 `check-peek-touch.mjs` uses native Chromium touch input for control drags, taps,
-summary scroll containment and the constrained outer-card fallback. Its optional
+short-summary/title/padding swipes, short-to-long resize transitions, long-summary
+scroll containment and the constrained outer-card fallback. Its optional
 `--baseline-v1` injects the frozen old core only into localhost fixtures; it is
 refused for public staging39. Browser simulation is not a physical-device result.
 Synthetic activation is not VoiceOver/TalkBack validation. Safari and physical-device tests

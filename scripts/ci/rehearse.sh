@@ -257,14 +257,18 @@ if [ -f "$extra" ]; then
   browser_seconds=600
   # This shared-core upgrade checks four actual pages in two engines plus native
   # touch, then retains the timing-sensitive Thai gesture suite in isolation.
-  [ "$inst" != link-ideas/core-upgrade/install-peek-core-upgrade.php ] || browser_seconds=900
+  browser_evidence=""
+  case "$inst" in
+    link-ideas/core-upgrade/install-peek-core-upgrade.php) browser_seconds=900; browser_evidence=peek-core-upgrade-browser.log ;;
+    link-ideas/core-summary-touch/install-peek-core-summary-touch.php) browser_seconds=900; browser_evidence=peek-core-summary-touch-browser.log ;;
+  esac
   echo "  browser budget: ${browser_seconds}s (all package checks retained)"
   timeout "$browser_seconds" node "$extra" http://localhost:8090 > "$out/package-browser.log" 2>&1
   package_browser_rc=$?
   check "package browser checks" "$package_browser_rc"
-  if [ "$inst" = link-ideas/core-upgrade/install-peek-core-upgrade.php ]; then
+  if [ -n "$browser_evidence" ]; then
     evidence="${RUNNER_TEMP:-$HOME/.cache}/ops-out"
-    mkdir -p "$evidence" && cp "$out/package-browser.log" "$evidence/peek-core-upgrade-browser.log"
+    mkdir -p "$evidence" && cp "$out/package-browser.log" "$evidence/$browser_evidence"
     check "complete core-upgrade browser log retained for review" $?
   fi
   [ "$package_browser_rc" -eq 0 ] || tail -n 30 "$out/package-browser.log"
