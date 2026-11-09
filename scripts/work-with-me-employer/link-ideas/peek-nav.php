@@ -1,9 +1,23 @@
 <?php
-// Display-only top strip + "Peek" side rail (idea 3 of /rail-nav-ideas/), Thai Massage page only. Practice on staging39 (Ryan, 2026-11-08: "Peek. Let's use this design. Now you can try it on a real staging page.").
+// Shared Peek behavior. Page data is registered in WordPress by ts_pk_pages filters; .ts-jump remains the only destination/order source.
 // Built from the existing server-rendered row <nav class="ts-jump"> (A11yPageJumpLinks): its links stay the no-JavaScript fallback and the source of the destinations.
 // Section names = the row's labels; descriptions = the first paragraph of each section; reading time = its words at 200 a minute. No page content is changed.
+// A duplicate core must not register a second set of hooks. Data snippets register
+// their filters at load time; the current page is selected only during rendering.
+if ( ! function_exists( 'ts_pk_page_data' ) ) {
+function ts_pk_page_data() {
+	if ( is_admin() || is_feed() || ! is_page() ) { return null; }
+	$page = get_queried_object();
+	$pages = apply_filters( 'ts_pk_pages', array() );
+	$data = $page && is_array( $pages ) ? ( $pages[ $page->post_name ] ?? null ) : null;
+	if ( ! is_array( $data ) || ( $data['schema'] ?? null ) !== 1 || ( $data['slug'] ?? '' ) !== $page->post_name ) { return null; }
+	// Draft text stays in WordPress/repository storage, never in public source.
+	if ( ( $data['approval']['status'] ?? '' ) !== 'approved' ) { $data['items'] = array(); $data['coverage'] = (object) array(); }
+	return $data;
+}
+} else { return; }
 add_action( 'wp_head', function () {
-	if ( is_admin() || is_feed() || ! is_page( 'thai-massage' ) ) {
+	if ( ! ts_pk_page_data() ) {
 		return;
 	}
 	?>
@@ -74,8 +88,8 @@ html[data-ts-theme="dark"] .ts-pk-card .hint{color:var(--pk-on)}
 /* keep the text clear of the rail on phones and tablets; the bottom "On this page" button is replaced by the rail */
 /* Ryan, 2026-11-09: the clearance goes on the text blocks, not on the column. Padding the column moved its middle, and full-width theme blocks (placed from
    that middle) shifted by half of it: off the left edge with the rail on the right (text cut at the screen edge), past the right edge with it on the left */
-html.ts-pk-ready.ts-pk-pad:not(.ts-pk-left) .entry-content :is(p,li,h1,h2,h3,h4,h5,h6,blockquote,figcaption,dt,dd,td,th):not(:is(p,li,blockquote,dd,td,th,.ts-pk,.ts-jump) *){padding-right:var(--pk-clear)}
-html.ts-pk-ready.ts-pk-pad:not(.ts-pk-left) .entry-content .ts-pk-top{padding-right:calc(12px + var(--pk-clear))}   /* the strip's titles stay clear of the rail while it is still in the page */
+@media screen{html.ts-pk-ready.ts-pk-pad:not(.ts-pk-left) .entry-content :is(p,li,h1,h2,h3,h4,h5,h6,blockquote,figcaption,dt,dd,td,th):not(:is(p,li,blockquote,dd,td,th,.ts-pk,.ts-jump) *){padding-right:var(--pk-clear)}}
+@media screen{html.ts-pk-ready.ts-pk-pad:not(.ts-pk-left) .entry-content .ts-pk-top{padding-right:calc(12px + var(--pk-clear))}   /* the strip's titles stay clear of the rail while it is still in the page */}
 html.ts-pk-ready .entry-content .ts-jump{display:none!important}   /* Ryan, 2026-11-08: "You can remove the in-page links beneath header." The strip, rail and index replace the row; without JavaScript (no ts-pk-ready) it still shows and works */
 html.ts-pk-ready #ts-section-guide-trigger,html.ts-pk-ready #ts-section-guide-popover{display:none!important}   /* only once the rail is there */
 html.ts-pk-ready .entry-content :is(a[href],button,input,select,textarea,summary,[tabindex]){scroll-margin-top:calc(var(--pk-head,0px) + var(--pk-strip,0px) + 12px)}   /* Tab never leaves focus under the pinned header and strip (Kiro, WCAG 2.4.11); on the content only: scroll-padding on the page made focusing the pinned header's own menu button scroll the page to the top */
@@ -92,8 +106,8 @@ html.ts-pk-left .ts-pk-you{right:auto;left:28px}
 html.ts-pk-left .ts-pk-card{right:auto;left:58px;transform:translateX(-10px) scale(.98)}
 html.ts-pk-left .ts-pk-card.is-on{transform:none}
 html.ts-pk-left .ts-pk-tip{right:auto;left:58px}
-html.ts-pk-ready.ts-pk-pad.ts-pk-left .entry-content :is(p,li,h1,h2,h3,h4,h5,h6,blockquote,figcaption,dt,dd,td,th):not(:is(p,li,blockquote,dd,td,th,.ts-pk,.ts-jump) *){padding-left:var(--pk-clear)}
-html.ts-pk-ready.ts-pk-pad.ts-pk-left .entry-content .ts-pk-top{padding-left:calc(12px + var(--pk-clear))}   /* the other side keeps the theme's own spacing */
+@media screen{html.ts-pk-ready.ts-pk-pad.ts-pk-left .entry-content :is(p,li,h1,h2,h3,h4,h5,h6,blockquote,figcaption,dt,dd,td,th):not(:is(p,li,blockquote,dd,td,th,.ts-pk,.ts-jump) *){padding-left:var(--pk-clear)}}
+@media screen{html.ts-pk-ready.ts-pk-pad.ts-pk-left .entry-content .ts-pk-top{padding-left:calc(12px + var(--pk-clear))}   /* the other side keeps the theme's own spacing */}
 /* the side button in the preview */
 .ts-pk-card .hint{display:flex;align-items:center;justify-content:space-between;gap:.5rem}
 .ts-pk-card .side{display:none;flex:0 0 auto;min-height:36px;margin:0;padding:0 .7rem;border:1px solid var(--pk-rule);border-radius:999px;background:transparent;color:var(--pk-muted);font:inherit;font-size:.75rem;font-weight:700;cursor:pointer;touch-action:manipulation}
@@ -138,13 +152,13 @@ html .ts-pk .ts-pk-fan li.is-over{background:var(--pk-on);color:var(--pk-on-text
 .ts-pk-nav.is-index .ts-pk-label{opacity:0}
 @media (prefers-reduced-motion:reduce){html .ts-pk .ts-pk-fan li,html .ts-pk .ts-pk-ix{transition-duration:.01ms!important;transition-delay:0ms!important}}
 /* the site header stays on top (Ryan, 2026-11-08: "make the header persistent too"); not on short landscape screens, where header, strip and rail would not fit */
-@media (min-height:501px){
+@media screen and (min-height:501px){
 html.ts-pk-ready #masthead{position:sticky;top:0;z-index:96}
 html.ts-pk-ready body.admin-bar #masthead{top:var(--wp-admin--admin-bar--height,32px)}
 html.ts-pk-ready #masthead .ast-mobile-header-content{max-height:calc(100vh - var(--pk-head,0px));max-height:calc(100dvh - var(--pk-head,0px));overflow-y:auto}
 html.ts-pk-ready body.admin-bar #masthead .ast-mobile-header-content{max-height:calc(100dvh - var(--pk-head,0px) - var(--wp-admin--admin-bar--height,32px))}   /* the phone menu still opens fully from the pinned header */
 }
-@media (min-height:501px) and (max-width:600px){html.ts-pk-ready body.admin-bar #masthead{top:0}}
+@media screen and (min-height:501px) and (max-width:600px){html.ts-pk-ready body.admin-bar #masthead{top:0}}
 /* the stack fits between the strip and the bottom of the screen: it gives up detail in steps (fit1-fit3), never the open box's name and "Tap to go there" */
 html .ts-pk .ts-pk-card.fit2 .sum{max-height:6.6em}
 html .ts-pk .ts-pk-card.fit3 .sum{max-height:4.4em}
@@ -160,15 +174,18 @@ html .ts-pk .ts-pk-card.fit5 .open > b{font-size:.95rem;margin-top:0}
 html .ts-pk .ts-pk-card.fit5 .sum.is-gist{display:block;max-height:2.7em;margin-top:.15rem}   /* the glance list stays even on the smallest fit (it scrolls) */
 html .ts-pk .ts-pk-card.fit5 .hint{margin-top:.3rem;padding-top:.3rem}   /* very short screens or very large text: the open box keeps only its name and "Tap to go there" */
 html .ts-pk .ts-pk-card.ts-pk-stack{overflow-y:auto;overscroll-behavior:contain}   /* last resort: the card scrolls, and fit() brings the open box into view */
-@media print{.ts-pk{display:none!important}}
+@media print{.ts-pk{display:none!important}html.ts-pk-ready .entry-content .ts-jump{display:block!important}}
 </style>
 	<?php
 }, 200 );
 
 add_action( 'wp_footer', function () {
-	if ( is_admin() || is_feed() || ! is_page( 'thai-massage' ) ) {
+	if ( ! ts_pk_page_data() ) {
 		return;
 	}
+	$json = wp_json_encode( ts_pk_page_data(), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT );
+	if ( false === $json ) { return; }
+	echo '<script type="application/json" id="ts-peek-nav-data">' . $json . '</script>';
 	?>
 <script id="ts-peek-nav-runtime">
 (function () {
@@ -192,33 +209,30 @@ add_action( 'wp_footer', function () {
     function el(i) { if (!S[i]) return null; var id = S[i].href.slice(1); try { id = decodeURIComponent(id); } catch (e) {} return document.getElementById(id); }   // null past the last section; a malformed href is used as written
     function nameOf(h, fallback) {   // Kiro, template review: an FAQ panel or a plain block as a target read its whole text (2,173 characters) aloud
       if (!h) return fallback;
-      var q = /^H[1-6]$/.test(h.tagName) ? h : h.querySelector('h1,h2,h3,h4,h5,h6,.uagb-question');
+      var q = /^H[1-6]$/.test(h.tagName) ? h : h.querySelector('h1,h2,h3,h4,h5,h6,.uagb-question,summary');
       var t = q ? q.textContent.replace(/\s+/g, ' ').trim() : ''; return t && t.length <= 140 ? t : fallback;
     }
     function esc(t) { var d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
     function buzz() { if (navigator.vibrate) { try { navigator.vibrate(6); } catch (e) {} } }
 
     // what each section is: its heading, its first paragraph, its length (read from the page itself)
-    // Ryan, 2026-11-08: the summary is a glance. Each distinct idea of the section becomes one short "subject, verb, object" (three words or so);
-    // ideas that overlap are merged into one, or the lesser one is left out; no minutiae and nothing said twice (also not across sections). A long
-    // section (the research) may have a longer list; the box scrolls. A list that holds about 60% or less of its section ends with "etc." (Ryan). Written by hand from the rendered page (new wording on a regulated page: no
-    // claim words, no outcomes promised; checked with wording_tiers; for Ryan's approval before live). A section without a list keeps its own paragraphs.
-    // keyed by page, then by section id (Kiro, template review: Thai, Therapeutic, Deep Tissue and Chair share the same ids, so id alone would show one
-    // page's wording on another, regulated page); the page is its own address (WordPress pages live at /slug/)
-    var GISTS = {
-      'thai-massage': {
-        'ts-what-it-is': ['Movement meets massage', 'Pressure, rocking, stretching', 'Butsaba\'s specialty', 'Restful or active', 'Rooted in Thai self-care', 'UNESCO-listed heritage', 'Trained at Still Light'],
-        'ts-common-reasons': ['Routines leave stiffness', 'Freer movement wanted', 'Some simply unwind', 'Tight areas get time'],
-        'ts-what-to-expect': ['Share health history', 'Warning signs: see doctor', 'Brief talk first', 'You set the pace', 'Check-ins throughout', 'Change anything, anytime', 'Post-session guidance'],
-        'ts-guide-questions': ['Wear loose clothing', 'Done on a mat', '60 or 90 minutes', 'Stretches never forced', 'No individual home visits'],
-        'ts-guide-research': ['Evidence is limited', 'Trials are small, short', 'Studies reported less pain', 'Big reviews stay cautious', 'Regular sessions may matter', 'Rare serious effects reported', 'Compared with sham devices', 'Other methods mostly tied', 'Not always ahead', 'Recovery compared with rest', 'Stress results mixed', 'Swedish seen as relaxing', 'Thai seen as energizing', 'etc.']
-      }
-    };
-    var PAGE = (location.pathname.replace(/\/+$/, '').split('/').pop() || '').toLowerCase(), MINE = Object.prototype.hasOwnProperty.call(GISTS, PAGE) ? GISTS[PAGE] : {};
+    // Data contains wording, approval and provenance only; it cannot introduce
+    // destinations. Unapproved or mismatched-page data uses whole paragraphs.
+    var dataNode = document.getElementById('ts-peek-nav-data'), data;
+    try { data = JSON.parse(dataNode.textContent); } catch (e) { return; }
+    if (!data || data.schema !== 1 || !Array.isArray(data.items)) return;
+    var PAGE = (location.pathname.replace(/\/+$/, '').split('/').pop() || '').toLowerCase(), MINE = Object.create(null);
+    if (data.slug === PAGE && data.approval && data.approval.status === 'approved') {
+      data.items.forEach(function (item) {
+        if (!Array.isArray(item) || item.length !== 2 || typeof item[0] !== 'string' || typeof item[1] !== 'string') return;
+        if (!Object.prototype.hasOwnProperty.call(MINE, item[1])) MINE[item[1]] = [];
+        MINE[item[1]].push(item[0]);
+      });
+    }
     function describe() {
       var ps = [].slice.call(content.querySelectorAll('p'));
       S.forEach(function (s, i) {
-        var h = el(i), nx = el(i + 1) || null; s.heading = nameOf(h, s.label); s.excerpt = ''; s.desc = ''; s.mins = 1;
+        var h = el(i), nx = el(i + 1) || null; s.heading = nameOf(h, s.label); s.excerpt = ''; s.desc = ''; s.paragraph = ''; s.mins = 1;
         if (!h) return;
         var r = document.createRange(); r.setStartBefore(h); if (nx) r.setEndBefore(nx); else r.setEndAfter(content.lastChild);
         var frag = r.cloneContents(); [].forEach.call(frag.querySelectorAll('script,style,noscript'), function (x) { x.remove(); });
@@ -227,13 +241,13 @@ add_action( 'wp_footer', function () {
           var p = ps[k], after = h.compareDocumentPosition(p) & Node.DOCUMENT_POSITION_FOLLOWING, before = !nx || (p.compareDocumentPosition(nx) & Node.DOCUMENT_POSITION_FOLLOWING);
           var pt = p.textContent.trim();
           if (after && before && pt.length > 30 && !/\?$/.test(pt) && !p.closest('.ts-jump') && !p.closest('.ts-pk-top') && !p.closest('.ts-pk') && !p.closest('figcaption')) {
-            var t = p.textContent.trim().replace(/\s+/g, ' '); s.excerpt = t.length > 120 ? t.slice(0, 117).replace(/\s+\S*$/, '') + '…' : t;
+            var t = p.textContent.trim().replace(/\s+/g, ' '); s.paragraph = t; s.excerpt = t.length > 120 ? t.slice(0, 117).replace(/\s+\S*$/, '') + '…' : t;
             var safe = t.replace(/\b(Dr|Mr|Mrs|Ms|St|vs|etc|e\.g|i\.e)\./gi, function (m) { return m.replace(/\./g, '\u2024'); });   // abbreviations do not end the sentence
             var first = ((safe.match(/^.*?[.!?](\s|$)/) || [safe])[0].trim()).replace(/\u2024/g, '.'); s.desc = first.length > 90 ? first.slice(0, 87).replace(/\s+\S*$/, '') + '…' : first; break;
           }
         }
       });
-      S.forEach(function (s, i) { var id = s.href.slice(1); s.gist = Object.prototype.hasOwnProperty.call(MINE, id) ? MINE[id] : null; var sm = s.gist ? [] : summarize(i), alt = s.excerpt || s.desc; s.summary = sm.length ? sm : (alt ? [alt] : []); });
+      S.forEach(function (s, i) { var id = el(i).id; s.gist = Object.prototype.hasOwnProperty.call(MINE, id) ? MINE[id] : null; var sm = s.gist ? [] : summarize(i), alt = s.paragraph; s.summary = sm.length ? sm : (alt ? [alt] : []); });
       if (segs) segs.forEach(function (li, i) { li.querySelector('a').setAttribute('aria-label', S[i].label + (S[i].desc ? ': ' + S[i].desc : '')); });   // the rail's names for screen readers include the description
     }
 
@@ -336,8 +350,15 @@ add_action( 'wp_footer', function () {
     // a jump: the heading lands just below the strip (also under the admin bar)
     var glow = { el: null, t: 0 };
     function below() { return (parseFloat(getComputedStyle(top).top) || 0) + top.offsetHeight + 12; }   // where the stuck strip ends
+    function openDetails(h) {
+      // Native details may itself be the target, or contain a target several
+      // levels down. Open outer and inner panels before measuring the jump.
+      for (var d = h; d && content.contains(d); d = d.parentElement) {
+        if (d.tagName === 'DETAILS') d.open = true;
+      }
+    }
     function jumpTo(i) {   // Ryan, 2026-11-08: no "Back to ..." button
-      var h = el(i); if (!h) return;
+      var h = el(i); if (!h) return; openDetails(h);
       // a closed FAQ panel as the target opens, as the old row's own script did (after the swallowed click of the tap, so it is not swallowed itself)
       var fq = h.classList.contains('uagb-faq-item') ? h : h.closest('.uagb-faq-item');
       if (fq && !fq.classList.contains('uagb-faq-item-active')) { var qb = fq.querySelector('.uagb-faq-questions-button'); if (qb) setTimeout(function () { qb.click(); }, 600); }
@@ -351,7 +372,7 @@ add_action( 'wp_footer', function () {
     // the row at the top of the page uses the same jump (otherwise the theme's own smooth scroll hides the heading under the strip)
     row.addEventListener('click', function (e) {
       var a = e.target.closest ? e.target.closest('a[href^="#"]') : null; if (!a || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-      var i = links.indexOf(a); if (i < 0 || !el(i)) return; e.preventDefault(); e.stopPropagation(); jumpTo(i);
+      var i = S.findIndex(function (s) { return s.href === a.getAttribute('href'); }); if (i < 0 || !el(i)) return; e.preventDefault(); e.stopPropagation(); jumpTo(i);
     }, true);
 
     // any other in-page link in the content (a "see the questions below" link): the theme's own smooth scroll would hide the heading under the pinned header and strip
@@ -360,6 +381,7 @@ add_action( 'wp_footer', function () {
       if (!a || a.closest('.ts-pk') || a.closest('.ts-jump') || e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       var id = a.getAttribute('href').slice(1); try { id = decodeURIComponent(id); } catch (err) {}
       var t = id ? document.getElementById(id) : null; if (!t || !content.contains(t)) return;
+      openDetails(t);
       e.preventDefault(); e.stopPropagation();
       window.scrollTo({ top: t.getBoundingClientRect().top + window.scrollY - below(), behavior: calm.matches ? 'auto' : 'smooth' });
       try { history.replaceState(null, '', '#' + id); } catch (err) {}
@@ -591,6 +613,7 @@ add_action( 'wp_footer', function () {
     // (only for 4 s, and never once the visitor touches, scrolls or types)
     function arrive() {
       var hash = location.hash, i = -1; S.forEach(function (s, k) { if (s.href === hash) i = k; }); if (i < 0) return;
+      openDetails(el(i));
       var until = Date.now() + 4000, timer = 0, done = false;
       function stop() { done = true; window.removeEventListener('scroll', idle); }
       function fix() { var h = el(i); if (!h || done) return; var t = h.getBoundingClientRect().top, want = below(); if (Math.abs(t - want) > 6) window.scrollTo({ top: t + window.scrollY - want, behavior: 'instant' }); }

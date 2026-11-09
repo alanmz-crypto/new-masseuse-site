@@ -1,0 +1,60 @@
+{
+  "schema": 1,
+  "regression": "thai-massage",
+  "pages": [
+    {
+      "slug": "thai-massage",
+      "staging": "enabled",
+      "expectedLabels": [
+        "What it is",
+        "Common reasons",
+        "What to expect",
+        "Questions",
+        "What Research Says"
+      ]
+    },
+    {
+      "slug": "therapeutic-massage",
+      "staging": "prepared",
+      "expectedLabels": [
+        "What it is",
+        "Common reasons",
+        "Who can benefit",
+        "Questions",
+        "What to expect",
+        "What Research Says"
+      ]
+    },
+    {
+      "slug": "deep-tissue-massage",
+      "staging": "prepared",
+      "expectedLabels": [
+        "What it is",
+        "Common reasons",
+        "What to expect",
+        "Questions",
+        "What Research Says"
+      ]
+    },
+    {
+      "slug": "chair-massage",
+      "staging": "prepared",
+      "expectedLabels": [
+        "What it is",
+        "Common reasons",
+        "Who can benefit",
+        "Questions",
+        "What to expect",
+        "What Research Says"
+      ]
+    }
+  ],
+  "eligibilityPending": [
+    "services",
+    "home",
+    "about",
+    "contact",
+    "privacy-policy",
+    "accessibility"
+  ]
+}

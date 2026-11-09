@@ -80,6 +80,13 @@ gate "posture check self-test (mock site and deliberate breaks)" python3 -I -B "
 
 # ---- wording tiers (banned-word list with the research exemption, 2026-10-19): self-test, offline -------------------------------------------
 gate "wording tiers self-test (deliberate breaks, mutation-checked)" python3 -I -B "$here/work-with-me-employer/client-pages/tests/wording-tiers-selftest.py"
+gate "Peek summary schema, planned anchors and regulated wording" python3 -I -B "$here/work-with-me-employer/link-ideas/lint-gists.py"
+gate "Peek summary lint refusal tests" python3 -I -B "$here/work-with-me-employer/link-ideas/tests/gists-selftest.py"
+peek_test() {
+  docker run --rm --network none --entrypoint php -v "$here/work-with-me-employer/link-ideas:/pkg:ro" "$img" /pkg/test-installer.php &&
+  docker run --rm --network none --entrypoint php -v "$here/work-with-me-employer/link-ideas:/pkg:ro" "$img" /pkg/tests/core-data-test.php
+}
+if [ -n "$img" ] && command -v docker >/dev/null; then gate "Peek installer ownership, recovery and current-page JSON (offline)" peek_test; else skip "Peek installer and JSON tests" "docker or the pinned image is not available"; fi
 # the generated Thai content must be what the builder produces (a hand edit or a stale build is caught here)
 gate "Thai evidence content matches its builder" python3 -I -B "$here/work-with-me-employer/thai/build-thai-evidence.py" --check
 gate "Therapeutic evidence content matches its builder" python3 -I -B "$here/work-with-me-employer/therapeutic/build-therapeutic-evidence.py" --check

@@ -176,7 +176,7 @@ check `ui-peek-nav-staging39-20261108-14`: **310/0**. Note: the second Kiro revi
 Finding 1 (staging not serving the Peek) not reproduced: the server check found it served anonymously; Kiro's load most likely fell in a roll-back-then-apply
 swap. Fixed: hint focus (no auto-hide while focused; focus to the rail on hide), hint after 1.5 s and not on #hash arrivals, plain in-page links below the
 header+strip (scroll-margin + capture handler), text clear of rail/icon by measurement (`clearRail()`, plus a block-measuring pass after staging39 showed a theme
-block 4px under the rail), icon background transparent, admin-bar menu height, rove/fan/hint guards; installer: CRLF, rollback stops on CHANGED, umask.
+block 4px under the rail), icon background transparent, admin-bar menu height, rove/fan/hint guards; installer: CRLF/umask were reported; the later 2026-11-09 source audit found rollback still ignored its saved hash and could delete CHANGED code (see current template record below).
 Not taken: iOS left-edge (device first), header unpin below 600px (Ryan). Now snippet **#1363**; export `staging39-before-peek-nav-20261108-084155.sql`;
 snapshot `peek-nav-before-20261108-084212-e58e7d70.json`; check `ui-peek-nav-staging39-20261108-16`: **326/0**; cleanup installer rehearsal passed on a copy of
 staging38. Third handoff: `docs/inter-model/2026-11-08-peek-nav-kiro-review-3-handoff.md`.
@@ -252,3 +252,24 @@ excludes `.ts-pk`/`.ts-jump`. Kiro's wording applied (hedged research phrases; d
 **Lesson (swaps):** during "rollback, rehearse, apply" (~6 min) the page shows the plain no-JavaScript row; tell Ryan not to judge a reload until the
 apply line appears.
 
+
+## Shared template continuation (2026-11-09, Codex)
+
+Fresh rendered review and exact #1380 inspection completed; code hash matches
+`b7314c8938a728bf64b6dac16c48bba722b4aea59b277c9f56f0760132322c01`.
+Implementation separates shared core and WordPress-stored `ts_pk_pages` page data;
+`.ts-jump` stays the sole navigation source. Thai wording is unchanged. Draft
+Therapeutic/Deep Tissue/Chair lists were reviewed against fresh rendered text,
+remain unapproved, and are stripped from public JSON. Native details, reordered
+row mapping and print have focused coverage. Legacy rollback hash protection was
+missing despite the older note above; the new installer checks complete state,
+and push rollback now takes a verified fresh off-site backup.
+
+Local validation and Actions rehearsals are in progress; no staging write by
+this continuation yet. The current #1380 snapshot remains
+`peek-nav-before-20261109-010037-0c493281.json`. Migration is Thai data first,
+then exact in-place core replacement, avoiding the old fallback-only interval.
+Current evidence/status: [template record](../../docs/reviews/2026-11-09-peek-template.md).
+Draft wording: [three-page review](../../docs/reviews/2026-11-09-peek-summary-drafts.md).
+Services/short pages remain individual eligibility decisions; Safari/physical
+devices and actual assistive technology remain untested.
