@@ -2,8 +2,10 @@
 """Build separate local structural fixtures for Peek (never real website copy).
 
 The four service-page shapes come from jump-links.php, including the six-section
-Therapeutic/Chair order. Enabled rails follow peek-pages.json; every shape receives
-the read-only title strip, and browser fixtures may inject prepared core/data explicitly.
+Therapeutic/Chair order. Approved summary registrations follow peek-pages.json;
+other shapes deliberately emit only title configuration so the current shared
+runtime can exercise its title-rail mode. Browser fixtures may inject prepared
+core/data explicitly; these shapes do not establish deployed rail coverage.
 All jump targets are in the HTML so the no-JavaScript fallback is testable.
 The tiny dark theme exercises the core's colour branches, not the site's theme.
 Responsive root sizes reproduce the observed staging typography reflow so a

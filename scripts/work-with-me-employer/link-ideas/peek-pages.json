@@ -9,6 +9,25 @@
       "feed"
     ]
   },
+  "titleRail": {
+    "scope": "visitor-pages-without-existing-rail",
+    "staging": "pending",
+    "excludedContexts": [
+      "admin",
+      "feed"
+    ],
+    "existingRailPages": [
+      "/rail-nav-ideas/",
+      "/index-nav-ideas/"
+    ],
+    "conditionalExistingRails": [
+      {
+        "path": "/progress-nav-ideas/",
+        "mode": "E",
+        "behavior": "hide-title-rail-while-demo-active"
+      }
+    ]
+  },
   "pages": [
     {
       "slug": "thai-massage",
@@ -56,13 +75,5 @@
         "What Research Says"
       ]
     }
-  ],
-  "railEligibilityPending": [
-    "services",
-    "home",
-    "about",
-    "contact",
-    "privacy-policy",
-    "accessibility"
   ]
 }

@@ -1,14 +1,17 @@
 # Peek shared template
 
-Staging39 only. `.ts-jump` is the sole navigation/destination source. The deployed
-`peek-nav.php` emits a read-only title strip on every normal visitor HTML page,
-including short, unlisted and practice pages. A safely encoded
-`ts-peek-nav-config` JSON element supplies the page/document title fallback;
-valid current-page `ts_pk_pages` registrations alone produce `ts-peek-nav-data`
-and enable the existing rail. Admin/feed requests emit neither. WordPress/WPCode
-stores all deployed code and data; the browser never requests repository JSON files.
-The all-page title strip and larger summary areas are deployed. Final public
-browser verification is blocked by SiteGround HTTP202, as recorded below.
+Staging39 only. The current `peek-nav.php` is a candidate that adds title-only
+Peek rails to visitor pages without an existing rail. It is not deployed; see
+the [title-rail record](../../../docs/reviews/2026-11-09-peek-title-rails.md).
+The deployed baseline is frozen `peek-nav-shared-v4.php`: all-page read-only
+title strips, larger summary areas and four approved service-page summary rails.
+Its final focused public browser check was blocked by SiteGround HTTP202.
+
+Existing `.ts-jump` rows remain the sole navigation/destination source where they
+exist. Safely encoded `ts-peek-nav-config` JSON supplies the page-title fallback;
+valid current-page `ts_pk_pages` registrations alone produce `ts-peek-nav-data`.
+Admin/feed requests emit neither. WordPress/WPCode stores all deployed code and
+data; the browser never requests repository JSON files.
 
 `peek-data/<slug>.json` stores `[text, anchor]` items, approval provenance and an
 editorial coverage classification. Anchors identify existing sections, not a
@@ -25,10 +28,33 @@ Run `python3 -I -B lint-gists.py` and `tests/gists-selftest.py`; both are in
 `scripts/check-all.sh`, with PHP ownership/recovery/JSON tests. Lint cannot decide
 semantic accuracy, overlap or percentage coverage. Approval must follow rendered
 source review. `peek-pages.json` records the browser expectations and explicit
-rollout status. Its `titleStrip` scope is separate from `railEligibilityPending`:
-Services/short-page rail eligibility remains undecided, while their read-only
-title strip is included. The independently collected published-page inventory
-drives title coverage; the four rail records are not a title-strip allow-list.
+rollout status. `titleStrip` is enabled; `titleRail` is pending for visitor pages
+without existing rails, with explicit practice-page exceptions. The old
+`railEligibilityPending` list is removed. The four `pages` entries describe
+approved summaries, not an allow-list for title strips or title-only rails.
+The independently collected published-page inventory drives browser coverage.
+
+## Candidate title-only rails: full gates and deployment pending
+
+The candidate reuses Peek's rail/index gestures and preview/jump controls with
+`.ts-pk-titles` boxes containing titles only. Existing row labels/targets come
+first, including closed native details; otherwise visible main H2 headings supply
+sections, with a single page-title entry for no-heading or fixed-search pages.
+Existing IDs remain links; headings without IDs use buttons targeting the actual
+DOM node without inventing an ID or hash. The index still does not scroll the page.
+The four approved summaries and their paragraph fallbacks remain unchanged.
+
+Preserve the existing rails on `/rail-nav-ideas/` and `/index-nav-ideas/`.
+Progress modes A–D gain the title rail; mode E hides it and releases its rail
+readiness/padding while the demo rail is active. Without PointerEvent support,
+the strip and ordinary links remain. No new summary text or data snippet is added.
+
+`core-title-rail` is the new exact v4→candidate transition. `core-title-strip` is
+now pinned to frozen v3→v4, preserving its actual 10:24:52 snapshot. Full offline,
+fresh-copy, rendered-wording, browser/visual and backup gates remain required;
+this candidate has no staging apply or actual recovery snapshot yet. There is no
+planned fallback-only interval. Once applied, reverse `core-title-rail` with its
+own actual snapshot to restore v4 before using any older recovery route.
 
 ## Current title strip and summary space: deployed; public browser check blocked
 
@@ -103,10 +129,11 @@ Only then can `core-summary-touch` restore v2, `core-upgrade` restore v1, and
 reverse this new payload. `core-summary-touch` now pins v2 to frozen v3,
 preserving the actual 07:59:57 snapshot's meaning.
 
-Before any future runtime edit, freeze the deployed payload as shared v4 and pin
-`core-title-strip` to that exact file. A later version needs a new exact transition
-so the actual snapshot above retains its recovery meaning. This freeze has not
-yet been performed. Safari, physical devices and actual assistive technology
+The deployed payload is now frozen as `peek-nav-shared-v4.php`, and
+`core-title-strip` is pinned to exact v3→v4. The candidate uses the separate
+`core-title-rail` transition so the actual snapshot above retains its recovery
+meaning. If that candidate is applied, reverse it to v4 first. Safari, physical
+devices and actual assistive technology
 remain unverified; the reported loading delay was not reproduced.
 
 ## Completed short-summary touch correction: frozen shared v3

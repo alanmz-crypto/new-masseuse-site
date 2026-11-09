@@ -166,7 +166,7 @@ try {
       ok(`${prefix}: every fallback destination exists`, await p.evaluate(row => row.length >= 2 && row.every(a => !!document.getElementById(decodeURIComponent(a.href.slice(1)))) && new Set(row.map(a => a.href)).size === row.length, row));
       if (enabled(page)) await verifyEnabled(p, page.slug, data.approval.status === 'approved' ? data : { ...data, items: [], coverage: {} }, prefix);
       else {
-        ok(`${prefix}: prepared page has only the shared read-only strip`, await p.locator('#ts-peek-title-strip').count() === 1 && await p.locator('.ts-pk-nav,.ts-pk-card,#ts-peek-nav-data').count() === 0);
+        ok(`${prefix}: prepared page has a title-only rail without page data or summaries`, await p.locator('#ts-peek-title-strip').count() === 1 && await p.locator('.ts-pk-nav').count() === 1 && await p.locator('.ts-pk-titles').count() === 1 && await p.locator('#ts-peek-nav-data,.ts-pk-titles .sum').count() === 0 && await p.evaluate(() => document.documentElement.classList.contains('ts-pk-ready')));
         if (fixtures) {
           // A sentinel draft phrase proves that the approval flag suppresses data even when present.
           const draft = { ...data, approval: { ...data.approval, status: 'draft' }, items: [['Unapproved fixture phrase', decodeURIComponent(row[0].href.slice(1))]] };
@@ -223,7 +223,7 @@ try {
       }, count);
       await inject(shape, { ...dataFor(page.slug), approval: { status: 'draft', source: 'synthetic section-count fixture' }, items: [] });
       if (count < 2) {
-        ok(`${engine}: ${count}-destination fixture keeps the plain fallback`, await shape.locator('.ts-pk-nav').count() === 0 && await shape.evaluate(() => !document.documentElement.classList.contains('ts-pk-ready') && (!document.querySelector('.ts-jump') || getComputedStyle(document.querySelector('.ts-jump')).display !== 'none')));
+        ok(`${engine}: ${count}-destination fixture uses one title-only rail piece`, await shape.locator('.ts-pk-titles').count() === 1 && await shape.locator('.ts-pk-rail > li').count() === 1 && await shape.locator('.ts-pk-titles .sum').count() === 0 && await shape.evaluate(() => document.documentElement.classList.contains('ts-pk-ready')));
       } else {
         ok(`${engine}: ${count}-destination fixture initializes the matching rail`, await shape.locator('.ts-pk-rail a').count() === count);
         await preview(shape, count - 1);

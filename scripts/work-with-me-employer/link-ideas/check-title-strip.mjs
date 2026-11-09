@@ -37,6 +37,8 @@ const inspect = p => p.evaluate(() => {
   const main = document.querySelector('#main,main,[role="main"]') || document.querySelector('#primary,#content') || document.body;
   const entries = main.querySelectorAll('.entry-content'), content = entries.length === 1 ? entries[0] : main;
   const strip = document.getElementById('ts-peek-title-strip'), row = content.querySelector('.ts-jump'), rail = !!document.querySelector('.ts-pk-nav');
+  const pointerEvents = 'PointerEvent' in window;
+  const dedicatedNavigation = !!content.querySelector('.tsr-nav,.tsi-nav');
   const config = JSON.parse(document.getElementById('ts-peek-nav-config').textContent);
   const visible = node => {
     if (!node || !content.contains(node) || node.closest('nav,[role="navigation"],header,footer,dialog,[role="banner"],[role="contentinfo"],[role="dialog"],.ts-pk,.ts-jump,[hidden],[inert],[aria-hidden="true"],.screen-reader-text,.sr-only')) return false;
@@ -49,15 +51,18 @@ const inspect = p => p.evaluate(() => {
     }
     return true;
   };
+  // A rail preserves valid curated destinations even in closed content. The
+  // no-PointerEvent read-only fallback retains its visible-title filtering.
   let expected = row ? [...row.querySelectorAll('a[href^="#"]')].map(a => {
     let id = a.hash.slice(1); try { id = decodeURIComponent(id); } catch {}
     return { node: document.getElementById(id), label: norm(a.textContent) };
-  }).filter(item => item.node && (rail || visible(item.node))) : [...content.querySelectorAll('h2')].filter(visible).map(node => ({ node, label: norm(node.innerText) }));
+  }).filter(item => item.node && (pointerEvents || visible(item.node))) : [...content.querySelectorAll('h2')].filter(visible).map(node => ({ node, label: norm(node.innerText) }));
   expected.sort((a, b) => a.node === b.node ? 0 : a.node.compareDocumentPosition(b.node) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1);
   if (config.mode === 'fixed' || !expected.length) expected = [{ node: content, label: config.title }];
   window.__peekTitleExpected = expected;
   const actual = [...strip.querySelectorAll('.tr > span')].map(node => node.textContent);
-  return { expected: expected.map(item => item.label), actual, config, rail,
+  return { expected: expected.map(item => item.label), actual, config, rail, pointerEvents, dedicatedNavigation,
+    titleRails: document.querySelectorAll('.ts-pk-titles').length,
     ready: document.documentElement.classList.contains('ts-pk-title-ready'), railReady: document.documentElement.classList.contains('ts-pk-ready'),
     strips: document.querySelectorAll('#ts-peek-title-strip,.ts-pk-top').length,
     configs: document.querySelectorAll('#ts-peek-nav-config').length, data: document.querySelectorAll('#ts-peek-nav-data').length,
@@ -142,10 +147,17 @@ const menu = async (p, label) => {
   const closed = await state(p), readingClosed = await readingPosition();
   ok(`${label}: closing the menu restores the original scroll and reading position`, still(before, closed) && Math.abs(readingBefore.top - readingClosed.top) <= 2 && await toggle.getAttribute('aria-expanded') === 'false', { before, closed, readingBefore, readingClosed });
 };
-const existingAnchor = async (p, selector, label, faq = false, extraBar = null) => {
+const existingAnchor = async (p, selector, label, faq = false, extraBar = null, hiddenRow = false) => {
   const link = p.locator(selector).first(), href = await link.getAttribute('href');
   if (!href?.startsWith('#')) throw new Error(`INVALID ${label}: missing existing same-page destination`);
-  await link.click();
+  if (hiddenRow && !await link.isVisible()) {
+    const replaced = await link.evaluate(link => !!link.closest('.ts-jump') && document.documentElement.classList.contains('ts-pk-ready') && !!document.querySelector('.ts-pk-nav'));
+    if (!replaced) throw new Error(`INVALID ${label}: hidden row has no ready rail replacement`);
+    // This exercises the preserved fallback's integration handler. Native link
+    // activation remains separately required with JavaScript disabled below.
+    await link.evaluate(link => link.click());
+    label += '/programmatic-hidden-fallback';
+  } else await link.click();
   const measure = () => p.evaluate(({ href, extraBar }) => {
     const target = document.getElementById(decodeURIComponent(href.slice(1))), r = target.getBoundingClientRect(), strip = document.getElementById('ts-peek-title-strip').getBoundingClientRect();
     const ceiling = Math.max(strip.bottom, extraBar ? document.querySelector(extraBar).getBoundingClientRect().bottom : 0);
@@ -236,8 +248,9 @@ try {
         ok(`${prefix}: one read-only title strip uses the actual heading order or complete page title`, actual.ready && actual.strips === 1 && actual.configs === 1 && JSON.stringify(actual.actual) === JSON.stringify(actual.expected), actual);
         ok(`${prefix}: search keeps its complete page title while ordinary pages follow their sections`, actual.config.mode === (page.path.startsWith('/?s=') ? 'fixed' : 'sections'), actual.config);
         ok(`${prefix}: title strip is not interactive or in the tab sequence`, actual.interactive === 0 && actual.pointer === 'none' && actual.position === 'sticky', actual);
-        const rail = enabled.has(page.path);
-        ok(`${prefix}: only approved service pages expose data and a rail`, actual.rail === rail && actual.railReady === rail && actual.data === (rail ? 1 : 0), actual);
+        const approvedPage = enabled.has(page.path), rail = actual.pointerEvents && !actual.dedicatedNavigation;
+        ok(`${prefix}: only approved service pages expose page data`, actual.data === (approvedPage ? 1 : 0), actual);
+        ok(`${prefix}: shared rails respect dedicated practice navigation`, actual.rail === rail && actual.railReady === rail && actual.titleRails === (rail && !approvedPage ? 1 : 0), actual);
         if (page.title) {
           const decoded = await p.evaluate(text => { const element = document.createElement('textarea'); element.innerHTML = text; return element.value; }, page.title);
           ok(`${prefix}: safe page-title configuration matches the inventory`, actual.config.title === decoded, { expected: decoded, actual: actual.config.title });
@@ -248,10 +261,10 @@ try {
         await print(p, prefix);
         await demoControls(p, page.path, prefix);
         if (width === 390 && page.path === '/about/') await menu(p, prefix);
-        if ([390, 768].includes(width) && !rail && actual.row.length) {
+        if ([390, 768].includes(width) && !approvedPage && actual.row.length) {
           await p.evaluate(() => scrollTo({ top: 0, behavior: 'instant' })); await settle(p);
           const target = page.path === '/privacy-policy/' ? '#ts-client-privacy' : actual.row.at(-1);
-          await existingAnchor(p, `.ts-jump a[href="${target}"]`, prefix + '/jump-row', page.path === '/privacy-policy/');
+          await existingAnchor(p, `.ts-jump a[href="${target}"]`, prefix + '/jump-row', page.path === '/privacy-policy/', null, true);
         }
         if ([390, 768].includes(width) && ['/work-with-me/', '/corporate-massage-portland/'].includes(page.path)) {
           await p.evaluate(() => scrollTo({ top: 0, behavior: 'instant' })); await settle(p);
@@ -259,7 +272,7 @@ try {
           if (!href) throw new Error(`INVALID ${page.path}: existing hero anchor not found`);
           await existingAnchor(p, `.entry-content a[href="${href}"]:not(.ts-pk a,.ts-jump a,nav a)`, prefix + '/hero-link');
         }
-        if (width === 390 && actual.row.length && !rail) nojsRoutes.push({ path: page.path, links: actual.row });
+        if (width === 390 && actual.row.length && !approvedPage) nojsRoutes.push({ path: page.path, links: actual.row });
       }
       ok(`${label}: no JavaScript errors`, errors.length === 0, errors); await p.close();
     }
@@ -268,7 +281,7 @@ try {
     for (const item of nojsRoutes) {
       const p = await nojs.newPage(), response = await p.goto(base + item.path, { waitUntil: 'load' });
       if (response?.status() !== 200) throw new Error(`INVALID no-JS${item.path}: response${response?.status()}`);
-      ok(`${item.path}: no-JavaScript row stays visible with existing targets`, await p.evaluate(() => !document.querySelector('#ts-peek-title-strip') && [...document.querySelectorAll('.ts-jump')].every(row => getComputedStyle(row).display !== 'none' && [...row.querySelectorAll('a[href^="#"]')].every(a => document.getElementById(decodeURIComponent(a.hash.slice(1)))))));
+      ok(`${item.path}: no-JavaScript row stays visible with existing targets`, await p.evaluate(() => !document.querySelector('#ts-peek-title-strip,.ts-pk-nav,.ts-pk-card') && [...document.querySelectorAll('.ts-jump')].every(row => getComputedStyle(row).display !== 'none' && [...row.querySelectorAll('a[href^="#"]')].every(a => document.getElementById(decodeURIComponent(a.hash.slice(1)))))));
       for (const href of [...new Set([item.links[0], item.links.at(-1)])]) {
         await p.locator(`.ts-jump a[href="${href}"]`).first().click(); await p.waitForTimeout(100);
         ok(`${item.path}: native no-JS link reaches${href}`, await p.evaluate(href => { const r = document.getElementById(decodeURIComponent(href.slice(1))).getBoundingClientRect(); return location.hash === href && r.height > 0 && r.bottom > 0 && r.top < innerHeight; }, href));
@@ -278,22 +291,28 @@ try {
     await nojs.close();
     const noPointer = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
     await noPointer.addInitScript(() => { delete window.PointerEvent; });
-    const { p, errors } = await open(noPointer, '/thai-massage/');
-    if (await p.evaluate(() => 'PointerEvent' in window)) throw new Error('INVALID no-PointerEvent scenario: browser API property could not be removed');
-    const actual = await inspect(p);
-    ok('no PointerEvent: strip remains ready and the rail falls back to ordinary links', actual.ready && !actual.rail && !actual.railReady && actual.actual.length > 0 && await p.locator('.ts-jump').isVisible(), actual);
-    ok('no PointerEvent: no JavaScript errors', errors.length === 0, errors); await noPointer.close();
+    for (const path of ['/thai-massage/', '/services/', '/work-with-me/']) {
+      const { p, errors } = await open(noPointer, path);
+      if (await p.evaluate(() => 'PointerEvent' in window)) throw new Error('INVALID no-PointerEvent scenario: browser API property could not be removed');
+      const actual = await inspect(p);
+      const rowsVisible = await p.locator('.ts-jump').evaluateAll(rows => rows.every(row => getComputedStyle(row).display !== 'none'));
+      ok(`no PointerEvent${path}: strip remains ready without rail UI and ordinary rows stay visible`, actual.ready && !actual.rail && !actual.railReady && actual.titleRails === 0 && actual.actual.length > 0 && JSON.stringify(actual.actual) === JSON.stringify(actual.expected) && rowsVisible, actual);
+      ok(`no PointerEvent${path}: no JavaScript errors`, errors.length === 0, errors); await p.close();
+    }
+    await noPointer.close();
   }
   if (fixtures) {
     const core = readFileSync(new URL('./peek-nav.php', import.meta.url), 'utf8');
     const css = core.match(/<style id="ts-peek-nav-css">[\s\S]*?<\/style>/)[0], js = core.match(/<script id="ts-peek-nav-runtime">[\s\S]*?<\/script>/)[0];
     const title = 'A complete page title that stays readable on a narrow screen without cutting off its final words';
     const block = (id, text) => `<h2 id="${id}">${text}</h2><p>Fixture paragraph.</p><div style="height:360px"></div>`;
+    const curatedRow = '<nav class="ts-jump"><ul><li><a href="#third">Last label</a></li><li><a href="#missing">Missing</a></li><li><a href="#first">First label</a></li><li><a href="#hidden">Hidden label</a></li></ul></nav>' + block('first', 'First source heading') + '<div hidden><h2 id="hidden">Hidden source heading</h2></div>' + block('third', 'Last source heading');
     const cases = [
       { name: 'zero', html: '<h1>Fixture heading</h1><p>A short page.</p>', expected: [title] },
       { name: 'one', html: block('one', title), expected: [title] },
       { name: 'headings', noPointer: true, html: '<nav><h2>Navigation heading</h2></nav><header><h2>Embedded header</h2></header><footer><h2>Embedded footer</h2></footer><div hidden><h2>Hidden heading</h2></div><div aria-hidden="true"><h2>Aria-hidden heading</h2></div><div style="height:0;overflow:hidden"><h2>Collapsed heading</h2></div><details><summary>Closed detail</summary><h2>Closed-detail heading</h2></details>' + block('first', 'First content heading') + block('second', 'Second content heading') + block('third', 'Third content heading'), expected: ['First content heading', 'Second content heading', 'Third content heading'] },
-      { name: 'row', html: '<nav class="ts-jump"><ul><li><a href="#third">Last label</a></li><li><a href="#missing">Missing</a></li><li><a href="#first">First label</a></li><li><a href="#hidden">Hidden label</a></li></ul></nav>' + block('first', 'First source heading') + '<div hidden><h2 id="hidden">Hidden source heading</h2></div>' + block('third', 'Last source heading'), expected: ['First label', 'Last label'] },
+      { name: 'row', html: curatedRow, expected: ['First label', 'Hidden label', 'Last label'] },
+      { name: 'row-no-pointer', noPointer: true, html: curatedRow, expected: ['First label', 'Last label'] },
       { name: 'grid', html: '<style>.results{display:grid;grid-template-columns:1fr;gap:20px}@media(min-width:1000px){.results{grid-template-columns:1fr 1fr}}</style><div class="results">' + ['First result', 'Second result', 'Third result', 'Fourth result'].map((text, index) => '<section>' + block('result-' + index, text) + '</section>').join('') + '</div>', expected: ['First result', 'Second result', 'Third result', 'Fourth result'] },
       { name: 'fixed-search', mode: 'fixed', html: block('result-one', 'First search result') + block('result-two', 'Second search result'), expected: [title] }
     ];
@@ -307,7 +326,9 @@ try {
       for (const width of [390, 768, 1280]) {
         await p.setViewportSize({ width, height: 844 }); await p.evaluate(() => scrollTo({ top: 0, behavior: 'instant' })); await settle(p);
         const actual = await inspect(p), label = `local-${spec.name}/${width}`;
-        ok(`${label}: expected headings or full fixed title without page data`, JSON.stringify(actual.actual) === JSON.stringify(spec.expected) && actual.data === 0 && !actual.rail && actual.ready && !actual.railReady, actual);
+        const rail = !spec.noPointer;
+        ok(`${label}: expected headings or full fixed title without page data`, JSON.stringify(actual.actual) === JSON.stringify(spec.expected) && actual.data === 0 && actual.ready, actual);
+        ok(`${label}: title-only rail follows PointerEvent availability`, actual.rail === rail && actual.railReady === rail && actual.titleRails === (rail ? 1 : 0), actual);
         ok(`${label}: read-only with no interactive/tab destinations`, actual.interactive === 0 && actual.pointer === 'none', actual);
         await bounds(p, label); await track(p, label, actual.expected.length); await print(p, label);
       }

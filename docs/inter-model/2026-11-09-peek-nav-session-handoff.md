@@ -1,5 +1,20 @@
 # Session handoff: the Peek navigation (for the next Claude Code session)
 
+**Current candidate: title-only Peek rails on pages without existing rails; not
+deployed.** The [title-rail record](../reviews/2026-11-09-peek-title-rails.md)
+tracks Ryan's new request and the pending full gates. Reuse existing jump-row
+labels/targets, otherwise visible H2 headings or one page-title entry, without
+new summaries, IDs or hashes. Keep Rail/Index practice rails; Progress A–D gains
+the shared rail, while E hides it and releases its rail padding for the demo.
+Four approved data sets and settled gestures remain unchanged. The manifest now
+separates enabled `titleStrip`, pending `titleRail` and four approved summary pages.
+
+The deployed code is frozen as `peek-nav-shared-v4.php`; `core-title-strip` now
+pins exact v3→v4. The new `core-title-rail` transition starts from v4 and has no
+staging apply or actual snapshot yet. After any future apply, reverse that
+transition using its own actual snapshot first, before the baseline recovery
+below. Fresh-copy, wording, visual, offline and verified-backup gates still apply.
+
 **Deployed staging39; public browser check blocked by HTTP202.** The all-page
 read-only title strip and globally enlarged scrolling summaries were written to
 #1380 at **10:24:52 UTC**; apply run **42600617720** finished **10:28:23 UTC, PASS**.
@@ -26,12 +41,12 @@ encrypted off-site. Restore import returned 0, with only #1380/cache differences
 There was no fallback-only interval. Recovery requires a fresh verified backup,
 current full-state checks and the matching package: first use explicit
 `core-title-strip --rollback $HOME/private-backups/peek-template-core-title-strip-before-20261109-102452-90630a29.json`
-arguments to restore frozen v3 before any older transition. Before future runtime
-changes, freeze this deployed payload as v4 and pin this transition to it; use a
-new exact transition for later versions. No v4 freeze is claimed yet.
-`peek-pages.json` marks the title strip enabled separately from undecided rail
-eligibility. Services/short-page rails, Safari, physical devices and actual
-assistive technology remain open. Main/live remain untouched.
+arguments to restore frozen v3 before any older transition, after reversing any
+later applied title-rail transition to v4. The v4 freeze and v3→v4 pin are complete;
+new versions use separate exact transitions. Services/short-page title rails now
+follow the pending scope above; new summary wording remains subject to approval.
+Safari, physical devices and actual assistive technology remain open. Main/live
+remain untouched.
 
 **Previous deployed baseline: short open summaries (frozen shared v3).** The
 [short-summary touch record](../reviews/2026-11-09-peek-short-summary-touch.md)

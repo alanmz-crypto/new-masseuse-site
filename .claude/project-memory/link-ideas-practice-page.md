@@ -345,6 +345,19 @@ Detailed visual review, full evidence and recovery are in the
 The reported page-scroll leak was not reproduced by native Chromium probes;
 Safari/physical-device resolution remains unverified.
 
+**Current candidate: title-only rails where no rail already exists; not deployed.**
+The [title-rail record](../../docs/reviews/2026-11-09-peek-title-rails.md) tracks the
+new shared rail using existing jump labels/targets, otherwise visible H2 headings
+or one page-title entry. No new summaries, destination IDs or hashes are added;
+the four approved data sets and settled gestures remain unchanged. Keep the
+Rail/Index practice rails. Progress A–D gets the shared rail; E hides it and
+releases its rail padding while the demo rail is active. `peek-pages.json` records
+this pending `titleRail` scope separately from enabled strips and summary pages.
+The exact v4→candidate `core-title-rail` route still needs full offline, fresh-copy,
+wording, visual and verified-backup gates. No staging apply or actual snapshot
+exists for it; after any apply, reverse it with its own actual snapshot to v4
+before the older recovery below.
+
 **Deployed staging39; public browser check blocked by HTTP202.** The all-page
 title strip and larger usable summaries were written to #1380 at **10:24:52 UTC**;
 apply run **42600617720** finished **10:28:23 UTC, PASS**. Short, no-heading,
@@ -366,14 +379,14 @@ and all four data identities/hashes are unchanged. The fresh export
 `staging39-before-peek-nav-20261109-102438.sql` and actual snapshot
 `peek-template-core-title-strip-before-20261109-102452-90630a29.json` were verified
 encrypted off-site. Restore import returned 0, with only #1380/cache differences.
-The update was in place with no fallback-only interval. Before future runtime
-changes, freeze this payload as shared v4 and pin the transition to it; use a new
-exact transition for a later version. This freeze has not yet been performed.
+The update was in place with no fallback-only interval. Its payload is now
+frozen as `peek-nav-shared-v4.php`; `core-title-strip` pins exact v3→v4, preserving
+the actual snapshot. The new title-rail candidate uses its own exact transition.
 
 Original core snapshot: `peek-template-core-before-20261109-023645-fe38e498.json`.
 Original Thai data snapshot: `peek-template-page-thai-massage-before-20261109-023133-3e7b1cf5.json`.
-After a fresh verified backup and current full-state checks, first use the
-matching package with explicit
+After a fresh verified backup and current full-state checks, and after reversing
+any later applied title-rail transition to v4, use the matching package with explicit
 `core-title-strip --rollback $HOME/private-backups/peek-template-core-title-strip-before-20261109-102452-90630a29.json`
 arguments to restore v3. Then reverse `core-summary-touch` with its own actual
 snapshot to restore v2. Then `core-upgrade --rollback FILE` restores v1 from frozen v2;
@@ -385,12 +398,13 @@ core and other pages active. **All earlier rollback commands in this note are hi
 `peek-nav-before-20261109-010037-0c493281.json` to delete the shared core.
 Migration installed inert Thai data before changing #1380 in place, with no
 fallback-only interval. Main/live remain unchanged.
-Current deployment/status: [all-page title strip](../../docs/reviews/2026-11-09-peek-title-strip-all-pages.md).
+Current candidate: [title-only rails](../../docs/reviews/2026-11-09-peek-title-rails.md).
+Deployed baseline/status: [all-page title strip](../../docs/reviews/2026-11-09-peek-title-strip-all-pages.md).
 Previous baseline: [short-summary touch correction](../../docs/reviews/2026-11-09-peek-short-summary-touch.md).
 Earlier core correction: [clearance/touch record](../../docs/reviews/2026-11-09-peek-clearance.md).
 Earlier page-data rollout: [service rollout record](../../docs/reviews/2026-11-09-peek-service-rollout.md).
 Original core migration/recovery: [template record](../../docs/reviews/2026-11-09-peek-template.md).
 Approved wording: [three-page review](../../docs/reviews/2026-11-09-peek-summary-drafts.md).
-Services/short-page rails remain individual eligibility decisions; the title
-strip includes every visitor page. Safari/physical
-devices and actual assistive technology remain untested.
+Services/short-page title rails follow the pending scope above; new summaries
+still require wording approval. The title strip includes every visitor page.
+Safari, physical devices and actual assistive technology remain untested.

@@ -1,8 +1,8 @@
 <?php
-// Shared Peek behavior. The display-only title strip runs across front-end pages;
-// page data registered by ts_pk_pages enables the existing rail and summaries.
-// The server-rendered .ts-jump row remains the only rail destination/order source
-// and the no-JavaScript fallback. Title-only pages without it read visible H2s.
+// Shared Peek behavior. Visitor pages without an existing practice rail receive
+// a title-only rail; ts_pk_pages registrations enable the approved summaries.
+// The server-rendered .ts-jump row owns its destinations and no-JavaScript
+// fallback. Other pages use visible H2 targets, or their main reading start.
 // Section names = the row's labels; descriptions = the first paragraph of each section; reading time = its words at 200 a minute. No page content is changed.
 // A duplicate core must not register a second set of hooks. Data snippets register
 // their filters at load time; the current page is selected only during rendering.
@@ -51,6 +51,12 @@ html.ts-pk-title-ready .ts-pk-title-content :is(.tsx-lab,.tsp-lab,.tsr-lab) :is(
 .ts-pk-nav.is-active .ts-pk-rail{background:var(--pk-panel);background:color-mix(in srgb,var(--pk-panel) 92%,transparent);box-shadow:0 6px 24px -12px rgba(0,0,0,.45)}
 .ts-pk-rail li{position:relative;flex:var(--len,1) 1 0;min-height:22px;margin:0;padding:0}
 .ts-pk-rail a{position:absolute;inset:0;display:block;text-decoration:none;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;-webkit-user-drag:none;user-select:none}
+.ts-pk-rail button{position:absolute;inset:0;display:block;width:100%;height:100%;min-height:0;margin:0;padding:0;border:0;border-radius:0;background:none!important;color:inherit;box-shadow:none!important;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:none}
+.ts-pk-rail button:focus-visible{outline:3px solid var(--pk-accent);outline-offset:-2px;border-radius:12px}
+.ts-pk-rail button::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:6px;margin-left:-3px;border-radius:9px;background:var(--pk-rule);box-shadow:0 0 0 2px var(--pk-ground);transition:width .15s,margin .15s,background-color .15s}
+.ts-pk-rail button i{position:absolute;left:50%;top:0;bottom:0;width:6px;margin-left:-3px;border-radius:9px;background:var(--pk-on);transform-origin:top;transform:scaleY(var(--p,0));transition:width .15s,margin .15s}
+.ts-pk-rail li.is-hover button::before,.ts-pk-rail li.is-hover button i{width:12px;margin-left:-6px}
+.ts-pk-rail li.is-hover button::before{background:var(--pk-accent)}
 .ts-pk-rail a:focus-visible{outline:3px solid var(--pk-accent);outline-offset:-2px;border-radius:12px}
 .ts-pk-rail a::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:6px;margin-left:-3px;border-radius:9px;background:var(--pk-rule);box-shadow:0 0 0 2px var(--pk-ground);transition:width .15s,margin .15s,background-color .15s}
 .ts-pk-rail a i{position:absolute;left:50%;top:0;bottom:0;width:6px;margin-left:-3px;border-radius:9px;background:var(--pk-on);transform-origin:top;transform:scaleY(var(--p,0));transition:width .15s,margin .15s}
@@ -102,8 +108,8 @@ html[data-ts-theme="dark"] .ts-pk-card .hint{color:var(--pk-on)}
 /* keep the text clear of the rail on phones and tablets; the bottom "On this page" button is replaced by the rail */
 /* Ryan, 2026-11-09: the clearance goes on the text blocks, not on the column. Padding the column moved its middle, and full-width theme blocks (placed from
    that middle) shifted by half of it: off the left edge with the rail on the right (text cut at the screen edge), past the right edge with it on the left */
-@media screen{html.ts-pk-ready.ts-pk-pad:not(.ts-pk-left) .entry-content :is(p,li,h1,h2,h3,h4,h5,h6,blockquote,figcaption,dt,dd,td,th):not(:is(p,li,blockquote,dd,td,th,.ts-pk,.ts-jump) *){padding-right:var(--pk-clear)}}
-@media screen{html.ts-pk-ready.ts-pk-pad:not(.ts-pk-left) .entry-content .ts-pk-top{padding-right:calc(12px + var(--pk-clear))}   /* the strip's titles stay clear of the rail while it is still in the page */}
+@media screen{html.ts-pk-ready.ts-pk-pad:not(.ts-pk-left) .ts-pk-title-content :is(p,li,h1,h2,h3,h4,h5,h6,blockquote,figcaption,dt,dd,td,th):not(:is(p,li,blockquote,dd,td,th,.ts-pk,.ts-jump,nav,[role="navigation"],[role="tablist"],.tsx-picker,.tsp-picker,.tsr-picker,.tsi-picker) *){padding-right:var(--pk-clear)}}
+@media screen{html.ts-pk-ready.ts-pk-pad:not(.ts-pk-left) .ts-pk-title-content .ts-pk-top{padding-right:calc(12px + var(--pk-clear))}   /* the strip's titles stay clear of the rail while it is still in the page */}
 html.ts-pk-ready .entry-content .ts-jump{display:none!important}   /* Ryan, 2026-11-08: "You can remove the in-page links beneath header." The strip, rail and index replace the row; without JavaScript (no ts-pk-ready) it still shows and works */
 html.ts-pk-ready #ts-section-guide-trigger,html.ts-pk-ready #ts-section-guide-popover{display:none!important}   /* only once the rail is there */
 html.ts-pk-title-ready .ts-pk-title-content :is(a[href],button,input,select,textarea,summary,[tabindex]){scroll-margin-top:calc(var(--pk-head,0px) + var(--pk-strip,0px) + 12px)}   /* Tab never leaves focus under the pinned header and strip (Kiro, WCAG 2.4.11); on the content only: scroll-padding on the page made focusing the pinned header's own menu button scroll the page to the top */
@@ -120,8 +126,8 @@ html.ts-pk-left .ts-pk-you{right:auto;left:28px}
 html.ts-pk-left .ts-pk-card{right:auto;left:58px;transform:translateX(-10px) scale(.98)}
 html.ts-pk-left .ts-pk-card.is-on{transform:none}
 html.ts-pk-left .ts-pk-tip{right:auto;left:58px}
-@media screen{html.ts-pk-ready.ts-pk-pad.ts-pk-left .entry-content :is(p,li,h1,h2,h3,h4,h5,h6,blockquote,figcaption,dt,dd,td,th):not(:is(p,li,blockquote,dd,td,th,.ts-pk,.ts-jump) *){padding-left:var(--pk-clear)}}
-@media screen{html.ts-pk-ready.ts-pk-pad.ts-pk-left .entry-content .ts-pk-top{padding-left:calc(12px + var(--pk-clear))}   /* the other side keeps the theme's own spacing */}
+@media screen{html.ts-pk-ready.ts-pk-pad.ts-pk-left .ts-pk-title-content :is(p,li,h1,h2,h3,h4,h5,h6,blockquote,figcaption,dt,dd,td,th):not(:is(p,li,blockquote,dd,td,th,.ts-pk,.ts-jump,nav,[role="navigation"],[role="tablist"],.tsx-picker,.tsp-picker,.tsr-picker,.tsi-picker) *){padding-left:var(--pk-clear)}}
+@media screen{html.ts-pk-ready.ts-pk-pad.ts-pk-left .ts-pk-title-content .ts-pk-top{padding-left:calc(12px + var(--pk-clear))}   /* the other side keeps the theme's own spacing */}
 /* the side button in the preview */
 .ts-pk-card .hint{display:flex;align-items:center;justify-content:space-between;gap:.5rem}
 .ts-pk-card .side{display:none;flex:0 0 auto;min-height:36px;margin:0;padding:0 .7rem;border:1px solid var(--pk-rule);border-radius:999px;background:transparent;color:var(--pk-muted);font:inherit;font-size:.75rem;font-weight:700;cursor:pointer;touch-action:none}
@@ -190,6 +196,9 @@ html .ts-pk .ts-pk-card.fit5 .open > b{font-size:.95rem;margin-top:0}
 html .ts-pk .ts-pk-card.fit5 .sum{display:block;max-height:4.4em;margin-top:.15rem}   /* gist and whole-paragraph summaries retain a scroll surface on the smallest fit */
 html .ts-pk .ts-pk-card.fit5 .hint{margin-top:.3rem;padding-top:.3rem}   /* very short screens or very large text retain the name, summary and jump hint */
 html .ts-pk .ts-pk-card.ts-pk-stack{overflow-y:auto;overscroll-behavior:contain}   /* last resort: the card scrolls, and fit() brings the open box into view */
+/* Newly added rails show names and navigation only, never paragraph previews. */
+.ts-pk-titles[hidden]{display:none!important}
+.ts-pk-titles .ts-pk-card b{overflow-wrap:anywhere}
 @media print{.ts-pk{display:none!important}html.ts-pk-ready .entry-content .ts-jump{display:block!important}}
 </style>
 	<?php
@@ -215,7 +224,9 @@ add_action( 'wp_footer', function () {
 <script id="ts-peek-nav-runtime">
 (function () {
   'use strict';
+  var revealingQuestion = null;
   function esc(t) { var d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
+  function attr(t) { return esc(t).replace(/"/g, '&quot;'); }
   function byHref(h) { var id = h.slice(1); try { id = decodeURIComponent(id); } catch (e) {} return document.getElementById(id); }
   function rowSections(row) {
     var out = row ? [].slice.call(row.querySelectorAll('a[href^="#"]')).map(function (a) { return { href: a.getAttribute('href'), label: a.textContent.trim() }; }) : [];
@@ -223,8 +234,7 @@ add_action( 'wp_footer', function () {
     out.sort(function (a, b) { var x = byHref(a.href), y = byHref(b.href); return x === y ? 0 : (x.compareDocumentPosition(y) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1); });
     return out;
   }
-  // Both modes share the same strip, pinned-header measurement, reading line
-  // and title painting. Only the registered pages continue into the rail code.
+  // All modes share the same strip, pinned-header measurement and reading line.
   function titleStrip(content, sections, resolve, row, titleOnly) {
     var root = document.documentElement, strip = document.createElement('div');
     strip.id = 'ts-peek-title-strip'; strip.className = 'ts-pk ts-pk-top' + (titleOnly ? ' is-title-only' : ''); strip.setAttribute('aria-hidden', 'true');
@@ -331,7 +341,13 @@ add_action( 'wp_footer', function () {
       var faq = target.closest('.uagb-faq-item');
       if (faq && !faq.classList.contains('uagb-faq-item-active')) {
         var question = faq.querySelector('.uagb-faq-questions-button');
-        if (question) question.click();
+        if (question) {
+          // A title-card touch has armed its compatibility-click guard. Allow
+          // only this owned disclosure activation through that guard; the real
+          // click following the finger lift must still be consumed.
+          revealingQuestion = question;
+          try { question.click(); } finally { revealingQuestion = null; }
+        }
       }
       // A second activation may arrive while an already-active answer is
       // still animating and moving the destination.
@@ -371,14 +387,9 @@ add_action( 'wp_footer', function () {
       }
       window.addEventListener('scroll', idle, { passive: true }); idle();
     }
-    content.addEventListener('click', function (event) {
-      var link = event.target.closest ? event.target.closest('a[href^="#"]') : null;
-      if (!link || link.closest('.ts-pk,.tsx-lab,.tsp-lab,.tsr-lab,.tsi-lab') || event.defaultPrevented || event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
-      var href = link.getAttribute('href'), target = href.length > 1 ? byHref(href) : null;
+    function go(target, href) {
       if (!target || !content.contains(target)) return;
-      // Astra's anchor handler ignores scroll-margin. Capture the existing link
-      // before it reaches the theme; retain its exact encoded fragment.
-      event.preventDefault(); event.stopPropagation(); stopPending(); mayArrive = false;
+      stopPending(); mayArrive = false;
       var animated = reveal(target); align(target, calm.matches ? 'auto' : 'smooth');
       var focus = /^H[1-6]$/.test(target.tagName) ? target : target.querySelector('h1,h2,h3,h4,h5,h6,.ts-faq-disclosure') || target;
       if (!focus.hasAttribute('tabindex') && !focus.matches('a[href],button,input,select,textarea,summary')) {
@@ -386,8 +397,17 @@ add_action( 'wp_footer', function () {
         focus.addEventListener('blur', function () { if (focus.getAttribute('tabindex') === '-1') focus.removeAttribute('tabindex'); }, { once: true });
       }
       focus.focus({ preventScroll: true });
-      try { history.replaceState(null, '', href); } catch (e) {}
+      if (href) { try { history.replaceState(null, '', href); } catch (e) {} }
       if (animated) settle(target);
+    }
+    content.addEventListener('click', function (event) {
+      var link = event.target.closest ? event.target.closest('a[href^="#"]') : null;
+      if (!link || link.closest('.ts-pk,.tsx-lab,.tsp-lab,.tsr-lab,.tsi-lab') || event.defaultPrevented || event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+      var href = link.getAttribute('href'), target = href.length > 1 ? byHref(href) : null;
+      if (!target || !content.contains(target)) return;
+      // Astra's anchor handler ignores scroll-margin. Capture the existing link
+      // before it reaches the theme; retain its exact encoded fragment.
+      event.preventDefault(); event.stopPropagation(); go(target, href);
     }, true);
     function arrive() {
       if (!mayArrive) return;
@@ -402,8 +422,9 @@ add_action( 'wp_footer', function () {
       earlyInputs.forEach(function (event) { window.addEventListener(event, touched, { once: true, passive: true, capture: true }); });
       window.addEventListener('load', function () { clearEarly(); arrive(); }, { once: true });
     }
+    return { go: go };
   }
-  function titleOnly(content, row) {
+  function sectionSource(content, row, keepRowTargets) {
     var config = null;
     try { config = JSON.parse(document.getElementById('ts-peek-nav-config').textContent); } catch (e) {}
     var fallback = config && typeof config.title === 'string' && config.title.trim() ? config.title.trim() : document.title;
@@ -418,15 +439,19 @@ add_action( 'wp_footer', function () {
       }
       return true;
     }
-    function collect() {
+    return function () {
       // Search cards can share a row; they are parallel results, not sequential
       // page sections. The WordPress query supplies their fixed page identity.
-      if (config && config.mode === 'fixed') return [{ label: fallback, target: content }];
-      var list = row ? rowSections(row).map(function (s) { return { label: s.label, target: byHref(s.href) }; }) : [].slice.call(content.querySelectorAll('h2')).map(function (h) { return { label: h.innerText.replace(/\s+/g, ' ').trim(), target: h }; });
-      list = list.filter(function (s) { return s.label && visible(s.target); });
-      return list.length ? list : [{ label: fallback, target: content }];
-    }
-    var sections = collect(), title = titleStrip(content, sections, function (i) { return sections[i] && sections[i].target; }, row, true), measurePractice = practiceNavigation(content, title), queued = false;
+      if (config && config.mode === 'fixed') return [{ label: fallback, target: content, href: null }];
+      var list = row ? rowSections(row).map(function (s) { return { label: s.label, target: byHref(s.href), href: s.href }; }) : [].slice.call(content.querySelectorAll('h2')).map(function (h) { return { label: h.innerText.replace(/\s+/g, ' ').trim(), target: h, href: h.id ? '#' + encodeURIComponent(h.id) : null }; });
+      // An explicit jump row may intentionally address a closed disclosure;
+      // discovered headings belong to the rail only while they are visible.
+      list = list.filter(function (s) { return s.label && (keepRowTargets && row ? content.contains(s.target) : visible(s.target)); });
+      return list.length ? list : [{ label: fallback, target: content, href: null }];
+    };
+  }
+  function titleOnly(content, row) {
+    var collect = sectionSource(content, row, false), sections = collect(), title = titleStrip(content, sections, function (i) { return sections[i] && sections[i].target; }, row, true), measurePractice = practiceNavigation(content, title), queued = false;
     function drawTitle() {
       queued = false;
       var next = collect();
@@ -455,9 +480,13 @@ add_action( 'wp_footer', function () {
     var hasData = data && data.schema === 1 && Array.isArray(data.items);
     var links = row ? [].slice.call(row.querySelectorAll('a[href^="#"]')) : [];
     if (hasData && links.some(function (a) { return !byHref(a.getAttribute('href')); }) && tries++ < 10) { setTimeout(init, 100); return; }
-    var S = rowSections(row);
-    if (!hasData || S.length < 2 || !('PointerEvent' in window) || document.querySelector('.ts-pk-nav')) { titleOnly(content, row); return; }
-    function el(i) { return S[i] ? byHref(S[i].href) : null; }
+    hasData = hasData && rowSections(row).length >= 2;
+    var collect = hasData ? null : sectionSource(content, row, true), S = collect ? collect() : rowSections(row);
+    // These two dedicated practice pages already have their own rail. Progress
+    // mode E is handled dynamically below because its other modes have none.
+    var practiceRail = content.querySelector('.tsr-lab .tsr-nav,.tsi-lab .tsi-nav');
+    if (!S.length || !('PointerEvent' in window) || practiceRail || document.querySelector('.ts-pk-nav')) { titleOnly(content, row); return; }
+    function el(i) { return S[i] ? S[i].target || byHref(S[i].href) : null; }
     function nameOf(h, fallback) {   // Kiro, template review: an FAQ panel or a plain block as a target read its whole text (2,173 characters) aloud
       if (!h) return fallback;
       var q = /^H[1-6]$/.test(h.tagName) ? h : h.querySelector('h1,h2,h3,h4,h5,h6,.uagb-question,summary');
@@ -469,7 +498,7 @@ add_action( 'wp_footer', function () {
     // Data contains wording, approval and provenance only; it cannot introduce
     // destinations. Unapproved or mismatched-page data uses whole paragraphs.
     var PAGE = (location.pathname.replace(/\/+$/, '').split('/').pop() || '').toLowerCase(), MINE = Object.create(null);
-    if (data.slug === PAGE && data.approval && data.approval.status === 'approved') {
+    if (hasData && data.slug === PAGE && data.approval && data.approval.status === 'approved') {
       data.items.forEach(function (item) {
         if (!Array.isArray(item) || item.length !== 2 || typeof item[0] !== 'string' || typeof item[1] !== 'string') return;
         if (!Object.prototype.hasOwnProperty.call(MINE, item[1])) MINE[item[1]] = [];
@@ -477,6 +506,7 @@ add_action( 'wp_footer', function () {
       });
     }
     function describe() {
+      if (!hasData) { S.forEach(function (s) { s.heading = s.label; }); return; }
       var ps = [].slice.call(content.querySelectorAll('p'));
       S.forEach(function (s, i) {
         var h = el(i), nx = el(i + 1) || null; s.heading = nameOf(h, s.label); s.excerpt = ''; s.desc = ''; s.paragraph = ''; s.mins = 1;
@@ -515,10 +545,23 @@ add_action( 'wp_footer', function () {
 
     // the parts: top strip (display only), rail with its index icon, card
     var segs = null;
-    var title = titleStrip(content, S, el, row, false), strip = title.strip;
-    var box = document.createElement('div'); box.className = 'ts-pk';
+    function readingTarget(i) {
+      var target = el(i), reading = target;
+      if (!hasData) for (var node = target; node && content.contains(node); node = node.parentElement) {
+        if (node.tagName === 'DETAILS' && !node.open) reading = node.querySelector(':scope > summary') || node;
+        if (node.classList.contains('uagb-faq-item') && !node.classList.contains('uagb-faq-item-active')) reading = node.querySelector('.uagb-faq-questions-button') || node;
+      }
+      return reading;
+    }
+    var title = titleStrip(content, S, readingTarget, row, !hasData), strip = title.strip;
+    var measurePractice = hasData ? function () {} : practiceNavigation(content, title), plainNavigation = null;
+    function railHTML() {
+      return S.map(function (s) { var tag = s.href ? 'a' : 'button'; return '<li><' + tag + (s.href ? ' href="' + attr(s.href) + '" draggable="false"' : ' type="button"') + ' data-ts-pk-section aria-label="' + attr(s.label) + '"><i></i></' + tag + '></li>'; }).join('');
+    }
+    function fanHTML() { return S.map(function (s, i) { return '<li><b>' + (i + 1) + '</b><span>' + esc(s.label) + '</span></li>'; }).join(''); }
+    var box = document.createElement('div'); box.className = 'ts-pk' + (hasData ? '' : ' ts-pk-titles');
     box.innerHTML = '<nav class="ts-pk-nav" aria-label="Sections on this page"><button type="button" class="ts-pk-ix" aria-expanded="false" aria-controls="ts-pk-fan" aria-label="Show all sections (press and hold)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 7h12M6 12h9M6 17h6"/></svg></button>' +
-      '<ol class="ts-pk-fan" id="ts-pk-fan" aria-label="All sections" aria-hidden="true">' + S.map(function (s, i) { return '<li><b>' + (i + 1) + '</b><span>' + esc(s.label) + '</span></li>'; }).join('') + '</ol><ol class="ts-pk-rail">' + S.map(function (s) { return '<li><a href="' + esc(s.href) + '" aria-label="' + esc(s.label) + '" draggable="false"><i></i></a></li>'; }).join('') + '</ol><span class="ts-pk-you" aria-hidden="true"></span><span class="ts-pk-label" aria-hidden="true"></span></nav>' +
+      '<ol class="ts-pk-fan" id="ts-pk-fan" aria-label="All sections" aria-hidden="true">' + fanHTML() + '</ol><ol class="ts-pk-rail">' + railHTML() + '</ol><span class="ts-pk-you" aria-hidden="true"></span><span class="ts-pk-label" aria-hidden="true"></span></nav>' +
       '<div class="ts-pk-card" role="group" aria-label="Section preview" tabindex="-1"></div>' +
       '<div class="ts-pk-tip" role="note" hidden><p>Slide your thumb along this bar to preview each section. Lift, then tap the preview to go there. Press the icon above it to see them all, and slide onto a name to open it.</p><div class="row"><button type="button" class="ok">Got it</button><button type="button" class="flip"></button></div></div>';
     var host = strip.parentNode, okHost = true;
@@ -528,18 +571,18 @@ add_action( 'wp_footer', function () {
       you = nav.querySelector('.ts-pk-you'), label = nav.querySelector('.ts-pk-label'), card = box.querySelector('.ts-pk-card');
     segs = [].slice.call(rail.children);
     var tip = box.querySelector('.ts-pk-tip'), ixBtn = nav.querySelector('.ts-pk-ix'), fan = nav.querySelector('.ts-pk-fan'), fanItems = [].slice.call(fan.children);
-    root.classList.add('ts-pk-ready');
     var head = title.head; title.watch(ask);
     // the text column stops 6px before the rail and its icon, whatever margin the theme gives the content at this width (measured, not guessed);
     // the theme's own padding stays whenever it is already enough
     function clearRail() {
       var left = root.classList.contains('ts-pk-left'), need = 0;
       root.classList.remove('ts-pk-pad');   // start from the theme's own spacing (no paint happens in between)
+      if (box.hidden) return;
       // measure where the text really ends on the rail's side, and give the text blocks only what is missing (the column itself is never padded)
       for (var round = 0; round < 3; round++) {
         var edge = left ? Infinity : -Infinity;
         [].forEach.call(content.querySelectorAll('p,li,h1,h2,h3,h4,h5,h6,blockquote,figcaption,dt,dd,td,th'), function (el) {
-          if (el.closest('.ts-pk') || el.closest('.ts-jump')) return;
+          if (el.closest('.ts-pk,.ts-jump,nav,[role="navigation"],[role="tablist"],.tsx-picker,.tsp-picker,.tsr-picker,.tsi-picker')) return;
           var r = el.getBoundingClientRect(); if (!r.width) return;
           var cs = getComputedStyle(el), e2 = left ? r.left + (parseFloat(cs.paddingLeft) || 0) : r.right - (parseFloat(cs.paddingRight) || 0);
           edge = left ? Math.min(edge, e2) : Math.max(edge, e2);
@@ -592,7 +635,9 @@ add_action( 'wp_footer', function () {
       }
     }
     function jumpTo(i) {   // Ryan, 2026-11-08: no "Back to ..." button
-      var h = el(i); if (!h) return; openDetails(h);
+      var h = el(i); if (!h || !h.isConnected) return;
+      if (plainNavigation) { plainNavigation.go(h, S[i].href); return; }
+      openDetails(h);
       // a closed FAQ panel as the target opens, as the old row's own script did (after the swallowed click of the tap, so it is not swallowed itself)
       var fq = h.classList.contains('uagb-faq-item') ? h : h.closest('.uagb-faq-item');
       if (fq && !fq.classList.contains('uagb-faq-item-active')) { var qb = fq.querySelector('.uagb-faq-questions-button'); if (qb) setTimeout(function () { qb.click(); }, 600); }
@@ -604,13 +649,13 @@ add_action( 'wp_footer', function () {
       try { history.replaceState(null, '', S[i].href); } catch (e) {}   // no history entry per jump (the browser's Back would only change the address); the in-page Back returns
     }
     // the row at the top of the page uses the same jump (otherwise the theme's own smooth scroll hides the heading under the strip)
-    row.addEventListener('click', function (e) {
+    if (hasData && row) row.addEventListener('click', function (e) {
       var a = e.target.closest ? e.target.closest('a[href^="#"]') : null; if (!a || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       var i = S.findIndex(function (s) { return s.href === a.getAttribute('href'); }); if (i < 0 || !el(i)) return; e.preventDefault(); e.stopPropagation(); jumpTo(i);
     }, true);
 
     // any other in-page link in the content (a "see the questions below" link): the theme's own smooth scroll would hide the heading under the pinned header and strip
-    content.addEventListener('click', function (e) {
+    if (hasData) content.addEventListener('click', function (e) {
       var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
       if (!a || a.closest('.ts-pk') || a.closest('.ts-jump') || e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       var id = a.getAttribute('href').slice(1); try { id = decodeURIComponent(id); } catch (err) {}
@@ -622,18 +667,18 @@ add_action( 'wp_footer', function () {
     }, true);
 
     // the peek card
-    function rowHTML(k, near) { return '<button type="button" class="row' + (near ? ' near' : '') + '" data-k="' + k + '" aria-label="Section ' + (k + 1) + ': ' + esc(S[k].heading) + ' (show its preview)"><b>' + (k + 1) + '</b><span>' + esc(S[k].heading) + '</span></button>'; }
+    function rowHTML(k, near) { return '<button type="button" class="row' + (near ? ' near' : '') + '" data-k="' + k + '" aria-label="Section ' + (k + 1) + ': ' + attr(S[k].heading) + ' (show its preview)"><b>' + (k + 1) + '</b><span>' + esc(S[k].heading) + '</span></button>'; }
     function cardHTML(i, pinned) {
       var above = '', below = '';
       for (var k = 0; k < S.length; k++) { if (k < i) above += rowHTML(k, k === i - 1); else if (k > i) below += rowHTML(k, k === i + 1); }
       var upN = Math.max(0, i - 1), downN = Math.max(0, S.length - i - 2);   // shown only when the far rows are folded away (fit4)
-      return (upN ? '<span class="more" aria-hidden="true">+' + upN + ' more above</span>' : '') + above + '<div class="open" tabindex="-1" aria-label="Section ' + (i + 1) + ' preview: ' + esc(S[i].label) + '">' + openHTML(i, pinned) + '</div>' + below + (downN ? '<span class="more" aria-hidden="true">+' + downN + ' more below</span>' : '');
+      return (upN ? '<span class="more" aria-hidden="true">+' + upN + ' more above</span>' : '') + above + '<div class="open" tabindex="-1" aria-label="Section ' + (i + 1) + ' preview: ' + attr(S[i].label) + '">' + openHTML(i, pinned) + '</div>' + below + (downN ? '<span class="more" aria-hidden="true">+' + downN + ' more below</span>' : '');
     }
     function openHTML(i, pinned) {
       var s = S[i];   // no "You are in ...": the strip at the top already says where you are (Ryan, 2026-11-08)
-      return '<button type="button" class="x" aria-label="Close the preview">×</button><small>Section ' + (i + 1) + ' of ' + S.length + ' · ' + s.mins + ' min</small><b>' + esc(s.label) + '</b>' +
-        (s.gist ? '<div class="sum is-gist" tabindex="0" role="region" aria-label="Summary of ' + esc(s.label) + '"><ul>' + s.gist.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul></div>'
-         : s.summary.length ? '<div class="sum" tabindex="0" role="region" aria-label="Summary of ' + esc(s.label) + '">' + s.summary.map(function (t) { return '<p>' + esc(t) + '</p>'; }).join('') + '</div>' : '') +
+      return '<button type="button" class="x" aria-label="Close the preview">×</button><small>Section ' + (i + 1) + ' of ' + S.length + (hasData ? ' · ' + s.mins + ' min' : '') + '</small><b>' + esc(s.label) + '</b>' +
+        (!hasData ? '' : s.gist ? '<div class="sum is-gist" tabindex="0" role="region" aria-label="Summary of ' + attr(s.label) + '"><ul>' + s.gist.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul></div>'
+         : s.summary.length ? '<div class="sum" tabindex="0" role="region" aria-label="Summary of ' + attr(s.label) + '">' + s.summary.map(function (t) { return '<p>' + esc(t) + '</p>'; }).join('') + '</div>' : '') +
         '<span class="hint"><span>' + (pinned ? 'Tap to go there' : 'Lift to keep this preview') + '</span>' + (pinned ? '<button type="button" class="side" aria-label="Move the section bar to the ' + sideName() + ' side">⇆ ' + (sideName() === 'left' ? 'Left' : 'Right') + '</button>' : '') + '</span>';
     }
     function hover(i) { segs.forEach(function (li, k) { li.classList.toggle('is-hover', k === i); }); }
@@ -733,12 +778,19 @@ add_action( 'wp_footer', function () {
       place(y);
     }
     // "this tap is already handled": swallow the click the browser may still send (to the card, or to whatever is under it once the card is gone)
-    function swallowNextClick(lifted) {
+    function swallowNextClick(lifted, keepTouchFocus) {
       var on = true, t = 0;
-      function sw(c) { c.preventDefault(); c.stopPropagation(); off(); }
+      function sw(c) { if (revealingQuestion && c.target === revealingQuestion && !c.isTrusted) return; c.preventDefault(); c.stopPropagation(); off(); }
+      // A title-only card can disappear on pointerup before the compatibility
+      // mousedown. Its default action would blur the destination just focused
+      // by the jump. Reserve that same touch's mouse events; a fresh pointer
+      // press is a new interaction and disarms this additional reservation.
+      function mouse(c) { c.preventDefault(); c.stopPropagation(); }
+      function nextPointer() { off(); }
       function up() { clearTimeout(t); t = setTimeout(off, 450); }   // timed from the finger lifting, however long the press
-      function off() { if (!on) return; on = false; clearTimeout(t); document.removeEventListener('click', sw, true); document.removeEventListener('pointerup', up, true); document.removeEventListener('pointercancel', off, true); }
+      function off() { if (!on) return; on = false; clearTimeout(t); document.removeEventListener('click', sw, true); document.removeEventListener('pointerup', up, true); document.removeEventListener('pointercancel', off, true); document.removeEventListener('mousedown', mouse, true); document.removeEventListener('mouseup', mouse, true); document.removeEventListener('pointerdown', nextPointer, true); }
       document.addEventListener('click', sw, true); document.addEventListener('pointercancel', off, true);   // a touch that becomes a scroll sends no click: disarm
+      if (keepTouchFocus) { document.addEventListener('mousedown', mouse, true); document.addEventListener('mouseup', mouse, true); document.addEventListener('pointerdown', nextPointer, true); }
       if (lifted) up(); else document.addEventListener('pointerup', up, true);
       setTimeout(off, 5000);
     }
@@ -777,11 +829,11 @@ add_action( 'wp_footer', function () {
       var d = cdn; if (!d || e.pointerId !== d.id) return; cdn = null;
       // A control owns a touch from its start. Sliding across it neither pans the
       // page nor turns the compatibility click into an accidental box activation.
-      cardTapAt = performance.now(); swallowNextClick(true);
+      cardTapAt = performance.now(); swallowNextClick(true, !!collect);
       if (d.dragged || Math.abs(e.clientX - d.x) > 10 || Math.abs(e.clientY - d.y) > 10) return;
       activate(d.target);   // the click that follows would land on whatever is under the card once it closes
     });
-    function cancelCardTouch(e) { if (cdn && e.pointerId === cdn.id) cdn = null; }
+    function cancelCardTouch(e) { if (cdn && e.pointerId === cdn.id) { cdn = null; if (collect) ask(); } }
     card.addEventListener('pointercancel', cancelCardTouch);
     card.addEventListener('lostpointercapture', function (e) { if (e.target === card) cancelCardTouch(e); });
     card.addEventListener('click', function (e) { if (performance.now() - cardTapAt < 700) { e.preventDefault(); return; } activate(e.target); });
@@ -802,7 +854,7 @@ add_action( 'wp_footer', function () {
     rail.addEventListener('pointerdown', function (e) { if (e.button > 0 || !e.isPrimary || g) return; tipSeen(); try { rail.setPointerCapture(e.pointerId); } catch (err) {} g = { id: e.pointerId, i: pickAt(e.clientY), y: e.clientY }; show(g.i, g.y, false); e.preventDefault(); });
     rail.addEventListener('pointermove', function (e) { if (!g || e.pointerId !== g.id) return; var i = pickAt(e.clientY); g.y = e.clientY; if (i !== g.i) { g.i = i; buzz(); } show(g.i, g.y, false); });
     rail.addEventListener('pointerup', function (e) { if (!g || e.pointerId !== g.id) return; var x = g; g = null; pressedAt = performance.now(); show(x.i, x.y, true); });
-    function cancelPress(e) { if (!g || e.pointerId !== g.id) return; g = null; pressedAt = performance.now(); hideCard(); }
+    function cancelPress(e) { if (!g || e.pointerId !== g.id) return; g = null; pressedAt = performance.now(); hideCard(); if (collect) ask(); }
     rail.addEventListener('pointercancel', cancelPress);
     rail.addEventListener('lostpointercapture', function (e) { if (g && e.pointerId === g.id) setTimeout(function () { cancelPress(e); }, 0); });   // after pointerup g is already cleared, so only a real loss cancels
     rail.addEventListener('click', function (e) {   // a finger or mouse press is handled above; a click without one (keyboard Enter, VoiceOver/TalkBack double-tap) opens the preview and focuses it
@@ -814,9 +866,55 @@ add_action( 'wp_footer', function () {
     // draw on scroll, once per frame
     var ticking = false;
     var lastLabel = '', lastRove = -2, tipWait = 0;
+    function refreshSections() {
+      // A captured gesture owns its original target until release. Reconcile
+      // afterward by DOM identity, never by an index that may now name another
+      // section. The stable rail/fan containers retain their event handlers.
+      if (!collect || g || ixPress !== null || cdn || fdn) return;
+      var next = collect();
+      if (next.length === S.length && next.every(function (s, i) { return s.target === el(i) && s.label === S[i].label && s.href === S[i].href; })) return;
+      var active = document.activeElement, selected = card.classList.contains('is-on') ? el(+card.dataset.i) : null;
+      var wasPinned = card.classList.contains('is-pinned'), wasCardFocus = card.contains(active), focusedPiece = segs.findIndex(function (li) { return li.contains(active); });
+      var focusedTarget = focusedPiece >= 0 ? el(focusedPiece) : null, currentTarget = el(cur), oldIndex = Math.max(0, cur), oldY = card.getBoundingClientRect().top + card.offsetHeight / 2;
+      var focusedRow = wasCardFocus && active.closest('.row'), rowTarget = focusedRow ? el(+focusedRow.dataset.k) : null, oldSelectedIndex = +card.dataset.i;
+      var focusPart = active && active.closest('.x,.side'), focusClass = focusPart && (focusPart.classList.contains('x') ? '.x' : '.side');
+      hideCard(); setIndex(false);
+      S = next; describe(); rail.innerHTML = railHTML(); fan.innerHTML = fanHTML();
+      segs = [].slice.call(rail.children); fanItems = [].slice.call(fan.children);
+      title.setSections(S); lengths(); lastRove = -2; lastLabel = '';
+      var selectedIndex = S.findIndex(function (s) { return s.target === selected; }), focusedIndex = S.findIndex(function (s) { return s.target === focusedTarget; });
+      var currentIndex = S.findIndex(function (s) { return s.target === currentTarget; });
+      rove(focusedIndex >= 0 ? focusedIndex : currentIndex >= 0 ? currentIndex : Math.min(oldIndex, S.length - 1));
+      if (selectedIndex >= 0) {
+        show(selectedIndex, oldY, wasPinned);
+        if (wasCardFocus) {
+          var rowIndex = S.findIndex(function (s) { return s.target === rowTarget; });
+          var focusNext = focusClass ? card.querySelector(focusClass) : rowIndex >= 0 ? card.querySelector('.row[data-k="' + rowIndex + '"]') : null;
+          if (!focusNext || !focusNext.getClientRects().length) focusNext = card.querySelector('.open') || card;
+          focusNext.focus({ preventScroll: true });
+        }
+      } else if (wasCardFocus) focusSeg(Math.min(isFinite(oldSelectedIndex) ? oldSelectedIndex : oldIndex, S.length - 1));
+      if (focusedPiece >= 0) focusSeg(focusedIndex >= 0 ? focusedIndex : Math.min(focusedPiece, S.length - 1));
+      scheduleClear(true);
+    }
+    function practiceRailMode() {
+      if (hasData) return;
+      var demo = content.querySelector('.tsp-lab .tspE.is-on'), hidden = !!(demo && demo.getClientRects().length && getComputedStyle(demo).display !== 'none');
+      if (hidden === box.hidden) return;
+      var hadFocus = hidden && box.contains(document.activeElement);
+      if (hadFocus) {
+        var chooser = content.querySelector('.tsp-picker [aria-pressed="true"]') || demo.querySelector('a,button');
+        if (chooser) chooser.focus({ preventScroll: true });
+      }
+      box.hidden = hidden; root.classList.toggle('ts-pk-ready', !hidden);
+      hideCard(); setIndex(false); hideTip();
+      clearRail(); title.layout(); lengths();
+    }
     function draw() {
       ticking = false;
+      refreshSections(); measurePractice(); practiceRailMode();
       var state = title.read(), fills = state.fills, w = state.whole; cur = state.cur;
+      if (box.hidden) { title.paint(state); return; }
       var rr = rail.getBoundingClientRect(), nr = nav.getBoundingClientRect();
       title.paint(state);
       segs.forEach(function (li, k) { li.firstChild.firstChild.style.setProperty('--p', fills[k].toFixed(3)); var a = li.firstChild; if (k === cur) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
@@ -882,6 +980,7 @@ add_action( 'wp_footer', function () {
     function ixRelease(e) {
       if (ixPress === null || e.pointerId !== ixPress) return;
       ixPress = null; ixPressedAt = performance.now(); clearTimeout(keepT);
+      if (collect) ask();
       var h = handed, up = e.type === 'pointerup'; handed = null;
       if (h && up) { show(h.i, h.y, true); return; }   // lifted on the rail: the preview stays, tap it to go there
       if (h) { hideCard(); return; }                   // cancelled while on the rail
@@ -924,6 +1023,13 @@ add_action( 'wp_footer', function () {
     window.addEventListener('resize', function () { lengths(); ask(); refitCard(true); });   // rotation or zoom: keep the open card inside the current visible bounds
     var lastCW = -1;
     if ('ResizeObserver' in window) new ResizeObserver(function (en) { lengths(); ask(); var w = Math.round(en[0].contentRect.width); if (w !== lastCW) { lastCW = w; scheduleClear(true); } }).observe(content);   // re-measure the rail clearance only when the width changes (an FAQ opening changes the height every frame)   // FAQ answers or late fonts move block edges   // FAQ answers opening change the lengths
+    if (collect) {
+      content.addEventListener('toggle', ask, true);
+      document.addEventListener('pointerup', ask); document.addEventListener('pointercancel', ask);
+      if ('MutationObserver' in window) new MutationObserver(function (changes) {
+        if (changes.some(function (change) { var node = change.target.nodeType === 1 ? change.target : change.target.parentElement; return node && !node.closest('.ts-pk'); })) ask();
+      }).observe(content, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['class', 'style', 'hidden', 'inert', 'aria-hidden', 'open', 'id', 'href'] });
+    }
 
     // arriving with #section in the address: the theme's own smooth scroll runs after load and ignores the strip, so line the heading up once the page stops moving
     // (only for 4 s, and never once the visitor touches, scrolls or types)
@@ -937,8 +1043,11 @@ add_action( 'wp_footer', function () {
       ['wheel', 'touchstart', 'keydown', 'mousedown'].forEach(function (ev) { window.addEventListener(ev, stop, { once: true, passive: true }); });
       window.addEventListener('scroll', idle, { passive: true }); idle();
     }
+    root.classList.add('ts-pk-ready'); clearRail(); title.layout();
+    if (collect) plainNavigation = titleNavigation(content, title, function () { refreshSections(); measurePractice(); lengths(); ask(); });
     describe(); lengths(); draw();
-    if (document.readyState === 'complete') arrive(); else window.addEventListener('load', function () { describe(); lengths(); ask(); arrive(); });
+    if (document.readyState === 'complete') { if (hasData) arrive(); }
+    else window.addEventListener('load', function () { describe(); lengths(); ask(); if (hasData) arrive(); });
   }
   // after the section guide has given the Questions and Research headings their ids
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { setTimeout(init, 0); }); else setTimeout(init, 0);
