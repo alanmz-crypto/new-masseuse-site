@@ -1,7 +1,9 @@
 {
-  "id": "peek-input-rail-inspect-1",
-  "op": "inspect",
+  "id": "peek-rail-input-rehearse-1",
+  "op": "rehearse",
   "target": "staging39",
-  "query": "page",
-  "arg": "rail-nav-ideas"
+  "installer": "link-ideas/rail-input/install-rail-input.php",
+  "args": [
+    "--with-uploads"
+  ]
 }
