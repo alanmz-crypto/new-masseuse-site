@@ -1,0 +1,2828 @@
+{
+  "coreFile": "/tmp/peek-title-rail-frozen-a5805598/peek-nav.php",
+  "fileSha256": "382c7805cae8495e4a88c0bf81b9250c4bd44e92225a4632f7255f62e14e482c",
+  "codeSha256": "a580559856501092595ed3d623a74e05e133463706e118ec0338fc28948d92af",
+  "scope": "Local structural forms with native submit inputs, fixture-only prevented submissions, and no external requests; not actual Astra page reproduction.",
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 390,
+      "side": "right",
+      "errors": [],
+      "before": {
+        ".entry-content": {
+          "left": 0,
+          "right": 390,
+          "width": 390
+        },
+        ".hero": {
+          "left": 0,
+          "right": 390,
+          "width": 390
+        },
+        ".columns": {
+          "left": 24,
+          "right": 366,
+          "width": 342
+        },
+        ".left": {
+          "left": 24,
+          "right": 183,
+          "width": 159
+        },
+        ".right": {
+          "left": 207,
+          "right": 366,
+          "width": 159
+        }
+      },
+      "after": {
+        ".entry-content": {
+          "left": 0,
+          "right": 390,
+          "width": 390
+        },
+        ".hero": {
+          "left": 0,
+          "right": 390,
+          "width": 390
+        },
+        ".columns": {
+          "left": 24,
+          "right": 366,
+          "width": 342
+        },
+        ".left": {
+          "left": 24,
+          "right": 183,
+          "width": 159
+        },
+        ".right": {
+          "left": 207,
+          "right": 366,
+          "width": 159
+        }
+      },
+      "geometry": {
+        "y": 151,
+        "max": 1929,
+        "icon": {
+          "left": 344,
+          "right": 388,
+          "top": 201.1875,
+          "bottom": 245.1875,
+          "width": 44,
+          "height": 44
+        },
+        "buttons": [
+          {
+            "side": "left",
+            "rect": {
+              "left": 24,
+              "right": 134,
+              "top": 185.78125,
+              "bottom": 241.78125,
+              "width": 110,
+              "height": 56
+            },
+            "points": [
+              {
+                "name": "left-top",
+                "x": 36,
+                "y": 197.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-middle",
+                "x": 36,
+                "y": 213.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-bottom",
+                "x": 36,
+                "y": 229.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-top",
+                "x": 79,
+                "y": 197.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-middle",
+                "x": 79,
+                "y": 213.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-bottom",
+                "x": 79,
+                "y": 229.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-top",
+                "x": 122,
+                "y": 197.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-middle",
+                "x": 122,
+                "y": 213.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-bottom",
+                "x": 122,
+                "y": 229.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              }
+            ],
+            "iconOverlap": 0
+          },
+          {
+            "side": "right",
+            "rect": {
+              "left": 256,
+              "right": 366,
+              "top": 185.78125,
+              "bottom": 241.78125,
+              "width": 110,
+              "height": 56
+            },
+            "points": [
+              {
+                "name": "left-top",
+                "x": 268,
+                "y": 197.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-middle",
+                "x": 268,
+                "y": 213.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-bottom",
+                "x": 268,
+                "y": 229.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-top",
+                "x": 311,
+                "y": 197.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-middle",
+                "x": 311,
+                "y": 213.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-bottom",
+                "x": 311,
+                "y": 229.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-top",
+                "x": 354,
+                "y": 197.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-middle",
+                "x": 354,
+                "y": 213.78125,
+                "hit": "BUTTON.ts-pk-ix",
+                "delivers": false
+              },
+              {
+                "name": "right-bottom",
+                "x": 354,
+                "y": 229.78125,
+                "hit": "BUTTON.ts-pk-ix",
+                "delivers": false
+              }
+            ],
+            "iconOverlap": 893.0625
+          }
+        ]
+      },
+      "centerResult": "1",
+      "blockedResult": {
+        "submits": "1",
+        "index": "true",
+        "card": "ts-pk-card",
+        "url": "http://localhost:8091/__asymmetric-form-probe/"
+      }
+    },
+    {
+      "engine": "chromium",
+      "width": 390,
+      "side": "left",
+      "errors": [],
+      "before": {
+        ".entry-content": {
+          "left": 0,
+          "right": 390,
+          "width": 390
+        },
+        ".hero": {
+          "left": 0,
+          "right": 390,
+          "width": 390
+        },
+        ".columns": {
+          "left": 24,
+          "right": 366,
+          "width": 342
+        },
+        ".left": {
+          "left": 24,
+          "right": 183,
+          "width": 159
+        },
+        ".right": {
+          "left": 207,
+          "right": 366,
+          "width": 159
+        }
+      },
+      "after": {
+        ".entry-content": {
+          "left": 0,
+          "right": 390,
+          "width": 390
+        },
+        ".hero": {
+          "left": 0,
+          "right": 390,
+          "width": 390
+        },
+        ".columns": {
+          "left": 24,
+          "right": 366,
+          "width": 342
+        },
+        ".left": {
+          "left": 24,
+          "right": 183,
+          "width": 159
+        },
+        ".right": {
+          "left": 207,
+          "right": 366,
+          "width": 159
+        }
+      },
+      "geometry": {
+        "y": 151,
+        "max": 1929,
+        "icon": {
+          "left": 2,
+          "right": 46,
+          "top": 201.1875,
+          "bottom": 245.1875,
+          "width": 44,
+          "height": 44
+        },
+        "buttons": [
+          {
+            "side": "left",
+            "rect": {
+              "left": 24,
+              "right": 134,
+              "top": 185.78125,
+              "bottom": 241.78125,
+              "width": 110,
+              "height": 56
+            },
+            "points": [
+              {
+                "name": "left-top",
+                "x": 36,
+                "y": 197.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-middle",
+                "x": 36,
+                "y": 213.78125,
+                "hit": "BUTTON.ts-pk-ix",
+                "delivers": false
+              },
+              {
+                "name": "left-bottom",
+                "x": 36,
+                "y": 229.78125,
+                "hit": "BUTTON.ts-pk-ix",
+                "delivers": false
+              },
+              {
+                "name": "center-top",
+                "x": 79,
+                "y": 197.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-middle",
+                "x": 79,
+                "y": 213.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-bottom",
+                "x": 79,
+                "y": 229.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-top",
+                "x": 122,
+                "y": 197.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-middle",
+                "x": 122,
+                "y": 213.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-bottom",
+                "x": 122,
+                "y": 229.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              }
+            ],
+            "iconOverlap": 893.0625
+          },
+          {
+            "side": "right",
+            "rect": {
+              "left": 256,
+              "right": 366,
+              "top": 185.78125,
+              "bottom": 241.78125,
+              "width": 110,
+              "height": 56
+            },
+            "points": [
+              {
+                "name": "left-top",
+                "x": 268,
+                "y": 197.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-middle",
+                "x": 268,
+                "y": 213.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-bottom",
+                "x": 268,
+                "y": 229.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-top",
+                "x": 311,
+                "y": 197.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-middle",
+                "x": 311,
+                "y": 213.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-bottom",
+                "x": 311,
+                "y": 229.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-top",
+                "x": 354,
+                "y": 197.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-middle",
+                "x": 354,
+                "y": 213.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-bottom",
+                "x": 354,
+                "y": 229.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              }
+            ],
+            "iconOverlap": 0
+          }
+        ]
+      },
+      "centerResult": "1",
+      "blockedResult": {
+        "submits": "1",
+        "index": "true",
+        "card": "ts-pk-card",
+        "url": "http://localhost:8091/__asymmetric-form-probe/"
+      }
+    },
+    {
+      "engine": "chromium",
+      "width": 768,
+      "side": "right",
+      "errors": [],
+      "before": {
+        ".entry-content": {
+          "left": 0,
+          "right": 768,
+          "width": 768
+        },
+        ".hero": {
+          "left": 0,
+          "right": 768,
+          "width": 768
+        },
+        ".columns": {
+          "left": 24,
+          "right": 744,
+          "width": 720
+        },
+        ".left": {
+          "left": 24,
+          "right": 372,
+          "width": 348
+        },
+        ".right": {
+          "left": 396,
+          "right": 744,
+          "width": 348
+        }
+      },
+      "after": {
+        ".entry-content": {
+          "left": 0,
+          "right": 768,
+          "width": 768
+        },
+        ".hero": {
+          "left": 0,
+          "right": 768,
+          "width": 768
+        },
+        ".columns": {
+          "left": 24,
+          "right": 744,
+          "width": 720
+        },
+        ".left": {
+          "left": 24,
+          "right": 372,
+          "width": 348
+        },
+        ".right": {
+          "left": 396,
+          "right": 744,
+          "width": 348
+        }
+      },
+      "geometry": {
+        "y": 151,
+        "max": 1929,
+        "icon": {
+          "left": 722,
+          "right": 766,
+          "top": 201.1875,
+          "bottom": 245.1875,
+          "width": 44,
+          "height": 44
+        },
+        "buttons": [
+          {
+            "side": "left",
+            "rect": {
+              "left": 24,
+              "right": 134,
+              "top": 185.78125,
+              "bottom": 241.78125,
+              "width": 110,
+              "height": 56
+            },
+            "points": [
+              {
+                "name": "left-top",
+                "x": 36,
+                "y": 197.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-middle",
+                "x": 36,
+                "y": 213.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-bottom",
+                "x": 36,
+                "y": 229.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-top",
+                "x": 79,
+                "y": 197.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-middle",
+                "x": 79,
+                "y": 213.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-bottom",
+                "x": 79,
+                "y": 229.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-top",
+                "x": 122,
+                "y": 197.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-middle",
+                "x": 122,
+                "y": 213.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-bottom",
+                "x": 122,
+                "y": 229.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              }
+            ],
+            "iconOverlap": 0
+          },
+          {
+            "side": "right",
+            "rect": {
+              "left": 634,
+              "right": 744,
+              "top": 185.78125,
+              "bottom": 241.78125,
+              "width": 110,
+              "height": 56
+            },
+            "points": [
+              {
+                "name": "left-top",
+                "x": 646,
+                "y": 197.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-middle",
+                "x": 646,
+                "y": 213.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-bottom",
+                "x": 646,
+                "y": 229.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-top",
+                "x": 689,
+                "y": 197.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-middle",
+                "x": 689,
+                "y": 213.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-bottom",
+                "x": 689,
+                "y": 229.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-top",
+                "x": 732,
+                "y": 197.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-middle",
+                "x": 732,
+                "y": 213.78125,
+                "hit": "BUTTON.ts-pk-ix",
+                "delivers": false
+              },
+              {
+                "name": "right-bottom",
+                "x": 732,
+                "y": 229.78125,
+                "hit": "BUTTON.ts-pk-ix",
+                "delivers": false
+              }
+            ],
+            "iconOverlap": 893.0625
+          }
+        ]
+      },
+      "centerResult": "1",
+      "blockedResult": {
+        "submits": "1",
+        "index": "true",
+        "card": "ts-pk-card",
+        "url": "http://localhost:8091/__asymmetric-form-probe/"
+      }
+    },
+    {
+      "engine": "chromium",
+      "width": 768,
+      "side": "left",
+      "errors": [],
+      "before": {
+        ".entry-content": {
+          "left": 0,
+          "right": 768,
+          "width": 768
+        },
+        ".hero": {
+          "left": 0,
+          "right": 768,
+          "width": 768
+        },
+        ".columns": {
+          "left": 24,
+          "right": 744,
+          "width": 720
+        },
+        ".left": {
+          "left": 24,
+          "right": 372,
+          "width": 348
+        },
+        ".right": {
+          "left": 396,
+          "right": 744,
+          "width": 348
+        }
+      },
+      "after": {
+        ".entry-content": {
+          "left": 0,
+          "right": 768,
+          "width": 768
+        },
+        ".hero": {
+          "left": 0,
+          "right": 768,
+          "width": 768
+        },
+        ".columns": {
+          "left": 24,
+          "right": 744,
+          "width": 720
+        },
+        ".left": {
+          "left": 24,
+          "right": 372,
+          "width": 348
+        },
+        ".right": {
+          "left": 396,
+          "right": 744,
+          "width": 348
+        }
+      },
+      "geometry": {
+        "y": 151,
+        "max": 1929,
+        "icon": {
+          "left": 2,
+          "right": 46,
+          "top": 201.1875,
+          "bottom": 245.1875,
+          "width": 44,
+          "height": 44
+        },
+        "buttons": [
+          {
+            "side": "left",
+            "rect": {
+              "left": 24,
+              "right": 134,
+              "top": 185.78125,
+              "bottom": 241.78125,
+              "width": 110,
+              "height": 56
+            },
+            "points": [
+              {
+                "name": "left-top",
+                "x": 36,
+                "y": 197.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-middle",
+                "x": 36,
+                "y": 213.78125,
+                "hit": "BUTTON.ts-pk-ix",
+                "delivers": false
+              },
+              {
+                "name": "left-bottom",
+                "x": 36,
+                "y": 229.78125,
+                "hit": "BUTTON.ts-pk-ix",
+                "delivers": false
+              },
+              {
+                "name": "center-top",
+                "x": 79,
+                "y": 197.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-middle",
+                "x": 79,
+                "y": 213.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-bottom",
+                "x": 79,
+                "y": 229.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-top",
+                "x": 122,
+                "y": 197.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-middle",
+                "x": 122,
+                "y": 213.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-bottom",
+                "x": 122,
+                "y": 229.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              }
+            ],
+            "iconOverlap": 893.0625
+          },
+          {
+            "side": "right",
+            "rect": {
+              "left": 634,
+              "right": 744,
+              "top": 185.78125,
+              "bottom": 241.78125,
+              "width": 110,
+              "height": 56
+            },
+            "points": [
+              {
+                "name": "left-top",
+                "x": 646,
+                "y": 197.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-middle",
+                "x": 646,
+                "y": 213.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-bottom",
+                "x": 646,
+                "y": 229.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-top",
+                "x": 689,
+                "y": 197.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-middle",
+                "x": 689,
+                "y": 213.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-bottom",
+                "x": 689,
+                "y": 229.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-top",
+                "x": 732,
+                "y": 197.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-middle",
+                "x": 732,
+                "y": 213.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-bottom",
+                "x": 732,
+                "y": 229.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              }
+            ],
+            "iconOverlap": 0
+          }
+        ]
+      },
+      "centerResult": "1",
+      "blockedResult": {
+        "submits": "1",
+        "index": "true",
+        "card": "ts-pk-card",
+        "url": "http://localhost:8091/__asymmetric-form-probe/"
+      }
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "side": "right",
+      "errors": [],
+      "before": {
+        ".entry-content": {
+          "left": 0,
+          "right": 1280,
+          "width": 1280
+        },
+        ".hero": {
+          "left": 0,
+          "right": 1280,
+          "width": 1280
+        },
+        ".columns": {
+          "left": 24,
+          "right": 1256,
+          "width": 1232
+        },
+        ".left": {
+          "left": 24,
+          "right": 628,
+          "width": 604
+        },
+        ".right": {
+          "left": 652,
+          "right": 1256,
+          "width": 604
+        }
+      },
+      "after": {
+        ".entry-content": {
+          "left": 0,
+          "right": 1280,
+          "width": 1280
+        },
+        ".hero": {
+          "left": 0,
+          "right": 1280,
+          "width": 1280
+        },
+        ".columns": {
+          "left": 24,
+          "right": 1256,
+          "width": 1232
+        },
+        ".left": {
+          "left": 24,
+          "right": 628,
+          "width": 604
+        },
+        ".right": {
+          "left": 652,
+          "right": 1256,
+          "width": 604
+        }
+      },
+      "geometry": {
+        "y": 151,
+        "max": 1929,
+        "icon": {
+          "left": 1234,
+          "right": 1278,
+          "top": 201.1875,
+          "bottom": 245.1875,
+          "width": 44,
+          "height": 44
+        },
+        "buttons": [
+          {
+            "side": "left",
+            "rect": {
+              "left": 24,
+              "right": 134,
+              "top": 185.78125,
+              "bottom": 241.78125,
+              "width": 110,
+              "height": 56
+            },
+            "points": [
+              {
+                "name": "left-top",
+                "x": 36,
+                "y": 197.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-middle",
+                "x": 36,
+                "y": 213.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-bottom",
+                "x": 36,
+                "y": 229.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-top",
+                "x": 79,
+                "y": 197.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-middle",
+                "x": 79,
+                "y": 213.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-bottom",
+                "x": 79,
+                "y": 229.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-top",
+                "x": 122,
+                "y": 197.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-middle",
+                "x": 122,
+                "y": 213.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-bottom",
+                "x": 122,
+                "y": 229.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              }
+            ],
+            "iconOverlap": 0
+          },
+          {
+            "side": "right",
+            "rect": {
+              "left": 1146,
+              "right": 1256,
+              "top": 185.78125,
+              "bottom": 241.78125,
+              "width": 110,
+              "height": 56
+            },
+            "points": [
+              {
+                "name": "left-top",
+                "x": 1158,
+                "y": 197.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-middle",
+                "x": 1158,
+                "y": 213.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-bottom",
+                "x": 1158,
+                "y": 229.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-top",
+                "x": 1201,
+                "y": 197.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-middle",
+                "x": 1201,
+                "y": 213.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-bottom",
+                "x": 1201,
+                "y": 229.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-top",
+                "x": 1244,
+                "y": 197.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-middle",
+                "x": 1244,
+                "y": 213.78125,
+                "hit": "BUTTON.ts-pk-ix",
+                "delivers": false
+              },
+              {
+                "name": "right-bottom",
+                "x": 1244,
+                "y": 229.78125,
+                "hit": "BUTTON.ts-pk-ix",
+                "delivers": false
+              }
+            ],
+            "iconOverlap": 893.0625
+          }
+        ]
+      },
+      "centerResult": "1",
+      "blockedResult": {
+        "submits": "1",
+        "index": "true",
+        "card": "ts-pk-card",
+        "url": "http://localhost:8091/__asymmetric-form-probe/"
+      }
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "side": "left",
+      "errors": [],
+      "before": {
+        ".entry-content": {
+          "left": 0,
+          "right": 1280,
+          "width": 1280
+        },
+        ".hero": {
+          "left": 0,
+          "right": 1280,
+          "width": 1280
+        },
+        ".columns": {
+          "left": 24,
+          "right": 1256,
+          "width": 1232
+        },
+        ".left": {
+          "left": 24,
+          "right": 628,
+          "width": 604
+        },
+        ".right": {
+          "left": 652,
+          "right": 1256,
+          "width": 604
+        }
+      },
+      "after": {
+        ".entry-content": {
+          "left": 0,
+          "right": 1280,
+          "width": 1280
+        },
+        ".hero": {
+          "left": 0,
+          "right": 1280,
+          "width": 1280
+        },
+        ".columns": {
+          "left": 24,
+          "right": 1256,
+          "width": 1232
+        },
+        ".left": {
+          "left": 24,
+          "right": 628,
+          "width": 604
+        },
+        ".right": {
+          "left": 652,
+          "right": 1256,
+          "width": 604
+        }
+      },
+      "geometry": {
+        "y": 151,
+        "max": 1929,
+        "icon": {
+          "left": 2,
+          "right": 46,
+          "top": 201.1875,
+          "bottom": 245.1875,
+          "width": 44,
+          "height": 44
+        },
+        "buttons": [
+          {
+            "side": "left",
+            "rect": {
+              "left": 24,
+              "right": 134,
+              "top": 185.78125,
+              "bottom": 241.78125,
+              "width": 110,
+              "height": 56
+            },
+            "points": [
+              {
+                "name": "left-top",
+                "x": 36,
+                "y": 197.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-middle",
+                "x": 36,
+                "y": 213.78125,
+                "hit": "BUTTON.ts-pk-ix",
+                "delivers": false
+              },
+              {
+                "name": "left-bottom",
+                "x": 36,
+                "y": 229.78125,
+                "hit": "BUTTON.ts-pk-ix",
+                "delivers": false
+              },
+              {
+                "name": "center-top",
+                "x": 79,
+                "y": 197.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-middle",
+                "x": 79,
+                "y": 213.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-bottom",
+                "x": 79,
+                "y": 229.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-top",
+                "x": 122,
+                "y": 197.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-middle",
+                "x": 122,
+                "y": 213.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-bottom",
+                "x": 122,
+                "y": 229.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              }
+            ],
+            "iconOverlap": 893.0625
+          },
+          {
+            "side": "right",
+            "rect": {
+              "left": 1146,
+              "right": 1256,
+              "top": 185.78125,
+              "bottom": 241.78125,
+              "width": 110,
+              "height": 56
+            },
+            "points": [
+              {
+                "name": "left-top",
+                "x": 1158,
+                "y": 197.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-middle",
+                "x": 1158,
+                "y": 213.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-bottom",
+                "x": 1158,
+                "y": 229.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-top",
+                "x": 1201,
+                "y": 197.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-middle",
+                "x": 1201,
+                "y": 213.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-bottom",
+                "x": 1201,
+                "y": 229.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-top",
+                "x": 1244,
+                "y": 197.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-middle",
+                "x": 1244,
+                "y": 213.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-bottom",
+                "x": 1244,
+                "y": 229.78125,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              }
+            ],
+            "iconOverlap": 0
+          }
+        ]
+      },
+      "centerResult": "1",
+      "blockedResult": {
+        "submits": "1",
+        "index": "true",
+        "card": "ts-pk-card",
+        "url": "http://localhost:8091/__asymmetric-form-probe/"
+      }
+    },
+    {
+      "engine": "firefox",
+      "width": 390,
+      "side": "right",
+      "errors": [],
+      "before": {
+        ".entry-content": {
+          "left": 0,
+          "right": 390,
+          "width": 390
+        },
+        ".hero": {
+          "left": 0,
+          "right": 390,
+          "width": 390
+        },
+        ".columns": {
+          "left": 24,
+          "right": 366,
+          "width": 342
+        },
+        ".left": {
+          "left": 24,
+          "right": 183,
+          "width": 159
+        },
+        ".right": {
+          "left": 207,
+          "right": 366,
+          "width": 159
+        }
+      },
+      "after": {
+        ".entry-content": {
+          "left": 0,
+          "right": 390,
+          "width": 390
+        },
+        ".hero": {
+          "left": 0,
+          "right": 390,
+          "width": 390
+        },
+        ".columns": {
+          "left": 24,
+          "right": 366,
+          "width": 342
+        },
+        ".left": {
+          "left": 24,
+          "right": 183,
+          "width": 159
+        },
+        ".right": {
+          "left": 207,
+          "right": 366,
+          "width": 159
+        }
+      },
+      "geometry": {
+        "y": 151,
+        "max": 1929,
+        "icon": {
+          "left": 344,
+          "right": 388,
+          "top": 201.1999969482422,
+          "bottom": 245.1999969482422,
+          "width": 44,
+          "height": 44
+        },
+        "buttons": [
+          {
+            "side": "left",
+            "rect": {
+              "left": 24,
+              "right": 134,
+              "top": 185.8000030517578,
+              "bottom": 241.8000030517578,
+              "width": 110,
+              "height": 56
+            },
+            "points": [
+              {
+                "name": "left-top",
+                "x": 36,
+                "y": 197.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-middle",
+                "x": 36,
+                "y": 213.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-bottom",
+                "x": 36,
+                "y": 229.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-top",
+                "x": 79,
+                "y": 197.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-middle",
+                "x": 79,
+                "y": 213.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-bottom",
+                "x": 79,
+                "y": 229.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-top",
+                "x": 122,
+                "y": 197.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-middle",
+                "x": 122,
+                "y": 213.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-bottom",
+                "x": 122,
+                "y": 229.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              }
+            ],
+            "iconOverlap": 0
+          },
+          {
+            "side": "right",
+            "rect": {
+              "left": 256,
+              "right": 366,
+              "top": 185.8000030517578,
+              "bottom": 241.8000030517578,
+              "width": 110,
+              "height": 56
+            },
+            "points": [
+              {
+                "name": "left-top",
+                "x": 268,
+                "y": 197.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-middle",
+                "x": 268,
+                "y": 213.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-bottom",
+                "x": 268,
+                "y": 229.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-top",
+                "x": 311,
+                "y": 197.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-middle",
+                "x": 311,
+                "y": 213.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-bottom",
+                "x": 311,
+                "y": 229.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-top",
+                "x": 354,
+                "y": 197.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-middle",
+                "x": 354,
+                "y": 213.8000030517578,
+                "hit": "BUTTON.ts-pk-ix",
+                "delivers": false
+              },
+              {
+                "name": "right-bottom",
+                "x": 354,
+                "y": 229.8000030517578,
+                "hit": "BUTTON.ts-pk-ix",
+                "delivers": false
+              }
+            ],
+            "iconOverlap": 893.2001342773438
+          }
+        ]
+      },
+      "centerResult": "1",
+      "blockedResult": {
+        "submits": "1",
+        "index": "true",
+        "card": "ts-pk-card",
+        "url": "http://localhost:8091/__asymmetric-form-probe/"
+      }
+    },
+    {
+      "engine": "firefox",
+      "width": 390,
+      "side": "left",
+      "errors": [],
+      "before": {
+        ".entry-content": {
+          "left": 0,
+          "right": 390,
+          "width": 390
+        },
+        ".hero": {
+          "left": 0,
+          "right": 390,
+          "width": 390
+        },
+        ".columns": {
+          "left": 24,
+          "right": 366,
+          "width": 342
+        },
+        ".left": {
+          "left": 24,
+          "right": 183,
+          "width": 159
+        },
+        ".right": {
+          "left": 207,
+          "right": 366,
+          "width": 159
+        }
+      },
+      "after": {
+        ".entry-content": {
+          "left": 0,
+          "right": 390,
+          "width": 390
+        },
+        ".hero": {
+          "left": 0,
+          "right": 390,
+          "width": 390
+        },
+        ".columns": {
+          "left": 24,
+          "right": 366,
+          "width": 342
+        },
+        ".left": {
+          "left": 24,
+          "right": 183,
+          "width": 159
+        },
+        ".right": {
+          "left": 207,
+          "right": 366,
+          "width": 159
+        }
+      },
+      "geometry": {
+        "y": 151,
+        "max": 1929,
+        "icon": {
+          "left": 2,
+          "right": 46,
+          "top": 201.1999969482422,
+          "bottom": 245.1999969482422,
+          "width": 44,
+          "height": 44
+        },
+        "buttons": [
+          {
+            "side": "left",
+            "rect": {
+              "left": 24,
+              "right": 134,
+              "top": 185.8000030517578,
+              "bottom": 241.8000030517578,
+              "width": 110,
+              "height": 56
+            },
+            "points": [
+              {
+                "name": "left-top",
+                "x": 36,
+                "y": 197.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-middle",
+                "x": 36,
+                "y": 213.8000030517578,
+                "hit": "BUTTON.ts-pk-ix",
+                "delivers": false
+              },
+              {
+                "name": "left-bottom",
+                "x": 36,
+                "y": 229.8000030517578,
+                "hit": "BUTTON.ts-pk-ix",
+                "delivers": false
+              },
+              {
+                "name": "center-top",
+                "x": 79,
+                "y": 197.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-middle",
+                "x": 79,
+                "y": 213.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-bottom",
+                "x": 79,
+                "y": 229.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-top",
+                "x": 122,
+                "y": 197.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-middle",
+                "x": 122,
+                "y": 213.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-bottom",
+                "x": 122,
+                "y": 229.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              }
+            ],
+            "iconOverlap": 893.2001342773438
+          },
+          {
+            "side": "right",
+            "rect": {
+              "left": 256,
+              "right": 366,
+              "top": 185.8000030517578,
+              "bottom": 241.8000030517578,
+              "width": 110,
+              "height": 56
+            },
+            "points": [
+              {
+                "name": "left-top",
+                "x": 268,
+                "y": 197.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-middle",
+                "x": 268,
+                "y": 213.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-bottom",
+                "x": 268,
+                "y": 229.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-top",
+                "x": 311,
+                "y": 197.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-middle",
+                "x": 311,
+                "y": 213.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-bottom",
+                "x": 311,
+                "y": 229.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-top",
+                "x": 354,
+                "y": 197.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-middle",
+                "x": 354,
+                "y": 213.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-bottom",
+                "x": 354,
+                "y": 229.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              }
+            ],
+            "iconOverlap": 0
+          }
+        ]
+      },
+      "centerResult": "1",
+      "blockedResult": {
+        "submits": "1",
+        "index": "true",
+        "card": "ts-pk-card",
+        "url": "http://localhost:8091/__asymmetric-form-probe/"
+      }
+    },
+    {
+      "engine": "firefox",
+      "width": 768,
+      "side": "right",
+      "errors": [],
+      "before": {
+        ".entry-content": {
+          "left": 0,
+          "right": 768,
+          "width": 768
+        },
+        ".hero": {
+          "left": 0,
+          "right": 768,
+          "width": 768
+        },
+        ".columns": {
+          "left": 24,
+          "right": 744,
+          "width": 720
+        },
+        ".left": {
+          "left": 24,
+          "right": 372,
+          "width": 348
+        },
+        ".right": {
+          "left": 396,
+          "right": 744,
+          "width": 348
+        }
+      },
+      "after": {
+        ".entry-content": {
+          "left": 0,
+          "right": 768,
+          "width": 768
+        },
+        ".hero": {
+          "left": 0,
+          "right": 768,
+          "width": 768
+        },
+        ".columns": {
+          "left": 24,
+          "right": 744,
+          "width": 720
+        },
+        ".left": {
+          "left": 24,
+          "right": 372,
+          "width": 348
+        },
+        ".right": {
+          "left": 396,
+          "right": 744,
+          "width": 348
+        }
+      },
+      "geometry": {
+        "y": 151,
+        "max": 1929,
+        "icon": {
+          "left": 722,
+          "right": 766,
+          "top": 201.1999969482422,
+          "bottom": 245.1999969482422,
+          "width": 44,
+          "height": 44
+        },
+        "buttons": [
+          {
+            "side": "left",
+            "rect": {
+              "left": 24,
+              "right": 134,
+              "top": 185.8000030517578,
+              "bottom": 241.8000030517578,
+              "width": 110,
+              "height": 56
+            },
+            "points": [
+              {
+                "name": "left-top",
+                "x": 36,
+                "y": 197.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-middle",
+                "x": 36,
+                "y": 213.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-bottom",
+                "x": 36,
+                "y": 229.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-top",
+                "x": 79,
+                "y": 197.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-middle",
+                "x": 79,
+                "y": 213.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-bottom",
+                "x": 79,
+                "y": 229.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-top",
+                "x": 122,
+                "y": 197.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-middle",
+                "x": 122,
+                "y": 213.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-bottom",
+                "x": 122,
+                "y": 229.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              }
+            ],
+            "iconOverlap": 0
+          },
+          {
+            "side": "right",
+            "rect": {
+              "left": 634,
+              "right": 744,
+              "top": 185.8000030517578,
+              "bottom": 241.8000030517578,
+              "width": 110,
+              "height": 56
+            },
+            "points": [
+              {
+                "name": "left-top",
+                "x": 646,
+                "y": 197.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-middle",
+                "x": 646,
+                "y": 213.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-bottom",
+                "x": 646,
+                "y": 229.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-top",
+                "x": 689,
+                "y": 197.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-middle",
+                "x": 689,
+                "y": 213.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-bottom",
+                "x": 689,
+                "y": 229.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-top",
+                "x": 732,
+                "y": 197.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-middle",
+                "x": 732,
+                "y": 213.8000030517578,
+                "hit": "BUTTON.ts-pk-ix",
+                "delivers": false
+              },
+              {
+                "name": "right-bottom",
+                "x": 732,
+                "y": 229.8000030517578,
+                "hit": "BUTTON.ts-pk-ix",
+                "delivers": false
+              }
+            ],
+            "iconOverlap": 893.2001342773438
+          }
+        ]
+      },
+      "centerResult": "1",
+      "blockedResult": {
+        "submits": "1",
+        "index": "true",
+        "card": "ts-pk-card",
+        "url": "http://localhost:8091/__asymmetric-form-probe/"
+      }
+    },
+    {
+      "engine": "firefox",
+      "width": 768,
+      "side": "left",
+      "errors": [],
+      "before": {
+        ".entry-content": {
+          "left": 0,
+          "right": 768,
+          "width": 768
+        },
+        ".hero": {
+          "left": 0,
+          "right": 768,
+          "width": 768
+        },
+        ".columns": {
+          "left": 24,
+          "right": 744,
+          "width": 720
+        },
+        ".left": {
+          "left": 24,
+          "right": 372,
+          "width": 348
+        },
+        ".right": {
+          "left": 396,
+          "right": 744,
+          "width": 348
+        }
+      },
+      "after": {
+        ".entry-content": {
+          "left": 0,
+          "right": 768,
+          "width": 768
+        },
+        ".hero": {
+          "left": 0,
+          "right": 768,
+          "width": 768
+        },
+        ".columns": {
+          "left": 24,
+          "right": 744,
+          "width": 720
+        },
+        ".left": {
+          "left": 24,
+          "right": 372,
+          "width": 348
+        },
+        ".right": {
+          "left": 396,
+          "right": 744,
+          "width": 348
+        }
+      },
+      "geometry": {
+        "y": 151,
+        "max": 1929,
+        "icon": {
+          "left": 2,
+          "right": 46,
+          "top": 201.1999969482422,
+          "bottom": 245.1999969482422,
+          "width": 44,
+          "height": 44
+        },
+        "buttons": [
+          {
+            "side": "left",
+            "rect": {
+              "left": 24,
+              "right": 134,
+              "top": 185.8000030517578,
+              "bottom": 241.8000030517578,
+              "width": 110,
+              "height": 56
+            },
+            "points": [
+              {
+                "name": "left-top",
+                "x": 36,
+                "y": 197.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-middle",
+                "x": 36,
+                "y": 213.8000030517578,
+                "hit": "BUTTON.ts-pk-ix",
+                "delivers": false
+              },
+              {
+                "name": "left-bottom",
+                "x": 36,
+                "y": 229.8000030517578,
+                "hit": "BUTTON.ts-pk-ix",
+                "delivers": false
+              },
+              {
+                "name": "center-top",
+                "x": 79,
+                "y": 197.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-middle",
+                "x": 79,
+                "y": 213.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-bottom",
+                "x": 79,
+                "y": 229.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-top",
+                "x": 122,
+                "y": 197.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-middle",
+                "x": 122,
+                "y": 213.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-bottom",
+                "x": 122,
+                "y": 229.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              }
+            ],
+            "iconOverlap": 893.2001342773438
+          },
+          {
+            "side": "right",
+            "rect": {
+              "left": 634,
+              "right": 744,
+              "top": 185.8000030517578,
+              "bottom": 241.8000030517578,
+              "width": 110,
+              "height": 56
+            },
+            "points": [
+              {
+                "name": "left-top",
+                "x": 646,
+                "y": 197.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-middle",
+                "x": 646,
+                "y": 213.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-bottom",
+                "x": 646,
+                "y": 229.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-top",
+                "x": 689,
+                "y": 197.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-middle",
+                "x": 689,
+                "y": 213.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-bottom",
+                "x": 689,
+                "y": 229.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-top",
+                "x": 732,
+                "y": 197.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-middle",
+                "x": 732,
+                "y": 213.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-bottom",
+                "x": 732,
+                "y": 229.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              }
+            ],
+            "iconOverlap": 0
+          }
+        ]
+      },
+      "centerResult": "1",
+      "blockedResult": {
+        "submits": "1",
+        "index": "true",
+        "card": "ts-pk-card",
+        "url": "http://localhost:8091/__asymmetric-form-probe/"
+      }
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "side": "right",
+      "errors": [],
+      "before": {
+        ".entry-content": {
+          "left": 0,
+          "right": 1280,
+          "width": 1280
+        },
+        ".hero": {
+          "left": 0,
+          "right": 1280,
+          "width": 1280
+        },
+        ".columns": {
+          "left": 24,
+          "right": 1256,
+          "width": 1232
+        },
+        ".left": {
+          "left": 24,
+          "right": 628,
+          "width": 604
+        },
+        ".right": {
+          "left": 652,
+          "right": 1256,
+          "width": 604
+        }
+      },
+      "after": {
+        ".entry-content": {
+          "left": 0,
+          "right": 1280,
+          "width": 1280
+        },
+        ".hero": {
+          "left": 0,
+          "right": 1280,
+          "width": 1280
+        },
+        ".columns": {
+          "left": 24,
+          "right": 1256,
+          "width": 1232
+        },
+        ".left": {
+          "left": 24,
+          "right": 628,
+          "width": 604
+        },
+        ".right": {
+          "left": 652,
+          "right": 1256,
+          "width": 604
+        }
+      },
+      "geometry": {
+        "y": 151,
+        "max": 1929,
+        "icon": {
+          "left": 1234,
+          "right": 1278,
+          "top": 201.1999969482422,
+          "bottom": 245.1999969482422,
+          "width": 44,
+          "height": 44
+        },
+        "buttons": [
+          {
+            "side": "left",
+            "rect": {
+              "left": 24,
+              "right": 134,
+              "top": 185.8000030517578,
+              "bottom": 241.8000030517578,
+              "width": 110,
+              "height": 56
+            },
+            "points": [
+              {
+                "name": "left-top",
+                "x": 36,
+                "y": 197.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-middle",
+                "x": 36,
+                "y": 213.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-bottom",
+                "x": 36,
+                "y": 229.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-top",
+                "x": 79,
+                "y": 197.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-middle",
+                "x": 79,
+                "y": 213.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-bottom",
+                "x": 79,
+                "y": 229.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-top",
+                "x": 122,
+                "y": 197.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-middle",
+                "x": 122,
+                "y": 213.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-bottom",
+                "x": 122,
+                "y": 229.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              }
+            ],
+            "iconOverlap": 0
+          },
+          {
+            "side": "right",
+            "rect": {
+              "left": 1146,
+              "right": 1256,
+              "top": 185.8000030517578,
+              "bottom": 241.8000030517578,
+              "width": 110,
+              "height": 56
+            },
+            "points": [
+              {
+                "name": "left-top",
+                "x": 1158,
+                "y": 197.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-middle",
+                "x": 1158,
+                "y": 213.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-bottom",
+                "x": 1158,
+                "y": 229.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-top",
+                "x": 1201,
+                "y": 197.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-middle",
+                "x": 1201,
+                "y": 213.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-bottom",
+                "x": 1201,
+                "y": 229.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-top",
+                "x": 1244,
+                "y": 197.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-middle",
+                "x": 1244,
+                "y": 213.8000030517578,
+                "hit": "BUTTON.ts-pk-ix",
+                "delivers": false
+              },
+              {
+                "name": "right-bottom",
+                "x": 1244,
+                "y": 229.8000030517578,
+                "hit": "BUTTON.ts-pk-ix",
+                "delivers": false
+              }
+            ],
+            "iconOverlap": 893.2001342773438
+          }
+        ]
+      },
+      "centerResult": "1",
+      "blockedResult": {
+        "submits": "1",
+        "index": "true",
+        "card": "ts-pk-card",
+        "url": "http://localhost:8091/__asymmetric-form-probe/"
+      }
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "side": "left",
+      "errors": [],
+      "before": {
+        ".entry-content": {
+          "left": 0,
+          "right": 1280,
+          "width": 1280
+        },
+        ".hero": {
+          "left": 0,
+          "right": 1280,
+          "width": 1280
+        },
+        ".columns": {
+          "left": 24,
+          "right": 1256,
+          "width": 1232
+        },
+        ".left": {
+          "left": 24,
+          "right": 628,
+          "width": 604
+        },
+        ".right": {
+          "left": 652,
+          "right": 1256,
+          "width": 604
+        }
+      },
+      "after": {
+        ".entry-content": {
+          "left": 0,
+          "right": 1280,
+          "width": 1280
+        },
+        ".hero": {
+          "left": 0,
+          "right": 1280,
+          "width": 1280
+        },
+        ".columns": {
+          "left": 24,
+          "right": 1256,
+          "width": 1232
+        },
+        ".left": {
+          "left": 24,
+          "right": 628,
+          "width": 604
+        },
+        ".right": {
+          "left": 652,
+          "right": 1256,
+          "width": 604
+        }
+      },
+      "geometry": {
+        "y": 151,
+        "max": 1929,
+        "icon": {
+          "left": 2,
+          "right": 46,
+          "top": 201.1999969482422,
+          "bottom": 245.1999969482422,
+          "width": 44,
+          "height": 44
+        },
+        "buttons": [
+          {
+            "side": "left",
+            "rect": {
+              "left": 24,
+              "right": 134,
+              "top": 185.8000030517578,
+              "bottom": 241.8000030517578,
+              "width": 110,
+              "height": 56
+            },
+            "points": [
+              {
+                "name": "left-top",
+                "x": 36,
+                "y": 197.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-middle",
+                "x": 36,
+                "y": 213.8000030517578,
+                "hit": "BUTTON.ts-pk-ix",
+                "delivers": false
+              },
+              {
+                "name": "left-bottom",
+                "x": 36,
+                "y": 229.8000030517578,
+                "hit": "BUTTON.ts-pk-ix",
+                "delivers": false
+              },
+              {
+                "name": "center-top",
+                "x": 79,
+                "y": 197.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-middle",
+                "x": 79,
+                "y": 213.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-bottom",
+                "x": 79,
+                "y": 229.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-top",
+                "x": 122,
+                "y": 197.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-middle",
+                "x": 122,
+                "y": 213.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-bottom",
+                "x": 122,
+                "y": 229.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              }
+            ],
+            "iconOverlap": 893.2001342773438
+          },
+          {
+            "side": "right",
+            "rect": {
+              "left": 1146,
+              "right": 1256,
+              "top": 185.8000030517578,
+              "bottom": 241.8000030517578,
+              "width": 110,
+              "height": 56
+            },
+            "points": [
+              {
+                "name": "left-top",
+                "x": 1158,
+                "y": 197.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-middle",
+                "x": 1158,
+                "y": 213.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "left-bottom",
+                "x": 1158,
+                "y": 229.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-top",
+                "x": 1201,
+                "y": 197.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-middle",
+                "x": 1201,
+                "y": 213.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "center-bottom",
+                "x": 1201,
+                "y": 229.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-top",
+                "x": 1244,
+                "y": 197.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-middle",
+                "x": 1244,
+                "y": 213.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              },
+              {
+                "name": "right-bottom",
+                "x": 1244,
+                "y": 229.8000030517578,
+                "hit": "INPUT.search-submit",
+                "delivers": true
+              }
+            ],
+            "iconOverlap": 0
+          }
+        ]
+      },
+      "centerResult": "1",
+      "blockedResult": {
+        "submits": "1",
+        "index": "true",
+        "card": "ts-pk-card",
+        "url": "http://localhost:8091/__asymmetric-form-probe/"
+      }
+    }
+  ]
+}

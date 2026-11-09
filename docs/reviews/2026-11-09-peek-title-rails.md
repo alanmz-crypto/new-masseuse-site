@@ -321,3 +321,27 @@ next fresh-copy run completes.
 
 Pinned PHP syntax, **487/0 installer guards** and **24/0 emission checks** passed
 on the exact new candidate. No staging write has occurred.
+
+Bounded local form-check evidence is retained as the
+[candidate2 baseline excerpt](assets/2026-11-09-peek-title-rails/checks/candidate3-form-baseline-chromium.log)
+and final [Chromium](assets/2026-11-09-peek-title-rails/checks/candidate3-form-final-chromium.log)
+and [Firefox](assets/2026-11-09-peek-title-rails/checks/candidate3-form-final-firefox.log)
+excerpts. The separate native-input [baseline probe](assets/2026-11-09-peek-title-rails/checks/candidate3-form-independent-baseline.json)
+and [candidate3 probe](assets/2026-11-09-peek-title-rails/checks/candidate3-form-independent-candidate3.json)
+cover 12 local combinations of engine, width and rail side. Baseline had 12
+overlapping buttons and 24 blocked sampled hit points; candidate3 had zero of
+either. Both preserve the measured hero/column geometry in all 12 combinations.
+These use structural forms, prevent fixture submissions and make no external
+requests; they do not reproduce the actual Astra page or establish a copied-site
+visual pass.
+
+[Candidate3 Actions Gates 42662819268](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42662819268)
+passed at **17:16:13 UTC**, source
+`751083e3afddb67a2f56e2cea374a6046b88e3f4`: **29 PASS, 1 SKIP, 0 FAIL,
+0 INVALID**. The complete job log was read
+(`/tmp/peek-title-rails-actions-gates-3.log`); only URL-dependent rendered
+verification was skipped. The candidate remains exactly **97,130 code bytes**,
+SHA256 `c7ed404ebe3e19d24e7a91b91bb996505efb80027fd183245d1c7137f188991e`.
+The [third fresh-copy rehearsal, 42662818962](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42662818962)
+started **17:15:20 UTC** and is still running. No result or removal of the visual
+deployment blocker is claimed; the manifest remains pending.
