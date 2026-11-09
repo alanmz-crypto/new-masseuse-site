@@ -258,9 +258,10 @@ apply line appears.
 Fresh rendered review and starting #1380 inspection completed; legacy code hash matched
 `b7314c8938a728bf64b6dac16c48bba722b4aea59b277c9f56f0760132322c01`.
 Implementation separates shared core and WordPress-stored `ts_pk_pages` page data;
-`.ts-jump` stays the sole navigation source. Thai wording is unchanged. Draft
-Therapeutic/Deep Tissue/Chair lists were reviewed against fresh rendered text,
-remain unapproved, and are stripped from public JSON. Native details, reordered
+`.ts-jump` stays the sole navigation source. Thai wording is unchanged. Therapeutic/Deep Tissue/Chair lists were reviewed against fresh rendered text
+and subsequently approved by Ryan in chat. Their separate staged rollout is
+tracked in [the service rollout record](../../docs/reviews/2026-11-09-peek-service-rollout.md).
+Any unapproved data is still stripped from public JSON. Native details, reordered
 row mapping and print have focused coverage. Legacy rollback hash protection was
 missing despite the older note above; the new installer checks complete state,
 and push rollback now takes a verified fresh off-site backup.
@@ -287,6 +288,6 @@ checks. **All earlier rollback commands in this note are historical.** Do not us
 Migration installed inert Thai data before changing #1380 in place, with no
 fallback-only interval. Main/live remain unchanged.
 Current evidence/status: [template record](../../docs/reviews/2026-11-09-peek-template.md).
-Draft wording: [three-page review](../../docs/reviews/2026-11-09-peek-summary-drafts.md).
+Approved wording: [three-page review](../../docs/reviews/2026-11-09-peek-summary-drafts.md).
 Services/short pages remain individual eligibility decisions; Safari/physical
 devices and actual assistive technology remain untested.

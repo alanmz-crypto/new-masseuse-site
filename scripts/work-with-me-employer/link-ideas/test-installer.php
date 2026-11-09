@@ -5,14 +5,14 @@ $testdir = sys_get_temp_dir() . '/peek-installer-' . bin2hex( random_bytes( 5 ) 
 mkdir( $testdir ); mkdir( $testdir . '/web' ); mkdir( $testdir . '/backups' );
 define( 'ABSPATH', $testdir . '/web/' ); define( 'ARRAY_A', 'ARRAY_A' );
 putenv( 'WWM_BACKUP_DIR=' . $testdir . '/backups' );
-$db = array(); $next_id = 2000; $filters = array(); $home = 'http://localhost:8090'; $fail_write = false; $fail_cache = false; $fail_snapshot_complete = false; $page = 'thai-massage'; $admin = false; $feed = false;
+$db = array(); $next_id = 2000; $filters = array(); $home = 'http://localhost:8090'; $environment_type = 'local'; $fail_write = false; $fail_cache = false; $fail_snapshot_complete = false; $page = 'thai-massage'; $admin = false; $feed = false;
 class WP_CLI { static function error( $m ) { throw new RuntimeException( $m ); } static function success( $m ) { $GLOBALS['message'] = $m; } }
 function home_url() { return $GLOBALS['home']; }
 function untrailingslashit( $s ) { return rtrim( $s, '/' ); }
 function wp_parse_url( $s, $component ) { return parse_url( $s, $component ); }
 function get_stylesheet() { return 'astra'; }
 function current_user_can( $s ) { return true; }
-function wp_get_environment_type() { return 'local'; }
+function wp_get_environment_type() { return $GLOBALS['environment_type']; }
 function wpcode() { static $o; return $o ??= (object) array( 'cache' => new class { function cache_all_loaded_snippets() { if ( $GLOBALS['fail_cache'] ) { $GLOBALS['fail_cache'] = false; throw new RuntimeException( 'Forced cache failure' ); } } } ); }
 function get_object_taxonomies( $t ) { return array( 'wpcode_type', 'wpcode_location' ); }
 function get_post_stati() { return array( 'publish', 'draft', 'trash' ); }
@@ -50,6 +50,8 @@ $pass = 0;
 function check( $ok, $label ) { if ( ! $ok ) { throw new RuntimeException( 'FAIL: ' . $label ); } $GLOBALS['pass']++; }
 function invoke( $args ) { $GLOBALS['message'] = ''; require __DIR__ . '/install-peek-nav.php'; return $GLOBALS['message']; }
 function refusal( $args, $label ) { $before = $GLOBALS['db']; $error = null; try { invoke( $args ); } catch ( Throwable $e ) { $error = $e; } check( $error !== null && $GLOBALS['db'] === $before, $label ); }
+function invoke_page_rehearsal( $page_slug, $args ) { $GLOBALS['message'] = ''; require __DIR__ . '/peek-page/' . $page_slug . '/install-peek-page-data.php'; return $GLOBALS['message']; }
+function page_rehearsal_refusal( $page_slug, $args, $label ) { $before = $GLOBALS['db']; $error = null; try { invoke_page_rehearsal( $page_slug, $args ); } catch ( Throwable $e ) { $error = $e; } check( $error !== null && $GLOBALS['db'] === $before, $page_slug . ': ' . $label ); }
 function snapshot_path() { preg_match( '/Before-snapshot: (.+)$/', $GLOBALS['message'], $m ); if ( ! isset( $m[1] ) ) { throw new RuntimeException( 'No completed snapshot: ' . $GLOBALS['message'] ); } return $m[1]; }
 function snap_write( $data, $name ) { $p = $GLOBALS['testdir'] . '/backups/' . $name . '.json'; file_put_contents( $p, json_encode( $data ) ); return $p; }
 $legacy = record( 1380, 'TSPeekNav practice (Thai, staging39)', substr( file_get_contents( __DIR__ . '/peek-nav-legacy.php' ), 6 ), 'Created by link-ideas/install-peek-nav.php (2026-11-08); exact owned-snippet rollback only.' );
@@ -127,6 +129,29 @@ foreach ( array( 'code', 'status', 'type', 'duplicate', 'hash' ) as $mutation ) 
 }
 $db = $original; invoke( array( 'rollback', $legacy_path ) ); check( $db === array(), 'matching legacy snapshot can remove only exact owned snippet' );
 invoke( array( 'rollback', $legacy_path ) ); check( $db === array(), 'legacy rollback idempotent' );
+// Each rehearsal package must exercise only its named page on an isolated copy.
+foreach ( array( 'therapeutic-massage', 'deep-tissue-massage', 'chair-massage' ) as $page_slug ) {
+    $db = $applied; $baseline = $db;
+    invoke_page_rehearsal( $page_slug, array() ); check( $db === $baseline, $page_slug . ': default preflight is read-only' );
+    page_rehearsal_refusal( $page_slug, array( 'other' ), 'unknown mode refused' );
+    page_rehearsal_refusal( $page_slug, array( 'apply', 'core' ), 'extra arguments cannot override target' );
+    $home = 'https://staging39.thaisolitude.com'; page_rehearsal_refusal( $page_slug, array( 'apply' ), 'staging origin refused by rehearsal adapter' );
+    $home = 'http://localhost:8090/other'; page_rehearsal_refusal( $page_slug, array( 'apply' ), 'inexact localhost origin refused' );
+    $home = 'http://localhost:8090'; $environment_type = 'staging'; page_rehearsal_refusal( $page_slug, array( 'apply' ), 'non-local environment refused' ); $environment_type = 'local';
+    invoke_page_rehearsal( $page_slug, array( 'apply' ) ); $rehearsal_snap = snapshot_path(); $first = $db;
+    $added = array_diff_key( $db, $baseline ); $new_id = array_key_first( $added ); $new_record = $added[ $new_id ];
+    check( count( $added ) === 1 && array_intersect_key( $db, $baseline ) === $baseline && $new_record['post']['post_title'] === 'TSPeekData ' . $page_slug . ' (staging39)', $page_slug . ': apply changes only named page' );
+    invoke_page_rehearsal( $page_slug, array( 'apply' ) ); check( $db === $first, $page_slug . ': apply is idempotent' );
+    page_rehearsal_refusal( $page_slug, array( 'rollback' ), 'missing snapshot refused' );
+    page_rehearsal_refusal( $page_slug, array( 'rollback', $rehearsal_snap, 'extra' ), 'extra rollback arguments refused' );
+    page_rehearsal_refusal( $page_slug, array( 'rollback', $core_snap ), 'core snapshot refused' );
+    page_rehearsal_refusal( $page_slug, array( 'rollback', $page_snap ), 'other-page snapshot refused' );
+    invoke_page_rehearsal( $page_slug, array( 'rollback', $rehearsal_snap ) ); check( $db === $baseline, $page_slug . ': rollback restores exact baseline' );
+    invoke_page_rehearsal( $page_slug, array( 'rollback', $rehearsal_snap ) ); check( $db === $baseline, $page_slug . ': rollback is idempotent' );
+    invoke_page_rehearsal( $page_slug, array( 'apply' ) ); $recreated = array_values( array_diff_key( $db, $baseline ) )[0];
+    $recreated['id'] = $new_record['id']; $recreated['post']['ID'] = $new_record['post']['ID'];
+    check( $recreated === $new_record && array_intersect_key( $db, $baseline ) === $baseline, $page_slug . ': reapply matches first state except new ID' );
+}
 // Execute the real generated page snippets and core against minimal rendering hooks.
 $db = $original; invoke( array( 'apply', 'page', 'thai-massage' ) );
 invoke( array( 'apply', 'page', 'therapeutic-massage' ) );
@@ -138,7 +163,14 @@ $html = render(); check( substr_count( $html, 'id="ts-peek-nav-runtime"' ) === 1
 preg_match( '/id="ts-peek-nav-data">(.*?)<\/script>/s', $html, $m ); $decoded = json_decode( $m[1], true );
 check( $decoded['slug'] === 'thai-massage' && ! str_contains( $m[1], 'therapeutic-massage' ), 'emits only current page data' );
 $page = 'services'; check( render() === '', 'unregistered page emits nothing' );
-$page = 'therapeutic-massage'; $html = render(); check( str_contains( $html, '"status":"draft"' ) && ! str_contains( $html, 'Movement meets massage' ), 'draft has own fallback data, no Thai lists' );
+$page = 'therapeutic-massage'; $html = render(); preg_match( '/id="ts-peek-nav-data">(.*?)<\/script>/s', $html, $m ); $decoded = json_decode( $m[1], true );
+$therapeutic = json_decode( file_get_contents( __DIR__ . '/peek-data/therapeutic-massage.json' ), true );
+check( $decoded === $therapeutic && ! str_contains( $m[1], 'Movement meets massage' ), 'approved Therapeutic emits its exact approved payload, no Thai lists' );
+$draft_fixture = static function ( $pages ) { $pages['therapeutic-massage']['approval']['status'] = 'draft'; return $pages; };
+add_filter( 'ts_pk_pages', $draft_fixture, 99 );
+$html = render(); preg_match( '/id="ts-peek-nav-data">(.*?)<\/script>/s', $html, $m ); $decoded = json_decode( $m[1], true );
+check( $decoded['approval']['status'] === 'draft' && $decoded['items'] === array() && $decoded['coverage'] === array(), 'draft fixture withholds summaries for whole-paragraph fallback' );
+remove_filter( 'ts_pk_pages', $draft_fixture, 99 );
 $admin = true; check( render() === '', 'admin emits nothing' ); $admin = false; $feed = true; check( render() === '', 'feed emits nothing' ); $feed = false;
 $page = 'thai-massage';
 add_filter( 'ts_pk_pages', static function ( $pages ) { $pages['thai-massage']['items'][] = array( '</script><script>alert("x")</script>&\'雪', 'ts-what-it-is' ); return $pages; }, 99 );

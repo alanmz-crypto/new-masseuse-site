@@ -1,4 +1,4 @@
-// Preserved Thai gesture regression. Chromium emulates touch; this is not VoiceOver, TalkBack or physical-device testing. Also checks one other page is unchanged.
+// Preserved Thai gesture regression. Chromium emulates touch; this is not VoiceOver, TalkBack or physical-device testing. Also checks another page's declared state.
 // node check-peek-nav.mjs https://staging39.thaisolitude.com     (Chromium; phone + tablet, light + dark, plus one #section arrival and Therapeutic Massage)
 // Exit 0 = every check passed; 1 = a check failed; 2 = INVALID (the hosting bot challenge answered; nothing concluded).
 import { createRequire } from 'node:module';
@@ -482,10 +482,10 @@ for (const [label, init] of [['landscape, 7 sections', [addSections]], ['landsca
   await ctx.close();
 }
 const ctx = await b.newContext({ ...devices['iPhone 13'], deviceScaleFactor: 1 });
-const comparison = manifest.pages.find(page => page.staging === 'prepared');
+const comparison = manifest.pages.find(page => page.slug !== regression.slug);
 const { p } = await open(ctx, '/' + comparison.slug + '/');
-ok('Therapeutic Massage unchanged (no strip, no rail)', await p.evaluate(() => !document.querySelector('.ts-pk') && !document.getElementById('ts-peek-nav-runtime')));
-ok('Therapeutic Massage: no reading-progress bar and no scroll-to-top button either (sitewide)', await p.evaluate(() => !document.getElementById('ast-scroll-top') && !(document.getElementById('wp-custom-css') || { textContent: '' }).textContent.includes('ts-reading-progress')));
+ok(`${comparison.slug}: Peek matches the manifest's ${comparison.staging} state`, await p.evaluate(enabled => enabled ? document.querySelectorAll('.ts-pk-nav').length === 1 && document.querySelectorAll('#ts-peek-nav-runtime').length === 1 && document.documentElement.classList.contains('ts-pk-ready') : !document.querySelector('.ts-pk') && !document.getElementById('ts-peek-nav-runtime'), comparison.staging === 'enabled'));
+ok(`${comparison.slug}: no reading-progress bar and no scroll-to-top button either (sitewide)`, await p.evaluate(() => !document.getElementById('ast-scroll-top') && !(document.getElementById('wp-custom-css') || { textContent: '' }).textContent.includes('ts-reading-progress')));
 await b.close();
 console.log(`\nchromium: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

@@ -2,23 +2,43 @@
 """Build separate local structural fixtures for Peek (never real website copy).
 
 The four service-page shapes come from jump-links.php, including the six-section
-Therapeutic/Chair order. Thai alone is enabled initially; the browser fixture
-checks inject the packaged core into the other rendered shapes explicitly.
+Therapeutic/Chair order. The enabled pages follow peek-pages.json; the browser
+fixture checks may also inject the packaged core into prepared shapes explicitly.
 All jump targets are in the HTML so the no-JavaScript fallback is testable.
 The tiny dark theme exercises the core's colour branches, not the site's theme.
 
-  python3 build-mock.py [OUT_DIR]
+  python3 build-mock.py [OUT_DIR] [--enabled-page SLUG]
+  # --enabled-page adds one approved page for this local output only; repeatable.
   python3 -m http.server 8090 -d OUT_DIR
 """
+import argparse
 import html
 import json
 from pathlib import Path
 import re
-import sys
 
 here = Path(__file__).resolve().parent
-out = Path(sys.argv[1]) if len(sys.argv) > 1 else here / 'site'
 package = here.parent
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument('out_dir', nargs='?', type=Path, default=here / 'site')
+parser.add_argument('--enabled-page', action='append', default=[], metavar='SLUG',
+                    help='also enable this approved page in local output only (repeatable)')
+args = parser.parse_args()
+out = args.out_dir
+manifest = json.loads((package / 'peek-pages.json').read_text(encoding='utf-8'))
+if manifest.get('schema') != 1 or not isinstance(manifest.get('pages'), list):
+    raise SystemExit('Unsupported peek-pages.json schema.')
+slugs = [entry['slug'] for entry in manifest['pages']]
+if len(slugs) != len(set(slugs)):
+    raise SystemExit('Duplicate pages in peek-pages.json.')
+enabled_pages = {entry['slug'] for entry in manifest['pages'] if entry['staging'] == 'enabled'}
+for slug in args.enabled_page:
+    if slug not in slugs:
+        parser.error(f'--enabled-page is not a manifest page: {slug}')
+    data = json.loads((package / 'peek-data' / f'{slug}.json').read_text(encoding='utf-8'))
+    if data.get('approval', {}).get('status') != 'approved':
+        parser.error(f'--enabled-page requires approved wording: {slug}')
+    enabled_pages.add(slug)
 src = (package / 'peek-nav.php').read_text(encoding='utf-8')
 css_match = re.search(r'(<style id="ts-peek-nav-css">.*?</style>)', src, re.S)
 js_match = re.search(r'(<script id="ts-peek-nav-runtime">.*?</script>)', src, re.S)
@@ -90,6 +110,10 @@ def page(slug, plan, body=None, enabled=False):
     data_script = ''
     if enabled:
         data = json.loads((package / 'peek-data' / f'{slug}.json').read_text(encoding='utf-8'))
+        # Match ts_pk_page_data(): unapproved words never reach public source.
+        if data.get('approval', {}).get('status') != 'approved':
+            data['items'] = []
+            data['coverage'] = {}
         # JSON is data inside a script element; escape HTML-sensitive bytes.
         encoded = json.dumps(data, ensure_ascii=True).replace('<', '\\u003c').replace('>', '\\u003e').replace('&', '\\u0026')
         data_script = f'<script type="application/json" id="ts-peek-nav-data">{encoded}</script>'
@@ -104,8 +128,8 @@ def page(slug, plan, body=None, enabled=False):
 
 
 pages = {}
-for slug in ['thai-massage', 'therapeutic-massage', 'deep-tissue-massage', 'chair-massage']:
-    pages[slug] = page(slug, service_plan(slug), enabled=slug == 'thai-massage')
+for slug in slugs:
+    pages[slug] = page(slug, service_plan(slug), enabled=slug in enabled_pages)
 for name, count in [('zero', 0), ('one', 1), ('two', 2), ('seven', 7)]:
     plan = [(f'fixture-{n}', f'Section {n}', f'Structural fixture section {n}') for n in range(1, count + 1)]
     pages[f'peek-shape-{name}'] = page(f'peek-shape-{name}', plan)
@@ -117,4 +141,4 @@ for slug, markup in pages.items():
     destination = out / slug / 'index.html'
     destination.parent.mkdir(parents=True, exist_ok=True)
     destination.write_text(markup, encoding='utf-8')
-print(f'{len(pages)} structural mock routes written to {out}; only Thai enabled by default')
+print(f'{len(pages)} structural mock routes written to {out}; enabled: {", ".join(sorted(enabled_pages)) or "none"}')

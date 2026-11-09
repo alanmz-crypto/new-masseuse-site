@@ -12,25 +12,67 @@ if (fixtures && !local) throw new Error('Fixture injection is restricted to the 
 const engine = process.argv.includes('--firefox') ? 'firefox' : 'chromium';
 const manifest = JSON.parse(readFileSync(new URL('./peek-pages.json', import.meta.url), 'utf8'));
 const dataFor = slug => JSON.parse(readFileSync(new URL(`./peek-data/${slug}.json`, import.meta.url), 'utf8'));
+const option = flag => {
+  const at = process.argv.indexOf(flag);
+  if (at < 0) return null;
+  if (process.argv.lastIndexOf(flag) !== at || !process.argv[at + 1] || process.argv[at + 1].startsWith('--')) throw new Error(`${flag} requires one page slug`);
+  const slug = process.argv[at + 1];
+  if (!manifest.pages.some(page => page.slug === slug)) throw new Error(`${flag}: unknown page ${slug}`);
+  return slug;
+};
+// A rehearsal installs one new registration while the manifest still describes
+// staging. This changes expectations only; it never injects or installs data.
+const enabledPage = option('--enabled-page');
+if (enabledPage && !local) throw new Error('--enabled-page is restricted to the isolated localhost copy');
+if (enabledPage && dataFor(enabledPage).approval.status !== 'approved') throw new Error('--enabled-page requires approved wording');
+const enabled = page => page.staging === 'enabled' || page.slug === enabledPage;
+const capturePage = option('--capture-page');
+if (capturePage && (!enabled(manifest.pages.find(page => page.slug === capturePage)) || dataFor(capturePage).approval.status !== 'approved')) throw new Error('--capture-page requires an enabled page with approved wording');
 const core = readFileSync(new URL('./peek-nav.php', import.meta.url), 'utf8');
 const css = core.match(/<style id="ts-peek-nav-css">([\s\S]*?)<\/style>/)[1];
 const js = core.match(/<script id="ts-peek-nav-runtime">([\s\S]*?)<\/script>/)[1];
 let pass = 0, fail = 0;
 const ok = (name, value, detail = '') => { value ? pass++ : fail++; console.log(`${value ? 'PASS' : 'FAIL'} ${name}${detail ? ' ' + JSON.stringify(detail) : ''}`); };
 const b = await playwright[engine].launch(engine === 'chromium' && process.env.TS_BROWSER_EXECUTABLE ? { executablePath: process.env.TS_BROWSER_EXECUTABLE } : {});
+const noJsContexts = new WeakSet();
 const context = async (width, options = {}) => {
   const ctx = await b.newContext({ viewport: { width, height: 844 }, reducedMotion: 'reduce', ...options });
+  if (options.javaScriptEnabled === false) noJsContexts.add(ctx);
   await ctx.addInitScript(() => { try { localStorage.setItem('ts-pk-tip', 'seen'); } catch {} });
   return ctx;
 };
-const open = async (ctx, slug) => {
+const open = async (ctx, slug, bareFixture = false) => {
   const p = await ctx.newPage(), errors = [];
   p.on('pageerror', e => errors.push(e.message));
+  if (bareFixture) {
+    if (!fixtures || !local) throw new Error('A bare runtime fixture is restricted to local --fixtures checks');
+    // Once every page is enabled, structural fixtures still need a document
+    // without already-running listeners. Strip only Peek from this browser's
+    // local response before parsing; WordPress and other page assets stay intact.
+    await p.route(`${base}/${slug}/`, async route => {
+      const response = await route.fetch();
+      const body = (await response.text())
+        .replace(/<style\b[^>]*\bid=["']ts-peek-nav-css["'][^>]*>[\s\S]*?<\/style>/g, '')
+        .replace(/<script\b[^>]*\bid=["']ts-peek-nav-(?:data|runtime)["'][^>]*>[\s\S]*?<\/script>/g, '');
+      await route.fulfill({ response, body });
+    });
+  }
   const r = await p.goto(`${base}/${slug}/`, { waitUntil: 'load' });
   if (!r || r.status() !== 200 || /Robot Challenge/i.test(await p.title())) {
     console.log(`INVALID ${slug}: response ${r?.status()}; no verdict for this run`); await b.close(); process.exit(2);
   }
-  await p.waitForTimeout(1200); return { p, errors };
+  await p.waitForTimeout(1200);
+  // The load event waits for eager page images/styles. Wait explicitly for fonts
+  // before comparing geometry, then allow two layout frames after they settle.
+  const fontStatus = noJsContexts.has(ctx) || await p.evaluate(async () => {
+    let timer;
+    const ready = await Promise.race([document.fonts.ready.then(() => true), new Promise(resolve => { timer = setTimeout(() => resolve(false), 10000); })]);
+    clearTimeout(timer);
+    if (ready) await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    return ready;
+  });
+  if (!fontStatus) { console.log(`INVALID ${slug}: fonts did not settle; no geometry verdict`); await b.close(); process.exit(2); }
+  return { p, errors };
 };
 const rowOf = p => p.$$eval('.entry-content .ts-jump a', nodes => nodes.map(a => ({ href: a.getAttribute('href'), label: a.textContent.trim() })));
 const inject = async (p, data) => {
@@ -41,6 +83,22 @@ const inject = async (p, data) => {
 const preview = async (p, i) => {
   await p.locator('.ts-pk-rail a').nth(i).evaluate(a => a.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true })));
   await p.waitForTimeout(80);
+};
+const capture = async (p, slug, name) => {
+  // INLINE survives the rehearsal report filter and remains in its artifact.
+  console.log(`INLINE ${engine}-${slug}-${p.viewportSize().width}-${name}.jpg base64:${(await p.screenshot({ type: 'jpeg', quality: 80 })).toString('base64')}`);
+};
+const verifyCard = async (p, prefix) => {
+  const geometry = await p.evaluate(() => {
+    const card = document.querySelector('.ts-pk-card'), summary = card.querySelector('.sum'), hint = card.querySelector('.hint'), strip = document.querySelector('.ts-pk-top');
+    const rect = e => { const r = e.getBoundingClientRect(); return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, width: r.width, height: r.height }; };
+    const stuckBottom = (parseFloat(getComputedStyle(strip).top) || 0) + strip.offsetHeight;
+    return { card: rect(card), summary: rect(summary), hint: rect(hint), stuckBottom, viewport: { width: innerWidth, height: innerHeight }, fit: card.className.match(/fit\d/g) || [], summaryScroll: { width: summary.scrollWidth, clientWidth: summary.clientWidth, height: summary.scrollHeight, clientHeight: summary.clientHeight }, font: getComputedStyle(summary).fontSize };
+  });
+  const { card, summary, hint, stuckBottom, viewport, summaryScroll } = geometry;
+  ok(`${prefix}: approved card and jump hint fit below the pinned strip`, card.left >= -1 && card.right <= viewport.width + 1 && card.top >= stuckBottom + 6 && card.bottom <= viewport.height - 10 && hint.top >= card.top && hint.bottom <= card.bottom + 1 && hint.height > 0, geometry);
+  ok(`${prefix}: summary remains visible without horizontal text clipping`, summary.height > 0 && summary.top >= card.top && summary.bottom <= hint.top + 1 && summaryScroll.width <= summaryScroll.clientWidth + 1, geometry);
+  console.log('INFO approved card geometry ' + JSON.stringify({ check: prefix, ...geometry }));
 };
 const verifyEnabled = async (p, slug, data, prefix) => {
   const row = await rowOf(p), rail = await p.$$eval('.ts-pk-rail a', nodes => nodes.map(a => a.getAttribute('href')));
@@ -64,6 +122,21 @@ const verifyEnabled = async (p, slug, data, prefix) => {
     const wanted = data.approval.status === 'approved' ? data.items.filter(item => item[1] === anchor).map(item => item[0]) : [];
     ok(`${prefix}: ${row[i].label} previews without moving the page`, actual.title === row[i].label && actual.visible && actual.y === before, actual);
     ok(`${prefix}: ${row[i].label} uses ${wanted.length ? 'approved summaries' : 'whole source paragraphs'}`, wanted.length ? actual.gist && JSON.stringify(actual.items) === JSON.stringify(wanted) : !actual.gist && actual.whole, actual);
+    if (slug === capturePage && data.approval.status === 'approved') {
+      await verifyCard(p, `${prefix}/${row[i].label}`);
+      if (i === 0) await capture(p, slug, 'first');
+      if (anchor === data.research_anchor) {
+        await capture(p, slug, 'research-start');
+        await p.locator('.ts-pk-card .sum').focus(); await p.keyboard.press('End'); await p.waitForTimeout(250);
+        const end = await p.evaluate(() => {
+          const card = document.querySelector('.ts-pk-card'), sum = card.querySelector('.sum'), last = sum.querySelector('li:last-child'), r = sum.getBoundingClientRect(), l = last.getBoundingClientRect();
+          return { atEnd: sum.scrollHeight - sum.scrollTop - sum.clientHeight <= 2, lastVisible: l.top >= r.top - 1 && l.bottom <= r.bottom + 1, faded: sum.classList.contains('has-more'), pinned: card.classList.contains('is-pinned'), y: scrollY, scrollTop: sum.scrollTop, height: sum.scrollHeight, viewportHeight: sum.clientHeight, last: last.textContent };
+        });
+        ok(`${prefix}: keyboard reaches the research qualifications without moving the page`, end.atEnd && end.lastVisible && !end.faded && end.pinned && end.y === before, end);
+        console.log('INFO research summary end ' + JSON.stringify({ check: prefix, ...end }));
+        await capture(p, slug, 'research-end');
+      }
+    }
     await p.keyboard.press('Escape');
   }
   const measure = () => p.evaluate(() => ({ width: document.documentElement.scrollWidth, viewport: document.documentElement.clientWidth }));
@@ -86,12 +159,12 @@ const verifyEnabled = async (p, slug, data, prefix) => {
 try {
   for (const page of manifest.pages) {
     const data = dataFor(page.slug);
-    for (const width of [390, 768]) {
+    for (const width of page.slug === capturePage ? [390, 768, 1280] : [390, 768]) {
       const ctx = await context(width), { p, errors } = await open(ctx, page.slug), row = await rowOf(p);
       const prefix = `${engine}/${width}/${page.slug}`;
       ok(`${prefix}: actual section order matches the reviewed page`, JSON.stringify(row.map(a => a.label)) === JSON.stringify(page.expectedLabels), row);
       ok(`${prefix}: every fallback destination exists`, await p.evaluate(row => row.length >= 2 && row.every(a => !!document.getElementById(decodeURIComponent(a.href.slice(1)))) && new Set(row.map(a => a.href)).size === row.length, row));
-      if (page.staging === 'enabled') await verifyEnabled(p, page.slug, data.approval.status === 'approved' ? data : { ...data, items: [], coverage: {} }, prefix);
+      if (enabled(page)) await verifyEnabled(p, page.slug, data.approval.status === 'approved' ? data : { ...data, items: [], coverage: {} }, prefix);
       else {
         ok(`${prefix}: prepared page remains unchanged`, await p.locator('.ts-pk, #ts-peek-nav-css, #ts-peek-nav-runtime, #ts-peek-nav-data').count() === 0);
         if (fixtures) {
@@ -121,9 +194,18 @@ try {
   if (fixtures) {
     // Mutate one real prepared page before injecting: filtered/reordered row and
     // nested native details. All assertions use destination identity, not indices.
-    const page = manifest.pages.find(p => p.staging === 'prepared');
+    const page = manifest.pages.find(p => !enabled(p)) || manifest.pages.find(p => p.slug !== manifest.regression);
     {
-      const delayedCtx = await context(390), { p: delayed, errors: delayedErrors } = await open(delayedCtx, page.slug);
+      // Keep explicit approval-gating coverage even after every production
+      // registration has approved text and no prepared page remains.
+      const draftCtx = await context(390), { p: draftPage, errors: draftErrors } = await open(draftCtx, page.slug, true);
+      const row = await rowOf(draftPage);
+      const draft = { ...dataFor(page.slug), approval: { status: 'draft', source: 'isolated approval-gating fixture' }, items: [['Unapproved fixture phrase', decodeURIComponent(row[0].href.slice(1))]] };
+      await inject(draftPage, draft); await verifyEnabled(draftPage, page.slug, draft, `${engine}/${page.slug}/explicit draft fixture`);
+      ok(`${engine}: explicit draft fixture has no JavaScript errors`, draftErrors.length === 0, draftErrors); await draftCtx.close();
+    }
+    {
+      const delayedCtx = await context(390), { p: delayed, errors: delayedErrors } = await open(delayedCtx, page.slug, true);
       const before = await rowOf(delayed);
       await delayed.evaluate(() => { const a = document.querySelector('.ts-jump a'), id = decodeURIComponent(a.hash.slice(1)), target = document.getElementById(id); target.removeAttribute('id'); setTimeout(() => { target.id = id; }, 500); });
       await inject(delayed, { ...dataFor(page.slug), approval: { status: 'draft', source: 'delayed ID fixture' }, items: [] });
@@ -131,7 +213,7 @@ try {
       ok(`${engine}: delayed ID fixture has no JavaScript errors`, delayedErrors.length === 0, delayedErrors); await delayedCtx.close();
     }
     for (const count of [0, 1, 2, 7]) {
-      const shapeCtx = await context(390), { p: shape, errors: shapeErrors } = await open(shapeCtx, page.slug);
+      const shapeCtx = await context(390), { p: shape, errors: shapeErrors } = await open(shapeCtx, page.slug, true);
       await shape.evaluate(count => {
         const content = document.querySelector('.entry-content');
         const items = Array.from({ length: count }, (_, i) => ({ id: 'shape-' + i, name: 'Fixture section ' + i }));
@@ -147,7 +229,7 @@ try {
       }
       ok(`${engine}: ${count}-destination fixture has no JavaScript errors`, shapeErrors.length === 0, shapeErrors); await shapeCtx.close();
     }
-    const ctx = await context(390), { p, errors } = await open(ctx, page.slug);
+    const ctx = await context(390), { p, errors } = await open(ctx, page.slug, true);
     const original = await rowOf(p);
     await p.evaluate(() => {
       const list = document.querySelector('.ts-jump ul'); list.prepend(list.lastElementChild);
@@ -173,5 +255,5 @@ try {
     ok(`${engine}: structural fixture has no JavaScript errors`, errors.length === 0, errors); await ctx.close();
   }
 } finally { await b.close(); }
-console.log(`Peek pages ${engine}: ${pass} passed, ${fail} failed; touch/accessibility simulation does not establish physical-device or screen-reader support.`);
+console.log(`INFO Peek pages ${engine}: ${pass} passed, ${fail} failed; touch/accessibility simulation does not establish physical-device or screen-reader support.`);
 process.exit(fail ? 1 : 0);

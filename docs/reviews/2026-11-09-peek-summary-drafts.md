@@ -1,10 +1,12 @@
-# Peek: draft summaries for three more service pages
+# Peek: approved summaries for three more service pages
 
-**Prepared for Ryan's wording review. Not approved and not deployed.** These
-proposals cover Therapeutic, Deep Tissue and Chair Massage. Their page-data
-status must stay `draft`; the shared core must retain the existing whole-paragraph
-fallback until Ryan approves each page's wording. Thai's already approved
-summaries are outside this copy change.
+**Ryan approved all three wording sets in chat on 2026-11-09**, after they were
+reproduced inline for review. His reply began "Approved:" and quoted the review's
+introductory line. The exact item arrays and coverage maps below are unchanged;
+only approval metadata moved from `draft` to `approved`. Deployment still requires
+each page's staging39-source rehearsal and rendered-card review. Follow the
+[rollout record](2026-11-09-peek-service-rollout.md) for actual deployment status.
+Thai's already approved summaries are outside this copy change.
 
 ## Evidence and limits
 
@@ -51,7 +53,7 @@ another navigation order. `partial` means the list intentionally covers roughly
 judgment about idea coverage, not a calculated percentage of words. Neither lint
 nor a phrase count can prove accuracy, distinctness or coverage.
 
-## Therapeutic Massage — draft
+## Therapeutic Massage — approved
 
 | Section / anchor | Proposed items, in order | Coverage |
 |---|---|---|
@@ -75,7 +77,7 @@ gains ([3], [23]); the rest/cortisol items preserve the less favorable compariso
 ([4], [28]). Rare serious harms come from the general massage safety account
 ([9], [13], [14]), not a claimed measured rate for this service.
 
-## Deep Tissue Massage — draft
+## Deep Tissue Massage — approved
 
 | Section / anchor | Proposed items, in order | Coverage |
 |---|---|---|
@@ -95,7 +97,7 @@ independent qualifications. The brief summary does not reproduce the complete
 cost analysis, adverse-event examples or sports-study comparisons, so it ends
 with `etc.`.
 
-## Chair Massage — draft
+## Chair Massage — approved
 
 | Section / anchor | Proposed items, in order | Coverage |
 |---|---|---|
@@ -139,24 +141,23 @@ with `lint-gists.py`'s validator, including the regulated wording tiers from
 `client-pages/wording_tiers.py`: **Therapeutic 27 items / six sections, Deep Tissue
 24 / five, Chair 30 / six; all passed** schema, planned-anchor, phrase-length,
 exact-duplicate, wording and coverage-marker checks. Counts include `etc.` items.
-The populated JSON datasets now match these tables exactly, including coverage,
-and all three approval states remain `draft`. After transfer, the file-level
+The populated JSON datasets match these tables exactly, including coverage.
+They were initially stored as drafts and are now approved by Ryan. After transfer, the file-level
 `python3 -I -B scripts/work-with-me-employer/link-ideas/lint-gists.py` passed for
 all four page-data files, and `tests/gists-selftest.py` passed **40 checks**. These
 were rerun against the populated files. Approval provenance points to this
 document and the fresh capture. These mechanical checks neither grant wording
 approval nor verify the appearance of the proposed cards in a browser.
 
-Ryan's next decision is the exact wording for each page above. After approval,
-mark only that page's data approved, then run the guarded staging39-source
-rehearsal and rendered-card checks before any staged rollout. Until then, retain
-the whole-paragraph fallback and the plain jump row.
+The next step is the guarded staging39-source rehearsal and rendered-card checks
+for each approved page before its rollout. The shared core retains whole-paragraph
+fallback for any future unapproved data and the plain jump row without JavaScript.
 
-I finished: drafts checked against the fresh rendered staging39 section text.
-Next step: Ryan reviews the proposed wording; these pages remain draft.
-Next lane: wording approval, then page-specific staging39 verification.
+I finished: exact wording approval recorded for all three pages.
+Next step: page-specific rehearsals and rendered-card review.
+Next lane: guarded staging39 rollout.
 See my work: this review and the linked capture report.
 Arc: none (ad-hoc)
 
-TL;DR: three page-specific proposals are ready for wording review, with research
-qualifications intact; no new summaries are approved or deployed.
+TL;DR: all three wording sets are approved with research qualifications intact;
+deployment evidence is tracked separately in the rollout record.

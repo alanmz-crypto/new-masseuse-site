@@ -7,8 +7,10 @@ code and data; the browser never requests repository JSON files.
 
 `peek-data/<slug>.json` stores `[text, anchor]` items, approval provenance and an
 editorial coverage classification. Anchors identify existing sections, not a
-second navigation order. Thai wording is approved; Therapeutic, Deep Tissue and
-Chair remain drafts. Unapproved phrases are stripped before public JSON emission,
+second navigation order. Thai wording is approved; Ryan approved the Therapeutic,
+Deep Tissue and Chair sets in chat on 2026-11-09. Their actual staging rollout is
+tracked separately in the [service rollout record](../../../docs/reviews/2026-11-09-peek-service-rollout.md).
+Unapproved phrases are stripped before public JSON emission,
 and the runtime uses whole source paragraphs. No mechanical sentence splitting
 is used for the summary fallback.
 
@@ -69,6 +71,34 @@ the plain jump row.
 Do not deploy another page until its wording/rollout is approved. An independently
 edited or newer data/core payload is deliberately refused; a future version needs
 its own reviewed exact-state migration, not deletion using an old snapshot.
+
+## Approved service-page rollout
+
+The three approved pages use the same installer; their rehearsal adapters only
+fix a page identity on an isolated copy. Repeat this sequence for
+`therapeutic-massage`, `deep-tissue-massage`, then `chair-massage`:
+
+```sh
+scripts/ci/request.sh rehearse --source staging39 --installer link-ideas/peek-page/therapeutic-massage/install-peek-page-data.php --with-uploads
+scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args 'page therapeutic-massage'
+scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args 'page therapeutic-massage --apply'
+```
+
+Read the complete rehearsal and inspect its approved-card captures before the
+write. Read every backup/public/restore section after the write. Then change only
+that page's manifest state to `enabled`, commit it and run:
+
+```sh
+scripts/ci/request.sh run --target staging39 --script link-ideas/check-peek-pages.mjs --args 'https://staging39.thaisolitude.com --capture-page therapeutic-massage'
+```
+
+Review the public captures before proceeding to the next page. The local-only
+`--enabled-page` option changes rehearsal expectations, never public expectations
+or WordPress data. `--capture-page` adds first/research-start/research-end captures
+at three widths and checks card bounds and access to the final research item.
+After all pages, run the complete `check-peek-nav.mjs` public check once. Record
+actual per-page snapshots; a page-only reversal removes only its data and restores
+its plain jump row without changing the shared core or other pages.
 
 ## Local browser checks
 

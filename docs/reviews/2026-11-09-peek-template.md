@@ -2,6 +2,10 @@
 
 Work is confined to staging39 and `claude/wizardly-bell-xu0rta`. No live change or main merge/push is authorized. This record separates observed evidence from design judgment and pending verification.
 
+Subsequent phase: Ryan approved the three service-page wording sets in chat.
+Their [separate rollout record](2026-11-09-peek-service-rollout.md) tracks current
+deployment; the Thai-only migration and approval-pending status below are historical.
+
 ## Fresh starting evidence
 
 - Pulled the requested branch: latest starting commit `4bc0fc81468a0674f7667cb0068a759d2dd49f1e`; clean checkout.

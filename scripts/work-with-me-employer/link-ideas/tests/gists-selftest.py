@@ -33,8 +33,9 @@ def broken(name, mutate, reason):
 expect("approved Thai data accepted", not lint.validate(thai, "thai-massage", plans))
 for slug in ("therapeutic-massage", "deep-tissue-massage", "chair-massage"):
     data = lint.read_json(HERE / "peek-data" / f"{slug}.json")
-    expect(f"{slug} draft wording passes mechanical checks", data["approval"]["status"] == "draft" and bool(data["items"]) and not lint.validate(data, slug, plans))
+    expect(f"{slug} wording passes mechanical checks", bool(data["items"]) and not lint.validate(data, slug, plans))
     empty = copy.deepcopy(data)
+    empty["approval"]["status"] = "draft"
     empty["items"] = []
     empty["coverage"] = {}
     expect(f"{slug} empty draft accepted for paragraph fallback", not lint.validate(empty, slug, plans))

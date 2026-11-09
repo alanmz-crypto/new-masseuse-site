@@ -10,8 +10,9 @@ assertions to accommodate missing layout assets. Fresh public Chromium checks
 passed **74/0 manifest + 485/0 Thai regression**; six before/after images are
 byte-identical, and stored snippet hashes are confirmed. Safari/physical devices
 and actual assistive technology remain unverified.
-[Three-page wording drafts](../reviews/2026-11-09-peek-summary-drafts.md)
-remain unapproved and undeployed. Main/live are untouched.
+[Three-page wording](../reviews/2026-11-09-peek-summary-drafts.md) was subsequently
+approved by Ryan in chat; follow the [service rollout record](../reviews/2026-11-09-peek-service-rollout.md)
+for current page deployment status. Main/live are untouched.
 
 Written 2026-11-09 by the Claude Code cloud session that built the Peek navigation over 2026-11-08/09, because its context is running out. Ryan asked
 for this handoff to go to a higher-tier model, which **continues the work and keeps assessing it**. Read this first, then the files in section 6.
