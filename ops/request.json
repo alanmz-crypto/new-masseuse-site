@@ -1,10 +1,9 @@
 {
-  "id": "peek-titles-behavior-20261109-1",
-  "op": "run",
+  "id": "peek-titles-rehearse-20261109-2",
+  "op": "rehearse",
   "target": "staging39",
-  "script": "link-ideas/inspect-title-behavior.mjs",
+  "installer": "link-ideas/core-title-strip/install-peek-core-title-strip.php",
   "args": [
-    "https://staging39.thaisolitude.com"
-  ],
-  "tests": "auto"
+    "--with-uploads"
+  ]
 }
