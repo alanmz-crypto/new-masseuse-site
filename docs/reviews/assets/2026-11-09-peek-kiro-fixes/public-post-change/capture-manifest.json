@@ -1,0 +1,731 @@
+{
+  "schema_version": 1,
+  "evidence": "Actual public staging39 full-page closed-state images from post-change retry. All 20 candidate views visually inspected; six representative candidate images retained. No live-reference image is retained.",
+  "run_id": 42698232542,
+  "run_url": "https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42698232542",
+  "request_id": "peek-kiro-fixes-post-retry-1",
+  "source_commit": "fdf441d503ab0b6449b3793d0fdda26a7b7d0f19",
+  "started_at_utc": "2026-11-09 21:00:04",
+  "finished_at_utc": "2026-11-09 21:03:22",
+  "capture_batch": "staging39-20261109-210051",
+  "artifact": {
+    "id": 13708959892,
+    "name": "site-ops-42698232542",
+    "bytes": 29622008,
+    "sha256": "e008df86237743fad45c0da2bdcd8b8a3a302da18d2791051aa84b611aa405a7"
+  },
+  "report": {
+    "retained_file": "operation-report.md",
+    "bytes": 5200,
+    "sha256": "3f9a67cd35d69a6a931513e28fd0b7e35fa07723dfaf0c206f26e3c5b3ddda58",
+    "note": "Exact operation report, with local waiter status prefix removed."
+  },
+  "operation_result": {
+    "status": "FAIL",
+    "exit_code": 1,
+    "code_and_rendered_page_gates": "PASS",
+    "route_statuses": "PASS; all 12 answers 200",
+    "structured_data": "PASS; candidate 27/reference 27 items, 0 parse failures, identical on 4 pages",
+    "php_log": "PASS; no site-code PHP errors, warnings or deprecations in last 120 minutes",
+    "live_pixel_comparison": "FAIL; all 20 page views differ in dimensions, 0 missing, 0 capture problems",
+    "note": "This visual review does not relabel the zero-tolerance live comparison as PASS or attribute every difference to this update."
+  },
+  "visual_review": {
+    "current_candidate_views_inspected": 20,
+    "retained_candidate_views": 6,
+    "desktop_views": 10,
+    "mobile_views": 10,
+    "conclusion": "No clear new persistent layout/image/content blocker in the captured states. All 20 current images were viewed. Focused viewport and interaction evidence remains separate.",
+    "prior_staging_comparison": {
+      "run_id": 42666333809,
+      "source_commit": "267c93e94f2b81ae63843be8f2e806805a061bd3",
+      "artifact_id": 13697715744,
+      "candidate_hashes_verified_against_committed_prior_manifest": 20,
+      "personally_compared_files": [
+        "accessibility-m.png",
+        "contact-d.png",
+        "home-d.png",
+        "services-d.png",
+        "therapeutic-massage-d.png",
+        "work-with-me-m.png"
+      ],
+      "same_dimensions": 16,
+      "different_dimensions": 4,
+      "note": "Dimension matching alone is not visual approval. Remaining small massage-page height changes are not all individually attributed; desktop Therapeutic comparison visibly shows increased FAQ clearance and wrapping."
+    },
+    "known_visible_limits": [
+      "Transient rail labels overlap some text: Accessibility strip and Work With Me hero; both overlaps exist in prior v5 captures.",
+      "Home mobile first-use hint overlays hero copy until dismissed.",
+      "Contact blurred grayscale image and large lower whitespace predate this change."
+    ],
+    "not_established": [
+      "Open-summary readability or scrolling.",
+      "Scrolled rail/FAQ hit-area clearance.",
+      "Touch/keyboard jump behavior.",
+      "Fine-text accuracy throughout dense research content.",
+      "Physical-device, true OS text-scale, Safari/WebKit or assistive-technology behavior."
+    ]
+  },
+  "images": [
+    {
+      "file": "about-d.png",
+      "bytes": 465042,
+      "sha256": "06094f1ed845b7977982bbe484e17bd56448aa9b72baa50bc67a5adeaa0c58d0",
+      "dimensions": [
+        1280,
+        2570
+      ],
+      "retained_here": false,
+      "review_status": "viewed_current_public_capture",
+      "viewed_by": "/root/evidence_audit/visual_samples",
+      "observation": "Full title/illustration, text columns and accordion cards align. Header, strip and rail remain visible.",
+      "prior_v5": {
+        "run_id": 42666333809,
+        "bytes": 470073,
+        "sha256": "f320f213ff6cd5b503d5cf8dba4d727f029b865c2340d0700a5c6a18f8153fbe",
+        "dimensions": [
+          1280,
+          2570
+        ],
+        "height_delta_px": 0,
+        "personally_compared": false
+      },
+      "live_reference": {
+        "bytes": 464632,
+        "sha256": "bf24d09810d90d25ffd709f7a8192778baeb41bd35e228020200047130a1b316",
+        "dimensions": [
+          1280,
+          2572
+        ],
+        "personally_reviewed": false
+      }
+    },
+    {
+      "file": "about-m.png",
+      "bytes": 342921,
+      "sha256": "3afd95a041b477665036def5cd8ce689ba1c0731deaa2a63e26cac2bf94fa186",
+      "dimensions": [
+        390,
+        3201
+      ],
+      "retained_here": true,
+      "review_status": "viewed_current_public_capture",
+      "viewed_by": "/root/evidence_audit",
+      "observation": "Title, portrait, content sections and accordion boxes render without visible clipping; right-side rail is present in captured top state.",
+      "prior_v5": {
+        "run_id": 42666333809,
+        "bytes": 344465,
+        "sha256": "8cf19865e7d58fd0e7b8920d91eec6e187321580337876d385be81a6605b7da4",
+        "dimensions": [
+          390,
+          3201
+        ],
+        "height_delta_px": 0,
+        "personally_compared": false
+      },
+      "live_reference": {
+        "bytes": 345894,
+        "sha256": "9bcc7a5ccc9a451f38c30539334f58d7f0b62004c4f7d5b8172a9f28ec794fa9",
+        "dimensions": [
+          390,
+          3176
+        ],
+        "personally_reviewed": false
+      }
+    },
+    {
+      "file": "accessibility-d.png",
+      "bytes": 260310,
+      "sha256": "0ce5316b2c2fdecf8ade3cca6bef21a1c58babec031d5469a8d3366a1d63bb7b",
+      "dimensions": [
+        1280,
+        1705
+      ],
+      "retained_here": false,
+      "review_status": "viewed_current_public_capture",
+      "viewed_by": "/root/evidence_audit/visual_samples",
+      "observation": "Heading, page strip, section headings, body blocks and footer render. Rail remains in right margin.",
+      "prior_v5": {
+        "run_id": 42666333809,
+        "bytes": 263294,
+        "sha256": "72dbcef13a024c55575031083cf1afbcf3e9e6367d90ed33b3dd2cdcd3120be8",
+        "dimensions": [
+          1280,
+          1705
+        ],
+        "height_delta_px": 0,
+        "personally_compared": false
+      },
+      "live_reference": {
+        "bytes": 258018,
+        "sha256": "809cca7228b040e9ca922f86431b81296fdb58ba3753e621937b7845d7bcde75",
+        "dimensions": [
+          1280,
+          1680
+        ],
+        "personally_reviewed": false
+      }
+    },
+    {
+      "file": "accessibility-m.png",
+      "bytes": 213306,
+      "sha256": "6518135a0355896e60a78ee950fcb26d103c200c3dd059df09bb4bd5d59954f2",
+      "dimensions": [
+        390,
+        2873
+      ],
+      "retained_here": false,
+      "review_status": "viewed_current_public_capture",
+      "viewed_by": "/root/evidence_audit",
+      "observation": "Heading, page strip and content render. Transient What has been checked label overlaps part of strip text; same overlap is present in prior v5 image.",
+      "prior_v5": {
+        "run_id": 42666333809,
+        "bytes": 214150,
+        "sha256": "bdf9b2322907ae06d88c772b002208b93cdd2278d9aa5a12beaa3f5f08db6401",
+        "dimensions": [
+          390,
+          2873
+        ],
+        "height_delta_px": 0,
+        "personally_compared": true
+      },
+      "live_reference": {
+        "bytes": 209306,
+        "sha256": "ed82b4b5624d783d0e7722d9576369e9690194e439f7d82877e7d3b4584c0f8f",
+        "dimensions": [
+          390,
+          2766
+        ],
+        "personally_reviewed": false
+      }
+    },
+    {
+      "file": "contact-d.png",
+      "bytes": 364918,
+      "sha256": "d052b40118d6fea549e0ed7301cd29f67e583e85c2fbe3cbb6ff1dc9d889be29",
+      "dimensions": [
+        1280,
+        2988
+      ],
+      "retained_here": false,
+      "review_status": "viewed_current_public_capture",
+      "viewed_by": "/root/evidence_audit/visual_samples",
+      "observation": "Title, contact cards and buttons fit. Heavily blurred grayscale hero and substantial blank space before footer also appear in prior v5.",
+      "prior_v5": {
+        "run_id": 42666333809,
+        "bytes": 366871,
+        "sha256": "5cbde5972008b5d90e39a87594d5ae1ef619e4a57e4fb3fbd22a4ec7015822fc",
+        "dimensions": [
+          1280,
+          2988
+        ],
+        "height_delta_px": 0,
+        "personally_compared": true
+      },
+      "live_reference": {
+        "bytes": 364213,
+        "sha256": "e983937db809f07869f738b5af33429f0d54d00df3f6187ef77f5bce8e8de1f8",
+        "dimensions": [
+          1280,
+          2990
+        ],
+        "personally_reviewed": false
+      }
+    },
+    {
+      "file": "contact-m.png",
+      "bytes": 247421,
+      "sha256": "67899f42a30e6a6b3c94c1320d82c82abb45c30d75523e3ec797fb2b984761a2",
+      "dimensions": [
+        390,
+        2992
+      ],
+      "retained_here": false,
+      "review_status": "viewed_current_public_capture",
+      "viewed_by": "/root/evidence_audit",
+      "observation": "Title, contact cards, actions and rail render. Blurred grayscale hero and lower whitespace are visible; desktop comparison establishes these features existed previously.",
+      "prior_v5": {
+        "run_id": 42666333809,
+        "bytes": 248750,
+        "sha256": "026f5477b4ca2b4d427040a6e4b82b1efdac0f6ef6ee09a56b0dc452266cb526",
+        "dimensions": [
+          390,
+          2992
+        ],
+        "height_delta_px": 0,
+        "personally_compared": false
+      },
+      "live_reference": {
+        "bytes": 246637,
+        "sha256": "4fc085e34eea6ec76a51b4a6d2438168ac9b76a26fb32edcf4884c2738fa104f",
+        "dimensions": [
+          390,
+          2993
+        ],
+        "personally_reviewed": false
+      }
+    },
+    {
+      "file": "deep-tissue-massage-d.png",
+      "bytes": 1014126,
+      "sha256": "aad5d83676206cca9fb6d9015371528f874bf3702a11ba8c91f98b8f1098c2d7",
+      "dimensions": [
+        1280,
+        5779
+      ],
+      "retained_here": false,
+      "review_status": "viewed_current_public_capture",
+      "viewed_by": "/root/evidence_audit/visual_samples",
+      "observation": "Full hero title, illustrations, section rows, FAQ and research panels render within page margins without visible clipping. Dense fine text was not comprehensively audited.",
+      "prior_v5": {
+        "run_id": 42666333809,
+        "bytes": 1018284,
+        "sha256": "209566f63cdb5c9f17e92f126a62e3929daabf7fd475efe0f3ff540b2ae614dd",
+        "dimensions": [
+          1280,
+          5779
+        ],
+        "height_delta_px": 0,
+        "personally_compared": false
+      },
+      "live_reference": {
+        "bytes": 1009030,
+        "sha256": "c9223b0954786e46776cfe6e99a80b0f8e1b6833cd6e9ef3faf2646b9187fafa",
+        "dimensions": [
+          1280,
+          5674
+        ],
+        "personally_reviewed": false
+      }
+    },
+    {
+      "file": "deep-tissue-massage-m.png",
+      "bytes": 1007979,
+      "sha256": "495a441c72e7f996fcd6c50a1821c0053d15fa688b47e6ba4d80c6efe0ab2864",
+      "dimensions": [
+        390,
+        10117
+      ],
+      "retained_here": false,
+      "review_status": "viewed_current_public_capture",
+      "viewed_by": "/root/evidence_audit",
+      "observation": "Hero title, illustrations, section blocks, FAQ and research panels are present and aligned at full-page scale. No visible image/content clipping; dense fine text was not comprehensively audited.",
+      "prior_v5": {
+        "run_id": 42666333809,
+        "bytes": 1008215,
+        "sha256": "378bccd6c7379730c21b38202bebd328bf11aa53a8fd9936d64518f014646bef",
+        "dimensions": [
+          390,
+          10085
+        ],
+        "height_delta_px": 32,
+        "personally_compared": false
+      },
+      "live_reference": {
+        "bytes": 974880,
+        "sha256": "a5b974c52afe2c7ab2fc8bade894a211c47aa0991f52120fe1e22ba431fe9a89",
+        "dimensions": [
+          390,
+          9446
+        ],
+        "personally_reviewed": false
+      }
+    },
+    {
+      "file": "home-d.png",
+      "bytes": 1399044,
+      "sha256": "255c9f7ea7fa13ef650c2dbf4e46ee1463fc5f0612e7220dce291c1fba70e887",
+      "dimensions": [
+        1280,
+        4622
+      ],
+      "retained_here": false,
+      "review_status": "viewed_current_public_capture",
+      "viewed_by": "/root/evidence_audit/visual_samples",
+      "observation": "Full hero title, portrait, service images, header and strip render. Onboarding card occupies open right hero area without visible title/button collision.",
+      "prior_v5": {
+        "run_id": 42666333809,
+        "bytes": 1385765,
+        "sha256": "e09d94bb496fe947dc5764c3a99def06bcc905ef98840584dc0b0371d08293bc",
+        "dimensions": [
+          1280,
+          4622
+        ],
+        "height_delta_px": 0,
+        "personally_compared": true
+      },
+      "live_reference": {
+        "bytes": 1382520,
+        "sha256": "fd3371c8c94ca9a0c63e531fe8c70ce8a3efc61393bd82ef7578e4c847e985c8",
+        "dimensions": [
+          1280,
+          4624
+        ],
+        "personally_reviewed": false
+      }
+    },
+    {
+      "file": "home-m.png",
+      "bytes": 1098762,
+      "sha256": "fd4335facbe7047732f7761961ebc0057bd69455ba4e7d6da166281615868c1a",
+      "dimensions": [
+        390,
+        6095
+      ],
+      "retained_here": false,
+      "review_status": "viewed_current_public_capture",
+      "viewed_by": "/root/evidence_audit",
+      "observation": "Home page title appears in strip while hero is visible. First-use hint overlays some hero copy and has dismiss/side controls; full portrait and service cards render.",
+      "prior_v5": {
+        "run_id": 42666333809,
+        "bytes": 1100530,
+        "sha256": "fd9c83eac2d209f233d924f4bf22870f29ef37160d59cc8a500a2ae6eee24460",
+        "dimensions": [
+          390,
+          6095
+        ],
+        "height_delta_px": 0,
+        "personally_compared": false
+      },
+      "live_reference": {
+        "bytes": 1089479,
+        "sha256": "4561e84b230f1d1e740f8fddad8f66b065a823f010e6562687cd068380bdc7f0",
+        "dimensions": [
+          390,
+          5929
+        ],
+        "personally_reviewed": false
+      }
+    },
+    {
+      "file": "privacy-policy-d.png",
+      "bytes": 218165,
+      "sha256": "92516342a6c44fe3f2636d5ff7b708801a29ee3aceeec9b54d623dcd78dc1af4",
+      "dimensions": [
+        1280,
+        1430
+      ],
+      "retained_here": false,
+      "review_status": "viewed_current_public_capture",
+      "viewed_by": "/root/evidence_audit/visual_samples",
+      "observation": "Page heading and centered strip are separate and readable. Both disclosure boxes have right clearance from rail in captured state.",
+      "prior_v5": {
+        "run_id": 42666333809,
+        "bytes": 219928,
+        "sha256": "fb4e7bc497707a19cc3c0d027fd22c3bbf5fcce0a311cdd30b36d002002a0df6",
+        "dimensions": [
+          1280,
+          1430
+        ],
+        "height_delta_px": 0,
+        "personally_compared": false
+      },
+      "live_reference": {
+        "bytes": 214429,
+        "sha256": "2e5613205caa65577701b61cf144e2a82b455c646ccbb8ce1a7ff8a1de89d7cf",
+        "dimensions": [
+          1280,
+          1405
+        ],
+        "personally_reviewed": false
+      }
+    },
+    {
+      "file": "privacy-policy-m.png",
+      "bytes": 174672,
+      "sha256": "fc0d6d72732cb30ce9e167864e5dbe514a10781ed5e275166099247a2b0b2dfa",
+      "dimensions": [
+        390,
+        2251
+      ],
+      "retained_here": true,
+      "review_status": "viewed_current_public_capture",
+      "viewed_by": "/root/evidence_audit",
+      "observation": "Privacy Policy heading and page strip are readable. Online and Client privacy boxes have right-side clearance. This top-state full-page image cannot establish scrolled clearance or jump behavior.",
+      "prior_v5": {
+        "run_id": 42666333809,
+        "bytes": 176160,
+        "sha256": "78cb1f7f09b5f79a994cd7c3e63fd26a89c5c2d65c1fba2f75bf9a3c95ccc222",
+        "dimensions": [
+          390,
+          2251
+        ],
+        "height_delta_px": 0,
+        "personally_compared": false
+      },
+      "live_reference": {
+        "bytes": 170683,
+        "sha256": "134814cd42be0256172a810165085bed72089f6c5130df580394bff5b8057ac9",
+        "dimensions": [
+          390,
+          2198
+        ],
+        "personally_reviewed": false
+      }
+    },
+    {
+      "file": "services-d.png",
+      "bytes": 972008,
+      "sha256": "8a27277f1da1456b5e720dfb3d90d1a4626c9480e4446fbc68809e863b47a5ba",
+      "dimensions": [
+        1280,
+        3904
+      ],
+      "retained_here": true,
+      "review_status": "viewed_current_public_capture",
+      "viewed_by": "/root/evidence_audit/visual_samples",
+      "observation": "At 1280 px, complete two-line hero title, illustration, service rows, expectation cards and CTA buttons fit; rail is outside content.",
+      "prior_v5": {
+        "run_id": 42666333809,
+        "bytes": 976466,
+        "sha256": "ad0a31426188087a608c79d879ff5ca6be54426b6fd0d3a66dba4e120bd5e0e4",
+        "dimensions": [
+          1280,
+          3904
+        ],
+        "height_delta_px": 0,
+        "personally_compared": true
+      },
+      "live_reference": {
+        "bytes": 969401,
+        "sha256": "1f401adfed6c9afa262ce2aa2749c0e763a6ecb7dc6d008694917b178f9d7e7f",
+        "dimensions": [
+          1280,
+          3906
+        ],
+        "personally_reviewed": false
+      }
+    },
+    {
+      "file": "services-m.png",
+      "bytes": 1203724,
+      "sha256": "80c98c7530f1a2366b2684b764408eee337f11eb79942fe0ca02406fb7401f73",
+      "dimensions": [
+        390,
+        6376
+      ],
+      "retained_here": false,
+      "review_status": "viewed_current_public_capture",
+      "viewed_by": "/root/evidence_audit",
+      "observation": "Full two-line hero title and service illustrations/cards are present and aligned. Rail remains alongside the hero in the captured top state.",
+      "prior_v5": {
+        "run_id": 42666333809,
+        "bytes": 1205024,
+        "sha256": "02d82a69ddb47c0c7fc177c2e220566d7995c56c905764b1a5cf9e09f6064059",
+        "dimensions": [
+          390,
+          6376
+        ],
+        "height_delta_px": 0,
+        "personally_compared": false
+      },
+      "live_reference": {
+        "bytes": 1198013,
+        "sha256": "88a2ddec9775be4922b1e6341685911d56d9ed0ccd8bf4d685c7e1e42814854a",
+        "dimensions": [
+          390,
+          6125
+        ],
+        "personally_reviewed": false
+      }
+    },
+    {
+      "file": "thai-massage-d.png",
+      "bytes": 1034075,
+      "sha256": "571bf6a1cefc1c6bf27304b263fffd53f3aeba4e1d95c307a5c905baf8dd7928",
+      "dimensions": [
+        1280,
+        5773
+      ],
+      "retained_here": false,
+      "review_status": "viewed_current_public_capture",
+      "viewed_by": "/root/evidence_audit/visual_samples",
+      "observation": "Full hero title, illustrations, section rows, FAQ and research panels render within page margins without visible clipping. Dense fine text was not comprehensively audited.",
+      "prior_v5": {
+        "run_id": 42666333809,
+        "bytes": 1038503,
+        "sha256": "9a8a4f0d561ff0e7d3e460df735893fbdac7e87c95a5c4425261394ff909cd84",
+        "dimensions": [
+          1280,
+          5773
+        ],
+        "height_delta_px": 0,
+        "personally_compared": false
+      },
+      "live_reference": {
+        "bytes": 1033841,
+        "sha256": "0f2a5e327f00da8a3c70dc4b344938d0eaefe41d956b92466f4876e860a30964",
+        "dimensions": [
+          1280,
+          5774
+        ],
+        "personally_reviewed": false
+      }
+    },
+    {
+      "file": "thai-massage-m.png",
+      "bytes": 1118636,
+      "sha256": "afbf7a1eb70c1ad157cf7179e5aa5c4823edc913a71e5de18a39e7d80fff96e4",
+      "dimensions": [
+        390,
+        10181
+      ],
+      "retained_here": true,
+      "review_status": "viewed_current_public_capture",
+      "viewed_by": "/root/evidence_audit",
+      "observation": "Hero title, illustrations, section blocks, FAQ and research panels are present and aligned at full-page scale. No visible image/content clipping; dense fine text was not comprehensively audited.",
+      "prior_v5": {
+        "run_id": 42666333809,
+        "bytes": 1119566,
+        "sha256": "320b6211f6b58cc0aeeed58534143eb43cd638b71b229c08bd5bd3f6c1e3613f",
+        "dimensions": [
+          390,
+          10165
+        ],
+        "height_delta_px": 16,
+        "personally_compared": false
+      },
+      "live_reference": {
+        "bytes": 1096120,
+        "sha256": "0861f3870fa868a2e2ffbbe19d9a4ae8e57c53ce31f31238fb479765b9c71e89",
+        "dimensions": [
+          390,
+          9592
+        ],
+        "personally_reviewed": false
+      }
+    },
+    {
+      "file": "therapeutic-massage-d.png",
+      "bytes": 1302026,
+      "sha256": "7782b4040697be7a5fed78773aa82c81e03f8b754fb88d088ad78e4bef07a397",
+      "dimensions": [
+        1280,
+        6487
+      ],
+      "retained_here": false,
+      "review_status": "viewed_current_public_capture",
+      "viewed_by": "/root/evidence_audit/visual_samples",
+      "observation": "Full hero title, illustrations, section rows, FAQ and research panels render within page margins without visible clipping. Dense fine text was not comprehensively audited. Compared with prior v5, FAQ right clearance is larger and two long questions wrap to two lines; no clipped labels are visible.",
+      "prior_v5": {
+        "run_id": 42666333809,
+        "bytes": 1305162,
+        "sha256": "4cc4309afc8894c2572038bebe0595c0d35d9be238b5828b5f097b4560f8cb85",
+        "dimensions": [
+          1280,
+          6451
+        ],
+        "height_delta_px": 36,
+        "personally_compared": true
+      },
+      "live_reference": {
+        "bytes": 1298639,
+        "sha256": "a8c4bb964d22241e61a942bfa7ff3bfcb9c05740bc615bb9c7041a9591e8f2e7",
+        "dimensions": [
+          1280,
+          6426
+        ],
+        "personally_reviewed": false
+      }
+    },
+    {
+      "file": "therapeutic-massage-m.png",
+      "bytes": 1388363,
+      "sha256": "3148ea6fe0c0591454aabedab34c2adbb94e5616dcfda272430b04e763e3cf31",
+      "dimensions": [
+        390,
+        11159
+      ],
+      "retained_here": true,
+      "review_status": "viewed_current_public_capture",
+      "viewed_by": "/root/evidence_audit",
+      "observation": "Hero title, illustrations, section blocks, FAQ and research panels are present and aligned at full-page scale. No visible image/content clipping; dense fine text was not comprehensively audited.",
+      "prior_v5": {
+        "run_id": 42666333809,
+        "bytes": 1389572,
+        "sha256": "c16fcd2743a90064838adad140e58d46b73a39f131d8ba1b8ec0208a4161fd6c",
+        "dimensions": [
+          390,
+          11143
+        ],
+        "height_delta_px": 16,
+        "personally_compared": false
+      },
+      "live_reference": {
+        "bytes": 1358277,
+        "sha256": "cb7470cf1dfb268a5f1611559169b778220bdaba44663ad65222b4ec5b25a3e7",
+        "dimensions": [
+          390,
+          10367
+        ],
+        "personally_reviewed": false
+      }
+    },
+    {
+      "file": "work-with-me-d.png",
+      "bytes": 1017221,
+      "sha256": "962d0412e17271edb424da7c9810cf6d86a2ee04cfb2588f51c6cc9aba4771bf",
+      "dimensions": [
+        1280,
+        6103
+      ],
+      "retained_here": false,
+      "review_status": "viewed_current_public_capture",
+      "viewed_by": "/root/evidence_audit/visual_samples",
+      "observation": "Portrait, treatment photo, wrapped section headings, buttons and experience accordions render. Rail tooltip overlaps portrait upper edge without covering face or actions.",
+      "prior_v5": {
+        "run_id": 42666333809,
+        "bytes": 1023844,
+        "sha256": "357c2ecf6fc36debed39ec8ac39bd5953685b14700a986d2fede01f5c56dfbe1",
+        "dimensions": [
+          1280,
+          6103
+        ],
+        "height_delta_px": 0,
+        "personally_compared": false
+      },
+      "live_reference": {
+        "bytes": 1012001,
+        "sha256": "4d8ca7a8deb6b2bd271918c0ea8aa32159de4d1be1a9e1f3927ea57a1df108bf",
+        "dimensions": [
+          1280,
+          6045
+        ],
+        "personally_reviewed": false
+      }
+    },
+    {
+      "file": "work-with-me-m.png",
+      "bytes": 638691,
+      "sha256": "085ade4033ab79a4f2a30bc2dd945f2ca1678b667fc13f6325ea3a88693ff0c2",
+      "dimensions": [
+        390,
+        8044
+      ],
+      "retained_here": true,
+      "review_status": "viewed_current_public_capture",
+      "viewed_by": "/root/evidence_audit",
+      "observation": "Page-title strip and complete page sections render. Transient first-section label overlaps hero name; same overlap exists in prior v5. Sticky Email me/Resume bar is visible.",
+      "prior_v5": {
+        "run_id": 42666333809,
+        "bytes": 640844,
+        "sha256": "78b94a4a2ef9d395b703b072de0c457e6d54792470183a7e8787980e5feecf1c",
+        "dimensions": [
+          390,
+          8044
+        ],
+        "height_delta_px": 0,
+        "personally_compared": true
+      },
+      "live_reference": {
+        "bytes": 631773,
+        "sha256": "5525ed6f54cd6a8cbbd3530afef121be91d015063b29cda5e50def1244acae85",
+        "dimensions": [
+          390,
+          7981
+        ],
+        "personally_reviewed": false
+      }
+    }
+  ]
+}

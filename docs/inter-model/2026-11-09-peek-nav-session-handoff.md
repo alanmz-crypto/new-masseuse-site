@@ -1,12 +1,67 @@
 # Session handoff: the Peek navigation (for the next Claude Code session)
 
-**Fix candidate in progress:** Ryan requested the Kiro issues be fixed. The
-[fix record](../reviews/2026-11-09-peek-kiro-fixes.md) tracks the candidate and
-required fresh-copy gates; no new staging deployment yet. The deployed core is
-frozen as v5, the previous title-rail transition is pinned, and the candidate
-uses the new `core-kiro-fixes` transition.
+**Current: Kiro fixes deployed on staging39; public and stored checks passed.**
+The [fix and verification record](../reviews/2026-11-09-peek-kiro-fixes.md) tracks
+corrected disclosure touch/Enter behavior, larger short-screen reading areas,
+FAQ/text clearance, wrapped title rows, shorter single-entry rails, distinct
+preview edges and an opaque strip. All-page rails and four approved data sets
+remain; no icon scrolling or broad jump-engine refactor was added.
 
-**Assessment returned; fixes pending:** The [Kiro report and Codex verification](2026-11-09-peek-nav-kiro-assessment.md)
+Apply **42697003089**, source `8f4a3fb415b73cfe8c81071419c6da428f5b032a`, wrote #1380
+at **20:52:52 UTC** and finished **20:54:46 UTC, PASS**. Current code is **102,649
+bytes**, SHA256 `dec11c9e50cacba8986068e98748e966333aebe3366701f1f0e94e5e790113a1`.
+Gates passed **31/0 + 1 rendered-only skip**. Fresh-copy rehearsal **42693471206**
+passed **14,249/0 across 14 complete suites**, including native touch 387/0 and
+Thai gestures 491/0. Twenty-two selected images and the 133-capture manifest are
+retained; twelve were freshly viewed and ten match earlier reviewed captures.
+All 19 published origin routes/scope/plain rows passed. Short-screen cards can
+cover the strip to preserve reading space, while staying below the visible
+header; that tradeoff was explained before implementation.
+
+Fresh export `staging39-before-peek-nav-20261109-205236.sql` and actual snapshot
+`peek-template-core-kiro-fixes-before-20261109-205252-9078fe24.json` were verified
+encrypted off-site; export verification preceded the write. Restore import 0,
+104/104 fingerprints differ only on #1380/WPCode cache. No fallback-only interval.
+Automatic post-change checks were **INVALID HTTP202** at **20:54:27 UTC**, with
+zero checks. A single later retry **42698232542** finished **21:03:22 UTC**:
+both edge requests/all 12 HTTP checks returned 200; code/rendered wording/
+posture/PHP passed and schema passed 27/27, zero parse errors. Overall **FAIL**
+is 20/20 live pixel dimension differences, zero missing captures, not an
+aggregate pass. All 20 deployed full-page captures were independently viewed,
+with six v5 comparisons and verified hashes, without a new persistent layout/
+image blocker. Existing transient labels and Contact blur/whitespace remain;
+these closed-state views alone do not prove focused interactions.
+
+Focused public **42699275642** finished **21:19:05 UTC, PASS**: **12,237/0 across
+13 complete unique suites**, with no INVALID. Disclosure checks passed Chromium
+66/0 and Firefox 41/0, layout 158/0 and 134/0, native touch 387/0; retained title,
+page, clearance and matched-capture suites completed. Chair's native outer-card
+swipe moved 0→21 px at scale 1/390×180/zero offset, with page/summary unchanged.
+
+Independent audit verified all 33 streams, matching 12,237 literal/numeric
+PASS counts, 16 empty stderr logs and 16 zero exits. The full inventory contains
+123 decoded JPEGs. Fifteen of 24 selected public captures were freshly viewed;
+nine exactly match earlier reviewed rehearsal captures. No new visible blocker
+was found. Transient labels, approximate 150% root-text brand wrapping and one
+closed Therapeutic tablet row's ellipsis remain documented in the fix record.
+
+Stored inspection **42697818891** passed **20:57:33 UTC**: published #1380 matches
+the exact current 102,649-byte/hash payload and all four published data records
+retain their original identities, titles, bytes and full hashes.
+Do not present the passing throwaway-copy suites as deployed public evidence.
+
+Recovery requires a fresh verified backup, complete current-state checks and
+the matching package: first use explicit
+`core-kiro-fixes --rollback $HOME/private-backups/peek-template-core-kiro-fixes-before-20261109-205252-9078fe24.json`
+to restore frozen v5. Only then may the older title-rail snapshot below restore
+v4. Frozen v5 and pinned v4→v5 already exist. Before a future runtime edit,
+freeze this current payload as v6 and pin `core-kiro-fixes` to v5→v6; v6 is not
+yet frozen. Thai touch-focus-to-BODY and Rail-practice Firefox Enter are not
+claimed fixed. Safari, physical devices, actual assistive technology and OS
+text scaling remain unverified; rapid-switch delay is not claimed fixed.
+Main/live remain unchanged.
+
+**Historical assessment stage, before the fixes above:** The [Kiro report and Codex verification](2026-11-09-peek-nav-kiro-assessment.md)
 record independently reproduced touch overshoot and keyboard double-toggle on
 Privacy. Existing passing checks missed the relevant initial disclosure state.
 Further layout verification stopped on HTTP202; do not claim the reported
@@ -14,7 +69,7 @@ landscape and overlap findings were independently reproduced by Codex. This
 review changed records only. Preserve all-page rails; the subsequent v5 freeze
 and fix work are tracked above.
 
-**Current: title-only Peek rails deployed on staging39; public browser and
+**Previous baseline: title-only Peek rails, frozen shared v5; public browser and
 stored-code checks passed.** The [title-rail record](../reviews/2026-11-09-peek-title-rails.md)
 tracks the actual deployment and earlier failed attempts. Shared rails use
 existing jump-row labels/targets, otherwise visible H2 headings or one page-title
@@ -35,7 +90,7 @@ Public run **42667176429** finished **17:49:09 UTC, PASS**: **11,829/0** across 
 unique suites; both title matrices covered 21 actual routes in Chromium/Firefox.
 Stored inspection **42667209210** passed **17:49:42 UTC**: published #1380 exactly
 matches the bytes/hash above and #1381–1384 retain their original bytes/hashes.
-The current record tracks the full suite counts and final capture/log review.
+That previous record tracks the full suite counts and final capture/log review.
 Safari, physical devices and actual assistive technology remain unverified.
 Existing Thai touch-focus loss and the old Rail practice page's Firefox Enter
 issue remain open; practice pointer preview/Go passed. The reported rapid-switch
@@ -45,11 +100,11 @@ Fresh export `staging39-before-peek-nav-20261109-173723.sql` and actual snapshot
 `peek-template-core-title-rail-before-20261109-173737-cae68f35.json` were verified
 encrypted off-site. Restore import returned 0; 104/104 fingerprints differ only
 on #1380/WPCode cache. No fallback-only interval occurred. After a fresh verified
-backup and full current-state checks, use the matching package and explicit
+backup and full current-state checks, and only after reversing the current
+Kiro-fixes transition to v5 above, use the matching package and explicit
 `core-title-rail --rollback $HOME/private-backups/peek-template-core-title-rail-before-20261109-173737-cae68f35.json`
-arguments to restore v4 FIRST. The older `core-title-strip` route pins frozen
-v3→v4. Before any future runtime change, freeze the current payload as shared v5
-and pin the new transition; v5 does not exist yet. Page-only data removal leaves
+arguments to restore v4. This route now pins frozen v4→v5; the older
+`core-title-strip` route pins frozen v3→v4. Page-only data removal leaves
 a title-only rail and strip, with the original jump row available without JavaScript.
 
 **Previous deployment: all-page title strip and summary space, frozen shared v4.** The all-page
@@ -76,8 +131,8 @@ Fresh export `staging39-before-peek-nav-20261109-102438.sql` and actual snapshot
 `peek-template-core-title-strip-before-20261109-102452-90630a29.json` were verified
 encrypted off-site. Restore import returned 0, with only #1380/cache differences.
 There was no fallback-only interval. Recovery requires a fresh verified backup,
-current full-state checks and the matching package: after restoring v4 through
-the newer title-rail snapshot above, use explicit
+current full-state checks and the matching package: after restoring v5 through
+the new Kiro-fixes snapshot, then v4 through the title-rail snapshot above, use explicit
 `core-title-strip --rollback $HOME/private-backups/peek-template-core-title-strip-before-20261109-102452-90630a29.json`
 arguments to restore frozen v3 before any older transition. The v4 freeze and
 v3→v4 pin are complete; new versions use separate exact transitions.
@@ -133,8 +188,8 @@ physical devices and actual assistive technology remain open. Main/live are unto
 The original `core` migration targets frozen `peek-nav-shared-v1.php`;
 `core-upgrade` is now pinned to v1→frozen `peek-nav-shared-v2.php`, preserving its
 07:11:22 snapshot. `core-summary-touch` now pins v2→frozen `peek-nav-shared-v3.php`,
-preserving the 07:59:57 snapshot. Reverse the current title-rail update to v4 first,
-then the title-strip update to v3, then the summary-touch update using its
+preserving the 07:59:57 snapshot. Reverse the current Kiro-fixes update to v5
+first, then title-rail to v4, then title-strip to v3, then summary-touch using its
 own actual snapshot and explicit `core-summary-touch --rollback FILE` arguments.
 Only then may `core-upgrade --rollback FILE` restore v1, followed by the original
 `core --rollback FILE` recovery to legacy. Never substitute an older snapshot.
