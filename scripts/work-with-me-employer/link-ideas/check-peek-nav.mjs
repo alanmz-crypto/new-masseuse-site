@@ -337,6 +337,51 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
   ok('without JavaScript the in-page link row still shows, with all five links (fallback)', nj.shown && nj.links === labels.join('|'), JSON.stringify(nj));
   await ctx.close();
 }
+// Kiro, template review (2026-11-09): other pages' shapes - row order, missing targets, FAQ panels as targets, another page's data, focus, a quick tap
+{
+  const shape = async (initFn, path = '/thai-massage/') => { const ctx = await b.newContext({ ...devices['iPhone 13'], deviceScaleFactor: 1 }); await ctx.addInitScript(() => { try { localStorage.setItem('ts-pk-tip', 'seen'); } catch (e) {} }); if (initFn) await ctx.addInitScript(initFn); const { p, errors } = await open(ctx, path); await p.waitForTimeout(1400); return { ctx, p, errors, cdp: await ctx.newCDPSession(p) }; };
+  const tap = async (cdp, pt, hold = 0) => { await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [pt] }); if (hold) await new Promise(r => setTimeout(r, hold)); await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] }); };
+  { // the row in another order, plus a link whose target does not exist
+    const { ctx, p, errors } = await shape(() => document.addEventListener('DOMContentLoaded', () => { const l = document.querySelector('.entry-content .ts-jump__list'), li = [...l.children]; l.insertBefore(li[3], li[1]); const x = document.createElement('li'); x.innerHTML = '<a href="#ts-missing-target">Missing</a>'; l.appendChild(x); }));
+    const names = await p.$$eval('.ts-pk-rail a', a => a.map(x => x.getAttribute('aria-label').split(':')[0]));
+    ok('template: the rail follows the page order whatever the row order, and drops a link whose target is missing (Kiro)', names.join('|') === labels.join('|'), names.join('|'));
+    ok('template: ...no JavaScript errors', errors.length === 0, errors.join(' | '));
+    await ctx.close(); }
+  { // a closed FAQ panel as a target (Privacy on staging39): a short name, and a jump opens it
+    const { ctx, p, cdp } = await shape(() => document.addEventListener('DOMContentLoaded', () => {
+      const l = document.querySelector('.entry-content .ts-jump__list'), c = document.querySelector('.entry-content'); const li = document.createElement('li'); li.innerHTML = '<a href="#ts-faq-panel">A panel</a>'; l.appendChild(li);
+      const d = document.createElement('div'); d.id = 'ts-faq-panel'; d.className = 'uagb-faq-item'; d.innerHTML = '<div class="uagb-faq-questions-button" role="button"><span class="uagb-question">A short question for the check?</span></div><div class="uagb-faq-content"><p>' + 'A long hidden answer for the check. '.repeat(60) + '</p></div>';
+      d.querySelector('.uagb-faq-questions-button').addEventListener('click', () => d.classList.toggle('uagb-faq-item-active')); c.appendChild(d); }));
+    const n = await p.$$eval('.ts-pk-rail li', l => l.length);
+    const z = await p.evaluate(i => { const r = document.querySelectorAll('.ts-pk-rail li')[i].getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; }, n - 1);
+    await tap(cdp, z); await p.waitForTimeout(600);
+    const nm = await p.evaluate(() => ({ open: document.querySelector('.ts-pk-card .open > b').textContent, rows: [...document.querySelectorAll('.ts-pk-card .row')].map(r => r.getAttribute('aria-label').length) }));
+    ok('template: an FAQ panel as a target has a short name, not its whole answer (Kiro)', nm.open === 'A panel' && nm.rows.every(x => x < 200), JSON.stringify(nm));
+    const b2 = await p.evaluate(() => { const r = document.querySelector('.ts-pk-card .open > b').getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
+    await tap(cdp, b2); await p.waitForTimeout(1600);
+    ok('template: jumping to a closed FAQ panel opens it (Kiro)', await p.evaluate(() => document.getElementById('ts-faq-panel').classList.contains('uagb-faq-item-active')));
+    await ctx.close(); }
+  { // the same page at another address: none of Thai's summary lists
+    const ctx = await b.newContext({ ...devices['iPhone 13'], deviceScaleFactor: 1 }); await ctx.addInitScript(() => { try { localStorage.setItem('ts-pk-tip', 'seen'); } catch (e) {} });
+    const html = await (await ctx.request.get(base + '/thai-massage/')).text();
+    await ctx.route('**/another-service-page/', r => r.fulfill({ status: 200, contentType: 'text/html', body: html }));
+    const { p } = await open(ctx, '/another-service-page/'); await p.waitForTimeout(1200); const cdp = await ctx.newCDPSession(p);
+    const z = await p.evaluate(() => { const r = document.querySelectorAll('.ts-pk-rail li')[0].getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
+    await tap(cdp, z); await p.waitForTimeout(600);
+    ok("template: another page with the same section ids does not show Thai's summary lists (Kiro: keyed by page)", await p.evaluate(() => !!document.querySelector('.ts-pk-card .open .sum') && !document.querySelector('.ts-pk-card .open .sum.is-gist')));
+    await ctx.close(); }
+  { // focus never hides under the pinned header and strip; a quick tap on the icon keeps the names open
+    const { ctx, p, cdp } = await shape();
+    { const fm = await p.evaluate(() => { const a = document.createElement('a'); a.href = '#x'; a.textContent = 'x'; document.querySelector('.entry-content p').appendChild(a); const v = parseFloat(getComputedStyle(a).scrollMarginTop); a.remove(); return { link: v, page: getComputedStyle(document.documentElement).scrollPaddingTop }; });
+      ok('template: links and controls in the text keep clear of the pinned header and strip when focused (Kiro, WCAG 2.4.11); the page itself has no scroll padding, so focusing the header does not scroll to the top', fm.link > 40 && fm.page === 'auto', JSON.stringify(fm)); }
+    await p.evaluate(() => scrollTo(0, 1500)); await p.waitForTimeout(600);
+    const ix = await p.evaluate(() => { const r = document.querySelector('.ts-pk-ix').getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
+    await tap(cdp, ix, 80); await p.waitForTimeout(800);
+    ok('template: a quick tap on the index icon opens the names and they stay (Kiro: a tap did nothing)', await p.evaluate(() => { const n = document.querySelector('.ts-pk-nav'); return n.classList.contains('is-index') && n.classList.contains('is-kept'); }));
+    await tap(cdp, { x: 12, y: 500 }); await p.waitForTimeout(500);
+    ok('template: ...and a tap elsewhere closes them', await p.evaluate(() => !document.querySelector('.ts-pk-nav').classList.contains('is-index')));
+    await ctx.close(); }
+}
 // Kiro, fourth review: the open box and "Tap to go there" are always visible (7 sections or large text in landscape); full detail at the top of the page;
 // the rail clearance is not re-measured every frame while the page height animates; focus follows a newly opened box
 const addSections = () => document.addEventListener('DOMContentLoaded', () => {   // runs before the snippet's own start-up

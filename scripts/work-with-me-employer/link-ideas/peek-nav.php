@@ -18,7 +18,7 @@ body.admin-bar .ts-pk-top{top:calc(var(--wp-admin--admin-bar--height,32px) + var
 /* the strip: only topic titles, sliding by as you read: the current one in the middle, part of the neighbours on each side (Ryan, 2026-11-08) */
 .ts-pk-top .in{position:relative;height:1.55rem;margin:0;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 16%,#000 84%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 16%,#000 84%,transparent 100%)}
 .ts-pk-top .tr{position:absolute;left:0;top:0;display:flex;align-items:center;gap:1.75rem;height:100%;white-space:nowrap;will-change:transform}
-.ts-pk-top .tr span{font-size:.86rem;line-height:1.3;font-weight:600;color:var(--pk-muted);opacity:.6;transition:opacity .25s,color .25s}
+.ts-pk-top .tr span{font-size:.86rem;line-height:1.3;font-weight:600;color:var(--pk-muted);opacity:.85;transition:opacity .25s,color .25s}
 .ts-pk-top .tr span.is-now{color:var(--pk-ink);font-weight:800;opacity:1}
 /* rail: right edge, thumb zone */
 .ts-pk-nav{position:fixed;right:max(2px,env(safe-area-inset-right));top:max(30%,calc(var(--pk-head,0px) + var(--pk-strip,0px) + 64px));bottom:max(14%,76px);z-index:91;width:44px}   /* % follows the visible viewport on iOS; the index icon stays clear of the header and strip */
@@ -78,6 +78,7 @@ html.ts-pk-ready.ts-pk-pad:not(.ts-pk-left) .entry-content :is(p,li,h1,h2,h3,h4,
 html.ts-pk-ready.ts-pk-pad:not(.ts-pk-left) .entry-content .ts-pk-top{padding-right:calc(12px + var(--pk-clear))}   /* the strip's titles stay clear of the rail while it is still in the page */
 html.ts-pk-ready .entry-content .ts-jump{display:none!important}   /* Ryan, 2026-11-08: "You can remove the in-page links beneath header." The strip, rail and index replace the row; without JavaScript (no ts-pk-ready) it still shows and works */
 html.ts-pk-ready #ts-section-guide-trigger,html.ts-pk-ready #ts-section-guide-popover{display:none!important}   /* only once the rail is there */
+html.ts-pk-ready .entry-content :is(a[href],button,input,select,textarea,summary,[tabindex]){scroll-margin-top:calc(var(--pk-head,0px) + var(--pk-strip,0px) + 12px)}   /* Tab never leaves focus under the pinned header and strip (Kiro, WCAG 2.4.11); on the content only: scroll-padding on the page made focusing the pinned header's own menu button scroll the page to the top */
 html.ts-pk-ready .entry-content [id]{scroll-margin-top:calc(var(--pk-head,0px) + var(--pk-strip,0px) + 12px)}   /* plain in-page links land below the pinned header and the strip */
 @media (prefers-reduced-motion:reduce){.ts-pk *,.ts-pk-top,.ts-pk-nav,.ts-pk-card{transition:none!important}.ts-pk-card,.ts-pk-card.is-on{transform:none}}
 /* theme content rules (.entry-content ol, li, a, p) must not reach these parts, which sit inside the content for keyboard order */
@@ -172,6 +173,7 @@ add_action( 'wp_footer', function () {
 <script id="ts-peek-nav-runtime">
 (function () {
   'use strict';
+  var tries = 0;
   function init() {
     var content = document.querySelector('.entry-content'), row = content && content.querySelector('.ts-jump');
     if (!row || !('PointerEvent' in window) || document.querySelector('.ts-pk-nav')) return;
@@ -179,7 +181,20 @@ add_action( 'wp_footer', function () {
     if (links.length < 2) return;
     var root = document.documentElement, calm = window.matchMedia('(prefers-reduced-motion: reduce)');
     var S = links.map(function (a) { return { href: a.getAttribute('href'), label: a.textContent.trim() }; });
+    // Kiro, template review: keep only links whose target exists, in the page's own order (the row's order is not checked anywhere else); the section
+    // guide assigns some ids on load, so wait for them briefly before dropping a link
+    function byHref(h) { var id = h.slice(1); try { id = decodeURIComponent(id); } catch (e) {} return document.getElementById(id); }
+    if (S.some(function (s) { return !byHref(s.href); }) && tries++ < 10) { setTimeout(init, 100); return; }
+    S = S.filter(function (s) { s.t = byHref(s.href); return !!s.t; });
+    S.sort(function (a, b) { return a.t === b.t ? 0 : (a.t.compareDocumentPosition(b.t) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1); });
+    S.forEach(function (s) { delete s.t; });
+    if (S.length < 2) return;   // the row stays visible: it remains the page's navigation
     function el(i) { if (!S[i]) return null; var id = S[i].href.slice(1); try { id = decodeURIComponent(id); } catch (e) {} return document.getElementById(id); }   // null past the last section; a malformed href is used as written
+    function nameOf(h, fallback) {   // Kiro, template review: an FAQ panel or a plain block as a target read its whole text (2,173 characters) aloud
+      if (!h) return fallback;
+      var q = /^H[1-6]$/.test(h.tagName) ? h : h.querySelector('h1,h2,h3,h4,h5,h6,.uagb-question');
+      var t = q ? q.textContent.replace(/\s+/g, ' ').trim() : ''; return t && t.length <= 140 ? t : fallback;
+    }
     function esc(t) { var d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
     function buzz() { if (navigator.vibrate) { try { navigator.vibrate(6); } catch (e) {} } }
 
@@ -188,17 +203,22 @@ add_action( 'wp_footer', function () {
     // ideas that overlap are merged into one, or the lesser one is left out; no minutiae and nothing said twice (also not across sections). A long
     // section (the research) may have a longer list; the box scrolls. A list that holds about 60% or less of its section ends with "etc." (Ryan). Written by hand from the rendered page (new wording on a regulated page: no
     // claim words, no outcomes promised; checked with wording_tiers; for Ryan's approval before live). A section without a list keeps its own paragraphs.
+    // keyed by page, then by section id (Kiro, template review: Thai, Therapeutic, Deep Tissue and Chair share the same ids, so id alone would show one
+    // page's wording on another, regulated page); the page is its own address (WordPress pages live at /slug/)
     var GISTS = {
-      'ts-what-it-is': ['Movement meets massage', 'Pressure, rocking, stretching', 'Butsaba\'s specialty', 'Restful or active', 'Rooted in Thai self-care', 'UNESCO-listed heritage', 'Trained at Still Light'],
-      'ts-common-reasons': ['Routines leave stiffness', 'Freer movement wanted', 'Some simply unwind', 'Tight areas get time'],
-      'ts-what-to-expect': ['Share health history', 'Warning signs: see doctor', 'Brief talk first', 'You set the pace', 'Check-ins throughout', 'Change anything, anytime', 'Aftercare tips'],
-      'ts-guide-questions': ['Wear loose clothing', 'Done on a mat', '60 or 90 minutes', 'Stretches never forced', 'Group bookings: Nov 14', 'Solo sessions: summer 2027', 'No home visits'],
-      'ts-guide-research': ['Evidence is limited', 'Trials are small, short', 'Reviews reported less pain', 'Big reviews stay cautious', 'Regular sessions may matter', 'Serious harm is rare', 'Massage beat sham devices', 'Other methods mostly tied', 'Not always ahead', 'Muscles recovered faster', 'Stress results mixed', 'Swedish relaxed more', 'Thai energized more', 'etc.']
+      'thai-massage': {
+        'ts-what-it-is': ['Movement meets massage', 'Pressure, rocking, stretching', 'Butsaba\'s specialty', 'Restful or active', 'Rooted in Thai self-care', 'UNESCO-listed heritage', 'Trained at Still Light'],
+        'ts-common-reasons': ['Routines leave stiffness', 'Freer movement wanted', 'Some simply unwind', 'Tight areas get time'],
+        'ts-what-to-expect': ['Share health history', 'Warning signs: see doctor', 'Brief talk first', 'You set the pace', 'Check-ins throughout', 'Change anything, anytime', 'Aftercare tips'],
+        'ts-guide-questions': ['Wear loose clothing', 'Done on a mat', '60 or 90 minutes', 'Stretches never forced', 'Group bookings: Nov 14', 'Solo sessions: summer 2027', 'No home visits'],
+        'ts-guide-research': ['Evidence is limited', 'Trials are small, short', 'Reviews reported less pain', 'Big reviews stay cautious', 'Regular sessions may matter', 'Serious harm is rare', 'Massage beat sham devices', 'Other methods mostly tied', 'Not always ahead', 'Muscles recovered faster', 'Stress results mixed', 'Swedish relaxed more', 'Thai energized more', 'etc.']
+      }
     };
+    var PAGE = (location.pathname.replace(/\/+$/, '').split('/').pop() || '').toLowerCase(), MINE = Object.prototype.hasOwnProperty.call(GISTS, PAGE) ? GISTS[PAGE] : {};
     function describe() {
       var ps = [].slice.call(content.querySelectorAll('p'));
       S.forEach(function (s, i) {
-        var h = el(i), nx = el(i + 1) || null; s.heading = h ? h.textContent.trim() : s.label; s.excerpt = ''; s.desc = ''; s.mins = 1;
+        var h = el(i), nx = el(i + 1) || null; s.heading = nameOf(h, s.label); s.excerpt = ''; s.desc = ''; s.mins = 1;
         if (!h) return;
         var r = document.createRange(); r.setStartBefore(h); if (nx) r.setEndBefore(nx); else r.setEndAfter(content.lastChild);
         var frag = r.cloneContents(); [].forEach.call(frag.querySelectorAll('script,style,noscript'), function (x) { x.remove(); });
@@ -213,7 +233,7 @@ add_action( 'wp_footer', function () {
           }
         }
       });
-      S.forEach(function (s, i) { var id = s.href.slice(1); s.gist = Object.prototype.hasOwnProperty.call(GISTS, id) ? GISTS[id] : null; var sm = s.gist ? [] : summarize(i), alt = s.excerpt || s.desc; s.summary = sm.length ? sm : (alt ? [alt] : []); });
+      S.forEach(function (s, i) { var id = s.href.slice(1); s.gist = Object.prototype.hasOwnProperty.call(MINE, id) ? MINE[id] : null; var sm = s.gist ? [] : summarize(i), alt = s.excerpt || s.desc; s.summary = sm.length ? sm : (alt ? [alt] : []); });
       if (segs) segs.forEach(function (li, i) { li.querySelector('a').setAttribute('aria-label', S[i].label + (S[i].desc ? ': ' + S[i].desc : '')); });   // the rail's names for screen readers include the description
     }
 
@@ -318,6 +338,9 @@ add_action( 'wp_footer', function () {
     function below() { return (parseFloat(getComputedStyle(top).top) || 0) + top.offsetHeight + 12; }   // where the stuck strip ends
     function jumpTo(i) {   // Ryan, 2026-11-08: no "Back to ..." button
       var h = el(i); if (!h) return;
+      // a closed FAQ panel as the target opens, as the old row's own script did (after the swallowed click of the tap, so it is not swallowed itself)
+      var fq = h.classList.contains('uagb-faq-item') ? h : h.closest('.uagb-faq-item');
+      if (fq && !fq.classList.contains('uagb-faq-item-active')) { var qb = fq.querySelector('.uagb-faq-questions-button'); if (qb) setTimeout(function () { qb.click(); }, 600); }
       window.scrollTo({ top: h.getBoundingClientRect().top + window.scrollY - below(), behavior: calm.matches ? 'auto' : 'smooth' });
       if (glow.el) { glow.el.classList.remove('ts-pk-flash'); clearTimeout(glow.t); }
       glow.el = h; h.classList.remove('ts-pk-unflash'); h.classList.add('ts-pk-flash'); glow.t = setTimeout(function () { h.classList.add('ts-pk-unflash'); h.classList.remove('ts-pk-flash'); glow.el = null; }, 1200);
@@ -505,10 +528,11 @@ add_action( 'wp_footer', function () {
       return best;
     }
     function setOver(k) { if (k === over) return; over = k; fanItems.forEach(function (it, j) { it.classList.toggle('is-over', j === k); }); if (k > -1) buzz(); }
-    ixBtn.addEventListener('pointerdown', function (e) { if (e.button > 0 || !e.isPrimary) return; tipSeen(); ixPress = e.pointerId; handed = null; ixStart = { x: e.clientX, y: e.clientY }; lean = false; try { ixBtn.setPointerCapture(e.pointerId); } catch (err) {} setIndex(true); keep(false); clearTimeout(keepT); keepT = setTimeout(function () { if (ixPress !== null && !handed && over < 0) { keep(true); buzz(); } }, 2000); e.preventDefault(); });
+    ixBtn.addEventListener('pointerdown', function (e) { if (e.button > 0 || !e.isPrimary) return; tipSeen(); ixPress = e.pointerId; handed = null; ixStart = { x: e.clientX, y: e.clientY, t: performance.now(), moved: 0 }; lean = false; try { ixBtn.setPointerCapture(e.pointerId); } catch (err) {} setIndex(true); keep(false); clearTimeout(keepT); keepT = setTimeout(function () { if (ixPress !== null && !handed && over < 0) { keep(true); buzz(); } }, 2000); e.preventDefault(); });
     ixBtn.addEventListener('pointermove', function (e) {
       if (ixPress === null || e.pointerId !== ixPress) return;
       var x = e.clientX, y = e.clientY, rr = rail.getBoundingClientRect();
+      ixStart.moved = Math.max(ixStart.moved, Math.abs(x - ixStart.x) + Math.abs(y - ixStart.y));
       if (!handed) {
         var k = ixOpen ? hitFan(x, y) : -1; setOver(k);
         if (!inRailBand(x)) lean = true;   // left the rail sideways: this press picks a name (a slide toward a far name crosses the wide rail first)
@@ -525,6 +549,7 @@ add_action( 'wp_footer', function () {
       if (h) { hideCard(); return; }                   // cancelled while on the rail
       if (over > -1 && up) { var k = over, r = fanItems[k].getBoundingClientRect(); setIndex(false); swallowNextClick(true); show(k, r.top + r.height / 2, true); return; }   // lifted on a name: its box opens
       setOver(-1);
+      if (up && !kept && ixStart && performance.now() - ixStart.t < 250 && ixStart.moved < 8) { keep(true); return; }   // a quick tap: the names stay open (Kiro: a tap did nothing)
       if (kept && up) return;                          // held 2 s: the names stay open (tap one, the rail, or anywhere else)
       setIndex(false);
     }
