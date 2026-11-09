@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-09 06:15 UTC  **PASS**  `peek-clearance-dry-20261109-1`  [reports/2026-11-09/061523-peek-clearance-dry-20261109-1.md](reports/2026-11-09/061523-peek-clearance-dry-20261109-1.md)  (run 42571863355)
 - 2026-11-09 06:10 UTC  **PASS**  `peek-clearance-gates-20261109-1`  [reports/2026-11-09/061045-peek-clearance-gates-20261109-1.md](reports/2026-11-09/061045-peek-clearance-gates-20261109-1.md)  (run 42571365218)
 - 2026-11-09 06:05 UTC  **FAIL**  `peek-clearance-baseline-20261109-1`  [reports/2026-11-09/060550-peek-clearance-baseline-20261109-1.md](reports/2026-11-09/060550-peek-clearance-baseline-20261109-1.md)  (run 42570858557)
 - 2026-11-09 05:50 UTC  **PASS**  `peek-clearance-access-20261109-1`  [reports/2026-11-09/055043-peek-clearance-access-20261109-1.md](reports/2026-11-09/055043-peek-clearance-access-20261109-1.md)  (run 42569542165)
