@@ -211,6 +211,58 @@ const capture = async (p, label) => {
   if (engine !== 'chromium') return;
   captures++; console.log(`INLINE title-rail-${label}.jpg base64:${(await p.screenshot({ type: 'jpeg', quality: 76 })).toString('base64')}`);
 };
+const formClearance = async (p, label, actualPage = false) => {
+  await p.keyboard.press('Escape');
+  const original = await state(p), originalLeft = await p.evaluate(() => document.documentElement.classList.contains('ts-pk-left'));
+  const side = async left => {
+    if (await p.evaluate(() => document.documentElement.classList.contains('ts-pk-left')) === left) return;
+    await preview(p, 0); await p.locator('.ts-pk-card .side').click(); await settle(p);
+  };
+  const geometry = () => p.evaluate(() => {
+    const main = document.querySelector('#main,main,[role="main"]'), strip = document.getElementById('ts-peek-title-strip').getBoundingClientRect();
+    const rect = node => { const r = node.getBoundingClientRect(); return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, width: r.width, height: r.height }; };
+    const hitAreas = [...document.querySelectorAll('.ts-pk-nav,.ts-pk-ix')].map(node => ({ name: node.className, ...rect(node) }));
+    const controls = [...main.querySelectorAll('form input:not([type="hidden"]),form button,form select,form textarea')].filter(node => !node.closest('.ts-pk') && node.getClientRects().length > 0).map((node, index) => {
+      const r = rect(node), dx = Math.min(8, r.width / 4), dy = Math.min(8, r.height / 4);
+      const overlap = hitAreas.filter(area => Math.min(r.right, area.right, innerWidth) - Math.max(r.left, area.left, 0) > .5 && Math.min(r.bottom, area.bottom, innerHeight) - Math.max(r.top, area.top, 0) > .5).map(area => area.name);
+      const points = [[r.left + dx, r.top + dy], [r.right - dx, r.top + dy], [r.left + dx, r.bottom - dy], [r.right - dx, r.bottom - dy], [(r.left + r.right) / 2, (r.top + r.bottom) / 2]]
+        .filter(([x, y]) => x >= 0 && x < innerWidth && y >= Math.max(0, strip.bottom) && y < innerHeight)
+        .map(([x, y]) => { const hit = document.elementFromPoint(x, y); return { x, y, own: hit === node || node.contains(hit), hit: hit && { tag: hit.tagName, class: hit.className } }; });
+      return { index, tag: node.tagName, type: node.getAttribute('type'), name: node.getAttribute('name'), rect: r, overlap, points };
+    });
+    return { hitAreas, controls, viewport: { width: innerWidth, height: innerHeight }, y: scrollY };
+  });
+  for (const left of [false, true]) {
+    await side(left);
+    const positions = await p.evaluate(() => {
+      const main = document.querySelector('#main,main,[role="main"]'), nav = document.querySelector('.ts-pk-nav').getBoundingClientRect(), icon = document.querySelector('.ts-pk-ix').getBoundingClientRect(), strip = document.getElementById('ts-peek-title-strip');
+      const target = window.__peekTitleRailSource[0].node, offset = Math.max((parseFloat(getComputedStyle(strip).top) || 0) + strip.offsetHeight + 12, parseFloat(getComputedStyle(target).scrollMarginTop) || 0);
+      const controls = [...main.querySelectorAll('form input:not([type="hidden"]),form button,form select,form textarea')].filter(node => !node.closest('.ts-pk') && node.getClientRects().length > 0);
+      const out = [{ name: 'top', y: 0 }, { name: 'landed', y: scrollY + target.getBoundingClientRect().top - offset }];
+      controls.forEach((node, index) => { const r = node.getBoundingClientRect(), middle = scrollY + (r.top + r.bottom) / 2; out.push({ name: `control${index}-icon`, y: middle - (icon.top + icon.bottom) / 2 }, { name: `control${index}-rail`, y: middle - (nav.top + nav.bottom) / 2 }); });
+      return out;
+    });
+    for (const position of positions) {
+      await p.evaluate(y => scrollTo({ top: y, behavior: 'instant' }), Math.max(0, position.y)); await settle(p);
+      const actual = await geometry(), prefix = `${label}/${left ? 'left' : 'right'}/${position.name}`;
+      if (!actual.controls.length) throw new Error(`INVALID ${prefix}: expected original form controls`);
+      const visible = actual.controls.filter(control => control.points.length > 0);
+      ok(`${prefix}: complete rail and icon hit areas clear original form controls`, actual.controls.every(control => control.overlap.length === 0), actual);
+      ok(`${prefix}: visible form corners and centers hit their own controls`, visible.length > 0 && visible.every(control => control.points.every(point => point.own)), actual);
+      if (position.name === 'landed') {
+        if (actualPage) await capture(p, `${label.replaceAll('/', '-')}-${left ? 'left' : 'right'}-form-landed`);
+        const input = p.locator('main form input[type="search"],#main form input[type="search"]').first();
+        if (actual.controls.every(control => !control.overlap.length) && visible.every(control => control.points.every(point => point.own))) {
+          const before = await state(p); await input.click(); await settle(p);
+          ok(`${prefix}: native click focuses the search field without opening Peek`, await input.evaluate(node => document.activeElement === node) && await p.locator('.ts-pk-card.is-on').count() === 0 && still(before, await state(p)));
+        }
+      }
+    }
+    const edges = await p.evaluate(() => ({ document: document.documentElement.scrollWidth, viewport: document.documentElement.clientWidth }));
+    ok(`${label}/${left ? 'left' : 'right'}: form clearance adds no horizontal overflow`, edges.document <= edges.viewport + 1, edges);
+  }
+  await side(originalLeft); await p.evaluate(y => scrollTo({ top: y, behavior: 'instant' }), original.y); await settle(p);
+};
 const exercise = async (p, label, expected, width, detailed = false) => {
   const actual = await rail(p);
   ok(`${label}: one title-only rail follows the source labels with zero page data`, actual.titles && !actual.hidden && actual.ready && actual.navs === 1 && actual.count === expected.labels.length && actual.data === 0 && actual.sums === 0 && JSON.stringify(actual.labels) === JSON.stringify(expected.labels), { actual, expected });
@@ -292,6 +344,7 @@ try {
           ok(`${label}: dedicated practice rail is preserved without a second Peek rail`, !actual.titles && actual.navs === 0 && !actual.ready && actual.data === 0 && await p.locator(page.path === '/rail-nav-ideas/' ? '.tsr-lab .tsr-nav' : '.tsi-lab .tsi-nav').count() === 1, actual);
         } else {
           await exercise(p, label, expected, width, width === 390);
+          if (page.path === '/?s=massage') await formClearance(p, label + '/form', true);
           if (page.path === '/privacy-policy/' && [390, 768].includes(width)) await nativeFAQ(p, expected, '#ts-client-privacy', label + '/closed-FAQ');
           if (page.path === '/progress-nav-ideas/') await progressSwitch(p, label);
         }
@@ -324,6 +377,7 @@ try {
       { name: 'headings', html: '<nav><h2>Navigation title</h2></nav><h2 hidden>Hidden heading</h2><details><summary>Closed content</summary><h2>Closed heading</h2></details>' + section('', 'First heading without an ID') + section('second', 'Second original heading') + section('third', 'Third original heading') },
       { name: 'row-details', html: '<nav class="ts-jump"><a href="#last">Last row label</a><a href="#missing">Missing</a><a href="#first">First row label</a><a href="#inside">Closed row label</a></nav>' + section('first', 'First source heading') + '<details><summary>Outer</summary><details><summary>Inner</summary>' + section('inside', 'Inside source heading') + '</details></details>' + section('last', 'Last source heading') },
       { name: 'fixed', mode: 'fixed', html: section('first', 'A search result') + section('last', 'Another search result') },
+      { name: 'form', mode: 'fixed', css: '.entry-content{padding:0 8px}.form-hero{height:170px;background:#ddd}.search-row{display:grid;grid-template-columns:1fr;gap:24px}.search-form{margin:0}.search-form input{display:block;box-sizing:border-box;width:100%;height:42px}.search-form button{display:block;width:110px;height:52px;margin:0;border:0}.search-results{min-height:1100px}@media(min-width:700px){.search-row{grid-template-columns:1fr 2fr}}', html: '<div class="form-hero">Original full-width hero</div><div class="search-row"><form class="search-form" onsubmit="event.preventDefault()"><input type="search" name="s" aria-label="Search"><button type="submit">Search</button></form><div class="search-results"><h2>First result</h2>' + paragraph + '</div></div>' },
       { name: 'faq', html: '<nav class="ts-jump"><a href="#first">First</a><a href="#faq">Original FAQ label</a></nav>' + section('first', 'First') + '<div class="uagb-faq__outer-wrap"><div class="uagb-faq-item uagb-faq-item-active"><h2><button class="uagb-faq-questions-button">Preceding question</button></h2><div class="answer">' + paragraph + '</div></div><div class="uagb-faq-item" id="faq"><h2><button class="uagb-faq-questions-button">Original FAQ title</button></h2><div class="answer">' + paragraph + '</div></div></div><style>.uagb-faq-item .answer{height:0;overflow:hidden;transition:height .3s linear}.uagb-faq-item-active .answer{height:190px}</style><script>document.querySelectorAll(".uagb-faq-questions-button").forEach(button=>button.addEventListener("click",()=>{const item=button.closest(".uagb-faq-item"),wasOpen=item.classList.contains("uagb-faq-item-active");document.querySelectorAll(".uagb-faq-item").forEach(node=>node.classList.remove("uagb-faq-item-active"));if(!wasOpen)item.classList.add("uagb-faq-item-active")}));</script>' + section('after', 'Following content') },
       { name: 'progress', html: readFileSync(new URL('./progress-ideas.html', import.meta.url), 'utf8') },
       { name: 'no-pointer', noPointer: true, html: '<nav class="ts-jump"><a href="#first">First</a><a href="#last">Last</a></nav>' + section('first', 'First') + section('last', 'Last') }
@@ -345,6 +399,12 @@ try {
           const expected = await source(p); await exercise(p, `local-${spec.name}/${width}`, expected, width, width === 390);
           if (spec.name === 'faq' && width === 390) await nativeFAQ(p, expected, '#faq', 'local native closed-FAQ');
           if (spec.name === 'progress') await progressSwitch(p, `local-progress/${width}`);
+          if (spec.name === 'form') {
+            const before = await p.locator('.form-hero').boundingBox();
+            await formClearance(p, `local-form/${width}`);
+            const after = await p.locator('.form-hero').boundingBox();
+            ok(`local-form/${width}: control clearance preserves full-width hero and content column`, Math.abs(before.x - after.x) <= 1 && Math.abs(before.width - after.width) <= 1 && await p.evaluate(() => { const hero = document.querySelector('.form-hero').getBoundingClientRect(), content = document.querySelector('.entry-content').getBoundingClientRect(); return Math.abs(hero.left - content.left - 8) <= 1 && Math.abs(hero.right - content.right + 8) <= 1; }), { before, after });
+          }
           if (spec.name === 'one-idless' || spec.name === 'headings') ok(`local-${spec.name}/${width}: navigation never invents a heading ID`, await p.locator('section h2').first().getAttribute('id') === null);
         }
         if (spec.name === 'headings') {

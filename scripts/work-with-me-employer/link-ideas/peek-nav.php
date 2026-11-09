@@ -108,7 +108,7 @@ html[data-ts-theme="dark"] .ts-pk-card .hint{color:var(--pk-on)}
 /* keep the text clear of the rail on phones and tablets; the bottom "On this page" button is replaced by the rail */
 /* Ryan, 2026-11-09: the clearance goes on the text blocks, not on the column. Padding the column moved its middle, and full-width theme blocks (placed from
    that middle) shifted by half of it: off the left edge with the rail on the right (text cut at the screen edge), past the right edge with it on the left */
-@media screen{html.ts-pk-ready.ts-pk-pad:not(.ts-pk-left) .ts-pk-title-content :is(p,li,h1,h2,h3,h4,h5,h6,blockquote,figcaption,dt,dd,td,th):not(:is(p,li,blockquote,dd,td,th,.ts-pk,.ts-jump,nav,[role="navigation"],[role="tablist"],.tsx-picker,.tsp-picker,.tsr-picker,.tsi-picker) *){padding-right:var(--pk-clear)}}
+@media screen{html.ts-pk-ready.ts-pk-pad:not(.ts-pk-left) .ts-pk-title-content :is(p,li,h1,h2,h3,h4,h5,h6,blockquote,figcaption,dt,dd,td,th,:where(.ts-pk-title-rail) form):not(:is(p,li,blockquote,dd,td,th,:where(.ts-pk-title-rail) form,.ts-pk,.ts-jump,nav,[role="navigation"],[role="tablist"],.tsx-picker,.tsp-picker,.tsr-picker,.tsi-picker) *){padding-right:var(--pk-clear)}}
 @media screen{html.ts-pk-ready.ts-pk-pad:not(.ts-pk-left) .ts-pk-title-content .ts-pk-top{padding-right:calc(12px + var(--pk-clear))}   /* the strip's titles stay clear of the rail while it is still in the page */}
 html.ts-pk-ready .entry-content .ts-jump{display:none!important}   /* Ryan, 2026-11-08: "You can remove the in-page links beneath header." The strip, rail and index replace the row; without JavaScript (no ts-pk-ready) it still shows and works */
 html.ts-pk-ready #ts-section-guide-trigger,html.ts-pk-ready #ts-section-guide-popover{display:none!important}   /* only once the rail is there */
@@ -126,7 +126,7 @@ html.ts-pk-left .ts-pk-you{right:auto;left:28px}
 html.ts-pk-left .ts-pk-card{right:auto;left:58px;transform:translateX(-10px) scale(.98)}
 html.ts-pk-left .ts-pk-card.is-on{transform:none}
 html.ts-pk-left .ts-pk-tip{right:auto;left:58px}
-@media screen{html.ts-pk-ready.ts-pk-pad.ts-pk-left .ts-pk-title-content :is(p,li,h1,h2,h3,h4,h5,h6,blockquote,figcaption,dt,dd,td,th):not(:is(p,li,blockquote,dd,td,th,.ts-pk,.ts-jump,nav,[role="navigation"],[role="tablist"],.tsx-picker,.tsp-picker,.tsr-picker,.tsi-picker) *){padding-left:var(--pk-clear)}}
+@media screen{html.ts-pk-ready.ts-pk-pad.ts-pk-left .ts-pk-title-content :is(p,li,h1,h2,h3,h4,h5,h6,blockquote,figcaption,dt,dd,td,th,:where(.ts-pk-title-rail) form):not(:is(p,li,blockquote,dd,td,th,:where(.ts-pk-title-rail) form,.ts-pk,.ts-jump,nav,[role="navigation"],[role="tablist"],.tsx-picker,.tsp-picker,.tsr-picker,.tsi-picker) *){padding-left:var(--pk-clear)}}
 @media screen{html.ts-pk-ready.ts-pk-pad.ts-pk-left .ts-pk-title-content .ts-pk-top{padding-left:calc(12px + var(--pk-clear))}   /* the other side keeps the theme's own spacing */}
 /* the side button in the preview */
 .ts-pk-card .hint{display:flex;align-items:center;justify-content:space-between;gap:.5rem}
@@ -196,6 +196,8 @@ html .ts-pk .ts-pk-card.fit5 .open > b{font-size:.95rem;margin-top:0}
 html .ts-pk .ts-pk-card.fit5 .sum{display:block;max-height:4.4em;margin-top:.15rem}   /* gist and whole-paragraph summaries retain a scroll surface on the smallest fit */
 html .ts-pk .ts-pk-card.fit5 .hint{margin-top:.3rem;padding-top:.3rem}   /* very short screens or very large text retain the name, summary and jump hint */
 html .ts-pk .ts-pk-card.ts-pk-stack{overflow-y:auto;overscroll-behavior:contain}   /* last resort: the card scrolls, and fit() brings the open box into view */
+/* A form is a text/control block, not the full-width column around it. */
+@media screen{html.ts-pk-ready .ts-pk-title-rail form{box-sizing:border-box}}
 /* Newly added rails show names and navigation only, never paragraph previews. */
 .ts-pk-titles[hidden]{display:none!important}
 .ts-pk-titles .ts-pk-card b{overflow-wrap:anywhere}
@@ -492,6 +494,7 @@ add_action( 'wp_footer', function () {
     // mode E is handled dynamically below because its other modes have none.
     var practiceRail = content.querySelector('.tsr-lab .tsr-nav,.tsi-lab .tsi-nav');
     if (!S.length || !('PointerEvent' in window) || practiceRail || document.querySelector('.ts-pk-nav')) { titleOnly(content, row); return; }
+    if (collect) content.classList.add('ts-pk-title-rail');
     function el(i) { return S[i] ? S[i].target || byHref(S[i].href) : null; }
     function nameOf(h, fallback) {   // Kiro, template review: an FAQ panel or a plain block as a target read its whole text (2,173 characters) aloud
       if (!h) return fallback;
@@ -587,8 +590,8 @@ add_action( 'wp_footer', function () {
       // measure where the text really ends on the rail's side, and give the text blocks only what is missing (the column itself is never padded)
       for (var round = 0; round < 3; round++) {
         var edge = left ? Infinity : -Infinity;
-        [].forEach.call(content.querySelectorAll('p,li,h1,h2,h3,h4,h5,h6,blockquote,figcaption,dt,dd,td,th'), function (el) {
-          if (el.closest('.ts-pk,.ts-jump,nav,[role="navigation"],[role="tablist"],.tsx-picker,.tsp-picker,.tsr-picker,.tsi-picker')) return;
+        [].forEach.call(content.querySelectorAll((collect ? 'form,' : '') + 'p,li,h1,h2,h3,h4,h5,h6,blockquote,figcaption,dt,dd,td,th'), function (el) {
+          if (el.closest('.ts-pk,.ts-jump,nav,[role="navigation"],[role="tablist"],.tsx-picker,.tsp-picker,.tsr-picker,.tsi-picker') || (collect && el.parentElement.closest('form'))) return;
           var r = el.getBoundingClientRect(); if (!r.width) return;
           var cs = getComputedStyle(el), e2 = left ? r.left + (parseFloat(cs.paddingLeft) || 0) : r.right - (parseFloat(cs.paddingRight) || 0);
           edge = left ? Math.min(edge, e2) : Math.max(edge, e2);

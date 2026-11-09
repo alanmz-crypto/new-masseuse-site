@@ -4,6 +4,9 @@
 that do not already have rails, without adding summaries. This follows the
 [deployed all-page title strip and larger summaries](2026-11-09-peek-title-strip-all-pages.md).
 Staging39 is the only deployment target; main and live remain untouched.
+The second fresh-copy rehearsal passed its automated suites, but manual review
+found the left index icon overlapping Search's button. Deployment remains blocked
+while the scoped form-clearance correction is implemented and verified.
 
 ## Baseline and access
 
@@ -177,9 +180,11 @@ transient clearance clamping. Checker corrections under review cover bounded FAQ
 settling, explicit UTF-8 fixture encoding and Search's actual H1 outside `main`.
 These are pending corrections, not a passing result; the failed run remains failed.
 
-All **30 actual-page captures were reviewed**, with no additional visual blocker
-reported. Work With Me's desktop seventh closed row uses an ellipsis; its full
-title remains an explicit browser-check requirement when opened. This visual
+All **30 actual-page captures were reviewed** by the visual-review agent, with no
+additional visual blocker in those pictured open-first-card layouts. Work With
+Me's desktop seventh closed row uses an ellipsis; no open seventh-title capture
+was reviewed in this set. Its full title remains an explicit browser-check
+requirement when opened. This visual
 judgment does not waive the failed navigation/clearance checks. Images are retained
 unchanged in the clearly labeled [failed first-rehearsal folder](assets/2026-11-09-peek-title-rails/rehearsal-1-failed/),
 with per-image hashes in its [capture manifest](assets/2026-11-09-peek-title-rails/rehearsal-1-failed/capture-manifest.json).
@@ -200,7 +205,7 @@ recovery snapshot exists.
 
 ## Corrected candidate for a second fresh-copy rehearsal
 
-The current core has **96,717 code bytes**, SHA256
+The second candidate contained **96,717 code bytes**, SHA256
 `a580559856501092595ed3d623a74e05e133463706e118ec0338fc28948d92af`
 (full PHP file:96,723 bytes,
 `382c7805cae8495e4a88c0bf81b9250c4bd44e92225a4632f7255f62e14e482c`).
@@ -245,4 +250,74 @@ passed **16:51:41 UTC** for
 The full job log was read and retained at `/tmp/peek-title-rails-actions-gates-2.log`.
 Only URL-dependent rendered verification was skipped. The separate
 [fresh-copy rehearsal42658841171](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42658841171)
-uses the same source and is still running; no staging write has been requested.
+used the same source and completed as recorded below; no staging write was requested.
+
+## Second rehearsal: automated pass; visual blocker prevents deployment
+
+[Rehearsal 42658841171](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42658841171),
+source `362e92fa87da1e1aa93ba0de39e32b12d8da52c0`, finished
+**17:06:32 UTC, PASS**. The complete **286-line** decoded report was read
+(`/tmp/peek-title-rails-rehearse-2-text.md`), and the full browser log is retained
+in the extracted artifact. Exact rollback/reapply, idempotence, regulated wording,
+PHP and published-page inventory checks passed. Only #1380 and WPCode cache
+changed in the throwaway copy; its snapshots are not staging recovery snapshots.
+
+The ten unique browser suites total **13,380 passed, 0 failed**, without counting
+the repeated wrapper summaries twice:
+
+| Suite | Chromium | Firefox |
+|---|---:|---:|
+| New title rails | 1377/0 | 1370/0 |
+| Retained title strip | 1339/0 | 1336/0 |
+| Generic pages | 207/0 | 207/0 |
+| Clearance | 3340/0 | 3340/0 |
+| Native touch | 378/0 | Not a Firefox suite |
+| Retained Thai gestures | 486/0 | Not a Firefox suite |
+
+The complete wrapper ran **784 seconds**. New rails and retained strips each
+covered **21 actual routes**, including search and 404. The report produced
+**106 captures: 92 actual-page views and 14 local fixtures**. Its verified archive
+is **12,346,738 bytes**, SHA256
+`d8e993b21b5f57a59cd8a0fc3104abf0cdcf647230b258170a2aaa29790a5493`.
+The 34 new actual-page title-rail views are retained unchanged in
+[rehearsal-2-visual-blocked](assets/2026-11-09-peek-title-rails/rehearsal-2-visual-blocked/),
+with exact identities in the [capture manifest](assets/2026-11-09-peek-title-rails/rehearsal-2-visual-blocked/capture-manifest.json).
+The remaining captures are retained in the full operation artifact, not copied
+into this folder.
+
+Manual visual review found a deployment blocker despite the passing assertions:
+the **44px left index icon overlaps the Search button** in the landed
+[768px view](assets/2026-11-09-peek-title-rails/rehearsal-2-visual-blocked/title-rail-s-massage-768-landed.jpg)
+and [1280px view](assets/2026-11-09-peek-title-rails/rehearsal-2-visual-blocked/title-rail-s-massage-1280-landed.jpg).
+These views were also independently inspected while recording this result. The
+current clearance checks did not cover this form-control collision, so the
+automated pass is not a visual or deployment approval.
+
+A narrow correction is in progress to reserve clearance around the affected
+form block without padding the page column. It needs its own complete fresh-copy
+gate and visual review. No staging write or new recovery snapshot exists; the
+manifest remains pending. Physical-device, Safari and assistive-technology limits
+remain unchanged.
+
+## Form-clearance correction before the third rehearsal
+
+Candidate3 has **97,130 code bytes**, SHA256
+`c7ed404ebe3e19d24e7a91b91bb996505efb80027fd183245d1c7137f188991e`
+(full PHP:97,136 bytes,
+`602df3dca522b4f6be7db173202c8f64acec3806cffd00705f46fb27ee4815f6`).
+Only title-rail content gains a form-clearance class. The form itself receives
+measured spacing and border-box sizing; its descendants avoid duplicate padding.
+Columns and full-width blocks remain unchanged. `:where()` preserves the existing
+selector specificity and the four summary pages keep their earlier behavior.
+
+A new structural form reproducer exposed **46 overlap/hit failures** in candidate2
+(528 passing assertions). The corrected final fixtures pass **584/0 Chromium and
+581/0 Firefox**, including both sides at390/768/1280, full icon/rail hit rectangles,
+visible control corners/centers, native search-field focus, horizontal overflow
+and unchanged hero/column geometry. The new actual-page gate checks Search at
+top, landing and positions aligning each control with the icon/rail, and retains
+six additional form landing captures. This is still local evidence until the
+next fresh-copy run completes.
+
+Pinned PHP syntax, **487/0 installer guards** and **24/0 emission checks** passed
+on the exact new candidate. No staging write has occurred.
