@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-09 07:17 UTC  **PASS**  `peek-core-touch-stored-20261109-1`  [reports/2026-11-09/071732-peek-core-touch-stored-20261109-1.md](reports/2026-11-09/071732-peek-core-touch-stored-20261109-1.md)  (run 42578355744)
 - 2026-11-09 07:17 UTC  **INVALID**  `peek-core-touch-public-20261109-1`  [reports/2026-11-09/071704-peek-core-touch-public-20261109-1.md](reports/2026-11-09/071704-peek-core-touch-public-20261109-1.md)  (run 42578241317)
 - 2026-11-09 07:15 UTC  **PASS**  `peek-core-touch-apply-20261109-1`  [reports/2026-11-09/071511-peek-core-touch-apply-20261109-1.md](reports/2026-11-09/071511-peek-core-touch-apply-20261109-1.md)  (run 42577650950)
 - 2026-11-09 07:09 UTC  **PASS**  `peek-core-final-dry-20261109-1`  [reports/2026-11-09/070950-peek-core-final-dry-20261109-1.md](reports/2026-11-09/070950-peek-core-final-dry-20261109-1.md)  (run 42577490238)
