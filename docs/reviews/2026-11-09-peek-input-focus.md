@@ -230,6 +230,43 @@ on recovery or fingerprint failure. This checks that frontend asset/SEO activity
 has not invalidated full-state recovery; no extra browser rerun is needed after
 an exact reapply. Only the existing WPCode-cache exclusion remains.
 
+Reading-line-source Gates [42716785059](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42716785059)
+passed **32/0 + 1 rendered-only skip** at 23:01:21 UTC, source
+`24a79e4746376286bea315c0b69a33114067d280`.
+Fifth rehearsal [42716810354](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42716810354),
+source `f42418a26b6dce2aa632fc2185362bc3a36b0eee`, finished 23:08:28 UTC **FAIL**.
+All five browser suites completed **2,632/0**: keyboard Chromium/Firefox **121/0
+each**, native touch **166/0**, title matrices Chromium/Firefox **1,112/0 each**,
+all 21 actual routes. Complete leaf logs and 44 decoded captures were audited;
+no browser INVALID/FAIL or stderr. Initial full-state apply/idempotence/rollback/
+reapply and wording gates passed. The added post-browser rollback then refused
+one changed field, `_uag_page_assets[0]`, and correctly did not reapply. Initial
+local snapshot `rail-input-before-20261109-230222-b72c2099.json` and reapply
+`rail-input-before-20261109-230224-63022cd7.json` are not staging recovery.
+
+All 21 phone and 21 desktop title captures were reviewed, plus both practice
+previews. No new customer-page obstruction appeared. The first selected pill on
+the separate In-page Link Ideas prototype is unreadable in both phone/desktop
+captures; comparison with the earlier title-rails and Kiro public captures
+confirms it predates this phase. Source suggests the site's more specific link
+color rule overrides its white active text. Computed-style confirmation and a
+separate correction remain open. The current Rail prototype, Thai/Therapeutic
+hero states and Privacy disclosure clearance were also visually reviewed.
+
+**Next diagnostic sequence, explained before building:** establish an unchanged
+old-page baseline with two local HTTP reads. A private observation permits only
+the known `_uag_page_assets` movement on the first read and requires the entire
+state to be exactly stable on the second. It never changes or rebases an install
+snapshot. Retain the post-browser exact rollback. An added read-only `verify FILE`
+compares the complete applied state against its actual install snapshot after
+rendering. The cause of the cache movement is not yet proved; this copy included
+uploads, so missing uploads must not be assumed. No staging write occurred.
+
+The observer/verify harness passes **144 checks** and all three PHP files lint.
+The baseline orchestration passes **13 offline stub cases**, Bash syntax and
+whitespace checks. Independent review found no blocker for the next copy run;
+staging purge/render and full-snapshot verification still need their own proof.
+
 ## Actual applies and recovery
 
 No apply or new staging recovery snapshot is recorded yet. Never substitute a

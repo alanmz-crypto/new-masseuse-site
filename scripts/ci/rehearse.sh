@@ -200,6 +200,41 @@ fails=0
 check() { if [ "$2" -eq 0 ]; then echo "  -> PASS  $1"; else echo "  -> FAIL  $1"; fails=$((fails + 1)); fi; }
 inst_run() { local name=$1; shift; echo; echo "[$name] wp eval-file $inst $*"; wpc --user=1 eval-file "/wwm/$inst" "$@" 2>&1 | grep -v 'phar:///usr/local/bin/wp/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php' | tee "$out/$name.log" | sed 's/^/    /'; return "${PIPESTATUS[0]}"; }   # that one line is WP-CLI's own PHP 8.5 deprecation, not the installer's
 
+if [ "$inst" = link-ideas/rail-input/install-rail-input.php ]; then
+  echo; echo "[2c] observe unchanged Rail page before the baseline"
+  rail_observer=/wwm/link-ideas/rail-input/observe-state.php
+  [ -f "$wwm/link-ideas/rail-input/observe-state.php" ] || invalid "Rail baseline observer is missing"
+  rail_observation_logs="${RUNNER_TEMP:-$HOME/.cache}/ops-out/rail-baseline"
+  mkdir -p "$rail_observation_logs" || invalid "cannot retain Rail baseline observations"
+  rail_observe_run() {
+    local label=$1; shift
+    "$@" 2>&1 | tee "$out/$label.log" "$rail_observation_logs/$label.log"
+    local rail_status=("${PIPESTATUS[@]}")
+    [ "${rail_status[0]}" -eq 0 ] && [ "${rail_status[1]}" -eq 0 ]
+  }
+  rail_observation_path() {
+    sed -nE 's@.*Observation: (/backups/rail-input-observe-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}\.json)$@\1@p' "$1"
+  }
+  rail_local_get() {
+    local status rc
+    status=$(curl -sS -o /dev/null --max-time 30 -w '%{http_code}' http://localhost:8090/rail-nav-ideas/); rc=$?
+    printf 'Rail unchanged-page GET: HTTP%s; curl_exit=%s\n' "$status" "$rc"
+    [ "$rc" -eq 0 ] && [ "$status" = 200 ]
+  }
+  # The PHP container cannot address the runner's localhost port. Both GETs
+  # happen here, with no redirect, against the untouched copy before fp A.
+  rail_observe_run rail-cold-record wpc --user=1 eval-file "$rail_observer" record || invalid "could not record cold Rail state"
+  rail_cold=$(rail_observation_path "$out/rail-cold-record.log")
+  [[ "$rail_cold" =~ ^/backups/rail-input-observe-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}\.json$ ]] || invalid "cold Rail observation path missing or ambiguous"
+  rail_observe_run rail-cold-get rail_local_get || invalid "unchanged Rail page did not answer HTTP200"
+  rail_observe_run rail-cold-compare wpc --user=1 eval-file "$rail_observer" compare "$rail_cold" cold-assets || invalid "cold Rail GET changed more than the measured asset metadata"
+  rail_observe_run rail-warm-record wpc --user=1 eval-file "$rail_observer" record || invalid "could not record warm Rail state"
+  rail_warm=$(rail_observation_path "$out/rail-warm-record.log")
+  [[ "$rail_warm" =~ ^/backups/rail-input-observe-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}\.json$ ]] || invalid "warm Rail observation path missing or ambiguous"
+  rail_observe_run rail-warm-get rail_local_get || invalid "warm Rail page did not answer HTTP200"
+  rail_observe_run rail-warm-compare wpc --user=1 eval-file "$rail_observer" compare "$rail_warm" || invalid "warm Rail GET changed complete page state"
+fi
+
 echo; echo "[3] baseline: fingerprint A and the 10 pages"
 fp A; load_pages; check "pages answer 200 before the change" $?
 errs > "$out/errors-before.txt"
@@ -214,7 +249,9 @@ if cmp -s "$out/A.content" "$out/B.content"; then
 fi
 inst_run apply-again apply; check "apply a second time" $?
 fp B2; cmp -s "$out/B.content" "$out/B2.content"; check "applying twice changes nothing more (idempotent)" $?
-snap=$(find "$bk" -maxdepth 1 -name '*.json' -printf '%T@ %f\n' | sort -rn | head -1 | cut -d' ' -f2-)
+snap_pattern='*.json'
+[ "$inst" != link-ideas/rail-input/install-rail-input.php ] || snap_pattern='rail-input-before-*.json'
+snap=$(find "$bk" -maxdepth 1 -name "$snap_pattern" -printf '%T@ %f\n' | sort -rn | head -1 | cut -d' ' -f2-)
 if [ -z "$snap" ]; then echo "  no before-snapshot was written to WWM_BACKUP_DIR"; check "apply wrote a before-snapshot" 1; else
   inst_run rollback rollback "/backups/$snap"; check "rollback with $snap" $?
   # WPCode's own snippet-list cache option stores each snippet's "modified" time, so an in-place edit of a snippet followed by a rollback always changes it (2026-10-25, Work With Me availability update);

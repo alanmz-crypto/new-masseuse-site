@@ -2,7 +2,7 @@
 /**
  * Repair keyboard/focus input on the existing staging39 Rail practice page.
  * Exact v1 -> current page-content transition; never creates or deletes a page.
- * preflight | apply | rollback FILE. The push wrapper backs up every write.
+ * preflight | apply | rollback FILE | verify FILE. The push wrapper backs up every write.
  * Preserve the complete post, metadata, taxonomy and dates except post_content.
  */
 if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) ) { exit( 'Run with WP-CLI.' ); }
@@ -11,7 +11,8 @@ $local_host = 'localhost:8090';
 if ( ! in_array( $home, array( 'http://' . $local_host, 'http://staging39.thaisolitude.com', 'https://staging39.thaisolitude.com' ), true ) ) { WP_CLI::error( 'Only exact localhost:8090 and staging39 origins are allowed; nothing changed.' ); }
 if ( 'astra' !== get_stylesheet() || ! current_user_can( 'manage_options' ) || ! current_user_can( 'unfiltered_html' ) ) { WP_CLI::error( 'Requires Astra and an administrator (--user=1).' ); }
 $args = isset( $args ) && is_array( $args ) ? $args : array(); $mode = $args[0] ?? 'preflight';
-if ( ! in_array( $mode, array( 'preflight', 'apply', 'rollback' ), true ) || count( $args ) > ( 'rollback' === $mode ? 2 : 1 ) || ( 'rollback' === $mode && count( $args ) !== 2 ) ) { WP_CLI::error( 'Use preflight, apply, or rollback FILE.' ); }
+$file_mode = in_array( $mode, array( 'rollback', 'verify' ), true );
+if ( ! in_array( $mode, array( 'preflight', 'apply', 'rollback', 'verify' ), true ) || count( $args ) > ( $file_mode ? 2 : 1 ) || ( $file_mode && count( $args ) !== 2 ) ) { WP_CLI::error( 'Use preflight, apply, rollback FILE, or verify FILE.' ); }
 $old_html = file_get_contents( __DIR__ . '/../rail-ideas-v1.html' );
 $new_html = file_get_contents( __DIR__ . '/../rail-ideas.html' );
 if ( false === $old_html || hash( 'sha256', $old_html ) !== '26f3472e8032cb89d99b923c23999fc6281537a32d0eed07a54f61347af8d38d' || false === $new_html || $old_html === $new_html ) { WP_CLI::error( 'Frozen v1 is missing/changed or the new page does not differ; nothing changed.' ); }
@@ -96,13 +97,17 @@ $transition = static function ( $before, $after ) use ( $capture, $write, $diffe
 		throw new \RuntimeException( $e->getMessage() . '; complete original page preserved/restored and verified.' );
 	}
 };
-if ( 'rollback' === $mode ) {
+if ( $file_mode ) {
 	$file = $args[1]; $path = is_string( $file ) && $file ? realpath( $file ) : false;
-	if ( ! $path || ! is_file( $path ) || 0 !== strpos( $path, $private . '/' ) ) { WP_CLI::error( 'Rollback requires this update\'s snapshot inside WWM_BACKUP_DIR.' ); }
+	if ( ! $path || ! is_file( $path ) || 0 !== strpos( $path, $private . '/' ) ) { WP_CLI::error( 'Rollback/verify requires this update\'s snapshot inside WWM_BACKUP_DIR.' ); }
 	$snapshot = json_decode( file_get_contents( $path ), true ); $old = $snapshot['old'] ?? null; $new = $snapshot['new'] ?? null;
 	$valid = is_array( $snapshot ) && ( $snapshot['bundle'] ?? '' ) === 'rail-input-v1' && ( $snapshot['home'] ?? '' ) === $home && true === ( $snapshot['complete'] ?? false ) && ( $snapshot['payloads'] ?? null ) === $manifest && $matches( $old, $old_content ) && $matches( $new, $new_content ) && hash( 'sha256', wp_json_encode( $old ) ) === ( $snapshot['old_sha256'] ?? '' ) && hash( 'sha256', wp_json_encode( $new ) ) === ( $snapshot['new_sha256'] ?? '' );
 	if ( $valid ) { $allowed = $old; $allowed['post']['post_content'] = $new_content; $valid = $allowed === $new; }
 	if ( ! $valid ) { WP_CLI::error( 'Snapshot invalid, damaged or from another site/page/payload; nothing changed.' ); }
+	if ( 'verify' === $mode ) {
+		if ( $current !== $new ) { WP_CLI::error( 'Applied full-state verification failed; nothing changed. ' . $difference( $new, $current ) ); }
+		WP_CLI::success( 'Exact applied Rail state verified read-only; full_state_sha256=' . hash( 'sha256', wp_json_encode( $current ) ) . '. Snapshot: ' . $path ); return;
+	}
 	if ( $current === $old ) { WP_CLI::success( 'Exact original page already restored; nothing changed.' ); return; }
 	if ( $current !== $new ) { WP_CLI::error( 'Complete page state changed since apply; nothing changed. ' . $difference( $new, $current ) ); }
 	try { $transition( $new, $old ); } catch ( \Throwable $e ) { WP_CLI::error( $e->getMessage() . ' Snapshot: ' . $path ); }
