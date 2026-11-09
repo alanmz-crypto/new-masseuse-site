@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-09 08:27 UTC  **PASS**  `peek-titles-inventory-20261109-1`  [reports/2026-11-09/082754-peek-titles-inventory-20261109-1.md](reports/2026-11-09/082754-peek-titles-inventory-20261109-1.md)  (run 42585875924)
 - 2026-11-09 08:09 UTC  **PASS**  `peek-short-stored-20261109-1`  [reports/2026-11-09/080931-peek-short-stored-20261109-1.md](reports/2026-11-09/080931-peek-short-stored-20261109-1.md)  (run 42583499757)
 - 2026-11-09 08:08 UTC  **PASS**  `peek-short-public-20261109-1`  [reports/2026-11-09/080853-peek-short-public-20261109-1.md](reports/2026-11-09/080853-peek-short-public-20261109-1.md)  (run 42583371605)
 - 2026-11-09 08:04 UTC  **PASS**  `peek-short-apply-20261109-1`  [reports/2026-11-09/080408-peek-short-apply-20261109-1.md](reports/2026-11-09/080408-peek-short-apply-20261109-1.md)  (run 42582749743)
