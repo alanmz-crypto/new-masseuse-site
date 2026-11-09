@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-09 03:16 UTC  **PASS**  `peek-therapeutic-dry-20261109-1`  [reports/2026-11-09/031651-peek-therapeutic-dry-20261109-1.md](reports/2026-11-09/031651-peek-therapeutic-dry-20261109-1.md)  (run 42555329218)
 - 2026-11-09 03:16 UTC  **PASS**  `peek-therapeutic-rehearse-20261109-1`  [reports/2026-11-09/031618-peek-therapeutic-rehearse-20261109-1.md](reports/2026-11-09/031618-peek-therapeutic-rehearse-20261109-1.md)  (run 42555107195)
 - 2026-11-09 03:13 UTC  **PASS**  `peek-rollout-gates-20261109-1`  [reports/2026-11-09/031303-peek-rollout-gates-20261109-1.md](reports/2026-11-09/031303-peek-rollout-gates-20261109-1.md)  (run 42555080039)
 - 2026-11-09 03:02 UTC  **PASS**  `peek-rollout-access-20261109-1`  [reports/2026-11-09/030243-peek-rollout-access-20261109-1.md](reports/2026-11-09/030243-peek-rollout-access-20261109-1.md)  (run 42554148440)
