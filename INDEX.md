@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-09 23:58 UTC  **PASS**  `peek-rail-input-apply-2`  [reports/2026-11-09/235806-peek-rail-input-apply-2.md](reports/2026-11-09/235806-peek-rail-input-apply-2.md)  (run 42724350260)
 - 2026-11-09 23:53 UTC  **PASS**  `peek-rail-input-dry-2`  [reports/2026-11-09/235319-peek-rail-input-dry-2.md](reports/2026-11-09/235319-peek-rail-input-dry-2.md)  (run 42723968704)
 - 2026-11-09 23:47 UTC  **FAIL**  `peek-rail-input-apply-1`  [reports/2026-11-09/234727-peek-rail-input-apply-1.md](reports/2026-11-09/234727-peek-rail-input-apply-1.md)  (run 42723171410)
 - 2026-11-09 23:45 UTC  **PASS**  `peek-rail-input-dry-1`  [reports/2026-11-09/234543-peek-rail-input-dry-1.md](reports/2026-11-09/234543-peek-rail-input-dry-1.md)  (run 42722968261)
