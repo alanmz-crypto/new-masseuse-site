@@ -1,6 +1,9 @@
 {
-  "id": "peek-titles-stored-20261109-1",
-  "op": "inspect",
+  "id": "peek-title-rails-rehearse-20261109-1",
+  "op": "rehearse",
   "target": "staging39",
-  "query": "snippets"
+  "installer": "link-ideas/core-title-rail/install-peek-core-title-rail.php",
+  "args": [
+    "--with-uploads"
+  ]
 }
