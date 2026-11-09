@@ -12,6 +12,7 @@ const engine = flags.includes('--firefox') ? 'firefox' : 'chromium';
 const data = JSON.parse(readFileSync(new URL('./peek-data/therapeutic-massage.json', import.meta.url), 'utf8'));
 const started = Date.now();
 let pass = 0, fail = 0, captures = 0, visits = 0, browser;
+const routes = new Set();
 const ok = (name, condition, detail) => {
   condition ? pass++ : fail++;
   console.log(`${condition ? 'PASS' : 'FAIL'} kiro-layout ${engine}/${name}${!condition && detail !== undefined ? ' ' + JSON.stringify(detail) : ''}`);
@@ -28,16 +29,17 @@ const capture = async (p, label) => {
   captures++;
   console.log(`INLINE kiro-layout-${label}.jpg base64:${(await p.screenshot({ type: 'jpeg', quality: 80 })).toString('base64')}`);
 };
-const open = async (path, status = 200) => {
+const open = async (path, status = 200, options = {}) => {
   // Ration public HTML loads. Local rehearsal has no hosting challenge budget.
   if (visits && base.startsWith('https:')) await new Promise(resolve => setTimeout(resolve, 5500));
-  const ctx = await browser.newContext({ viewport: { width: 390, height: 664 }, deviceScaleFactor: 1, hasTouch: true, ...(engine === 'chromium' ? { isMobile: true } : {}), reducedMotion: 'reduce' });
-  await ctx.addInitScript(() => { localStorage.setItem('ts-pk-tip', 'seen'); localStorage.setItem('ts-pk-side', 'right'); });
+  const viewport = options.viewport || { width: 390, height: 664 };
+  const ctx = await browser.newContext({ viewport, screen: viewport, deviceScaleFactor: 1, hasTouch: true, ...(engine === 'chromium' ? { isMobile: options.mobile !== false } : {}), reducedMotion: 'reduce' });
+  await ctx.addInitScript(hand => { localStorage.setItem('ts-pk-tip', 'seen'); localStorage.setItem('ts-pk-side', hand); }, options.side || 'right');
   const p = await ctx.newPage(), errors = [];
   p.on('pageerror', error => errors.push(error.message));
   const response = await p.goto(base + path, { waitUntil: 'load', timeout: 45000 });
   if (!response || response.status() !== status || new URL(p.url()).origin !== base || /Robot Challenge/i.test(await p.title())) throw new Error(`INVALID ${path}: expected same-origin ${status}, got ${response?.status()}; stop further loads`);
-  visits++;
+  visits++; routes.add(path);
   await p.waitForSelector('html.ts-pk-ready .ts-pk-nav', { timeout: 10000 });
   await p.waitForFunction(() => document.fonts.status === 'loaded', null, { timeout: 10000 });
   await settle(p);
@@ -59,6 +61,32 @@ const tap = async (p, selector) => {
   await p.waitForTimeout(100); await settle(p);
 };
 const close = async p => { await p.keyboard.press('Escape'); await settle(p); };
+const viewportDiagnostics = p => p.evaluate(() => {
+  const root = document.documentElement, visual = window.visualViewport;
+  const visible = { left: visual?.offsetLeft || 0, top: visual?.offsetTop || 0, width: visual?.width || root.clientWidth, height: visual?.height || root.clientHeight, scale: visual?.scale || 1 };
+  const overflowing = [...document.body.querySelectorAll('*')].flatMap(node => {
+    const r = node.getBoundingClientRect(), style = getComputedStyle(node);
+    if (r.width < 2 || r.height < 2 || style.display === 'none' || style.visibility !== 'visible' || node.closest('script,style,noscript,[hidden],[aria-hidden="true"]')) return [];
+    const over = Math.max(visible.left - r.left, r.right - visible.left - visible.width);
+    if (over <= 1) return [];
+    return [{ tag: node.tagName, id: node.id, class: typeof node.className === 'string' ? node.className.slice(0, 180) : '', peek: !!node.closest('.ts-pk'), left: r.left, right: r.right, width: r.width, top: r.top, overflow: over, ownScrollWidth: node.scrollWidth, text: node.childElementCount ? '' : node.textContent.trim().slice(0, 100) }];
+  }).sort((a, b) => b.overflow - a.overflow).slice(0, 20);
+  return { innerWidth, innerHeight, clientWidth: root.clientWidth, clientHeight: root.clientHeight, scrollWidth: root.scrollWidth, scrollHeight: root.scrollHeight,
+    bodyWidth: document.body.getBoundingClientRect().width, bodyScrollWidth: document.body.scrollWidth, x: scrollX, y: scrollY, viewport: visible, rootFont: getComputedStyle(root).fontSize, overflowing };
+});
+const stableLayout = async (p, label) => {
+  await p.evaluate(() => { window.__kiroLayoutStable = null; });
+  await p.waitForFunction(() => {
+    const rect = selector => { const node = document.querySelector(selector); if (!node) return null; const r = node.getBoundingClientRect(); return [r.left, r.top, r.width, r.height]; };
+    const metrics = [scrollX, scrollY, innerWidth, innerHeight, document.documentElement.scrollWidth, document.documentElement.scrollHeight,
+      window.visualViewport?.width, window.visualViewport?.height, window.visualViewport?.scale, rect('#masthead'), rect('.ts-pk-top')];
+    const key = JSON.stringify(metrics), now = performance.now(), previous = window.__kiroLayoutStable;
+    if (!previous || previous.key !== key) window.__kiroLayoutStable = { key, since: now, started: previous?.started || now, changes: (previous?.changes || 0) + 1, first: previous?.first || metrics, last: metrics };
+    return document.fonts.status === 'loaded' && now - window.__kiroLayoutStable.since >= 250;
+  }, null, { polling: 'raf', timeout: 4000 }).catch(async () => { throw new Error(`INVALID ${label}: layout did not stabilize before input: ${JSON.stringify(await viewportDiagnostics(p))}`); });
+  const evidence = await p.evaluate(() => window.__kiroLayoutStable);
+  if (evidence.changes > 1) console.log(`INFO kiro-layout ${engine}/${label}: settled responsive layout before input ${JSON.stringify(evidence)}`);
+};
 const side = async (p, wanted) => {
   if (await p.locator('html').evaluate(root => root.classList.contains('ts-pk-left')) === (wanted === 'left')) return;
   await close(p); await p.setViewportSize({ width: 390, height: 844 });
@@ -72,16 +100,18 @@ const summaryGeometry = p => p.evaluate(() => {
   const card = document.querySelector('.ts-pk-card'), sum = card.querySelector('.sum'), title = card.querySelector('.open > b'), hint = card.querySelector('.hint'), strip = document.querySelector('.ts-pk-top'), head = document.getElementById('masthead');
   const rect = node => { const r = node.getBoundingClientRect(); return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, width: r.width, height: r.height }; };
   const c = rect(card), s = rect(sum), t = rect(title), j = rect(hint), bar = rect(strip), h = head ? rect(head) : null;
-  const headBottom = h && h.bottom > 0 && h.top < innerHeight ? Math.min(innerHeight, h.bottom) : 0;
+  const v = window.visualViewport, viewport = { width: v?.width || document.documentElement.clientWidth, height: v?.height || document.documentElement.clientHeight, left: v?.offsetLeft || 0, top: v?.offsetTop || 0, scale: v?.scale || 1 };
+  const bottom = viewport.top + viewport.height, right = viewport.left + viewport.width;
+  const headBottom = h && h.bottom > viewport.top && h.top < bottom ? Math.min(bottom, h.bottom) : viewport.top;
   // The accepted short-screen preview can temporarily cover the read-only strip,
   // never the site header. Taller screens retain both clearances. This uses
   // visible geometry, not fit classes or the implementation's sizing variable.
-  const short = innerHeight <= 500, stripVisible = bar.top < innerHeight && bar.bottom > 0;
-  const intervals = short || !stripVisible ? [innerHeight - headBottom] : [bar.top - headBottom, innerHeight - Math.max(headBottom, bar.bottom)];
+  const short = viewport.height <= 500, stripVisible = bar.top < bottom && bar.bottom > viewport.top;
+  const intervals = short || !stripVisible ? [bottom - headBottom] : [bar.top - headBottom, bottom - Math.max(headBottom, bar.bottom)];
   const usable = Math.max(0, ...intervals) - 20;
   const expected = Math.min(120, Math.max(0, usable - t.height - j.height - 48));
   const clearStrip = !stripVisible || c.bottom <= bar.top + 1 || c.top >= bar.bottom - 1;
-  const visible = { left: Math.max(0, c.left, s.left), right: Math.min(innerWidth, c.right, s.right), top: Math.max(headBottom, c.top, s.top), bottom: Math.min(innerHeight, c.bottom, s.bottom) };
+  const visible = { left: Math.max(viewport.left, c.left, s.left), right: Math.min(right, c.right, s.right), top: Math.max(headBottom, c.top, s.top), bottom: Math.min(bottom, c.bottom, s.bottom) };
   const x = (visible.left + visible.right) / 2;
   const start = { x, y: visible.bottom - 12 }, end = { x, y: visible.top + 12 };
   const hit = at => sum.contains(document.elementFromPoint(at.x, at.y));
@@ -89,7 +119,7 @@ const summaryGeometry = p => p.evaluate(() => {
   if (final) range.selectNodeContents(final);
   const lines = final ? [...range.getClientRects()].filter(r => r.width > 0 && r.height > 0) : [];
   const last = lines.at(-1);
-  return { viewport: { width: innerWidth, height: innerHeight }, card: c, summary: s, title: t, hint: j, strip: bar, header: h, boundary: headBottom, clearStrip, usable, expected,
+  return { viewport, layoutViewport: { width: innerWidth, height: innerHeight, clientWidth: document.documentElement.clientWidth, clientHeight: document.documentElement.clientHeight }, card: c, summary: s, title: t, hint: j, strip: bar, header: h, rail: rect(document.querySelector('.ts-pk-nav')), boundary: headBottom, clearStrip, usable, expected,
     visibleHeight: Math.max(0, visible.bottom - visible.top), visibleWidth: Math.max(0, visible.right - visible.left), start, end, hit: hit(start) && hit(end),
     range: sum.scrollHeight - sum.clientHeight, inner: sum.scrollTop, outer: card.scrollTop, faded: sum.classList.contains('has-more'),
     lastVisible: !!last && last.top >= visible.top - 1 && last.bottom <= visible.bottom + 1 && last.left >= visible.left - 1 && last.right <= visible.right + 1,
@@ -108,12 +138,9 @@ const dragSummary = async (p, reverse = false) => {
 try {
   browser = await playwright[engine].launch(engine === 'chromium' && process.env.TS_BROWSER_EXECUTABLE ? { executablePath: process.env.TS_BROWSER_EXECUTABLE } : {});
   {
-    const { ctx, p, errors } = await open('/therapeutic-massage/');
     const wanted = data.items.filter(item => item[1] === data.research_anchor).map(item => item[0]);
     const researchSelector = `.ts-pk-rail a[href="#${data.research_anchor}"]`;
-    if (await p.locator(researchSelector).count() !== 1) throw new Error('INVALID therapeutic research destination missing');
     for (const hand of ['right', 'left']) {
-      await side(p, hand);
       for (const spec of [
         { name: 'portrait-top', width: 390, height: 664, y: 0 },
         { name: 'portrait-scrolled', width: 390, height: 664, y: 600 },
@@ -123,13 +150,38 @@ try {
         { name: 'tablet', width: 768, height: 1024, y: 600 }
       ]) {
         const label = `therapeutic/${hand}/${spec.name}`;
-        await close(p); await p.setViewportSize({ width: spec.width, height: spec.height });
+        // Each size is a fresh device context. Changing only setViewportSize
+        // after mobile text enlargement can carry an altered visual zoom into
+        // the next "device". Rotation itself remains in the retained suite.
+        const { ctx, p, errors } = await open('/therapeutic-massage/', 200, { viewport: { width: spec.width, height: spec.height }, side: hand });
+        if (await p.locator(researchSelector).count() !== 1) throw new Error(`INVALID ${label}: research destination missing`);
         await p.evaluate(scale => { document.documentElement.style.fontSize = scale ? '150%' : ''; }, spec.scale);
-        await scroll(p, spec.y); const before = await state(p); await tap(p, researchSelector);
+        // Resize and text changes can invoke browser scroll anchoring after
+        // the first frame. Establish a stable layout before the baseline scroll,
+        // and a stable reading position before the tap. Keep the one-pixel
+        // gesture contract strict; do not count resize anchoring as tap motion.
+        await stableLayout(p, `${label}/resize`);
+        if (spec.scale) {
+          const stripText = await p.evaluate(() => {
+            const strip = document.querySelector('.ts-pk-top'), window = strip.querySelector('.in'), r = window.getBoundingClientRect();
+            const labels = [...strip.querySelectorAll('.before,.tr span')].map(node => {
+              const range = document.createRange(); range.selectNodeContents(node); const lines = [...range.getClientRects()].filter(line => line.width > 0 && line.height > 0);
+              return { text: node.textContent, height: lines.length ? Math.max(...lines.map(line => line.bottom)) - Math.min(...lines.map(line => line.top)) : 0 };
+            });
+            return { windowHeight: r.height, labels, font: getComputedStyle(document.documentElement).fontSize };
+          });
+          ok(`${label}: font-only enlargement refits page identity and section title height`, stripText.labels.length > 1 && stripText.labels.every(item => item.height <= stripText.windowHeight + 1), stripText);
+          if (hand === 'right') await capture(p, 'therapeutic-font-only-strip');
+        }
+        await scroll(p, spec.y); await stableLayout(p, `${label}/reading-position`);
+        const before = await state(p); await tap(p, researchSelector);
         const opened = await state(p), g = await summaryGeometry(p);
+        if (g.layoutViewport.width !== spec.width || g.layoutViewport.height !== spec.height || Math.abs(g.viewport.width - spec.width) > 0.5 || Math.abs(g.viewport.height - spec.height) > 0.5 || Math.abs(g.viewport.scale - 1) > 0.001) console.log(`INFO kiro-layout ${engine}/${label}: viewport overflow diagnostics ${JSON.stringify(await viewportDiagnostics(p))}`);
         ok(`${label}: preview keeps page and original research wording`, samePage(before, opened) && opened.pinned && JSON.stringify(g.words) === JSON.stringify(wanted), { before, opened, words: g.words });
-        ok(`${label}: viewport is the requested CSS size`, g.viewport.width === spec.width && g.viewport.height === spec.height, g.viewport);
-        ok(`${label}: card stays below visible header and on screen`, g.card.top >= g.boundary - 1 && g.card.bottom <= spec.height + 1 && g.card.left >= -1 && g.card.right <= spec.width + 1 && (spec.height <= 500 || g.clearStrip), g);
+        ok(`${label}: visible viewport is the requested CSS size at normal scale`, Math.abs(g.viewport.width - spec.width) <= 0.5 && Math.abs(g.viewport.height - spec.height) <= 0.5 && Math.abs(g.viewport.scale - 1) <= 0.001, { visible: g.viewport, layout: g.layoutViewport });
+        const insideVisible = rect => rect.left >= g.viewport.left - 1 && rect.right <= g.viewport.left + g.viewport.width + 1 && rect.top >= g.viewport.top - 1 && rect.bottom <= g.viewport.top + g.viewport.height + 1;
+        const headerFits = !g.header || (g.header.left >= g.viewport.left - 1 && g.header.right <= g.viewport.left + g.viewport.width + 1);
+        ok(`${label}: card and rail stay inside visible screen below header`, g.card.top >= g.boundary - 1 && insideVisible(g.card) && insideVisible(g.rail) && headerFits && (g.viewport.height <= 500 || g.clearStrip), g);
         ok(`${label}: research offers a useful visible finger area`, g.expected >= 60 && g.visibleHeight >= g.expected - 1 && g.visibleWidth >= 200 && g.hit && g.scrollWidth <= g.clientWidth + 1, g);
         ok(`${label}: side label uses readable text`, g.sideText === (hand === 'right' ? 'Left' : 'Right'), g.sideText);
         if (hand === 'right' || spec.name === 'landscape-scrolled') await capture(p, `therapeutic-${hand}-${spec.name}`);
@@ -146,9 +198,9 @@ try {
           const first = await state(p), swiped = await dragSummary(p), after = await state(p);
           ok(`${label}: end-of-summary swipe cannot pan page`, swiped && samePreview(first, after) && Math.abs(first.inner - after.inner) <= 1, { first, after, swiped });
         }
+        ok(`${label}: no page errors`, errors.length === 0, errors); await ctx.close();
       }
     }
-    ok('therapeutic: no page errors', errors.length === 0, errors); await ctx.close();
   }
   for (const path of ['/privacy-policy/', '/about/']) {
     const { ctx, p, errors } = await open(path), name = path.replaceAll('/', '');
@@ -188,7 +240,7 @@ try {
     ok(`${name}: no page errors`, errors.length === 0, errors); await ctx.close();
   }
   {
-    const { ctx, p, errors } = await open('/services/');
+    const { ctx, p, errors } = await open('/services/', 200, { viewport: { width: 1280, height: 800 }, mobile: false });
     for (const hand of ['right', 'left']) {
       await side(p, hand); await p.setViewportSize({ width: 1280, height: 800 }); await scroll(p, 0);
       // Text-node ranges measure rendered glyph runs, not padded block borders.
@@ -293,5 +345,5 @@ try {
 } catch (error) {
   console.log(`INVALID kiro-layout ${engine}: ${error.message}`); process.exitCode = 2;
 } finally { if (browser) await browser.close(); }
-console.log(`INFO Peek Kiro layout ${engine}: ${pass} passed, ${fail} failed; ${visits} actual routes, ${captures} captures, ${Math.round((Date.now() - started) / 1000)}s; ${engine === 'chromium' ? 'simulated native touch' : 'keyboard/mouse only'}, root text enlargement is not OS text scale.`);
+console.log(`INFO Peek Kiro layout ${engine}: ${pass} passed, ${fail} failed; ${routes.size} actual routes, ${visits} page loads, ${captures} captures, ${Math.round((Date.now() - started) / 1000)}s; ${engine === 'chromium' ? 'simulated native touch' : 'keyboard/mouse only'}, root text enlargement is not OS text scale.`);
 process.exit(process.exitCode || (fail ? 1 : 0));

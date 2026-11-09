@@ -37,8 +37,8 @@ original meaning. Never apply an older rollback against the wrong current core.
 - F4: clearance includes the entire FAQ box and moves its interactive rectangle
   clear of the rail; text inside is not padded twice. Full-width containing
   columns are unchanged. Actual control-edge checks must verify the result.
-- F5: a new actual-text-range Services gate checks both rail sides at 1280 px;
-  the assessment remains pending actual-copy results, not assumed fixed.
+- F5: actual-text-range Services checks pass on both rail sides at 1280 px in
+  the first fresh-copy Chromium run; the captures show clear text and controls.
 - J1: single-entry rails remain, with a shorter 120 px maximum rail. Search/404
   identity drops only the document title's trailing site-brand suffix.
 - J2: original headings remain the only label source. Title-only closed rows
@@ -73,6 +73,31 @@ pinned-PHP lint on 131 files, structured-data 22 checks, header/CSP 29 checks,
 Peek installer 594 checks and current-page JSON 35 checks. Full Actions Gates
 must also pass before any write.
 
-No fresh-copy rehearsal, staging apply, new backup or new rollback snapshot has
-yet been recorded for this candidate. Physical-device Safari/Android, OS text
-scale and real assistive technology remain unverified.
+Actions Gates at `4c5632be6e1acca5dbfba0b844cfdc7d7400501f` passed 31 checks,
+with one optional skip and no failures (run `42681652317`).
+
+The first fresh-copy rehearsal `peek-kiro-fixes-rehearse-1`, run `42681652458`,
+**failed** and authorizes no deployment. Preflight, apply, idempotence, exact
+rollback/reapply fingerprints, rendered wording, page inventory and PHP checks
+passed. Disclosure regressions passed Chromium 66/0 and Firefox 41/0. Chromium
+layout finished 138/7; later Firefox layout and retained suites did not run.
+The seven failures were enlarged-text viewport/card containment and small page
+position shifts after resizing. Screenshots confirm that enlarged text can
+leave the card below the physical screen; this is being corrected, not waived.
+
+The follow-up uses visible viewport bounds for fixed rails/cards, including
+pinch offsets, instead of inflated inner dimensions. It also remeasures the
+strip when root text changes. The layout checker now establishes a stable
+reading position before input, uses fresh device contexts to prevent inherited
+zoom between cases, and checks actual visible card/rail bounds at scale 1. Its
+one-pixel touch-ownership limit is unchanged. Enlarged text remains an
+approximation, not a claim about OS text scaling.
+
+Independent review of the copy captures found the wider landscape research
+card readable, the full Privacy FAQ controls clear of the rail, and full Work
+With Me headings readable in both the current strip and stacked title boxes.
+Home now accurately says Home over its hero. These are actual-copy observations.
+
+Staging remains unchanged; no new staging backup/apply/snapshot has occurred.
+Physical-device Safari/Android, OS text scale and real assistive technology
+remain unverified.

@@ -49,7 +49,7 @@ body.admin-bar .ts-pk-top{top:calc(var(--wp-admin--admin-bar--height,32px) + var
 html.ts-pk-title-ready .ts-pk-title-content :is(.tsx-pills,.tsx-seg,.tsp-bar,.tsr-top){top:var(--pk-title-end,0px)}
 html.ts-pk-title-ready .ts-pk-title-content :is(.tsx-lab,.tsp-lab,.tsr-lab) :is(.tsx-sec,.tsp-sec,.tsr-sec),html.ts-pk-title-ready .ts-pk-title-content :is(.tsx-lab,.tsp-lab,.tsr-lab) :is(.tsx-sec,.tsp-sec,.tsr-sec) [id]{scroll-margin-top:calc(var(--pk-title-end,0px) + var(--pk-demo-bar,0px) + 12px)}
 /* rail: right edge, thumb zone */
-.ts-pk-nav{position:fixed;right:max(2px,env(safe-area-inset-right));top:max(30%,calc(var(--pk-head,0px) + var(--pk-strip,0px) + 64px));bottom:max(14%,76px);z-index:91;width:44px}   /* % follows the visible viewport on iOS; the index icon stays clear of the header and strip */
+.ts-pk-nav{position:fixed;right:calc(100% - var(--pk-vx,0px) - var(--pk-vw,100vw) + max(2px,env(safe-area-inset-right)));top:max(calc(var(--pk-vy,0px) + var(--pk-vh,100vh) * .3),calc(var(--pk-head,0px) + var(--pk-strip,0px) + 64px));bottom:calc(100% - var(--pk-vy,0px) - var(--pk-vh,100vh) + max(calc(var(--pk-vh,100vh) * .14),76px));z-index:91;width:44px}   /* % follows the visible viewport on iOS; the index icon stays clear of the header and strip */
 .ts-pk-rail{position:absolute;inset:0;display:flex;flex-direction:column;gap:5px;margin:0;padding:8px 0;list-style:none;touch-action:none;-webkit-user-select:none;user-select:none;border-radius:22px;transition:background-color .2s,box-shadow .2s}
 .ts-pk-nav.is-active .ts-pk-rail{background:var(--pk-panel);background:color-mix(in srgb,var(--pk-panel) 92%,transparent);box-shadow:0 6px 24px -12px rgba(0,0,0,.45)}
 .ts-pk-rail li{position:relative;flex:var(--len,1) 1 0;min-height:22px;margin:0;padding:0}
@@ -70,7 +70,7 @@ html.ts-pk-title-ready .ts-pk-title-content :is(.tsx-lab,.tsp-lab,.tsr-lab) :is(
 .ts-pk-nav.is-active .ts-pk-label{opacity:0}
 .ts-pk-you{position:absolute;right:28px;width:10px;height:10px;margin-top:-5px;border-radius:50%;background:var(--pk-ink);box-shadow:0 0 0 3px var(--pk-ground);pointer-events:none;transition:top .2s}
 /* peek card */
-.ts-pk-card{position:fixed;right:58px;z-index:92;width:min(300px,calc(100vw - 78px));max-height:calc(100vh - 90px);max-height:calc(100dvh - 90px);overflow:hidden;padding:.85rem 1rem;border:1px solid var(--pk-rule);border-radius:18px;background:var(--pk-panel);color:var(--pk-ink);box-shadow:var(--pk-shadow);pointer-events:none;opacity:0;transform:translateX(10px) scale(.98);transition:opacity .15s,transform .2s var(--pk-ease);font-size:1rem;line-height:1.4}
+.ts-pk-card{position:fixed;right:calc(100% - var(--pk-vx,0px) - var(--pk-vw,100vw) + 58px);z-index:92;width:min(300px,calc(var(--pk-vw,100vw) - 78px));max-height:calc(100vh - 90px);max-height:calc(100dvh - 90px);overflow:hidden;padding:.85rem 1rem;border:1px solid var(--pk-rule);border-radius:18px;background:var(--pk-panel);color:var(--pk-ink);box-shadow:var(--pk-shadow);pointer-events:none;opacity:0;transform:translateX(10px) scale(.98);transition:opacity .15s,transform .2s var(--pk-ease);font-size:1rem;line-height:1.4}
 .ts-pk-card.is-on{opacity:1;transform:none}
 .ts-pk-card.is-pinned{pointer-events:auto;cursor:pointer;touch-action:none;-webkit-tap-highlight-color:transparent}   /* a box with no scroll range must not pan the page behind it */
 .ts-pk-card.is-pinned.can-scroll{touch-action:pan-y}   /* the constrained outer-card fallback keeps its own native scrolling */
@@ -123,12 +123,12 @@ html .ts-pk ol,html .ts-pk li{margin:0;padding:0;list-style:none;text-indent:0}
 html .ts-pk .ts-pk-rail{padding:8px 0}
 html .ts-pk a{text-decoration:none!important;border:0!important;box-shadow:none!important;background:none!important}   /* staging39: a more specific theme rule underlined these links */
 /* left-hand option: everything mirrored to the left edge */
-html.ts-pk-left .ts-pk-nav{right:auto;left:max(2px,env(safe-area-inset-left))}
+html.ts-pk-left .ts-pk-nav{right:auto;left:calc(var(--pk-vx,0px) + max(2px,env(safe-area-inset-left)))}
 html.ts-pk-left .ts-pk-label{right:auto;left:48px}
 html.ts-pk-left .ts-pk-you{right:auto;left:28px}
-html.ts-pk-left .ts-pk-card{right:auto;left:58px;transform:translateX(-10px) scale(.98)}
+html.ts-pk-left .ts-pk-card{right:auto;left:calc(58px + var(--pk-vx,0px));transform:translateX(-10px) scale(.98)}
 html.ts-pk-left .ts-pk-card.is-on{transform:none}
-html.ts-pk-left .ts-pk-tip{right:auto;left:58px}
+html.ts-pk-left .ts-pk-tip{right:auto;left:calc(58px + var(--pk-vx,0px))}
 @media screen{html.ts-pk-ready.ts-pk-pad.ts-pk-left .ts-pk-title-content :is(p,li,h1,h2,h3,h4,h5,h6,blockquote,figcaption,dt,dd,td,th,:where(.ts-pk-title-rail) form):not(:is(p,li,blockquote,dd,td,th,:where(.ts-pk-title-rail) form,.uagb-faq-item,.ts-pk,.ts-jump,nav,[role="navigation"],[role="tablist"],.tsx-picker,.tsp-picker,.tsr-picker,.tsi-picker) *){padding-left:var(--pk-clear)}}
 @media screen{html.ts-pk-ready.ts-pk-pad.ts-pk-left .ts-pk-title-content .ts-pk-top{padding-left:calc(12px + var(--pk-clear))}   /* the other side keeps the theme's own spacing */}
 /* the side button in the preview */
@@ -137,7 +137,7 @@ html.ts-pk-left .ts-pk-tip{right:auto;left:58px}
 .ts-pk-card .side:hover,.ts-pk-card .side:focus{background:var(--pk-stone);color:var(--pk-ink)}
 .ts-pk-card.is-pinned .side{display:inline-flex;align-items:center}
 /* first-time hint beside the rail (shown once per visitor) */
-.ts-pk-tip{position:fixed;right:58px;z-index:94;width:min(270px,calc(100vw - 78px));padding:.85rem 1rem;border-radius:16px;background:var(--pk-ink);color:var(--pk-panel);box-shadow:var(--pk-shadow);font-size:.88rem;line-height:1.4;opacity:0;transform:translateY(6px);transition:opacity .25s,transform .25s var(--pk-ease)}
+.ts-pk-tip{position:fixed;right:calc(100% - var(--pk-vx,0px) - var(--pk-vw,100vw) + 58px);z-index:94;width:min(270px,calc(var(--pk-vw,100vw) - 78px));padding:.85rem 1rem;border-radius:16px;background:var(--pk-ink);color:var(--pk-panel);box-shadow:var(--pk-shadow);font-size:.88rem;line-height:1.4;opacity:0;transform:translateY(6px);transition:opacity .25s,transform .25s var(--pk-ease)}
 .ts-pk-tip.is-on{opacity:1;transform:none}
 .ts-pk-tip[hidden]{display:none}
 .ts-pk-tip p{margin:0 0 .65rem;color:inherit}
@@ -212,8 +212,8 @@ html.ts-pk-ready.ts-pk-pad.ts-pk-left .ts-pk-title-content .uagb-faq-item{margin
 }
 /* Newly added rails show names and navigation only, never paragraph previews. */
 .ts-pk-titles[hidden]{display:none!important}
-.ts-pk-titles.is-single .ts-pk-nav{bottom:auto;height:min(120px,24vh)}
-@media screen and (max-height:500px){.ts-pk:not(.ts-pk-titles) .ts-pk-card{width:min(440px,calc(100vw - 78px));max-height:calc(100dvh - 24px)}}
+.ts-pk-titles.is-single .ts-pk-nav{bottom:auto;height:min(120px,calc(var(--pk-vh,100vh) * .24))}
+@media screen and (max-height:500px){.ts-pk:not(.ts-pk-titles) .ts-pk-card{width:min(440px,calc(var(--pk-vw,100vw) - 78px));max-height:calc(100dvh - 24px)}}
 .ts-pk-titles .ts-pk-card b{overflow-wrap:anywhere}
 html .ts-pk-titles .ts-pk-card .row span{white-space:normal;overflow:visible;overflow-wrap:anywhere}
 @media print{.ts-pk{display:none!important}html.ts-pk-ready .entry-content .ts-jump{display:block!important}}
@@ -256,6 +256,21 @@ add_action( 'wp_footer', function () {
     out.sort(function (a, b) { var x = byHref(a.href), y = byHref(b.href); return x === y ? 0 : (x.compareDocumentPosition(y) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1); });
     return out;
   }
+  // Mobile text overflow can enlarge innerWidth/innerHeight while the visible
+  // viewport remains unchanged. Keep fixed controls in the visible rectangle,
+  // including its offsets during pinch zoom, without clipping page content.
+  function viewportBounds() {
+    var v = window.visualViewport, root = document.documentElement;
+    var left = v ? v.offsetLeft : 0, top = v ? v.offsetTop : 0;
+    var width = v ? v.width : root.clientWidth, height = v ? v.height : root.clientHeight;
+    return { left: left, top: top, width: width, height: height, right: left + width, bottom: top + height };
+  }
+  function measureViewport() {
+    var v = viewportBounds(), root = document.documentElement;
+    var values = { '--pk-vx': v.left, '--pk-vy': v.top, '--pk-vw': v.width, '--pk-vh': v.height };
+    Object.keys(values).forEach(function (key) { var value = values[key] + 'px'; if (root.style.getPropertyValue(key) !== value) root.style.setProperty(key, value); });
+    return v;
+  }
   function pageIdentity() {
     try { var config = JSON.parse(document.getElementById('ts-peek-nav-config').textContent); if (typeof config.title === 'string' && config.title.trim()) return config.title.trim(); } catch (e) {}
     return document.title;
@@ -270,6 +285,7 @@ add_action( 'wp_footer', function () {
     root.classList.add('ts-pk-title-ready');
     if (content !== document.body) content.classList.add('ts-pk-title-content');
     function measureHead() {
+      measureViewport();
       var pinned = head && getComputedStyle(head).position === 'sticky';
       var menu = head ? head.querySelector('.ast-mobile-header-content') : null;
       var bar = pinned ? head.offsetHeight - (menu ? menu.offsetHeight : 0) : 0;
@@ -295,7 +311,7 @@ add_action( 'wp_footer', function () {
       topTr.innerHTML = sections.map(function (s) { return '<span>' + esc(s.label) + '</span>'; }).join('');
       items = [].slice.call(topTr.children); strip.classList.toggle('is-single', sections.length === 1); layout();
     }
-    function line() { return Math.max(window.innerHeight * 0.25, (parseFloat(getComputedStyle(strip).top) || 0) + strip.offsetHeight + 24); }
+    function line() { var v = viewportBounds(); return Math.max(v.top + v.height * 0.25, (parseFloat(getComputedStyle(strip).top) || 0) + strip.offsetHeight + 24); }
     function bounds(i) { var h = resolve(i), nx = resolve(i + 1); return [h ? h.getBoundingClientRect().top : 0, nx ? nx.getBoundingClientRect().top : content.getBoundingClientRect().bottom]; }
     function read() {
       var y = line(), cur = -1, tops = sections.map(function (s, k) { var h = resolve(k); return h ? h.getBoundingClientRect().top : null; }), end = content.getBoundingClientRect().bottom;
@@ -314,12 +330,16 @@ add_action( 'wp_footer', function () {
     }
     function watch(changed) {
       window.addEventListener('resize', function () { layout(); changed(); });
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', function () { layout(); changed(); });
+        window.visualViewport.addEventListener('scroll', function () { measureViewport(); changed(); });
+      }
       if ('ResizeObserver' in window) {
-        var sizes = new ResizeObserver(function () { if (titleOnly) layout(); else measureHead(); changed(); });
+        var sizes = new ResizeObserver(function () { layout(); changed(); });
         if (head) sizes.observe(head);
         // Rem-based padding changes with text enlargement even while the
         // measured title window still has its previous pixel height.
-        sizes.observe(strip, titleOnly ? { box: 'border-box' } : undefined);
+        sizes.observe(strip, { box: 'border-box' });
       }
       window.addEventListener('load', function () { layout(); changed(); });
       if (document.fonts && document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', function () { layout(); changed(); });
@@ -638,9 +658,9 @@ add_action( 'wp_footer', function () {
     }
     // at most once per frame, and on resize only when the width really changed (phone toolbars resize the page while scrolling)
     var clearQ = 0, lastW = -1;
-    function scheduleClear(force) { if (!force && window.innerWidth === lastW) return; lastW = window.innerWidth; if (clearQ) return; clearQ = requestAnimationFrame(function () { clearQ = 0; clearRail(); }); }
+    function scheduleClear(force) { if (!force && document.documentElement.clientWidth === lastW) return; lastW = document.documentElement.clientWidth; if (clearQ) return; clearQ = requestAnimationFrame(function () { clearQ = 0; clearRail(); }); }
     root.classList.toggle('ts-pk-left', store('ts-pk-side') === 'left');   // the saved side first, so the first measurement is for the right side (Kiro, third review)
-    lastW = window.innerWidth; clearRail(); window.addEventListener('resize', function () { scheduleClear(false); });
+    lastW = document.documentElement.clientWidth; clearRail(); window.addEventListener('resize', function () { scheduleClear(false); });
 
     // left-hand option (remembered on this device)
     function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } return null; }
@@ -726,16 +746,16 @@ add_action( 'wp_footer', function () {
     }
     function hover(i) { segs.forEach(function (li, k) { li.classList.toggle('is-hover', k === i); }); }
     function cardSpaces() {
-      var r = top.getBoundingClientRect(), stickyTop = parseFloat(getComputedStyle(top).top) || 0;
-      var visible = r.top < window.innerHeight && r.bottom > 0, hr = head && head.getBoundingClientRect();
-      var headBottom = Math.max(0, stickyTop, hr && hr.top < window.innerHeight && hr.bottom > 0 ? hr.bottom : 0);
+      var r = top.getBoundingClientRect(), stickyTop = parseFloat(getComputedStyle(top).top) || 0, viewport = viewportBounds();
+      var visible = r.top < viewport.bottom && r.bottom > viewport.top, hr = head && head.getBoundingClientRect();
+      var headBottom = Math.max(viewport.top, stickyTop, hr && hr.top < viewport.bottom && hr.bottom > viewport.top ? hr.bottom : 0);
       // At page top the availability banner still separates the strip from its
       // sticky position. Clear the visible strip, including the card's focus ring.
       // A strip entirely outside the viewport must not consume preview space.
-      var lower = { top: Math.max(headBottom, stickyTop + top.offsetHeight, visible ? r.bottom : 0) + 8, bottom: window.innerHeight - 12 };
+      var lower = { top: Math.max(headBottom, stickyTop + top.offsetHeight, visible ? r.bottom : 0) + 8, bottom: viewport.bottom - 12 };
       var upper = visible && r.top - 8 > headBottom + 8 ? { top: headBottom + 8, bottom: r.top - 8 } : null;
-      var expanded = { top: headBottom + 8, bottom: window.innerHeight - 12 };
-      return { lower: lower, upper: upper, expanded: expanded, key: [lower.top, lower.bottom, upper ? upper.top : 0, upper ? upper.bottom : 0].join('|') };
+      var expanded = { top: headBottom + 8, bottom: viewport.bottom - 12 };
+      return { lower: lower, upper: upper, expanded: expanded, key: [lower.top, lower.bottom, upper ? upper.top : 0, upper ? upper.bottom : 0, viewport.left, viewport.width].join('|') };
     }
     function moreHint() {
       var m = card.querySelector('.sum');
@@ -784,11 +804,12 @@ add_action( 'wp_footer', function () {
       }
       // On short screens an open reading card may cover the strip, but never
       // the visible site header. The page and strip return unchanged on close.
-      if (summary && window.innerHeight <= 500 && summary.scrollHeight > summary.clientHeight + 1 && summary.clientHeight < 120 && spaces.expanded.bottom - spaces.expanded.top > bounds.bottom - bounds.top) {
+      if (summary && viewportBounds().height <= 500 && summary.scrollHeight > summary.clientHeight + 1 && summary.clientHeight < 120 && spaces.expanded.bottom - spaces.expanded.top > bounds.bottom - bounds.top) {
         bounds = spaces.expanded; fitIn(bounds);
       }
       var o = card.querySelector('.open'); if (o && card.scrollHeight > card.clientHeight + 1) card.scrollTop = Math.max(0, o.offsetTop - 4);   // never hidden
-      fitted = { bounds: bounds, key: spaces.key, width: window.innerWidth, height: window.innerHeight };
+      var viewport = viewportBounds();
+      fitted = { bounds: bounds, key: spaces.key, width: viewport.width, height: viewport.height };
     }
     function clampCard(y) {
       var bounds = fitted.bounds;
@@ -801,8 +822,8 @@ add_action( 'wp_footer', function () {
     }
     function refitCard(force) {
       if (!card.classList.contains('is-on')) return;
-      var spaces = cardSpaces(), sum = card.querySelector('.sum');
-      if (!force && fitted && spaces.key === fitted.key && fitted.width === window.innerWidth && fitted.height === window.innerHeight && (!sum || sameReadingSize(sum))) return;
+      var spaces = cardSpaces(), sum = card.querySelector('.sum'), viewport = viewportBounds();
+      if (!force && fitted && spaces.key === fitted.key && fitted.width === viewport.width && fitted.height === viewport.height && (!sum || sameReadingSize(sum))) return;
       var y = parseFloat(card.style.top), scroll = card.scrollTop;
       // Responsive styles have already reflowed by the time resize fires. Keep
       // the reading intent recorded before that reflow, especially an endpoint.
@@ -874,7 +895,8 @@ add_action( 'wp_footer', function () {
       moreHint();
       // A browser-generated clamp during responsive reflow is not a new reading
       // choice. Refit restores the bookmark, then records its new dimensions.
-      if (fitted && fitted.width === window.innerWidth && fitted.height === window.innerHeight) rememberReading();
+      var viewport = viewportBounds();
+      if (fitted && fitted.width === viewport.width && fitted.height === viewport.height) rememberReading();
     }, true);
     card.addEventListener('pointerdown', function (e) {
       if (e.pointerType === 'mouse' || !e.isPrimary) return;
