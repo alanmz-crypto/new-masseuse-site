@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-09 07:54 UTC  **PASS**  `peek-short-rehearse-20261109-1`  [reports/2026-11-09/075451-peek-short-rehearse-20261109-1.md](reports/2026-11-09/075451-peek-short-rehearse-20261109-1.md)  (run 42580943410)
 - 2026-11-09 07:30 UTC  **PASS**  `peek-short-start-20261109-1`  [reports/2026-11-09/073046-peek-short-start-20261109-1.md](reports/2026-11-09/073046-peek-short-start-20261109-1.md)  (run 42579762288)
 - 2026-11-09 07:17 UTC  **PASS**  `peek-core-touch-stored-20261109-1`  [reports/2026-11-09/071732-peek-core-touch-stored-20261109-1.md](reports/2026-11-09/071732-peek-core-touch-stored-20261109-1.md)  (run 42578355744)
 - 2026-11-09 07:17 UTC  **INVALID**  `peek-core-touch-public-20261109-1`  [reports/2026-11-09/071704-peek-core-touch-public-20261109-1.md](reports/2026-11-09/071704-peek-core-touch-public-20261109-1.md)  (run 42578241317)
