@@ -1,11 +1,6 @@
 {
-  "id": "peek-kiro-fixes-apply-1",
-  "op": "run",
+  "id": "peek-kiro-fixes-stored-1",
+  "op": "inspect",
   "target": "staging39",
-  "script": "link-ideas/push-peek-nav.sh",
-  "args": [
-    "core-kiro-fixes",
-    "--apply"
-  ],
-  "tests": "auto"
+  "query": "snippets"
 }
