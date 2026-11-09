@@ -22,12 +22,57 @@ semantic accuracy, overlap or percentage coverage. Approval must follow rendered
 source review. `peek-pages.json` records the browser expectations and explicit
 rollout status; Services/short-page eligibility remains undecided.
 
-## Guarded migration from #1380
+## Current core correction: awaiting rehearsal and deployment
+
+The title-strip clearance and closed-topic touch corrections are implemented, but still await a fresh
+staging39-copy rehearsal, rendered-copy and visual review, and guarded deployment.
+The [current correction record](../../../docs/reviews/2026-11-09-peek-clearance.md)
+holds the actual baseline evidence and verification status. Its pre-fix public
+check reproduced strip/card overlap; that diagnostic failure is not a release pass.
+
+`core-upgrade` updates the uniquely owned #1380 in place from the exact deployed
+shared version frozen in `peek-nav-shared-v1.php` to the reviewed `peek-nav.php`.
+Frozen shared-v1 code SHA256:
+`dda8aecd38e417ad37766d2df951c6bdc761bf44997e030bbef5a36e9321f573`.
+The upgrade preserves the snippet's identity/settings and all four page-data
+records (#1381–1384). It checks and snapshots complete old/new core states and
+the four unchanged data states, using a separate `peek-core-upgrade-v1` bundle.
+Changed, missing or duplicate ownership/data stops an actual upgrade or reversal.
+There is no snippet swap or planned fallback-only interval.
+
+The dedicated rehearsal adapter has no preparation hook: it must exercise the
+untouched four-page staging39 baseline, with uploads. Run offline gates first;
+then this is the guarded route, with each report reviewed before the next step:
+
+```sh
+scripts/ci/request.sh rehearse --source staging39 --installer link-ideas/core-upgrade/install-peek-core-upgrade.php --with-uploads
+scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args 'core-upgrade'
+# Only after the fresh-copy gates and actual copied-page review pass:
+scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args 'core-upgrade --apply'
+```
+
+The rehearsal includes exact rollback/reapply, rendered regulated-copy gates,
+the actual-clearance matrix in Chromium/Firefox, native Chromium touch checks, and retained page/Thai gesture
+checks. Every staging write takes a fresh verified encrypted off-site backup.
+Review the apply, backup, restore and public browser reports afterward, and record
+the actual new snapshot in the correction record. No upgrade snapshot exists yet.
+
+Recovery must name `core-upgrade --rollback FILE` explicitly in the push arguments;
+the wrapper's preparatory preflight uses that component. Use the matching reviewed
+package and actual upgrade snapshot after checking current ownership and complete state. Any later
+core or page-data drift, including a page-only removal, makes that reversal refuse.
+Reverse this upgrade before attempting the historical shared-v1-to-legacy recovery
+below. Neither an old migration snapshot nor a legacy deletion snapshot can undo
+the upgraded payload.
+
+## Historical legacy-to-shared-v1 migration
 
 This section records the completed 2026-11-09 legacy-to-shared migration on
 staging39 (#1380 core, #1381 Thai data). Do not repeat it as a new upgrade:
-future payload revisions need their own reviewed exact-state migration. Current
-snapshots and verification are in the linked review record below.
+`core` remains tied to frozen `peek-nav-shared-v1.php`, preserving the original
+snapshot's meaning. Current revisions use the separate upgrade route above.
+Original snapshots and verification are in the
+[template record](../../../docs/reviews/2026-11-09-peek-template.md).
 
 The original payload is frozen in `peek-nav-legacy.php`. Original legacy starting code
 SHA256: `b7314c8938a728bf64b6dac16c48bba722b4aea59b277c9f56f0760132322c01`.
@@ -66,8 +111,9 @@ Every write, including rollback, takes and verifies a fresh encrypted off-site
 backup first. Read every report section: an overall operation PASS does not make
 informational post-change differences pass. INVALID establishes no verification.
 Record actual snapshots, not guessed names. Reversing this original migration
-restores the legacy core first, then removes Thai data, with the respective actual snapshots via
-`push-peek-nav.sh --rollback FILE`; core reversal affects every Peek page.
+requires reversing any core upgrade first. Then restore the legacy core using
+`core --rollback FILE`, and remove Thai data using `page thai-massage --rollback FILE`,
+with each component's actual snapshot. Core reversal affects every Peek page.
 For one service page, reverse only its page data using its actual snapshot in the
 current rollout record. The completed migration had no fallback-only swap;
 deliberate page-data removal under the shared core restores that page's plain row.
@@ -108,10 +154,10 @@ row without changing the shared core or other pages.
 
 Known shared-placement defect: Chair's first preview overlaps the strip before it
 sticks, and its tablet focus ring grazes the Corporate CTA. No inaccessible
-card/section control was observed. The geometry checker uses the strip's eventual
-sticky position; a focused core correction and actual-rectangle assertions remain
-open. Start/end research captures and exact item checks do not claim visual review
-of every intermediate scroll position.
+card/section control was observed in that rollout. Its geometry checker used the
+strip's eventual sticky position. The correction and actual-rectangle assertions
+above await fresh-copy verification and deployment. Start/end research captures
+and exact item checks do not claim visual review of every intermediate position.
 
 ## Local browser checks
 
@@ -120,9 +166,23 @@ python3 mock/build-mock.py
 python3 -m http.server 8091 -d mock/site
 # In another shell, TS_PLAYWRIGHT_ROOT points to a Playwright package.json:
 node check-peek-nav.mjs http://localhost:8091 --fixtures
+node check-peek-clearance.mjs http://localhost:8091
+node check-peek-clearance.mjs http://localhost:8091 --firefox
+node check-peek-touch.mjs http://localhost:8091
 ```
 
 The generic suite is driven by the page manifest; the historical detailed Thai
-gesture regression remains explicit in `check-peek-thai-regression.mjs`. Synthetic
-activation is not VoiceOver/TalkBack validation. Safari and physical-device tests
+gesture regression remains explicit in `check-peek-thai-regression.mjs`.
+`check-peek-clearance.mjs` measures actual visible strip/header/card rectangles,
+independently of the runtime's placement formula. It covers all four enabled
+pages, both sides, page top, sticky transitions, kept cards returning to the top,
+resize/landscape and enlarged-text cases, approved words and research reachability.
+It injects no runtime or page data; local mocks remain structural evidence only.
+`--quick` is a Thai/Chair diagnostic subset, not the full rehearsal gate. Public
+staging39 runs use the same checker after deployment and require capture review.
+`check-peek-touch.mjs` uses native Chromium touch input for control drags, taps,
+summary scroll containment and the constrained outer-card fallback. Its optional
+`--baseline-v1` injects the frozen old core only into localhost fixtures; it is
+refused for public staging39. Browser simulation is not a physical-device result.
+Synthetic activation is not VoiceOver/TalkBack validation. Safari and physical-device tests
 remain outstanding. See the [review and deployment record](../../../docs/reviews/2026-11-09-peek-template.md).

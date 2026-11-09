@@ -92,11 +92,11 @@ const verifyCard = async (p, prefix) => {
   const geometry = await p.evaluate(() => {
     const card = document.querySelector('.ts-pk-card'), summary = card.querySelector('.sum'), hint = card.querySelector('.hint'), strip = document.querySelector('.ts-pk-top');
     const rect = e => { const r = e.getBoundingClientRect(); return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, width: r.width, height: r.height }; };
-    const stuckBottom = (parseFloat(getComputedStyle(strip).top) || 0) + strip.offsetHeight;
-    return { card: rect(card), summary: rect(summary), hint: rect(hint), stuckBottom, viewport: { width: innerWidth, height: innerHeight }, fit: card.className.match(/fit\d/g) || [], summaryScroll: { width: summary.scrollWidth, clientWidth: summary.clientWidth, height: summary.scrollHeight, clientHeight: summary.clientHeight }, font: getComputedStyle(summary).fontSize };
+    return { card: rect(card), summary: rect(summary), hint: rect(hint), strip: rect(strip), viewport: { width: innerWidth, height: innerHeight }, fit: card.className.match(/fit\d/g) || [], summaryScroll: { width: summary.scrollWidth, clientWidth: summary.clientWidth, height: summary.scrollHeight, clientHeight: summary.clientHeight }, font: getComputedStyle(summary).fontSize };
   });
-  const { card, summary, hint, stuckBottom, viewport, summaryScroll } = geometry;
-  ok(`${prefix}: approved card and jump hint fit below the pinned strip`, card.left >= -1 && card.right <= viewport.width + 1 && card.top >= stuckBottom + 6 && card.bottom <= viewport.height - 10 && hint.top >= card.top && hint.bottom <= card.bottom + 1 && hint.height > 0, geometry);
+  const { card, summary, hint, strip, viewport, summaryScroll } = geometry;
+  const visibleStrip = strip.bottom > 0 && strip.top < viewport.height;
+  ok(`${prefix}: approved card and jump hint fit below the actual visible strip`, card.left >= -1 && card.right <= viewport.width + 1 && card.top >= 0 && (!visibleStrip || card.top >= strip.bottom + 6) && card.bottom <= viewport.height - 10 && hint.top >= card.top && hint.bottom <= card.bottom + 1 && hint.height > 0, geometry);
   ok(`${prefix}: summary remains visible without horizontal text clipping`, summary.height > 0 && summary.top >= card.top && summary.bottom <= hint.top + 1 && summaryScroll.width <= summaryScroll.clientWidth + 1, geometry);
   console.log('INFO approved card geometry ' + JSON.stringify({ check: prefix, ...geometry }));
 };

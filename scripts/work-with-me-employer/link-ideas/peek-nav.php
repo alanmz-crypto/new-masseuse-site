@@ -59,7 +59,7 @@ body.admin-bar .ts-pk-top{top:calc(var(--wp-admin--admin-bar--height,32px) + var
 html .ts-pk .ts-pk-card.ts-pk-stack{padding:.4rem}
 .ts-pk-card .open{position:relative;margin:.3rem 0;padding:.75rem .9rem;border:1.5px solid var(--pk-on);border-radius:14px;background:var(--pk-panel)}
 .ts-pk-card .open:first-child{margin-top:0}.ts-pk-card .open:last-child{margin-bottom:0}
-html .ts-pk .ts-pk-card .row{display:flex;align-items:center;gap:.55rem;width:100%;min-height:34px;margin:0;padding:.3rem .6rem;border:0;border-radius:10px;background:var(--pk-stone);color:var(--pk-ink);box-shadow:none;font:inherit;font-size:.82rem;font-weight:600;line-height:1.25;text-align:left;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+html .ts-pk .ts-pk-card .row{display:flex;align-items:center;gap:.55rem;width:100%;min-height:34px;margin:0;padding:.3rem .6rem;border:0;border-radius:10px;background:var(--pk-stone);color:var(--pk-ink);box-shadow:none;font:inherit;font-size:.82rem;font-weight:600;line-height:1.25;text-align:left;cursor:pointer;touch-action:none;-webkit-tap-highlight-color:transparent}
 html .ts-pk .ts-pk-card .row:hover,html .ts-pk .ts-pk-card .row:focus{background:var(--pk-stone);color:var(--pk-ink);box-shadow:none}
 html .ts-pk .ts-pk-card .row:focus-visible{outline:3px solid var(--pk-accent);outline-offset:1px}
 html .ts-pk .ts-pk-card .row+.row{margin-top:.25rem}
@@ -78,7 +78,7 @@ html .ts-pk .ts-pk-card .sum.is-gist li::before{content:'';position:absolute;lef
 .ts-pk-card .sum:focus-visible{outline:3px solid var(--pk-accent);outline-offset:2px;border-radius:6px}
 .ts-pk-card .hint{display:block;margin-top:.6rem;padding-top:.55rem;border-top:1px solid var(--pk-rule);font-size:.82rem;font-weight:700;color:var(--pk-on)}
 html[data-ts-theme="dark"] .ts-pk-card .hint{color:var(--pk-on)}
-.ts-pk-card .x{position:absolute;right:.35rem;top:.35rem;display:none;width:40px;height:40px;margin:0;padding:0;border:0;border-radius:50%;background:transparent;color:var(--pk-muted);font:inherit;font-size:1.3rem;line-height:1;cursor:pointer;touch-action:manipulation}
+.ts-pk-card .x{position:absolute;right:.35rem;top:.35rem;display:none;width:40px;height:40px;margin:0;padding:0;border:0;border-radius:50%;background:transparent;color:var(--pk-muted);font:inherit;font-size:1.3rem;line-height:1;cursor:pointer;touch-action:none}
 .ts-pk-card .x:hover,.ts-pk-card .x:focus{background:var(--pk-stone);color:var(--pk-ink)}
 .ts-pk-card.is-pinned .x{display:block}
 .ts-pk-card:focus-visible{outline:3px solid var(--pk-accent);outline-offset:2px}
@@ -110,7 +110,7 @@ html.ts-pk-left .ts-pk-tip{right:auto;left:58px}
 @media screen{html.ts-pk-ready.ts-pk-pad.ts-pk-left .entry-content .ts-pk-top{padding-left:calc(12px + var(--pk-clear))}   /* the other side keeps the theme's own spacing */}
 /* the side button in the preview */
 .ts-pk-card .hint{display:flex;align-items:center;justify-content:space-between;gap:.5rem}
-.ts-pk-card .side{display:none;flex:0 0 auto;min-height:36px;margin:0;padding:0 .7rem;border:1px solid var(--pk-rule);border-radius:999px;background:transparent;color:var(--pk-muted);font:inherit;font-size:.75rem;font-weight:700;cursor:pointer;touch-action:manipulation}
+.ts-pk-card .side{display:none;flex:0 0 auto;min-height:36px;margin:0;padding:0 .7rem;border:1px solid var(--pk-rule);border-radius:999px;background:transparent;color:var(--pk-muted);font:inherit;font-size:.75rem;font-weight:700;cursor:pointer;touch-action:none}
 .ts-pk-card .side:hover,.ts-pk-card .side:focus{background:var(--pk-stone);color:var(--pk-ink)}
 .ts-pk-card.is-pinned .side{display:inline-flex;align-items:center}
 /* first-time hint beside the rail (shown once per visitor) */
@@ -512,12 +512,23 @@ add_action( 'wp_footer', function () {
     }
     var cdn = null, cardTapAt = -1e9;
     card.addEventListener('scroll', function (e) { if (e.target.classList && e.target.classList.contains('sum')) moreHint(); }, true);
-    card.addEventListener('pointerdown', function (e) { cdn = card.classList.contains('is-pinned') && e.pointerType !== 'mouse' && e.isPrimary ? { id: e.pointerId, x: e.clientX, y: e.clientY } : null; });
-    card.addEventListener('pointerup', function (e) {
-      var d = cdn; cdn = null; if (!d || e.pointerId !== d.id || Math.abs(e.clientX - d.x) > 10 || Math.abs(e.clientY - d.y) > 10) return;
-      cardTapAt = performance.now(); swallowNextClick(true); activate(e.target);   // the click that follows would land on whatever is under the card once it closes
+    card.addEventListener('pointerdown', function (e) {
+      if (e.pointerType === 'mouse' || !e.isPrimary) return;
+      cdn = card.classList.contains('is-pinned') ? { id: e.pointerId, x: e.clientX, y: e.clientY, target: e.target, dragged: false } : null;
+      if (cdn && e.target.closest('.row,.x,.side')) { try { card.setPointerCapture(e.pointerId); } catch (err) {} }
     });
-    card.addEventListener('pointercancel', function () { cdn = null; });
+    card.addEventListener('pointermove', function (e) { if (cdn && e.pointerId === cdn.id && (Math.abs(e.clientX - cdn.x) > 10 || Math.abs(e.clientY - cdn.y) > 10)) cdn.dragged = true; });
+    card.addEventListener('pointerup', function (e) {
+      var d = cdn; if (!d || e.pointerId !== d.id) return; cdn = null;
+      // A control owns a touch from its start. Sliding across it neither pans the
+      // page nor turns the compatibility click into an accidental box activation.
+      cardTapAt = performance.now(); swallowNextClick(true);
+      if (d.dragged || Math.abs(e.clientX - d.x) > 10 || Math.abs(e.clientY - d.y) > 10) return;
+      activate(d.target);   // the click that follows would land on whatever is under the card once it closes
+    });
+    function cancelCardTouch(e) { if (cdn && e.pointerId === cdn.id) cdn = null; }
+    card.addEventListener('pointercancel', cancelCardTouch);
+    card.addEventListener('lostpointercapture', function (e) { if (e.target === card) cancelCardTouch(e); });
     card.addEventListener('click', function (e) { if (performance.now() - cardTapAt < 700) { e.preventDefault(); return; } activate(e.target); });
     card.addEventListener('keydown', function (e) { if (e.key !== 'Enter' || !card.classList.contains('is-pinned') || e.target.closest('button')) return; var i = +card.dataset.i; hideCard(); jumpTo(i); });   // Enter on × or the side button is that button's own click
     document.addEventListener('pointerdown', function (e) {

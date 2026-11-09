@@ -396,7 +396,7 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     ok('template: ...and a tap elsewhere closes them', await p.evaluate(() => !document.querySelector('.ts-pk-nav').classList.contains('is-index')));
     await ctx.close(); }
 }
-// Kiro, fourth review: the open box and "Tap to go there" are always visible (7 sections or large text in landscape); full detail at the top of the page;
+// Kiro, fourth review: the open box and "Tap to go there" are always visible (7 sections or large text in landscape); usable detail at the top of the page;
 // the rail clearance is not re-measured every frame while the page height animates; focus follows a newly opened box
 const addSections = () => document.addEventListener('DOMContentLoaded', () => {   // runs before the snippet's own start-up
   const list = document.querySelector('.entry-content .ts-jump__list') || document.querySelector('.entry-content .ts-jump ul'), c = document.querySelector('.entry-content');
@@ -439,15 +439,20 @@ for (const [label, init] of [['landscape, 7 sections', [addSections]], ['landsca
   ok(`${label}: no JavaScript errors`, errors.length === 0, errors.join(' | '));
   await ctx.close();
 }
-{ // full detail at the top of the page (the strip is still in the page there); focus follows a newly opened box; quiet during a height animation
+{ // At page top the actual strip still sits in the page; clear it while keeping the approved summary and jump hint usable.
   const ctx = await b.newContext({ ...devices['iPhone 13'], deviceScaleFactor: 1 });
   await ctx.addInitScript(() => { try { localStorage.setItem('ts-pk-tip', 'seen'); } catch (e) {} });
   const { p } = await open(ctx, regressionPath);
   const cdp = await ctx.newCDPSession(p);
   const z = await p.evaluate(() => { const r = document.querySelectorAll('.ts-pk-rail li')[2].getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
   await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [z] }); await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] }); await p.waitForTimeout(500);
-  const t0 = await p.evaluate(() => { const c = document.querySelector('.ts-pk-card'); return { y: Math.round(scrollY), fit: c.className.match(/fit\d/g) || [], shot: !!c.querySelector('.sum') && getComputedStyle(c.querySelector('.sum')).display !== 'none' && !c.querySelector('.sum').closest('.fit1, .fit2, .fit3') }; });
-  ok('at the top of the page the preview keeps its full detail (measured from where the strip sticks)', t0.y === 0 && t0.shot && !t0.fit.includes('fit2') && !t0.fit.includes('fit3'), JSON.stringify(t0));
+  const t0 = await p.evaluate(() => {
+    const c = document.querySelector('.ts-pk-card'), r = c.getBoundingClientRect(), s = document.querySelector('.ts-pk-top').getBoundingClientRect(), sum = c.querySelector('.sum');
+    const visible = el => { const b = el.getBoundingClientRect(); return b.height > 0 && b.top >= r.top - 1 && b.bottom <= r.bottom + 1 && b.top >= 0 && b.bottom <= innerHeight; };
+    return { y: Math.round(scrollY), clear: r.bottom <= s.top || r.top >= s.bottom, onScreen: r.top >= 0 && r.bottom <= innerHeight, name: visible(c.querySelector('.open > b')), hint: visible(c.querySelector('.hint')), summary: visible(sum), items: [...sum.querySelectorAll('li')].map(li => li.textContent), fit: c.className.match(/fit\d/g) || [] };
+  });
+  const topWanted = summaryData.items.filter(item => item[1] === 'ts-what-to-expect').map(item => item[0]);
+  ok('at page top the preview clears the actual title strip and keeps its name, approved summary and jump hint usable', t0.y === 0 && t0.clear && t0.onScreen && t0.name && t0.hint && t0.summary && JSON.stringify(t0.items) === JSON.stringify(topWanted), JSON.stringify(t0));
   await p.keyboard.press('Escape'); await p.waitForTimeout(300);
   await p.evaluate(() => document.querySelectorAll('.ts-pk-rail a')[1].dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 }))); await p.waitForTimeout(300);
   await p.focus('.ts-pk-card .row[data-k="3"]'); await p.keyboard.press('Enter'); await p.waitForTimeout(300);

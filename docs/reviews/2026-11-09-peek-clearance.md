@@ -1,9 +1,11 @@
-# Peek: clear the initial title strip
+# Peek: title-strip clearance and touch ownership
 
-Scope: the shared preview-card placement on staging39 only, on branch
+Scope: shared preview-card placement and touch ownership on staging39 only, on branch
 `claude/wizardly-bell-xu0rta`. Ryan's “Next step” continues the explicitly recorded
-first-card/title-strip correction. Approved summaries, page data, gestures,
-destination landing and other-page eligibility are outside this change.
+first-card/title-strip correction. His follow-up also requires a finger sliding
+over a closed topic button to stay within that control, without scrolling the
+page. Approved summaries, page data, destination landing and other-page
+eligibility remain unchanged.
 
 ## Starting evidence and access
 
@@ -68,6 +70,22 @@ A kept, focused research summary also needs its outer card scrollbar adjusted
 after rotation when the summary would become clipped. This adjustment preserves
 the summary's own scroll position, its DOM and focus, and never scrolls the page.
 
+## Touch ownership correction
+
+Ryan reported that sliding a finger over a closed topic button after opening the
+rail menu scrolls the page. Before implementation, the correction was explained:
+closed topic buttons and close/side controls suppress native panning; open
+summaries retain their own scrolling. The original pointerdown target owns the
+touch, movement beyond the tap tolerance stays a drag even when it returns to
+the starting point, and a compatibility click cannot activate a dragged control.
+Control pointers are captured until release/cancellation; unrelated pointer IDs
+cannot clear the owner. Native browser touch checks compare old and proposed
+behavior; dispatched JavaScript pointer events alone do not establish that
+native page scrolling is prevented. The initial frozen-v1 local comparison
+passed 116/0: that Chromium structural fixture did **not** reproduce Ryan's page
+scrolling report. Public-page comparison and final native regression results
+must be reported separately, without claiming an unobserved reproduction.
+
 ## Upgrade and recovery design
 
 The deployed shared version is frozen byte for byte as `peek-nav-shared-v1.php`:
@@ -84,6 +102,34 @@ There is no snippet swap or planned fallback-only interval. Actual upgrade
 snapshots will be recorded only after the guarded write.
 
 ## Verification in progress
+
+The [Actions offline gate](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42571365218)
+passed at 06:10:44 UTC for `7ab9cfc4790a7e7256e29f535a192bef161adf5d`, including
+PHP, shellcheck, ruff, installer/recovery and regulated-wording checks. The later
+focused-summary adjustment is also subject to the final commit's automatic gates.
+Local source checks passed 184 installer/guard cases and 10 JSON-emission cases;
+local shellcheck/ruff were unavailable, so the Actions results supply those gates.
+An independent resize probe passed all 40 normal/enlarged-text states while
+preserving focused-summary identity and reading position. These local probes are
+not actual staging renders.
+
+[Read-only staging preflight](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42571863355),
+source `8e48502d4e0469c375bf758e5ab470da178133aa`, finished 06:15:22 UTC:
+`core-upgrade ready; nothing written.` It accepts the current exact v1 core and
+four approved data records. That preflight preceded the touch correction.
+The final proposed core has 70,135 code bytes and SHA256
+`f045d957e3e28fa8448dfd4089fa1f811ff158a40aa8c0524bb0aa482030f234`.
+
+Final local Chromium clearance passed **3340/0** in 100 seconds, including actual
+closed-row containment and 16 structural captures. Native Chromium touch passed
+**126/0** in 63 seconds: closed-control drags preserve page, preview and both
+scrollbars; taps work; summary/outer-card scrolling remains local to the card.
+The expanded final native suite is not the same 116-case baseline above.
+The original Thai top test now asserts real strip separation, intact approved
+items and visible name/summary/hint instead of forbidding compact fit classes:
+its 390×664 mock viewport genuinely needs compaction under the initial strip.
+No settled gesture assertion was removed. Local Firefox is unavailable; the
+fresh Actions rehearsal must supply its first final-payload result.
 
 The independent regression matrix will compare actual strip/header/card rectangles
 at page top, through the sticky transition, after returning to the top with a
