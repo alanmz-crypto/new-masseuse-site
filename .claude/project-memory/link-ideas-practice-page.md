@@ -239,4 +239,10 @@ Ryan's approval before live); sections without a list fall back to whole opening
 `docs/inter-model/2026-11-08-peek-nav-kiro-template-review-handoff.md`.
 Staging39 now snippet **#1377** (no "You are in"; 461/0); snapshot `peek-nav-before-20261108-234541-8cf99e25.json`.
 **Undo (current):** `scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args '--rollback $HOME/private-backups/peek-nav-before-20261108-234541-8cf99e25.json'`.
+**Edge bug (Ryan, 2026-11-09, larger iPhone, rail right):** padding `.entry-content` moved full-width Spectra blocks by half the padding (text cut at the left
+edge on the right side; page 26px too wide on the left side). Fix: clearance on text blocks + strip, never the column. Lesson: never pad a column that
+holds full-width blocks; check `scrollWidth === clientWidth` and text edges on both sides. Staging39 #1378 (469/0); `probe-overflow.mjs` clean at 375/402/440.
+**Kiro template review outcomes:** page-keyed GISTS, non-heading targets (FAQ panels open), row validated and sorted, focus margin on content focusables
+(page scroll-padding scrolled to top when the header's menu got focus), quick tap keeps the fan, strip opacity .85. Mock 477/0. Next: shared core + per-page
+data + gist lint (Kiro's structure); Ryan to decide Kiro's safer phrases.
 

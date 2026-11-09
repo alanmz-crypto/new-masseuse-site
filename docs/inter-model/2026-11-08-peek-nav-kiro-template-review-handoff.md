@@ -196,3 +196,28 @@ it. SiteGround sometimes answers a bot challenge (HTTP 202): retry later, and do
 > reproduction, smallest fix, reproduced or reading-only), template blockers, a proposed template structure, a per-page readiness table, then
 > enhancements. Do not edit `ops/request.json` or `ops/live-request.json`, do not run `scripts/ci/request.sh`, and do not touch `main`. Changes, if
 > any, go on a new branch from `claude/wizardly-bell-xu0rta` with a pull request into it.
+
+## Addendum: outcomes of the template review (2026-11-09)
+
+**A flaw Kiro did not report (Ryan, 2026-11-09, screenshot on a larger iPhone, rail on the right): text cut at the left screen edge.**
+- `clearRail()` padded `.entry-content` on the rail's side. Full-width theme blocks (Spectra containers) are placed from the middle of the column, so
+  they moved by half the padding:
+  - with the rail on the right, off the left edge, so their text started off-screen;
+  - with the rail on the left, past the right edge, so the page became 26px wider than the screen at every phone width (`probe-overflow.mjs` on staging39).
+- **Fixed:** the clearance now goes on the text blocks and the strip, never on the column. The mock has a full-width block, and the check asserts that
+  nothing sticks out on either side.
+- On staging39 the page now matches the screen width at 375, 402 and 440px, on both sides, before and after jumps.
+
+| # | Finding | Outcome |
+| --- | --- | --- |
+| 1 | Summary lists keyed by id only | **Fixed**: keyed by page (from its address), then id. Checked: the same page at another address shows no Thai lists. |
+| 2 | Non-heading targets | **Fixed**: named by the heading or question inside; a jump opens a closed FAQ panel. Checked with an FAQ-panel target. |
+| 3 | Row order / missing ids | **Fixed**: only existing targets, in page order; waits up to 1 s for ids assigned on load; fewer than 2 leaves the row. Checked. |
+| 4 | Focus hidden under header + strip | **Fixed differently**: `scroll-margin-top` on the content's focusables. Page-wide `scroll-padding-top`, as suggested, made focusing the pinned header's menu button scroll the page to the top. |
+| 5 | Phrases that drop the page's hedging | **For Ryan** (Kiro's table of safer phrases); not changed. |
+| 6 | Quick tap on the icon did nothing | **Fixed**: a tap under 250 ms keeps the names open. Checked. |
+| 7 | Strip contrast | **Raised** (opacity 0.85); not measured on real theme colours. |
+| 8 | Strip vs rail late in a section | Known decision; unchanged. |
+| 9 | Installer, push script and check pinned to one page | **Next step**, with Kiro's structure (shared core plus per-page data, a lint for the lists). |
+
+Mock: **477 passed, 0 failed**.
