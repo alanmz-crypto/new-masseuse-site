@@ -1,9 +1,11 @@
 {
-  "id": "peek-titles-rehearse-20261109-4",
-  "op": "rehearse",
+  "id": "peek-titles-apply-20261109-1",
+  "op": "run",
   "target": "staging39",
-  "installer": "link-ideas/core-title-strip/install-peek-core-title-strip.php",
+  "script": "link-ideas/push-peek-nav.sh",
   "args": [
-    "--with-uploads"
-  ]
+    "core-title-strip",
+    "--apply"
+  ],
+  "tests": "auto"
 }
