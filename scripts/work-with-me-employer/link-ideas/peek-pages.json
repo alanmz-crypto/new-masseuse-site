@@ -27,7 +27,7 @@
     },
     {
       "slug": "deep-tissue-massage",
-      "staging": "prepared",
+      "staging": "enabled",
       "expectedLabels": [
         "What it is",
         "Common reasons",

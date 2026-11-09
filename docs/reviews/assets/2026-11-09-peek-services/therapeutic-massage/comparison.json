@@ -1,0 +1,60 @@
+{
+  "public_run": 42556138549,
+  "rehearsal_run": 42555107195,
+  "captures": [
+    {
+      "file": "chromium-therapeutic-massage-1280-first.jpg",
+      "public_sha256": "8197aa1a16ec1ca5d0560a2fcd9a23edcd5f83722f44b0bac0d5d568f897eac9",
+      "rehearsal_sha256": "8197aa1a16ec1ca5d0560a2fcd9a23edcd5f83722f44b0bac0d5d568f897eac9",
+      "byte_identical": true
+    },
+    {
+      "file": "chromium-therapeutic-massage-1280-research-end.jpg",
+      "public_sha256": "b1f96317555e87cca64ae0b86cc3913e857183b2021c0242df953d121f13429e",
+      "rehearsal_sha256": "b1f96317555e87cca64ae0b86cc3913e857183b2021c0242df953d121f13429e",
+      "byte_identical": true
+    },
+    {
+      "file": "chromium-therapeutic-massage-1280-research-start.jpg",
+      "public_sha256": "3745fbc945f1ae1f274db1a81ae69171fdda917d19fe02391980b3ea2ac7aa52",
+      "rehearsal_sha256": "3745fbc945f1ae1f274db1a81ae69171fdda917d19fe02391980b3ea2ac7aa52",
+      "byte_identical": true
+    },
+    {
+      "file": "chromium-therapeutic-massage-390-first.jpg",
+      "public_sha256": "32e9aa974aa97c653ea9b94748eba42ecd6635f683583c4b7dca6bcbf3b295e4",
+      "rehearsal_sha256": "32e9aa974aa97c653ea9b94748eba42ecd6635f683583c4b7dca6bcbf3b295e4",
+      "byte_identical": true
+    },
+    {
+      "file": "chromium-therapeutic-massage-390-research-end.jpg",
+      "public_sha256": "e09005cbceb6c678f47b6b421d4fc0b9675fe92fc70a997bcd2f1234fb59515d",
+      "rehearsal_sha256": "e09005cbceb6c678f47b6b421d4fc0b9675fe92fc70a997bcd2f1234fb59515d",
+      "byte_identical": true
+    },
+    {
+      "file": "chromium-therapeutic-massage-390-research-start.jpg",
+      "public_sha256": "32bb59743bc02ab1b1c0825da10fe949c89aff2ea3f06c638bfae046a1551c01",
+      "rehearsal_sha256": "32bb59743bc02ab1b1c0825da10fe949c89aff2ea3f06c638bfae046a1551c01",
+      "byte_identical": true
+    },
+    {
+      "file": "chromium-therapeutic-massage-768-first.jpg",
+      "public_sha256": "9d2bdefe35540a5faf1ae31549b266c02ee51a7da5be5a9987a067d373285a5f",
+      "rehearsal_sha256": "9d2bdefe35540a5faf1ae31549b266c02ee51a7da5be5a9987a067d373285a5f",
+      "byte_identical": true
+    },
+    {
+      "file": "chromium-therapeutic-massage-768-research-end.jpg",
+      "public_sha256": "e330008a21e1ac229d38538416b974fc117dcbaa057bca3017df35ebf8ca297c",
+      "rehearsal_sha256": "e330008a21e1ac229d38538416b974fc117dcbaa057bca3017df35ebf8ca297c",
+      "byte_identical": true
+    },
+    {
+      "file": "chromium-therapeutic-massage-768-research-start.jpg",
+      "public_sha256": "1a5c53f54262214fdef1534cb75b28821e70a57417382cd49e13efc99fa75e1e",
+      "rehearsal_sha256": "1a5c53f54262214fdef1534cb75b28821e70a57417382cd49e13efc99fa75e1e",
+      "byte_identical": true
+    }
+  ]
+}
