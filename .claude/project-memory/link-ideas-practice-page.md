@@ -311,22 +311,54 @@ passed at 07:17:32 UTC: #1380 matches the exact hash/bytes above and all four da
 hashes are unchanged. [Public run 42578241317](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42578241317)
 finished 07:17:03 UTC **INVALID HTTP202** on the initial Thai request, with zero
 assertions/captures and no retry queued. The
-[current correction/recovery record](../../docs/reviews/2026-11-09-peek-clearance.md)
+[preceding clearance/touch record](../../docs/reviews/2026-11-09-peek-clearance.md)
 holds the full evidence. Chromium's native-touch baseline on the old core did not
 reproduce Ryan's reported page scroll; physical-device resolution remains unverified.
 
+**Short-summary follow-up deployed: written 07:59:57 UTC; apply job finished 08:04:07 UTC.**
+Ryan reports that closed controls and long summaries work, but short open
+summaries still pan the page. The correction measures card/summary overflow
+independently, allowing native panning only for an element with its own scroll
+range. Approved wording/layout and the working scroll paths stay unchanged.
+Source `659c251a8`: 71,826 code bytes, SHA256
+`a20e7a69141843d08dbc0104f1eb7c4ae81ff99b0c7c6594ed1690d23fc0f4ac`.
+Rehearsal 42580943410 passed at 07:54:50 UTC: clearance **3340/0** and pages
+**207/0** in each engine, native Chromium touch **266/0**, Thai **485/0**, exact
+rollback/reapply and rendered wording gates. All 16 captures were reviewed;
+nine match v2 byte for byte, seven differ only on the rail. Read-only preflight
+42582374039 passed at 07:55:56 UTC.
+[Apply 42582749743](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42582749743)
+updated #1380 in place, preserving all four approved data records without a
+fallback-only interval. Export `staging39-before-peek-nav-20261109-075943.sql`
+and actual snapshot `peek-template-core-summary-touch-before-20261109-075957-5ef2bd29.json`
+were verified encrypted off-site. Restore import returned 0; 104/104 fingerprints
+differ only on #1380/WPCode cache. Origin scope and rendered wording checks passed;
+six broad pixel differences versus live remain, so no aggregate post-change pass
+is claimed. [Public run 42583371605](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42583371605)
+passed at 08:08:52 UTC: clearance **3340/0** in each browser, native touch **266/0**,
+pages **172/0**, and matched-capture subset **342/0**. All 16 common card/text/strip/banner
+captures match rehearsal pixels; five images are byte-identical and eleven differ
+only on the rail. [Stored inspection 42583499757](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42583499757)
+passed at 08:09:31 UTC: exact #1380 hash/71,826 bytes and four unchanged data hashes.
+Detailed visual review, full evidence and recovery are in the
+[current record](../../docs/reviews/2026-11-09-peek-short-summary-touch.md).
+The reported page-scroll leak was not reproduced by native Chromium probes;
+Safari/physical-device resolution remains unverified.
+
 Original core snapshot: `peek-template-core-before-20261109-023645-fe38e498.json`.
 Original Thai data snapshot: `peek-template-page-thai-massage-before-20261109-023133-3e7b1cf5.json`.
-Reverse the later `core-upgrade` first, using its actual snapshot and explicit
-`core-upgrade --rollback FILE` arguments; the original `core` migration remains
-tied to frozen `peek-nav-shared-v1.php`. Reversing that original migration affects
+Reverse `core-summary-touch` with its own actual
+snapshot first. Then `core-upgrade --rollback FILE` restores v1 from frozen v2;
+the original `core` migration remains tied to frozen `peek-nav-shared-v1.php`.
+Reversing that original migration affects
 every page using Peek. For one service page,
 use only its actual page-data snapshot in the service rollout record, leaving the
 core and other pages active. **All earlier rollback commands in this note are historical.** Do not use
 `peek-nav-before-20261109-010037-0c493281.json` to delete the shared core.
 Migration installed inert Thai data before changing #1380 in place, with no
 fallback-only interval. Main/live remain unchanged.
-Current evidence/status: [clearance/touch correction](../../docs/reviews/2026-11-09-peek-clearance.md).
+Current evidence/status: [short-summary touch correction](../../docs/reviews/2026-11-09-peek-short-summary-touch.md).
+Earlier core correction: [clearance/touch record](../../docs/reviews/2026-11-09-peek-clearance.md).
 Earlier page-data rollout: [service rollout record](../../docs/reviews/2026-11-09-peek-service-rollout.md).
 Original core migration/recovery: [template record](../../docs/reviews/2026-11-09-peek-template.md).
 Approved wording: [three-page review](../../docs/reviews/2026-11-09-peek-summary-drafts.md).

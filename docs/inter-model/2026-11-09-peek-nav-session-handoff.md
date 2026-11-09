@@ -1,5 +1,21 @@
 # Session handoff: the Peek navigation (for the next Claude Code session)
 
+**Current follow-up deployed: short open summaries.** The
+[short-summary touch record](../reviews/2026-11-09-peek-short-summary-touch.md)
+tracks the exact `core-summary-touch` transition from frozen shared v2, written
+to #1380 at 07:59:57 UTC; its apply job finished 08:04:07 UTC. The correction reserves short-summary swipes
+while preserving long-summary and constrained-card scrolling. Chromium did not
+reproduce Ryan's reported leak; physical-device confirmation remains open.
+Fresh-copy/wording gates and preflight passed. Actual snapshot
+`peek-template-core-summary-touch-before-20261109-075957-5ef2bd29.json` and its
+fresh export were verified encrypted off-site; restore import returned 0 with
+only #1380/cache differences. Four approved data records remain unchanged and
+there was no fallback-only interval. Public verification passed at 08:08:52 UTC:
+clearance **3340/0** in Chromium/Firefox, native touch **266/0**, pages **172/0**,
+matched-capture subset **342/0**. Stored inspection passed at 08:09:31 UTC:
+exact #1380 hash/71,826 bytes and all four unchanged data hashes. The linked
+record holds the public evidence, detailed visual review and recovery.
+
 **Continuation update, 2026-11-09 (Codex):** all four service pages are deployed on
 staging39: shared core **#1380**, Thai data **#1381**, Therapeutic **#1382**, Deep
 Tissue **#1383**, Chair **#1384**. Ryan approved the exact three new wording sets.
@@ -12,7 +28,7 @@ assertions to accommodate missing layout assets. The earlier **74/0 manifest +
 485/0 Thai regression** and six identical before/after images describe the
 original Thai-only migration, not final four-page verification.
 
-**Later clearance/touch correction deployed; apply job finished 07:15:10 UTC:** the guarded
+**Earlier clearance/touch correction deployed; apply job finished 07:15:10 UTC:** the guarded
 [core upgrade](../reviews/2026-11-09-peek-clearance.md) updated #1380 in place after
 passing fresh-copy rehearsal and visual review. It measures the actual visible
 strip/header, preserves kept-summary reading state across resize, and gives closed
@@ -28,9 +44,12 @@ touch on the old core did not reproduce Ryan's reported page scrolling, so no
 physical-device resolution is claimed. Services/short-page eligibility, Safari,
 physical devices and actual assistive technology remain open. Main/live are untouched.
 
-The original `core` migration targets frozen `peek-nav-shared-v1.php`. Reverse
-the later upgrade with its actual snapshot and explicit `core-upgrade --rollback`
-arguments before attempting that historical migration's recovery.
+The original `core` migration targets frozen `peek-nav-shared-v1.php`;
+`core-upgrade` is now pinned to v1→frozen `peek-nav-shared-v2.php`, preserving its
+07:11:22 snapshot. Reverse the summary-touch update first using its
+own actual snapshot and explicit `core-summary-touch --rollback FILE` arguments.
+Only then may `core-upgrade --rollback FILE` restore v1, followed by the original
+`core --rollback FILE` recovery to legacy. Never substitute an older snapshot.
 
 The original handoff below, including its Thai-only state and swap/rollback
 commands, is historical. Do not rerun the completed migrations or use core

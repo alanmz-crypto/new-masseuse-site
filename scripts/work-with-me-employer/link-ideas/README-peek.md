@@ -22,32 +22,47 @@ semantic accuracy, overlap or percentage coverage. Approval must follow rendered
 source review. `peek-pages.json` records the browser expectations and explicit
 rollout status; Services/short-page eligibility remains undecided.
 
-## Current short-summary touch correction: pending rehearsal and deployment
+## Current short-summary touch correction: deployed on staging39
 
-The next correction lets an open summary absorb swipes when its text fits,
+The correction lets an open summary absorb swipes when its text fits,
 while long summaries and the constrained outer card retain their own native
 scrolling. Card and summary pan permission follow each element's measured scroll
 range, including after resize. Approved wording, layout and rail/index gestures
 remain unchanged. The
 [short-summary correction record](../../../docs/reviews/2026-11-09-peek-short-summary-touch.md)
 holds the reported behavior, source assessment and current verification status.
-Fresh-copy rehearsal and staging deployment are still pending; no new staging
-snapshot exists yet. Local Chromium did not reproduce the reported page scroll,
-so physical-device resolution is not claimed.
+It was written to #1380 at 07:59:57 UTC on 2026-11-09; the apply job finished
+08:04:07 UTC. Focused public browser checks passed at 08:08:52 UTC, and exact
+stored core/data hashes were confirmed at 08:09:31 UTC. Local Chromium did not reproduce the
+reported page scroll, so physical-device resolution is not claimed.
+
+The fresh-copy run finished 07:54:50 UTC with clearance **3340/0** and page checks
+**207/0** in each browser, native Chromium touch **266/0**, and retained Thai
+gestures **485/0**. Exact rollback/reapply and rendered wording gates passed.
+All 16 copied-page captures were independently reviewed: nine match v2 byte for
+byte and seven differ only on the rail; card/text/strip/banner pixels match.
+The 07:55:56 UTC preflight wrote nothing. See the linked record for full reports.
+
+The five public suites passed with zero failures: clearance **3340/0** in each
+browser, native Chromium touch **266/0**, page checks **172/0**, and the matched
+capture subset **342/0**. All 16 common card/text/strip/banner captures match the
+rehearsal pixels; five images are byte-identical and eleven differ only on the
+rail. The linked record tracks the detailed visual review and retained logs.
 
 `core-summary-touch` updates exact frozen shared v2 in `peek-nav-shared-v2.php`
 to the reviewed `peek-nav.php`, keeping #1380 and all four data records intact.
 Frozen v2 code SHA256:
 `357e1d447ecf21ce1fa130f08f917bf7965d074463905106182fd3db9f8c39d8`.
-The candidate has 71,826 code bytes, SHA256
+The deployed payload has 71,826 code bytes, SHA256
 `a20e7a69141843d08dbc0104f1eb7c4ae81ff99b0c7c6594ed1690d23fc0f4ac`.
 Its separate `peek-core-summary-touch-v1` snapshot bundle binds complete old/new
 core states and unchanged page-data states. Changed or foreign state refuses.
-The update is in place, with no planned fallback-only interval.
+The update was in place, with no fallback-only interval.
 
-Run offline gates first. The new localhost-only adapter has no preparation hook;
+Offline gates passed first. The localhost-only adapter has no preparation hook;
 it imports the existing full browser suite map and retains the same 900-second
-allowance and complete log. Review each report before advancing:
+allowance and complete log. These commands record the completed route; do not
+rerun it as a new version:
 
 ```sh
 scripts/ci/request.sh rehearse --source staging39 --installer link-ideas/core-summary-touch/install-peek-core-summary-touch.php --with-uploads
@@ -59,7 +74,13 @@ scripts/ci/request.sh run --target staging39 --script link-ideas/core-upgrade/ch
 ```
 
 Every write, including recovery, requires the existing fresh verified encrypted
-off-site backup. Record the actual new snapshot only after apply. Recovery must
+off-site backup. Actual export `staging39-before-peek-nav-20261109-075943.sql` and
+snapshot `peek-template-core-summary-touch-before-20261109-075957-5ef2bd29.json`
+were verified encrypted off-site. Restore import returned 0; the 104/104
+fingerprints differ only on #1380 and WPCode cache. Origin page/scope and rendered
+wording checks passed. The broad pixel check retained six differences versus live
+(14/20 identical), so the automatic post-change suite is not an aggregate pass.
+Recovery must
 use the matching package and explicit `core-summary-touch --rollback FILE` with
 that snapshot, restoring exact v2 first. Only then may the separate `core-upgrade`
 snapshot restore v1; only after that may the original `core` snapshot restore the
@@ -104,7 +125,7 @@ scripts/ci/request.sh run --target staging39 --script link-ideas/core-upgrade/ch
 
 The rehearsal includes exact rollback/reapply, rendered regulated-copy gates,
 the actual-clearance matrix in Chromium/Firefox, native Chromium touch checks, and retained page/Thai gesture
-checks. Both exact core-upgrade adapters have a 900-second browser allowance; the complete
+checks. The core-upgrade and core-summary-touch adapters have a 900-second browser allowance; the complete
 browser log is retained in the Actions artifact. The public wrapper retains
 complete per-suite streams and reports every count/verdict after its captures.
 Every staging write takes a fresh verified encrypted off-site backup.
@@ -116,7 +137,7 @@ Recovery must name `core-upgrade --rollback FILE` explicitly in the push argumen
 the wrapper's preparatory preflight uses that component. Use the matching reviewed
 package and actual upgrade snapshot after checking current ownership and complete state. Any later
 core or page-data drift, including a page-only removal, makes that reversal refuse.
-If the later summary-touch update is deployed, reverse it to exact v2 first.
+Reverse the later summary-touch update to exact v2 first.
 Reverse this upgrade before attempting the historical shared-v1-to-legacy recovery
 below. Neither an old migration snapshot nor a legacy deletion snapshot can undo
 the upgraded payload.

@@ -1,5 +1,9 @@
 # Peek: title-strip clearance and touch ownership
 
+**Newer follow-up:** the [short-summary touch record](2026-11-09-peek-short-summary-touch.md)
+tracks the later correction and current recovery sequence. This record retains
+the evidence and actual snapshot for the frozen shared-v2 deployment below.
+
 **Deployed on staging39, 2026-11-09 07:11 UTC.** Core #1380 now has the
 clearance, control-touch and reading-position correction. Approved data #1381–1384
 are unchanged. Exact stored hashes are verified. The final public browser run was
