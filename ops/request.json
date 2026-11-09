@@ -1,6 +1,11 @@
 {
-  "id": "peek-clearance-access-20261109-1",
-  "op": "inspect",
+  "id": "peek-clearance-baseline-20261109-1",
+  "op": "run",
   "target": "staging39",
-  "query": "snippets"
+  "script": "link-ideas/check-peek-clearance.mjs",
+  "args": [
+    "https://staging39.thaisolitude.com",
+    "--quick"
+  ],
+  "tests": "auto"
 }
