@@ -1,6 +1,9 @@
 {
-  "id": "peek-title-rails-stored-20261109-1",
-  "op": "inspect",
+  "id": "peek-kiro-fixes-rehearse-1",
+  "op": "rehearse",
   "target": "staging39",
-  "query": "snippets"
+  "installer": "link-ideas/core-kiro-fixes/install-peek-core-kiro-fixes.php",
+  "args": [
+    "--with-uploads"
+  ]
 }
