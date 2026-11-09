@@ -62,15 +62,50 @@ unchanged. No new content or controls are introduced.
   remain checked. Its former portrait expectation that every closed row must
   always be visible was replaced by exact neighboring-row and `+N` count checks
   when folding occurs; geometry and wording assertions were retained.
-- Local Firefox could not launch because its Playwright executable was absent.
-  This is not a Firefox pass. The fresh-copy Chromium/Firefox gate remains
-  mandatory before deployment.
+- Local Firefox could not launch during this initial run because its Playwright
+  executable was absent; it was installed later. This initial result was not a
+  Firefox pass. Fresh-copy Chromium/Firefox results are recorded below.
 
 Local logs: `/tmp/peek-summary-touch-final.log` and
 `/tmp/peek-summary-clearance-final.log`. Local source probes are in
 `/tmp/peek-fast-summary-probe.cjs` and its JSONL output. These fixtures do not
 replace visual review and browser tests on a fresh staging39 copy with uploads.
 Safari, physical devices and actual assistive technology remain unverified.
+
+## Second candidate: actual-copy evidence and an unfinished native gate
+
+Source `27666b83e66f17a0a3e8d6d935b35fce4d83c762` passed
+[Actions Gates](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42592835449)
+at **09:22:29 UTC**: **29 PASS, 1 SKIP, 0 FAIL, 0 INVALID**. Only URL-dependent
+rendered verification was skipped. The complete job log was read.
+
+The [second staging39-copy rehearsal](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42592835511)
+finished **09:29:02 UTC, FAIL**, on that same source. Exact rollback/reapply,
+rendered wording, page responses and PHP checks passed. The actual copied pages
+passed clearance **3340/0** and generic page/rail checks **207/0** in each browser;
+title checks passed **1223/0 Chromium** and **1220/0 Firefox**. All 58 captures
+were independently reviewed, including the 16 clearance/summary views. The
+actual Therapeutic research box at 390×844 has a **226.53px summary rectangle
+and 227px client height**, confirming the increased space with real page assets.
+
+Native touch reached **53 passed, 1 failed**, then stopped with an **INVALID**
+null-summary read. After resizing a kept short Thai summary to 844×320, the
+test's swipe moved the page 30px and closed the card. A later local replay of
+the reported geometry confirmed that its start point `(636, 181.3125)` fell
+below the clipped card's bottom `179.84375` and hit the page's corporate band;
+it reproduced the 30px movement and closure. This used captured inline HTML
+with imposed measured boundaries, not a new actual-copy pass. The detailed
+Thai and matched quick suites did not run.
+Passing geometry and captures cannot substitute for this unfinished native gate
+or establish resolution of the reported rapid-switch delay.
+
+The full report was read; the [combined record](2026-11-09-peek-title-strip-all-pages.md#second-candidate-actions-gate-and-actual-copy-rehearsal)
+holds the exact archive hash, suite results and continuing diagnosis. No staging
+write occurred. The checker-only correction must use the visible summary/card
+intersection, require at least 32px of usable height, hit-test its stroke, and
+retain the same-DOM/native-progress/page/hash/outer-scroll assertions. No runtime
+change is justified by this replay. Another successful fresh-copy gate remains
+required.
 
 The combined `core-title-strip` transition updates #1380 in place from frozen
 v3 while preserving the four data records. No new deployment snapshot exists.

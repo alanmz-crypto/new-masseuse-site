@@ -112,8 +112,9 @@ These results are local structural fixtures, not staging or physical-device
 results: title-only fixtures **125/0**, retained generic rail **207/0**, native
 Chromium touch **386/0** (including all four pages, both sides, immediate
 switch→swipe sequences), and Chromium clearance **3,340/0**. The long-summary
-phone fixture grows from **123.3 to 226.5 px**. Local Firefox is unavailable;
-the fresh-copy Chromium/Firefox gate remains required.
+phone fixture grows from **123.3 to 226.5 px**. Local Firefox was unavailable
+during this first run; it was installed later, as recorded below. These local
+results still required fresh-copy Chromium/Firefox verification.
 
 A direct-current-runtime probe covered all twenty practice-demo modes and
 expanded Now/Next navigation with normal motion. Demo source/CSS was checked
@@ -247,3 +248,83 @@ gate is 8/0 across both engines using saved markup and captured Astra source.
 These remain local fixtures, with external styles/fonts omitted in the menu
 probe. Installer checks 382/0 and PHP emission 24/0 pass. The fresh-copy gate also
 covers the actual Corporate booking-options hero anchor, alongside Work.
+
+## Second candidate Actions gate and actual-copy rehearsal
+
+Source `27666b83e66f17a0a3e8d6d935b35fce4d83c762` passed
+[Actions Gates](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42592835449)
+at **09:22:29 UTC**: **29 PASS, 1 SKIP, 0 FAIL, 0 INVALID**. The complete
+193-line job log was read; its only skip is URL-dependent rendered verification.
+The runtime remains the 86,567-byte candidate identified above.
+
+[Rehearsal 2](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42592835511)
+used that exact source and finished **09:29:02 UTC, FAIL**. The complete report
+was read. Root verified the 6,344,796-byte retained artifact, SHA256
+`0553bfe500f2d765814c7064b03902102b08038d0a13a986b065b5c0411c4b09`.
+The untouched staging39 copy included its actual database and 268 MB of files
+and uploads. Preflight, apply, idempotence, exact rollback/reapply, page responses,
+PHP and rendered regulated-copy gates passed. Only #1380 and WPCode's cache
+changed in the throwaway copy. Rehearsal `/backups/` snapshots are not staging
+recovery snapshots; **no staging write occurred**.
+
+| Browser suite | Chromium | Firefox |
+|---|---:|---:|
+| Title strip, all 19 published pages plus search/404 | 1223 passed, 0 failed | 1220 passed, 0 failed |
+| Generic page/rail fixtures | 207 passed, 0 failed | 207 passed, 0 failed |
+| Clearance and summary reachability | 3340 passed, 0 failed | 3340 passed, 0 failed |
+
+Native Chromium touch stopped after **53 passed, 1 failed**. Its short-summary
+resize check at 844×320 observed the page move 30px and the card close. The next
+read then encountered a missing summary (`scrollHeight` on null), making the
+unfinished touch stream and retained wrapper **INVALID**. The outer rehearsal
+correctly preserved **FAIL**; those missing results do not erase the observed
+failure. The detailed Thai regression and matched quick suite did not run.
+
+All **58 captures** (42 title views and 16 clearance views) were independently
+reviewed; root also viewed Therapeutic's research box, Chair at 844×320, and the
+search grid directly. The actual Therapeutic research summary is **226.53px
+high / 227px client height** at 390×844, with its title, neighboring rows and
+jump hint accessible. This confirms the larger rendered area, not successful
+completion of the interrupted touch gate or resolution on the reporting device.
+
+The input-target diagnosis was then reproduced in a **local replay of the
+reported geometry**, using captured inline page HTML with the measured boundary
+imposed; this is not another actual-copy gate. The old start point
+`(636, 181.3125)` lies below the card's bottom `179.84375` (card top `93`).
+`elementFromPoint` hits `DIV.ts-corp-band__inner`, outside both summary and card.
+That swipe reproduces the 30px page movement and card closure. The replay log
+is `/tmp/peek-resize-clip-probe.jsonl`.
+
+The authorized correction is confined to the checker: choose the summary's
+visible intersection with the clipped card/viewport, require at least 32px of
+usable height, and hit-test the start, midpoint and end. It must still require
+the same summary DOM, native inner-scroll progress, unchanged page/hash and
+unchanged outer-card position. This evidence does not justify a runtime change
+or waive the failed native gate. A corrected, fully reviewed fresh-copy run is
+still required before deployment.
+Local report/log paths: `/tmp/peek-titles-candidate-2-gates.log`,
+`/tmp/peek-titles-rehearse-2-text.md`, and
+`/tmp/peek-titles-rehearse-2-artifact/peek-core-title-strip-browser.log`.
+
+
+## Visible-surface checker correction
+
+Root and an independent reviewer checked the measurement-only change. It
+intersects the summary with the card's client clipping area and viewport, and
+hit-tests the start, midpoint and end without moving either scroller. The
+rapid-switch minimum remains a genuinely visible 180×200px; the short-landscape
+minimum increases from a raw 20px to a visible 32px. Native inner progress,
+page/address, preview, side, same summary node and outer-scroll assertions remain.
+A lost-preview guard preserves the original failure before reporting that the
+same-node resize round trip cannot continue. No runtime code changed.
+
+The [local geometry replay](assets/2026-11-09-peek-title-strip-all-pages/checks/resize-visible-path-replay.jsonl)
+compares the old outside-card start with the corrected visible path. The latter
+has 48.06px usable height; all three points hit summary list items. Inner scroll
+moves 0→23px while the finger is down, with pageY0, outer0, unchanged address,
+side, index and summary node, and the preview retained. Those states remain
+after release. This is a controlled replay, not an actual-copy pass.
+
+The corrected native Chromium fixture suite passed **386/0 in 148s**. Syntax
+and whitespace checks passed. The runtime remains exactly the second candidate;
+this test correction still requires a fresh actual-copy rehearsal.

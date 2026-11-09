@@ -28,6 +28,21 @@ const point = (p, selector) => p.locator(selector).evaluate(element => {
   if (r.width <= 0 || r.height <= 0 || x < 1 || x > innerWidth - 1 || y < 1 || y > innerHeight - 1 || !element.contains(document.elementFromPoint(x, y))) throw new Error('Touch target is not visible and hit-testable: ' + element.className);
   return { x, y };
 });
+// A summary's raw rectangle can extend past the outer card's clipping area.
+// Native gestures must begin on the visible summary, not on the page behind it.
+// This measures only: it does not focus or move either scroller into position.
+const summarySurface = (p, margin = 18) => p.locator('.ts-pk-card .sum').evaluate((sum, margin) => {
+  const card = sum.closest('.ts-pk-card'), r = sum.getBoundingClientRect(), c = card.getBoundingClientRect();
+  const left = Math.max(0, r.left, c.left + card.clientLeft), right = Math.min(innerWidth, r.right, c.left + card.clientLeft + card.clientWidth);
+  const top = Math.max(0, r.top, c.top + card.clientTop), bottom = Math.min(innerHeight, r.bottom, c.top + card.clientTop + card.clientHeight);
+  const width = Math.max(0, right - left), height = Math.max(0, bottom - top), inset = Math.min(margin, height / 5), x = (left + right) / 2;
+  const start = { x, y: bottom - inset }, end = { x, y: top + inset }, middle = { x, y: (top + bottom) / 2 };
+  const hits = [start, middle, end].map(at => { const hit = document.elementFromPoint(at.x, at.y); return { summary: sum.contains(hit), tag: hit?.tagName, className: hit?.className }; });
+  return { same: sum === window.__peekShortSummary, start, end, width, height, hits,
+    raw: r.toJSON(), visible: { left, right, top, bottom }, action: getComputedStyle(sum).touchAction,
+    visibleRows: [...card.querySelectorAll('.row')].filter(row => row.getBoundingClientRect().height > 0).length };
+}, margin);
+const usableSurface = (surface, height) => surface.height >= height && surface.width > 0 && surface.hits.every(hit => hit.summary);
 try {
   for (const spec of pages) {
     const data = JSON.parse(readFileSync(new URL(`./peek-data/${spec.slug}.json`, import.meta.url), 'utf8'));
@@ -142,13 +157,11 @@ try {
       await p.setViewportSize({ width: 844, height: 320 }); await p.waitForTimeout(150);
       await checkPanPolicy('short-resized');
       before = await state(p);
-      const resized = await p.locator('.ts-pk-card .sum').evaluate(sum => {
-        const r = sum.getBoundingClientRect(), margin = Math.min(5, r.height / 5);
-        return { same: sum === window.__peekShortSummary, start: { x: r.left + r.width / 2, y: r.bottom - margin }, end: { x: r.left + r.width / 2, y: r.top + margin }, height: r.height };
-      });
-      if (before.innerMax <= 1 || resized.height < 20) throw new Error(`INVALID ${label}: resized short summary did not become a usable inner scroller`);
+      const resized = await summarySurface(p, 5);
+      if (before.innerMax <= 1 || !usableSurface(resized, 32)) throw new Error(`INVALID ${label}: resized short summary lacks a visible, hit-tested inner scroll surface: ${JSON.stringify(resized)}`);
       await drag(resized.start, [resized.end]); after = await state(p);
       ok(`${label}/844x320: kept short summary gains native scrolling after resize`, resized.same && samePreview(before, after) && after.inner > before.inner + 1 && Math.abs(after.outer - before.outer) <= 1, { before, after, resized });
+      if (!after.pinned || after.inner === undefined) throw new Error(`INVALID ${label}: cannot continue the same-summary resize round trip after the preview was lost; preceding assertion records the gesture failure`);
       await p.setViewportSize({ width: 390, height: 844 }); await p.waitForTimeout(150);
       await checkPanPolicy('short-returned');
       before = await state(p);
@@ -159,16 +172,17 @@ try {
       ok(`${label}: short-summary tap still reads without jumping`, sameControl(before, after), { before, after });
       before = await state(p); await tap(await point(p, `.ts-pk-card .row[data-k="${research}"]`)); after = await state(p);
       ok(`${label}: tapping research after a short summary opens the long preview`, samePage(before, after) && after.pinned && after.index === research, { before, after });
-      const longPath = await p.locator('.ts-pk-card .sum').evaluate(sum => { const r = sum.getBoundingClientRect(); return [{ x: r.left + r.width / 2, y: r.bottom - 16 }, { x: r.left + r.width / 2, y: r.top + 16 }]; });
-      before = await state(p); await drag(longPath[0], [longPath[1]]); after = await state(p);
+      const longPath = await summarySurface(p, 16);
+      if (!usableSurface(longPath, 45)) throw new Error(`INVALID ${label}: long summary after short preview is not hit-testable: ${JSON.stringify(longPath)}`);
+      before = await state(p); await drag(longPath.start, [longPath.end]); after = await state(p);
       ok(`${label}: long summary after short preview retains its native scroll`, before.innerMax > 20 && samePreview(before, after) && after.inner > before.inner + 10, { before, after });
       await reset(research);
       const sumSelector = '.ts-pk-card .open .sum';
-      const sumPath = async direction => p.locator(sumSelector).evaluate((sum, direction) => {
-        const r = sum.getBoundingClientRect(), margin = Math.min(18, r.height / 5), x = r.left + r.width / 2;
-        if (r.height < 45 || sum.scrollHeight - sum.clientHeight < 20) throw new Error('Research summary is not a usable native scroll target');
-        return direction === 'up' ? [{ x, y: r.bottom - margin }, { x, y: r.top + margin }] : [{ x, y: r.top + margin }, { x, y: r.bottom - margin }];
-      }, direction);
+      const sumPath = async direction => {
+        const surface = await summarySurface(p), current = await state(p);
+        if (!usableSurface(surface, 45) || current.innerMax < 20) throw new Error(`Research summary is not a usable native scroll target: ${JSON.stringify(surface)}`);
+        return direction === 'up' ? [surface.start, surface.end] : [surface.end, surface.start];
+      };
       await p.locator(sumSelector).evaluate(sum => { sum.scrollTop = 0; });
       before = await state(p);
       let path = await sumPath('up'); await drag(path[0], [path[1]]); after = await state(p);
@@ -233,14 +247,12 @@ try {
           ok(`${label}/${round}: immediate row ${index + 1} opens without moving the page`, samePage(before, after) && after.pinned && after.index === index, { before, after });
         }
         const before = await state(p);
-        const path = await p.locator('.ts-pk-card .sum').evaluate(sum => {
-          const r = sum.getBoundingClientRect(), x = r.left + r.width / 2;
-          return { height: r.height, width: r.width, action: getComputedStyle(sum).touchAction, visibleRows: [...sum.closest('.ts-pk-card').querySelectorAll('.row')].filter(row => row.getBoundingClientRect().height > 0).length, from: { x, y: r.bottom - 18 }, to: { x, y: r.top + 18 } };
-        });
-        ok(`${label}/${round}: long summary provides a generous finger stroke with every topic retained`, path.height >= 180 && path.width >= 200 && before.innerMax > 1 && path.action === 'pan-y' && path.visibleRows === count - 1, { before, path });
-        await touch('touchStart', path.from);
+        const path = await summarySurface(p);
+        ok(`${label}/${round}: long summary provides a generous finger stroke with every topic retained`, usableSurface(path, 180) && path.width >= 200 && before.innerMax > 1 && path.action === 'pan-y' && path.visibleRows === count - 1, { before, path });
+        if (!usableSurface(path, 180) || path.width < 200) throw new Error(`INVALID ${label}: rapid-scroll gesture has no generous visible summary surface: ${JSON.stringify(path)}`);
+        await touch('touchStart', path.start);
         for (let step = 1; step <= 6; step++) {
-          await touch('touchMove', { x: path.from.x, y: path.from.y + (path.to.y - path.from.y) * step / 6 });
+          await touch('touchMove', { x: path.start.x, y: path.start.y + (path.end.y - path.start.y) * step / 6 });
           await p.waitForTimeout(16);
         }
         // Read while the finger is still down: a deferred response after release
