@@ -177,7 +177,14 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     ok(`${tag} a jump adds no browser-history entry`, (await p.evaluate(() => history.length)) === hl);
     await p.evaluate(y => scrollTo(0, y), y0); await W(800);
     const cssText = await p.evaluate(() => document.getElementById('ts-peek-nav-css').textContent);
-    ok(`${tag} older browsers get a solid strip background (color-mix fallback)`, cssText.includes('background:var(--pk-ground);background:color-mix') && cssText.includes('background:var(--pk-panel);background:color-mix'));
+    const stripSurface = await p.$eval('.ts-pk-top', e => {
+      const cs = getComputedStyle(e), canvas = document.createElement('canvas'); canvas.width = canvas.height = 1;
+      const draw = canvas.getContext('2d'); draw.fillStyle = cs.backgroundColor; draw.fillRect(0, 0, 1, 1);
+      return { color: cs.backgroundColor, alpha: draw.getImageData(0, 0, 1, 1).data[3], opacity: cs.opacity, image: cs.backgroundImage, filter: cs.filter, backdrop: cs.backdropFilter || 'none', webkitBackdrop: cs.getPropertyValue('-webkit-backdrop-filter') || 'none' };
+    });
+    ok(`${tag} the title strip has an opaque background with no translucent backdrop`, stripSurface.alpha === 255 && stripSurface.opacity === '1' && stripSurface.image === 'none' && stripSurface.filter === 'none' && stripSurface.backdrop === 'none' && stripSurface.webkitBackdrop === 'none', JSON.stringify(stripSurface));
+    const railBackground = (cssText.match(/\.ts-pk-nav\.is-active \.ts-pk-rail\{([^}]*)\}/) || [])[1] || '';
+    ok(`${tag} the active rail declares a solid panel fallback before color-mix`, railBackground.includes('background:var(--pk-panel);background:color-mix'));
     ok(`${tag} the bottom guide button is hidden only when the rail is there`, cssText.split('#ts-section-guide-trigger').length === cssText.split('html.ts-pk-ready #ts-section-guide-trigger').length);
     // second Kiro review (2026-11-08): taps that are already handled never reach what is underneath; Enter on ×; one keyboard stop
     await p.evaluate(() => { const t = document.createElement('a'); t.id = 'pk-under'; t.href = '#pk-under'; t.style.cssText = 'position:fixed;inset:0;z-index:50'; window.__under = 0; t.addEventListener('click', e => { e.preventDefault(); window.__under++; }); document.body.appendChild(t); });
@@ -495,8 +502,22 @@ for (const [label, init] of [['landscape, 7 sections', [addSections]], ['landsca
   ok('at page top the preview clears the actual title strip and keeps its name, approved summary and jump hint usable', t0.y === 0 && t0.clear && t0.onScreen && t0.name && t0.hint && t0.summary && JSON.stringify(t0.items) === JSON.stringify(topWanted), JSON.stringify(t0));
   await p.keyboard.press('Escape'); await p.waitForTimeout(300);
   await p.evaluate(() => document.querySelectorAll('.ts-pk-rail a')[1].dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 }))); await p.waitForTimeout(300);
-  await p.focus('.ts-pk-card .row[data-k="3"]'); await p.keyboard.press('Enter'); await p.waitForTimeout(300);
-  ok('keyboard: opening a closed box moves focus to the newly opened box', await p.evaluate(() => !!document.activeElement && document.activeElement.classList.contains('open') && /Section 4 preview/.test(document.activeElement.getAttribute('aria-label') || '')));
+  const closedRow = await p.evaluate(() => {
+    const c = document.querySelector('.ts-pk-card'), cr = c.getBoundingClientRect();
+    const row = [...c.querySelectorAll('.row')].find(el => { const r = el.getBoundingClientRect(); return r.width > 0 && r.height > 0 && r.top >= Math.max(0, cr.top) && r.bottom <= Math.min(innerHeight, cr.bottom) && el.contains(document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2)); });
+    return row ? { index: Number(row.dataset.k), y: scrollY, x: scrollX, hash: location.hash } : null;
+  });
+  ok('keyboard: the closed-box test has a visible, reachable row', !!closedRow, JSON.stringify(closedRow));
+  if (closedRow) {
+    await p.focus(`.ts-pk-card .row[data-k="${closedRow.index}"]`);
+    const focused = await p.evaluate(k => document.activeElement === document.querySelector(`.ts-pk-card .row[data-k="${k}"]`), closedRow.index);
+    ok('keyboard: focus reaches the visible closed-box button before Enter', focused);
+    if (focused) {
+      await p.keyboard.press('Enter'); await p.waitForTimeout(300);
+      const opened = await p.evaluate(() => ({ focused: document.activeElement === document.querySelector('.ts-pk-card .open'), name: document.activeElement?.getAttribute('aria-label') || '', index: Number(document.querySelector('.ts-pk-card').dataset.i), y: scrollY, x: scrollX, hash: location.hash }));
+      ok('keyboard: opening a closed box focuses its new preview without moving the page', opened.focused && opened.index === closedRow.index && opened.name.startsWith(`Section ${closedRow.index + 1} preview:`) && Math.abs(opened.y - closedRow.y) <= 1 && Math.abs(opened.x - closedRow.x) <= 1 && opened.hash === closedRow.hash, JSON.stringify({ closedRow, opened }));
+    }
+  }
   await p.keyboard.press('Escape'); await p.waitForTimeout(300);
   const flips = await p.evaluate(() => new Promise(res => { let n = 0; const mo = new MutationObserver(m => m.forEach(x => { if (x.attributeName === 'class') n++; })); mo.observe(document.documentElement, { attributes: true });
     const d = document.createElement('div'); d.style.height = '0px'; document.querySelector('.entry-content').appendChild(d); let h = 0; const t = setInterval(() => { h += 8; d.style.height = h + 'px'; }, 16);

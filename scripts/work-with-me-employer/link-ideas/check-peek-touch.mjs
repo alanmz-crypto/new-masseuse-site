@@ -231,15 +231,28 @@ try {
         // the closed controls above deliberately may not.
         await p.setViewportSize({ width: 844, height: 320 });
         await p.evaluate(() => { document.documentElement.style.fontSize = (parseFloat(getComputedStyle(document.documentElement).fontSize) * 2) + 'px'; });
+        const setOuterViewport = async viewport => {
+          await p.setViewportSize(viewport);
+          // Enlarged page text can make Chromium auto-zoom out to contain an
+          // unrelated wide block. Keep this CSS text-scale test at the requested
+          // visible size before judging whether the card needs outer scrolling.
+          await cdp.send('Emulation.setPageScaleFactor', { pageScaleFactor: 1 });
+          await p.waitForTimeout(250);
+          const measured = await p.evaluate(() => ({ visual: visualViewport ? { width: visualViewport.width, height: visualViewport.height, scale: visualViewport.scale, left: visualViewport.offsetLeft, top: visualViewport.offsetTop } : null, inner: { width: innerWidth, height: innerHeight }, client: { width: document.documentElement.clientWidth, height: document.documentElement.clientHeight }, scrollWidth: document.documentElement.scrollWidth, rootFont: getComputedStyle(document.documentElement).fontSize }));
+          if (!measured.visual || Math.abs(measured.visual.width - viewport.width) > 1 || Math.abs(measured.visual.height - viewport.height) > 1 || Math.abs(measured.visual.scale - 1) > .001 || Math.abs(measured.visual.left) > 1 || Math.abs(measured.visual.top) > 1) throw new Error(`INVALID constrained-card viewport changed scale or origin: ${JSON.stringify({ requested: viewport, measured })}`);
+          return measured;
+        };
+        let outerViewport = { width: 844, height: 320 }, viewportGeometry = await setOuterViewport(outerViewport);
         await reset(research);
         const outerSurface = () => p.evaluate(() => {
           const card = document.querySelector('.ts-pk-card'), title = card.querySelector('.open > b'), c = card.getBoundingClientRect(), t = title.getBoundingClientRect();
           const x = Math.max(c.left + 12, t.left + Math.min(30, t.width / 2)), y = Math.min(c.bottom - 14, t.bottom - 6);
-          return { x, y, end: Math.max(c.top + 12, y - 60), range: card.scrollHeight - card.clientHeight, stroke: y - Math.max(c.top, t.top), hit: title.contains(document.elementFromPoint(x, y)) };
+          const end = Math.max(c.top + 12, y - 60), cs = getComputedStyle(title);
+          return { x, y, end, range: card.scrollHeight - card.clientHeight, stroke: y - end, hit: title.contains(document.elementFromPoint(x, y)), title: { text: title.textContent, font: cs.font, lineHeight: cs.lineHeight, rect: t.toJSON() }, card: c.toJSON(), rootFont: getComputedStyle(document.documentElement).fontSize };
         });
         await p.locator('.ts-pk-card').evaluate(card => { card.scrollTop = 0; });
-        let origin = await outerSurface(), outerViewport = { width: 844, height: 320 };
-        const attempts = [{ viewport: outerViewport, ...origin }];
+        let origin = await outerSurface();
+        const attempts = [{ viewport: outerViewport, measured: viewportGeometry, ...origin }];
         // Widening the summary can also let all card chrome fit at double
         // text. Prove a title swipe is contained there, then retain a genuine
         // outer-scroll case by narrowing only the viewport, not the content.
@@ -248,10 +261,10 @@ try {
           ok(`${spec.slug}/844x320/${side}/double-text: fitted outer-card title swipe stays contained`, sameControl(before, after), { before, after, origin });
         }
         if (origin.range < 20 || origin.stroke < 25 || !origin.hit) {
-          for (const viewport of [{ width: 568, height: 240 }, { width: 390, height: 220 }, { width: 390, height: 200 }, { width: 390, height: 180 }, { width: 320, height: 220 }, { width: 320, height: 200 }, { width: 320, height: 180 }]) {
-            await p.setViewportSize(viewport); await p.waitForTimeout(150);
+          for (const viewport of [{ width: 568, height: 240 }, { width: 390, height: 220 }, { width: 390, height: 200 }, { width: 390, height: 180 }, { width: 320, height: 220 }, { width: 320, height: 200 }, { width: 320, height: 180 }, { width: 390, height: 160 }, { width: 320, height: 160 }, { width: 390, height: 140 }, { width: 320, height: 140 }]) {
+            viewportGeometry = await setOuterViewport(viewport);
             await p.locator('.ts-pk-card').evaluate(card => { card.scrollTop = 0; });
-            origin = await outerSurface(); outerViewport = viewport; attempts.push({ viewport, ...origin });
+            origin = await outerSurface(); outerViewport = viewport; attempts.push({ viewport, measured: viewportGeometry, ...origin });
             if (origin.range >= 20 && origin.stroke >= 25 && origin.hit) break;
           }
         }

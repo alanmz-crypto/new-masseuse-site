@@ -163,6 +163,57 @@ all four pages' rapid switches and page-top fit completed. An independent
 review found no relaxed movement thresholds or manufactured scroll ranges.
 Syntax and diff checks pass; the next fresh-copy rehearsal remains mandatory.
 
+Fourth rehearsal requested as `peek-kiro-fixes-rehearse-4`, run `42689973671`,
+source `e97b4f27cfb206d52e9aec5dacf1e8ad44d9b150`; offline Gates `42689973661`.
+Offline Gates passed 31/0 with one rendered-only skip. The rehearsal finished
+**20:17:59 UTC, FAIL / browser INVALID**. All earlier numeric suites retained
+their run-3 counts, but touch stopped at 205/0: the actual Chair outer card had
+zero scroll range in all eight bounded viewport attempts, unlike the local
+fixture's wrapping title. All title starting points were hit-testable and the
+fitted-title containment assertion passed. Thai regression never ran. The
+13,576/0 aggregate across 13 reported suites is incomplete evidence. All
+non-browser gates passed; the full report and artifact logs were reviewed.
+Of 22 selected captures, 21 match run 3 exactly; the changed mouse-disclosure
+capture was reviewed and still lands correctly. Runtime remains unchanged.
+
+In parallel, the previously unreached retained Thai suite is running locally.
+Its old source-shape check still requires a `color-mix` translucent strip, which
+contradicts the requested opaque-strip correction. The unchanged local run
+finished with manifest 172/0 and Thai 480/5: four obsolete opacity expectations
+and one hidden-row keyboard setup. The opacity check now measures rendered
+alpha, opacity and backdrop/filter state, while preserving the separate solid
+rail-panel fallback declaration. A focused phone/tablet light/dark comparison
+passed 16 expected results: current alpha255/no blur passes; frozen v5 alpha240
+with blur is rejected.
+
+An independent focus trace found row k3 is `display:none` at page top. Focusing
+it does nothing, so Enter correctly activates the currently focused card and
+jumps to Common reasons. The correction will select a genuinely visible closed
+row, prove focus reached its button, then require the newly opened box to have
+focus without page/hash movement. This is not the separate Thai touch-focus
+caveat. The corrected focused keyboard probe passed 3/0.
+
+The outer-card mismatch was reproduced by adding external overflowing text to
+a local fixture: requested 390×180 became visual 844×389.54 at scale 0.4621,
+despite doubled root text. The title stayed 40 px and the outer range was zero,
+matching the actual-copy stop. Resetting CDP page scale to 1 after each resize
+restores a 390×180 visible viewport, a 72.75 px title and a 21 px outer range.
+A native title swipe then moves the card 0→21 px with summary/page/hash/index
+unchanged. A separate native summary swipe also stays contained. The checker
+will verify scale and visible geometry explicitly, retaining required outer
+scrolling rather than accepting a zoomed-out case. Runtime remains unchanged.
+
+Read-only staging preflight `peek-kiro-fixes-dry-1`, run `42692714615`, source
+`8d5822186e0f4e921d2a3d5baf92cc42e1f0d999`, finished **20:25:25 UTC, PASS**.
+Published paths and the guarded baseline state match; no snippet was written.
+The complete corrected fresh-copy gate is still required before apply.
+
+The corrected complete local native-touch suite passed **395/0 in 155 s**.
+Scale 1, requested visual dimensions and near-zero viewport offsets are now
+required in the enlarged outer-card case, which retains its mandatory native
+scroll assertion. Syntax/diff checks and independent review pass. These are
+test-only corrections; the full/stored candidate hashes remain unchanged.
+
 Independent review of the copy captures found the wider landscape research
 card readable, the full Privacy FAQ controls clear of the rail, and full Work
 With Me headings readable in both the current strip and stacked title boxes.
