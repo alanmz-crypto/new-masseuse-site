@@ -1,0 +1,5 @@
+{
+  "scope": "Read-only actual staging39; Chromium emulation, not physical devices",
+  "cases": [],
+  "error": "Error: INVALID access /privacy-policy/ 202\n    at open (/tmp/peek-kiro-layout.cjs:7:514)\n    at async /tmp/peek-kiro-layout.cjs:11:17"
+}

@@ -1,8 +1,12 @@
 # Session handoff: the Peek navigation (for the next Claude Code session)
 
-**Next review:** Ryan said the latest result looks good and requested an independent
-[Kiro assessment for Codex](2026-11-09-peek-nav-kiro-assessment-handoff.md).
-That handoff is review-only; the assessment has not yet been returned.
+**Assessment returned; fixes pending:** The [Kiro report and Codex verification](2026-11-09-peek-nav-kiro-assessment.md)
+record independently reproduced touch overshoot and keyboard double-toggle on
+Privacy. Existing passing checks missed the relevant initial disclosure state.
+Further layout verification stopped on HTTP202; do not claim the reported
+landscape and overlap findings were independently reproduced by Codex. This
+review changed records only. Preserve all-page rails; freeze current core as v5
+and pin its existing transition before any future runtime edit.
 
 **Current: title-only Peek rails deployed on staging39; public browser and
 stored-code checks passed.** The [title-rail record](../reviews/2026-11-09-peek-title-rails.md)

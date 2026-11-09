@@ -1,5 +1,10 @@
 # Kiro handoff: assess the current Peek navigation for Codex
 
+**Returned 2026-11-09:** Ryan supplied the assessment. See the
+[returned findings and Codex verification](2026-11-09-peek-nav-kiro-assessment.md).
+Two disclosure defects are independently confirmed; fixes remain pending. This
+brief is retained as the original review scope.
+
 Ryan reviewed the latest staging result, said **“Looks good”**, and asked Codex
 to prepare this handoff so Kiro can give an assessment. This is an independent
 review of the integrated design and implementation, not an instruction to build

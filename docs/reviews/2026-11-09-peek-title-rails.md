@@ -1,5 +1,11 @@
 # Peek rails without new summaries
 
+**Later assessment, 2026-11-09:** The [Kiro findings and Codex verification](../inter-model/2026-11-09-peek-nav-kiro-assessment.md)
+confirm a native-touch disclosure landing failure and keyboard double-toggle on
+Privacy that the initial-state coverage below missed. Fixes are pending; the
+deployment results below are historical evidence, not proof those defects are
+absent. No runtime or website changes were made during that assessment.
+
 **Deployed and verified on staging39.** Ryan requested shared Peek rails on pages
 that do not already have rails, without adding summaries. This follows the
 [deployed all-page title strip and larger summaries](2026-11-09-peek-title-strip-all-pages.md).

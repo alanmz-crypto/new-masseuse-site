@@ -1,0 +1,51 @@
+{
+  "date": "2026-11-09",
+  "reviewed_commit": "60b2b8a05436732a4c5c92d59a9cacee6018d73d",
+  "site": "https://staging39.thaisolitude.com",
+  "source_php_sha256": "602df3dca522b4f6be7db173202c8f64acec3806cffd00705f46fb27ee4815f6",
+  "scope": "Codex read-only actual staging39 Chromium disclosure review; four fresh contexts, emulated inputs, no runtime edits",
+  "layout_status": "INVALID: first request HTTP202, zero layout cases; not retried",
+  "note": "Exact diagnostic probes retain environment-specific paths. Not portable project gates. Manifest excludes its own hash.",
+  "files": [
+    {
+      "file": "blocked-layout-probe.cjs",
+      "bytes": 5611,
+      "sha256": "aefdbadec57e86b1ead49bb1e4c7b9630276a0709403ba9cadbd21b7d6cb38db"
+    },
+    {
+      "file": "disclosure-probe.cjs",
+      "bytes": 5504,
+      "sha256": "2843990e30cbc9d999160b2bf0a253df7ec517293caa8b6d1213c538a393c2c9"
+    },
+    {
+      "file": "layout-results.json",
+      "bytes": 250,
+      "sha256": "1a2aa403923a91e26c16960200353809b267c49a2dc9fc9d13862027aab2feb3"
+    },
+    {
+      "file": "privacy-keyboard-normal.png",
+      "bytes": 154059,
+      "sha256": "022b6d0b07e39514f8313ead1ac59c413d4447fa204e5a1ece87a6f7ad28f3a1"
+    },
+    {
+      "file": "privacy-mouse-normal.png",
+      "bytes": 65202,
+      "sha256": "021e5ce9863b1e0af6a596d3c0ac430de5b0f29fb9d0a95365288c5ea57fe60b"
+    },
+    {
+      "file": "privacy-touch-normal.png",
+      "bytes": 89051,
+      "sha256": "50076cd427a3b945ad202bda08ad31316b9b1bc7fd96e49fd637aada70e24c29"
+    },
+    {
+      "file": "privacy-touch-reduced.png",
+      "bytes": 63446,
+      "sha256": "7ebf858f92cf58205aeb3f1e77d1d42d84718536e470c1cab28ed043ee438a30"
+    },
+    {
+      "file": "results.json",
+      "bytes": 14805,
+      "sha256": "a9d55873a418334fe584ff3a96550581eb519aa735fc323fa6d3c0265e430780"
+    }
+  ]
+}

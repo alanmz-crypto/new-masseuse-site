@@ -1,0 +1,615 @@
+{
+  "scope": "Read-only actual staging39 Chromium review; emulated devices, not physical devices",
+  "sourceSHA": "602df3dca522b4f6be7db173202c8f64acec3806cffd00705f46fb27ee4815f6",
+  "cases": [
+    {
+      "name": "privacy-touch-normal",
+      "mode": "touch",
+      "motion": "no-preference",
+      "phone": true,
+      "status": 200,
+      "runtimeMatches": true,
+      "before": {
+        "y": 0,
+        "hash": "",
+        "target": {
+          "tag": "DIV",
+          "top": 1479.9375,
+          "bottom": 1517.9375
+        },
+        "stripBottom": 281.75,
+        "focus": {
+          "tag": "BODY",
+          "id": "",
+          "text": "Skip to content\nThai Solitude\n\nCorporate & group massage bookings begin November 14, 2026. Individua"
+        },
+        "panels": [
+          {
+            "active": true,
+            "title": "Online privacy",
+            "expanded": null,
+            "height": 1009.5625
+          },
+          {
+            "active": false,
+            "title": "Client privacy",
+            "expanded": null,
+            "height": 38
+          }
+        ]
+      },
+      "preview": {
+        "y": 0,
+        "hash": "",
+        "target": {
+          "tag": "DIV",
+          "top": 1479.9375,
+          "bottom": 1517.9375
+        },
+        "stripBottom": 281.75,
+        "focus": {
+          "tag": "BODY",
+          "id": "",
+          "text": "Skip to content\nThai Solitude\n\nCorporate & group massage bookings begin November 14, 2026. Individua"
+        },
+        "panels": [
+          {
+            "active": true,
+            "title": "Online privacy",
+            "expanded": null,
+            "height": 1009.5625
+          },
+          {
+            "active": false,
+            "title": "Client privacy",
+            "expanded": null,
+            "height": 38
+          }
+        ]
+      },
+      "after": {
+        "y": 1347,
+        "hash": "#ts-client-privacy",
+        "target": {
+          "tag": "DIV",
+          "top": -838.625,
+          "bottom": 225.3125
+        },
+        "stripBottom": 120.859375,
+        "focus": {
+          "tag": "BUTTON",
+          "id": "ts-faq-question-3",
+          "text": "Client privacy"
+        },
+        "panels": [
+          {
+            "active": false,
+            "title": "Online privacy",
+            "expanded": null,
+            "height": 38
+          },
+          {
+            "active": true,
+            "title": "Client privacy",
+            "expanded": null,
+            "height": 1063.9375
+          }
+        ]
+      },
+      "events": [
+        {
+          "type": "pointerdown",
+          "at": 1615.2000000011176,
+          "tag": "B",
+          "id": "",
+          "trusted": true,
+          "prevented": false
+        },
+        {
+          "type": "pointerup",
+          "at": 1653.9000000003725,
+          "tag": "B",
+          "id": "",
+          "trusted": true,
+          "prevented": false
+        },
+        {
+          "type": "click",
+          "at": 1654.800000000745,
+          "tag": "DIV",
+          "id": "",
+          "trusted": false,
+          "prevented": false
+        },
+        {
+          "type": "touchend",
+          "at": 1662.800000000745,
+          "tag": "B",
+          "id": "",
+          "trusted": true,
+          "prevented": false,
+          "touch": true
+        },
+        {
+          "type": "mousedown",
+          "at": 1670.5,
+          "tag": "P",
+          "id": "",
+          "trusted": true,
+          "prevented": false,
+          "touch": true
+        },
+        {
+          "type": "mouseup",
+          "at": 1670.800000000745,
+          "tag": "P",
+          "id": "",
+          "trusted": true,
+          "prevented": false,
+          "touch": true
+        },
+        {
+          "type": "click",
+          "at": 1670.800000000745,
+          "tag": "P",
+          "id": "",
+          "trusted": true,
+          "prevented": false,
+          "touch": true
+        }
+      ],
+      "errors": []
+    },
+    {
+      "name": "privacy-mouse-normal",
+      "mode": "mouse",
+      "motion": "no-preference",
+      "phone": true,
+      "status": 200,
+      "runtimeMatches": true,
+      "before": {
+        "y": 0,
+        "hash": "",
+        "target": {
+          "tag": "DIV",
+          "top": 1479.9375,
+          "bottom": 1517.9375
+        },
+        "stripBottom": 281.75,
+        "focus": {
+          "tag": "BODY",
+          "id": "",
+          "text": "Skip to content\nThai Solitude\n\nCorporate & group massage bookings begin November 14, 2026. Individua"
+        },
+        "panels": [
+          {
+            "active": true,
+            "title": "Online privacy",
+            "expanded": null,
+            "height": 1009.5625
+          },
+          {
+            "active": false,
+            "title": "Client privacy",
+            "expanded": null,
+            "height": 38
+          }
+        ]
+      },
+      "preview": {
+        "y": 0,
+        "hash": "",
+        "target": {
+          "tag": "DIV",
+          "top": 1479.9375,
+          "bottom": 1517.9375
+        },
+        "stripBottom": 281.75,
+        "focus": {
+          "tag": "BODY",
+          "id": "",
+          "text": "Skip to content\nThai Solitude\n\nCorporate & group massage bookings begin November 14, 2026. Individua"
+        },
+        "panels": [
+          {
+            "active": true,
+            "title": "Online privacy",
+            "expanded": null,
+            "height": 1009.5625
+          },
+          {
+            "active": false,
+            "title": "Client privacy",
+            "expanded": null,
+            "height": 38
+          }
+        ]
+      },
+      "after": {
+        "y": 375,
+        "hash": "#ts-client-privacy",
+        "target": {
+          "tag": "DIV",
+          "top": 133.375,
+          "bottom": 1197.3125
+        },
+        "stripBottom": 120.859375,
+        "focus": {
+          "tag": "BUTTON",
+          "id": "ts-faq-question-3",
+          "text": "Client privacy"
+        },
+        "panels": [
+          {
+            "active": false,
+            "title": "Online privacy",
+            "expanded": null,
+            "height": 38
+          },
+          {
+            "active": true,
+            "title": "Client privacy",
+            "expanded": null,
+            "height": 1063.9375
+          }
+        ]
+      },
+      "events": [
+        {
+          "type": "pointerdown",
+          "at": 1412.2000000011176,
+          "tag": "B",
+          "id": "",
+          "trusted": true,
+          "prevented": false
+        },
+        {
+          "type": "mousedown",
+          "at": 1412.5,
+          "tag": "B",
+          "id": "",
+          "trusted": true,
+          "prevented": false,
+          "touch": false
+        },
+        {
+          "type": "pointerup",
+          "at": 1413.300000000745,
+          "tag": "B",
+          "id": "",
+          "trusted": true,
+          "prevented": false
+        },
+        {
+          "type": "mouseup",
+          "at": 1413.300000000745,
+          "tag": "B",
+          "id": "",
+          "trusted": true,
+          "prevented": false,
+          "touch": false
+        },
+        {
+          "type": "click",
+          "at": 1413.300000000745,
+          "tag": "B",
+          "id": "",
+          "trusted": true,
+          "prevented": false,
+          "touch": false
+        },
+        {
+          "type": "click",
+          "at": 1413.800000000745,
+          "tag": "DIV",
+          "id": "",
+          "trusted": false,
+          "prevented": false
+        }
+      ],
+      "errors": []
+    },
+    {
+      "name": "privacy-touch-reduced",
+      "mode": "touch",
+      "motion": "reduce",
+      "phone": true,
+      "status": 200,
+      "runtimeMatches": true,
+      "before": {
+        "y": 0,
+        "hash": "",
+        "target": {
+          "tag": "DIV",
+          "top": 1479.9375,
+          "bottom": 1517.9375
+        },
+        "stripBottom": 281.75,
+        "focus": {
+          "tag": "BODY",
+          "id": "",
+          "text": "Skip to content\nThai Solitude\n\nCorporate & group massage bookings begin November 14, 2026. Individua"
+        },
+        "panels": [
+          {
+            "active": true,
+            "title": "Online privacy",
+            "expanded": null,
+            "height": 1009.5625
+          },
+          {
+            "active": false,
+            "title": "Client privacy",
+            "expanded": null,
+            "height": 38
+          }
+        ]
+      },
+      "preview": {
+        "y": 0,
+        "hash": "",
+        "target": {
+          "tag": "DIV",
+          "top": 1479.9375,
+          "bottom": 1517.9375
+        },
+        "stripBottom": 281.75,
+        "focus": {
+          "tag": "BODY",
+          "id": "",
+          "text": "Skip to content\nThai Solitude\n\nCorporate & group massage bookings begin November 14, 2026. Individua"
+        },
+        "panels": [
+          {
+            "active": true,
+            "title": "Online privacy",
+            "expanded": null,
+            "height": 1009.5625
+          },
+          {
+            "active": false,
+            "title": "Client privacy",
+            "expanded": null,
+            "height": 38
+          }
+        ]
+      },
+      "after": {
+        "y": 523,
+        "hash": "#ts-client-privacy",
+        "target": {
+          "tag": "DIV",
+          "top": -14.625,
+          "bottom": 1049.3125
+        },
+        "stripBottom": 120.859375,
+        "focus": {
+          "tag": "BUTTON",
+          "id": "ts-faq-question-3",
+          "text": "Client privacy"
+        },
+        "panels": [
+          {
+            "active": false,
+            "title": "Online privacy",
+            "expanded": null,
+            "height": 38
+          },
+          {
+            "active": true,
+            "title": "Client privacy",
+            "expanded": null,
+            "height": 1063.9375
+          }
+        ]
+      },
+      "events": [
+        {
+          "type": "pointerdown",
+          "at": 1367.699999999255,
+          "tag": "B",
+          "id": "",
+          "trusted": true,
+          "prevented": false
+        },
+        {
+          "type": "pointerup",
+          "at": 1410,
+          "tag": "B",
+          "id": "",
+          "trusted": true,
+          "prevented": false
+        },
+        {
+          "type": "click",
+          "at": 1410.9000000003725,
+          "tag": "DIV",
+          "id": "",
+          "trusted": false,
+          "prevented": false
+        },
+        {
+          "type": "touchend",
+          "at": 1419.4000000003725,
+          "tag": "B",
+          "id": "",
+          "trusted": true,
+          "prevented": false,
+          "touch": true
+        },
+        {
+          "type": "mousedown",
+          "at": 1427.5,
+          "tag": "DIV",
+          "id": "",
+          "trusted": true,
+          "prevented": false,
+          "touch": true
+        },
+        {
+          "type": "mouseup",
+          "at": 1427.699999999255,
+          "tag": "DIV",
+          "id": "",
+          "trusted": true,
+          "prevented": false,
+          "touch": true
+        },
+        {
+          "type": "click",
+          "at": 1427.7999999988824,
+          "tag": "DIV",
+          "id": "",
+          "trusted": true,
+          "prevented": false,
+          "touch": true
+        }
+      ],
+      "errors": []
+    },
+    {
+      "name": "privacy-keyboard-normal",
+      "mode": "keyboard",
+      "motion": "no-preference",
+      "phone": false,
+      "status": 200,
+      "runtimeMatches": true,
+      "before": {
+        "y": 0,
+        "hash": "",
+        "target": {
+          "tag": "DIV",
+          "top": 906.859375,
+          "bottom": 946.859375
+        },
+        "stripBottom": 330.328125,
+        "focus": {
+          "tag": "BODY",
+          "id": "",
+          "text": "Skip to content\nThai Solitude\nHome\nAbout\nServices\nCorporate Massage\nFor Practices\nContact\nGet in Tou"
+        },
+        "panels": [
+          {
+            "active": true,
+            "title": "Online privacy",
+            "expanded": null,
+            "height": 467.8125
+          },
+          {
+            "active": false,
+            "title": "Client privacy",
+            "expanded": null,
+            "height": 40
+          }
+        ]
+      },
+      "preview": {
+        "y": 0,
+        "hash": "",
+        "target": {
+          "tag": "DIV",
+          "top": 906.859375,
+          "bottom": 946.859375
+        },
+        "stripBottom": 330.328125,
+        "focus": {
+          "tag": "DIV",
+          "id": "",
+          "text": "1\nOnline privacy\n×\nSECTION 2 OF 2\nClient privacy\nTap to go there\n⇆ Left"
+        },
+        "panels": [
+          {
+            "active": true,
+            "title": "Online privacy",
+            "expanded": null,
+            "height": 467.8125
+          },
+          {
+            "active": false,
+            "title": "Client privacy",
+            "expanded": null,
+            "height": 40
+          }
+        ]
+      },
+      "after": {
+        "y": 175,
+        "hash": "#ts-client-privacy",
+        "target": {
+          "tag": "DIV",
+          "top": 304.046875,
+          "bottom": 344.046875
+        },
+        "stripBottom": 155.328125,
+        "focus": {
+          "tag": "BUTTON",
+          "id": "ts-faq-question-3",
+          "text": "Client privacy"
+        },
+        "panels": [
+          {
+            "active": false,
+            "title": "Online privacy",
+            "expanded": null,
+            "height": 40
+          },
+          {
+            "active": false,
+            "title": "Client privacy",
+            "expanded": null,
+            "height": 40
+          }
+        ]
+      },
+      "events": [
+        {
+          "type": "keydown",
+          "at": 1355.0999999996275,
+          "tag": "DIV",
+          "id": "",
+          "key": "Enter",
+          "trusted": true,
+          "prevented": false,
+          "touch": false
+        },
+        {
+          "type": "click",
+          "at": 1355.800000000745,
+          "tag": "DIV",
+          "id": "",
+          "trusted": false,
+          "prevented": false
+        },
+        {
+          "type": "keypress",
+          "at": 1366.5999999996275,
+          "tag": "BUTTON",
+          "id": "ts-faq-question-3",
+          "key": "Enter",
+          "trusted": true,
+          "prevented": false,
+          "touch": false
+        },
+        {
+          "type": "click",
+          "at": 1366.800000000745,
+          "tag": "BUTTON",
+          "id": "ts-faq-question-3",
+          "trusted": true,
+          "prevented": false
+        },
+        {
+          "type": "keyup",
+          "at": 1379.9000000003725,
+          "tag": "BUTTON",
+          "id": "ts-faq-question-3",
+          "key": "Enter",
+          "trusted": true,
+          "prevented": false,
+          "touch": false
+        }
+      ],
+      "errors": []
+    }
+  ]
+}
