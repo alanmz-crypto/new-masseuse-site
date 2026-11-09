@@ -1,11 +1,10 @@
 {
-  "id": "peek-title-rails-apply-20261109-1",
+  "id": "peek-title-rails-public-20261109-1",
   "op": "run",
   "target": "staging39",
-  "script": "link-ideas/push-peek-nav.sh",
+  "script": "link-ideas/core-title-rail/check-public.mjs",
   "args": [
-    "core-title-rail",
-    "--apply"
+    "https://staging39.thaisolitude.com"
   ],
   "tests": "auto"
 }
