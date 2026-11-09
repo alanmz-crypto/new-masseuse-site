@@ -1,8 +1,7 @@
 {
-  "id": "peek-template-gates-20261109-1",
-  "op": "run",
+  "id": "peek-data-rehearse-20261109-1",
+  "op": "rehearse",
   "target": "staging39",
-  "script": "check-all.sh",
-  "args": [],
-  "tests": "auto"
+  "installer": "link-ideas/peek-page/install-peek-thai-data.php",
+  "args": []
 }
