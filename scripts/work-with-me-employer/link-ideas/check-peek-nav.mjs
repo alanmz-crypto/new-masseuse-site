@@ -29,6 +29,10 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     const landed = sel => p.evaluate(s => { const h = document.querySelector(s).getBoundingClientRect().top, sb = document.querySelector('.ts-pk-top').getBoundingClientRect().bottom; return { h: Math.round(h), sb: Math.round(sb), ok: h >= sb - 2 && sb + 40 >= h }; }, sel);
     const hrefOf = i => p.evaluate(k => document.querySelectorAll('.entry-content .ts-jump a')[k].getAttribute('href'), i);
 
+    const edges = () => p.evaluate(() => { const vw = document.documentElement.clientWidth, bad = [];
+      document.querySelectorAll('.entry-content p, .entry-content li, .entry-content h2, .entry-content h3, .entry-content img').forEach(e => { if (e.closest('.ts-pk, .ts-jump')) return; const r = e.getBoundingClientRect(); if (r.width && (r.left < -0.5 || r.right > vw + 0.5)) bad.push(e.tagName + ' ' + Math.round(r.left) + '..' + Math.round(r.right)); });
+      return { sw: document.documentElement.scrollWidth, vw, bad: bad.slice(0, 4) }; });
+    { const e = await edges(); ok(`${tag} nothing sticks out past either edge of the screen, full-width blocks included (Ryan, 2026-11-09: text at the left edge on a larger iPhone)`, e.sw === e.vw && !e.bad.length, JSON.stringify(e)); }
     ok(`${tag} the row still has the five links in order (no-JavaScript fallback)`, (await p.$$eval('.entry-content .ts-jump a', a => a.map(x => x.textContent).join('|'))) === labels.join('|'));
     ok(`${tag} the pills trial is gone`, await p.evaluate(() => !document.getElementById('ts-pill-nav-runtime') && !document.querySelector('.ts-pill-ind')));
     const atTop = await p.evaluate(() => { const row = document.querySelector('.entry-content .ts-jump'), t = document.querySelector('.ts-pk-top'), n = document.querySelector('.ts-pk-nav'), first = document.querySelector('.entry-content h2'); return { rowShown: getComputedStyle(row).display !== 'none', stripAfterRow: row.nextElementSibling === t, stripBeforeSections: !!(t.compareDocumentPosition(first) & Node.DOCUMENT_POSITION_FOLLOWING), rail: getComputedStyle(n).visibility, railOp: getComputedStyle(n).opacity }; });
@@ -275,6 +279,7 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     // left-hand option (Ryan, 2026-11-08: yes)
     await slideTo(1); await p.tap('.ts-pk-card .side'); await W(500);
     const lh = await p.evaluate(() => { const r = document.querySelector('.ts-pk-rail').getBoundingClientRect(); return { left: document.documentElement.classList.contains('ts-pk-left'), railLeft: Math.round(r.left), stored: localStorage.getItem('ts-pk-side'), card: document.querySelector('.ts-pk-card').classList.contains('is-on') }; });
+    { const e = await edges(); ok(`${tag} on the left, nothing sticks out past either edge of the screen (the page is not wider than the screen)`, e.sw === e.vw && !e.bad.length, JSON.stringify(e)); }
     ok(`${tag} "⇆ Left" in the preview moves the rail to the left edge and closes the preview`, lh.left && 8 >= lh.railLeft && lh.stored === 'left' && !lh.card, JSON.stringify(lh));
     await slideTo(3, false); c = await card(); const cr = await p.$eval('.ts-pk-card', e => Math.round(e.getBoundingClientRect().left)); await touch('touchEnd'); await W(400);
     ok(`${tag} on the left, sliding previews as on the right (card beside the rail)`, c.on && c.name === 'Questions' && cr >= 40 && 80 >= cr, `left=${cr}`);

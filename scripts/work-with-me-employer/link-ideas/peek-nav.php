@@ -72,7 +72,10 @@ html[data-ts-theme="dark"] .ts-pk-card .hint{color:var(--pk-on)}
 .ts-pk-flash{border-radius:8px;background:rgba(200,150,62,.28);background:color-mix(in srgb,var(--pk-accent) 28%,transparent);transition:background-color .6s}
 .ts-pk-unflash{transition:background-color .6s}
 /* keep the text clear of the rail on phones and tablets; the bottom "On this page" button is replaced by the rail */
-html.ts-pk-ready.ts-pk-pad:not(.ts-pk-left) .entry-content{padding-right:var(--pk-clear)}   /* the strip's text stays clear of the rail while it is still in the page */
+/* Ryan, 2026-11-09: the clearance goes on the text blocks, not on the column. Padding the column moved its middle, and full-width theme blocks (placed from
+   that middle) shifted by half of it: off the left edge with the rail on the right (text cut at the screen edge), past the right edge with it on the left */
+html.ts-pk-ready.ts-pk-pad:not(.ts-pk-left) .entry-content :is(p,li,h1,h2,h3,h4,h5,h6,blockquote,figcaption,dt,dd,td,th):not(:is(p,li,blockquote,dd,td,th) *){padding-right:var(--pk-clear)}
+html.ts-pk-ready.ts-pk-pad:not(.ts-pk-left) .entry-content .ts-pk-top{padding-right:calc(12px + var(--pk-clear))}   /* the strip's titles stay clear of the rail while it is still in the page */
 html.ts-pk-ready .entry-content .ts-jump{display:none!important}   /* Ryan, 2026-11-08: "You can remove the in-page links beneath header." The strip, rail and index replace the row; without JavaScript (no ts-pk-ready) it still shows and works */
 html.ts-pk-ready #ts-section-guide-trigger,html.ts-pk-ready #ts-section-guide-popover{display:none!important}   /* only once the rail is there */
 html.ts-pk-ready .entry-content [id]{scroll-margin-top:calc(var(--pk-head,0px) + var(--pk-strip,0px) + 12px)}   /* plain in-page links land below the pinned header and the strip */
@@ -88,7 +91,8 @@ html.ts-pk-left .ts-pk-you{right:auto;left:28px}
 html.ts-pk-left .ts-pk-card{right:auto;left:58px;transform:translateX(-10px) scale(.98)}
 html.ts-pk-left .ts-pk-card.is-on{transform:none}
 html.ts-pk-left .ts-pk-tip{right:auto;left:58px}
-html.ts-pk-ready.ts-pk-pad.ts-pk-left .entry-content{padding-left:var(--pk-clear)}   /* the right side keeps the theme's own spacing */
+html.ts-pk-ready.ts-pk-pad.ts-pk-left .entry-content :is(p,li,h1,h2,h3,h4,h5,h6,blockquote,figcaption,dt,dd,td,th):not(:is(p,li,blockquote,dd,td,th) *){padding-left:var(--pk-clear)}
+html.ts-pk-ready.ts-pk-pad.ts-pk-left .entry-content .ts-pk-top{padding-left:calc(12px + var(--pk-clear))}   /* the other side keeps the theme's own spacing */
 /* the side button in the preview */
 .ts-pk-card .hint{display:flex;align-items:center;justify-content:space-between;gap:.5rem}
 .ts-pk-card .side{display:none;flex:0 0 auto;min-height:36px;margin:0;padding:0 .7rem;border:1px solid var(--pk-rule);border-radius:999px;background:transparent;color:var(--pk-muted);font:inherit;font-size:.75rem;font-weight:700;cursor:pointer;touch-action:manipulation}
@@ -261,11 +265,9 @@ add_action( 'wp_footer', function () {
     // the text column stops 6px before the rail and its icon, whatever margin the theme gives the content at this width (measured, not guessed);
     // the theme's own padding stays whenever it is already enough
     function clearRail() {
-      var left = root.classList.contains('ts-pk-left'), side = left ? 'paddingLeft' : 'paddingRight';
-      root.classList.remove('ts-pk-pad');   // start from the theme's own padding (no paint happens in between)
-      var base = parseFloat(getComputedStyle(content)[side]) || 0, need = base;
-      function apply(n) { if (n > base + 0.5) { root.style.setProperty('--pk-clear', n + 'px'); root.classList.add('ts-pk-pad'); } else root.classList.remove('ts-pk-pad'); }
-      // measure where the text blocks really are (they can be inset from the column or wider than it) and add only what is missing
+      var left = root.classList.contains('ts-pk-left'), need = 0;
+      root.classList.remove('ts-pk-pad');   // start from the theme's own spacing (no paint happens in between)
+      // measure where the text really ends on the rail's side, and give the text blocks only what is missing (the column itself is never padded)
       for (var round = 0; round < 3; round++) {
         var edge = left ? Infinity : -Infinity;
         [].forEach.call(content.querySelectorAll('p,li,h1,h2,h3,h4,h5,h6,blockquote,figcaption,dt,dd,td,th'), function (el) {
@@ -277,7 +279,7 @@ add_action( 'wp_footer', function () {
         if (!isFinite(edge)) break;
         var nr = nav.getBoundingClientRect(), over = left ? (nr.right + 6) - edge : edge - (nr.left - 6);
         if (!(over > 0.5) || need >= 80) break;
-        need = Math.min(80, need + Math.ceil(over)); apply(need);   // capped, so an unusually wide element cannot squeeze the page
+        need = Math.min(80, need + Math.ceil(over)); root.style.setProperty('--pk-clear', need + 'px'); root.classList.add('ts-pk-pad');   // capped
       }
     }
     // at most once per frame, and on resize only when the width really changed (phone toolbars resize the page while scrolling)
