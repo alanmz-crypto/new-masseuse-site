@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-09 20:25 UTC  **PASS**  `peek-kiro-fixes-dry-1`  [reports/2026-11-09/202526-peek-kiro-fixes-dry-1.md](reports/2026-11-09/202526-peek-kiro-fixes-dry-1.md)  (run 42692714615)
 - 2026-11-09 20:18 UTC  **FAIL**  `peek-kiro-fixes-rehearse-4`  [reports/2026-11-09/201808-peek-kiro-fixes-rehearse-4.md](reports/2026-11-09/201808-peek-kiro-fixes-rehearse-4.md)  (run 42689973671)
 - 2026-11-09 19:56 UTC  **FAIL**  `peek-kiro-fixes-rehearse-3`  [reports/2026-11-09/195611-peek-kiro-fixes-rehearse-3.md](reports/2026-11-09/195611-peek-kiro-fixes-rehearse-3.md)  (run 42686456101)
 - 2026-11-09 19:37 UTC  **FAIL**  `peek-kiro-fixes-rehearse-2`  [reports/2026-11-09/193736-peek-kiro-fixes-rehearse-2.md](reports/2026-11-09/193736-peek-kiro-fixes-rehearse-2.md)  (run 42684101436)
