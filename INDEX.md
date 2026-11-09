@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-09 05:50 UTC  **PASS**  `peek-clearance-access-20261109-1`  [reports/2026-11-09/055043-peek-clearance-access-20261109-1.md](reports/2026-11-09/055043-peek-clearance-access-20261109-1.md)  (run 42569542165)
 - 2026-11-09 04:03 UTC  **PASS**  `peek-services-final-snippets-20261109-1`  [reports/2026-11-09/040324-peek-services-final-snippets-20261109-1.md](reports/2026-11-09/040324-peek-services-final-snippets-20261109-1.md)  (run 42559557625)
 - 2026-11-09 04:02 UTC  **PASS**  `peek-services-final-firefox-20261109-1`  [reports/2026-11-09/040257-peek-services-final-firefox-20261109-1.md](reports/2026-11-09/040257-peek-services-final-firefox-20261109-1.md)  (run 42558828529)
 - 2026-11-09 04:01 UTC  **PASS**  `peek-services-final-chromium-20261109-1`  [reports/2026-11-09/040119-peek-services-final-chromium-20261109-1.md](reports/2026-11-09/040119-peek-services-final-chromium-20261109-1.md)  (run 42558669623)
