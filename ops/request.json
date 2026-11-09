@@ -1,8 +1,10 @@
 {
-  "id": "peek-clearance-gates-20261109-1",
+  "id": "peek-clearance-dry-20261109-1",
   "op": "run",
   "target": "staging39",
-  "script": "check-all.sh",
-  "args": [],
+  "script": "link-ideas/push-peek-nav.sh",
+  "args": [
+    "core-upgrade"
+  ],
   "tests": "auto"
 }
