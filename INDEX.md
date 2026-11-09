@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-09 02:19 UTC  **PASS**  `peek-data-dry-20261109-1`  [reports/2026-11-09/021921-peek-data-dry-20261109-1.md](reports/2026-11-09/021921-peek-data-dry-20261109-1.md)  (run 42549971924)
 - 2026-11-09 02:18 UTC  **FAIL**  `peek-core-rehearse-20261109-1`  [reports/2026-11-09/021852-peek-core-rehearse-20261109-1.md](reports/2026-11-09/021852-peek-core-rehearse-20261109-1.md)  (run 42549121660)
 - 2026-11-09 02:08 UTC  **PASS**  `peek-data-rehearse-20261109-1`  [reports/2026-11-09/020857-peek-data-rehearse-20261109-1.md](reports/2026-11-09/020857-peek-data-rehearse-20261109-1.md)  (run 42549075999)
 - 2026-11-09 02:06 UTC  **PASS**  `peek-template-gates-20261109-1`  [reports/2026-11-09/020608-peek-template-gates-20261109-1.md](reports/2026-11-09/020608-peek-template-gates-20261109-1.md)  (run 42548969698)
