@@ -1,6 +1,8 @@
 <?php
-// Shared Peek behavior. Page data is registered in WordPress by ts_pk_pages filters; .ts-jump remains the only destination/order source.
-// Built from the existing server-rendered row <nav class="ts-jump"> (A11yPageJumpLinks): its links stay the no-JavaScript fallback and the source of the destinations.
+// Shared Peek behavior. The display-only title strip runs across front-end pages;
+// page data registered by ts_pk_pages enables the existing rail and summaries.
+// The server-rendered .ts-jump row remains the only rail destination/order source
+// and the no-JavaScript fallback. Title-only pages without it read visible H2s.
 // Section names = the row's labels; descriptions = the first paragraph of each section; reading time = its words at 200 a minute. No page content is changed.
 // A duplicate core must not register a second set of hooks. Data snippets register
 // their filters at load time; the current page is selected only during rendering.
@@ -17,7 +19,7 @@ function ts_pk_page_data() {
 }
 } else { return; }
 add_action( 'wp_head', function () {
-	if ( ! ts_pk_page_data() ) {
+	if ( is_admin() || is_feed() ) {
 		return;
 	}
 	?>
@@ -34,6 +36,15 @@ body.admin-bar .ts-pk-top{top:calc(var(--wp-admin--admin-bar--height,32px) + var
 .ts-pk-top .tr{position:absolute;left:0;top:0;display:flex;align-items:center;gap:1.75rem;height:100%;white-space:nowrap;will-change:transform}
 .ts-pk-top .tr span{font-size:.86rem;line-height:1.3;font-weight:600;color:var(--pk-muted);opacity:.85;transition:opacity .25s,color .25s}
 .ts-pk-top .tr span.is-now{color:var(--pk-ink);font-weight:800;opacity:1}
+/* Title-only pages keep their existing navigation. Long source headings wrap
+   inside the readable centre; the four established rails keep their geometry. */
+.ts-pk-top.is-title-only{margin-left:0;margin-right:0}
+.ts-pk-top.is-title-only .tr span{flex:0 0 auto;white-space:normal;text-align:center;overflow-wrap:anywhere}
+.ts-pk-top.is-title-only.is-single .in{-webkit-mask-image:none;mask-image:none}
+/* The existing practice controls retain their own gestures beneath the shared
+   strip. Only these owned demos need an additional sticky-bar clearance. */
+html.ts-pk-title-ready .ts-pk-title-content :is(.tsx-pills,.tsx-seg,.tsp-bar,.tsr-top){top:var(--pk-title-end,0px)}
+html.ts-pk-title-ready .ts-pk-title-content :is(.tsx-lab,.tsp-lab,.tsr-lab) :is(.tsx-sec,.tsp-sec,.tsr-sec),html.ts-pk-title-ready .ts-pk-title-content :is(.tsx-lab,.tsp-lab,.tsr-lab) :is(.tsx-sec,.tsp-sec,.tsr-sec) [id]{scroll-margin-top:calc(var(--pk-title-end,0px) + var(--pk-demo-bar,0px) + 12px)}
 /* rail: right edge, thumb zone */
 .ts-pk-nav{position:fixed;right:max(2px,env(safe-area-inset-right));top:max(30%,calc(var(--pk-head,0px) + var(--pk-strip,0px) + 64px));bottom:max(14%,76px);z-index:91;width:44px}   /* % follows the visible viewport on iOS; the index icon stays clear of the header and strip */
 .ts-pk-rail{position:absolute;inset:0;display:flex;flex-direction:column;gap:5px;margin:0;padding:8px 0;list-style:none;touch-action:none;-webkit-user-select:none;user-select:none;border-radius:22px;transition:background-color .2s,box-shadow .2s}
@@ -67,8 +78,9 @@ html .ts-pk .ts-pk-card .row+.row{margin-top:.25rem}
 html .ts-pk .ts-pk-card .row b{display:grid;place-items:center;flex:0 0 auto;width:1.45rem;height:1.45rem;margin:0;border-radius:50%;background:var(--pk-panel);font-size:.72rem;font-weight:800}
 html .ts-pk .ts-pk-card .row span{min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .ts-pk-card .d{display:block;font-size:.86rem;line-height:1.4;color:var(--pk-ink);opacity:.9}
-/* the summary: the section's own opening sentences, scrollable inside the open box (no second window; touching or scrolling it never jumps) */
-.ts-pk-card .sum{display:block;margin:.5rem 0 0;padding:0 .35rem 0 0;max-height:9.8em;overflow-y:auto;overflow-wrap:anywhere;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:none;font-size:.86rem;line-height:1.45;color:var(--pk-ink);cursor:auto}
+/* Approved gist lists or whole opening paragraphs scroll inside the open box;
+   touching or scrolling the summary never jumps. */
+.ts-pk-card .sum{display:block;margin:.5rem 0 0;padding:0 .35rem 0 0;max-height:18em;overflow-y:auto;overflow-wrap:anywhere;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:none;font-size:.86rem;line-height:1.45;color:var(--pk-ink);cursor:auto}
 .ts-pk-card .sum.can-scroll{touch-action:pan-y}
 html .ts-pk .ts-pk-card .sum p{margin:0 0 .55em;padding:0;font:inherit;line-height:inherit;color:inherit}
 html .ts-pk .ts-pk-card .sum p:last-child{margin-bottom:0}
@@ -94,8 +106,8 @@ html[data-ts-theme="dark"] .ts-pk-card .hint{color:var(--pk-on)}
 @media screen{html.ts-pk-ready.ts-pk-pad:not(.ts-pk-left) .entry-content .ts-pk-top{padding-right:calc(12px + var(--pk-clear))}   /* the strip's titles stay clear of the rail while it is still in the page */}
 html.ts-pk-ready .entry-content .ts-jump{display:none!important}   /* Ryan, 2026-11-08: "You can remove the in-page links beneath header." The strip, rail and index replace the row; without JavaScript (no ts-pk-ready) it still shows and works */
 html.ts-pk-ready #ts-section-guide-trigger,html.ts-pk-ready #ts-section-guide-popover{display:none!important}   /* only once the rail is there */
-html.ts-pk-ready .entry-content :is(a[href],button,input,select,textarea,summary,[tabindex]){scroll-margin-top:calc(var(--pk-head,0px) + var(--pk-strip,0px) + 12px)}   /* Tab never leaves focus under the pinned header and strip (Kiro, WCAG 2.4.11); on the content only: scroll-padding on the page made focusing the pinned header's own menu button scroll the page to the top */
-html.ts-pk-ready .entry-content [id]{scroll-margin-top:calc(var(--pk-head,0px) + var(--pk-strip,0px) + 12px)}   /* plain in-page links land below the pinned header and the strip */
+html.ts-pk-title-ready .ts-pk-title-content :is(a[href],button,input,select,textarea,summary,[tabindex]){scroll-margin-top:calc(var(--pk-head,0px) + var(--pk-strip,0px) + 12px)}   /* Tab never leaves focus under the pinned header and strip (Kiro, WCAG 2.4.11); on the content only: scroll-padding on the page made focusing the pinned header's own menu button scroll the page to the top */
+html.ts-pk-title-ready .ts-pk-title-content [id]{scroll-margin-top:calc(var(--pk-head,0px) + var(--pk-strip,0px) + 12px)}   /* plain in-page links land below the pinned header and the strip */
 @media (prefers-reduced-motion:reduce){.ts-pk *,.ts-pk-top,.ts-pk-nav,.ts-pk-card{transition:none!important}.ts-pk-card,.ts-pk-card.is-on{transform:none}}
 /* theme content rules (.entry-content ol, li, a, p) must not reach these parts, which sit inside the content for keyboard order */
 html .ts-pk ol,html .ts-pk li{margin:0;padding:0;list-style:none;text-indent:0}
@@ -155,26 +167,28 @@ html .ts-pk .ts-pk-fan li.is-over{background:var(--pk-on);color:var(--pk-on-text
 @media (prefers-reduced-motion:reduce){html .ts-pk .ts-pk-fan li,html .ts-pk .ts-pk-ix{transition-duration:.01ms!important;transition-delay:0ms!important}}
 /* the site header stays on top (Ryan, 2026-11-08: "make the header persistent too"); not on short landscape screens, where header, strip and rail would not fit */
 @media screen and (min-height:501px){
-html.ts-pk-ready #masthead{position:sticky;top:0;z-index:96}
-html.ts-pk-ready body.admin-bar #masthead{top:var(--wp-admin--admin-bar--height,32px)}
-html.ts-pk-ready #masthead .ast-mobile-header-content{max-height:calc(100vh - var(--pk-head,0px));max-height:calc(100dvh - var(--pk-head,0px));overflow-y:auto}
-html.ts-pk-ready body.admin-bar #masthead .ast-mobile-header-content{max-height:calc(100dvh - var(--pk-head,0px) - var(--wp-admin--admin-bar--height,32px))}   /* the phone menu still opens fully from the pinned header */
+html.ts-pk-title-ready #masthead{position:sticky;top:0;z-index:96}
+html.ts-pk-title-ready body.admin-bar #masthead{top:var(--wp-admin--admin-bar--height,32px)}
+html.ts-pk-title-ready #masthead .ast-mobile-header-content{max-height:calc(100vh - var(--pk-head,0px));max-height:calc(100dvh - var(--pk-head,0px));overflow-y:auto}
+html.ts-pk-title-ready body.admin-bar #masthead .ast-mobile-header-content{max-height:calc(100dvh - var(--pk-head,0px) - var(--wp-admin--admin-bar--height,32px))}   /* the phone menu still opens fully from the pinned header */
 }
-@media screen and (min-height:501px) and (max-width:600px){html.ts-pk-ready body.admin-bar #masthead{top:0}}
-/* the stack fits between the strip and the bottom of the screen: it gives up detail in steps (fit1-fit3), never the open box's name and "Tap to go there" */
-html .ts-pk .ts-pk-card.fit2 .sum{max-height:6.6em}
-html .ts-pk .ts-pk-card.fit3 .sum{max-height:4.4em}
+@media screen and (min-height:501px) and (max-width:600px){html.ts-pk-title-ready body.admin-bar #masthead{top:0}}
+/* Reserve a useful finger stroke for every summary. When space is tight, fold
+   distant boxes before shrinking the summary; its neighbors, title and jump stay. */
+html .ts-pk .ts-pk-card.fit2 .sum{max-height:14em}
+html .ts-pk .ts-pk-card.fit3 .sum{max-height:10em}
 html .ts-pk .ts-pk-card.fit3 .row{min-height:26px;padding:.1rem .5rem;font-size:.75rem}
 html .ts-pk .ts-pk-card.fit3 .row b{width:1.2rem;height:1.2rem}
 html .ts-pk .ts-pk-card.fit3 .open{padding:.45rem .7rem}
 html .ts-pk .ts-pk-card .more{display:none;margin:.2rem .3rem;font-size:.72rem;font-weight:700;color:var(--pk-muted);text-align:center}
-html .ts-pk .ts-pk-card.fit4 .row:not(.near){display:none}
-html .ts-pk .ts-pk-card.fit4 .more{display:block}
+html .ts-pk .ts-pk-card.fit1 .row:not(.near){display:none}
+html .ts-pk .ts-pk-card.fit1 .more{display:block}
+html .ts-pk .ts-pk-card.fit4 .sum{max-height:6.6em}
 html .ts-pk .ts-pk-card.fit5 .row,html .ts-pk .ts-pk-card.fit5 .more{display:none}
 html .ts-pk .ts-pk-card.fit5 .open small,html .ts-pk .ts-pk-card.fit5 .side,html .ts-pk .ts-pk-card.fit5 .sum{display:none}
 html .ts-pk .ts-pk-card.fit5 .open > b{font-size:.95rem;margin-top:0}
-html .ts-pk .ts-pk-card.fit5 .sum.is-gist{display:block;max-height:2.7em;margin-top:.15rem}   /* the glance list stays even on the smallest fit (it scrolls) */
-html .ts-pk .ts-pk-card.fit5 .hint{margin-top:.3rem;padding-top:.3rem}   /* very short screens or very large text: the open box keeps only its name and "Tap to go there" */
+html .ts-pk .ts-pk-card.fit5 .sum{display:block;max-height:4.4em;margin-top:.15rem}   /* gist and whole-paragraph summaries retain a scroll surface on the smallest fit */
+html .ts-pk .ts-pk-card.fit5 .hint{margin-top:.3rem;padding-top:.3rem}   /* very short screens or very large text retain the name, summary and jump hint */
 html .ts-pk .ts-pk-card.ts-pk-stack{overflow-y:auto;overscroll-behavior:contain}   /* last resort: the card scrolls, and fit() brings the open box into view */
 @media print{.ts-pk{display:none!important}html.ts-pk-ready .entry-content .ts-jump{display:block!important}}
 </style>
@@ -182,47 +196,190 @@ html .ts-pk .ts-pk-card.ts-pk-stack{overflow-y:auto;overscroll-behavior:contain}
 }, 200 );
 
 add_action( 'wp_footer', function () {
-	if ( ! ts_pk_page_data() ) {
+	if ( is_admin() || is_feed() ) {
 		return;
 	}
-	$json = wp_json_encode( ts_pk_page_data(), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT );
-	if ( false === $json ) { return; }
-	echo '<script type="application/json" id="ts-peek-nav-data">' . $json . '</script>';
+	$page = get_queried_object();
+	$title = is_page() && $page && ! empty( $page->post_title ) ? $page->post_title : wp_get_document_title();
+	$title = html_entity_decode( wp_strip_all_tags( (string) $title ), ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+	$flags = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
+	$config = wp_json_encode( array( 'title' => $title ), $flags );
+	if ( false === $config ) { return; }
+	echo '<script type="application/json" id="ts-peek-nav-config">' . $config . '</script>';
+	$data = ts_pk_page_data();
+	if ( $data ) {
+		$json = wp_json_encode( $data, $flags );
+		if ( false !== $json ) { echo '<script type="application/json" id="ts-peek-nav-data">' . $json . '</script>'; }
+	}
 	?>
 <script id="ts-peek-nav-runtime">
 (function () {
   'use strict';
+  function esc(t) { var d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
+  function byHref(h) { var id = h.slice(1); try { id = decodeURIComponent(id); } catch (e) {} return document.getElementById(id); }
+  function rowSections(row) {
+    var out = row ? [].slice.call(row.querySelectorAll('a[href^="#"]')).map(function (a) { return { href: a.getAttribute('href'), label: a.textContent.trim() }; }) : [];
+    out = out.filter(function (s) { return !!byHref(s.href); });
+    out.sort(function (a, b) { var x = byHref(a.href), y = byHref(b.href); return x === y ? 0 : (x.compareDocumentPosition(y) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1); });
+    return out;
+  }
+  // Both modes share the same strip, pinned-header measurement, reading line
+  // and title painting. Only the registered pages continue into the rail code.
+  function titleStrip(content, sections, resolve, row, titleOnly) {
+    var root = document.documentElement, strip = document.createElement('div');
+    strip.id = 'ts-peek-title-strip'; strip.className = 'ts-pk ts-pk-top' + (titleOnly ? ' is-title-only' : ''); strip.setAttribute('aria-hidden', 'true');
+    strip.innerHTML = '<div class="in"><div class="tr"></div></div>';
+    if (row) row.parentNode.insertBefore(strip, row.nextSibling); else content.insertBefore(strip, content.firstChild);
+    var topIn = strip.querySelector('.in'), topTr = strip.querySelector('.tr'), items = [], head = document.getElementById('masthead');
+    root.classList.add('ts-pk-title-ready');
+    if (content !== document.body) content.classList.add('ts-pk-title-content');
+    function measureHead() {
+      var pinned = head && getComputedStyle(head).position === 'sticky';
+      var menu = head ? head.querySelector('.ast-mobile-header-content') : null;
+      var bar = pinned ? head.offsetHeight - (menu ? menu.offsetHeight : 0) : 0;
+      root.style.setProperty('--pk-head', Math.max(0, bar) + 'px');
+      root.style.setProperty('--pk-strip', strip.offsetHeight + 'px');
+      root.style.setProperty('--pk-title-end', ((parseFloat(getComputedStyle(strip).top) || 0) + strip.offsetHeight) + 'px');
+    }
+    function layout() {
+      if (titleOnly) {
+        var width = Math.max(1, topIn.clientWidth * (items.length === 1 ? 1 : 0.68));
+        items.forEach(function (item) { item.style.maxWidth = width + 'px'; });
+        // Reserve the active weight's full wrapped height before painting, so
+        // becoming current cannot cut a long title's last line off.
+        var height = items.reduce(function (h, item) { item.style.fontWeight = '800'; var next = Math.ceil(item.getBoundingClientRect().height); item.style.removeProperty('font-weight'); return Math.max(h, next); }, 0);
+        topIn.style.height = Math.max(parseFloat(getComputedStyle(root).fontSize) * 1.55, height) + 'px';
+      }
+      measureHead();
+    }
+    function setSections(next) {
+      sections = next;
+      topTr.innerHTML = sections.map(function (s) { return '<span>' + esc(s.label) + '</span>'; }).join('');
+      items = [].slice.call(topTr.children); strip.classList.toggle('is-single', sections.length === 1); layout();
+    }
+    function line() { return Math.max(window.innerHeight * 0.25, (parseFloat(getComputedStyle(strip).top) || 0) + strip.offsetHeight + 24); }
+    function bounds(i) { var h = resolve(i), nx = resolve(i + 1); return [h ? h.getBoundingClientRect().top : 0, nx ? nx.getBoundingClientRect().top : content.getBoundingClientRect().bottom]; }
+    function read() {
+      var y = line(), cur = -1, tops = sections.map(function (s, k) { var h = resolve(k); return h ? h.getBoundingClientRect().top : null; }), end = content.getBoundingClientRect().bottom;
+      tops.forEach(function (t, k) { if (t !== null && t <= y) cur = k; });
+      var fills = sections.map(function (s, k) { if (k < cur) return 1; if (k !== cur || tops[k] === null) return 0; var b = tops[k + 1] !== undefined && tops[k + 1] !== null ? tops[k + 1] : end; return Math.max(0, Math.min(1, (y - tops[k]) / Math.max(1, b - tops[k]))); });
+      var a0 = tops[0] !== null ? tops[0] : 0, whole = Math.max(0, Math.min(1, (y - a0) / Math.max(1, end - a0)));
+      var ci = items.map(function (t) { return t.offsetLeft + t.offsetWidth / 2; }), at = Math.max(cur, 0), nxt = Math.min(at + 1, sections.length - 1);
+      var x = cur < 0 ? ci[0] : ci[at] + (fills[at] || 0) * (ci[nxt] - ci[at]), near = 0;
+      ci.forEach(function (c, k) { if (Math.abs(c - x) < Math.abs(ci[near] - x)) near = k; });
+      return { cur: cur, fills: fills, whole: whole, shift: topIn.clientWidth / 2 - x, near: near };
+    }
+    function paint(state) {
+      topTr.style.transform = 'translateX(' + state.shift.toFixed(1) + 'px)';
+      items.forEach(function (t, k) { t.classList.toggle('is-now', k === state.near); });
+    }
+    function watch(changed) {
+      window.addEventListener('resize', function () { layout(); changed(); });
+      if ('ResizeObserver' in window) {
+        var sizes = new ResizeObserver(function () { if (titleOnly) layout(); else measureHead(); changed(); });
+        if (head) sizes.observe(head);
+        // Rem-based padding changes with text enlargement even while the
+        // measured title window still has its previous pixel height.
+        sizes.observe(strip, titleOnly ? { box: 'border-box' } : undefined);
+      }
+      window.addEventListener('load', function () { layout(); changed(); });
+      if (document.fonts && document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', function () { layout(); changed(); });
+    }
+    setSections(sections);
+    return { strip: strip, head: head, line: line, bounds: bounds, read: read, paint: paint, layout: layout, watch: watch, setSections: setSections };
+  }
+  function practiceNavigation(content, title) {
+    var labs = [].slice.call(content.querySelectorAll('.tsx-lab,.tsp-lab,.tsr-lab'));
+    function barHeight(lab) {
+      var bar = lab.querySelector('.tsx-pills.is-on,.tsx-seg.is-on,.tsp-bar.is-on,.tsr-top');
+      if (!bar || !bar.getClientRects().length || getComputedStyle(bar).display === 'none') return 0;
+      // Keep the actual height while Now/Next closes: the section's document
+      // position includes that same shrinking list, so the two offsets cancel.
+      return Math.max(0, bar.getBoundingClientRect().height);
+    }
+    function measure() {
+      labs.forEach(function (lab) { var value = barHeight(lab) + 'px'; if (lab.style.getPropertyValue('--pk-demo-bar') !== value) lab.style.setProperty('--pk-demo-bar', value); });
+    }
+    if (labs.length && 'MutationObserver' in window) {
+      // These two owned demos mark a section is-flash only inside go(), after
+      // the visitor chooses a destination. Observe only those section classes:
+      // previews, index presses and ordinary scrolling never request a jump.
+      // Their old scrollTo offsets know only the old bar, so correct that one
+      // navigation immediately. No global API replacement or settling timer.
+      var jumps = new MutationObserver(function (changes) {
+        var section = null;
+        changes.forEach(function (change) { if (change.target.classList.contains('is-flash')) section = change.target; });
+        if (!section) return;
+        var lab = section.closest('.tsp-lab,.tsr-lab'), strip = title.strip;
+        if (!lab || !content.contains(lab)) return;
+        var offset = (parseFloat(getComputedStyle(strip).top) || 0) + strip.offsetHeight + barHeight(lab) + 12;
+        window.scrollTo({ top: section.getBoundingClientRect().top + window.scrollY - offset, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+      });
+      [].forEach.call(content.querySelectorAll('.tsp-lab .tsp-sec,.tsr-lab .tsr-sec'), function (section) { jumps.observe(section, { attributes: true, attributeFilter: ['class'] }); });
+    }
+    measure(); return measure;
+  }
+  function titleOnly(content, row) {
+    var config = null;
+    try { config = JSON.parse(document.getElementById('ts-peek-nav-config').textContent); } catch (e) {}
+    var fallback = config && typeof config.title === 'string' && config.title.trim() ? config.title.trim() : document.title;
+    function visible(node) {
+      if (!node || !content.contains(node) || node.closest('.ts-pk,.ts-jump,nav,header,footer,dialog,[role="navigation"],[role="banner"],[role="contentinfo"],[role="dialog"],[hidden],[inert],[aria-hidden="true"],.screen-reader-text,.sr-only')) return false;
+      var r = node.getBoundingClientRect(); if (r.width < 2 || r.height < 2) return false;
+      for (var a = node; a && content.contains(a); a = a.parentElement) {
+        var cs = getComputedStyle(a);
+        if (cs.display === 'none' || cs.visibility === 'hidden' || cs.visibility === 'collapse' || cs.contentVisibility === 'hidden') return false;
+        if (a.tagName === 'DETAILS' && !a.open) { var summary = a.querySelector('summary'); if (!summary || !summary.contains(node)) return false; }
+        if (a !== node && /^(hidden|clip)$/.test(cs.overflowY)) { var ar = a.getBoundingClientRect(); if (a.clientHeight < 2 || r.top >= ar.bottom || r.bottom <= ar.top) return false; }
+      }
+      return true;
+    }
+    function collect() {
+      var list = row ? rowSections(row).map(function (s) { return { label: s.label, target: byHref(s.href) }; }) : [].slice.call(content.querySelectorAll('h2')).map(function (h) { return { label: h.innerText.replace(/\s+/g, ' ').trim(), target: h }; });
+      list = list.filter(function (s) { return s.label && visible(s.target); });
+      return list.length ? list : [{ label: fallback, target: content }];
+    }
+    var sections = collect(), title = titleStrip(content, sections, function (i) { return sections[i] && sections[i].target; }, row, true), measurePractice = practiceNavigation(content, title), queued = false;
+    function drawTitle() {
+      queued = false;
+      var next = collect();
+      if (next.length !== sections.length || next.some(function (s, i) { return s.target !== sections[i].target || s.label !== sections[i].label; })) { sections = next; title.setSections(sections); }
+      measurePractice();
+      title.paint(title.read());
+    }
+    function askTitle() { if (!queued) { queued = true; requestAnimationFrame(drawTitle); } }
+    title.watch(askTitle); window.addEventListener('scroll', askTitle, { passive: true });
+    content.addEventListener('toggle', askTitle, true);
+    if ('ResizeObserver' in window) new ResizeObserver(askTitle).observe(content);
+    if ('MutationObserver' in window) new MutationObserver(function (changes) {
+      if (changes.some(function (change) { var node = change.target.nodeType === 1 ? change.target : change.target.parentElement; return node && !node.closest('.ts-pk'); })) askTitle();
+    }).observe(content, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['class', 'style', 'hidden', 'inert', 'aria-hidden', 'open', 'id'] });
+    drawTitle();
+  }
   var tries = 0;
   function init() {
-    var content = document.querySelector('.entry-content'), row = content && content.querySelector('.ts-jump');
-    if (!row || !('PointerEvent' in window) || document.querySelector('.ts-pk-nav')) return;
-    var links = [].slice.call(row.querySelectorAll('a[href^="#"]'));
-    if (links.length < 2) return;
-    var root = document.documentElement, calm = window.matchMedia('(prefers-reduced-motion: reduce)');
-    var S = links.map(function (a) { return { href: a.getAttribute('href'), label: a.textContent.trim() }; });
-    // Kiro, template review: keep only links whose target exists, in the page's own order (the row's order is not checked anywhere else); the section
-    // guide assigns some ids on load, so wait for them briefly before dropping a link
-    function byHref(h) { var id = h.slice(1); try { id = decodeURIComponent(id); } catch (e) {} return document.getElementById(id); }
-    if (S.some(function (s) { return !byHref(s.href); }) && tries++ < 10) { setTimeout(init, 100); return; }
-    S = S.filter(function (s) { s.t = byHref(s.href); return !!s.t; });
-    S.sort(function (a, b) { return a.t === b.t ? 0 : (a.t.compareDocumentPosition(b.t) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1); });
-    S.forEach(function (s) { delete s.t; });
-    if (S.length < 2) return;   // the row stays visible: it remains the page's navigation
-    function el(i) { if (!S[i]) return null; var id = S[i].href.slice(1); try { id = decodeURIComponent(id); } catch (e) {} return document.getElementById(id); }   // null past the last section; a malformed href is used as written
+    if (document.getElementById('ts-peek-title-strip')) return;
+    var main = document.querySelector('#main,main,[role="main"]') || document.querySelector('#primary,#content') || document.body;
+    var entries = main.querySelectorAll('.entry-content'), content = entries.length === 1 ? entries[0] : main, row = content.querySelector('.ts-jump');
+    var root = document.documentElement, calm = window.matchMedia('(prefers-reduced-motion: reduce)'), data = null;
+    var dataNode = document.getElementById('ts-peek-nav-data');
+    try { data = JSON.parse(dataNode.textContent); } catch (e) {}
+    var hasData = data && data.schema === 1 && Array.isArray(data.items);
+    var links = row ? [].slice.call(row.querySelectorAll('a[href^="#"]')) : [];
+    if (hasData && links.some(function (a) { return !byHref(a.getAttribute('href')); }) && tries++ < 10) { setTimeout(init, 100); return; }
+    var S = rowSections(row);
+    if (!hasData || S.length < 2 || !('PointerEvent' in window) || document.querySelector('.ts-pk-nav')) { titleOnly(content, row); return; }
+    function el(i) { return S[i] ? byHref(S[i].href) : null; }
     function nameOf(h, fallback) {   // Kiro, template review: an FAQ panel or a plain block as a target read its whole text (2,173 characters) aloud
       if (!h) return fallback;
       var q = /^H[1-6]$/.test(h.tagName) ? h : h.querySelector('h1,h2,h3,h4,h5,h6,.uagb-question,summary');
       var t = q ? q.textContent.replace(/\s+/g, ' ').trim() : ''; return t && t.length <= 140 ? t : fallback;
     }
-    function esc(t) { var d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
     function buzz() { if (navigator.vibrate) { try { navigator.vibrate(6); } catch (e) {} } }
 
     // what each section is: its heading, its first paragraph, its length (read from the page itself)
     // Data contains wording, approval and provenance only; it cannot introduce
     // destinations. Unapproved or mismatched-page data uses whole paragraphs.
-    var dataNode = document.getElementById('ts-peek-nav-data'), data;
-    try { data = JSON.parse(dataNode.textContent); } catch (e) { return; }
-    if (!data || data.schema !== 1 || !Array.isArray(data.items)) return;
     var PAGE = (location.pathname.replace(/\/+$/, '').split('/').pop() || '').toLowerCase(), MINE = Object.create(null);
     if (data.slug === PAGE && data.approval && data.approval.status === 'approved') {
       data.items.forEach(function (item) {
@@ -270,9 +427,7 @@ add_action( 'wp_footer', function () {
 
     // the parts: top strip (display only), rail with its index icon, card
     var segs = null;
-    var strip = document.createElement('div'); strip.className = 'ts-pk ts-pk-top'; strip.setAttribute('aria-hidden', 'true');
-    strip.innerHTML = '<div class="in"><div class="tr">' + S.map(function (s) { return '<span>' + esc(s.label) + '</span>'; }).join('') + '</div></div>';
-    row.parentNode.insertBefore(strip, row.nextSibling);   // in the page, right under the row; it sticks to the top as you read (display only)
+    var title = titleStrip(content, S, el, row, false), strip = title.strip;
     var box = document.createElement('div'); box.className = 'ts-pk';
     box.innerHTML = '<nav class="ts-pk-nav" aria-label="Sections on this page"><button type="button" class="ts-pk-ix" aria-expanded="false" aria-controls="ts-pk-fan" aria-label="Show all sections (press and hold)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 7h12M6 12h9M6 17h6"/></svg></button>' +
       '<ol class="ts-pk-fan" id="ts-pk-fan" aria-label="All sections" aria-hidden="true">' + S.map(function (s, i) { return '<li><b>' + (i + 1) + '</b><span>' + esc(s.label) + '</span></li>'; }).join('') + '</ol><ol class="ts-pk-rail">' + S.map(function (s) { return '<li><a href="' + esc(s.href) + '" aria-label="' + esc(s.label) + '" draggable="false"><i></i></a></li>'; }).join('') + '</ol><span class="ts-pk-you" aria-hidden="true"></span><span class="ts-pk-label" aria-hidden="true"></span></nav>' +
@@ -281,27 +436,12 @@ add_action( 'wp_footer', function () {
     var host = strip.parentNode, okHost = true;
     for (var an = host; an && an !== document.documentElement; an = an.parentElement) { var cs = getComputedStyle(an); if (cs.transform !== 'none' || cs.filter !== 'none' || cs.perspective !== 'none' || (cs.backdropFilter || cs.webkitBackdropFilter || 'none') !== 'none' || /transform|filter|perspective/.test(cs.willChange || '') || (cs.containerType && cs.containerType !== 'normal') || /paint|layout|strict|content/.test(cs.contain || '')) { okHost = false; break; } }   // any of these would make position:fixed relative to that ancestor
     if (okHost) host.insertBefore(box, strip.nextSibling); else document.body.appendChild(box);   // keyboard order: row, strip, rail, then the sections
-    var top = strip, topIn = strip.querySelector('.in'), topTr = strip.querySelector('.tr'), topItems = [].slice.call(topTr.children), nav = box.querySelector('.ts-pk-nav'), rail = nav.querySelector('.ts-pk-rail'),
+    var top = strip, nav = box.querySelector('.ts-pk-nav'), rail = nav.querySelector('.ts-pk-rail'),
       you = nav.querySelector('.ts-pk-you'), label = nav.querySelector('.ts-pk-label'), card = box.querySelector('.ts-pk-card');
     segs = [].slice.call(rail.children);
     var tip = box.querySelector('.ts-pk-tip'), ixBtn = nav.querySelector('.ts-pk-ix'), fan = nav.querySelector('.ts-pk-fan'), fanItems = [].slice.call(fan.children);
     root.classList.add('ts-pk-ready');
-    // the pinned header: the strip sticks right under it (its height changes with the phone menu, the logo and the admin bar)
-    var head = document.getElementById('masthead');
-    function measureHead() {
-      var pinned = head && getComputedStyle(head).position === 'sticky';
-      var menu = head ? head.querySelector('.ast-mobile-header-content') : null;   // the open phone menu lives inside the header: never count it (counting it made the menu's
-      var bar = pinned ? head.offsetHeight - (menu ? menu.offsetHeight : 0) : 0;     // max-height depend on itself, so it flickered between two sizes)
-      root.style.setProperty('--pk-head', Math.max(0, bar) + 'px');
-      root.style.setProperty('--pk-strip', strip.offsetHeight + 'px');
-    }
-    measureHead();
-    if ('ResizeObserver' in window) {
-      var headSize = new ResizeObserver(function () { measureHead(); ask(); });
-      if (head) headSize.observe(head);
-      headSize.observe(strip);
-    }
-    window.addEventListener('resize', measureHead);
+    var head = title.head; title.watch(ask);
     // the text column stops 6px before the rail and its icon, whatever margin the theme gives the content at this width (measured, not guessed);
     // the theme's own padding stays whenever it is already enough
     function clearRail() {
@@ -345,8 +485,8 @@ add_action( 'wp_footer', function () {
 
     // where the reader is
     var cur = -1;
-    function line() { return Math.max(window.innerHeight * 0.25, (parseFloat(getComputedStyle(top).top) || 0) + top.offsetHeight + 24); }   // below the pinned header and the strip
-    function bounds(i) { var h = el(i), nx = el(i + 1), a = h ? h.getBoundingClientRect().top : 0, b = nx ? nx.getBoundingClientRect().top : content.getBoundingClientRect().bottom; return [a, b]; }
+    function line() { return title.line(); }
+    function bounds(i) { return title.bounds(i); }
     function part(i) { var b = bounds(i); return Math.max(0, Math.min(1, (line() - b[0]) / Math.max(1, b[1] - b[0]))); }
     function fill(i) { return i < cur ? 1 : (i === cur ? part(i) : 0); }
     function whole() { var a = bounds(0)[0], b = bounds(S.length - 1)[1]; return Math.max(0, Math.min(1, (line() - a) / Math.max(1, b - a))); }
@@ -446,7 +586,8 @@ add_action( 'wp_footer', function () {
         // Keep the existing scrollable-card fallback inside the selected space.
         card.style.maxHeight = cap + 'px';
         var avail = Math.max(0, cap - (card.offsetHeight - card.clientHeight));
-        // fit1-3 trim detail; fit4 folds far rows; fit5 leaves the open box alone.
+        // Fold distant rows first; then trim summary height and compact nearby
+        // controls. Only the smallest fit leaves the open box alone.
         ['fit1', 'fit2', 'fit3', 'fit4', 'fit5'].some(function (c) { if (card.scrollHeight <= avail + 0.5) return true; card.classList.add(c); return false; });
         return card.scrollHeight <= avail + 0.5;
       }
@@ -587,19 +728,9 @@ add_action( 'wp_footer', function () {
     var lastLabel = '', lastRove = -2, tipWait = 0;
     function draw() {
       ticking = false;
-      // reads first (one layout pass) ...
-      var y = line(), i = -1, tops = S.map(function (s, k) { var h = el(k); return h ? h.getBoundingClientRect().top : null; }), end = content.getBoundingClientRect().bottom;
-      tops.forEach(function (t, k) { if (t !== null && t <= y) i = k; }); cur = i;
-      var fills = S.map(function (s, k) { if (k < cur) return 1; if (k !== cur || tops[k] === null) return 0; var b = tops[k + 1] !== undefined && tops[k + 1] !== null ? tops[k + 1] : end; return Math.max(0, Math.min(1, (y - tops[k]) / Math.max(1, b - tops[k]))); });
-      var a0 = tops[0] !== null ? tops[0] : 0, w = Math.max(0, Math.min(1, (y - a0) / Math.max(1, end - a0)));
-      var rr = rail.getBoundingClientRect(), nr = nav.getBoundingClientRect(), sy = window.scrollY;
-      // the title row: where the reading position is between this title and the next one
-      var ci = topItems.map(function (t) { return t.offsetLeft + t.offsetWidth / 2; }), at = Math.max(cur, 0), nxt = Math.min(at + 1, S.length - 1);
-      var x = cur < 0 ? ci[0] : ci[at] + (fills[at] || 0) * (ci[nxt] - ci[at]), mid = topIn.clientWidth / 2, near = 0;
-      ci.forEach(function (c, k) { if (Math.abs(c - x) < Math.abs(ci[near] - x)) near = k; });
-      // ... then writes
-      topTr.style.transform = 'translateX(' + (mid - x).toFixed(1) + 'px)';
-      topItems.forEach(function (t, k) { t.classList.toggle('is-now', k === near); });
+      var state = title.read(), fills = state.fills, w = state.whole; cur = state.cur;
+      var rr = rail.getBoundingClientRect(), nr = nav.getBoundingClientRect();
+      title.paint(state);
       segs.forEach(function (li, k) { li.firstChild.firstChild.style.setProperty('--p', fills[k].toFixed(3)); var a = li.firstChild; if (k === cur) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
       var name = S[Math.max(cur, 0)].label;
       if (name !== lastLabel) { lastLabel = name; label.textContent = name; }

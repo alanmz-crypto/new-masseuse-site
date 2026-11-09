@@ -2,8 +2,8 @@
 """Build separate local structural fixtures for Peek (never real website copy).
 
 The four service-page shapes come from jump-links.php, including the six-section
-Therapeutic/Chair order. The enabled pages follow peek-pages.json; the browser
-fixture checks may also inject the packaged core into prepared shapes explicitly.
+Therapeutic/Chair order. Enabled rails follow peek-pages.json; every shape receives
+the read-only title strip, and browser fixtures may inject prepared core/data explicitly.
 All jump targets are in the HTML so the no-JavaScript fallback is testable.
 The tiny dark theme exercises the core's colour branches, not the site's theme.
 Responsive root sizes reproduce the observed staging typography reflow so a
@@ -110,6 +110,9 @@ header = ('<header id="masthead"><div id="ast-mobile-header"><div style="height:
 
 
 def page(slug, plan, body=None, enabled=False):
+    title = slug.replace('-', ' ').title() + ' (structural mock)'
+    config = json.dumps({'title': title}, ensure_ascii=True).replace('<', '\\u003c').replace('>', '\\u003e').replace('&', '\\u0026')
+    config_script = f'<script type="application/json" id="ts-peek-nav-config">{config}</script>'
     data_script = ''
     if enabled:
         data = json.loads((package / 'peek-data' / f'{slug}.json').read_text(encoding='utf-8'))
@@ -124,10 +127,10 @@ def page(slug, plan, body=None, enabled=False):
     if body is None:
         body = ''.join(sec(anchor, heading, counts.get(anchor, 6)) for anchor, _, heading in plan)
     return ('<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
-            + mock_theme + (css if enabled else '') + '</head><body>' + header
-            + '<div class="entry-content"><div class="mock-inner"><h1>' + html.escape(slug.replace('-', ' ').title()) + ' (structural mock)</h1>'
+            + '<title>' + html.escape(title) + '</title>' + mock_theme + css + '</head><body>' + header
+            + '<div class="entry-content"><div class="mock-inner"><h1>' + html.escape(title) + '</h1>'
             + f'<p>{para}</p>' + row_for(plan) + body + '</div></div><footer style="height:400px;background:#222"></footer>'
-            + '<button id="ts-section-guide-trigger">On this page</button>' + data_script + (js if enabled else '') + '</body></html>')
+            + '<button id="ts-section-guide-trigger">On this page</button>' + config_script + data_script + js + '</body></html>')
 
 
 pages = {}

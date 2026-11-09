@@ -261,6 +261,16 @@ if [ -f "$extra" ]; then
   case "$inst" in
     link-ideas/core-upgrade/install-peek-core-upgrade.php) browser_seconds=900; browser_evidence=peek-core-upgrade-browser.log ;;
     link-ideas/core-summary-touch/install-peek-core-summary-touch.php) browser_seconds=900; browser_evidence=peek-core-summary-touch-browser.log ;;
+    link-ideas/core-title-strip/install-peek-core-title-strip.php)
+      browser_seconds=900; browser_evidence=peek-core-title-strip-browser.log
+      # Enumerate this fresh copy, including unlisted/practice pages. The title
+      # matrix must not silently test only a fixed menu or sitemap subset.
+      export TS_PEEK_TITLE_INVENTORY="$out/title-strip-pages.json"
+      wpc eval --skip-themes '$rows = array(); foreach (get_posts(array("post_type" => "page", "post_status" => "publish", "numberposts" => -1, "orderby" => "ID", "order" => "ASC", "suppress_filters" => true)) as $p) { $path = wp_parse_url(get_permalink($p), PHP_URL_PATH); if (!is_string($path) || substr($path, 0, 1) !== "/") { WP_CLI::error("Invalid published-page permalink"); } $rows[] = array("id" => $p->ID, "path" => $path, "title" => html_entity_decode(wp_strip_all_tags(get_the_title($p)), ENT_QUOTES | ENT_HTML5, "UTF-8")); } echo wp_json_encode(array("pages" => $rows));' > "$TS_PEEK_TITLE_INVENTORY"
+      inventory_rc=$?
+      check "all published-page browser inventory" "$inventory_rc"
+      [ "$inventory_rc" -eq 0 ] || invalid "could not enumerate all published pages for title-strip checks"
+      ;;
   esac
   echo "  browser budget: ${browser_seconds}s (all package checks retained)"
   timeout "$browser_seconds" node "$extra" http://localhost:8090 > "$out/package-browser.log" 2>&1

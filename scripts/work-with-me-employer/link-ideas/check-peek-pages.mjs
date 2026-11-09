@@ -166,11 +166,13 @@ try {
       ok(`${prefix}: every fallback destination exists`, await p.evaluate(row => row.length >= 2 && row.every(a => !!document.getElementById(decodeURIComponent(a.href.slice(1)))) && new Set(row.map(a => a.href)).size === row.length, row));
       if (enabled(page)) await verifyEnabled(p, page.slug, data.approval.status === 'approved' ? data : { ...data, items: [], coverage: {} }, prefix);
       else {
-        ok(`${prefix}: prepared page remains unchanged`, await p.locator('.ts-pk, #ts-peek-nav-css, #ts-peek-nav-runtime, #ts-peek-nav-data').count() === 0);
+        ok(`${prefix}: prepared page has only the shared read-only strip`, await p.locator('#ts-peek-title-strip').count() === 1 && await p.locator('.ts-pk-nav,.ts-pk-card,#ts-peek-nav-data').count() === 0);
         if (fixtures) {
           // A sentinel draft phrase proves that the approval flag suppresses data even when present.
           const draft = { ...data, approval: { ...data.approval, status: 'draft' }, items: [['Unapproved fixture phrase', decodeURIComponent(row[0].href.slice(1))]] };
-          await inject(p, draft); await verifyEnabled(p, page.slug, draft, prefix + '/local fixture');
+          const { p: draftPage, errors: draftErrors } = await open(ctx, page.slug, true);
+          await inject(draftPage, draft); await verifyEnabled(draftPage, page.slug, draft, prefix + '/local fixture');
+          errors.push(...draftErrors); await draftPage.close();
         }
       }
       ok(`${prefix}: no JavaScript errors`, errors.length === 0, errors);

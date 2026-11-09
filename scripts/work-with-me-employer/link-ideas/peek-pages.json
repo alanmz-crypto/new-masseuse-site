@@ -1,6 +1,14 @@
 {
   "schema": 1,
   "regression": "thai-massage",
+  "titleStrip": {
+    "scope": "all-visitor-html",
+    "staging": "pending",
+    "excludedContexts": [
+      "admin",
+      "feed"
+    ]
+  },
   "pages": [
     {
       "slug": "thai-massage",
@@ -49,7 +57,7 @@
       ]
     }
   ],
-  "eligibilityPending": [
+  "railEligibilityPending": [
     "services",
     "home",
     "about",

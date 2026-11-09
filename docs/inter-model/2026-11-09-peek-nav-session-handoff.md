@@ -1,6 +1,27 @@
 # Session handoff: the Peek navigation (for the next Claude Code session)
 
-**Current follow-up deployed: short open summaries.** The
+**Current work: all-page title strip and larger usable summaries; not yet deployed.**
+Ryan's scope includes short, no-heading, unlisted and practice pages. The
+[all-page title-strip record](../reviews/2026-11-09-peek-title-strip-all-pages.md)
+tracks the pending candidate and verification. Title-only pages receive safe
+page/document-title JSON and the shared runtime, with visible content headings
+when available; they receive no invented destinations, summaries or rail.
+The four approved data files and settled rail/index behavior stay unchanged.
+Ryan's newer request also enlarges the scrolling area globally for existing
+Peek summaries, folding distant closed rows before reducing summary space and
+retaining the nearest rows and whole-paragraph fallback. See the
+[summary-space record](../reviews/2026-11-09-peek-summary-space.md) for fit details
+and current tests. This adds no rail or summaries to title-only pages. Local
+structural fixtures do not establish actual-copy or device results, and the
+reported initial delay has not been reproduced as a loading latency.
+`peek-pages.json` separates the all-page strip from pending rail eligibility.
+Fresh staging39-copy rehearsal with uploads, rendered wording/visual review,
+guarded dry run and verified off-site backup still precede any staging write.
+No new deployment snapshot exists yet. The new `core-title-strip` route is exact
+frozen v3→the combined candidate; after applying, reverse it to v3 with its own actual snapshot
+before attempting any earlier recovery. Main/live remain untouched.
+
+**Current deployed baseline: short open summaries (frozen shared v3).** The
 [short-summary touch record](../reviews/2026-11-09-peek-short-summary-touch.md)
 tracks the exact `core-summary-touch` transition from frozen shared v2, written
 to #1380 at 07:59:57 UTC; its apply job finished 08:04:07 UTC. The correction reserves short-summary swipes
@@ -41,12 +62,14 @@ unchanged data hashes. Public browser verification was **INVALID HTTP202** at
 07:17:03 UTC on the initial Thai request: zero assertions/captures, no retry queued.
 Follow the correction record for evidence and exact recovery. Chromium native
 touch on the old core did not reproduce Ryan's reported page scrolling, so no
-physical-device resolution is claimed. Services/short-page eligibility, Safari,
+physical-device resolution is claimed. Services/short-page rail eligibility, Safari,
 physical devices and actual assistive technology remain open. Main/live are untouched.
 
 The original `core` migration targets frozen `peek-nav-shared-v1.php`;
 `core-upgrade` is now pinned to v1→frozen `peek-nav-shared-v2.php`, preserving its
-07:11:22 snapshot. Reverse the summary-touch update first using its
+07:11:22 snapshot. `core-summary-touch` now pins v2→frozen `peek-nav-shared-v3.php`,
+preserving the 07:59:57 snapshot. Reverse any later title-strip update to v3 first;
+then reverse the summary-touch update using its
 own actual snapshot and explicit `core-summary-touch --rollback FILE` arguments.
 Only then may `core-upgrade --rollback FILE` restore v1, followed by the original
 `core --rollback FILE` recovery to legacy. Never substitute an older snapshot.

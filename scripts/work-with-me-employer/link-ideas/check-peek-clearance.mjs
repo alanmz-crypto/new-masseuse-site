@@ -34,6 +34,7 @@ const snapshot = p => p.evaluate(() => {
     title: rect(o?.querySelector('b')), hint: rect(o?.querySelector('.hint')), summary: rect(sum), name: o?.querySelector('b')?.textContent,
     pinned: c?.classList.contains('is-pinned'), index: Number(c?.dataset.i),
     rows: [...c.querySelectorAll('.row')].map(row => ({ index: Number(row.dataset.k), visible: getComputedStyle(row).display !== 'none', rect: rect(row) })),
+    more: [...c.querySelectorAll('.more')].filter(node => getComputedStyle(node).display !== 'none').map(node => node.textContent),
     items: [...c.querySelectorAll('.sum.is-gist li')].map(li => li.textContent),
     summaryScroll: sum && { top: sum.scrollTop, height: sum.scrollHeight, clientHeight: sum.clientHeight, width: sum.scrollWidth, clientWidth: sum.clientWidth },
     fit: c.className.match(/fit\d/g) || [], stickyTop: parseFloat(getComputedStyle(strip).top) || 0 };
@@ -96,7 +97,13 @@ const checkCard = async (p, label, row, data, i, allRows = false) => {
   // prove the existing outer-card fallback works with actual keyboard scrolling.
   const reach = !allRows && !visible && inside(g.card, viewport) ? await reachCardEnds(p) : null;
   ok(`${label}: section title, summary and jump hint are ${allRows ? 'visible' : 'visible or keyboard-reachable'}`, (visible || reach?.reachable) && g.summary.height > 0 && g.summaryScroll.width <= g.summaryScroll.clientWidth + 1, { ...g, reach });
-  ok(`${label}: approved words and section identity stay intact`, g.index === i && g.name === row[i].label && JSON.stringify(g.items) === JSON.stringify(wanted) && g.rows.length === row.length - 1 && (!allRows || g.rows.every(row => row.visible && inside(row.rect, g.card) && inside(row.rect, viewport))), g);
+  // Portrait fitting may now fold distant rows before shrinking the summary.
+  // Require the exact neighboring controls and accurate +N counts when folded;
+  // all visible controls must still fit. Wording and identity remain exact.
+  const folded = g.rows.some(item => !item.visible);
+  const wantedMore = [i > 1 ? `+${i - 1} more above` : null, row.length - i > 2 ? `+${row.length - i - 2} more below` : null].filter(Boolean);
+  const rowsFit = g.rows.every(item => item.visible === (!folded || Math.abs(item.index - i) === 1) && (!item.visible || (inside(item.rect, g.card) && inside(item.rect, viewport)))) && JSON.stringify(g.more) === JSON.stringify(folded ? wantedMore : []);
+  ok(`${label}: approved words, section identity and topic controls stay intact`, g.index === i && g.name === row[i].label && JSON.stringify(g.items) === JSON.stringify(wanted) && g.rows.length === row.length - 1 && (!allRows || rowsFit), g);
   return g;
 };
 const shot = async (p, label, geometry) => {

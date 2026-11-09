@@ -9,14 +9,15 @@ $db = array(); $next_id = 2000; $filters = array(); $home = 'http://localhost:80
 class WP_CLI { static function error( $m ) { throw new RuntimeException( $m ); } static function success( $m ) { $GLOBALS['message'] = $m; } }
 function home_url() { return $GLOBALS['home']; }
 function untrailingslashit( $s ) { return rtrim( $s, '/' ); }
-function wp_parse_url( $s, $component ) { return parse_url( $s, $component ); }
+function wp_parse_url( $s, $component = -1 ) { return parse_url( $s, $component ); }
 function get_stylesheet() { return 'astra'; }
 function current_user_can( $s ) { return true; }
 function wp_get_environment_type() { return $GLOBALS['environment_type']; }
 function wpcode() { static $o; return $o ??= (object) array( 'cache' => new class { function cache_all_loaded_snippets() { if ( $GLOBALS['fail_cache'] ) { $GLOBALS['fail_cache'] = false; throw new RuntimeException( 'Forced cache failure' ); } if ( is_callable( $GLOBALS['mutate_page_on_refresh'] ) ) { $callback = $GLOBALS['mutate_page_on_refresh']; $GLOBALS['mutate_page_on_refresh'] = null; $callback(); } } } ); }
 function get_object_taxonomies( $t ) { return array( 'wpcode_type', 'wpcode_location' ); }
 function get_post_stati() { return array( 'publish', 'draft', 'trash' ); }
-function get_posts( $args ) { return array_map( static fn( $r ) => (object) $r['post'], array_values( $GLOBALS['db'] ) ); }
+function get_posts( $args ) { if ( ( $args['post_type'] ?? '' ) === 'page' ) { return array_map( static fn( $p ) => (object) $p, array_filter( $GLOBALS['inventory_pages'], static fn( $p ) => ( $p['post_status'] ?? 'publish' ) === ( $args['post_status'] ?? 'publish' ) ) ); } return array_map( static fn( $r ) => (object) $r['post'], array_values( $GLOBALS['db'] ) ); }
+function get_permalink( $post ) { return $post->permalink; }
 function get_post( $id, $out = null, $context = null ) { $p = $GLOBALS['db'][ $id ]['post'] ?? null; return $out === ARRAY_A ? $p : ( $p ? (object) $p : null ); }
 function get_post_meta( $id ) { return $GLOBALS['db'][ $id ]['meta']; }
 function wp_get_object_terms( $id, $tax, $args ) { return $GLOBALS['db'][ $id ]['terms'][ $tax ]; }
@@ -33,7 +34,9 @@ function do_action( $tag ) { $groups = $GLOBALS['filters'][ $tag ] ?? array(); k
 function is_admin() { return $GLOBALS['admin']; }
 function is_feed() { return $GLOBALS['feed']; }
 function is_page( $slug = null ) { return $slug === null ? (bool) $GLOBALS['page'] : $GLOBALS['page'] === $slug; }
-function get_queried_object() { return (object) array( 'post_name' => $GLOBALS['page'] ); }
+function get_queried_object() { return (object) array( 'post_name' => $GLOBALS['page'], 'post_title' => 'Page ' . $GLOBALS['page'] ); }
+function wp_get_document_title() { return 'Visitor page'; }
+function wp_strip_all_tags( $text ) { return trim( strip_tags( preg_replace( '@<(script|style)[^>]*?>.*?</\\1>@si', '', $text ) ) ); }
 function wp_update_post( $arr, $error = false ) {
     if ( $GLOBALS['fail_write'] ) { $GLOBALS['fail_write'] = false; return 0; }
     $arr = wp_unslash( $arr ); $id = $arr['ID']; $p = array_merge( $GLOBALS['db'][ $id ]['post'], $arr );
@@ -56,6 +59,8 @@ function invoke_upgrade_rehearsal( $args ) { $GLOBALS['message'] = ''; require _
 function upgrade_rehearsal_refusal( $args, $label ) { $before = $GLOBALS['db']; $error = null; try { invoke_upgrade_rehearsal( $args ); } catch ( Throwable $e ) { $error = $e; } check( $error !== null && $GLOBALS['db'] === $before, 'core upgrade adapter: ' . $label ); }
 function invoke_summary_rehearsal( $args ) { $GLOBALS['message'] = ''; require __DIR__ . '/core-summary-touch/install-peek-core-summary-touch.php'; return $GLOBALS['message']; }
 function summary_rehearsal_refusal( $args, $label ) { $before = $GLOBALS['db']; $error = null; try { invoke_summary_rehearsal( $args ); } catch ( Throwable $e ) { $error = $e; } check( $error !== null && $GLOBALS['db'] === $before, 'summary-touch adapter: ' . $label ); }
+function invoke_title_rehearsal( $args ) { $GLOBALS['message'] = ''; require __DIR__ . '/core-title-strip/install-peek-core-title-strip.php'; return $GLOBALS['message']; }
+function title_rehearsal_refusal( $args, $label ) { $before = $GLOBALS['db']; $error = null; try { invoke_title_rehearsal( $args ); } catch ( Throwable $e ) { $error = $e; } check( $error !== null && $GLOBALS['db'] === $before, 'title-strip adapter: ' . $label ); }
 function invoke_package( $package, $args ) { require $package . '/install-peek-nav.php'; }
 function snapshot_path() { preg_match( '/Before-snapshot: (.+)$/', $GLOBALS['message'], $m ); if ( ! isset( $m[1] ) ) { throw new RuntimeException( 'No completed snapshot: ' . $GLOBALS['message'] ); } return $m[1]; }
 function snap_write( $data, $name ) { $p = $GLOBALS['testdir'] . '/backups/' . $name . '.json'; file_put_contents( $p, json_encode( $data ) ); return $p; }
@@ -244,13 +249,16 @@ invoke( array( 'rollback', $upgrade_snap ) ); invoke( array( 'rollback', $core_s
 check( $db[1380] === $legacy && array_diff_key( $db, array( 1380 => true ) ) === $data_before, 'original migration recovery still works after upgrade reversal with all page data preserved' );
 // Frozen baseline corruption is tested in a disposable package, never by editing source.
 $package = $testdir . '/package'; mkdir( $package );
-foreach ( array( 'install-peek-nav.php', 'peek-nav-legacy.php', 'peek-nav-shared-v1.php', 'peek-nav-shared-v2.php', 'peek-nav.php' ) as $name ) { copy( __DIR__ . '/' . $name, $package . '/' . $name ); }
+foreach ( array( 'install-peek-nav.php', 'peek-nav-legacy.php', 'peek-nav-shared-v1.php', 'peek-nav-shared-v2.php', 'peek-nav-shared-v3.php', 'peek-nav.php' ) as $name ) { copy( __DIR__ . '/' . $name, $package . '/' . $name ); }
 $db = $upgrade_before; file_put_contents( $package . '/peek-nav-shared-v1.php', "\n// changed", FILE_APPEND ); $error = null;
 try { invoke_package( $package, array( 'apply', 'core-upgrade' ) ); } catch ( Throwable $e ) { $error = $e; }
 check( $error !== null && str_contains( $error->getMessage(), 'Frozen shared v1 payload differs' ) && $db === $upgrade_before, 'altered frozen v1 file hash stops upgrade before any write' );
 copy( __DIR__ . '/peek-nav-shared-v1.php', $package . '/peek-nav-shared-v1.php' ); file_put_contents( $package . '/peek-nav-shared-v2.php', "\n// changed", FILE_APPEND ); $error = null;
 try { invoke_package( $package, array( 'apply', 'core-summary-touch' ) ); } catch ( Throwable $e ) { $error = $e; }
 check( $error !== null && str_contains( $error->getMessage(), 'Frozen shared v2 payload differs' ) && $db === $upgrade_before, 'altered frozen v2 file hash stops summary-touch upgrade before any write' );
+copy( __DIR__ . '/peek-nav-shared-v2.php', $package . '/peek-nav-shared-v2.php' ); file_put_contents( $package . '/peek-nav-shared-v3.php', "\n// changed", FILE_APPEND ); $error = null;
+try { invoke_package( $package, array( 'apply', 'core-title-strip' ) ); } catch ( Throwable $e ) { $error = $e; }
+check( $error !== null && str_contains( $error->getMessage(), 'Frozen shared v3 payload differs' ) && $db === $upgrade_before, 'altered frozen v3 file hash stops title-strip upgrade before any write' );
 foreach ( glob( $package . '/*' ) as $f ) { unlink( $f ); } rmdir( $package ); $clock = '2026-11-09 05:00:00';
 // A second explicit transition binds v2, leaving both earlier recoveries intact.
 $db = $upgraded; $summary_before = $db; $clock = '2026-11-09 07:30:00';
@@ -293,7 +301,7 @@ $expected_drift = $summary_before; $expected_drift[ $drift_id ]['post']['post_mo
 try { invoke( array( 'apply', 'core-summary-touch' ) ); } catch ( Throwable $e ) { $error = $e; }
 check( $error !== null && $db === $expected_drift, 'summary-touch concurrent page drift restores core without overwriting independent change' );
 $db = $summary_before; invoke_summary_rehearsal( array( 'apply' ) ); $summary_snap = snapshot_path(); $summary_applied = $db;
-check( $db[1380]['post']['post_content'] === substr( file_get_contents( __DIR__ . '/peek-nav.php' ), 6 ) && $db[1380]['post']['post_modified'] === $clock && array_diff_key( $db, array( 1380 => true ) ) === $data_before, 'summary-touch changes only core payload/dates and preserves all page records' );
+check( $db[1380]['post']['post_content'] === substr( file_get_contents( __DIR__ . '/peek-nav-shared-v3.php' ), 6 ) && $db[1380]['post']['post_modified'] === $clock && array_diff_key( $db, array( 1380 => true ) ) === $data_before, 'summary-touch changes only core payload/dates and preserves all page records' );
 invoke_summary_rehearsal( array( 'apply' ) ); check( $db === $summary_applied, 'summary-touch apply is idempotent' );
 foreach ( array( $legacy_path, $core_snap, $upgrade_snap ) as $earlier_snapshot ) { refusal( array( 'rollback', $earlier_snapshot ), 'earlier snapshot cannot reverse latest summary-touch payload' ); }
 refusal( array( 'apply', 'core-upgrade' ), 'earlier upgrade cannot overwrite latest summary-touch payload' );
@@ -328,18 +336,236 @@ refusal( array( 'rollback', $summary_snap ), 'latest core rollback refuses separ
 $db = $summary_applied; invoke( array( 'rollback', $summary_snap ) ); invoke( array( 'rollback', $upgrade_snap ) );
 check( $db === $upgrade_before, 'existing v1-to-v2 snapshot restores exact v1 after summary-touch reversal' );
 invoke( array( 'rollback', $core_snap ) ); check( $db[1380] === $legacy && array_diff_key( $db, array( 1380 => true ) ) === $data_before, 'all three exact reversals preserve historical legacy recovery and every page record' );
+// Sitewide titles use a separate exact v3 transition; no older snapshot changes meaning.
+$db = $summary_applied; $title_before = $db; $clock = '2026-11-09 09:00:00';
+check( hash( 'sha256', $db[1380]['post']['post_content'] ) === 'a20e7a69141843d08dbc0104f1eb7c4ae81ff99b0c7c6594ed1690d23fc0f4ac', 'summary-touch still produces exact deployed shared v3' );
+invoke_title_rehearsal( array() ); check( $db === $title_before && str_contains( $message, 'core-title-strip ready;' ), 'title-strip default preflight is read-only and ready' );
+foreach ( array( 'https://thaisolitude.com', 'https://staging38.thaisolitude.com', 'https://staging39.thaisolitude.com/other' ) as $bad ) { $home = $bad; refusal( array( 'apply', 'core-title-strip' ), 'title-strip refuses foreign/inexact origin ' . $bad ); }
+$home = 'https://staging39.thaisolitude.com'; title_rehearsal_refusal( array( 'apply' ), 'staging origin refused' );
+$home = 'http://localhost:8090'; $environment_type = 'staging'; title_rehearsal_refusal( array( 'apply' ), 'non-local environment refused' ); $environment_type = 'local';
+title_rehearsal_refusal( array( 'other' ), 'unknown mode refused' );
+title_rehearsal_refusal( array( 'apply', 'core-summary-touch' ), 'target override refused' );
+title_rehearsal_refusal( array( 'rollback' ), 'missing snapshot refused' );
+title_rehearsal_refusal( array( 'rollback', $summary_snap, 'extra' ), 'extra rollback arguments refused' );
+foreach ( array( $core_snap, $upgrade_snap, $summary_snap, $page_snap ) as $other_snapshot ) { title_rehearsal_refusal( array( 'rollback', $other_snapshot ), 'earlier/other-component snapshot refused' ); }
+foreach ( array( 'legacy', 'v1', 'v2', 'missing', 'code', 'title', 'status', 'meta', 'terms', 'duplicate', 'id' ) as $mutation ) {
+    $db = $title_before;
+    if ( $mutation === 'legacy' ) { $db[1380] = $legacy; }
+    if ( $mutation === 'v1' ) { $db[1380] = $upgrade_before[1380]; }
+    if ( $mutation === 'v2' ) { $db[1380] = $summary_before[1380]; }
+    if ( $mutation === 'missing' ) { unset( $db[1380] ); }
+    if ( $mutation === 'code' ) { $db[1380]['post']['post_content'] .= '// drift'; }
+    if ( $mutation === 'title' ) { $db[1380]['post']['post_title'] .= ' edited'; }
+    if ( $mutation === 'status' ) { $db[1380]['post']['post_status'] = 'draft'; }
+    if ( $mutation === 'meta' ) { $db[1380]['meta']['_wpcode_priority'] = array( '11' ); }
+    if ( $mutation === 'terms' ) { $db[1380]['terms']['wpcode_location'] = array( 'footer' ); }
+    if ( $mutation === 'duplicate' || $mutation === 'id' ) { $db[9999] = $db[1380]; $db[9999]['id'] = $db[9999]['post']['ID'] = 9999; }
+    if ( $mutation === 'id' ) { unset( $db[1380] ); }
+    refusal( array( 'apply', 'core-title-strip' ), 'title-strip refuses core ' . $mutation );
+}
+foreach ( $data_before as $page_id => $record ) {
+    foreach ( array( 'missing', 'code', 'meta', 'terms', 'status', 'duplicate' ) as $mutation ) {
+        $db = $title_before;
+        if ( $mutation === 'missing' ) { unset( $db[ $page_id ] ); }
+        if ( $mutation === 'code' ) { $db[ $page_id ]['post']['post_content'] .= '// independently changed'; }
+        if ( $mutation === 'meta' ) { $db[ $page_id ]['meta']['_wpcode_priority'] = array( '11' ); }
+        if ( $mutation === 'terms' ) { $db[ $page_id ]['terms']['wpcode_location'] = array( 'footer' ); }
+        if ( $mutation === 'status' ) { $db[ $page_id ]['post']['post_status'] = 'draft'; }
+        if ( $mutation === 'duplicate' ) { $db[9999] = $record; $db[9999]['id'] = $db[9999]['post']['ID'] = 9999; }
+        refusal( array( 'apply', 'core-title-strip' ), 'title-strip refuses page ' . $page_id . ' ' . $mutation );
+    }
+}
+$db = $title_before;
+foreach ( array( 'fail_write', 'fail_cache', 'fail_snapshot_complete' ) as $failure ) { $GLOBALS[ $failure ] = true; refusal( array( 'apply', 'core-title-strip' ), 'title-strip ' . $failure . ' recovers exact v3 and every page' ); }
+$mutate_page_on_refresh = static function () use ( $drift_id ) { $GLOBALS['db'][ $drift_id ]['post']['post_modified'] = '2026-11-09 09:01:00'; };
+$expected_drift = $title_before; $expected_drift[ $drift_id ]['post']['post_modified'] = '2026-11-09 09:01:00'; $error = null;
+try { invoke( array( 'apply', 'core-title-strip' ) ); } catch ( Throwable $e ) { $error = $e; }
+check( $error !== null && $db === $expected_drift, 'title-strip concurrent page drift restores core without overwriting independent change' );
+$db = $title_before; invoke_title_rehearsal( array( 'apply' ) ); $title_snap = snapshot_path(); $title_applied = $db;
+check( $db[1380]['post']['post_content'] === substr( file_get_contents( __DIR__ . '/peek-nav.php' ), 6 ) && $db[1380]['post']['post_modified'] === $clock && array_diff_key( $db, array( 1380 => true ) ) === $data_before, 'title-strip changes only core payload/dates and preserves all page records' );
+invoke_title_rehearsal( array( 'apply' ) ); check( $db === $title_applied, 'title-strip apply is idempotent' );
+foreach ( array( $legacy_path, $core_snap, $upgrade_snap, $summary_snap ) as $earlier_snapshot ) { refusal( array( 'rollback', $earlier_snapshot ), 'earlier snapshot cannot reverse title-strip payload' ); }
+refusal( array( 'apply', 'core-summary-touch' ), 'summary-touch cannot overwrite title-strip payload' );
+$title_snapshot = json_decode( file_get_contents( $title_snap ), true );
+foreach ( array( 'bundle', 'component', 'before-hash', 'new-hash', 'old-state', 'new-state', 'pages', 'pages-hash', 'incomplete', 'home' ) as $mutation ) {
+    $s = $title_snapshot;
+    if ( $mutation === 'bundle' ) { $s['bundle'] = 'peek-core-summary-touch-v1'; }
+    if ( $mutation === 'component' ) { $s['component'] = 'core-summary-touch'; }
+    if ( $mutation === 'before-hash' ) { $s['payloads']['before_sha256'] = str_repeat( '0', 64 ); }
+    if ( $mutation === 'new-hash' ) { $s['payloads']['code_sha256'] = str_repeat( '0', 64 ); }
+    if ( $mutation === 'old-state' ) { $s['old'] = $summary_before[1380]; $s['old_sha256'] = hash( 'sha256', json_encode( $s['old'] ) ); }
+    if ( $mutation === 'new-state' ) { $s['new']['post']['post_author'] = '99'; $s['new_sha256'] = hash( 'sha256', json_encode( $s['new'] ) ); }
+    if ( $mutation === 'pages' ) { $s['pages']['thai-massage']['post']['post_modified'] = '2000-01-01 00:00:00'; $s['pages_sha256'] = hash( 'sha256', json_encode( $s['pages'] ) ); }
+    if ( $mutation === 'pages-hash' ) { $s['pages_sha256'] = str_repeat( '0', 64 ); }
+    if ( $mutation === 'incomplete' ) { $s['complete'] = false; }
+    if ( $mutation === 'home' ) { $s['home'] = 'https://staging39.thaisolitude.com'; }
+    refusal( array( 'rollback', snap_write( $s, 'title-' . $mutation ) ), 'title-strip refuses snapshot ' . $mutation );
+}
+foreach ( array( 'code', 'date', 'meta', 'duplicate' ) as $mutation ) {
+    $db = $title_applied;
+    if ( $mutation === 'code' ) { $db[1380]['post']['post_content'] .= '// changed'; }
+    if ( $mutation === 'date' ) { $db[1380]['post']['post_modified'] = '2027-01-01 00:00:00'; }
+    if ( $mutation === 'meta' ) { $db[1380]['meta']['_wpcode_priority'] = array( '11' ); }
+    if ( $mutation === 'duplicate' ) { $db[9999] = $db[1380]; $db[9999]['id'] = $db[9999]['post']['ID'] = 9999; }
+    refusal( array( 'rollback', $title_snap ), 'title-strip rollback refuses current core ' . $mutation );
+}
+foreach ( $data_before as $page_id => $record ) { $db = $title_applied; $db[ $page_id ]['post']['post_modified'] = '2027-01-01 00:00:00'; refusal( array( 'rollback', $title_snap ), 'title-strip rollback refuses changed complete page state ' . $page_id ); }
+$db = $title_applied; invoke_title_rehearsal( array( 'rollback', $title_snap ) ); check( $db === $title_before, 'title-strip rollback restores exact v3 post/settings/dates and all data' );
+invoke_title_rehearsal( array( 'rollback', $title_snap ) ); check( $db === $title_before, 'title-strip rollback is idempotent' );
+invoke_title_rehearsal( array( 'apply' ) ); check( $db === $title_applied, 'title-strip reapply exactly matches first result' );
+$without_page = $title_applied; unset( $without_page[ $drift_id ] ); $db = $without_page;
+invoke( array( 'preflight', 'core-title-strip' ) ); check( $db === $without_page && str_contains( $message, 'core-title-strip applied;' ), 'sitewide core remains inspectable after a separate page-only removal' );
+invoke( array( 'apply', 'core-title-strip' ) ); check( $db === $without_page, 'idempotent sitewide apply never recreates separately removed data' );
+refusal( array( 'rollback', $title_snap ), 'title-strip rollback refuses separately removed page data' );
+$db = $title_applied; invoke( array( 'rollback', $title_snap ) ); invoke( array( 'rollback', $summary_snap ) );
+check( $db === $summary_before, 'existing v2-to-v3 snapshot restores exact v2 after title-strip reversal' );
+invoke( array( 'rollback', $upgrade_snap ) ); check( $db === $upgrade_before, 'existing v1-to-v2 recovery remains exact after both newer reversals' );
+invoke( array( 'rollback', $core_snap ) ); check( $db[1380] === $legacy && array_diff_key( $db, array( 1380 => true ) ) === $data_before, 'all four exact reversals preserve legacy recovery and every page record' );
+// Execute the actual read-only origin inventory program from the push wrapper.
+// Changing published coverage must block a forward deployment, without adding a runtime map.
+$push_source = file_get_contents( __DIR__ . '/push-peek-nav.sh' );
+if ( ! preg_match( "/read -r -d '' INVENTORY <<'PHP' \\|\\| true\\n(.*?)\\nPHP\\n/s", $push_source, $inventory_match ) ) { throw new RuntimeException( 'Missing reviewed-path inventory program.' ); }
+$inventory_php = $inventory_match[1];
+function inventory_output( $review = '' ) {
+    putenv( 'WWM_PEEK_REVIEWED_PAGES=' . $review ); ob_start();
+    try { eval( $GLOBALS['inventory_php'] ); return ob_get_contents(); }
+    finally { ob_end_clean(); putenv( 'WWM_PEEK_REVIEWED_PAGES' ); }
+}
+function inventory_refusal( $review, $label ) { $before = $GLOBALS['db']; $error = null; try { inventory_output( $review ); } catch ( Throwable $e ) { $error = $e; } check( $error !== null && $GLOBALS['db'] === $before, 'origin inventory: ' . $label ); }
+$inventory_pages = array(
+    array( 'ID' => 1, 'post_name' => 'home', 'permalink' => 'http://staging39.thaisolitude.com/' ),
+    array( 'ID' => 2, 'post_name' => 'corporate-massage-portland', 'permalink' => 'https://staging39.thaisolitude.com/corporate-massage-portland/' ),
+    array( 'ID' => 3, 'post_name' => 'new-child', 'permalink' => 'https://staging39.thaisolitude.com/parent/new-child/' ),
+    array( 'ID' => 4, 'post_name' => 'private-draft', 'post_status' => 'draft', 'permalink' => 'https://staging39.thaisolitude.com/private-draft/' ),
+);
+$published_inventory = $inventory_pages;
+$review = array( 'pages' => array( array( 'id' => 3, 'path' => '/parent/new-child/', 'title' => 'Any title' ), array( 'id' => 1, 'path' => '/', 'title' => 'Home' ), array( 'id' => 2, 'path' => '/corporate-massage-portland/', 'title' => 'Corporate' ) ) );
+$review_path = snap_write( $review, 'reviewed-title-pages' );
+$expected_inventory = "page-1\t/\thome\npage-2\t/corporate-massage-portland/\tcorporate-massage-portland\npage-3\t/parent/new-child/\tnew-child\n";
+check( inventory_output( $review_path ) === $expected_inventory, 'origin inventory covers published nested/unlisted pages and deduplicates home, excluding drafts' );
+check( inventory_output() === $expected_inventory, 'origin verification can enumerate actual pages without a reviewed-map restriction' );
+unset( $inventory_pages[0] );
+$review_without_front = $review; $review_without_front['pages'][1]['id'] = 0;
+check( str_starts_with( inventory_output( snap_write( $review_without_front, 'review-without-front-page' ) ), "home\t/\t__home__\n" ), 'origin inventory includes home when no published page owns the root' );
+$inventory_pages = $published_inventory;
+foreach ( array( 'missing-route', 'extra-route', 'duplicate-route', 'external-route', 'protocol-relative', 'newline', 'empty', 'bad-json' ) as $mutation ) {
+    $r = $review;
+    if ( $mutation === 'missing-route' ) { array_pop( $r['pages'] ); }
+    if ( $mutation === 'extra-route' ) { $r['pages'][] = array( 'path' => '/not-published/' ); }
+    if ( $mutation === 'duplicate-route' ) { $r['pages'][] = $r['pages'][0]; }
+    if ( $mutation === 'external-route' ) { $r['pages'][0]['path'] = 'https://thaisolitude.com/'; }
+    if ( $mutation === 'protocol-relative' ) { $r['pages'][0]['path'] = '//thaisolitude.com/'; }
+    if ( $mutation === 'newline' ) { $r['pages'][0]['path'] = "/line\nbreak/"; }
+    if ( $mutation === 'empty' ) { $r['pages'] = array(); }
+    $r_path = snap_write( $r, 'reviewed-' . $mutation );
+    if ( $mutation === 'bad-json' ) { file_put_contents( $r_path, '{"pages":' ); }
+    inventory_refusal( $r_path, 'refuses reviewed ' . $mutation );
+}
+inventory_refusal( $testdir . '/missing-inventory.json', 'refuses missing reviewed inventory' );
+foreach ( array( 'https://thaisolitude.com/path/', 'https://staging39.thaisolitude.com:443/path/', 'https://user@staging39.thaisolitude.com/path/', 'https://staging39.thaisolitude.com/path/#section', "https://staging39.thaisolitude.com/line%0Abreak/", 'https://staging39.thaisolitude.com//other/' ) as $url ) {
+    $inventory_pages = $published_inventory; $inventory_pages[2]['permalink'] = $url;
+    // Percent-encoded route characters are data, never shell syntax; only coverage changes.
+    inventory_refusal( $review_path, 'refuses foreign/ambiguous or unreviewed permalink ' . $url );
+}
+$inventory_pages = $published_inventory; $inventory_pages[2]['permalink'] = $inventory_pages[1]['permalink']; inventory_refusal( '', 'refuses duplicate actual non-home paths' );
+$inventory_pages = $published_inventory; $inventory_pages[2]['permalink'] = $inventory_pages[0]['permalink']; inventory_refusal( '', 'refuses duplicate actual home paths' );
+$inventory_pages = $published_inventory; $inventory_pages[2]['post_name'] = ''; inventory_refusal( '', 'refuses empty slug before shell field parsing' );
+$inventory_pages = $published_inventory; $inventory_pages[2]['post_name'] = "new\tchild"; inventory_refusal( '', 'refuses tab-separated slug injection' );
+$inventory_pages = $published_inventory;
+// Run the wrapper's actual verification branch with local WP/curl fixtures.
+// No SSH or network process exists in this harness; state and HTML are independent inputs.
+$verify_start = strpos( $push_source, "  verify)\n" ); $verify_end = strpos( $push_source, "  rollback) snap=", $verify_start );
+if ( false === $verify_start || false === $verify_end ) { throw new RuntimeException( 'Missing origin verification branch.' ); }
+$verify_branch = substr( $push_source, $verify_start, $verify_end - $verify_start );
+$origin_stubs = <<<'BASH'
+cfgs=$(mktemp); doc=/unused; installer=/unused; want=staging39.thaisolitude.com
+wp() {
+  local part="${*: -1}"
+  case "$part" in
+    core-title-strip)
+      if [ "$model" = latest ]; then echo 'Success: core-title-strip applied; nothing written.'
+      elif [ "$model" = v3 ] && [ -z "$missing_data" ]; then echo 'Success: core-title-strip ready; nothing written.'
+      else return 1; fi ;;
+    core-summary-touch)
+      if [ "$model" = v3 ]; then echo 'Success: core-summary-touch applied; nothing written.'
+      elif [ "$model" = v2 ]; then echo 'Success: core-summary-touch ready; nothing written.'
+      else return 1; fi ;;
+    core-upgrade)
+      if [ "$model" = v2 ]; then echo 'Success: core-upgrade applied; nothing written.'
+      elif [ "$model" = v1 ]; then echo 'Success: core-upgrade ready; nothing written.'
+      else return 1; fi ;;
+    core)
+      if [ "$model" = v1 ]; then echo 'Success: core applied; nothing written.'
+      elif [ "$model" = legacy ]; then echo 'Success: core ready; nothing written.'
+      else return 1; fi ;;
+    thai-massage|therapeutic-massage|deep-tissue-massage|chair-massage)
+      if [ "$part" = "$missing_data" ]; then echo "Success: page:$part ready; nothing written."
+      else echo "Success: page:$part applied; nothing written."; fi ;;
+    *) return 1 ;;
+  esac
+}
+inventory() {
+  printf 'home\t/\t__home__\n'
+  for p in thai-massage therapeutic-massage deep-tissue-massage chair-massage services corporate-massage-portland work-with-me; do printf '%s\t/%s/\t%s\n' "$p" "$p" "$p"; done
+  printf 'nested\t/parent/unlisted/\tunlisted\n'
+}
+curl() {
+  local output='' url='' route pg has_core=0 has_data=0 jump=0
+  while [ "$#" -gt 0 ]; do
+    case "$1" in -o) output=$2; shift 2 ;; https://*) url=$1; shift ;; *) shift ;; esac
+  done
+  route=${url#https://staging39.thaisolitude.com}; pg=${route#/}; pg=${pg%/}
+  case "$pg" in thai-massage|therapeutic-massage|deep-tissue-massage|chair-massage) jump=1; if [ "$render_mode" != legacy ] && [ "$pg" != "$missing_data" ]; then has_data=1; has_core=1; fi ;; services) jump=1 ;; esac
+  [ "$render_mode" != latest ] || has_core=1
+  if [ "$render_mode" = legacy ] && [ "$pg" = thai-massage ]; then has_core=1; fi
+  if [ "$fault" = missing-core ] && [ "$pg" = parent/unlisted ]; then has_core=0; fi
+  if [ "$fault" = extra-data ] && [ "$pg" = services ]; then has_data=1; fi
+  if [ "$fault" = removed-jump ] && [ "$pg" = services ]; then jump=0; fi
+  {
+    if [ "$has_core" = 1 ]; then printf '<style id="ts-peek-nav-css"></style><script id="ts-peek-nav-runtime"></script>'; fi
+    if [ "$render_mode" = latest ]; then printf '<script id="ts-peek-nav-config"></script>'; fi
+    if [ "$has_data" = 1 ]; then printf '<script id="ts-peek-nav-data"></script>'; fi
+    if [ "$jump" = 1 ]; then printf '<nav class="ts-jump"></nav>'; fi
+    if [ "$fault" = duplicate-core ] && [ "$pg" = '' ]; then printf '<script id="ts-peek-nav-runtime"></script>'; fi
+  } > "$output"
+  if [ "$fault" = challenge ] && [ "$pg" = parent/unlisted ]; then printf 202; else printf 200; fi
+}
+BASH;
+function origin_check( $model, $render_mode, $missing_data = '', $fault = '' ) {
+    $script = "set -euo pipefail\n";
+    foreach ( array( 'model', 'render_mode', 'missing_data', 'fault' ) as $name ) { $script .= $name . '=' . escapeshellarg( $$name ) . "\n"; }
+    $script .= $GLOBALS['origin_stubs'] . "\ncase verify in\n" . $GLOBALS['verify_branch'] . "esac\n";
+    $pipes = array(); $proc = proc_open( array( 'bash', '-c', $script ), array( array( 'pipe', 'r' ), array( 'pipe', 'w' ), array( 'pipe', 'w' ) ), $pipes );
+    if ( ! is_resource( $proc ) ) { throw new RuntimeException( 'Cannot run offline origin guard checks.' ); }
+    fclose( $pipes[0] ); $out = stream_get_contents( $pipes[1] ); $err = stream_get_contents( $pipes[2] ); fclose( $pipes[1] ); fclose( $pipes[2] );
+    return array( proc_close( $proc ), $out, $err );
+}
+foreach ( array( 'latest', 'v3', 'v2', 'v1', 'legacy' ) as $version ) { $result = origin_check( $version, $version ); check( 0 === $result[0] && str_contains( $result[1], '200 /parent/unlisted/' ), 'origin verifier checks all actual pages with exact ' . $version . ' scope' ); }
+foreach ( array( 'latest', 'v3' ) as $version ) { $result = origin_check( $version, $version, 'chair-massage' ); check( 0 === $result[0], 'origin verifier preserves separate page removal under ' . $version ); }
+$result = origin_check( 'v3', 'latest' ); check( 0 !== $result[0] && str_contains( $result[1], 'FAIL' ), 'ready predecessor cannot be mistaken for applied sitewide core' );
+$result = origin_check( 'unknown', 'latest' ); check( 0 !== $result[0] && ! str_contains( $result[1], '200 ' ), 'unknown core fails before any origin fetch' );
+foreach ( array( 'missing-core', 'extra-data', 'duplicate-core', 'removed-jump', 'challenge' ) as $fault ) {
+    $result = origin_check( 'latest', 'latest', '', $fault );
+    check( 0 !== $result[0] && str_contains( $result[1], 'challenge' === $fault ? 'INVALID' : 'FAIL' ), 'origin verifier refuses ' . $fault . ': ' . json_encode( $result ) );
+}
 $clock = '2026-11-09 05:00:00';
 // Execute the real generated page snippets and core against minimal rendering hooks.
 $db = $original; invoke( array( 'apply', 'page', 'thai-massage' ) );
 invoke( array( 'apply', 'page', 'therapeutic-massage' ) );
 $filters = array();
 foreach ( $db as $id => $r ) { if ( $id !== 1380 ) { eval( $r['post']['post_content'] ); } }
+$saved_filters = $filters;
+eval( "namespace PeekFrozenV3;\n" . substr( file_get_contents( __DIR__ . '/peek-nav-shared-v3.php' ), 6 ) );
+$page = 'services'; ob_start(); do_action( 'wp_head' ); do_action( 'wp_footer' ); $frozen_html = ob_get_clean();
+check( $frozen_html === '', 'frozen v3 unregistered page still emits nothing' );
+$filters = $saved_filters; $page = 'thai-massage';
 require __DIR__ . '/peek-nav.php'; require __DIR__ . '/peek-nav.php';
 function render() { ob_start(); do_action( 'wp_head' ); do_action( 'wp_footer' ); return ob_get_clean(); }
 $html = render(); check( substr_count( $html, 'id="ts-peek-nav-runtime"' ) === 1 && substr_count( $html, 'id="ts-peek-nav-css"' ) === 1, 'duplicate core registers output once' );
 preg_match( '/id="ts-peek-nav-data">(.*?)<\/script>/s', $html, $m ); $decoded = json_decode( $m[1], true );
 check( $decoded['slug'] === 'thai-massage' && ! str_contains( $m[1], 'therapeutic-massage' ), 'emits only current page data' );
-$page = 'services'; check( render() === '', 'unregistered page emits nothing' );
+$page = 'services'; $html = render();
+check( substr_count( $html, 'id="ts-peek-nav-css"' ) === 1 && substr_count( $html, 'id="ts-peek-nav-runtime"' ) === 1 && substr_count( $html, 'id="ts-peek-nav-config"' ) === 1 && ! str_contains( $html, 'id="ts-peek-nav-data"' ), 'unregistered page gets one title-only core without page data' );
 $page = 'therapeutic-massage'; $html = render(); preg_match( '/id="ts-peek-nav-data">(.*?)<\/script>/s', $html, $m ); $decoded = json_decode( $m[1], true );
 $therapeutic = json_decode( file_get_contents( __DIR__ . '/peek-data/therapeutic-massage.json' ), true );
 check( $decoded === $therapeutic && ! str_contains( $m[1], 'Movement meets massage' ), 'approved Therapeutic emits its exact approved payload, no Thai lists' );

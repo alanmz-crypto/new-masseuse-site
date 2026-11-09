@@ -202,6 +202,77 @@ try {
       await ctx.close();
     }
   }
+  // Actual-device report: switching among previews can feel slow to accept the
+  // next scroll. Keep this separate from the older tap helper's 180 ms pause:
+  // each new finger starts as soon as the preceding native lift has completed.
+  // This geometry belongs to the current candidate, not the frozen-v1 probe.
+  for (const slug of baseline ? [] : ['thai-massage', 'therapeutic-massage', 'deep-tissue-massage', 'chair-massage']) {
+    for (const side of ['right', 'left']) {
+      const ctx = await browser.newContext({ ...devices['iPhone 13'], viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
+      await ctx.addInitScript(side => { localStorage.setItem('ts-pk-tip', 'seen'); localStorage.setItem('ts-pk-side', side); }, side);
+      const p = await ctx.newPage(), errors = [], label = `${slug}/390/${side}/rapid`;
+      p.on('pageerror', error => errors.push(error.message));
+      const response = await p.goto(`${base}/${slug}/`, { waitUntil: 'load' });
+      if (!response || response.status() !== 200 || /Robot Challenge/i.test(await p.title())) throw new Error(`INVALID ${label}: response ${response?.status()}`);
+      await p.waitForSelector('html.ts-pk-ready .ts-pk-nav', { timeout: 10000 });
+      await p.waitForFunction(() => document.fonts.status === 'loaded', null, { timeout: 10000 });
+      const cdp = await ctx.newCDPSession(p);
+      const touch = (type, at) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchEnd' ? [] : [{ ...at, radiusX: 5, radiusY: 5, force: 1, id: 1 }] });
+      const tapNow = async at => { await touch('touchStart', at); await p.waitForTimeout(30); await touch('touchEnd'); };
+      await p.evaluate(() => scrollTo({ top: 600, behavior: 'instant' }));
+      await p.waitForTimeout(100); // Establish page geometry before the rapid sequence.
+      const count = await p.locator('.ts-pk-rail a').count();
+      const research = await p.locator('.ts-jump a').evaluateAll(links => links.findIndex(a => /research/i.test(a.textContent)));
+      if (research < 3 || count < 4) throw new Error(`INVALID ${label}: expected service-page destinations`);
+      await tapNow(await point(p, '.ts-pk-rail li:first-child a'));
+      for (let round = 0; round < 2; round++) {
+        for (const index of [1, 2, 0, research]) {
+          const before = await state(p);
+          await tapNow(await point(p, `.ts-pk-card .row[data-k="${index}"]`));
+          const after = await state(p);
+          ok(`${label}/${round}: immediate row ${index + 1} opens without moving the page`, samePage(before, after) && after.pinned && after.index === index, { before, after });
+        }
+        const before = await state(p);
+        const path = await p.locator('.ts-pk-card .sum').evaluate(sum => {
+          const r = sum.getBoundingClientRect(), x = r.left + r.width / 2;
+          return { height: r.height, width: r.width, action: getComputedStyle(sum).touchAction, visibleRows: [...sum.closest('.ts-pk-card').querySelectorAll('.row')].filter(row => row.getBoundingClientRect().height > 0).length, from: { x, y: r.bottom - 18 }, to: { x, y: r.top + 18 } };
+        });
+        ok(`${label}/${round}: long summary provides a generous finger stroke with every topic retained`, path.height >= 180 && path.width >= 200 && before.innerMax > 1 && path.action === 'pan-y' && path.visibleRows === count - 1, { before, path });
+        await touch('touchStart', path.from);
+        for (let step = 1; step <= 6; step++) {
+          await touch('touchMove', { x: path.from.x, y: path.from.y + (path.to.y - path.from.y) * step / 6 });
+          await p.waitForTimeout(16);
+        }
+        // Read while the finger is still down: a deferred response after release
+        // cannot satisfy this first-stroke check. Then let native momentum stop.
+        const during = await state(p);
+        ok(`${label}/${round}: first swipe after rapid switches scrolls immediately inside the summary`, samePreview(before, during) && during.inner > before.inner + 5 && Math.abs(during.outer - before.outer) <= 1, { before, during });
+        await p.waitForTimeout(100); await touch('touchEnd'); await p.waitForTimeout(180);
+      }
+      // At the page top, the real strip/banner can reduce available height.
+      // Fold distant controls before sacrificing the summary's reading surface.
+      await p.keyboard.press('Escape');
+      await p.evaluate(() => scrollTo({ top: 0, behavior: 'instant' }));
+      await p.waitForTimeout(100);
+      await tapNow(await point(p, `.ts-pk-rail li:nth-child(${research + 1}) a`));
+      const fit = await p.locator('.ts-pk-card').evaluate(card => {
+        const visible = node => !!node && node.getBoundingClientRect().height > 0;
+        return { compact: card.classList.contains('fit1'), summary: card.querySelector('.sum').getBoundingClientRect().height,
+          neighbors: [...card.querySelectorAll('.row.near')].every(visible), distant: [...card.querySelectorAll('.row:not(.near)')].some(visible),
+          more: [...card.querySelectorAll('.more')].some(visible), title: visible(card.querySelector('.open > b')), hint: visible(card.querySelector('.hint')) };
+      });
+      ok(`${label}: tight fit keeps the summary, nearest topic and jump visible`, fit.summary >= 160 && fit.neighbors && fit.title && fit.hint && (!fit.compact || (!fit.distant && fit.more)), fit);
+      if (fit.compact) {
+        const before = await state(p);
+        const neighbor = await p.locator('.ts-pk-card .row.near').first().getAttribute('data-k');
+        await tapNow(await point(p, `.ts-pk-card .row[data-k="${neighbor}"]`));
+        const after = await state(p);
+        ok(`${label}: folded stack's nearest topic still opens by native tap`, samePage(before, after) && after.pinned && after.index === Number(neighbor), { before, after });
+      }
+      ok(`${label}: no JavaScript errors`, errors.length === 0, errors);
+      await ctx.close();
+    }
+  }
 } catch (error) {
   console.log(`INVALID touch: ${error.message}`); process.exitCode = 2;
 } finally { await browser.close(); }

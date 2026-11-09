@@ -1,0 +1,107 @@
+{
+  "schema": 1,
+  "provenance": {
+    "source": "Published WordPress page permalinks and titles from the read-only staging39 inventory",
+    "capturedUtc": "2026-11-09T08:26:16+00:00",
+    "run": "https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42585875924",
+    "commit": "27eb2c3a5cb49c3ab1d62203c81844e2b3e9cf9f",
+    "archiveSha256": "f7d24f95a4f044f79fddacf1569b09a7325e2e3abc0ca3c2e185f323b7ceee9c"
+  },
+  "pages": [
+    {
+      "id": 296,
+      "path": "/",
+      "title": "Home"
+    },
+    {
+      "id": 298,
+      "path": "/about/",
+      "title": "About"
+    },
+    {
+      "id": 299,
+      "path": "/services/",
+      "title": "Services"
+    },
+    {
+      "id": 301,
+      "path": "/contact/",
+      "title": "Contact"
+    },
+    {
+      "id": 1091,
+      "path": "/deep-tissue-massage/",
+      "title": "Deep Tissue Massage"
+    },
+    {
+      "id": 1107,
+      "path": "/therapeutic-massage/",
+      "title": "Therapeutic Massage"
+    },
+    {
+      "id": 1160,
+      "path": "/thai-massage/",
+      "title": "Thai Massage"
+    },
+    {
+      "id": 1165,
+      "path": "/work-with-me/",
+      "title": "Work With Me"
+    },
+    {
+      "id": 1227,
+      "path": "/privacy-policy/",
+      "title": "Privacy Policy"
+    },
+    {
+      "id": 1230,
+      "path": "/accessibility/",
+      "title": "Accessibility"
+    },
+    {
+      "id": 1254,
+      "path": "/personal-automation/",
+      "title": "Ryan Personal Automation"
+    },
+    {
+      "id": 1255,
+      "path": "/personal-automation/privacy/",
+      "title": "Ryan Personal Automation — Privacy"
+    },
+    {
+      "id": 1257,
+      "path": "/personal-automation/terms/",
+      "title": "Ryan Personal Automation — Terms of Service"
+    },
+    {
+      "id": 1266,
+      "path": "/corporate-massage-portland/",
+      "title": "Corporate & Group Massage in Portland"
+    },
+    {
+      "id": 1293,
+      "path": "/chair-massage/",
+      "title": "Chair Massage"
+    },
+    {
+      "id": 1340,
+      "path": "/in-page-link-ideas/",
+      "title": "In-page link ideas"
+    },
+    {
+      "id": 1346,
+      "path": "/progress-nav-ideas/",
+      "title": "Progress navigation ideas"
+    },
+    {
+      "id": 1348,
+      "path": "/rail-nav-ideas/",
+      "title": "Side rail ideas"
+    },
+    {
+      "id": 1354,
+      "path": "/index-nav-ideas/",
+      "title": "Index icon ideas"
+    }
+  ]
+}

@@ -1,9 +1,14 @@
 # Peek shared template
 
-Staging39 only. `.ts-jump` is the sole navigation/destination source. The core
-`peek-nav.php` reads the current page's `ts_pk_pages` registration and prints one
-safely encoded `ts-peek-nav-data` JSON element. WordPress/WPCode stores all deployed
-code and data; the browser never requests repository JSON files.
+Staging39 only. `.ts-jump` is the sole navigation/destination source. The candidate
+`peek-nav.php` emits a read-only title strip on every normal visitor HTML page,
+including short, unlisted and practice pages. A safely encoded
+`ts-peek-nav-config` JSON element supplies the page/document title fallback;
+valid current-page `ts_pk_pages` registrations alone produce `ts-peek-nav-data`
+and enable the existing rail. Admin/feed requests emit neither. WordPress/WPCode
+stores all deployed code and data; the browser never requests repository JSON files.
+This broader title-strip scope and the global summary-space follow-up are
+pending deployment, as recorded below.
 
 `peek-data/<slug>.json` stores `[text, anchor]` items, approval provenance and an
 editorial coverage classification. Anchors identify existing sections, not a
@@ -20,9 +25,68 @@ Run `python3 -I -B lint-gists.py` and `tests/gists-selftest.py`; both are in
 `scripts/check-all.sh`, with PHP ownership/recovery/JSON tests. Lint cannot decide
 semantic accuracy, overlap or percentage coverage. Approval must follow rendered
 source review. `peek-pages.json` records the browser expectations and explicit
-rollout status; Services/short-page eligibility remains undecided.
+rollout status. Its `titleStrip` scope is separate from `railEligibilityPending`:
+Services/short-page rail eligibility remains undecided, while their read-only
+title strip is included. The independently collected published-page inventory
+drives title coverage; the four rail records are not a title-strip allow-list.
 
-## Current short-summary touch correction: deployed on staging39
+## Current title-strip and summary-space changes: awaiting rehearsal and deployment
+
+The [all-page title-strip record](../../../docs/reviews/2026-11-09-peek-title-strip-all-pages.md)
+tracks this candidate and its evidence. Existing `.ts-jump` labels remain the
+first title source. Pages without a usable row use visible content headings,
+then their page/document title when no heading is available. This is display-only:
+it adds no destination IDs, summary wording or rail to unregistered pages.
+The plain row remains available where it already exists, including without
+JavaScript. `ts-pk-title-ready` governs the shared strip/header behavior;
+`ts-pk-ready` continues to govern the rail. No title-strip eligibility cutoff
+is applied to short or unlisted visitor pages.
+
+Ryan also requested a larger, usable scrolling area throughout the existing
+Peek summaries. The [summary-space record](../../../docs/reviews/2026-11-09-peek-summary-space.md)
+tracks this addition to the same candidate. The regular summary cap increases
+from 9.8em to 18em; when the stack does not fit, distant closed rows fold behind
+the existing `+N` labels before the summary shrinks. Nearest rows stay visible.
+Further fit levels use 14/10/6.6em caps, then 4.4em on the smallest layout;
+whole-paragraph fallback summaries remain visible there too. Native summary
+and outer-card scrolling, measured touch permission, approved text and the
+settled gestures remain intact. No new summaries or rail are enabled on
+title-only pages. Structural fixture results are not actual copied-page or
+physical-device verification; no intentional delay or reproduced loading
+latency has been established.
+
+`core-title-strip` is the new exact transition from frozen shared v3
+(`peek-nav-shared-v3.php`, code SHA256
+`a20e7a69141843d08dbc0104f1eb7c4ae81ff99b0c7c6594ed1690d23fc0f4ac`)
+to the reviewed combined title-strip/summary-space candidate. It changes #1380 in place and retains all four
+complete page-data records. Its separate `peek-core-title-strip-v1` bundle
+binds old/new core and unchanged data states; drift or foreign ownership refuses.
+There is no planned fallback-only interval. No deployment snapshot exists yet.
+
+The new localhost-only adapter has no preparation hook. It checks the untouched
+staging39 copy with uploads, exact rollback/reapply, title matrices in Chromium
+and Firefox, and the retained rail/clearance/touch/Thai suites. The reviewed
+published-path inventory is checked again before a forward staging apply.
+These are the pending operation routes, not evidence that they have run:
+
+```sh
+scripts/ci/request.sh rehearse --source staging39 --installer link-ideas/core-title-strip/install-peek-core-title-strip.php --with-uploads
+scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args 'core-title-strip'
+# Only after offline, fresh-copy, rendered-wording and visual gates pass:
+scripts/ci/request.sh run --target staging39 --script link-ideas/push-peek-nav.sh --args 'core-title-strip --apply'
+scripts/ci/request.sh run --target staging39 --script link-ideas/core-title-strip/check-public.mjs --args https://staging39.thaisolitude.com
+```
+
+Every write still requires a fresh verified encrypted off-site backup. After an
+actual apply, record its exact snapshot and read all origin, restore and public
+reports. Recovery must first use the matching reviewed package and explicit
+`core-title-strip --rollback FILE` with that actual snapshot to restore v3.
+Only then can `core-summary-touch` restore v2, `core-upgrade` restore v1, and
+`core` restore legacy, each with its own actual snapshot. Old snapshots cannot
+reverse this new payload. `core-summary-touch` now pins v2 to frozen v3,
+preserving the actual 07:59:57 snapshot's meaning.
+
+## Completed short-summary touch correction: frozen shared v3
 
 The correction lets an open summary absorb swipes when its text fits,
 while long summaries and the constrained outer card retain their own native
@@ -50,7 +114,7 @@ rehearsal pixels; five images are byte-identical and eleven differ only on the
 rail. The linked record tracks the detailed visual review and retained logs.
 
 `core-summary-touch` updates exact frozen shared v2 in `peek-nav-shared-v2.php`
-to the reviewed `peek-nav.php`, keeping #1380 and all four data records intact.
+to frozen `peek-nav-shared-v3.php`, keeping #1380 and all four data records intact.
 Frozen v2 code SHA256:
 `357e1d447ecf21ce1fa130f08f917bf7965d074463905106182fd3db9f8c39d8`.
 The deployed payload has 71,826 code bytes, SHA256
@@ -82,7 +146,8 @@ wording checks passed. The broad pixel check retained six differences versus liv
 (14/20 identical), so the automatic post-change suite is not an aggregate pass.
 Recovery must
 use the matching package and explicit `core-summary-touch --rollback FILE` with
-that snapshot, restoring exact v2 first. Only then may the separate `core-upgrade`
+that snapshot, restoring exact v2 after any later title-strip update is reversed
+to v3 first. Only then may the separate `core-upgrade`
 snapshot restore v1; only after that may the original `core` snapshot restore the
 legacy core. The older snapshots cannot reverse this new payload. Complete
 state drift, including a later page-data removal, makes recovery refuse.
@@ -194,6 +259,7 @@ with each component's actual snapshot. Core reversal affects every Peek page.
 For one service page, reverse only its page data using its actual snapshot in the
 current rollout record. The completed migration had no fallback-only swap;
 deliberate page-data removal under the shared core restores that page's plain row.
+Under the all-page candidate, page-only removal also retains its read-only strip.
 
 Do not deploy another page until its wording/rollout is approved. An independently
 edited or newer data/core payload is deliberately refused; a future version needs
@@ -227,7 +293,8 @@ or WordPress data. `--capture-page` adds first/research-start/research-end captu
 at three widths and checks card bounds and access to the final research item.
 The current rollout record holds final aggregate-check status and actual per-page
 snapshots. A page-only reversal removes only its data and restores its plain jump
-row without changing the shared core or other pages.
+row without changing the shared core or other pages; the all-page candidate
+retains the title strip on that page.
 
 The service rollout exposed a shared-placement defect: Chair's first preview
 overlapped the initial strip and grazed the tablet CTA. The deployed correction

@@ -345,9 +345,32 @@ Detailed visual review, full evidence and recovery are in the
 The reported page-scroll leak was not reproduced by native Chromium probes;
 Safari/physical-device resolution remains unverified.
 
+**Current follow-up: all-page title strip and larger usable summaries; rehearsal/deployment pending.**
+Ryan includes short, no-heading, unlisted and practice pages. The candidate
+separates title readiness from rail readiness: existing row labels, visible
+content headings or the page/document title supply the read-only strip without
+new destination IDs or summary wording. Only registered service pages receive
+page-data JSON and the existing rail; admin/feed output stays empty. The four
+approved JSON files remain unchanged. `peek-pages.json` records title scope
+separately from pending rail eligibility. See the
+[all-page title-strip record](../../docs/reviews/2026-11-09-peek-title-strip-all-pages.md)
+for current evidence. No deployment snapshot exists yet. The exact new
+`core-title-strip` transition starts from frozen shared v3, preserving #1380 and
+all four data states in place; no fallback-only interval is planned. It must pass
+fresh-copy, rendered-copy and visual gates before the guarded staging write.
+Ryan's newer request is included in this combined candidate: give existing Peek
+summaries more scrolling space globally, folding distant closed rows before
+shrinking the summary while retaining the nearest rows and whole-paragraph
+fallback. The [summary-space record](../../docs/reviews/2026-11-09-peek-summary-space.md)
+holds fit details and current tests. Approved words and settled touch/scroll
+paths remain intact; no new rail or summaries appear on title-only pages.
+Structural fixture results are not actual-copy/device verification, and no
+loading delay has been reproduced.
+
 Original core snapshot: `peek-template-core-before-20261109-023645-fe38e498.json`.
 Original Thai data snapshot: `peek-template-page-thai-massage-before-20261109-023133-3e7b1cf5.json`.
-Reverse `core-summary-touch` with its own actual
+After any title-strip deployment, reverse `core-title-strip` to v3 using its
+own actual snapshot first. Then reverse `core-summary-touch` with its own actual
 snapshot first. Then `core-upgrade --rollback FILE` restores v1 from frozen v2;
 the original `core` migration remains tied to frozen `peek-nav-shared-v1.php`.
 Reversing that original migration affects
@@ -357,10 +380,12 @@ core and other pages active. **All earlier rollback commands in this note are hi
 `peek-nav-before-20261109-010037-0c493281.json` to delete the shared core.
 Migration installed inert Thai data before changing #1380 in place, with no
 fallback-only interval. Main/live remain unchanged.
-Current evidence/status: [short-summary touch correction](../../docs/reviews/2026-11-09-peek-short-summary-touch.md).
+Current candidate/status: [all-page title strip](../../docs/reviews/2026-11-09-peek-title-strip-all-pages.md).
+Deployed baseline: [short-summary touch correction](../../docs/reviews/2026-11-09-peek-short-summary-touch.md).
 Earlier core correction: [clearance/touch record](../../docs/reviews/2026-11-09-peek-clearance.md).
 Earlier page-data rollout: [service rollout record](../../docs/reviews/2026-11-09-peek-service-rollout.md).
 Original core migration/recovery: [template record](../../docs/reviews/2026-11-09-peek-template.md).
 Approved wording: [three-page review](../../docs/reviews/2026-11-09-peek-summary-drafts.md).
-Services/short pages remain individual eligibility decisions; Safari/physical
+Services/short-page rails remain individual eligibility decisions; the title
+strip includes every visitor page. Safari/physical
 devices and actual assistive technology remain untested.
