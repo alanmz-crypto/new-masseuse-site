@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-09 21:03 UTC  **FAIL**  `peek-kiro-fixes-post-retry-1`  [reports/2026-11-09/210324-peek-kiro-fixes-post-retry-1.md](reports/2026-11-09/210324-peek-kiro-fixes-post-retry-1.md)  (run 42698232542)
 - 2026-11-09 20:57 UTC  **PASS**  `peek-kiro-fixes-stored-1`  [reports/2026-11-09/205735-peek-kiro-fixes-stored-1.md](reports/2026-11-09/205735-peek-kiro-fixes-stored-1.md)  (run 42697818891)
 - 2026-11-09 20:54 UTC  **PASS**  `peek-kiro-fixes-apply-1`  [reports/2026-11-09/205447-peek-kiro-fixes-apply-1.md](reports/2026-11-09/205447-peek-kiro-fixes-apply-1.md)  (run 42697003089)
 - 2026-11-09 20:47 UTC  **PASS**  `peek-kiro-fixes-rehearse-5`  [reports/2026-11-09/204752-peek-kiro-fixes-rehearse-5.md](reports/2026-11-09/204752-peek-kiro-fixes-rehearse-5.md)  (run 42693471206)
