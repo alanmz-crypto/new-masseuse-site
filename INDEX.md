@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-09 16:40 UTC  **PASS**  `peek-title-rails-dry-20261109-1`  [reports/2026-11-09/164057-peek-title-rails-dry-20261109-1.md](reports/2026-11-09/164057-peek-title-rails-dry-20261109-1.md)  (run 42656886956)
 - 2026-11-09 16:40 UTC  **FAIL**  `peek-title-rails-rehearse-20261109-1`  [reports/2026-11-09/164021-peek-title-rails-rehearse-20261109-1.md](reports/2026-11-09/164021-peek-title-rails-rehearse-20261109-1.md)  (run 42656502274)
 - 2026-11-09 10:30 UTC  **PASS**  `peek-titles-stored-20261109-1`  [reports/2026-11-09/103041-peek-titles-stored-20261109-1.md](reports/2026-11-09/103041-peek-titles-stored-20261109-1.md)  (run 42601221631)
 - 2026-11-09 10:30 UTC  **INVALID**  `peek-titles-public-20261109-1`  [reports/2026-11-09/103015-peek-titles-public-20261109-1.md](reports/2026-11-09/103015-peek-titles-public-20261109-1.md)  (run 42601203134)
