@@ -1,7 +1,7 @@
 {
-  "id": "peek-data-rehearse-20261109-1",
+  "id": "peek-core-rehearse-20261109-1",
   "op": "rehearse",
   "target": "staging39",
-  "installer": "link-ideas/peek-page/install-peek-thai-data.php",
+  "installer": "link-ideas/install-peek-nav.php",
   "args": []
 }
