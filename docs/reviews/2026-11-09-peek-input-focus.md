@@ -133,6 +133,22 @@ equivalent full HTTP origin. Declare the local host explicitly and concatenate
 the same exact origin. No allowed address changes; no site write or rehearsal
 conclusion follows from this invalid attempt.
 
+Corrected-source Gates [42712792983](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42712792983)
+passed **32/0 + 1 rendered-only skip** at 22:33:42 UTC on
+`e21218f77e22a1209c2d3919b6556b4f2b22c336`; installer lint and all 90 focused
+mock checks also passed again after the host declaration adjustment.
+
+Second rehearsal [42712817404](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42712817404),
+request `peek-rail-input-rehearse-2`, source `c42e1611780937fba34a57a8dfa5fbe67655c19f`,
+finished 22:35:12 UTC **FAIL**. The fresh copy had all ten baseline pages HTTP200
+and exact ownership preflight. Real WordPress apply then failed full-state
+read-back; recovery refused the unrecognized state. No idempotence, rollback,
+reapply, rendered-copy or browser check ran. Zero browser suites/captures. The
+throwaway snapshot `rail-input-before-20261109-223509-91cc2e2e.json` is not a
+staging recovery snapshot. Complete artifact/log reviewed; staging unchanged.
+Add changed-field/type/hash diagnostics without raw values or relaxed equality
+to identify the actual WordPress side effect in the next isolated rehearsal.
+
 ## Actual applies and recovery
 
 No apply or new staging recovery snapshot is recorded yet. Never substitute a

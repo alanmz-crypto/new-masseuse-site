@@ -6,7 +6,7 @@ mkdir( $testdir ); mkdir( $testdir . '/web' ); mkdir( $testdir . '/backups' );
 define( 'ABSPATH', $testdir . '/web/' ); define( 'ARRAY_A', 'ARRAY_A' );
 putenv( 'WWM_BACKUP_DIR=' . $testdir . '/backups' );
 $home = 'http://localhost:8090'; $theme = 'astra'; $admin = true; $filters = array(); $db = array(); $updates = 0; $deletes = 0; $captures = 0; $race = false;
-$fail_write = false; $fail_after_write = false; $fail_snapshot_complete = false; $message = ''; $pass = 0;
+$fail_write = false; $fail_after_write = false; $fail_snapshot_complete = false; $save_drift = false; $message = ''; $pass = 0;
 class WP_CLI { static function error( $m ) { throw new RuntimeException( $m ); } static function success( $m ) { $GLOBALS['message'] = $m; } static function log( $m ) {} }
 function home_url() { return $GLOBALS['home']; }
 function untrailingslashit( $s ) { return rtrim( $s, '/' ); }
@@ -39,6 +39,7 @@ function wp_update_post( $arr, $error = false ) {
 	check( apply_filters( 'wp_revisions_to_keep', 5, (object) array( 'ID' => 1348 ) ) === 0, 'owned update does not create a revision' );
 	check( apply_filters( 'wp_revisions_to_keep', 5, (object) array( 'ID' => 900 ) ) === 5, 'other pages retain revision policy' );
 	$GLOBALS['db'][$id]['post'] = apply_filters( 'wp_insert_post_data', $p, $arr ); $GLOBALS['updates']++;
+	if ( $GLOBALS['save_drift'] ) { $GLOBALS['db'][$id]['post']['post_parent'] = '0'; $GLOBALS['db'][$id]['post']['comment_status'] = 'SYNTHETIC_PRIVATE_SAVE_VALUE'; $GLOBALS['db'][$id]['meta']['unknown_setting'][0] = 'SYNTHETIC_PRIVATE_META_VALUE'; $GLOBALS['db'][$id]['meta']['new_hook_setting'] = array( 'SYNTHETIC_PRIVATE_ADDED_VALUE' ); $GLOBALS['db'][$id]['terms']['page_topic'][] = 'SYNTHETIC_PRIVATE_TERM_VALUE'; }
 	if ( $GLOBALS['fail_after_write'] ) { $GLOBALS['fail_after_write'] = false; throw new RuntimeException( 'Forced failure after recognized write' ); }
 	return $id;
 }
@@ -83,6 +84,12 @@ foreach ( array( 'fail_after_write', 'fail_snapshot_complete' ) as $flag ) {
 }
 $race = true; $writes = $updates; $error = null; try { invoke( array( 'apply' ) ); } catch ( Throwable $e ) { $error = $e; }
 check( $error !== null && $updates === $writes && $db[1348]['post']['post_content'] === $content && $db[1348]['meta']['independent'] === array( 'new editor value' ), 'concurrent independent edit is retained without overwrite' ); $race = false; $db = $original;
+$save_drift = true; $writes = $updates; $error = null; try { invoke( array( 'apply' ) ); } catch ( Throwable $e ) { $error = $e; }
+check( $error !== null && $updates === $writes + 1 && $db[1348]['meta']['new_hook_setting'] === array( 'SYNTHETIC_PRIVATE_ADDED_VALUE' ), 'save-hook drift refuses recovery overwrite of an unknown state' );
+$diagnostic = $error ? $error->getMessage() : '';
+foreach ( array( 'state["post"]["post_parent"]', 'state["post"]["comment_status"]', 'state["meta"]["unknown_setting"][0]', 'state["meta"]["new_hook_setting"]', 'state["terms"]["page_topic"][1]' ) as $path ) { check( str_contains( $diagnostic, $path ), 'diagnostic identifies changed field path: ' . $path ); }
+check( str_contains( $diagnostic, 'expected integer sha256=' ) && str_contains( $diagnostic, 'actual string sha256=' ) && str_contains( $diagnostic, 'expected absent actual array sha256=' ) && ! str_contains( $diagnostic, 'SYNTHETIC_PRIVATE' ), 'diagnostic preserves datatype and absent-value distinctions without exposing any stored value' );
+$save_drift = false; $db = $original;
 invoke( array( 'apply' ) ); $path = snapshot_path(); $applied = $db; $snapshot = json_decode( file_get_contents( $path ), true );
 $expected = $original; $expected[1348]['post']['post_content'] = "<!-- wp:html -->\n" . rtrim( file_get_contents( __DIR__ . '/../rail-ideas.html' ) ) . "\n<!-- /wp:html -->";
 check( $applied === $expected, 'only content changed; original dates/ID/meta/SEO/terms/other page stay exact' );

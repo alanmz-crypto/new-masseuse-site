@@ -54,21 +54,42 @@ $save = static function ( $file, $snapshot ) {
 	$json = wp_json_encode( $snapshot ); $mask = umask( 0077 ); $ok = false !== $json && false !== file_put_contents( $file, $json, LOCK_EX ); umask( $mask );
 	if ( ! $ok || ! chmod( $file, 0600 ) || file_get_contents( $file ) !== $json ) { throw new \RuntimeException( 'Private snapshot save/read-back failed.' ); }
 };
-$write = static function ( $before, $after ) use ( $capture ) {
+// Report field paths, types and hashes only. Never put stored values in public ops logs.
+$difference = static function ( $expected, $actual ) {
+	$changes = array(); $limit = 30;
+	$describe = static fn( $value, $exists ) => $exists ? gettype( $value ) . ' sha256=' . hash( 'sha256', serialize( $value ) ) : 'absent';
+	$visit = static function ( $a, $b, $path, $has_a = true, $has_b = true ) use ( &$visit, &$changes, $limit, $describe ) {
+		if ( count( $changes ) >= $limit || ( $has_a && $has_b && $a === $b ) ) { return; }
+		if ( $has_a && $has_b && is_array( $a ) && is_array( $b ) ) {
+			$keys = array_unique( array_merge( array_keys( $a ), array_keys( $b ) ) );
+			foreach ( $keys as $key ) { $visit( $a[ $key ] ?? null, $b[ $key ] ?? null, $path . '[' . wp_json_encode( $key ) . ']', array_key_exists( $key, $a ), array_key_exists( $key, $b ) ); }
+			if ( count( $changes ) < $limit && array_keys( $a ) !== array_keys( $b ) ) { $changes[] = $path . ' key-order/set expected ' . $describe( array_keys( $a ), true ) . ' actual ' . $describe( array_keys( $b ), true ); }
+			return;
+		}
+		$changes[] = $path . ' expected ' . $describe( $a, $has_a ) . ' actual ' . $describe( $b, $has_b );
+	};
+	$visit( $expected, $actual, 'state' );
+	return implode( '; ', $changes ) . ( count( $changes ) >= $limit ? '; diagnostic limit reached' : '' );
+};
+$write = static function ( $before, $after ) use ( $capture, $difference ) {
 	$allowed = $before; $allowed['post']['post_content'] = $after['post']['post_content'];
-	if ( $allowed !== $after || $capture() !== $before ) { throw new \RuntimeException( 'Complete page state changed before the content-only write.' ); }
+	if ( $allowed !== $after ) { throw new \RuntimeException( 'Transition is not content-only: ' . $difference( $allowed, $after ) ); }
+	$observed = $capture();
+	if ( $observed !== $before ) { throw new \RuntimeException( 'Complete page state changed before the content-only write: ' . $difference( $before, $observed ) ); }
 	$dates = static function ( $data, $postarr ) use ( $before ) { if ( (int) ( $postarr['ID'] ?? 0 ) === 1348 && ( $data['post_type'] ?? '' ) === 'page' ) { $data['post_modified'] = $before['post']['post_modified']; $data['post_modified_gmt'] = $before['post']['post_modified_gmt']; } return $data; };
 	// Keep existing revisions intact; the complete private snapshot is this update's rollback.
 	$revisions = static fn( $count, $post ) => (int) $post->ID === 1348 ? 0 : $count;
 	add_filter( 'wp_insert_post_data', $dates, PHP_INT_MAX, 2 ); add_filter( 'wp_revisions_to_keep', $revisions, PHP_INT_MAX, 2 );
 	try { $result = wp_update_post( wp_slash( array( 'ID' => 1348, 'post_content' => $after['post']['post_content'] ) ), true ); }
 	finally { remove_filter( 'wp_insert_post_data', $dates, PHP_INT_MAX ); remove_filter( 'wp_revisions_to_keep', $revisions, PHP_INT_MAX ); }
-	if ( is_wp_error( $result ) || ! $result || $capture() !== $after ) { throw new \RuntimeException( 'Content save/full-state read-back failed.' ); }
+	if ( is_wp_error( $result ) || ! $result ) { throw new \RuntimeException( 'Content save returned failure; checking the original state.' ); }
+	$observed = $capture();
+	if ( $observed !== $after ) { throw new \RuntimeException( 'Content save/full-state read-back failed: ' . $difference( $after, $observed ) ); }
 };
-$transition = static function ( $before, $after ) use ( $capture, $write ) {
+$transition = static function ( $before, $after ) use ( $capture, $write, $difference ) {
 	try { $write( $before, $after ); }
 	catch ( \Throwable $e ) {
-		try { $now = $capture(); if ( $now === $after ) { $write( $after, $before ); } elseif ( $now !== $before ) { throw new \RuntimeException( 'Unknown concurrent page state; refusing recovery overwrite.' ); } if ( $capture() !== $before ) { throw new \RuntimeException( 'Original page read-back differs.' ); } }
+		try { $now = $capture(); if ( $now === $after ) { $write( $after, $before ); } elseif ( $now !== $before ) { throw new \RuntimeException( 'Unknown concurrent page state; refusing recovery overwrite. Differences from intended state: ' . $difference( $after, $now ) ); } $restored = $capture(); if ( $restored !== $before ) { throw new \RuntimeException( 'Original page read-back differs: ' . $difference( $before, $restored ) ); } }
 		catch ( \Throwable $r ) { throw new \RuntimeException( $e->getMessage() . '; recovery failed: ' . $r->getMessage() ); }
 		throw new \RuntimeException( $e->getMessage() . '; complete original page preserved/restored and verified.' );
 	}
@@ -81,7 +102,7 @@ if ( 'rollback' === $mode ) {
 	if ( $valid ) { $allowed = $old; $allowed['post']['post_content'] = $new_content; $valid = $allowed === $new; }
 	if ( ! $valid ) { WP_CLI::error( 'Snapshot invalid, damaged or from another site/page/payload; nothing changed.' ); }
 	if ( $current === $old ) { WP_CLI::success( 'Exact original page already restored; nothing changed.' ); return; }
-	if ( $current !== $new ) { WP_CLI::error( 'Complete page state changed since apply; nothing changed.' ); }
+	if ( $current !== $new ) { WP_CLI::error( 'Complete page state changed since apply; nothing changed. ' . $difference( $new, $current ) ); }
 	try { $transition( $new, $old ); } catch ( \Throwable $e ) { WP_CLI::error( $e->getMessage() . ' Snapshot: ' . $path ); }
 	WP_CLI::success( 'Exact Rail input rollback complete; original page/post/meta/terms/dates restored. Snapshot: ' . $path ); return;
 }
