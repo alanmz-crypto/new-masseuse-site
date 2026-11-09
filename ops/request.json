@@ -1,11 +1,12 @@
 {
-  "id": "peek-chair-dry-20261109-1",
+  "id": "peek-chair-apply-20261109-1",
   "op": "run",
   "target": "staging39",
   "script": "link-ideas/push-peek-nav.sh",
   "args": [
     "page",
-    "chair-massage"
+    "chair-massage",
+    "--apply"
   ],
   "tests": "auto"
 }
