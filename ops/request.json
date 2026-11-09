@@ -1,12 +1,9 @@
 {
-  "id": "peek-deep-public-20261109-1",
-  "op": "run",
+  "id": "peek-chair-rehearse-20261109-1",
+  "op": "rehearse",
   "target": "staging39",
-  "script": "link-ideas/check-peek-pages.mjs",
+  "installer": "link-ideas/peek-page/chair-massage/install-peek-page-data.php",
   "args": [
-    "https://staging39.thaisolitude.com",
-    "--capture-page",
-    "deep-tissue-massage"
-  ],
-  "tests": "auto"
+    "--with-uploads"
+  ]
 }
