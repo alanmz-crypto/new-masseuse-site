@@ -19,8 +19,10 @@ Deployed to staging39 #1380 at 14:32 UTC. Copy rehearsal passed **19,061/0**;
 public browsers passed **15,646/0 across 16 suites** at 15:16:58, with complete
 leaf evidence audited despite combined-console truncation. Actual snapshot
 verification passed at 15:19:21: exact core/four data state before and after
-19 HTTP200 renders. iPhone Safari acceptance remains open. Live-release
-preparation is paused; the blocked live-copy permission remains unapproved.
+19 HTTP200 renders. Ryan accepted the current iPhone Safari layout on November
+10: “Looks good on Safari. No problems I see.” This closes the user acceptance
+check; it is not live-copy or deployment permission. Release-package work remains;
+the blocked temporary live-copy permission remains unapproved.
 Separate pre-live clearance item: the left index icon overlaps the announcement
 in 390×500 captures. Its positioning code is unchanged from v7, but a rendered
 v7 baseline and physical Safari hit-testing have not established its origin.
@@ -35,10 +37,11 @@ contains the exact scope, new read-only live/staging inventories and current
 acceptance blockers. At that inventory, all 15 shared page bodies matched after
 origin normalization, and staged core/four data payloads matched source. Live
 metadata is preserved. The localhost-only first-install/rollback package is
-paused at the preceding core; no live enablement or request exists. Ryan's
-iPhone reply confirms rail/index behavior and background containment but leaves research scrolling
-and the contradictory Privacy/hamburger result to clarify. No Safari pass is
-claimed; no website runtime changed during this preparation.
+still frozen at the preceding core; no live enablement or request exists. Ryan's
+latest no-problems Safari report accepts the current neighbours layout. The
+earlier contradictory Privacy/menu reply is historical, not a renewed generic
+retest requirement. No per-route, device-version or assistive-technology
+certification is inferred. This acceptance update changes notes only.
 The fourth live-sourced disposable-copy rehearsal identified the first draft's
 full-state mismatch: both shared WPCode category counts rise from 17 to 18 for
 an inactive snippet. The installer incorrectly counted only published records.
@@ -87,9 +90,9 @@ Only after `core-neighbours` restores frozen v7, and with fresh verified
 backups/full-state checks, may `core-input-focus` restore v6, followed if needed
 by older Kiro→v5/title-rail→v4 routes. Rail recovery uses
 its independent full-state `rail-input` route, never the old delete/recreate
-installer. No fallback-only interval occurred. Actual iPhone Safari acceptance
-is incomplete; see release readiness above. Official Linux WebKit now installs
-and launches in Actions, but its public attempt was INVALID HTTP202 with zero
+installer. No fallback-only interval occurred. Safari acceptance was incomplete
+at this preceding stage; the current neighbours layout is accepted above.
+Official Linux WebKit now installs and launches in Actions, but its public attempt was INVALID HTTP202 with zero
 assertions. The later neighbours copy6 passed WebKit **1,304/0**; that is
 Linux WebKit evidence, not physical Safari. Real OS text scaling and assistive
 technology remain unverified. Main/live remain untouched.

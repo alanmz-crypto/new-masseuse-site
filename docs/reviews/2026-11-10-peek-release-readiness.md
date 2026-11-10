@@ -5,8 +5,8 @@ when it is a good time to push live and continue. This assessment does not start
 a live write or authorize a main merge. Work remains on
 `claude/wizardly-bell-xu0rta`; the current visitor navigation is on staging39.
 
-**Paused for the November 10 summary-neighbour experiment.** Ryan has now
-requested only the previous and next summary controls around each open box;
+**November 10 summary-neighbour experiment accepted on Safari.** Ryan requested
+only the previous and next summary controls around each open box;
 see the [active staging record](2026-11-10-peek-summary-neighbours.md). The
 provisional release payload remains frozen at the preceding input-focus core.
 It is not the new candidate, and its old browser evidence cannot validate the
@@ -16,15 +16,19 @@ passed. Complete leaf evidence was audited despite combined-console truncation;
 see the staging record. The live package remains the older payload. Short-viewport
 left-index/announcement overlap is a separate remaining clearance concern before
 live; its code is unchanged from v7, but its rendered origin is unproved.
-Reassess and prepare the accepted payload after iPhone Safari acceptance;
-do not dispatch the previously blocked copy6 merely on a later permission reply without checking that the release package is still intended.
+The user acceptance check is complete; next resolve the separate clearance item,
+refresh the release payload and complete its first-install/recovery rehearsal.
+Do not dispatch the previously blocked copy6 merely on a later permission reply
+without checking that the release package is still intended.
 
-**Actual iPhone Safari acceptance is not complete.** Ryan reported that the
-rail/index step and background-scroll containment passed. Their reply reports
-step 4 both passing and failing, and says only containment passed in the
-research-box step. The specific research scrolling/size/switching problem,
-Privacy versus hamburger outcome, iPhone model and iOS version are being
-clarified. Do not infer a complete Safari pass or a confirmed root cause.
+**Current iPhone Safari user acceptance passed.** After the neighbours deployment
+and requested check, Ryan reported on November 10: **“Looks good on Safari.
+No problems I see.”** Accept this as their current experience of the new layout.
+The earlier partial and contradictory Privacy/menu reply remains historical;
+do not ask them to repeat the same generic check. No per-route checklist,
+iPhone/iOS version, OS text-scale or assistive-technology result was supplied.
+Those limits do not negate their acceptance or create another approval hurdle.
+This is not authorization for a temporary live-data copy or a live write.
 
 **Next copy rehearsal is blocked pending explicit scope permission.** Automatic
 approval review rejected the `peek-visitor-release-rehearse-6` dispatch before
@@ -416,16 +420,11 @@ The subsequent copy6 dispatch was rejected before execution as recorded above.
    including search/404; staging's 19-page inventory is not the live inventory.
 4. Complete supplemental Linux WebKit disclosure/layout checks. Linux WebKit
    remains engine evidence, not a claim of Safari or physical-device testing.
-5. Complete a short actual iPhone Safari acceptance check on the frozen staging
-   candidate. Ryan confirmed an iPhone with Safari is available. Give the short
-   test after automated checks are ready: Therapeutic research scrolling in both
-   orientations and at both ends, rapid box changes, short/closed-box touch
-   containment, preview/index gestures, left side, Privacy disclosure landing,
-   and header use as Safari's browser bars change height. Record device/iOS and
-   outcomes. This is a release judgment based on the previously reported finger
-   scrolling defects, not an additional repository approval rule. A brief
-   VoiceOver focus/jump check is separate from touch acceptance and is not a full
-   accessibility audit.
+5. **Current neighbours layout accepted by Ryan on iPhone Safari, November 10.**
+   Their no-problems report is recorded above. If a subsequent runtime fix changes
+   relevant behavior, recheck the affected path rather than repeating the entire
+   acceptance process. VoiceOver and OS text scaling remain separate coverage;
+   no result was supplied for them.
 6. Present the exact release and recovery package with fresh verified off-site
    backup requirements and a live dry run. The repository's manual LIVE workflow
    leaves the main merge and live start with Ryan; no live request is prepared or
@@ -487,9 +486,10 @@ browser launched, but the first Privacy request returned HTTP202. There were
 skipped. This establishes runner capability, not site verification. The next
 WebKit check belongs on the isolated rendered copy; no public retry is queued.
 
-Ryan's short iPhone Safari check was requested while the unchanged visitor core
-remains frozen; the partial/ambiguous result is recorded above. If a subsequent
-fix changes that core, the affected acceptance steps must be repeated.
+At this earlier input-focus stage, Ryan's short Safari reply was partial and
+ambiguous. The later neighbours layout received their no-problems acceptance,
+recorded above. Recheck affected behavior only if a subsequent runtime fix
+changes it.
 
 Source review identifies two possible discriminators, not reproduced Safari
 causes. An open Peek preview/index consumes the first outside tap, including a

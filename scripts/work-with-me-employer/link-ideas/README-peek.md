@@ -12,8 +12,9 @@ Copy rehearsal passed **19,061/0**; public browser checks passed **15,646/0**
 across all 16 suites. Complete leaf evidence was audited despite truncation of
 the combined console log. Actual-snapshot verification passed at 15:19:21 UTC:
 exact core/four data state before and after all 19 published HTTP200 renders.
-iPhone Safari acceptance remains open. Live-release preparation is paused,
-and its frozen first-install payload has not been updated to this core. The phase
+Ryan accepted the current layout on iPhone Safari on November 10: “Looks good
+on Safari. No problems I see.” Release-package work remains; its frozen
+first-install payload has not been updated to this core. The phase
 record also tracks a separate short-viewport left-index/announcement overlap;
 its positioning code is unchanged, and its rendered origin remains unproved.
 
@@ -27,10 +28,11 @@ contains the exact scope, new read-only live/staging inventories and current
 acceptance blockers. At that inventory, all 15 shared page bodies matched after
 origin normalization, and staged core/four data payloads matched source. Live
 metadata is preserved. The localhost-only first-install/rollback package is
-paused at the preceding core; no live enablement or request exists. Ryan's
-iPhone reply confirms rail/index behavior and background containment but leaves research scrolling
-and the contradictory Privacy/hamburger result to clarify. No Safari pass is
-claimed; no website runtime changed during this preparation.
+still frozen at the preceding core; no live enablement or request exists. Ryan's
+latest Safari report accepts the current neighbours layout; the earlier
+ambiguous Privacy/menu reply remains historical. Device/iOS details, per-route
+results and assistive-technology certification are not inferred. This acceptance
+is not permission for the blocked temporary live-data copy or live deployment.
 
 **Previous baseline: input-focus core and Rail practice updates on staging39.**
 See the [canonical phase record](../../../docs/reviews/2026-11-09-peek-input-focus.md) for complete attempts, hashes, backups
@@ -67,9 +69,9 @@ Only after `core-neighbours` restores frozen v7, and with fresh verified
 backups/full-state checks, may `core-input-focus` restore v6, followed if needed
 by older Kiro→v5/title-rail→v4 routes. Rail recovery uses
 its independent full-state `rail-input` route, never the old delete/recreate
-installer. No fallback-only interval occurred. Actual iPhone Safari acceptance
-is incomplete; see release readiness above. Official Linux WebKit now installs
-and launches in Actions, but its public attempt was INVALID HTTP202 with zero
+installer. No fallback-only interval occurred. Safari acceptance was incomplete
+at this preceding stage; the current neighbours layout is accepted above.
+Official Linux WebKit now installs and launches in Actions, but its public attempt was INVALID HTTP202 with zero
 assertions. The later neighbours copy6 passed WebKit **1,304/0**; that is
 Linux WebKit evidence, not physical Safari. Real OS text scaling and assistive
 technology remain unverified. Main/live remain untouched.

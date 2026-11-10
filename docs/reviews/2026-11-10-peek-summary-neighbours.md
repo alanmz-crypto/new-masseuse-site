@@ -1,7 +1,8 @@
 # Peek: one neighbouring summary above and below
 
-**Deployed and automatically verified on staging39; iPhone Safari acceptance
-remains open.** Ryan reported the same box problem across the service pages,
+**Deployed and automatically verified on staging39; Ryan accepted the current
+layout on iPhone Safari on November 10.** Ryan reported the same box problem
+across the service pages,
 particularly with Safari's address bar expanded. They requested
 one uniform experiment: show only the immediately preceding summary above the
 open summary, and the immediately following summary below it. First and last
@@ -468,11 +469,19 @@ verified core state `c9046dbb…ca289` and four-page state `3e9acc4e…cc9` befo
 after all 19 published routes returned HTTP200 with exact runtime/style/data
 scope. This was verification only; no reapply or rollback occurred.
 
-The staging implementation and automated verification are complete. Recheck the
-Thai “What to expect” and Therapeutic research boxes on iPhone Safari with the
-address bar expanded, upright and sideways. The earlier ambiguous Privacy/menu
-result and the separate short-viewport index clearance concern remain open. Release preparation stays paused, with its frozen
-payload still at the older core; no live deployment or main merge occurred.
+The staging implementation and automated verification are complete. On November
+10, after the requested Safari check, Ryan reported: **“Looks good on Safari.
+No problems I see.”** This closes user acceptance of the current neighbours
+layout on their iPhone Safari. The earlier ambiguous Privacy/menu reply remains
+historical evidence, not a request to repeat the same general acceptance check.
+No device/iOS version, per-route checklist or assistive-technology result was
+supplied; this records the user's experience without inventing those details.
+
+The separate short-viewport index clearance concern remains open. The release
+package still contains the preceding core and needs current first-install and
+recovery proof before live. This Safari acceptance does not authorize the
+blocked temporary live-data copy or a live deployment. No runtime, website or
+operations-request change accompanied this acceptance record.
 
 ## Required verification
 
@@ -490,7 +499,7 @@ post-browser recovery. Before any apply or rollback: a fresh DB export with a
 verified encrypted off-site copy. Read every complete operation report and
 retained evidence; INVALID supplies no verification.
 
-Desktop browser emulation and Linux WebKit cannot establish physical iPhone
-Safari behavior. Ryan's address-bar and finger-scrolling check remains the
-final acceptance of this proposed simplification. Their earlier contradictory
-hamburger result remains unresolved; this layout change is not a claimed fix.
+Desktop browser emulation and Linux WebKit remain separate from Ryan's
+user-reported iPhone Safari acceptance above. OS text scaling and assistive
+technology are not certified by that report. No specific root cause or separate
+hamburger fix is claimed.
