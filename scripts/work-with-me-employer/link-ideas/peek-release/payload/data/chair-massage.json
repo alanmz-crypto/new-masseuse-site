@@ -1,0 +1,139 @@
+{
+  "schema": 1,
+  "slug": "chair-massage",
+  "approval": {
+    "status": "approved",
+    "source": "Ryan approved these exact three-page box contents in chat on 2026-11-09 after the inline wording review; docs/reviews/2026-11-09-peek-summary-drafts.md; rendered staging39 capture peek-design-s39-20261109-1, run 42548017902, completed 2026-11-09 01:55:57 UTC."
+  },
+  "items": [
+    [
+      "Seated, clothed massage",
+      "ts-what-it-is"
+    ],
+    [
+      "Hands-on, without oil",
+      "ts-what-it-is"
+    ],
+    [
+      "etc.",
+      "ts-what-it-is"
+    ],
+    [
+      "Workday muscle tightness",
+      "ts-common-reasons"
+    ],
+    [
+      "A brief pause",
+      "ts-common-reasons"
+    ],
+    [
+      "Employee appreciation events",
+      "ts-common-reasons"
+    ],
+    [
+      "etc.",
+      "ts-common-reasons"
+    ],
+    [
+      "First-timers welcome",
+      "ts-who-can-benefit"
+    ],
+    [
+      "Ordinary chair alternative",
+      "ts-who-can-benefit"
+    ],
+    [
+      "etc.",
+      "ts-who-can-benefit"
+    ],
+    [
+      "Table sessions last longer",
+      "ts-guide-questions"
+    ],
+    [
+      "Results vary",
+      "ts-guide-questions"
+    ],
+    [
+      "Host arranges space, signups",
+      "ts-guide-questions"
+    ],
+    [
+      "Corporate/group bookings only",
+      "ts-guide-questions"
+    ],
+    [
+      "No individual home visits",
+      "ts-guide-questions"
+    ],
+    [
+      "etc.",
+      "ts-guide-questions"
+    ],
+    [
+      "Share health history",
+      "ts-what-to-expect"
+    ],
+    [
+      "Warning signs: see doctor",
+      "ts-what-to-expect"
+    ],
+    [
+      "Chair fitted first",
+      "ts-what-to-expect"
+    ],
+    [
+      "Focus follows feedback",
+      "ts-what-to-expect"
+    ],
+    [
+      "Pause before standing",
+      "ts-what-to-expect"
+    ],
+    [
+      "Mostly small workplace studies",
+      "ts-guide-research"
+    ],
+    [
+      "Many lacked comparison groups",
+      "ts-guide-research"
+    ],
+    [
+      "Some studies reported less stress and discomfort",
+      "ts-guide-research"
+    ],
+    [
+      "Some comparisons found no difference",
+      "ts-guide-research"
+    ],
+    [
+      "Longer-term effects remain uncertain",
+      "ts-guide-research"
+    ],
+    [
+      "Reviews mainly concern massage in general",
+      "ts-guide-research"
+    ],
+    [
+      "Chair-study harm reporting was sparse",
+      "ts-guide-research"
+    ],
+    [
+      "General-massage reports include rare serious harms",
+      "ts-guide-research"
+    ],
+    [
+      "etc.",
+      "ts-guide-research"
+    ]
+  ],
+  "coverage": {
+    "ts-what-it-is": "partial",
+    "ts-common-reasons": "partial",
+    "ts-who-can-benefit": "partial",
+    "ts-guide-questions": "partial",
+    "ts-what-to-expect": "most",
+    "ts-guide-research": "partial"
+  },
+  "research_anchor": "ts-guide-research"
+}

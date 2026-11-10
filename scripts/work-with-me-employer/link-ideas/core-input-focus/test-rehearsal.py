@@ -13,8 +13,8 @@ import tempfile
 
 ROOT = Path(__file__).resolve().parents[4]
 SOURCE = (ROOT / 'scripts/ci/rehearse.sh').read_text()
-HELPERS = SOURCE[SOURCE.index('core_focus_snapshot_from_log() {'):SOURCE.index('\nif [ "$inst" = link-ideas/rail-input/install-rail-input.php ]; then')]
-BODY = SOURCE[SOURCE.index('echo; echo "[3] baseline: fingerprint A and the 10 pages"'):]
+HELPERS = SOURCE[SOURCE.index('core_focus_snapshot_from_log() {'):SOURCE.index('\nrelease_manifest=')]
+BODY = SOURCE[SOURCE.index('echo; echo "[3] baseline:'):]
 # Preserve the already-approved Rail observation and recovery branches byte-for-byte.
 rail_blocks=[]
 for match in re.finditer(r'^if \[ "\$inst" = link-ideas/rail-input/install-rail-input.php \]; then$', SOURCE, re.M):
@@ -30,7 +30,7 @@ set -uo pipefail
 out=$CORE_FIXTURE/out; wwm=$CORE_FIXTURE/wwm; bk=$CORE_FIXTURE/backups
 trace=$CORE_FIXTURE/trace; state=$CORE_FIXTURE/state
 inst=link-ideas/core-input-focus/install-peek-core-input-focus.php
-src=staging39; fails=0
+src=staging39; fails=0; release_rehearsal=0; pages=(/ /about/)
 emit() {
   printf '%s\n' "$1" >> "$trace"
   [ "$(wc -l < "$trace")" != "${FAIL_AT:-0}" ]

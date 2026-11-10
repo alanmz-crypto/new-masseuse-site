@@ -1,0 +1,166 @@
+{
+  "schema": 1,
+  "slug": "thai-massage",
+  "approval": {
+    "status": "approved",
+    "source": "Ryan approved Kiro's safer Thai phrases; docs/inter-model/2026-11-09-peek-nav-session-handoff.md section 2; wording preserved from snippet #1380 (commit 4bc0fc8)."
+  },
+  "items": [
+    [
+      "Movement meets massage",
+      "ts-what-it-is"
+    ],
+    [
+      "Pressure, rocking, stretching",
+      "ts-what-it-is"
+    ],
+    [
+      "Butsaba's specialty",
+      "ts-what-it-is"
+    ],
+    [
+      "Restful or active",
+      "ts-what-it-is"
+    ],
+    [
+      "Rooted in Thai self-care",
+      "ts-what-it-is"
+    ],
+    [
+      "UNESCO-listed heritage",
+      "ts-what-it-is"
+    ],
+    [
+      "Trained at Still Light",
+      "ts-what-it-is"
+    ],
+    [
+      "Routines leave stiffness",
+      "ts-common-reasons"
+    ],
+    [
+      "Freer movement wanted",
+      "ts-common-reasons"
+    ],
+    [
+      "Some simply unwind",
+      "ts-common-reasons"
+    ],
+    [
+      "Tight areas get time",
+      "ts-common-reasons"
+    ],
+    [
+      "Share health history",
+      "ts-what-to-expect"
+    ],
+    [
+      "Warning signs: see doctor",
+      "ts-what-to-expect"
+    ],
+    [
+      "Brief talk first",
+      "ts-what-to-expect"
+    ],
+    [
+      "You set the pace",
+      "ts-what-to-expect"
+    ],
+    [
+      "Check-ins throughout",
+      "ts-what-to-expect"
+    ],
+    [
+      "Change anything, anytime",
+      "ts-what-to-expect"
+    ],
+    [
+      "Post-session guidance",
+      "ts-what-to-expect"
+    ],
+    [
+      "Wear loose clothing",
+      "ts-guide-questions"
+    ],
+    [
+      "Done on a mat",
+      "ts-guide-questions"
+    ],
+    [
+      "60 or 90 minutes",
+      "ts-guide-questions"
+    ],
+    [
+      "Stretches never forced",
+      "ts-guide-questions"
+    ],
+    [
+      "No individual home visits",
+      "ts-guide-questions"
+    ],
+    [
+      "Evidence is limited",
+      "ts-guide-research"
+    ],
+    [
+      "Trials are small, short",
+      "ts-guide-research"
+    ],
+    [
+      "Studies reported less pain",
+      "ts-guide-research"
+    ],
+    [
+      "Big reviews stay cautious",
+      "ts-guide-research"
+    ],
+    [
+      "Regular sessions may matter",
+      "ts-guide-research"
+    ],
+    [
+      "Rare serious effects reported",
+      "ts-guide-research"
+    ],
+    [
+      "Compared with sham devices",
+      "ts-guide-research"
+    ],
+    [
+      "Other methods mostly tied",
+      "ts-guide-research"
+    ],
+    [
+      "Not always ahead",
+      "ts-guide-research"
+    ],
+    [
+      "Recovery compared with rest",
+      "ts-guide-research"
+    ],
+    [
+      "Stress results mixed",
+      "ts-guide-research"
+    ],
+    [
+      "Swedish seen as relaxing",
+      "ts-guide-research"
+    ],
+    [
+      "Thai seen as energizing",
+      "ts-guide-research"
+    ],
+    [
+      "etc.",
+      "ts-guide-research"
+    ]
+  ],
+  "coverage": {
+    "ts-what-it-is": "most",
+    "ts-common-reasons": "most",
+    "ts-what-to-expect": "most",
+    "ts-guide-questions": "most",
+    "ts-guide-research": "partial"
+  },
+  "research_anchor": "ts-guide-research"
+}

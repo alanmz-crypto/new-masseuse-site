@@ -139,7 +139,7 @@ REMOTE
 ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 "$user@$host" bash -s -- "$want" <<<"$REMOTE" > "$work/rows.jsonl"
 
 python3 - "$work/rows.jsonl" "$out" "$target" <<'PY'
-import base64, datetime, hashlib, json, os, pathlib, re, sys, urllib.parse
+import datetime, hashlib, json, os, pathlib, re, sys, urllib.parse
 source, out, target = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2]), sys.argv[3]
 want = {'live': 'thaisolitude.com', 'staging39': 'staging39.thaisolitude.com'}[target]
 def fail(message): raise ValueError(message)
@@ -257,10 +257,10 @@ body = encoded(snapshot) + b'\n'; path = out/'baseline.json'; path.write_bytes(b
 manifest = {'schema':1,'target':target,'file':'baseline.json','bytes':len(body),'sha256':sha(body),'published_pages':len(pages),'snippets':len(kinds.get('snippet',[])),'full_records':len(records),'issues':len(issues)}
 manifest_path = out/'manifest.json'; manifest_path.write_bytes(encoded(manifest)+b'\n'); manifest_path.chmod(0o600)
 print('NAVIGATION-BASELINE ' + json.dumps(manifest, separators=(',',':')))
-print('NAVIGATION-BASELINE-BEGIN')
-payload = base64.b64encode(body).decode()
-for offset in range(0,len(payload),200000): print(payload[offset:offset+200000])
-print('NAVIGATION-BASELINE-END')
+# The checksum-verified artifact is canonical. Large encoded console copies
+# delay publication and can be changed by GitHub's secret masking.
+print('Stored navigation: ' + json.dumps({'peek_ownership':roles,'additional_css_ids':css_ids,'service_page_ids':service_ids},separators=(',',':')))
+print('Published routes: ' + json.dumps([page['path'] for page in pages],separators=(',',':')))
 for issue in issues: print('FAIL baseline: ' + issue)
 print('Artifact: ' + str(path))
 sys.exit(1 if issues else 0)

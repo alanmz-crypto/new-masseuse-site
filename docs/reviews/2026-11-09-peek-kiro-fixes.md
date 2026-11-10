@@ -4,10 +4,12 @@
 updated Rail page #1348 on November 9 and core #1380 on November 10. Core public
 checks passed 12,374/0 and exact post-browser snapshot verification passed;
 independent artifact audits are complete. Rail Firefox drawer failures remain
-unresolved: gesture-history diagnostic 42734807322 reproduced them (64/1), but
-the next split 42736953507 was INVALID HTTP202 (0/0, one load, no HAR). No public
-retry is queued; the linked phase record gives the precise next diagnostic.
-No runtime changed during these diagnostics. This Kiro payload is the previous frozen
+unresolved: gesture-history diagnostic 42734807322 reproduced them (64/1).
+After the challenged first hold split, retry 42738993282 completed 26/1 and
+isolated hold-to-go as sufficient; the mechanism remains unproved. That separate
+practice investigation is paused. [Visitor release preparation](2026-11-10-peek-release-readiness.md)
+now has exact read-only live/staging inventories but incomplete actual iPhone
+Safari acceptance. No live enablement/request or runtime change followed. This Kiro payload is the previous frozen
 `peek-nav-shared-v6.php`; `core-kiro-fixes` still pins v5→v6. Historical results
 below remain unchanged. Current recovery starts with actual input-focus snapshot
 `peek-template-core-input-focus-before-20261110-004021-4570ecbf.json`

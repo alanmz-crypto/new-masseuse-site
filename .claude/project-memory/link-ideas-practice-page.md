@@ -5,6 +5,16 @@ metadata:
   type: project
 ---
 
+**Release preparation, November 10: not ready for live.** The [readiness record](../../docs/reviews/2026-11-10-peek-release-readiness.md)
+contains the exact scope, new read-only live/staging inventories and current
+acceptance blockers. All 15 shared page bodies match after origin normalization;
+staged core/four data payloads match source. Live metadata is preserved, not
+copied from staging. A localhost-only first-install/rollback package is being
+prepared; no live enablement or request exists. Ryan's iPhone reply confirms
+rail/index behavior and background containment but leaves research scrolling
+and the contradictory Privacy/hamburger result to clarify. No Safari pass is
+claimed; no website runtime changed during this preparation.
+
 **Current: input-focus core and Rail practice updates deployed on staging39.**
 See the [canonical phase record](../../docs/reviews/2026-11-09-peek-input-focus.md) for complete attempts, hashes, backups
 and evidence. Core apply **42729961919** wrote #1380 at **2026-11-10 00:40:21 UTC**
@@ -23,11 +33,13 @@ fresh copy passed **2,632/0** and snapshot verification **42727758208** passed.
 Public Chromium passed **121/0**, but Firefox **115/2** drawer mouse-open failures
 remain unresolved. Diagnostic **42734807322 (64/1)** showed gestures 1–4 are
 sufficient to reproduce missing mouse input; the underlying cause is unproved.
-The next split, gestures 1–3 versus gesture 4 (hold to go), run **42736953507**,
-finished **2026-11-10 01:37:39 UTC, INVALID HTTP202** on its first request:
-**0/0, one load, no HAR**. No public retry is queued. After access recovers,
-resume that bounded split with capture; keep the original full gate unchanged.
-No website runtime changed during these diagnostics.
+The first hold split **42736953507** was INVALID HTTP202 (zero assertions).
+Its once-later retry **42738993282** finished **01:55:11 UTC, 26/1**, with two
+loads and a verified HAR: hold-to-go alone reproduces the later missing mouse
+input; gestures 1–3 pass. Offline replay did not reproduce it but remained
+INVALID because the isolation proxy blocked one browser-level connection.
+The mechanism is unproved; no runtime patch follows. This staging-only practice
+investigation is paused and does not block the separate visitor release.
 
 Actual recovery snapshots, both verified encrypted off-site:
 
@@ -37,9 +49,11 @@ Actual recovery snapshots, both verified encrypted off-site:
 After fresh verified backups/full-state checks, reverse `core-input-focus` to
 frozen v6 FIRST, then any older Kiro→v5/title-rail→v4 route. Rail recovery uses
 its independent full-state `rail-input` route, never the old delete/recreate
-installer. No fallback-only interval occurred. Safari/physical devices/OS text
-scale/real assistive technology remain unverified; WebKit ran zero assertions
-because libraries are missing. Main/live remain untouched.
+installer. No fallback-only interval occurred. Actual iPhone Safari acceptance
+is incomplete; see release readiness above. Official Linux WebKit now installs
+and launches in Actions, but its public attempt was INVALID HTTP202 with zero
+assertions; the next run belongs on the isolated copy. Real OS text scaling and
+assistive technology remain unverified. Main/live remain untouched.
 
 **Durable page-update lesson:** a script-only `wp_update_post` ran save hooks
 that removed Spectra `_uag_css_file_name`/`_uag_page_assets` and changed SureRank's

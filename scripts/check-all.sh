@@ -88,9 +88,12 @@ peek_test() {
   docker run --rm --network none --entrypoint php -v "$here/work-with-me-employer/link-ideas:/pkg:ro" "$img" /pkg/rail-input/test-installer.php
 }
 if [ -n "$img" ] && command -v docker >/dev/null; then gate "Peek installer ownership, recovery and current-page JSON (offline)" peek_test; else skip "Peek installer and JSON tests" "docker or the pinned image is not available"; fi
+peek_release_test() { docker run --rm --network none --entrypoint php -v "$here/work-with-me-employer/link-ideas:/pkg:ro" "$img" /pkg/peek-release/test-installer.php; }
+if [ -n "$img" ] && command -v docker >/dev/null; then gate "Peek visitor first-install ownership and exact recovery (offline)" peek_release_test; else skip "Peek visitor first-install tests" "docker or the pinned image is not available"; fi
 gate "Rail deployment backups, cache stability and snapshot verification (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/rail-input/test-push.py"
 gate "Peek input-focus deployment snapshot, rendering order and historical dispatch (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/core-input-focus/test-push.py"
 gate "Peek input-focus rehearsal snapshot binding and post-browser recovery (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/core-input-focus/test-rehearsal.py"
+gate "Peek visitor-release snapshot, rollback rendering and evidence guards (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/peek-release/test-rehearsal.py"
 peek_js_syntax() {
   local file
   while IFS= read -r file; do node --check "$file" || return 1; done < <(find "$here/work-with-me-employer/link-ideas" -name '*.mjs' -not -path '*/node_modules/*' | sort)

@@ -11,6 +11,19 @@ if (!local && base !== 'https://staging39.thaisolitude.com') throw new Error('ex
 if (flags.some(flag => !['--firefox', '--fixtures', '--fixtures-only'].includes(flag)) || new Set(flags).size !== flags.length) throw new Error('unknown or repeated title-rail flag');
 const fixturesOnly = flags.includes('--fixtures-only'), fixtures = fixturesOnly || flags.includes('--fixtures');
 if (fixtures && !local) throw new Error('title-rail response fixtures are localhost only');
+// A first installation on a copy of live has its own reviewed visitor inventory,
+// without staging's four practice pages. Keep the default staging guard intact.
+const releaseProfile = process.env.TS_PEEK_REHEARSAL_PROFILE;
+let releaseInventory = null;
+if (releaseProfile !== undefined) {
+  if (releaseProfile !== 'visitor-release-v1' || base !== 'http://localhost:8090' || fixturesOnly || !process.env.TS_PEEK_TITLE_INVENTORY) throw new Error('INVALID title-rail release profile: exact localhost:8090 and fresh complete inventory required');
+  const release = JSON.parse(readFileSync(new URL('./peek-release/manifest.json', import.meta.url), 'utf8'));
+  const current = JSON.parse(readFileSync(process.env.TS_PEEK_TITLE_INVENTORY, 'utf8')).pages;
+  const normalize = pages => pages.map(({ id, path, title }) => ({ id, path, title })).sort((a, b) => a.id - b.id);
+  const practice = new Set(['/in-page-link-ideas/', '/progress-nav-ideas/', '/rail-nav-ideas/', '/index-nav-ideas/']);
+  if (release.schema !== 1 || release.bundle !== 'peek-visitor-release-v1' || !Array.isArray(release.pages) || release.pages.length !== 15 || release.pages.some(page => practice.has(page.path)) || !Array.isArray(current) || JSON.stringify(normalize(current)) !== JSON.stringify(normalize(release.pages))) throw new Error('INVALID title-rail release profile: inventory must exactly match the reviewed 15 visitor pages');
+  releaseInventory = current;
+}
 const engine = flags.includes('--firefox') ? 'firefox' : 'chromium';
 const manifest = JSON.parse(readFileSync(new URL('./peek-pages.json', import.meta.url), 'utf8'));
 const approved = new Set(manifest.pages.filter(page => page.staging === 'enabled').map(page => '/' + page.slug + '/'));
@@ -326,8 +339,9 @@ const originalContent = p => p.evaluate(() => {
 });
 try {
   if (!fixturesOnly) {
-    const inventory = JSON.parse(readFileSync(process.env.TS_PEEK_TITLE_INVENTORY || new URL('./title-strip-pages.json', import.meta.url), 'utf8')).pages;
-    if (!Array.isArray(inventory) || inventory.length < 19 || new Set(inventory.map(page => page.id)).size !== inventory.length || new Set(inventory.map(page => page.path)).size !== inventory.length || inventory.some(page => !Number.isInteger(page.id) || !/^\/(?!\/)/.test(page.path) || !page.title)) throw new Error('INVALID incomplete published-page inventory');
+    const inventory = releaseInventory || JSON.parse(readFileSync(process.env.TS_PEEK_TITLE_INVENTORY || new URL('./title-strip-pages.json', import.meta.url), 'utf8')).pages;
+    if (!Array.isArray(inventory) || (!releaseInventory && inventory.length < 19) || new Set(inventory.map(page => page.id)).size !== inventory.length || new Set(inventory.map(page => page.path)).size !== inventory.length || inventory.some(page => !Number.isInteger(page.id) || !/^\/(?!\/)/.test(page.path) || !page.title)) throw new Error('INVALID incomplete published-page inventory');
+    if (releaseInventory) console.log('INFO title-rail inventory profile visitor-release-v1: exact 15 reviewed visitor pages plus search/404; no published practice routes.');
     const ctx = await context(), nojsSources = new Map();
     if (!local) {
       const response = await ctx.request.get(base + '/wp-json/wp/v2/pages?per_page=100&_fields=id,link');

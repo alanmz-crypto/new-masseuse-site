@@ -5,6 +5,13 @@ when it is a good time to push live and continue. This assessment does not start
 a live write or authorize a main merge. Work remains on
 `claude/wizardly-bell-xu0rta`; the current visitor navigation is on staging39.
 
+**Actual iPhone Safari acceptance is not complete.** Ryan reported that the
+rail/index step and background-scroll containment passed. Their reply reports
+step 4 both passing and failing, and says only containment passed in the
+research-box step. The specific research scrolling/size/switching problem,
+Privacy versus hamburger outcome, iPhone model and iOS version are being
+clarified. Do not infer a complete Safari pass or a confirmed root cause.
+
 ## Recommended scope
 
 - The currently verified shared Peek core, with the title strip and rails on
@@ -52,10 +59,88 @@ already match the current source and the recorded staging versions:
 | #1232 A11yPageJumpLinks | `027d8a2b78d68b55be139b41f8594501fc2492aff437146364dc1c87bbfda99c` |
 | #1338 TSSectionGuide v1 | `ef9ee2fb82fe91be616518b4a02f9ee276855a9b998685e7e5ee13064c84f785` |
 
-The fingerprint is not a full-state capture. Exact records, CSS/Astra bytes,
-page identities and route provenance are being inspected separately.
+The fingerprint is not a full-state capture. A separate database-only inventory
+[42741958557](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42741958557),
+source `9c6e090417c83164b457be16e5dcbd9ac4f6bb8b`, captured the exact live state
+at **02:19:48 UTC, PASS**: WordPress 7.1.4, MySQL 8.4.11-11, a read-only
+REPEATABLE READ snapshot across seven InnoDB tables, 15 published pages,
+25 snippet metadata entries, seven scoped full records and zero issues. No
+WordPress bootstrap, public HTTP request or database write occurred.
+
+The complete report and checksum-verified three-file artifact were independently
+reviewed. `baseline.json` is **2,047,975 bytes**, SHA256
+`a6c6e923d484576d96060ab8d9f84110c5d785f9fec64c5ae7e5b0ef3f37f013`.
+Artifact `13730735070` is 645,199 bytes, SHA256
+`a0d1022e26be819216bad40bd800074b2db7f5447c55a37cd9615afd9967824e`.
+All raw records, option and witness hashes recompute. There are no Peek records
+in any status; #1232 and #1338 are active with their exact expected code and
+metadata. Their PHP/everywhere taxonomy rows each have count 17, so new owned
+snippets must account for precise shared-count changes. All 22 configured
+service headings occur once in stored HTML; rendered anchor validation remains
+part of the rehearsal.
+
+Live Additional CSS #29 contains one exact reading-progress block (1,093 bytes
+without surrounding newlines, SHA256
+`f8da6191df763e2f270aafaf322d9c2b1e5050620f67af5c2c2fd3f311c7332b`).
+Astra's `scroll-to-top-enable` is boolean true and its option autoload is `on`.
+Only scoped public/navigation settings were exported; unknown page metadata is
+represented by hashes. Independent inspection found no unintended credential
+data in the export.
+
+Staging's equivalent inventory
+[42743361208](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42743361208),
+source `3ac99e143ca812cf45c96a9b31399ac003840e9a`, finished **02:31:55 UTC,
+PASS**. Its 2,425,765-byte baseline has SHA256
+`06cbb42ae2b74f145f488c351a6be8cfec17d5981070e9b550adc1024a7df837`;
+artifact `13730377390` is 832,281 bytes, SHA256
+`d943af1ae6c945596977aa15dfd292354992877f97279086660b1fe33a464b1d`.
+Full report, artifact and all row/option/witness hashes were independently
+verified. It contains 19 pages, 30 snippet metadata entries, 12 scoped full
+records and zero issues; WordPress/MySQL versions match live.
+
+All 15 common page IDs, titles and origin-normalized content hashes match;
+eight bodies are identical and seven differ only by the site origin. The four
+extra routes are exactly the navigation practice pages. Current #1380 and all
+four generated data snippets match repository bytes exactly. The eight existing
+navigation metadata rows match; full dependency posts differ only by GUID.
+Astra differs only in four image origins and the scroll-to-top boolean, with
+autoload unchanged. The release's exact 1,094-byte CSS removal includes the
+progress block's following newline and produces staged CSS SHA256
+`2806a8a19e13aab2c672a4f62bb8265c091944652c54d45c5bb3845629ee38ae`.
+
+The service-page metadata witnesses are **not** identical: both sites have 106,
+with four IDs unique to each site and four differing hashes among shared IDs.
+Only hashes were exported, so those differences are not classified. This is
+additional reason to preserve live's own state and rehearse its exact copy;
+no staging metadata or database is being promoted.
+
+GitHub masks parts of the large encoded **console** copy. The artifact, leaf log
+and published report copy are intact and agree; the console payload is not
+canonical. Future inventories retain the full artifact and print findings and
+hashes instead of duplicating megabytes of encoded data. The first live capture
+itself took seconds; emitting its console copy delayed publication by minutes.
 
 ## Conditions for recommending launch
+
+The provisional first-install package now lives in
+`scripts/work-with-me-employer/link-ideas/peek-release/`. It accepts only exact
+`http://localhost:8090`; no staging/live installer or live request is enabled.
+Independent source review cleared installer SHA256
+`b9485188ea80f05567cbfb903c28da34148d39c2ff7db6541ceebe553db80a64`
+for isolated rehearsal. Its pinned-PHP SQLite/WordPress API model passed **913
+checks**, including **106 injected write-boundary failures**. The separate
+rehearsal evidence tests passed **117 controls** and detected eight deliberate
+guard removals. Adapter/profile tests passed **46 controls**, then accepted the
+actual frozen manifest and independently captured 15-page inventory using stub
+browser entry points. These are offline results, not real WordPress or browser
+verification.
+
+The rehearsal retains the existing complete visitor browser chain, adds the
+supplemental WebKit checks on localhost, and checks original rendered navigation
+after each rollback. It binds each phase to the actual immutable snapshot and
+five created IDs, including a separate rollback/reapply after browser activity.
+The source and destination stores, shared taxonomy counts and unrelated content
+must remain exact. Fresh-copy execution is still pending.
 
 1. Capture and review the exact current live navigation baseline. Existing
    staging upgrade installers require owned snippet #1380 and historical
@@ -112,8 +197,17 @@ skipped. This establishes runner capability, not site verification. The next
 WebKit check belongs on the isolated rendered copy; no public retry is queued.
 
 Ryan's short iPhone Safari check was requested while the unchanged visitor core
-remains frozen. Device/iOS and outcomes are pending. If a subsequent fix changes
-that core, the affected acceptance steps must be repeated.
+remains frozen; the partial/ambiguous result is recorded above. If a subsequent
+fix changes that core, the affected acceptance steps must be repeated.
+
+Source review identifies two possible discriminators, not reproduced Safari
+causes. An open Peek preview/index consumes the first outside tap, including a
+hamburger tap; testing with Peek already closed distinguishes that existing
+behavior. Safari browser-bar changes can trigger `visualViewport` refitting,
+which currently writes inner scroll positions. Native scroll recognition and
+scroll interruption need separate observation before changing either. The
+supplemental WebKit layout check uses taps and keyboard End, not finger swipes,
+and cannot settle the actual iPhone scrolling complaint.
 
 ## Separate follow-ups
 
