@@ -594,6 +594,40 @@ Default checks and website runtime remain unchanged. A failing half would be
 sufficient history to reproduce; two passing halves would leave combined
 history/order as an open question.
 
+
+Earlier-history split [42734807322](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42734807322),
+source `8e7c98068c5daec9a42c4b4e661afe9fe316f16d`, finished **01:22:01 UTC,
+64/1**, two loads and one failure capture. The pre-gesture prefix passed; the
+native gesture loop 1–4 reproduced the missing drawer mouse input. Correct
+coordinates were acknowledged but no DOM input or drawer transition followed.
+All four gestures and the modal keyboard suffix themselves passed. Root and an
+independent reviewer checked the complete report, traces, artifact and failure
+image. Artifact SHA256:
+`83c6315961a3990b9893ddf87215ddcebea79f0d82074cc3dfe4bb9086e79993`.
+This identifies sufficient history in this run, not a root cause. The matching
+Playwright 1.63 Firefox fixture still passes **121/0** when served at synthetic
+HTTPS URLs with all unmatched requests aborted; HTTPS alone does not reproduce.
+
+The next opt-in `--hold-history-diagnostic` separates gestures 1–3 from gesture
+4 (hold to go), retaining their existing actions and modal suffix. Gesture 4
+jumps while the mouse remains pressed; that is a hypothesis to test. The
+capture-enabled current fixture passed **29/0**, while the frozen faulty baseline
+correctly failed **23/6**. No public request or runtime change was made in these
+local controls. Default checks remain unchanged.
+
+Optional `--capture-har` records these same two anonymous loads for offline
+replay. Body collection adds overhead, but no routing, cache policy, input or
+wait is changed. Raw capture stays private outside artifact paths and is deleted
+on completion or failure. Published artifacts reconstruct only replay fields,
+strip cookies, refuse authenticated/non-GET requests, require embedded bodies
+and exactly one HTML200 main document, and include count/hash manifests.
+Offline sanitizer/lifecycle checks passed **46/0**, now integrated in
+`check-all.sh`; both current and failing fixture controls produced valid private
+sanitized artifacts and left no raw directories. Independent integration review
+passed. Recording may affect timing; a passing recorded run would not erase
+prior unrecorded failures. Offline replay will also remain diagnostic evidence,
+not a substitute for a fresh public gate.
+
 ## Limits
 
 Native input is browser emulation. Physical devices, true OS text scale and real

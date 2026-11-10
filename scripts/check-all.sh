@@ -99,6 +99,7 @@ if command -v node >/dev/null; then
   gate "Peek browser checker and wrapper syntax (offline)" peek_js_syntax
   gate "Peek wrapper evidence, invalid and failure guards (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/tests/wrapper-selftest.py"
   gate "Peek input wrapper evidence, complete logs and stop guards (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/tests/input-wrappers-selftest.py"
+  gate "Rail anonymous HAR capture and artifact guards (offline)" node "$here/work-with-me-employer/link-ideas/rail-input/test-har-capture.mjs"
 else skip "Peek browser checker syntax and wrapper guards" "node is not installed"; fi
 # the generated Thai content must be what the builder produces (a hand edit or a stale build is caught here)
 gate "Thai evidence content matches its builder" python3 -I -B "$here/work-with-me-employer/thai/build-thai-evidence.py" --check
