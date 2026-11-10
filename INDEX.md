@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-10 01:12 UTC  **PASS**  `peek-rail-input-firefox-history-1`  [reports/2026-11-10/011212-peek-rail-input-firefox-history-1.md](reports/2026-11-10/011212-peek-rail-input-firefox-history-1.md)  (run 42733164765)
 - 2026-11-10 01:05 UTC  **PASS**  `peek-core-input-focus-verify-1`  [reports/2026-11-10/010507-peek-core-input-focus-verify-1.md](reports/2026-11-10/010507-peek-core-input-focus-verify-1.md)  (run 42731765629)
 - 2026-11-10 01:04 UTC  **PASS**  `peek-core-input-focus-public-1`  [reports/2026-11-10/010419-peek-core-input-focus-public-1.md](reports/2026-11-10/010419-peek-core-input-focus-public-1.md)  (run 42731171781)
 - 2026-11-10 00:50 UTC  **FAIL**  `peek-rail-input-firefox-protocol-1`  [reports/2026-11-10/005014-peek-rail-input-firefox-protocol-1.md](reports/2026-11-10/005014-peek-rail-input-firefox-protocol-1.md)  (run 42731095161)
