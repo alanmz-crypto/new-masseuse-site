@@ -8,8 +8,14 @@ tracks the deployed core, tests and actual recovery snapshot. `peek-nav.php`
 is deployed to staging39 #1380; the preceding input-focus core is frozen as
 shared v7. Recovery snapshot:
 `peek-template-core-neighbours-before-20261110-143200-81725f33.json`.
-Public browser verification is in progress. Live-release preparation is paused,
-and its frozen first-install payload has not been updated to this core.
+Copy rehearsal passed **19,061/0**; public browser checks passed **15,646/0**
+across all 16 suites. Complete leaf evidence was audited despite truncation of
+the combined console log. Actual-snapshot verification passed at 15:19:21 UTC:
+exact core/four data state before and after all 19 published HTTP200 renders.
+iPhone Safari acceptance remains open. Live-release preparation is paused,
+and its frozen first-install payload has not been updated to this core. The phase
+record also tracks a separate short-viewport left-index/announcement overlap;
+its positioning code is unchanged, and its rendered origin remains unproved.
 
 Current recovery starts with `core-neighbours` → frozen v7, using
 `peek-template-core-neighbours-before-20261110-143200-81725f33.json`,

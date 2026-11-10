@@ -10,11 +10,14 @@ requested only the previous and next summary controls around each open box;
 see the [active staging record](2026-11-10-peek-summary-neighbours.md). The
 provisional release payload remains frozen at the preceding input-focus core.
 It is not the new candidate, and its old browser evidence cannot validate the
-new layout. The neighbour core is now deployed on staging39, with public browser
-verification in progress; the live package remains the older payload.
-Reassess and prepare the accepted payload after staging and Safari
-acceptance; do not dispatch the previously blocked copy6 merely on a later
-permission reply without checking that the release package is still intended.
+new layout. The neighbour core is deployed on staging39: copy **19,061/0**,
+public **15,646/0 across 16 suites**, and exact actual-snapshot verification
+passed. Complete leaf evidence was audited despite combined-console truncation;
+see the staging record. The live package remains the older payload. Short-viewport
+left-index/announcement overlap is a separate remaining clearance concern before
+live; its code is unchanged from v7, but its rendered origin is unproved.
+Reassess and prepare the accepted payload after iPhone Safari acceptance;
+do not dispatch the previously blocked copy6 merely on a later permission reply without checking that the release package is still intended.
 
 **Actual iPhone Safari acceptance is not complete.** Ryan reported that the
 rail/index step and background-scroll containment passed. Their reply reports

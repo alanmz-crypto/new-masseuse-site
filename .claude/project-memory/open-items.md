@@ -15,9 +15,15 @@ pages with Safari’s address bar expanded. They requested only the immediate
 previous summary above and next below each open box. The
 [neighbour-layout record](../../docs/reviews/2026-11-10-peek-summary-neighbours.md)
 tracks the deployed core, actual backup/snapshot and browser/recovery checks.
-Deployed to staging39 #1380 at 14:32 UTC; public browser verification is in
-progress. Live-release preparation is paused; the blocked live-copy
-permission remains unapproved.
+Deployed to staging39 #1380 at 14:32 UTC. Copy rehearsal passed **19,061/0**;
+public browsers passed **15,646/0 across 16 suites** at 15:16:58, with complete
+leaf evidence audited despite combined-console truncation. Actual snapshot
+verification passed at 15:19:21: exact core/four data state before and after
+19 HTTP200 renders. iPhone Safari acceptance remains open. Live-release
+preparation is paused; the blocked live-copy permission remains unapproved.
+Separate pre-live clearance item: the left index icon overlaps the announcement
+in 390×500 captures. Its positioning code is unchanged from v7, but a rendered
+v7 baseline and physical Safari hit-testing have not established its origin.
 
 Current recovery starts with `core-neighbours` → frozen v7, using
 `peek-template-core-neighbours-before-20261110-143200-81725f33.json`,

@@ -1,7 +1,8 @@
 # Peek: one neighbouring summary above and below
 
-**Deployed on staging39; public browser verification in progress.** Ryan reported the same box problem across the
-service pages, particularly with Safari's address bar expanded. They requested
+**Deployed and automatically verified on staging39; iPhone Safari acceptance
+remains open.** Ryan reported the same box problem across the service pages,
+particularly with Safari's address bar expanded. They requested
 one uniform experiment: show only the immediately preceding summary above the
 open summary, and the immediately following summary below it. First and last
 sections have only their existing neighbour; there is no wraparound.
@@ -427,9 +428,51 @@ The verifier correction and deployment notes were committed as
 passed at 14:54:18 UTC; the complete log was read. Runtime SHA256 remained
 `0459b427…7e27`. Request `92564ef44111d635ce81d93d8d464885cb34bd42` ran the
 [public browser check](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42838951767)
-against deployed staging39 and completed **PASS at 15:16:58 UTC**. Full artifact
-and capture review is in progress; the final actual-snapshot verification
-follows this browser run.
+against deployed staging39 and completed **PASS at 15:16:58 UTC**:
+**15,646 passed / 0 failed across all 16 required logical suites**. Focused
+neighbours checks passed Chromium **1,384/0** and Firefox **1,304/0**, each
+completing all eight cases, eight page loads and 16 captures. All 14 retained
+suites passed, including disclosure, input-focus, title, clearance, page and
+native-touch checks. WebKit's **1,304/0** belongs to the earlier mandatory copy6
+rehearsal, not this public run.
+
+The combined operation log and its published report truncate during the first
+input-focus JPEG. They are not complete browser evidence by themselves. The
+artifact retains every complete leaf stdout/stderr log, nested wrapper output
+and `results.json`; independent audit reconciled all 16 leaves, wrapper exits
+and the aggregate count, with no FAIL/INVALID or browser stderr. All 166 unique
+JPEG payloads decode; the truncated console image is an exact prefix of the
+complete retained image. All 32 focused neighbour geometry/capture pairs and
+all four research lists match their expectations. The full lower-level evidence
+supplies the verification; the truncated console output is not treated as a
+complete report.
+
+Actual public captures show the Thai middle box with its two neighbours and all
+seven ideas, plus readable Therapeutic research in landscape. All 32 focused
+Chromium/Firefox captures were independently reviewed across four pages and both
+sides; no new persistent blocker was found in the summary boxes. Deep Tissue's
+long neighbouring title still uses its existing ellipsis.
+
+A separate clearance concern remains before live: at 390×500, the left index
+icon visibly overlaps the announcement text in both copy6 and public captures.
+Its positioning CSS and header/strip measurement code are unchanged from frozen
+v7, so there is no evidence this summary change caused it. A rendered v7
+baseline was not reproduced; its age is not proved. Physical Safari overlap and
+hit-testing remain unverified. No extra runtime change was made for this finding.
+
+[Final actual-snapshot verification](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42843020616)
+used request `f5597ac4dba497c1739e5c1c4dcc1dbbc39d22eb` and finished **PASS at
+15:19:21 UTC**. The complete report was read independently. The owned actual
+snapshot `peek-template-core-neighbours-before-20261110-143200-81725f33.json`
+verified core state `c9046dbb…ca289` and four-page state `3e9acc4e…cc9` before and
+after all 19 published routes returned HTTP200 with exact runtime/style/data
+scope. This was verification only; no reapply or rollback occurred.
+
+The staging implementation and automated verification are complete. Recheck the
+Thai “What to expect” and Therapeutic research boxes on iPhone Safari with the
+address bar expanded, upright and sideways. The earlier ambiguous Privacy/menu
+result and the separate short-viewport index clearance concern remain open. Release preparation stays paused, with its frozen
+payload still at the older core; no live deployment or main merge occurred.
 
 ## Required verification
 
