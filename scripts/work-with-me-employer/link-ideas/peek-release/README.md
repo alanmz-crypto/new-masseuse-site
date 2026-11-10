@@ -85,6 +85,26 @@ WPCode's initial unslashing is corrected only after this inactive initialization
 jump links and the guide remain available throughout. The installer never reads
 remote JSON and changes only WordPress database storage.
 
+Copy5 (run `42756230445`, completed 2026-11-10 04:36:13 UTC) accepted the first
+factory record and its attribute initialization. Its first code correction then
+changed the new GUID from the exact raw `&p=ID` form to `&#038;p=ID`; that was the
+only unexpected field in the owned-save comparison. Matching official WordPress
+7.1.4 source explains it: [post updates reload the GUID in display context](https://github.com/WordPress/WordPress/blob/7.1.4/wp-includes/post.php#L4653),
+whose [default filter is `esc_url`](https://github.com/WordPress/WordPress/blob/7.1.4/wp-includes/default-filters.php#L91),
+which [uses this numeric entity](https://github.com/WordPress/WordPress/blob/7.1.4/wp-includes/formatting.php#L4585).
+Initial insertion writes the raw permalink directly. The installer now predicts
+only those two exact home/ID-bound constants: factory creation and attribute
+initialization require raw; code correction and activation require the entity
+form, including repeated saves. It never accepts arbitrary decoded-equivalent
+GUIDs or uses a current filter result as its acceptance rule.
+
+An incomplete snapshot's three-key factory or uncorrected-PHP draft requires the
+raw GUID; a published record requires the entity form. A four-key draft with
+final PHP can represent either skipped correction (the factory already preserved
+the code) or completed correction, so that one snapshot phase permits the two
+exact forms. Current state must still equal the entire recorded snapshot.
+Actual activation and later saves remain to be proved by the fresh-copy run.
+
 `apply FILE` is a strict read-only repeat. `verify FILE [original]` uses the same
 complete snapshot validation and performs no database, cache or file writes.
 A snapshot-free apply refuses existing Peek records, including drafts and trash.

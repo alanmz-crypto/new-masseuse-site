@@ -309,6 +309,67 @@ Independent review cleared the count correction and full test diff. The full
 local source check passed **38/0**, with the same Ruff and rendered-URL skips.
 All full-state and ownership checks remain enabled. Only the shared-count
 expectation changed; the other field expectations and runtime payload are exact.
+Committed source `59fa6c80fde4a1e8ba29e1da068fe4e432607ef8` then passed
+Gates `42755890311`: **39/0**, only the expected rendered-URL skip, at
+**04:28:59 UTC**. The complete 202-line log was read by the primary agent and
+independently reviewed; SHA256
+`fef597af85a50cfc66d8d1c105e4dc90c035719ad48ff42cef0c97c9d3f80851`.
+
+Fresh copy request `peek-visitor-release-rehearse-5`, run `42756230445`, source
+`44e42dba67861ed799005ef65f59cc444aca7495`, finished **04:36:13 UTC, FAIL**.
+The first inactive Thai record and explicit attribute initialization now passed.
+Its code correction stopped at the owned-save field check: the only unexpected
+field was the new record's GUID, changing from
+`http://localhost:8090/?post_type=wpcode&p=1339` to
+`http://localhost:8090/?post_type=wpcode&#038;p=1339`. Both exact strings were
+independently reconstructed and verified against the diagnostic's typed hashes.
+The intended code and modified-date changes are the only additional differences
+in the subsequent recovery diagnostic. The changed save was not accepted, and
+recovery refused it. No later creation, activation, deletion or browser phase ran.
+
+The actual copy-only journal was
+`/backups/peek-release-before-20261110-043610-c8f1cf19.json`. The complete report,
+356-line job log and eleven-file artifact agree. Artifact size is 10,382 bytes,
+SHA256 `63af1f0838e21be621fdeee4c35f7c596e4090e818725abb0d5119f2ec7ceaed`.
+All original navigation signatures and baseline fingerprints match copy4;
+preflight state is stable within this run. **Zero browser suites, assertions or
+screenshots; WebKit did not start.** The long setup interval was dependency
+installation, not browser verification. No staging/live store changed.
+
+Local source inspection found the pinned Apache image contains WordPress 7.1.3;
+the rehearsal overlays the actual copied 7.1.4 files. Matching official 7.1.4
+source was then read through GitHub by the implementation agent and primary
+agent. [`wp_insert_post`](https://github.com/WordPress/WordPress/blob/7.1.4/wp-includes/post.php#L4653)
+reloads an update's GUID through `get_post_field`'s default display context;
+[`post_guid`](https://github.com/WordPress/WordPress/blob/7.1.4/wp-includes/default-filters.php#L91)
+uses `esc_url`, whose display path emits
+[`&#038;`](https://github.com/WordPress/WordPress/blob/7.1.4/wp-includes/formatting.php#L4585).
+The initial insert directly stores `get_permalink`. Relevant upstream blob SHAs:
+post `aa6e4f9999ae284cd0edff011b0ce9409a614236`, filters
+`12ca0045b98b4133d31c671897f94c5de7d9ff55`, formatting
+`d7b0e2a67189a55bd3c2e2853d9566ae3dcadf25`.
+
+The proposed correction was explained before implementation: construct only the
+two exact origin/ID-bound GUID forms, with raw factory/attribute states and the
+entity form after code correction or activation. Published snapshots require
+the entity form; uncorrected PHP and three-key factories require raw. A four-key
+exact-code draft has one legitimate journal ambiguity: the existing factory
+contract allows already-correct PHP, so it may still be raw until activation,
+or may be encoded after correction. Only those two exact constants can be
+accepted there. Every actual save and full-current-state comparison remains
+exact. Do not use URL decoding/filter output to accept arbitrary variants, or
+reinterpret the unaccepted copy5 journal as a recognized rollback state.
+That narrow correction is implemented in installer SHA256
+`4452c637d2dfdb4b673b1cae90ba3b233d2b336f2ac303bdb8b3ad3766a7243e`
+and passed independent source review and pinned-PHP syntax checking. The updated
+fixture passed **1,666 checks / 138 injected write-boundary failures**. It covers
+the already-correct factory path, raw versus saved partial journals, exact
+first/later saves, wrong-phase rejection and foreign host/ID/entity variants.
+No generalized GUID equivalence or new database write was introduced. A complete
+actual WordPress cycle still remains unverified.
+The complete local source check then passed **38/0**; Ruff was unavailable
+locally and rendered-page checks require the separate copy URL. Those two skips
+do not supply browser evidence. Repository Gates and a fresh copy remain next.
 
 1. Capture and review the exact current live navigation baseline. Existing
    staging upgrade installers require owned snippet #1380 and historical
@@ -344,6 +405,38 @@ No arbitrary calendar date or amount of elapsed time makes the release ready.
 Recommend a window when these conditions pass and someone can immediately check
 the live result and initiate the tested rollback if necessary. Traffic-dependent
 timing cannot be inferred from the evidence available here.
+
+## Remote package still to prepare
+
+A source-only review identified these remaining implementation requirements;
+none enables live or changes an Actions workflow:
+
+- Keep the shared frozen payloads and select explicit copy/live profiles. The
+  existing manifest pins localhost-mapped post/option hashes and the mapped
+  Astra result. Live needs its own raw captured hashes. Preserve its recorded
+  `home` and `siteurl` (`http://thaisolitude.com`) while checking public pages over
+  HTTPS. The marker parser also needs a precise live-origin/private-path profile;
+  its current contract accepts only localhost and `/backups/`.
+- Prepare one dedicated first-install push wrapper using the input-focus
+  wrapper's backup sequence. Require a fresh DB export and verified encrypted
+  off-site copy before apply and rollback. Preserve the actual journal off-site
+  even after failure; bind successful verification to its returned path, hash,
+  manifest and five IDs, never a newest-file guess.
+- Make exact before/after state verification, successful purge and correct
+  rendered core/data scope across all 15 visitor routes decisive gates. Rollback
+  must also restore original fallback navigation. `scripts/ci/run-op.sh` does
+  not take the backup itself, and its automatic post-change/restore sections
+  are informational; its overall PASS alone cannot establish these results.
+- Preserve recognized partial rollback prefixes. Snapshot-free preflight refuses
+  any existing Peek; completed-state verification refuses incomplete journals.
+  Neither can be copied into a blanket rollback prerequisite. The installer
+  already validates exact reverse prefixes before writing. Keep that behavior
+  behind the fresh-backup step, or add a genuinely read-only prefix inspection.
+
+These findings were independently reviewed against `push-peek-input-focus.sh`,
+`run-op.sh`, the installer and evidence parser. The existing manual LIVE route
+remains sufficient after acceptance and Ryan's go; no new workflow, live request
+or live enablement has been prepared.
 
 ## Supplemental engine preparation
 

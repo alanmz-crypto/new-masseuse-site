@@ -159,7 +159,7 @@ class WPCode_Snippet {
     function save() {
         event( 'create' ); list( $forced, $value ) = result_override( 'create', 'before' ); if ( $forced ) { return $value; }
         $active = (bool) ( $this->settings['active'] ?? false );
-        $row = fixture_post( array( 'post_title' => $this->settings['title'], 'post_content' => wp_unslash( $this->settings['code'] ), 'post_type' => 'wpcode', 'post_status' => $active ? 'publish' : 'draft', 'post_date' => current_time( 'mysql' ), 'post_date_gmt' => '0000-00-00 00:00:00', 'post_modified' => current_time( 'mysql' ), 'post_modified_gmt' => current_time( 'mysql', true ), 'post_name' => '' ) );
+        $row = fixture_post( array( 'post_title' => $this->settings['title'], 'post_content' => ( $GLOBALS['factory_preserves_code'] ?? false ) ? $this->settings['code'] : wp_unslash( $this->settings['code'] ), 'post_type' => 'wpcode', 'post_status' => $active ? 'publish' : 'draft', 'post_date' => current_time( 'mysql' ), 'post_date_gmt' => '0000-00-00 00:00:00', 'post_modified' => current_time( 'mysql' ), 'post_modified_gmt' => current_time( 'mysql', true ), 'post_name' => '' ) );
         unset( $row['ID'] ); $id = fixture_insert( 'wp_posts', $row );
         fixture_update( 'wp_posts', 'ID', $id, array( 'guid' => home_url() . '/?post_type=wpcode&p=' . $id ) );
         foreach ( array( '_wpcode_auto_insert' => '1', '_wpcode_priority' => (string) ( $this->settings['priority'] ?? 10 ), '_wpcode_note' => $this->settings['note'] ) as $key => $value ) {
@@ -168,7 +168,7 @@ class WPCode_Snippet {
         foreach ( array( 9, 10 ) as $term ) { fixture_insert( 'wp_term_relationships', array( 'object_id' => $id, 'term_taxonomy_id' => $term, 'term_order' => '0' ) ); }
         // Copy4 observed that WPCode taxonomy membership includes inactive drafts.
         recount( $id, 1 );
-        $GLOBALS['created_observations'][] = array( 'id' => $id, 'active' => $active, 'content' => $row['post_content'], 'meta' => rows( 'postmeta', 'post_id', $id, 'meta_id' ) );
+        $GLOBALS['created_observations'][] = array( 'id' => $id, 'active' => $active, 'content' => $row['post_content'], 'guid' => row( 'posts', 'ID', $id )['guid'], 'meta' => rows( 'postmeta', 'post_id', $id, 'meta_id' ) );
         event( 'create', $id, true ); list( $forced, $value ) = result_override( 'create', 'after' ); return $forced ? $value : $id;
     }
 }
@@ -180,10 +180,10 @@ function add_post_meta( $post_id, $meta_key, $meta_value, $unique = false ) {
     if ( ! $id || ! $meta_key ) { return false; }
     $key = wp_unslash( $meta_key ); $value = wp_unslash( $meta_value );
     if ( $unique && fixture_sql( 'SELECT COUNT(*) FROM wp_postmeta WHERE post_id=? AND meta_key=?', array( $id, $key ) )->fetchColumn() !== '0' ) { return false; }
-    $before = rows( 'postmeta', 'post_id', $id, 'meta_id' );
+    $before = rows( 'postmeta', 'post_id', $id, 'meta_id' ); $guid_before = row( 'posts', 'ID', $id )['guid'];
     $stored = is_array( $value ) || is_object( $value ) ? serialize( $value ) : (string) $value;
     $meta_id = fixture_insert( 'wp_postmeta', array( 'post_id' => $id, 'meta_key' => $key, 'meta_value' => $stored ) );
-    $GLOBALS['normalization_observations'][] = array( 'id' => $id, 'key' => $key, 'value' => $meta_value, 'unique' => $unique, 'meta_id' => $meta_id, 'before' => $before, 'after' => rows( 'postmeta', 'post_id', $id, 'meta_id' ) );
+    $GLOBALS['normalization_observations'][] = array( 'id' => $id, 'key' => $key, 'value' => $meta_value, 'unique' => $unique, 'meta_id' => $meta_id, 'guid_before' => $guid_before, 'guid_after' => row( 'posts', 'ID', $id )['guid'], 'before' => $before, 'after' => rows( 'postmeta', 'post_id', $id, 'meta_id' ) );
     event( 'normalize-meta', $id, true ); list( $forced, $value ) = result_override( 'normalize-meta', 'after' ); return $forced ? $value : $meta_id;
 }
 function sanitize_title( $value ) { return trim( strtolower( preg_replace( '/[^a-z0-9]+/i', '-', $value ) ), '-' ); }
@@ -198,7 +198,10 @@ function wp_update_post( $values, $wp_error = false ) {
     list( $forced, $value ) = result_override( $name, 'before' ); if ( $forced ) { return $value; }
     $old = fixture_sql( 'SELECT * FROM wp_posts WHERE ID=?', array( $id ) )->fetch( PDO::FETCH_ASSOC );
     if ( ! $old ) { return $wp_error ? new WP_Error( 'missing', 'No such post' ) : 0; }
-    $GLOBALS['save_observations'][] = array( 'id' => $id, 'edit_date' => $edit_date );
+    // WordPress 7.1.4 reloads an update's GUID in display context; for these
+    // constructed URLs esc_url converts only the bare ampersand, idempotently.
+    $values['guid'] = str_replace( '&amp;', '&#038;', htmlspecialchars( $old['guid'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false ) );
+    $GLOBALS['save_observations'][] = array( 'id' => $id, 'operation' => $name, 'edit_date' => $edit_date, 'guid_before' => $old['guid'], 'guid_after' => $values['guid'] );
     $GLOBALS['clock'] = ( new DateTimeImmutable( $GLOBALS['clock'] ) )->modify( '+2 seconds' )->format( 'Y-m-d H:i:s' );
     if ( $old['post_status'] === 'draft' && ! $edit_date ) { $values['post_date'] = current_time( 'mysql' ); }
     if ( ( $values['post_status'] ?? null ) === 'publish' && $old['post_date_gmt'] === '0000-00-00 00:00:00' ) { $values['post_date_gmt'] = get_gmt_from_date( $values['post_date'] ?? $old['post_date'] ); }
@@ -239,7 +242,7 @@ function restore_state( $state ) {
         fixture_sql( "DELETE FROM wp_$table" );
         foreach ( $rows as $row ) { fixture_insert( "wp_$table", $row ); }
     }
-    $GLOBALS['events'] = $GLOBALS['event_counts'] = $GLOBALS['failures'] = $GLOBALS['created_observations'] = $GLOBALS['activation_observations'] = $GLOBALS['save_observations'] = $GLOBALS['normalization_observations'] = $GLOBALS['count_observations'] = array(); $GLOBALS['clock'] = '2026-11-10 03:00:00'; $GLOBALS['encode_failure'] = null; $GLOBALS['result_overrides'] = array(); $GLOBALS['read_hook'] = null; $GLOBALS['fail_state_diagnostic_log'] = false;
+    $GLOBALS['events'] = $GLOBALS['event_counts'] = $GLOBALS['failures'] = $GLOBALS['created_observations'] = $GLOBALS['activation_observations'] = $GLOBALS['save_observations'] = $GLOBALS['normalization_observations'] = $GLOBALS['count_observations'] = array(); $GLOBALS['clock'] = '2026-11-10 03:00:00'; $GLOBALS['encode_failure'] = null; $GLOBALS['result_overrides'] = array(); $GLOBALS['read_hook'] = null; $GLOBALS['fail_state_diagnostic_log'] = false; $GLOBALS['factory_preserves_code'] = false;
 }
 function create_schema() {
     $columns = array_keys( fixture_post() );
@@ -412,17 +415,27 @@ check( $membership_count === 22 && shared_counts() === array( 9 => '22', 10 => '
 check( count( $normalization_observations ) === 5, 'all five three-key drafts receive one explicit metadata normalization' );
 foreach ( $normalization_observations as $i => $normalization ) {
     $created = $created_observations[$i];
+    check( $created['guid'] === $home . '/?post_type=wpcode&p=' . $created['id'] && $normalization['guid_before'] === $created['guid'] && $normalization['guid_after'] === $created['guid'], 'factory and metadata-only normalization retain the exact raw GUID' );
     check( array_column( $created['meta'], 'meta_key' ) === array( '_wpcode_auto_insert', '_wpcode_priority', '_wpcode_note' ), 'initial WPCode metadata matches the actual three-key copy evidence' );
     check( $normalization['id'] === $created['id'] && $normalization['key'] === '_wpcode_shortcode_attributes' && $normalization['value'] === array() && $normalization['unique'] === true, 'normalization adds unique empty-array attributes to the currently created draft only' );
     $new_rows = array_values( array_filter( $normalization['after'], static fn( $row ) => (int) $row['meta_id'] === $normalization['meta_id'] ) );
     $old_rows = array_values( array_filter( $normalization['after'], static fn( $row ) => (int) $row['meta_id'] !== $normalization['meta_id'] ) );
     check( $normalization['before'] === $created['meta'] && $old_rows === $created['meta'] && count( $new_rows ) === 1 && $new_rows[0]['post_id'] === (string) $created['id'] && $new_rows[0]['meta_value'] === 'a:0:{}', 'normalization preserves every original metadata ID/raw byte and adds exactly one serialized empty array' );
 }
+$corrected_ids = array_column( array_filter( $save_observations, static fn( $item ) => $item['operation'] === 'correct-code' ), 'id' );
+$uncorrected_activations = 0;
+foreach ( $save_observations as $observation ) {
+    $raw_guid = $home . '/?post_type=wpcode&p=' . $observation['id']; $saved_guid = $home . '/?post_type=wpcode&#038;p=' . $observation['id'];
+    $already_saved = $observation['operation'] === 'activate' && in_array( $observation['id'], $corrected_ids, true );
+    check( $observation['guid_before'] === ( $already_saved ? $saved_guid : $raw_guid ) && $observation['guid_after'] === $saved_guid, 'each post update uses the exact WordPress GUID transition and later updates preserve it' );
+    if ( $observation['operation'] === 'activate' && ! $already_saved ) { $uncorrected_activations++; }
+}
+check( $uncorrected_activations > 0, 'already-correct factory payloads retain raw GUID until their first activation save' );
 check( count( $save_observations ) >= 5 && array_filter( $save_observations, static fn( $record ) => $record['edit_date'] !== true ) === array(), 'all snippet corrections/activations explicitly preserve creation dates across advancing local/GMT clocks' );
 check( count( $activation_observations ) === 5 && end( $activation_observations )['id'] === $ids['core'], 'data activated before shared core' );
 foreach ( $ids as $role => $id ) {
     $record = row( 'posts', 'ID', $id ); $spec = $role === 'core' ? $manifest['payloads']['core'] : $manifest['payloads']['data'][$role];
-    check( $record['post_type'] === 'wpcode' && $record['post_status'] === 'publish' && hash( 'sha256', $record['post_content'] ) === $spec['code_sha256'], "$role active with exact approved stored bytes" );
+    check( $record['post_type'] === 'wpcode' && $record['post_status'] === 'publish' && $record['guid'] === $home . '/?post_type=wpcode&#038;p=' . $id && hash( 'sha256', $record['post_content'] ) === $spec['code_sha256'], "$role active with exact approved stored bytes" );
     $observed = array_values( array_filter( $activation_observations, static fn( $record ) => $record['id'] === $id ) );
     check( count( $observed ) === 1 && count( $observed[0]['meta'] ) === 4 && hash( 'sha256', $observed[0]['content'] ) === $spec['code_sha256'], "$role corrected before activation" );
 }
@@ -664,6 +677,7 @@ for ( $at = 1; $at <= 5; $at++ ) {
 // Remove normalization from an earlier role whose PHP is already correct. A
 // following role must be refused because of the missing key, not PHP escaping.
 restore_state( $partials['create:2']['state'] ); $forged = $partials['create:2']['snapshot'];
+$forged['journal']['owned']['thai-massage']['post']['guid'] = $home . '/?post_type=wpcode&p=' . $forged['ids']['thai-massage'];
 $forged['journal']['owned']['thai-massage']['meta'] = array_values( array_filter( $forged['journal']['owned']['thai-massage']['meta'], static fn( $row ) => $row['meta_key'] !== '_wpcode_shortcode_attributes' ) );
 check( hash( 'sha256', $forged['journal']['owned']['thai-massage']['post']['post_content'] ) === $manifest['payloads']['data']['thai-massage']['code_sha256'], 'normalization-order forgery retains exact corrected PHP' );
 $forged['journal_sha256'] = digest( $forged['journal'] );
@@ -701,9 +715,9 @@ foreach ( array( 'creation-gap', 'uncorrected-early-draft', 'activation-gap', 'a
     restore_state( $partial_base['state'] ); $forged = $partial_base['snapshot']; $role = 'thai-massage';
     if ( $mutation === 'creation-gap' ) { $forged['journal']['owned'][$role] = null; unset( $forged['ids'][$role] ); }
     if ( $mutation === 'uncorrected-early-draft' ) {
-        $record = &$forged['journal']['owned'][$role]; $record['post']['post_content'] = wp_unslash( $record['post']['post_content'] ); unset( $record );
+        $record = &$forged['journal']['owned'][$role]; $record['post']['post_content'] = wp_unslash( $record['post']['post_content'] ); $record['post']['guid'] = $home . '/?post_type=wpcode&p=' . $forged['ids'][$role]; unset( $record );
     }
-    if ( $mutation === 'activation-gap' ) { $forged['journal']['owned']['deep-tissue-massage']['post']['post_status'] = 'publish'; }
+    if ( $mutation === 'activation-gap' ) { $forged['journal']['owned']['deep-tissue-massage']['post']['post_status'] = 'publish'; $forged['journal']['owned']['deep-tissue-massage']['post']['guid'] = $home . '/?post_type=wpcode&#038;p=' . $forged['ids']['deep-tissue-massage']; }
     if ( $mutation === 'astra-before-css' ) {
         $forged['journal']['records'][29]['post']['post_content'] = $forged['old']['records'][29]['post']['post_content'];
         $settings = unserialize( $forged['journal']['options']['astra-settings']['option_value'], array( 'allowed_classes' => false ) ); $settings['scroll-to-top-enable'] = false;
@@ -966,6 +980,71 @@ foreach ( array( 'shared-counts', 'unrelated-witness', 'raw-content' ) as $mutat
     check( $phase[0]['changes'] === $expected_changes, "$mutation pinpoints the actual captured difference using exact typed fingerprints" );
     check( preg_match( '/Snapshot: (.+)$/', $caught->getMessage(), $found ) === 1, "$mutation retains the actual private recovery journal" );
     refusal( array( 'rollback', $found[1] ), "$mutation diagnostic cannot authorize removal of the unknown draft" );
+}
+
+// Factory code may already be exact, so no post update is needed until publish.
+restore_state( $original ); $factory_preserves_code = true; invoke( array( 'apply' ) ); $guid_apply = marker( 'RELEASE-SNAPSHOT' );
+check( ( $event_counts['correct-code:before'] ?? 0 ) === 0 && count( $save_observations ) === 5, 'preserved-code factory skips all corrections and updates only on activation' );
+foreach ( $save_observations as $observation ) {
+    check( $observation['operation'] === 'activate' && $observation['guid_before'] === $home . '/?post_type=wpcode&p=' . $observation['id'] && $observation['guid_after'] === $home . '/?post_type=wpcode&#038;p=' . $observation['id'], 'preserved-code draft changes raw GUID to the exact entity form only when published' );
+}
+invoke( array( 'rollback', $guid_apply['snapshot'] ) ); check( all_state() === $original, 'preserved-code factory path rolls back to every exact original byte' );
+
+// Capture a legitimate exact-code, normalized, never-updated raw-GUID draft.
+restore_state( $original ); $factory_preserves_code = true;
+$failures = array( array( 'key' => 'normalize-meta:after', 'at' => 1, 'throw' => false, 'change' => static function () {
+    $reads = 0; $GLOBALS['read_hook'] = static function ( $query ) use ( &$reads ) {
+        if ( $query === 'SELECT * FROM wp_posts ORDER BY ID' && ++$reads === 2 ) { $GLOBALS['read_hook'] = null; throw new RuntimeException( 'Synthetic exact-code raw-GUID pause' ); }
+    };
+} ), array( 'key' => 'delete:before', 'at' => 1 ) );
+$caught = null; try { invoke( array( 'apply' ) ); } catch ( Refusal_Error $error ) { $caught = $error; }
+check( $caught !== null && str_contains( $caught->getMessage(), 'Synthetic exact-code raw-GUID pause' ) && preg_match( '/Snapshot: (.+)$/', $caught->getMessage(), $found ) === 1, 'never-updated exact-code draft has a real bound partial journal' );
+$guid_partial_path = $found[1]; $guid_partial_snapshot = json_decode( file_get_contents( $guid_partial_path ), true, 512, JSON_THROW_ON_ERROR ); $guid_partial_state = all_state(); $guid_id = $guid_partial_snapshot['ids']['thai-massage'];
+$guid_record = $guid_partial_snapshot['journal']['owned']['thai-massage'];
+check( count( $guid_record['meta'] ) === 4 && hash( 'sha256', $guid_record['post']['post_content'] ) === $manifest['payloads']['data']['thai-massage']['code_sha256'] && $guid_record['post']['guid'] === $home . '/?post_type=wpcode&p=' . $guid_id, 'four-key exact-code draft legitimately retains raw GUID before any save' );
+$forged = $guid_partial_snapshot; $forged['journal']['owned']['thai-massage']['post']['guid'] = $home . '/?post_type=wpcode&#038;p=' . $guid_id; $forged['journal_sha256'] = digest( $forged['journal'] );
+refusal( array( 'rollback', snapshot_write( $forged ) ), 'legitimate entity-profile journal cannot adopt a current raw-profile draft' );
+invoke( array( 'rollback', $guid_partial_path ) ); check( all_state() === $original, 'matching raw exact-code partial journal restores original state' );
+restore_state( $partials['correct-code:1']['state'] ); $forged = $partials['correct-code:1']['snapshot'];
+$forged['journal']['owned']['thai-massage']['post']['guid'] = $home . '/?post_type=wpcode&p=' . $forged['ids']['thai-massage']; $forged['journal_sha256'] = digest( $forged['journal'] );
+refusal( array( 'rollback', snapshot_write( $forged ) ), 'legitimate raw-profile journal cannot adopt a current entity-profile draft' );
+
+// Each forward transition has one exact GUID form; the two-form snapshot case
+// above does not widen creation, normalization, correction or activation.
+foreach ( array( 'create', 'normalize-meta', 'correct-code', 'activate' ) as $operation ) {
+    restore_state( $original ); $unexpected_state = null;
+    $failures = array( array( 'key' => $operation . ':after', 'at' => 1, 'throw' => false, 'change' => static function ( $id ) use ( $operation, &$unexpected_state ) {
+        $saved = in_array( $operation, array( 'create', 'normalize-meta' ), true );
+        fixture_update( 'wp_posts', 'ID', $id, array( 'guid' => home_url() . '/?post_type=wpcode' . ( $saved ? '&#038;p=' : '&p=' ) . $id ) );
+        $unexpected_state = all_state();
+    } ) );
+    $caught = null; try { invoke( array( 'apply' ) ); } catch ( Refusal_Error $error ) { $caught = $error; }
+    check( $caught !== null && str_contains( $caught->getMessage(), 'recovery stopped' ) && $unexpected_state !== null && all_state() === $unexpected_state, "$operation refuses and retains a GUID valid only in a different phase" );
+    check( ( $event_counts['delete:before'] ?? 0 ) === 0 && ( $event_counts[$operation . ':after'] ?? 0 ) === 1 && ! str_contains( implode( '\n', $logs ), 'RELEASE-SNAPSHOT ' ), "$operation wrong-phase GUID permits neither cleanup adoption nor a success marker" );
+    check( preg_match( '/Snapshot: (.+)$/', $caught->getMessage(), $found ) === 1, "$operation wrong-phase GUID names its actual journal" );
+    refusal( array( 'rollback', $found[1] ), "$operation unexpected GUID cannot be removed using a stale journal" );
+}
+// A rehashed snapshot still has to satisfy its exact recorded phase.
+foreach ( array( 'factory-entity', 'uncorrected-entity', 'published-raw' ) as $mutation ) {
+    $complete = $mutation === 'published-raw'; $case = $complete ? array( 'snapshot' => $snapshot, 'state' => $applied ) : $partials[$mutation === 'factory-entity' ? 'create:1' : 'normalized:1'];
+    restore_state( $case['state'] ); $forged = $case['snapshot']; $state_key = $complete ? 'new' : 'journal'; $role = 'thai-massage'; $id = $forged['ids'][$role];
+    $forged[$state_key]['owned'][$role]['post']['guid'] = $home . '/?post_type=wpcode' . ( $complete ? '&p=' : '&#038;p=' ) . $id; $forged[$state_key . '_sha256'] = digest( $forged[$state_key] );
+    $error = refusal( array( 'rollback', snapshot_write( $forged ) ), "$mutation snapshot phase" );
+    check( str_contains( $error->getMessage(), 'Owned snippet identity/code differs' ), "$mutation rejected by GUID phase validation before mutable-state comparison" );
+}
+foreach ( array( 'wrong-host', 'wrong-id', 'amp-entity', 'hex-entity', 'double-entity', 'extra-query', 'missing-guid' ) as $mutation ) {
+    restore_state( $applied ); $forged = $snapshot; $id = $ids['core']; $guid = $home . '/?post_type=wpcode&#038;p=' . $id;
+    if ( $mutation === 'wrong-host' ) { $guid = 'https://example.invalid/?post_type=wpcode&#038;p=' . $id; }
+    if ( $mutation === 'wrong-id' ) { $guid = $home . '/?post_type=wpcode&#038;p=' . ( $id + 1 ); }
+    if ( $mutation === 'amp-entity' ) { $guid = str_replace( '&#038;', '&amp;', $guid ); }
+    if ( $mutation === 'hex-entity' ) { $guid = str_replace( '&#038;', '&#x26;', $guid ); }
+    if ( $mutation === 'double-entity' ) { $guid = str_replace( '&#038;', '&amp;#038;', $guid ); }
+    if ( $mutation === 'extra-query' ) { $guid .= '&#038;extra=1'; }
+    $forged['new']['owned']['core']['post']['guid'] = $guid;
+    if ( $mutation === 'missing-guid' ) { unset( $forged['new']['owned']['core']['post']['guid'] ); }
+    $forged['new_sha256'] = digest( $forged['new'] ); $bad = snapshot_write( $forged );
+    refusal( array( 'verify', $bad ), "$mutation GUID never verifies as an owned completed record" );
+    refusal( array( 'rollback', $bad ), "$mutation GUID never authorizes deletion" );
 }
 
 restore_state( $original );

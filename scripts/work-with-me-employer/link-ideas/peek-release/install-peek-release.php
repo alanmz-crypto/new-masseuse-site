@@ -194,13 +194,16 @@ $release_astra = static function ( $old ) use ( $release_fail, $release_hash, $r
     if ( unserialize( $new['option_value'], array( 'allowed_classes' => false ) ) !== $before || $release_hash( $new ) !== $release_manifest['baseline']['astra_new_row_sha256'] ) { $release_fail( 'Astra change is not the reviewed single boolean.' ); }
     return $new;
 };
-$release_owned_ok = static function ( $record, $role, $status, $code, $initial_factory = false ) use ( $release_titles, $release_notes, $release_home, $release_fail ) {
+// WordPress 7.1.4 stores a raw permalink at insertion, then the exact numeric
+// entity form through get_post_field('guid')'s display filter on a post update.
+$release_guid = static fn( $id, $saved ) => $release_home . '/?post_type=wpcode' . ( $saved ? '&#038;p=' : '&p=' ) . $id;
+$release_owned_ok = static function ( $record, $role, $status, $code, $initial_factory = false, $saved = false ) use ( $release_titles, $release_notes, $release_guid, $release_fail ) {
     $p = $record['post'] ?? array(); $id = (int) ( $p['ID'] ?? 0 );
-    if ( $id < 1 || ( $p['post_type'] ?? null ) !== 'wpcode' || ( $p['post_title'] ?? null ) !== $release_titles[$role] || ( $p['post_status'] ?? null ) !== $status || ( $p['post_content'] ?? null ) !== $code || ( $p['post_password'] ?? null ) !== '' || ( $p['post_parent'] ?? null ) !== '0' || ( $p['guid'] ?? null ) !== $release_home . '/?post_type=wpcode&p=' . $id ) { $release_fail( 'Owned snippet identity/code differs: ' . $role ); }
+    if ( $id < 1 || ( $p['post_type'] ?? null ) !== 'wpcode' || ( $p['post_title'] ?? null ) !== $release_titles[$role] || ( $p['post_status'] ?? null ) !== $status || ( $p['post_content'] ?? null ) !== $code || ( $p['post_password'] ?? null ) !== '' || ( $p['post_parent'] ?? null ) !== '0' || ( $p['guid'] ?? null ) !== $release_guid( $id, $saved ) ) { $release_fail( 'Owned snippet identity/code differs: ' . $role ); }
     $expected = array( '_wpcode_auto_insert' => '1', '_wpcode_priority' => '10', '_wpcode_note' => $release_notes[$role], '_wpcode_shortcode_attributes' => 'a:0:{}' ); ksort( $expected );
     $meta_expected = $expected;
     if ( $initial_factory ) {
-        if ( $status !== 'draft' ) { $release_fail( 'Initial factory profile is only valid for an inactive draft.' ); }
+        if ( $status !== 'draft' || $saved ) { $release_fail( 'Initial factory profile is only valid for an inactive draft.' ); }
         unset( $meta_expected['_wpcode_shortcode_attributes'] );
     }
     $diagnose = static function ( $reasons ) use ( $record, $role, $expected, $meta_expected ) {
@@ -344,7 +347,10 @@ try {
             $status = $record['post']['post_status'] ?? null; $code = $record['post']['post_content'] ?? null;
             if ( ! in_array( $status, $release_incomplete ? array( 'draft', 'publish' ) : array( 'publish' ), true ) || ! in_array( $code, $status === 'draft' ? array( $release_codes[$role], wp_unslash( $release_codes[$role] ) ) : array( $release_codes[$role] ), true ) ) { $release_fail( 'Snapshot frozen code/activation phase differs.' ); }
             $initial_factory = $release_incomplete && $status === 'draft' && ! in_array( '_wpcode_shortcode_attributes', array_column( $record['meta'], 'meta_key' ), true );
-            $release_owned_ok( $record, $role, $status, $code, $initial_factory );
+            // An exact-code four-key draft may have skipped correction (raw)
+            // or completed it (entity). No other phase accepts both forms.
+            $saved_guid = $status === 'publish' || ( ! $initial_factory && $code === $release_codes[$role] && ( $record['post']['guid'] ?? null ) === $release_guid( $id, true ) );
+            $release_owned_ok( $record, $role, $status, $code, $initial_factory, $saved_guid );
             // A three-key factory draft cannot be followed by another role or
             // cleanup/publication, even if its initial code needed no unslashing.
             $uncorrected = $initial_factory || $code !== $release_codes[$role];
@@ -381,9 +387,10 @@ catch ( Throwable $release_error ) { WP_CLI::error( $release_error->getMessage()
 
 // Only accept a save's documented fields; all other post fields/meta/terms stay
 // byte-for-byte equal. Dates are limited to the actual call's local/GMT clocks.
-$release_changed_record = static function ( $before, $after, $changes, $clocks ) use ( $release_equal, $release_fail ) {
+$release_changed_record = static function ( $before, $after, $changes, $clocks ) use ( $release_equal, $release_fail, $release_guid ) {
     $expected = $before;
     foreach ( $changes as $key => $value ) { $expected['post'][$key] = $value; }
+    $expected['post']['guid'] = $release_guid( (int) $before['post']['ID'], true );
     if ( ( $changes['post_status'] ?? null ) === 'publish' && $before['post']['post_name'] === '' ) {
         // Core creates a draft without a slug, then assigns its deterministic
         // title slug when publishing. An existing slug is never normalized.
@@ -479,7 +486,7 @@ try {
             $id = wp_update_post( wp_slash( array( 'ID' => $release_ids[$role], 'post_status' => 'publish', 'edit_date' => true ) ), true );
             if ( is_wp_error( $id ) || $id !== $release_ids[$role] ) { $release_fail( 'Activation failed.' ); } return $id;
         }, static function ( $actual ) use ( $role, &$release_owned, $release_changed_record, $clocks, $release_owned_ok, $release_codes, $release_old, &$release_cleaned, $release_expected, $release_equal ) {
-            $record = $actual['owned'][$role]; $release_changed_record( $release_owned[$role], $record, array( 'post_status' => 'publish' ), $clocks ); $release_owned_ok( $record, $role, 'publish', $release_codes[$role] );
+            $record = $actual['owned'][$role]; $release_changed_record( $release_owned[$role], $record, array( 'post_status' => 'publish' ), $clocks ); $release_owned_ok( $record, $role, 'publish', $release_codes[$role], false, true );
             $owned = $release_owned; $owned[$role] = $record; $release_equal( $actual, $release_expected( $release_old, $owned, $release_cleaned ), 'Activation full state and shared counts' ); $release_owned = $owned;
         } );
     }

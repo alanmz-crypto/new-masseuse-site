@@ -17,10 +17,12 @@ claimed; no website runtime changed during this preparation.
 The fourth live-sourced disposable-copy rehearsal identified the first draft's
 full-state mismatch: both shared WPCode category counts rise from 17 to 18 for
 an inactive snippet. The installer incorrectly counted only published records.
-Its expectation is being corrected to count every owned relationship, with full
-state and rollback checks retained. No complete install or browser phase has
-passed in this release-copy lane; see the readiness record for actual attempts
-and copy-only journals.
+That correction passed first-draft creation and attribute initialization in copy5.
+Code correction then stopped on WordPress 7.1.4's exact `&` to `&#038;` GUID
+conversion, confirmed against official source. A narrowly specified save-phase
+expectation is under verification; full-state and rollback checks remain exact.
+No complete install or browser phase has passed in this release-copy lane; see
+the readiness record for actual attempts and copy-only journals.
 
 **Current: input-focus core and Rail practice updates deployed on staging39.**
 See the [canonical phase record](../../docs/reviews/2026-11-09-peek-input-focus.md) for complete attempts, hashes, backups
