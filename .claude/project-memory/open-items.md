@@ -14,8 +14,9 @@ reports missing neighbouring links and scrolling trouble across the four service
 pages with Safari’s address bar expanded. They requested only the immediate
 previous summary above and next below each open box. The
 [neighbour-layout record](../../docs/reviews/2026-11-10-peek-summary-neighbours.md)
-tracks preparation, exact frozen v7 and required copy/browser/recovery checks.
-Not deployed yet. Live-release preparation is paused; the blocked live-copy
+tracks the deployed core, actual backup/snapshot and browser/recovery checks.
+Deployed to staging39 #1380 at 14:32 UTC; public browser verification is in
+progress. Live-release preparation is paused; the blocked live-copy
 permission remains unapproved.
 
 **Release preparation, November 10: not ready for live.** The [readiness record](../../docs/reviews/2026-11-10-peek-release-readiness.md)

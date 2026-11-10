@@ -4,10 +4,12 @@
 requested this uniform layout after reporting missing links and scrolling
 trouble with Safari's expanded address bar. The
 [active phase record](../../../docs/reviews/2026-11-10-peek-summary-neighbours.md)
-tracks the candidate, tests and actual deployment status. `peek-nav.php` is now
-that candidate; the deployed input-focus core is frozen as shared v7. No new
-staging write or snapshot exists yet. Live-release preparation is paused, and
-its frozen first-install payload has not been updated to this candidate.
+tracks the deployed core, tests and actual recovery snapshot. `peek-nav.php`
+is deployed to staging39 #1380; the preceding input-focus core is frozen as
+shared v7. Recovery snapshot:
+`peek-template-core-neighbours-before-20261110-143200-81725f33.json`.
+Public browser verification is in progress. Live-release preparation is paused,
+and its frozen first-install payload has not been updated to this core.
 
 **Release preparation, November 10: not ready for live.** The [readiness record](../../../docs/reviews/2026-11-10-peek-release-readiness.md)
 contains the exact scope, new read-only live/staging inventories and current
@@ -19,7 +21,7 @@ rail/index behavior and background containment but leaves research scrolling
 and the contradictory Privacy/hamburger result to clarify. No Safari pass is
 claimed; no website runtime changed during this preparation.
 
-**Current: input-focus core and Rail practice updates deployed on staging39.**
+**Previous baseline: input-focus core and Rail practice updates on staging39.**
 See the [canonical phase record](../../../docs/reviews/2026-11-09-peek-input-focus.md) for complete attempts, hashes, backups
 and evidence. Core apply **42729961919** wrote #1380 at **2026-11-10 00:40:21 UTC**
 and finished **00:45:55 UTC, PASS**; fresh-copy proof passed **14,386/0 across

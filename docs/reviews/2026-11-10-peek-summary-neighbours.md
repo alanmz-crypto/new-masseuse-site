@@ -1,6 +1,6 @@
 # Peek: one neighbouring summary above and below
 
-**In preparation; not deployed.** Ryan reports the same box problem across the
+**Deployed on staging39; public browser verification in progress.** Ryan reported the same box problem across the
 service pages, particularly with Safari's address bar expanded. They requested
 one uniform experiment: show only the immediately preceding summary above the
 open summary, and the immediately following summary below it. First and last
@@ -41,7 +41,7 @@ will come from the authorized staging39-copy Actions rehearsal.
 
 ## Exact starting point and recovery
 
-Current #1380 was frozen before runtime edits as `peek-nav-shared-v7.php`:
+Starting #1380 was frozen before runtime edits as `peek-nav-shared-v7.php`:
 102,756 file bytes, SHA256
 `ddd7e3b9df4a3c6cd45b3f7c46bc56c4e2c1df6c4553846879681843e60f639f`;
 102,750 stored bytes, SHA256
@@ -53,7 +53,8 @@ meaning of actual staging snapshot
 A separate `core-neighbours` transition will update #1380 in place and verify
 all four unchanged page-data records. No fallback-only interval is planned.
 Any later rollback must use this new transition's actual snapshot, after a
-fresh verified backup and exact current-state checks. No new snapshot exists yet.
+fresh verified backup and exact current-state checks. The actual new snapshot is
+recorded in the deployment section below.
 
 ## Candidate and local observations
 
@@ -370,6 +371,52 @@ the current Therapeutic landscape card, WebKit Thai middle card and enlarged
 Chair research ending. Compact summaries are readable, neighbours remain
 distinct and the final research qualification is visible. No staging write has
 occurred yet.
+
+## Staging39 deployment
+
+[Preflight](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42787846489)
+passed at 09:06:22 UTC. A usage-limit error stopped automatic approval review
+of the report-fetch command before it ran. After Ryan said Continue, access
+worked again; the latest feature branch was pulled and remained unchanged.
+The deployment repeated current-state checks rather than relying on the earlier
+preflight's age.
+
+[Apply](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42834929062)
+used commit `e2fb64c292e9fa84e44b00c7e80531646573c87d` and finished **PASS** at
+14:44:04 UTC. It updated #1380 in WordPress storage at 14:32, without a
+fallback-only interval. All four approved data records remained exact. The
+fresh export and actual recovery snapshot were each stored encrypted off-site
+and read back byte-identically:
+
+- DB export: `staging39-before-peek-neighbours-20261110-143148-33164.sql`,
+  4,531,838 bytes; plaintext SHA256 prefix `9447f244b57a`.
+- Before snapshot: `peek-template-core-neighbours-before-20261110-143200-81725f33.json`;
+  plaintext SHA256 prefix `0bc2fbb59a14`.
+- Applied complete core state:
+  `c9046dbb963ed0d18297b4b1a4cfda0b94db4969767ee2ddf6f75498c66ca289`.
+- Unchanged four-page state:
+  `3e9acc4ea6dfedf7fe99e7a70534603ba0d32a1827793755c8ee10f4e55c9cc9`.
+
+After cache purge, all 19 published routes returned 200 and the exact deployed
+runtime/style/data scope; complete core/page state matched before and after
+those reads. Source and rendered wording gates, HTTP checks, structured data and
+the staging PHP log passed. The separate zero-tolerance live pixel comparison
+reported **20/20 differences**, not a visual-equality pass: live lacks the staged
+Peek navigation. The fresh DB export imported successfully into the disposable
+restore database; all 104 fingerprint entries compared, with only #1380 and
+WPCode's cache differing from current staging. The complete report and artifact
+were independently audited. No live deployment or main merge was performed.
+
+Before dispatching public browser verification, source review found a wrapper
+contract error: the established public chain includes a matched-capture clearance
+subset, not the rehearsal's Firefox page matrix. Only the new public evidence
+map and its tests were corrected; the deployed runtime and rehearsal contract
+remain unchanged. All 16 actual public logical suites remain required. The
+offline harness passed **89 cases**, including the actual retained wrapper
+chain with only browser leaves doubled and rejection of missing/substituted
+public suites. Restricted local execution lost asynchronous Node pipe output;
+the unchanged integration passed in the permitted outer execution environment,
+without modifying wrapper transport or relaxing any evidence requirement.
 
 ## Required verification
 

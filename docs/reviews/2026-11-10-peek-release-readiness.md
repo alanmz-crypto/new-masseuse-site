@@ -10,7 +10,9 @@ requested only the previous and next summary controls around each open box;
 see the [active staging record](2026-11-10-peek-summary-neighbours.md). The
 provisional release payload remains frozen at the preceding input-focus core.
 It is not the new candidate, and its old browser evidence cannot validate the
-new layout. Reassess and prepare the accepted payload after staging and Safari
+new layout. The neighbour core is now deployed on staging39, with public browser
+verification in progress; the live package remains the older payload.
+Reassess and prepare the accepted payload after staging and Safari
 acceptance; do not dispatch the previously blocked copy6 merely on a later
 permission reply without checking that the release package is still intended.
 
@@ -26,9 +28,10 @@ approval review rejected the `peek-visitor-release-rehearse-6` dispatch before
 execution because copying live's database and uploads into a disposable Actions
 runner exceeds the user's explicit staging39 scope. The question now asks for
 that specific additional temporary data copy; it does not seek a live write.
-No retry or workaround was attempted. HEAD and `ops/request.json` were unchanged
-after rejection; the request file still names completed copy5. No copy6 run,
-snapshot, browser result or website change exists.
+No retry or workaround was attempted. At that rejection, HEAD and
+`ops/request.json` were unchanged and the request file still named completed
+live-sourced copy5. No live-sourced copy6 run, snapshot, browser result or website
+change exists. Later requests concern staging39 only.
 
 ## Recommended scope
 

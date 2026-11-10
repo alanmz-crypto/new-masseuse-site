@@ -19,12 +19,22 @@ RETAINED = [
     'clearance chromium', 'clearance firefox', 'pages chromium', 'pages firefox',
     'native touch', 'retained Thai chromium',
 ]
+# Match the existing core-upgrade/check-public.mjs leaves independently of the
+# parser: Chromium pages plus the matched-capture clearance diagnostic subset.
+PUBLIC_RETAINED = [
+    'input focus chromium', 'disclosures chromium', 'disclosures firefox',
+    'Kiro layout chromium', 'Kiro layout firefox', 'title rails chromium',
+    'title rails firefox', 'title strip chromium', 'title strip firefox',
+    'clearance chromium', 'clearance firefox', 'pages chromium',
+    'native touch', 'clearance chromium diagnostic subset',
+]
 RAW_ERR = 'literal stderr: backslash \\ and Unicode →\r\nlast stderr byte'
 PASSED = 0
 
 
-def run_case(mode='rehearsal', scenario='pass', bad='chromium', expected=0, actions=False):
+def run_case(mode='rehearsal', scenario='pass', bad='chromium', expected=0, actions=False, actual_chain=False):
     global PASSED
+    assert not actual_chain or (mode == 'public' and scenario == 'pass')
     with tempfile.TemporaryDirectory(prefix='peek-neighbours-evidence-') as directory:
         root = Path(directory)
         package = root / 'core-neighbours'
@@ -108,7 +118,7 @@ def run_case(mode='rehearsal', scenario='pass', bad='chromium', expected=0, acti
         (root / 'check-peek-neighbours.mjs').write_text(
             "const engine=process.argv.includes('--webkit')?'webkit':process.argv.includes('--firefox')?'firefox':'chromium';\n"
             "await import('./'+engine+'.mjs');\n")
-        names = RETAINED if mode == 'rehearsal' else RETAINED[:-1]
+        names = RETAINED if mode == 'rehearsal' else PUBLIC_RETAINED
         leaf = [f'INFO Peek {name}: 2 passed, 0 failed; actual retained cases' for name in names]
         if bad == 'retained':
             if scenario == 'missing-leaf':
@@ -119,6 +129,12 @@ def run_case(mode='rehearsal', scenario='pass', bad='chromium', expected=0, acti
                 leaf.append(leaf[0].replace('2 passed', '3 passed'))
             elif scenario == 'unexpected-leaf':
                 leaf[0] = leaf[0].replace('input focus chromium', 'wrong suite')
+            elif scenario == 'missing-public-diagnostic':
+                leaf = [line for line in leaf if not line.startswith('INFO Peek clearance chromium diagnostic subset:')]
+            elif scenario == 'substituted-public-pages-firefox':
+                leaf = [line.replace('clearance chromium diagnostic subset:', 'pages firefox:') for line in leaf]
+            elif scenario == 'extra-public-pages-firefox':
+                leaf.append('INFO Peek pages firefox: 2 passed, 0 failed; fictional public case')
             elif scenario == 'failed':
                 leaf[0] = leaf[0].replace('2 passed, 0 failed', '1 passed, 1 failed')
         # Repeated nested summaries are normal; totals must remain deduplicated.
@@ -139,6 +155,40 @@ def run_case(mode='rehearsal', scenario='pass', bad='chromium', expected=0, acti
                 aggregate += '\n' + aggregate
         stdout = '\n'.join([*retained, *verdicts, aggregate]) + '\n'
         (root / 'core-input-focus' / f'check-{mode}.mjs').write_text(body('retained', stdout))
+        if actual_chain:
+            # Run the unchanged real wrapper call graph, not a second invented
+            # aggregate. Only browser leaves are replaced; their actual flags
+            # decide which summaries exist (including clearance --quick).
+            for relative in [
+                'core-input-focus/check-public.mjs', 'input-gates.mjs',
+                'core-kiro-fixes/check-public.mjs', 'core-kiro-fixes/run-gates.mjs',
+                'core-title-rail/check-public.mjs', 'core-title-strip/check-public.mjs',
+                'core-upgrade/check-public.mjs',
+            ]:
+                target = root / relative
+                target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(HERE.parent / relative, target)
+            for filename, label in [
+                ('check-peek-input-focus.mjs', 'input focus'),
+                ('check-peek-disclosures.mjs', 'disclosures'),
+                ('check-peek-kiro-layout.mjs', 'Kiro layout'),
+                ('check-peek-title-rails.mjs', 'title rails'),
+                ('check-title-strip.mjs', 'title strip'),
+                ('check-peek-clearance.mjs', 'clearance'),
+                ('check-peek-pages.mjs', 'pages'),
+                ('check-peek-touch.mjs', 'native touch'),
+            ]:
+                (root / filename).write_text(
+                    "import { appendFileSync, writeSync } from 'node:fs';\n"
+                    "const engine=process.argv.includes('--firefox')?'firefox':'chromium';\n"
+                    f"let label={json.dumps(label)};\n"
+                    "if(label!=='native touch') label+=' '+engine;\n"
+                    "if(process.argv.includes('--quick')) label+=' diagnostic subset';\n"
+                    f"appendFileSync({json.dumps(str(trace))}, JSON.stringify('retained/'+label)+'\\n');\n"
+                    "writeSync(1, 'INFO Peek '+label+': 2 passed, 0 failed; actual retained cases\\n');\n"
+                    f"writeSync(2, {json.dumps(RAW_ERR)});\n")
+            for name in PUBLIC_RETAINED:
+                raw['retained/' + name] = (f'INFO Peek {name}: 2 passed, 0 failed; actual retained cases\n'.encode(), RAW_ERR.encode())
         # Fake exact package and official CLI: invocation order is exercised,
         # but these subprocesses never download or install anything.
         pw = root / 'pw'
@@ -174,18 +224,34 @@ def run_case(mode='rehearsal', scenario='pass', bad='chromium', expected=0, acti
             wanted = engines + ['retained'] if scenario == 'pass' or bad == 'retained' else engines[:engines.index(bad) + 1]
             if actions:
                 wanted[2:2] = [['install-deps', 'webkit'], ['install', 'webkit']]
-        assert calls == wanted, (mode, scenario, 'child order/stop', calls, wanted)
+        if actual_chain:
+            assert calls[:3] == ['chromium', 'firefox', 'retained/input focus chromium'], calls
+            assert len(calls) == 16 and len(set(calls)) == 16, calls
+            assert set(calls[2:]) == {'retained/' + name for name in PUBLIC_RETAINED}, calls
+        else:
+            assert calls == wanted, (mode, scenario, 'child order/stop', calls, wanted)
         folders = list((root / 'logs/ops-out').glob('core-neighbours-*'))
         assert len(folders) == 1
         saved = json.loads((folders[0] / 'results.json').read_text())
         assert saved['code'] == expected
         for name in [call for call in calls if isinstance(call, str)]:
+            if actual_chain and name.startswith('retained/'):
+                # Each real nested wrapper must preserve its browser leaf's
+                # literal streams, including trailing stderr without a newline.
+                matches = [path for path in (root / 'logs/ops-out').rglob('*.stdout.log')
+                           if path.read_bytes() == raw[name][0]]
+                assert len(matches) == 1, (name, matches)
+                assert matches[0].with_name(matches[0].name.replace('.stdout.log', '.stderr.log')).read_bytes() == raw[name][1]
+                continue
             prefix = 'retained-input-focus' if name == 'retained' else 'neighbours-' + name
             if scenario != 'signal':
                 for channel, data in zip(['stdout', 'stderr'], raw[name]):
                     assert (folders[0] / f'{prefix}.{channel}.log').read_bytes() == data
         if scenario == 'pass':
             assert saved['counts'] == {'passed': len(engines) * 3 + len(names) * 2, 'failed': 0}
+            if actual_chain:
+                assert len(saved['results'][-1]['summaries']) == 14
+                assert sum(len(result['summaries']) for result in saved['results']) == 16
         PASSED += 1
 
 
@@ -205,6 +271,9 @@ for mode in ['rehearsal', 'public']:
                      'missing-aggregate', 'duplicate-aggregate']:
         run_case(mode, scenario, 'retained', expected=2)
     run_case(mode, 'failed', 'retained', expected=1)
+for scenario in ['missing-public-diagnostic', 'substituted-public-pages-firefox', 'extra-public-pages-firefox']:
+    run_case('public', scenario, 'retained', expected=2)
+run_case('public', actual_chain=True)
 run_case(actions=True)
 for scenario in ['wrong-pin', 'deps-fail', 'install-fail']:
     run_case(scenario=scenario, bad='webkit', expected=2, actions=True)

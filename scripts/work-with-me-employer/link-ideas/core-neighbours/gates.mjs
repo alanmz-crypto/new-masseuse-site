@@ -14,6 +14,12 @@ const retainedNames = [
   'INFO Peek clearance chromium', 'INFO Peek clearance firefox', 'INFO Peek pages chromium',
   'INFO Peek pages firefox', 'INFO Peek native touch', 'INFO Peek retained Thai chromium'
 ];
+// The established public runner uses Chromium page checks and a separate
+// matched-capture clearance subset; rehearsal retains Firefox pages and Thai.
+const publicRetainedNames = [
+  ...retainedNames.filter(name => !['INFO Peek pages firefox', 'INFO Peek retained Thai chromium'].includes(name)),
+  'INFO Peek clearance chromium diagnostic subset'
+];
 const slugs = ['thai-massage', 'therapeutic-massage', 'deep-tissue-massage', 'chair-massage'];
 const exactKeys = (actual, expected) => JSON.stringify([...actual].sort()) === JSON.stringify([...expected].sort());
 
@@ -71,7 +77,7 @@ export async function runNeighbourGates(base, mode) {
     const { lines, ...result } = raw, invalid = [...raw.errors], summaries = new Map();
     let passed = 0, failed = 0, failureObserved = false;
     const assertions = new Set(), captures = new Set(), verdicts = new Map(), aggregates = [];
-    const names = mode === 'public' ? retainedNames.filter(name => name !== 'INFO Peek retained Thai chromium') : retainedNames;
+    const names = mode === 'public' ? publicRetainedNames : retainedNames;
     const expectedCaptures = engine ? slugs.flatMap(slug => ['right', 'left'].flatMap(side => ['middle-short', 'research-landscape'].map(state => `peek-neighbours-${engine}-${slug}-${side}-${state}.jpg`))) : [];
     for (const line of lines) {
       if (line && !/^PASS(?:\s|$)/.test(line)) process.stdout.write(line + '\n');
