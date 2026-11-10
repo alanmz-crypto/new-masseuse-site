@@ -7,10 +7,17 @@ const playwright = require('playwright');
 const base = process.argv[2], flags = process.argv.slice(3);
 const local = ['http://localhost:8090', 'http://localhost:8091'].includes(base);
 if (!local && base !== 'https://staging39.thaisolitude.com') throw new Error('exact staging39 or isolated localhost origin only');
-if (flags.some(flag => !['--firefox', '--fixtures-only', '--baseline'].includes(flag)) || new Set(flags).size !== flags.length) throw new Error('unknown or repeated rail input flag');
+if (flags.some(flag => !['--firefox', '--fixtures-only', '--baseline', '--protocol-diagnostic'].includes(flag)) || new Set(flags).size !== flags.length) throw new Error('unknown or repeated rail input flag');
 const fixtures = flags.includes('--fixtures-only'), baseline = flags.includes('--baseline');
 if ((fixtures && !local) || (baseline && !fixtures)) throw new Error('baseline/source fixtures are isolated localhost only');
 const engine = flags.includes('--firefox') ? 'firefox' : 'chromium';
+const protocolDiagnostic = flags.includes('--protocol-diagnostic');
+if (protocolDiagnostic) {
+  let version; try { version = require('playwright-core/package.json').version; } catch {}
+  if (engine !== 'firefox' || version !== '1.63.0') {
+    console.log('INVALID protocol diagnostic: Firefox with Playwright core 1.63.0 required'); process.exit(2);
+  }
+}
 const executable = process.env.TS_BROWSER_EXECUTABLE || process.env.CHROMIUM_PATH;
 const browser = await playwright[engine].launch(engine === 'chromium' && executable ? { executablePath: executable } : {});
 const started = Date.now(); let pass = 0, fail = 0, loads = 0, captures = 0;
@@ -19,6 +26,37 @@ const state = p => p.evaluate(() => ({ x: scrollX, y: scrollY, hash: location.ha
   card: document.querySelector('.tsr-card').className, name: document.querySelector('.tsr-card b')?.textContent || '',
   focus: document.activeElement?.outerHTML.slice(0, 350), drawer: document.querySelector('.tsr-drawer').open }));
 const drawerTraceEvents = ['pointerdown', 'pointermove', 'pointerup', 'pointercancel', 'gotpointercapture', 'lostpointercapture', 'mousedown', 'mouseup', 'click', 'focusin', 'cancel', 'close'];
+let protocolConnection;
+const beginProtocolTrace = () => {
+  if (!protocolDiagnostic) return null;
+  const connection = protocolConnection, original = connection._protocolLogger;
+  const trace = { rows: [], dropped: 0, invalid: null }, pending = new Map();
+  const append = row => { if (trace.rows.length < 64) trace.rows.push(row); else trace.dropped++; };
+  const logger = function (direction, message) {
+    original.call(connection, direction, message);
+    // Observe only these two methods and their ID-matched replies. Never retain
+    // other protocol messages, Runtime expressions, network bodies or headers.
+    try {
+      const key = `${message.sessionId || ''}/${message.id}`;
+      const row = { time: Math.round(performance.now() * 10) / 10, direction, sessionId: message.sessionId || '', id: message.id };
+      if (direction === 'send' && ['Page.getContentQuads', 'Page.dispatchMouseEvent'].includes(message.method)) {
+        const keys = message.method === 'Page.getContentQuads' ? ['frameId', 'objectId'] : ['type', 'x', 'y', 'button', 'buttons', 'clickCount', 'modifiers'];
+        pending.set(key, message.method);
+        append({ ...row, method: message.method, params: Object.fromEntries(keys.filter(k => message.params?.[k] !== undefined).map(k => [k, message.params[k]])) });
+      } else if (direction === 'receive' && pending.has(key)) {
+        const method = pending.get(key); pending.delete(key);
+        const result = method === 'Page.getContentQuads' && message.result?.quads ? { quads: message.result.quads.map(q => Object.fromEntries(['p1', 'p2', 'p3', 'p4'].map(k => [k, { x: q[k].x, y: q[k].y }]))) } : { acknowledged: !message.error };
+        append({ ...row, method, result, error: message.error ? { code: message.error.code, present: true } : undefined });
+      }
+    } catch { trace.invalid = 'unexpected shape in selected protocol data'; }
+  };
+  connection._protocolLogger = logger;
+  return () => {
+    connection._protocolLogger = original;
+    const missing = ['Page.getContentQuads', 'mousemove', 'mousedown', 'mouseup'].filter(name => !trace.rows.some(row => row.direction === 'send' && (row.method === name || row.method === 'Page.dispatchMouseEvent' && row.params.type === name)));
+    return { ...trace, missing, pending: pending.size, restored: connection._protocolLogger === original };
+  };
+};
 const sameAddress = (a, b) => a.url === b.url && a.hash === b.hash && a.history === b.history;
 const still = (a, b) => sameAddress(a, b) && Math.abs(a.x - b.x) <= 1 && Math.abs(a.y - b.y) <= 1;
 const settle = async p => { await p.waitForTimeout(150); await p.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))); };
@@ -53,6 +91,11 @@ const landed = async (p, label) => {
   ok(label + ': original strip and rail agree on the chosen section', g.strip === 'Questions' && g.count === '4 of 6' && g.current === '#tsr-questions', g);
 };
 try {
+  if (protocolDiagnostic) {
+    if (typeof browser._connection?.toImpl !== 'function') throw new Error('protocol diagnostic: in-process browser hook unavailable');
+    protocolConnection = browser._connection.toImpl(browser)?._connection;
+    if (typeof protocolConnection?._protocolLogger !== 'function') throw new Error('protocol diagnostic: Firefox logger hook unavailable');
+  }
   // Fixed-width contexts avoid carrying browser pointer/modal state across a
   // synthetic viewport resize. The phone uses iPhone13's 664px visible height,
   // where the stacked header/bars extend beyond the old quarter-height line.
@@ -162,7 +205,7 @@ try {
     }
     await reset(5);
     // Observe the existing mouse action without retrying or changing its setup.
-    await p.evaluate(types => {
+    await p.evaluate(({ types, protocolDiagnostic }) => {
       const tab = document.querySelector('.tsr-tab'), drawer = document.querySelector('.tsr-drawer'), rail = document.querySelector('.tsr-rail');
       const describe = node => node instanceof Element ? node.tagName.toLowerCase() + (node.id ? '#' + node.id : '') + (node.getAttribute('class') ? '.' + node.getAttribute('class').trim().replace(/\s+/g, '.') : '') + (node.getAttribute('data-idea') ? '[idea=' + node.getAttribute('data-idea') + ']' : '') : node?.nodeName || 'none';
       const time = () => Math.round(performance.now() * 10) / 10;
@@ -172,6 +215,8 @@ try {
         for (let n = hit; n && path.length < 6; n = n.parentElement) path.push(describe(n));
         return { time: time(), rect: r.toJSON(), hitPath: path, focus: describe(document.activeElement), hasFocus: document.hasFocus(), visibility: document.visibilityState,
           drawer: drawer.open, modal: describe(document.querySelector(':modal')), scroll: [scrollX, scrollY], viewport: [innerWidth, innerHeight],
+          ...(protocolDiagnostic ? { outer: [outerWidth, outerHeight], devicePixelRatio, screen: { width: screen.width, height: screen.height, availWidth: screen.availWidth, availHeight: screen.availHeight },
+            visualViewport: visualViewport ? { width: visualViewport.width, height: visualViewport.height, offsetLeft: visualViewport.offsetLeft, offsetTop: visualViewport.offsetTop, pageLeft: visualViewport.pageLeft, pageTop: visualViewport.pageTop, scale: visualViewport.scale } : null } : {}),
           hidden: tab.hidden, disabled: tab.disabled, inert: !!tab.closest('[inert]'), captures: [0, 1].map(id => ({ id, ...captures(id) })),
           style: { display: style.display, visibility: style.visibility, pointerEvents: style.pointerEvents, position: style.position, zIndex: style.zIndex, transform: style.transform } };
       };
@@ -200,13 +245,18 @@ try {
         window.__tsRailInputDrawerWindowCleanup();
         trace.after = snapshot(); delete window.__tsRailInputDrawerTrace; return trace;
       };
-    }, drawerTraceEvents);
-    let drawerTrace;
+    }, { types: drawerTraceEvents, protocolDiagnostic });
+    let drawerTrace; const stopProtocolTrace = beginProtocolTrace();
     try { await p.locator('.tsr-tab').click(); await settle(p); }
     finally {
+      const protocolTrace = stopProtocolTrace?.();
       drawerTrace = await p.evaluate(() => window.__tsRailInputDrawerTrace());
       console.log(`INFO Rail input drawer trace ${engine}/${width}: ` + JSON.stringify({ before: drawerTrace.before, after: drawerTrace.after,
         events: drawerTrace.events.map(e => [e.time, e.scope, e.type, e.target, e.trusted, e.pointerId, e.capture, e.drawer]), transitions: drawerTrace.transitions, dropped: drawerTrace.dropped }));
+      if (protocolTrace) {
+        console.log(`INFO Rail input drawer protocol ${engine}/${width}: ` + JSON.stringify(protocolTrace));
+        if (protocolTrace.invalid || protocolTrace.dropped || protocolTrace.missing.length || protocolTrace.pending || !protocolTrace.restored) throw new Error('protocol diagnostic: incomplete capture or logger restoration');
+      }
     }
     const beforeDrawer = await state(p);
     ok(`${width}/drawer/mouse: tab opens the drawer`, beforeDrawer.drawer, { ...beforeDrawer, trace: drawerTrace });

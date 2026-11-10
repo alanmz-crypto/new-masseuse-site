@@ -452,6 +452,69 @@ before and after an HTTP200 read; exact served script/style and scope passed.
 This rules out a different stored/served Rail payload; it does not resolve the
 Firefox interaction failure.
 
+Read-only Firefox diagnostic [42728885867](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42728885867),
+source `983c8970fa3395c19bd3c14c2a0359d537433079`, again reported **115/2**.
+Both failed drawer activations produced zero events at the early window,
+document and tab listeners, and zero dialog-open mutations. The tab was visible,
+enabled and unobstructed, and the document had focus. Both failure screenshots
+and the complete integrity-verified artifact were reviewed. This locates the
+failure before normal drawer handling; it does not establish its underlying
+cause or waive the failures. Source `520519296` Gates passed **35/0, one skip**
+(rendered checks without a URL).
+
+The local comparison used Playwright 1.62.1, whereas Actions pins 1.63.0.
+An actual-page local Firefox comparison stopped before loading on certificate
+trust. A temporary diagnostic accommodating the environment proxy certificate
+then received HTTP202 on its first page: zero assertions, no usable page capture.
+No further local public retries were made. Matching the Actions browser version
+is the next diagnostic, initially against isolated fixtures.
+
+The core deployment hold was reassessed against its exact executable diff:
+the Rail practice page takes the unchanged `titleOnly` path and returns before
+the modified shared-card handler is created. The core change affects summary
+navigation focus only, and its fresh-copy rehearsal, rollback and dry run passed.
+The independent core deployment was therefore requested while the separate Rail
+Firefox failure remains unresolved; this is not a claim that Rail public gates
+passed.
+
+Core apply [42729961919](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42729961919),
+source `c5bd7226988938f9f25cb027e33925323bb9f22e`, finished **2026-11-10
+00:45:55 UTC, PASS**. The fresh SQL export
+`staging39-before-peek-input-focus-20261110-004003-18454.sql` (4,531,623 bytes)
+was checksum-verified and read back from encrypted off-site storage before the
+write. Actual recovery snapshot
+**`peek-template-core-input-focus-before-20261110-004021-4570ecbf.json`**
+was likewise verified off-site before purge/render. All 19 published routes
+returned HTTP200 with exact candidate runtime/style, correct data scope and
+retained jump rows. Full core state
+`d6cc25d5ca5f15cb0ef322aef5221535cb1ec293a5475eae9a9cbf8c28e0e6d0`
+and four-page state
+`3e9acc4ea6dfedf7fe99e7a70534603ba0d32a1827793755c8ee10f4e55c9cc9`
+matched before and after rendering.
+
+Automatic post-change code/rendered wording, URLs, structured data and PHP-log
+checks passed. Its zero-tolerance comparison against live reported **20/20
+different views**, not a visual pass: live has the earlier navigation, while
+staging contains this project's accumulated changes. The SQL restore imported
+successfully; all 104 fingerprint records compared, with differences confined
+to #1380 and `wpcode_snippets`. Focused public interaction verification and
+post-browser snapshot verification remain pending. No fallback-only interval
+occurred. Main/live were not changed. Recovery must use this actual input-focus
+snapshot to return to v6 before considering the older Kiro recovery chain.
+
+The matching Actions package (Playwright 1.63.0, Firefox 155/revision 1543)
+also passed the unchanged isolated fixture sequence **121/0**. Its tab geometry
+matches the public failures, but the fixture emits normal trusted mouse events.
+An opt-in `--protocol-diagnostic` now observes the existing Firefox protocol
+logger around only the unchanged drawer click. It forwards/restores the original
+logger, records only content quads and mouse-dispatch commands/replies, and
+rejects unsupported versions or incomplete traces as INVALID. No runtime,
+input, wait or behavioral assertion changed. The local smoke passed **9/0**,
+with eight complete protocol records, 31 DOM events, no dropped/pending records
+and confirmed cleanup. Filtering and pre-launch refusal checks passed. The next
+single public diagnostic will distinguish actual dispatch coordinates and
+acknowledgements; earlier public failures remain unresolved.
+
 ## Limits
 
 Native input is browser emulation. Physical devices, true OS text scale and real
