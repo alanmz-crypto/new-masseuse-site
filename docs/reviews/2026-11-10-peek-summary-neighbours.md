@@ -338,6 +338,39 @@ trace passed all 25 checks. Independent source review found no blocker in the
 compact spacing or bounded-position comparison. A fresh complete copy gate is
 still required before staging writes.
 
+An additional native-wheel diagnostic confirmed all four ±1px movements are
+recorded as the exact input positions across Chromium and Firefox. Its initial
+integer-only expectation returned 2/4 because Firefox reports fractional offsets;
+that diagnostic remains preserved separately. The corrected measurement compares
+actual before/after positions and recorded intent, not hardcoded integer starts.
+No existing acceptance test was changed.
+
+Commit `83d58b3f2247eb0c7800a8d852ab78e48a79612d` passed all 42
+[source gates](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42783577387)
+at 08:36:49 UTC. The complete log was read. Request
+`f9ad98babe34f26e42bff86ef1a0d8caed60c6be` starts
+[copy rehearsal 6](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42784150848)
+against this candidate.
+
+## Sixth actual staging39-copy rehearsal
+
+Copy 6 finished **PASS** at 09:02:15 UTC: **19,061/0**, all 18 required logical
+browser suites. Focused Chromium **1,384/0**, Firefox **1,304/0** and WebKit
+**1,304/0** passed. All retained suites passed, including clearance **3,544/0**
+per engine, native touch **451/0** and retained Thai **502/0**. This is fresh
+evidence for the current candidate, not a reused historical Thai report.
+
+Exact state verification after browser activity passed, followed by exact
+original-state rollback and reapply with a new owned snapshot. The four data
+records remained at `3e9acc4e…cc9`; only #1380 and WPCode's cache changed. The
+copy's snapshot files are rehearsal evidence, not staging recovery commands.
+The complete 1,174-line operation, native states and all browser suites were
+audited from the artifact; all 186 captures validate. The primary agent viewed
+the current Therapeutic landscape card, WebKit Thai middle card and enlarged
+Chair research ending. Compact summaries are readable, neighbours remain
+distinct and the final research qualification is visible. No staging write has
+occurred yet.
+
 ## Required verification
 
 Check all four service-page structures, both sides, first/middle/last sections,
