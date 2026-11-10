@@ -7,12 +7,17 @@ const playwright = require('playwright');
 const base = process.argv[2], flags = process.argv.slice(3);
 const local = ['http://localhost:8090', 'http://localhost:8091'].includes(base);
 if (!local && base !== 'https://staging39.thaisolitude.com') throw new Error('exact staging39 or isolated localhost origin only');
-if (flags.some(flag => !['--firefox', '--fixtures-only', '--baseline', '--protocol-diagnostic', '--drawer-history-diagnostic'].includes(flag)) || new Set(flags).size !== flags.length) throw new Error('unknown or repeated rail input flag');
+if (flags.some(flag => !['--firefox', '--fixtures-only', '--baseline', '--protocol-diagnostic', '--drawer-history-diagnostic', '--rail-history-diagnostic'].includes(flag)) || new Set(flags).size !== flags.length) throw new Error('unknown or repeated rail input flag');
 const fixtures = flags.includes('--fixtures-only'), baseline = flags.includes('--baseline');
 if ((fixtures && !local) || (baseline && !fixtures)) throw new Error('baseline/source fixtures are isolated localhost only');
 const engine = flags.includes('--firefox') ? 'firefox' : 'chromium';
 const protocolDiagnostic = flags.includes('--protocol-diagnostic');
 const drawerHistoryDiagnostic = flags.includes('--drawer-history-diagnostic');
+const railHistoryDiagnostic = flags.includes('--rail-history-diagnostic');
+const historyDiagnostic = drawerHistoryDiagnostic || railHistoryDiagnostic;
+if (railHistoryDiagnostic && (drawerHistoryDiagnostic || engine !== 'firefox' || !protocolDiagnostic)) {
+  console.log('INVALID rail history diagnostic: --firefox --protocol-diagnostic required; cannot combine with --drawer-history-diagnostic'); process.exit(2);
+}
 if (drawerHistoryDiagnostic && (engine !== 'firefox' || !protocolDiagnostic)) {
   console.log('INVALID drawer history diagnostic: --firefox --protocol-diagnostic required'); process.exit(2);
 }
@@ -74,7 +79,7 @@ const open = async ctx => {
   if (fixtures) await ctx.route(base + '/rail-nav-ideas/**', route => route.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', body: fixture() }));
   const p = await ctx.newPage(), errors = [];
   p.on('pageerror', error => errors.push(error.message));
-  if (drawerHistoryDiagnostic) historyLoadStarted = Date.now();
+  if (historyDiagnostic) historyLoadStarted = Date.now();
   const r = await p.goto(base + '/rail-nav-ideas/', { waitUntil: 'load' }); loads++;
   if (r?.status() !== 200 || new URL(p.url()).origin !== base || /Robot Challenge/i.test(await p.title())) throw new Error(`INVALID rail page: expected same-origin HTML200, got${r?.status()}`);
   return { p, errors };
@@ -104,11 +109,12 @@ try {
   // Fixed-width contexts avoid carrying browser pointer/modal state across a
   // synthetic viewport resize. The phone uses iPhone13's 664px visible height,
   // where the stacked header/bars extend beyond the old quarter-height line.
-  const cases = drawerHistoryDiagnostic ? [[390, 664, 'mouse-first'], [390, 664, 'keyboard-history']] : [[390, 664], [1280, 844]];
+  const cases = drawerHistoryDiagnostic ? [[390, 664, 'mouse-first'], [390, 664, 'keyboard-history']]
+    : railHistoryDiagnostic ? [[390, 664, 'before-gestures'], [390, 664, 'gestures-only']] : [[390, 664], [1280, 844]];
   for (const [width, height, historyCase] of cases) {
     // Pace only the fresh diagnostic page loads, after the prior context closed.
     // This leaves the modal-close-to-mouse timing and default suite unchanged.
-    if (drawerHistoryDiagnostic && historyLoadStarted) await new Promise(resolve => setTimeout(resolve, Math.max(0, 5500 - (Date.now() - historyLoadStarted))));
+    if (historyDiagnostic && historyLoadStarted) await new Promise(resolve => setTimeout(resolve, Math.max(0, 5500 - (Date.now() - historyLoadStarted))));
     const caseLabel = historyCase ? `${width}/${historyCase}` : String(width);
     const ctx = await browser.newContext({ viewport: { width, height }, reducedMotion: 'reduce' });
     await ctx.addInitScript(types => {
@@ -143,8 +149,8 @@ try {
       return { ready, before };
     };
 
-    // The optional two-case probe deliberately excludes earlier rail history.
-    if (!drawerHistoryDiagnostic) {
+    // The optional history probes select whole existing action blocks.
+    if (!historyDiagnostic || historyCase === 'before-gestures') {
       for (const idea of [1, 2, 3, 4]) {
         const label = `${width}/idea${idea}/keyboard`;
         if ([1, 3].includes(idea)) {
@@ -189,6 +195,8 @@ try {
       await reset(1); const beforeClick = await state(p); await rail.evaluate(a => a.click()); await settle(p);
       ok(`${width}/non-pointer-click: existing activation opens preview without jumping`, (await state(p)).card.includes('is-pinned') && still(beforeClick, await state(p)), await state(p));
       await p.keyboard.press('Escape');
+    }
+    if (!historyDiagnostic || historyCase === 'gestures-only') {
       // Genuine mouse PointerEvents preserve all four rail gestures.
       for (const idea of [1, 2, 3, 4]) {
         await reset(idea); const before = await state(p), box = await rail.boundingBox();
@@ -282,7 +290,7 @@ try {
     ok(`${caseLabel}: no JavaScript errors`, errors.length === 0, errors);
     await ctx.close();
   }
-  if (!drawerHistoryDiagnostic) {
+  if (!historyDiagnostic) {
     const nojs = await browser.newContext({ viewport: { width: 390, height: 844 }, javaScriptEnabled: false });
     const { p: fallback } = await open(nojs);
     const links = fallback.locator('.tsr-nav noscript a');
@@ -298,5 +306,5 @@ try {
   }
 } catch (error) { console.log(`INVALID rail input ${engine}: ${error.message}`); process.exitCode = 2; }
 finally { await browser.close(); }
-console.log(`INFO Rail input ${drawerHistoryDiagnostic ? 'drawer history diagnostic' : 'keyboard'} ${engine}: ${pass} passed, ${fail} failed; ${loads} page loads, ${captures} captures, ${Math.round((Date.now() - started) / 1000)}s${fixtures ? ', local fixtures only' : ''}; no physical-device or assistive-technology claim.`);
+console.log(`INFO Rail input ${drawerHistoryDiagnostic ? 'drawer history diagnostic' : railHistoryDiagnostic ? 'rail history diagnostic' : 'keyboard'} ${engine}: ${pass} passed, ${fail} failed; ${loads} page loads, ${captures} captures, ${Math.round((Date.now() - started) / 1000)}s${fixtures ? ', local fixtures only' : ''}; no physical-device or assistive-technology claim.`);
 process.exit(process.exitCode || (fail ? 1 : 0));

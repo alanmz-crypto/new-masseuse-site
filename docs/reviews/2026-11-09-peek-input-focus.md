@@ -571,6 +571,29 @@ With Me's phone hero heading; the Thai jump capture also shows a label over body
 text. Their duration and physical-device impact remain a separate follow-up.
 The core lane is complete; the independent Rail drawer diagnostic remains open.
 
+Drawer-history diagnostic [42733164765](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42733164765),
+source `dd7f8c8f6b2166d3a7a7b128a226a4f3ba7d669f`, finished **01:12:10 UTC,
+PASS 12/0**, two actual phone loads and no screenshots. Both mouse-first and
+keyboard-modal-history cases delivered 31 trusted observed events, complete
+eight-record protocol traces, normal pointer capture/release and a closed→open
+drawer transition. The report and integrity-verified artifact agree. These
+shorter histories work; they do not erase the full-sequence 115/2 failures.
+The apparent delay was **6m32s before the checker**, in runner preparation;
+the browser sequence took 12 seconds. Suppressed installation output does not
+identify a specific slow dependency. Nothing was cancelled and no browser stall
+or site latency is established.
+
+The next opt-in `--rail-history-diagnostic` preserves the exact original action
+blocks but separates the prefix before native gestures (including its outside
+picker mouse action and nonpointer activation) from the native gesture loop
+1–4. Both fresh phone contexts retain the proven modal suffix and traced click.
+Flags are mutually exclusive, loads remain paced, and a diagnostic-only summary
+cannot satisfy the full public gate. The fixture passed **67/0 across two loads**;
+independent byte comparisons, refusal tests and complete trace checks passed.
+Default checks and website runtime remain unchanged. A failing half would be
+sufficient history to reproduce; two passing halves would leave combined
+history/order as an open question.
+
 ## Limits
 
 Native input is browser emulation. Physical devices, true OS text scale and real
