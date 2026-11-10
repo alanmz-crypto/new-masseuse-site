@@ -17,12 +17,12 @@ rail, dark theme and expanded Safari address bar. Neither neighbouring topic
 is visible. The screenshot establishes that missing-control state, not the
 cause of a scrolling delay or a browser event trace.
 
-The complete current runtime was read before editing. `cardHTML()` renders
-every other section and distant-topic counts. Its compact `fit5` CSS hides
-every closed row, and the fitter selects that state when a scrollable summary
-has less than 120px of reading space. This source behavior explains how the
-neighbours can disappear; it does not prove Safari's address bar caused the
-reported scrolling problem.
+The complete starting v7 runtime was read before editing. Its `cardHTML()`
+rendered every other section and distant-topic counts. Its compact `fit5` CSS
+hid every closed row, and the fitter selected that state when a scrollable
+summary had less than 120px of reading space. That source behavior explains
+how the neighbours could disappear; it does not prove Safari's address bar
+caused the reported scrolling problem.
 
 The proposed simplification was explained before building: summary cards
 contain only their immediate previous/open/next sequence, with no distant
@@ -36,8 +36,9 @@ Fresh access checks confirmed GitHub pull/push/admin permission and a current
 clean branch at `8ef8b663c2cbec7993bfa4c15102bf3d9351d6de`. The attached managed
 environment reports a current enforced unrestricted policy. The inner process
 could not reach its proxy; the permitted outer request reached staging39 but
-received HTTP202. No unchanged public retry was made. Actual rendered evidence
-will come from the authorized staging39-copy Actions rehearsal.
+received HTTP202. No unchanged public retry was made. The authorized staging39
+copy rehearsal in Actions subsequently supplied actual rendered evidence,
+recorded below.
 
 ## Exact starting point and recovery
 
@@ -50,11 +51,13 @@ Starting #1380 was frozen before runtime edits as `peek-nav-shared-v7.php`:
 The previous input-focus transition must stay pinned v6→v7, preserving the
 meaning of actual staging snapshot
 `peek-template-core-input-focus-before-20261110-004021-4570ecbf.json`.
-A separate `core-neighbours` transition will update #1380 in place and verify
-all four unchanged page-data records. No fallback-only interval is planned.
-Any later rollback must use this new transition's actual snapshot, after a
-fresh verified backup and exact current-state checks. The actual new snapshot is
-recorded in the deployment section below.
+The separate `core-neighbours` transition updated #1380 in place and verified
+all four unchanged page-data records, without a fallback-only interval. Current
+recovery starts with `core-neighbours` → frozen v7 using actual snapshot
+`peek-template-core-neighbours-before-20261110-143200-81725f33.json`, after a
+fresh verified backup and exact ownership/state checks. Only then, if needed,
+can the previous input-focus snapshot restore v6; older snapshots cannot be
+applied directly to the current deployment.
 
 ## Candidate and local observations
 
@@ -417,6 +420,16 @@ chain with only browser leaves doubled and rejection of missing/substituted
 public suites. Restricted local execution lost asynchronous Node pipe output;
 the unchanged integration passed in the permitted outer execution environment,
 without modifying wrapper transport or relaxing any evidence requirement.
+
+The verifier correction and deployment notes were committed as
+`e1208efb032740edf26ed7e09de64aeef5220edd`. All 42
+[source gates](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42838240858)
+passed at 14:54:18 UTC; the complete log was read. Runtime SHA256 remained
+`0459b427…7e27`. Request `92564ef44111d635ce81d93d8d464885cb34bd42` ran the
+[public browser check](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42838951767)
+against deployed staging39 and completed **PASS at 15:16:58 UTC**. Full artifact
+and capture review is in progress; the final actual-snapshot verification
+follows this browser run.
 
 ## Required verification
 

@@ -11,13 +11,18 @@ shared v7. Recovery snapshot:
 Public browser verification is in progress. Live-release preparation is paused,
 and its frozen first-install payload has not been updated to this core.
 
+Current recovery starts with `core-neighbours` → frozen v7, using
+`peek-template-core-neighbours-before-20261110-143200-81725f33.json`,
+after a fresh verified backup and exact ownership/state checks. All older shared-core
+recovery sequences below apply only after that restoration.
+
 **Release preparation, November 10: not ready for live.** The [readiness record](../../../docs/reviews/2026-11-10-peek-release-readiness.md)
 contains the exact scope, new read-only live/staging inventories and current
-acceptance blockers. All 15 shared page bodies match after origin normalization;
-staged core/four data payloads match source. Live metadata is preserved, not
-copied from staging. A localhost-only first-install/rollback package is being
-prepared; no live enablement or request exists. Ryan's iPhone reply confirms
-rail/index behavior and background containment but leaves research scrolling
+acceptance blockers. At that inventory, all 15 shared page bodies matched after
+origin normalization, and staged core/four data payloads matched source. Live
+metadata is preserved. The localhost-only first-install/rollback package is
+paused at the preceding core; no live enablement or request exists. Ryan's
+iPhone reply confirms rail/index behavior and background containment but leaves research scrolling
 and the contradictory Privacy/hamburger result to clarify. No Safari pass is
 claimed; no website runtime changed during this preparation.
 
@@ -52,14 +57,16 @@ Actual recovery snapshots, both verified encrypted off-site:
 - Core: `peek-template-core-input-focus-before-20261110-004021-4570ecbf.json`.
 - Rail page: `rail-input-before-20261109-235652-0adc77b9.json`.
 
-After fresh verified backups/full-state checks, reverse `core-input-focus` to
-frozen v6 FIRST, then any older Kiro→v5/title-rail→v4 route. Rail recovery uses
+Only after `core-neighbours` restores frozen v7, and with fresh verified
+backups/full-state checks, may `core-input-focus` restore v6, followed if needed
+by older Kiro→v5/title-rail→v4 routes. Rail recovery uses
 its independent full-state `rail-input` route, never the old delete/recreate
 installer. No fallback-only interval occurred. Actual iPhone Safari acceptance
 is incomplete; see release readiness above. Official Linux WebKit now installs
 and launches in Actions, but its public attempt was INVALID HTTP202 with zero
-assertions; the next run belongs on the isolated copy. Real OS text scaling and
-assistive technology remain unverified. Main/live remain untouched.
+assertions. The later neighbours copy6 passed WebKit **1,304/0**; that is
+Linux WebKit evidence, not physical Safari. Real OS text scaling and assistive
+technology remain unverified. Main/live remain untouched.
 
 **Durable page-update lesson:** a script-only `wp_update_post` ran save hooks
 that removed Spectra `_uag_css_file_name`/`_uag_page_assets` and changed SureRank's
@@ -75,8 +82,8 @@ post-browser rollback caught the earlier drift even when all browser tests passe
 See the [completed fix record](../../../docs/reviews/2026-11-09-peek-kiro-fixes.md).
 `peek-nav-shared-v6.php` is the previous payload: 102,649 stored code bytes, SHA256
 `dec11c9e50cacba8986068e98748e966333aebe3366701f1f0e94e5e790113a1`.
-`core-title-rail` pins v4→v5 and `core-kiro-fixes` pins v5→v6. Current
-`peek-nav-shared-v7.php` is the deployed input-focus payload, with its separate
+`core-title-rail` pins v4→v5 and `core-kiro-fixes` pins v5→v6. Frozen
+`peek-nav-shared-v7.php` is the preceding input-focus payload, with its separate
 v6→v7 route and actual snapshot above. The new `core-neighbours` route uses
 v7→current; older snapshots retain their meaning.
 

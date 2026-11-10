@@ -15,13 +15,18 @@ Deployed to staging39 #1380 at 14:32 UTC; public browser verification is in
 progress. Live-release preparation is paused; the blocked live-copy
 permission remains unapproved.
 
+Current recovery starts with `core-neighbours` → frozen v7, using
+`peek-template-core-neighbours-before-20261110-143200-81725f33.json`,
+after a fresh verified backup and exact ownership/state checks. All older shared-core
+recovery sequences below apply only after that restoration.
+
 **Release preparation, November 10: not ready for live.** The [readiness record](../../docs/reviews/2026-11-10-peek-release-readiness.md)
 contains the exact scope, new read-only live/staging inventories and current
-acceptance blockers. All 15 shared page bodies match after origin normalization;
-staged core/four data payloads match source. Live metadata is preserved, not
-copied from staging. A localhost-only first-install/rollback package is being
-prepared; no live enablement or request exists. Ryan's iPhone reply confirms
-rail/index behavior and background containment but leaves research scrolling
+acceptance blockers. At that inventory, all 15 shared page bodies matched after
+origin normalization, and staged core/four data payloads matched source. Live
+metadata is preserved. The localhost-only first-install/rollback package is
+paused at the preceding core; no live enablement or request exists. Ryan's
+iPhone reply confirms rail/index behavior and background containment but leaves research scrolling
 and the contradictory Privacy/hamburger result to clarify. No Safari pass is
 claimed; no website runtime changed during this preparation.
 The fourth live-sourced disposable-copy rehearsal identified the first draft's
@@ -37,7 +42,7 @@ question is pending; no copy6 request was committed or dispatched. No complete
 install or browser phase has passed in this release-copy lane; see the readiness
 record for actual attempts and copy-only journals.
 
-**Current: input-focus core and Rail practice updates deployed on staging39.**
+**Previous baseline: input-focus core and Rail practice updates on staging39.**
 See the [canonical phase record](../../docs/reviews/2026-11-09-peek-input-focus.md) for complete attempts, hashes, backups
 and evidence. Core apply **42729961919** wrote #1380 at **2026-11-10 00:40:21 UTC**
 and finished **00:45:55 UTC, PASS**; fresh-copy proof passed **14,386/0 across
@@ -68,14 +73,16 @@ Actual recovery snapshots, both verified encrypted off-site:
 - Core: `peek-template-core-input-focus-before-20261110-004021-4570ecbf.json`.
 - Rail page: `rail-input-before-20261109-235652-0adc77b9.json`.
 
-After fresh verified backups/full-state checks, reverse `core-input-focus` to
-frozen v6 FIRST, then any older Kiro→v5/title-rail→v4 route. Rail recovery uses
+Only after `core-neighbours` restores frozen v7, and with fresh verified
+backups/full-state checks, may `core-input-focus` restore v6, followed if needed
+by older Kiro→v5/title-rail→v4 routes. Rail recovery uses
 its independent full-state `rail-input` route, never the old delete/recreate
 installer. No fallback-only interval occurred. Actual iPhone Safari acceptance
 is incomplete; see release readiness above. Official Linux WebKit now installs
 and launches in Actions, but its public attempt was INVALID HTTP202 with zero
-assertions; the next run belongs on the isolated copy. Real OS text scaling and
-assistive technology remain unverified. Main/live remain untouched.
+assertions. The later neighbours copy6 passed WebKit **1,304/0**; that is
+Linux WebKit evidence, not physical Safari. Real OS text scaling and assistive
+technology remain unverified. Main/live remain untouched.
 
 **Durable page-update lesson:** a script-only `wp_update_post` ran save hooks
 that removed Spectra `_uag_css_file_name`/`_uag_page_assets` and changed SureRank's
@@ -89,7 +96,8 @@ post-browser rollback caught the earlier drift even when all browser tests passe
 
 **Previous deployed baseline:** [Kiro fixes, frozen v6; historical public/stored proof](../../docs/reviews/2026-11-09-peek-kiro-fixes.md).
 The earlier practice and deployment stages below are historical; current core recovery
-starts with the actual input-focus snapshot above.
+starts with the actual neighbours snapshot at the top, restoring frozen v7
+before the input-focus snapshot can restore v6.
 
 **What:** Ryan (2026-11-08, cloud session) asked for a practice page on staging39 with five modern ideas to replace the plain in-page
 link row at the top of the service pages, "real code that really works so that we know we can use it on the final version".
