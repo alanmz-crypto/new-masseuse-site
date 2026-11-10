@@ -57,8 +57,14 @@ work="${RUNNER_TEMP:-$HOME/.cache}/ts-rehearsal-$$"   # never /tmp on Ryan's com
 pub="$work/public_html"; bk="$work/backups"; out="$work/out"
 mkdir -p "$pub" "$bk" "$out"; chmod 777 "$bk"
 project="ts-rehearsal-$$"
+release_relay_pid=""
 dc() { docker compose --progress quiet -p "$project" -f "$work/compose.yml" "$@"; }
 cleanup() { # files the containers wrote belong to their user, so remove those from inside a container, then the emptied folders
+  if [ -n "${release_relay_pid:-}" ]; then
+    kill "$release_relay_pid" 2>/dev/null || true
+    wait "$release_relay_pid" 2>/dev/null || true
+    release_relay_pid=""
+  fi
   dc down -v --remove-orphans >/dev/null 2>&1
   case "$work" in */ts-rehearsal-[0-9]*) ;; *) echo "cleanup: refusing to remove '$work' (not this run's work folder)" >&2; return ;; esac
   rm -rf "$work" 2>/dev/null || { docker run --rm --user 0 --entrypoint sh -v "$work:/w" "$cli_img" -c 'rm -rf /w/public_html /w/backups /w/out /w/db.sql.gz /w/compose.yml /w/fp.sql' >/dev/null 2>&1; rm -rf "$work" 2>/dev/null; }
@@ -159,7 +165,9 @@ services:
 YML
 if [ "$release_rehearsal" = 1 ]; then
   # Copied plugin settings may contain live integrations. Isolate every copy
-  # service before first boot; the host can still use the loopback HTTP port.
+  # service before first boot. Internal networks do not reliably publish ports;
+  # an owned host relay below provides the loopback browser endpoint instead.
+  sed -i '/^    ports: \["127.0.0.1:8090:80"\]$/d' "$work/compose.yml"
   cat >> "$work/compose.yml" <<'YML'
 networks:
   default:
@@ -198,6 +206,28 @@ wpdb option update sg_security_disable_activity_log 1 >/dev/null
 wpc eval 'if ( function_exists( "wpcode" ) ) { wpcode()->cache->cache_all_loaded_snippets(); }' >/dev/null 2>&1 || true
 [ "$(wpdb option get home 2>/dev/null)" = "http://localhost:8090" ] || invalid "the copy's home is not http://localhost:8090 after the rewrite"
 dc up -d wordpress >/dev/null 2>&1 || invalid "could not start the web container"
+if [ "$release_rehearsal" = 1 ]; then
+  release_container=$(dc ps -q wordpress) || invalid "isolated WordPress container lookup failed"
+  [[ "$release_container" =~ ^[a-f0-9]{64}$ ]] || invalid "isolated WordPress container identity is not unique"
+  release_network=$(docker inspect --format '{{range .NetworkSettings.Networks}}{{.NetworkID}}{{end}}' "$release_container") || invalid "isolated WordPress network lookup failed"
+  [[ "$release_network" =~ ^[a-f0-9]{64}$ ]] || invalid "isolated WordPress network identity is not unique"
+  release_internal=$(docker network inspect --format '{{.Internal}}' "$release_network") || invalid "isolated WordPress network inspection failed"
+  [ "$release_internal" = true ] || invalid "copied WordPress network is not internal"
+  release_backend=$(docker inspect --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' "$release_container") || invalid "isolated WordPress address lookup failed"
+  python3 -I -B "$here/rehearsal-loopback.py" "$release_backend" > "$out/release-loopback.log" 2>&1 &
+  release_relay_pid=$!
+  release_relay_ready=0
+  for _ in $(seq 1 30); do
+    kill -0 "$release_relay_pid" 2>/dev/null || break
+    if grep -qxF "READY rehearsal loopback 127.0.0.1:8090 -> $release_backend:80" "$out/release-loopback.log"; then release_relay_ready=1; break; fi
+    sleep 1
+  done
+  if [ "$release_relay_ready" != 1 ]; then
+    cat "$out/release-loopback.log"
+    invalid "isolated copy loopback relay did not bind"
+  fi
+  echo "  isolated PHP network verified; owned loopback relay ready"
+fi
 up=0; for _ in $(seq 1 60); do [ "$(curl -s -o /dev/null -m 10 -w '%{http_code}' http://localhost:8090/)" = 200 ] && { up=1; break; }; sleep 2; done
 [ "$up" = 1 ] || invalid "the copy's home page never answered 200"
 if [ -n "$seam" ] && [ -n "${TS_REHEARSAL_TEST_PREP:-}" ]; then   # TESTING ONLY: PHP run on the copy before the baseline (e.g. take a change out so it can be rehearsed)

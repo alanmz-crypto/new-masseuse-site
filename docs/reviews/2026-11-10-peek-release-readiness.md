@@ -129,7 +129,7 @@ Independent source review cleared installer SHA256
 `b9485188ea80f05567cbfb903c28da34148d39c2ff7db6541ceebe553db80a64`
 for isolated rehearsal. Its pinned-PHP SQLite/WordPress API model passed **913
 checks**, including **106 injected write-boundary failures**. The separate
-rehearsal evidence tests passed **120 controls** and detected eleven deliberate
+rehearsal evidence tests passed **135 controls** and detected eleven deliberate
 guard removals, including three network-boundary mutations. Adapter/profile
 tests passed **46 controls**, then accepted the
 actual frozen manifest and independently captured 15-page inventory using stub
@@ -142,9 +142,21 @@ after each rollback. It binds each phase to the actual immutable snapshot and
 five created IDs, including a separate rollback/reapply after browser activity.
 The source and destination stores, shared taxonomy counts and unrelated content
 must remain exact. A release-only internal Docker network isolates copied
-plugins from external integrations before the first container starts; host
-browser checks use the published loopback port. Fresh-copy execution is still
+plugins from external integrations before the first container starts. Docker
+suppressed port publishing on the tested internal-only network, so an owned
+localhost TCP relay forwards browser traffic to the exact inspected container.
+The host browser itself is not network-isolated. Fresh-copy execution is still
 pending.
+
+Seven synthetic TCP tests passed for the fixed relay, including address/bind
+refusals, large duplex transfers, half-close, idle failure and clean termination.
+An independent pinned-image Docker probe confirmed internal networking, no
+default egress route on all three copy services, PHP-to-database connectivity,
+localhost access through the exact relay, unchanged binary transfers and sixteen
+concurrent reads. This used synthetic content only, not the site's copied files.
+Source Gates runs `42747569094` (`f104e90c`) and `42748065437` (`d0f48692`) each
+passed **38/0**, with one expected rendered-URL skip; complete job logs were read.
+The relay additions require their own final source Gates run.
 
 1. Capture and review the exact current live navigation baseline. Existing
    staging upgrade installers require owned snippet #1380 and historical

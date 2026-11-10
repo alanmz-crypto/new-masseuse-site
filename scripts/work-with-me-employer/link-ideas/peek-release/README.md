@@ -6,8 +6,10 @@ fresh copy of live, not authorization or tooling to change live. The installer
 accepts only `http://localhost:8090`; staging and live origins are refused.
 Actual iPhone Safari acceptance and the fresh-copy gates remain release blockers.
 The copy's containers use an internal Docker network from first boot, so copied
-plugins cannot call external integrations. The host retains access through the
-published loopback HTTP port for browser checks.
+plugins cannot call external integrations. An owned host TCP relay binds only
+127.0.0.1:8090 and forwards unchanged bytes to port 80 of the exact inspected
+WordPress container on that internal network. It stops during copy cleanup.
+The host browser itself is not a network-isolated process.
 
 The release creates five WPCode snippets, removes the exact old reading-progress
 CSS block from Additional CSS #29, and changes Astra's `scroll-to-top-enable`

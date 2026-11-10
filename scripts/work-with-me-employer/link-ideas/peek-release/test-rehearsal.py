@@ -267,10 +267,107 @@ dc() {
             configs[release] = (case / "at-first-start.yml").read_text()
             assert configs[release] == (case / "compose.yml").read_text(), "network isolation was added after first start"
         network = "networks:\n  default:\n    internal: true\n"
+        port = '    ports: ["127.0.0.1:8090:80"]\n'
         assert configs[0] == original_config and "networks:" not in configs[0], "existing rehearsal network configuration changed"
-        assert configs[1].count(network) == 1 and configs[1].replace(network, "") == configs[0], "release must add exactly one internal default network before first start"
+        assert configs[0].count(port) == 1, "existing rehearsal must retain its published loopback port"
+        assert configs[1].count(network) == 1 and configs[1].replace(network, "") == configs[0].replace(port, ""), "release must add exactly one internal default network and remove only the published port before first start"
         assert "network_mode:" not in configs[1] and configs[1].count("networks:") == 1, "a copied service bypasses the internal default network"
-        assert 'ports: ["127.0.0.1:8090:80"]' in configs[1], "isolated copy must retain the loopback HTTP binding"
+        assert "ports:" not in configs[1], "isolated release must use its owned relay instead of Docker port publishing"
+
+        relay_start = source.index('dc up -d wordpress >/dev/null 2>&1 || invalid "could not start the web container"')
+        relay = source[relay_start:source.index("\nup=0;", relay_start)]
+        relay_shim = r'''
+set -uo pipefail
+out=$1; fixture_mode=$2; release_rehearsal=$3; here=/fixture/ci
+release_relay_pid=''; mkdir -p "$out"
+container_id=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+network_id=bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+trace() { printf '%s\n' "$*" >> "$out/calls.txt"; }
+invalid() { printf 'INVALID relay fixture: %s\n' "$*" >&2; exit 2; }
+dc() {
+  trace "dc $*"
+  case "$*" in
+    'up -d wordpress') return 0 ;;
+    'ps -q wordpress')
+      if [ "$fixture_mode" = container-invalid ]; then printf 'ambiguous container\n'; else printf '%s\n' "$container_id"; fi
+      [ "$fixture_mode" != container-error ] ;;
+    *) return 9 ;;
+  esac
+}
+docker() {
+  trace "docker $*"
+  if [ "$1" = inspect ]; then
+    [ "$2" = --format ] && [ "$4" = "$container_id" ] || return 9
+    case "$3" in
+      *NetworkID*)
+        if [ "$fixture_mode" = network-invalid ]; then printf '%s%s\n' "$network_id" "$network_id"; else printf '%s\n' "$network_id"; fi
+        [ "$fixture_mode" != network-error ] ;;
+      *IPAddress*) printf '172.30.0.2\n'; [ "$fixture_mode" != backend-error ] ;;
+      *) return 9 ;;
+    esac
+  else
+    [ "$1" = network ] && [ "$2" = inspect ] && [ "$3" = --format ] && [ "$5" = "$network_id" ] || return 9
+    if [ "$fixture_mode" = external-network ]; then printf 'false\n'; else printf 'true\n'; fi
+    [ "$fixture_mode" != internal-error ]
+  fi
+}
+python3() {
+  trace "python3 $*"
+  [ "$*" = '-I -B /fixture/ci/rehearsal-loopback.py 172.30.0.2' ] || return 9
+  case "$fixture_mode" in
+    startup-failure) printf 'fixture relay bind failed\n'; return 23 ;;
+    wrong-ready) printf 'READY rehearsal loopback 127.0.0.1:8091 -> 172.30.0.2:80\n' ;;
+    *) printf 'READY rehearsal loopback 127.0.0.1:8090 -> 172.30.0.2:80\n' ;;
+  esac
+}
+# The launch double finishes immediately. Synchronize its log, then model a
+# live/dead child explicitly; the separate relay tests exercise real sockets.
+kill() {
+  [ "$1" = -0 ] && [ "$2" = "$release_relay_pid" ] || return 9
+  builtin wait "$2" 2>/dev/null || true
+  [ "$fixture_mode" != startup-failure ] && [ "$fixture_mode" != ready-but-dead ]
+}
+sleep() { :; }
+trap '[ -z "${release_relay_pid:-}" ] || builtin wait "$release_relay_pid" 2>/dev/null || true' EXIT
+'''
+        relay_cases = (("success", 1, 0), ("legacy", 0, 0), ("container-invalid", 1, 2),
+                       ("container-error", 1, 2), ("network-invalid", 1, 2), ("network-error", 1, 2),
+                       ("external-network", 1, 2), ("internal-error", 1, 2), ("backend-error", 1, 2),
+                       ("startup-failure", 1, 2), ("wrong-ready", 1, 2), ("ready-but-dead", 1, 2))
+        for mode, release, expected in relay_cases:
+            case = work / ("relay-" + mode)
+            result = shell(relay_shim + relay, (case, mode, release))
+            check("relay orchestration " + mode, result, expected)
+            calls = (case / "calls.txt").read_text().splitlines()
+            if mode == "legacy":
+                assert calls == ["dc up -d wordpress"], "other rehearsal lanes must not start a relay"
+            elif mode in {"success", "startup-failure", "wrong-ready", "ready-but-dead"}:
+                assert calls[-1] == "python3 -I -B /fixture/ci/rehearsal-loopback.py 172.30.0.2", "relay must receive only the verified backend"
+                assert len(calls) == 6, ("identity/network/address checks before relay", calls)
+            else:
+                assert not any(call.startswith("python3 ") for call in calls), "failed identity/network lookup must stop before relay launch"
+                expected_calls = {"container-invalid": 2, "container-error": 2, "network-invalid": 3,
+                                  "network-error": 3, "external-network": 4, "internal-error": 4, "backend-error": 5}
+                assert len(calls) == expected_calls[mode], ("failed relay prerequisite must stop subsequent lookups", mode, calls)
+
+        cleanup_source = function(source, "cleanup", "\ntrap cleanup EXIT")
+        cleanup_shim = r'''
+set -uo pipefail
+work=$1/ts-rehearsal-123; fixture_pid=$2; fixture_kill_status=$3
+release_relay_pid=$fixture_pid; cli_img=fixture-cli; mkdir -p "$work"
+kill() { printf 'kill %s\n' "$*" >> "$work/calls.txt"; return "$fixture_kill_status"; }
+wait() { printf 'wait %s\n' "$*" >> "$work/calls.txt"; return 0; }
+dc() { printf 'dc %s\n' "$*" >> "$work/calls.txt"; }
+rm() { printf 'rm %s\n' "$*" >> "$work/calls.txt"; }
+docker() { printf 'unexpected Docker cleanup\n' >&2; return 9; }
+'''
+        for name, pid, kill_status in (("owned", "43210", 0), ("already-exited", "43210", 1), ("no-relay", "", 0)):
+            case = work / ("relay-cleanup-" + name)
+            result = shell(cleanup_shim + cleanup_source + '\ncleanup\ncleanup\n[ -z "$release_relay_pid" ]\n', (case, pid, kill_status))
+            check("relay cleanup " + name, result, 0)
+            calls = (case / "ts-rehearsal-123/calls.txt").read_text().splitlines()
+            signals = [call for call in calls if call.startswith(("kill ", "wait "))]
+            assert signals == (["kill 43210", "wait 43210"] if pid else []), ("cleanup may signal only its recorded child once", signals)
 
         recovery_label = source.index('echo; echo "[4f] exact visitor-release recovery')
         recovery_start = source.rfind('if [ "$release_rehearsal" = 1 ]; then', 0, recovery_label)
