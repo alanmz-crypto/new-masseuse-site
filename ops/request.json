@@ -1,10 +1,11 @@
 {
-  "id": "peek-neighbours-public-1",
+  "id": "peek-neighbours-verify-1",
   "op": "run",
   "target": "staging39",
-  "script": "link-ideas/core-neighbours/check-public.mjs",
+  "script": "link-ideas/push-peek-neighbours.sh",
   "args": [
-    "https://staging39.thaisolitude.com"
+    "--verify",
+    "$HOME/private-backups/peek-template-core-neighbours-before-20261110-143200-81725f33.json"
   ],
   "tests": "auto"
 }
