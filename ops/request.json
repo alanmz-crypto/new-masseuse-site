@@ -1,11 +1,11 @@
 {
-  "id": "peek-rail-input-verify-1",
+  "id": "peek-rail-input-firefox-diagnostic-1",
   "op": "run",
   "target": "staging39",
-  "script": "link-ideas/push-rail-input.sh",
+  "script": "link-ideas/rail-input/check-keyboard.mjs",
   "args": [
-    "--verify",
-    "$HOME/private-backups/rail-input-before-20261109-235652-0adc77b9.json"
+    "https://staging39.thaisolitude.com",
+    "--firefox"
   ],
   "tests": "auto"
 }
