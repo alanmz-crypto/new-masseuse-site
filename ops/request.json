@@ -1,5 +1,5 @@
 {
-  "id": "peek-neighbours-rehearse-2",
+  "id": "peek-neighbours-rehearse-3",
   "op": "rehearse",
   "target": "staging39",
   "installer": "link-ideas/core-neighbours/install-peek-core-neighbours.php",
