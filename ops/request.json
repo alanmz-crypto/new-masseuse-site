@@ -1,9 +1,10 @@
 {
-  "id": "peek-core-input-focus-rehearse-1",
-  "op": "rehearse",
+  "id": "peek-rail-input-public-1",
+  "op": "run",
   "target": "staging39",
-  "installer": "link-ideas/core-input-focus/install-peek-core-input-focus.php",
+  "script": "link-ideas/rail-input/check-public.mjs",
   "args": [
-    "--with-uploads"
-  ]
+    "https://staging39.thaisolitude.com"
+  ],
+  "tests": "auto"
 }
