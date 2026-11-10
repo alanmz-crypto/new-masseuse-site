@@ -1,9 +1,8 @@
 {
-  "id": "peek-neighbours-rehearse-6",
-  "op": "rehearse",
+  "id": "peek-neighbours-preflight-1",
+  "op": "run",
   "target": "staging39",
-  "installer": "link-ideas/core-neighbours/install-peek-core-neighbours.php",
-  "args": [
-    "--with-uploads"
-  ]
+  "script": "link-ideas/push-peek-neighbours.sh",
+  "args": [],
+  "tests": "auto"
 }
