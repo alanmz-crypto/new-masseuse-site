@@ -1,5 +1,5 @@
 {
-  "id": "peek-rail-input-firefox-history-1",
+  "id": "peek-rail-input-firefox-split-1",
   "op": "run",
   "target": "staging39",
   "script": "link-ideas/rail-input/check-keyboard.mjs",
@@ -7,7 +7,7 @@
     "https://staging39.thaisolitude.com",
     "--firefox",
     "--protocol-diagnostic",
-    "--drawer-history-diagnostic"
+    "--rail-history-diagnostic"
   ],
   "tests": "auto"
 }
