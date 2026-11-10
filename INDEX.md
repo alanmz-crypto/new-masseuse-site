@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-10 15:19 UTC  **PASS**  `peek-neighbours-verify-1`  [reports/2026-11-10/151923-peek-neighbours-verify-1.md](reports/2026-11-10/151923-peek-neighbours-verify-1.md)  (run 42843020616)
 - 2026-11-10 15:17 UTC  **PASS**  `peek-neighbours-public-1`  [reports/2026-11-10/151700-peek-neighbours-public-1.md](reports/2026-11-10/151700-peek-neighbours-public-1.md)  (run 42838951767)
 - 2026-11-10 14:44 UTC  **PASS**  `peek-neighbours-apply-1`  [reports/2026-11-10/144406-peek-neighbours-apply-1.md](reports/2026-11-10/144406-peek-neighbours-apply-1.md)  (run 42834929062)
 - 2026-11-10 09:06 UTC  **PASS**  `peek-neighbours-preflight-1`  [reports/2026-11-10/090624-peek-neighbours-preflight-1.md](reports/2026-11-10/090624-peek-neighbours-preflight-1.md)  (run 42787846489)
