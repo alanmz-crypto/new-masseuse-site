@@ -199,6 +199,7 @@ html .ts-pk:not(.ts-pk-titles) .ts-pk-card.fit5 .row{display:flex}
 html .ts-pk .ts-pk-card.fit5 .open small,html .ts-pk .ts-pk-card.fit5 .side,html .ts-pk .ts-pk-card.fit5 .sum{display:none}
 html .ts-pk .ts-pk-card.fit5{padding:.25rem}
 html .ts-pk .ts-pk-card.fit5 .open{margin:.15rem 0}
+html .ts-pk:not(.ts-pk-titles) .ts-pk-card.fit5 .open{padding-block:.25rem}   /* keep the neighbouring link without taking space from landscape reading */
 html .ts-pk .ts-pk-card.fit5 .open > b{font-size:.95rem;margin-top:0;min-height:40px;display:flex;align-items:center}
 html .ts-pk .ts-pk-card.fit5 .sum{display:block;max-height:4.4em;margin-top:.15rem}   /* gist and whole-paragraph summaries retain a scroll surface on the smallest fit */
 html .ts-pk .ts-pk-card.fit5 .hint{margin-top:.3rem;padding-top:.3rem}   /* very short screens or very large text retain the name, summary and jump hint */

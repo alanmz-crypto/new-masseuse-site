@@ -62,10 +62,10 @@ two available adjacent rows, compact fitting keeps those rows displayed, and
 viewport refitting avoids assigning an unchanged scroll position. The reading
 record now keeps the reader's intended position separate from a temporary
 rendered clamp. No flex-layout rewrite, touch-event rewrite or summary-data
-change was needed. Current candidate: 103,903 file bytes, SHA256
-`9bb2e83be8b8d78d21fe1e80fe7efc55807714ebaab19ac0f441970bc21c4bc7`;
-103,897 stored bytes, SHA256
-`0613b2601412a30223571a60231b5f86c4b6fcf691c592f7813573f71f96476c`.
+change was needed. Current candidate: 104,058 file bytes, SHA256
+`56739ffe25a21d542ce8f273d25f55e42b8bf8c18275f86bdd93f122b6057751`;
+104,052 stored bytes, SHA256
+`59758defe179b25b792f6dd12ba9e238f604ab43bf771655fd7a6a27bc7f8ad6`.
 
 A local structural-fixture probe passed **704/704** neighbour visibility and
 hit-test cases: all 22 service sections, both sides, 390×640, 390×500, 844×342
@@ -180,7 +180,7 @@ failed; the subsequent Home precondition could not be exercised, so Firefox
 stopped **incomplete/INVALID**, 150 passed/4 failed, zero completed cases, one
 load and two captures. Those failures are diagnostic evidence, not a completed
 Firefox validation. WebKit, retained suites and post-browser recovery were not
-attempted. Local Firefox reproduction is next; no staging write has occurred.
+attempted. No staging write occurred.
 
 Local Firefox reproduced the reset and isolated its cause. Initial card
 placement changed reported `scrollHeight` from 278 to 279 while the same text,
@@ -200,8 +200,37 @@ blocker. Fresh actual-copy verification is still required.
 
 Local WebKit could not launch because this managed environment lacks six
 required libraries. Its official isolated-image fallback hit Docker capacity;
-only task-owned failed resources are being removed. The Actions WebKit gate
+only the task-owned failed image was removed. The Actions WebKit gate
 remains mandatory, with no skip substituted for actual browser evidence.
+
+## Third actual staging39-copy rehearsal
+
+Reading-state commit `eeb1371fd06e7a7cbebc0f23d3443be68f3676f2` passed all 42
+[CI gates](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42772039156).
+[Copy rehearsal 3](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42772571723)
+used request commit `69325ac5d14eaaf3c5cc3064576499226b28b547` and finished
+**FAIL** at 07:13:54 UTC. Exact native apply/repeat/rollback/reapply, wording
+checks and pre-browser verification passed. Only #1380 and WPCode's cache
+changed; all four page-data records remained exact.
+
+The focused neighbour suites completed every page/side case and all 48 planned
+captures: Chromium **1,384/0**, Firefox **1,304/0**, WebKit **1,304/0**. Actions
+installed and launched WebKit successfully. Retained input-focus **128/0** and
+Chromium/Firefox disclosure checks **66/0**, **41/0** also passed.
+
+The retained Chromium Kiro layout suite found a real compact-layout regression:
+Therapeutic research at page top in 844×342 landscape provided **116px** of
+reading height on both sides, below the retained **120px** requirement. Its
+result was **168/2**. The remaining suites and post-browser recovery correctly
+stopped. The primary agent viewed the actual right-side capture: the preceding
+topic is visible and the site header is clear, but the reading area still needs
+space recovered from the compact controls. The acceptance threshold remains
+unchanged. This partial run is not a deployment gate pass; staging39 is unchanged.
+
+The next candidate reduces only summary-mode `fit5` vertical open-box padding
+from `.45rem` to `.25rem`. The 40px title/close target, 26px neighbouring rows,
+horizontal padding and title-only cards retain their dimensions. This recovers
+about 5.5px at the observed root text size for the native reading surface.
 
 ## Required verification
 
