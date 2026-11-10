@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-10 03:30 UTC  **FAIL**  `peek-visitor-release-rehearse-1`  [reports/2026-11-10/033019-peek-visitor-release-rehearse-1.md](reports/2026-11-10/033019-peek-visitor-release-rehearse-1.md)  (run 42749322045)
 - 2026-11-10 02:41 UTC  **PASS**  `peek-staging-navigation-baseline-1`  [reports/2026-11-10/024101-peek-staging-navigation-baseline-1.md](reports/2026-11-10/024101-peek-staging-navigation-baseline-1.md)  (run 42743361208)
 - 2026-11-10 02:28 UTC  **PASS**  `peek-live-navigation-baseline-1`  [reports/2026-11-10/022809-peek-live-navigation-baseline-1.md](reports/2026-11-10/022809-peek-live-navigation-baseline-1.md)  (run 42741958557)
 - 2026-11-10 02:08 UTC  **INVALID**  `peek-release-webkit-1`  [reports/2026-11-10/020858-peek-release-webkit-1.md](reports/2026-11-10/020858-peek-release-webkit-1.md)  (run 42740074026)
