@@ -653,6 +653,69 @@ $caught = null; try { invoke( array( 'rollback', $bound ) ); } catch ( Refusal_E
 check( $caught !== null && all_state() === $original && file_get_contents( $bound ) === $before_bytes . " \n", 'rollback completes known stores but detects evidence edit during cache refresh' );
 check( ! str_contains( implode( '\n', $logs ), 'RELEASE-SNAPSHOT ' ), 'late rollback evidence edit never receives success marker' );
 
+// Rehearsal diagnostics identify rejected storage shapes without exposing values.
+// These are synthetic failures; they do not identify the actual WPCode copy's shape.
+foreach ( array( 'extra-meta', 'missing-meta', 'changed-meta', 'null-meta', 'null-first-duplicate', 'extra-relationship', 'missing-relationship', 'changed-relationship', 'private-relationship' ) as $mutation ) {
+    restore_state( $original ); $unexpected_state = null; $unexpected_id = null; $expected_diagnostic = null;
+    $private_key = 'SYNTHETIC_PRIVATE_UNKNOWN_META_KEY'; $private_value = 'SYNTHETIC_PRIVATE_UNKNOWN_META_VALUE';
+    $failures = array( array( 'key' => 'create:after', 'at' => 1, 'throw' => false,
+        'change' => static function ( $id ) use ( $mutation, &$unexpected_state, &$unexpected_id, &$expected_diagnostic, $private_key, $private_value ) {
+            $unexpected_id = $id; $before_meta = rows( 'postmeta', 'post_id', $id, 'meta_id' );
+            if ( $mutation === 'extra-meta' ) { fixture_insert( 'wp_postmeta', array( 'post_id' => $id, 'meta_key' => $private_key, 'meta_value' => $private_value ) ); }
+            if ( $mutation === 'missing-meta' ) { fixture_sql( 'DELETE FROM wp_postmeta WHERE post_id=? AND meta_key=?', array( $id, '_wpcode_priority' ) ); }
+            if ( $mutation === 'changed-meta' || $mutation === 'null-meta' ) { fixture_sql( 'UPDATE wp_postmeta SET meta_value=? WHERE post_id=? AND meta_key=?', array( $mutation === 'null-meta' ? null : $private_value, $id, '_wpcode_priority' ) ); }
+            if ( $mutation === 'null-first-duplicate' ) {
+                $row = fixture_sql( 'SELECT * FROM wp_postmeta WHERE post_id=? AND meta_key=?', array( $id, '_wpcode_auto_insert' ) )->fetch( PDO::FETCH_ASSOC );
+                fixture_sql( 'UPDATE wp_postmeta SET meta_id=? WHERE meta_id=?', array( (int) $row['meta_id'] + 10000, $row['meta_id'] ) );
+                fixture_insert( 'wp_postmeta', array( 'meta_id' => $row['meta_id'], 'post_id' => $id, 'meta_key' => '_wpcode_auto_insert', 'meta_value' => null ) );
+            }
+            if ( $mutation === 'extra-relationship' ) { fixture_insert( 'wp_term_relationships', array( 'object_id' => $id, 'term_taxonomy_id' => 99, 'term_order' => '0' ) ); }
+            if ( $mutation === 'missing-relationship' ) { fixture_sql( 'DELETE FROM wp_term_relationships WHERE object_id=? AND term_taxonomy_id=9', array( $id ) ); }
+            if ( $mutation === 'changed-relationship' ) { fixture_sql( 'UPDATE wp_term_relationships SET term_order=7 WHERE object_id=? AND term_taxonomy_id=9', array( $id ) ); }
+            if ( $mutation === 'private-relationship' ) { fixture_sql( 'UPDATE wp_term_relationships SET term_order=? WHERE object_id=? AND term_taxonomy_id=9', array( $private_value, $id ) ); }
+            $expected_diagnostic = array( 'before_meta' => $before_meta, 'meta' => rows( 'postmeta', 'post_id', $id, 'meta_id' ), 'relationships' => rows( 'term_relationships', 'object_id', $id, 'term_taxonomy_id' ) );
+            $unexpected_state = all_state();
+        } ) );
+    $caught = null; try { invoke( array( 'apply' ) ); } catch ( Refusal_Error $error ) { $caught = $error; }
+    check( $caught !== null && $unexpected_state !== null && str_contains( $caught->getMessage(), 'recovery stopped' ), "$mutation diagnostic accompanies explicit unknown-state refusal" );
+    check( all_state() === $unexpected_state && row( 'posts', 'ID', $unexpected_id )['post_status'] === 'draft', "$mutation retains the exact unexpected inactive draft and every external row" );
+    check( ( $event_counts['create:before'] ?? 0 ) === 1 && ( $event_counts['correct-code:before'] ?? 0 ) === 0 && ( $event_counts['activate:before'] ?? 0 ) === 0 && ( $event_counts['delete:before'] ?? 0 ) === 0 && ( $event_counts['css-cas:before'] ?? 0 ) === 0 && ( $event_counts['astra-cas:before'] ?? 0 ) === 0, "$mutation causes no subsequent correction, activation, deletion or settings write" );
+    $output = $caught->getMessage() . implode( "\n", $logs );
+    check( ! str_contains( $output, 'SYNTHETIC_PRIVATE' ) && ! str_contains( $output, $private_key ) && ! str_contains( $output, $private_value ), "$mutation diagnostics contain no private metadata key/value bytes" );
+    check( ! str_contains( $output, 'RELEASE-SNAPSHOT ' ), "$mutation diagnostic emits no release success marker" );
+    $diagnostic = marker( 'RELEASE-OWNED-DIAGNOSTIC' );
+    $reason = match ( $mutation ) {
+        'null-first-duplicate' => 'metadata-identity-or-duplicate',
+        'extra-relationship', 'missing-relationship' => 'relationship-count',
+        'changed-relationship', 'private-relationship' => 'relationship-row',
+        default => 'metadata',
+    };
+    check( $diagnostic['role'] === 'thai-massage' && $diagnostic['reasons'] === array( $reason ), "$mutation diagnosis names the exact refused shape" );
+    $describe = static fn( $value ) => $value === null ? array( 'type' => 'null', 'bytes' => null, 'sha256' => null ) : array( 'type' => 'string', 'bytes' => strlen( $value ), 'sha256' => hash( 'sha256', $value ) );
+    $expected_known = array();
+    foreach ( $expected_diagnostic['before_meta'] as $row ) { $expected_known[$row['meta_key']] = $row['meta_value']; } ksort( $expected_known );
+    check( array_column( $diagnostic['known_meta'], 'key' ) === array_keys( $expected_known ), "$mutation reports only the four approved literal metadata names" );
+    foreach ( $diagnostic['known_meta'] as $item ) {
+        $matching = array_values( array_filter( $expected_diagnostic['meta'], static fn( $row ) => $row['meta_key'] === $item['key'] ) );
+        $descriptors = array_map( static fn( $row ) => $describe( $row['meta_value'] ), $matching );
+        check( $item['expected_count'] === 1 && $item['actual_count'] === count( $matching ) && $item['expected'] === $describe( $expected_known[$item['key']] ) && $item['actual'] === $descriptors, "$mutation accurately fingerprints known key " . $item['key'] );
+    }
+    $expected_unknown = $mutation === 'extra-meta' ? array( array( 'key_sha256' => hash( 'sha256', $private_key ), 'count' => 1, 'values' => array( $describe( $private_value ) ) ) ) : array();
+    check( $diagnostic['unknown_meta'] === $expected_unknown, "$mutation unknown metadata names and values appear only as fingerprints" );
+    $expected_relationships = array_map( static function ( $row ) use ( $describe ) {
+        $safe = array();
+        foreach ( array( 'object_id', 'term_taxonomy_id', 'term_order' ) as $key ) { $safe[$key] = is_string( $row[$key] ) && ctype_digit( ltrim( $row[$key], '-' ) ) ? $row[$key] : $describe( $row[$key] ); }
+        return $safe;
+    }, $expected_diagnostic['relationships'] );
+    check( $diagnostic['expected_taxonomy_ids'] === array( 9, 10 ) && $diagnostic['actual_relationship_count'] === count( $expected_relationships ) && $diagnostic['relationships'] === $expected_relationships, "$mutation relationship count/IDs/order faithfully distinguish expected and actual shape" );
+    if ( $mutation === 'null-first-duplicate' ) {
+        $duplicate = array_values( array_filter( $diagnostic['known_meta'], static fn( $item ) => $item['key'] === '_wpcode_auto_insert' ) )[0];
+        check( $duplicate['actual_count'] === 2 && $duplicate['actual'][0]['type'] === 'null' && $duplicate['actual'][1] === $describe( '1' ), 'NULL-first duplicate is refused even when a later value matches the expected value' );
+    }
+    check( preg_match( '/Snapshot: (.+)$/', $caught->getMessage(), $found ) === 1, "$mutation identifies actual incomplete journal" );
+    refusal( array( 'rollback', $found[1] ), "$mutation incomplete journal cannot delete the unexpected draft" );
+}
+
 restore_state( $original );
 check( file_get_contents( "$source/manifest.json" ) === $manifest_bytes, 'production manifest was never modified by synthetic fixture' );
 foreach ( $payload_specs as $role => $spec ) { check( hash_file( 'sha256', "$source/{$spec['file']}" ) === $spec['file_sha256'], "production $role payload unchanged after all controls" ); }

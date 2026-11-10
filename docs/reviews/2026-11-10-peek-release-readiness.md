@@ -126,11 +126,11 @@ The provisional first-install package now lives in
 `scripts/work-with-me-employer/link-ideas/peek-release/`. It accepts only exact
 `http://localhost:8090`; no staging/live installer or live request is enabled.
 Independent source review cleared installer SHA256
-`b9485188ea80f05567cbfb903c28da34148d39c2ff7db6541ceebe553db80a64`
-for isolated rehearsal. Its pinned-PHP SQLite/WordPress API model passed **913
+`c4ae2186bfc470023ec4305dc41c7c8e658a87fb47e84e401516221c5cf5399e`
+for isolated rehearsal. Its pinned-PHP SQLite/WordPress API model passed **1,085
 checks**, including **106 injected write-boundary failures**. The separate
-rehearsal evidence tests passed **135 controls** and detected eleven deliberate
-guard removals, including three network-boundary mutations. Adapter/profile
+rehearsal evidence tests passed **135 controls** and detected seventeen deliberate
+guard removals, including network and relay orchestration mutations. Adapter/profile
 tests passed **46 controls**, then accepted the
 actual frozen manifest and independently captured 15-page inventory using stub
 browser entry points. These are offline results, not real WordPress or browser
@@ -145,8 +145,7 @@ must remain exact. A release-only internal Docker network isolates copied
 plugins from external integrations before the first container starts. Docker
 suppressed port publishing on the tested internal-only network, so an owned
 localhost TCP relay forwards browser traffic to the exact inspected container.
-The host browser itself is not network-isolated. Fresh-copy execution is still
-pending.
+The host browser itself is not network-isolated.
 
 Seven synthetic TCP tests passed for the fixed relay, including address/bind
 refusals, large duplex transfers, half-close, idle failure and clean termination.
@@ -156,7 +155,41 @@ localhost access through the exact relay, unchanged binary transfers and sixteen
 concurrent reads. This used synthetic content only, not the site's copied files.
 Source Gates runs `42747569094` (`f104e90c`) and `42748065437` (`d0f48692`) each
 passed **38/0**, with one expected rendered-URL skip; complete job logs were read.
-The relay additions require their own final source Gates run.
+Final source `ff5499dfadfe841fc633d1f289fbdb2f216a40c2` passed
+[Gates 42748849495](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42748849495):
+**39 passed, 0 failed, one expected rendered-URL skip**, finished 03:23:20 UTC.
+All 202 job-log lines were read independently and by the primary agent. This
+includes the new loopback transport gate; it is still offline evidence.
+
+The first actual copy request `peek-visitor-release-rehearse-1`,
+[run 42749322045](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42749322045),
+source `6b03bd5759b1cf28e33e290c4ff13f79f76f92dc`, finished **03:30:18 UTC,
+FAIL**. Live was read only; the 269 MB copy ran on the internal network through
+the verified relay. Its exact 15-page inventory, original navigation signatures
+and three identical preflight state hashes passed before installation.
+
+The first newly created inactive Thai data snippet failed the combined expected
+metadata/relationship guard. Exact-state recovery also refused that unrecognized
+state. The private copy-only journal was
+`/backups/peek-release-before-20261110-033014-5f460677.json`; it is not a staging
+recovery snapshot. There was no successful release marker, repeated apply,
+verified rollback or browser execution: **zero browser suites/assertions/captures**.
+The aggregate error does not identify the actual unexpected metadata or terms;
+do not infer a cause or relax the guard. Hash-only mismatch diagnostics are now
+prepared for another fresh copy after checks. They report counts and typed value
+hashes from the same captured record, plus numeric relationship fields, while
+retaining the original rejection. A separate source-proven NULL-first duplicate
+metadata hole was closed with `array_key_exists`; this is not evidence of the
+actual copy failure's cause. Nine new synthetic failure controls verify redaction,
+refusal and preservation of unexpected draft state. The cleanup trap ran, but its suppressed
+removal output does not independently enumerate resource absence.
+
+The complete report, full job stream and checksum-verified 9,238-byte artifact
+were reviewed. Artifact SHA256 is
+`39dc4cf82e9736fc7111e92303c92a54462a85dd01832545e855fe8655e1d4d1`.
+All eleven retained files are native logs, public navigation signatures,
+inventory and hash fingerprints; no private snapshot, SQL, source files or
+browser output was exported. No live or staging store changed.
 
 1. Capture and review the exact current live navigation baseline. Existing
    staging upgrade installers require owned snippet #1380 and historical

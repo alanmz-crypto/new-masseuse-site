@@ -158,11 +158,35 @@ $release_astra = static function ( $old ) use ( $release_fail, $release_hash, $r
 $release_owned_ok = static function ( $record, $role, $status, $code ) use ( $release_titles, $release_notes, $release_home, $release_fail ) {
     $p = $record['post'] ?? array(); $id = (int) ( $p['ID'] ?? 0 );
     if ( $id < 1 || ( $p['post_type'] ?? null ) !== 'wpcode' || ( $p['post_title'] ?? null ) !== $release_titles[$role] || ( $p['post_status'] ?? null ) !== $status || ( $p['post_content'] ?? null ) !== $code || ( $p['post_password'] ?? null ) !== '' || ( $p['post_parent'] ?? null ) !== '0' || ( $p['guid'] ?? null ) !== $release_home . '/?post_type=wpcode&p=' . $id ) { $release_fail( 'Owned snippet identity/code differs: ' . $role ); }
+    $expected = array( '_wpcode_auto_insert' => '1', '_wpcode_priority' => '10', '_wpcode_note' => $release_notes[$role], '_wpcode_shortcode_attributes' => 'a:0:{}' ); ksort( $expected );
+    $diagnose = static function ( $reasons ) use ( $record, $role, $expected ) {
+        $describe = static fn( $value ) => array( 'type' => $value === null ? 'null' : 'string', 'bytes' => $value === null ? null : strlen( $value ), 'sha256' => $value === null ? null : hash( 'sha256', $value ) );
+        $groups = array(); foreach ( $record['meta'] as $row ) { $groups[(string) $row['meta_key']][] = $describe( $row['meta_value'] ); }
+        $known = $unknown = array();
+        foreach ( $expected as $key => $value ) { $known[] = array( 'key' => $key, 'expected_count' => 1, 'actual_count' => count( $groups[$key] ?? array() ), 'expected' => $describe( $value ), 'actual' => $groups[$key] ?? array() ); unset( $groups[$key] ); }
+        foreach ( $groups as $key => $values ) { $unknown[] = array( 'key_sha256' => hash( 'sha256', (string) $key ), 'count' => count( $values ), 'values' => $values ); }
+        $relationships = array();
+        foreach ( $record['relationships'] as $row ) {
+            $safe = array();
+            foreach ( array( 'object_id', 'term_taxonomy_id', 'term_order' ) as $key ) {
+                $value = $row[$key] ?? null;
+                $safe[$key] = is_string( $value ) && preg_match( '/^-?[0-9]+$/D', $value ) ? $value : $describe( $value );
+            }
+            $relationships[] = $safe;
+        }
+        WP_CLI::log( 'RELEASE-OWNED-DIAGNOSTIC ' . json_encode( array( 'role' => $role, 'reasons' => $reasons, 'known_meta' => $known, 'unknown_meta' => $unknown, 'expected_taxonomy_ids' => array( 9, 10 ), 'actual_relationship_count' => count( $relationships ), 'relationships' => $relationships ), JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR ) );
+    };
     $meta = array();
-    foreach ( $record['meta'] as $row ) { if ( $row['post_id'] !== (string) $id || isset( $meta[$row['meta_key']] ) ) { $release_fail( 'Owned metadata duplicate/identity differs.' ); } $meta[$row['meta_key']] = $row['meta_value']; }
-    $expected = array( '_wpcode_auto_insert' => '1', '_wpcode_priority' => '10', '_wpcode_note' => $release_notes[$role], '_wpcode_shortcode_attributes' => 'a:0:{}' ); ksort( $meta ); ksort( $expected );
-    if ( $meta !== $expected || count( $record['relationships'] ) !== 2 ) { $release_fail( 'Owned metadata/relationships differ: ' . $role ); }
-    foreach ( $record['relationships'] as $i => $row ) { if ( $row !== array( 'object_id' => (string) $id, 'term_order' => '0', 'term_taxonomy_id' => (string) ( 9 + $i ) ) ) { $release_fail( 'Owned relationship differs.' ); } }
+    foreach ( $record['meta'] as $row ) {
+        if ( $row['post_id'] !== (string) $id || array_key_exists( $row['meta_key'], $meta ) ) { $diagnose( array( 'metadata-identity-or-duplicate' ) ); $release_fail( 'Owned metadata duplicate/identity differs.' ); }
+        $meta[$row['meta_key']] = $row['meta_value'];
+    }
+    ksort( $meta );
+    if ( $meta !== $expected || count( $record['relationships'] ) !== 2 ) {
+        $reasons = array(); if ( $meta !== $expected ) { $reasons[] = 'metadata'; } if ( count( $record['relationships'] ) !== 2 ) { $reasons[] = 'relationship-count'; }
+        $diagnose( $reasons ); $release_fail( 'Owned metadata/relationships differ: ' . $role );
+    }
+    foreach ( $record['relationships'] as $i => $row ) { if ( $row !== array( 'object_id' => (string) $id, 'term_order' => '0', 'term_taxonomy_id' => (string) ( 9 + $i ) ) ) { $diagnose( array( 'relationship-row' ) ); $release_fail( 'Owned relationship differs.' ); } }
 };
 $release_expected = static function ( $old, $owned, $cleaned ) use ( $release_astra, $release_progress ) {
     $out = $old; $out['owned'] = $owned; $published = 0;

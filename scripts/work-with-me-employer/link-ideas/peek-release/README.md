@@ -102,6 +102,9 @@ rows, and each owned record are retained. Other posts, metadata, relationships,
 terms and term metadata are represented by per-row hashes. Unknown metadata
 values are not logged. All currently existing content and metadata witnesses stay
 exact; only the five new owned IDs are excluded from those original witnesses.
+Rejected newly owned records emit counts and typed value hashes, hashed unknown
+metadata names, and numeric relationship fields to identify storage mismatches.
+That diagnostic never authorizes adoption or deletion of unexpected state.
 
 Shared WPCode taxonomy rows #9 and #10 start at count 17. The expected count adds
 exactly the number of published owned snippets and returns to 17 on rollback.
