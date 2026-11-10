@@ -1,8 +1,9 @@
 {
-  "id": "peek-staging-navigation-baseline-1",
-  "op": "run",
-  "target": "staging39",
-  "script": "link-ideas/inspect-navigation-baseline.sh",
-  "args": [],
-  "tests": "auto"
+  "id": "peek-visitor-release-rehearse-1",
+  "op": "rehearse",
+  "target": "live",
+  "installer": "link-ideas/peek-release/install-peek-release.php",
+  "args": [
+    "--with-uploads"
+  ]
 }
