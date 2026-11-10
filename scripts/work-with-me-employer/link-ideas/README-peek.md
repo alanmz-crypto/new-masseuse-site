@@ -1,33 +1,55 @@
 # Peek shared template
 
-**Input and keyboard focus follow-up in progress; no website write in this phase.**
-The [new phase record](../../../docs/reviews/2026-11-09-peek-input-focus.md) tracks the remaining summary touch-focus and
-Rail practice keyboard issues. The deployed Kiro core is now frozen as
-`peek-nav-shared-v6.php`; `core-kiro-fixes` pins v5→v6. Source `peek-nav.php`
-contains the pending `core-input-focus` candidate, starting from v6, not the
-deployed payload. The existing actual Kiro snapshot retains its meaning.
+**Current: input-focus core and Rail practice updates deployed on staging39.**
+See the [canonical phase record](../../../docs/reviews/2026-11-09-peek-input-focus.md) for complete attempts, hashes, backups
+and evidence. Core apply **42729961919** wrote #1380 at **2026-11-10 00:40:21 UTC**
+and finished **00:45:55 UTC, PASS**; fresh-copy proof passed **14,386/0 across
+15 suites**, with exact pre/post-browser rollback. All 19 served routes and the
+core/four data records matched before/after rendering. Public **42731171781**
+passed **12,374/0 across 14 unique suites** at **01:04:18 UTC**, including 128
+focus checks and all eight summary jump/focus cases. Snapshot verification
+**42731765629** passed **01:05:05 UTC**: exact core/four data records before/after
+19 HTTP200 renders. Independent public/exact-state audits are complete; all four
+focus captures match reviewed copy views. Broad wording/URLs/schema/PHP passed;
+**20/20 live-reference pixel differences are not a visual pass**.
 
-The sequence is the Rail practice page **#1348 first**, updated in place for
-Enter/Close/Stay/Escape behavior, then the shared core's summary touch-focus
-correction. Never delete/recreate the practice page through the old installer;
-the new `rail-input` route will preserve complete page state in a private
-snapshot. Read-only inspection **42709406091** passed **22:10:57 UTC**:
-published #1348 is 36,892 bytes, SHA256
-`0203ac81f0eca37b7d2f217d154beda0f0485faae55072fd75276829c4c77748`, exactly the
-frozen v1 source wrapper. It did not inspect metadata/terms; the new update must
-check and preserve those. Local Chromium/Firefox probes are fixture evidence,
-not staging verification. WebKit could not run because required libraries are
-missing; no Safari/device result is claimed. Offline gates, fresh actual-copy
-rehearsals, wording checks and exact rollback proof remain required before
-writes. No new staging recovery snapshot exists yet. Main/live stay untouched.
+Rail apply **42724350260** updated #1348 in place at **2026-11-09 23:56:52 UTC**;
+its fresh copy passed **2,632/0**. Public Chromium passed **121/0**, but Firefox
+**115/2** drawer mouse-open failures remain under investigation; later suites
+stopped. Diagnostic repetition delivered no input events and established no
+underlying cause. Snapshot verification **42727758208** passed: the stored/served
+page is exact. This does not waive the interaction failures.
 
-**Current deployed core: Kiro fixes, frozen v6; public and stored checks passed.**
+Actual recovery snapshots, both verified encrypted off-site:
+
+- Core: `peek-template-core-input-focus-before-20261110-004021-4570ecbf.json`.
+- Rail page: `rail-input-before-20261109-235652-0adc77b9.json`.
+
+After fresh verified backups/full-state checks, reverse `core-input-focus` to
+frozen v6 FIRST, then any older Kiro→v5/title-rail→v4 route. Rail recovery uses
+its independent full-state `rail-input` route, never the old delete/recreate
+installer. No fallback-only interval occurred. Safari/physical devices/OS text
+scale/real assistive technology remain unverified; WebKit ran zero assertions
+because libraries are missing. Main/live remain untouched.
+
+**Durable page-update lesson:** a script-only `wp_update_post` ran save hooks
+that removed Spectra `_uag_css_file_name`/`_uag_page_assets` and changed SureRank's
+check timestamp. The reviewed `rail-input` route instead uses byte-exact content
+compare-and-swap through WordPress `wpdb`, targeted fresh cache reads and complete
+state/snapshot guards. The copy's first unchanged-page GET moved only the known
+asset cache (708→713 bytes); its second read was fully stable. Actual staging
+kept the original 708-byte value through both purge/render cycles. Backups precede
+warming and follow proved stability; install snapshots are never rebased. Exact
+post-browser rollback caught the earlier drift even when all browser tests passed.
+
+**Previous deployed core: Kiro fixes, frozen v6; historical public/stored proof.**
 See the [completed fix record](../../../docs/reviews/2026-11-09-peek-kiro-fixes.md).
-`peek-nav-shared-v6.php` is the deployed payload: 102,649 stored code bytes, SHA256
+`peek-nav-shared-v6.php` is the previous payload: 102,649 stored code bytes, SHA256
 `dec11c9e50cacba8986068e98748e966333aebe3366701f1f0e94e5e790113a1`.
-`core-title-rail` pins v4→v5 and `core-kiro-fixes` now pins v5→v6. The mutable
-`peek-nav.php` and separate `core-input-focus` route contain the pending next
-version. No older snapshot changes meaning; no new core apply has occurred.
+`core-title-rail` pins v4→v5 and `core-kiro-fixes` pins v5→v6. Current
+`peek-nav.php` is the deployed input-focus payload, with its separate route and
+actual snapshot above. Freeze and pin that payload before any future core edit;
+older snapshots retain their meaning.
 
 Staging39 only. Title-only rails remain on visitor pages without an existing
 rail, including one-entry pages; they now use a shorter 120 px maximum there.
@@ -61,7 +83,7 @@ enabled on pages without existing rails, with explicit practice-page exceptions.
 approved summaries, not an allow-list for title strips or title-only rails.
 The independently collected published-page inventory drives browser coverage.
 
-## Current deployed Kiro fixes: frozen v6; public and stored checks passed
+## Previous Kiro deployment: frozen v6; historical public/stored proof
 
 Privacy disclosure jumps now ignore a handled touch's compatibility mouse
 press during settling; genuine new input still cancels. The preview consumes
@@ -120,22 +142,19 @@ linked fix record. The full-page audit above is also complete.
 
 Stored inspection **42697818891**, source
 `3d919579cefcbbbb721ea66a76fd2de47d87548b`, passed **20:57:33 UTC**: published #1380
-matches the exact current 102,649-byte/hash payload; all four published data
+matches the exact then-deployed 102,649-byte/hash payload; all four published data
 identities, titles, bytes and full hashes match the unchanged baseline.
 
-For recovery, first take a fresh verified encrypted off-site backup and check
-complete current ownership/state with the matching package. Use explicit
-`core-kiro-fixes --rollback $HOME/private-backups/peek-template-core-kiro-fixes-before-20261109-205252-9078fe24.json`
-to restore v5 FIRST. Only then may the older title-rail snapshot below restore
-v4. Each older transition retains its own snapshot and frozen endpoints.
-This remains the current deployed-core recovery until input-focus is applied.
-After that future apply, reverse `core-input-focus` with its actual new staging
-snapshot to v6 first; no such staging snapshot exists yet. The practice-page
-update has its own independent `rail-input` full-state restoration route.
+This is historical v6 proof. First restore v6 through the current input-focus
+snapshot above, with a fresh verified backup and complete state checks. Only
+then use the older `core-kiro-fixes` snapshot to restore v5, followed by the
+title-rail route to v4. Frozen endpoints retain their meaning. Practice recovery
+uses its separate actual full-state `rail-input` snapshot, never the old installer.
+Thai touch-focus-to-BODY and Rail Firefox Enter were caveats at this v6 stage;
+see the follow-up deployment and verification status above. Safari, physical
+devices, OS text scale and real assistive technology remain unverified.
+Rapid-switch delay was not reproduced or claimed fixed. Main/live untouched.
 
-Safari, physical devices, actual assistive technology and OS text scaling
-remain unverified. Thai touch-focus-to-BODY and Rail-practice Firefox Enter
-are not claimed fixed. Rapid-switch delay was not reproduced or claimed fixed.
 All 22 approved summary destinations are visible H2 headings, so the old
 600 ms closed-disclosure branch is not exercised by their current maps;
 unifying the two jump engines remains separate work.
@@ -189,13 +208,13 @@ retain their original bytes/hashes. The previous record tracks the retained-log
 and final public capture review.
 
 Safari, physical devices and actual assistive technology remain unverified.
-The existing Thai touch-focus loss and old Rail practice page's Firefox Enter
-behavior remain open; the required practice pointer preview/Go checks passed.
+Thai touch-focus loss and Rail Firefox Enter were historical v5 caveats;
+see the follow-up above. The earlier practice pointer preview/Go checks passed.
 The reported rapid-switch/loading delay was not reproduced or claimed fixed.
 
 For recovery, first take a fresh verified encrypted off-site backup and check
 complete current ownership/state with the matching reviewed package. Only after
-reversing the current Kiro-fixes transition to v5 using its actual snapshot above,
+reversing input-focus to v6, then Kiro-fixes to v5 using their own actual snapshots,
 use explicit
 `core-title-rail --rollback $HOME/private-backups/peek-template-core-title-rail-before-20261109-173737-cae68f35.json`
 arguments to restore v4 before any older route below. `core-title-strip` remains
@@ -269,8 +288,8 @@ backup. The actual export `staging39-before-peek-nav-20261109-102438.sql` and
 snapshot `peek-template-core-title-strip-before-20261109-102452-90630a29.json`
 were verified encrypted off-site. Restore import returned 0 with 104/104
 fingerprints differing only on #1380/cache. The broad live comparison had 20/20
-pixel differences, not an aggregate pass. After Kiro-fixes is reversed to v5
-and title-rail to v4, recovery uses the matching reviewed package, current full-state
+pixel differences, not an aggregate pass. After input-focus is reversed to v6,
+Kiro-fixes to v5 and title-rail to v4, recovery uses the matching reviewed package, current full-state
 checks and explicit
 `core-title-strip --rollback $HOME/private-backups/peek-template-core-title-strip-before-20261109-102452-90630a29.json`
 arguments to restore v3.
@@ -280,8 +299,8 @@ reverse this new payload. `core-summary-touch` now pins v2 to frozen v3,
 preserving the actual 07:59:57 snapshot's meaning.
 
 This previous payload is frozen as `peek-nav-shared-v4.php`, and
-`core-title-strip` is pinned to exact v3→v4. Reverse `core-kiro-fixes` to v5,
-then `core-title-rail` to v4 before this older recovery route.
+`core-title-strip` is pinned to exact v3→v4. Reverse `core-input-focus` to v6,
+then `core-kiro-fixes` to v5 and `core-title-rail` to v4 before this older route.
 Safari, physical devices and actual assistive technology
 remain unverified; the reported loading delay was not reproduced.
 

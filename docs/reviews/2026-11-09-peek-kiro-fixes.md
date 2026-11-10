@@ -1,13 +1,16 @@
 # Peek: Kiro assessment fixes
 
-**Follow-up in progress:** the [input and keyboard focus phase](2026-11-09-peek-input-focus.md)
-addresses the older summary-touch and Rail practice keyboard caveats. No website
-write has occurred in that phase. This completed deployment is now frozen as
-`peek-nav-shared-v6.php`, with `core-kiro-fixes` pinned v5→v6; the mutable
-`peek-nav.php` is the pending `core-input-focus` candidate, starting from v6.
-The actual deployment, test results and snapshot below remain unchanged.
+**Superseded deployment:** the [input and keyboard focus phase](2026-11-09-peek-input-focus.md)
+updated Rail page #1348 on November 9 and core #1380 on November 10. Core public
+checks passed 12,374/0 and exact post-browser snapshot verification passed;
+independent artifact audits are complete. Two Rail Firefox drawer mouse-open failures
+remain under investigation. This completed Kiro payload is the previous frozen
+`peek-nav-shared-v6.php`; `core-kiro-fixes` still pins v5→v6. Historical results
+below remain unchanged. Current recovery starts with actual input-focus snapshot
+`peek-template-core-input-focus-before-20261110-004021-4570ecbf.json`
+to restore v6 before this older chain.
 
-**Deployed on staging39; stored verification and focused public checks passed.** Ryan requested “Fix the kiro assessment
+**Historical Kiro deployment; stored verification and focused public checks passed.** Ryan requested “Fix the kiro assessment
 issues.” Work is on `claude/wizardly-bell-xu0rta`, staging39 only. The baseline is
 `160360197c298c255eb18ea8179cb72869c87daf`; the
 [returned assessment](../inter-model/2026-11-09-peek-nav-kiro-assessment.md)
@@ -379,17 +382,15 @@ All four published data identities, bytes and hashes remain unchanged:
 | 1383 | Deep Tissue | 3408 | `c88e05ae019076e9a173dc239ffa2b091007864087067ef0444efca2acc00101` |
 | 1384 | Chair | 3923 | `b99558619488cf1506c8b0e8ca2c59066068eaa0727233c90b51f599798a121c` |
 
-For recovery, first use `core-kiro-fixes --rollback` with this actual new snapshot
-under `$HOME/private-backups/`, after current full-state checks and the script's
-fresh verified backup. That restores v5. Only then may the earlier actual
-`core-title-rail` snapshot `peek-template-core-title-rail-before-20261109-173737-cae68f35.json`
-restore v4. Never run an older rollback against the wrong current core. This
-payload is now frozen as v6 and `core-kiro-fixes` is pinned v5→v6. The pending
-`core-input-focus` route has no actual staging apply or recovery snapshot yet.
-After that future apply, restore v6 through its own actual snapshot before this
-older chain. The practice-page correction is a separate in-place `rail-input`
-update with private full-state restoration, never an old delete/recreate route.
-Main and live were not changed.
+After restoring v6 through the newer actual input-focus snapshot above, use
+`core-kiro-fixes --rollback` with this record's actual snapshot under
+`$HOME/private-backups/`, after current full-state checks and a fresh verified
+backup. That restores v5. Only then may the title-rail snapshot
+`peek-template-core-title-rail-before-20261109-173737-cae68f35.json` restore v4.
+This payload remains frozen as v6 and `core-kiro-fixes` pins v5→v6. Practice
+recovery independently uses actual full-state snapshot
+`rail-input-before-20261109-235652-0adc77b9.json` and the `rail-input` route,
+never an old delete/recreate installer. Main/live were not changed.
 
 ## Remaining validation limits
 
@@ -397,5 +398,6 @@ Physical-device Safari/Android, OS text scale and real assistive technology
 remain unverified. All 22 current approved summary-rail destinations are visible
 H2 headings, outside disclosures; the legacy 600 ms closed-FAQ branch therefore
 is not exercised by those maps. Sharing the two jump engines remains a separate
-maintainability task. The earlier Thai touch-focus-to-BODY caveat and Rail
-practice-page Firefox Enter caveat are not claimed fixed by this work.
+maintainability task. Thai touch-focus-to-BODY and Rail Firefox Enter were
+caveats of this historical Kiro work; the newer phase record gives their actual
+follow-up deployment and verification status.

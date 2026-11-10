@@ -1,10 +1,12 @@
 # Peek input and keyboard focus follow-up
 
-**In progress: Rail practice repair deployed; shared-core focus fix pending.** Ryan said “Continue” after
+**Core and Rail repairs deployed; core verified, Rail Firefox drawer investigation open.** Ryan said “Continue” after
 the completed Kiro fixes and the named next lane of older Thai/practice-page
 focus issues. Work stays on `claude/wizardly-bell-xu0rta`, staging39 only.
-The [previous Kiro fix record](2026-11-09-peek-kiro-fixes.md) remains the deployed
-baseline until the actual apply records below establish a new state.
+The [previous Kiro fix record](2026-11-09-peek-kiro-fixes.md) describes frozen v6,
+now superseded by the input-focus update. Current core public checks passed
+**12,374/0 across 14 suites**, followed by exact actual-snapshot verification.
+The chronology below preserves earlier failures and superseded pending states.
 
 ## Access and baseline
 
@@ -536,6 +538,38 @@ probe being mistaken for a full keyboard suite. The isolated fixture passed
 refusals and independent source comparison passed. This does not erase the
 public failures. Core public checks and subsequent actual-snapshot verification
 are running/queued independently of this diagnostic.
+
+Core public verification [42731171781](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42731171781),
+source `66563c1a9c89ff09bef9d21ae45f8827ce6a0dee`, finished **01:04:18 UTC,
+PASS 12,374/0 across 14 unique suites**: 128 input-focus checks and 12,246 retained
+Kiro checks. The integrity-verified artifact's literal PASS counts match every
+summary; all stderr logs are empty, all wrapper exits are zero, and no FAIL or
+INVALID appears. All eight focus traces retain the research H2 through trusted
+compatibility mouse events, land 11.86–12.53 px below the strip, and accept a new
+pointer 129.9–130.3 ms later. Root also checked all 16 disclosure traces and
+reviewed the actual Thai jump and Therapeutic open-summary captures. The four
+new focus images match their previously reviewed actual-copy captures exactly.
+All **133 capture occurrences** are retained by leaf; there are 127 unique
+filenames because the diagnostic clearance subset repeats six names, two with
+different bytes. Flattened image folders do not replace original leaf evidence.
+
+Post-browser verification [42731765629](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42731765629),
+source `d420c926b0ee7b2ef9c516d12f1e18471fd3481f`, finished **01:05:05 UTC,
+PASS**. The actual `4570ecbf` snapshot still matches full core state
+`d6cc25d5ca5f15cb0ef322aef5221535cb1ec293a5475eae9a9cbf8c28e0e6d0`
+and four-page state
+`3e9acc4ea6dfedf7fe99e7a70534603ba0d32a1827793755c8ee10f4e55c9cc9`
+before and after all 19 HTTP200 exact-byte renders. Its complete report and
+integrity-verified artifact were independently audited. This read-only check
+did not purge, write records or alter snapshots.
+
+All 20 deployed full-page captures from the apply operation were visually
+reviewed. No new persistent layout blocker was visible in their closed/default
+states; this is not interaction proof or a passing pixel comparison against live.
+Existing transient section labels overlap Accessibility's phone strip and Work
+With Me's phone hero heading; the Thai jump capture also shows a label over body
+text. Their duration and physical-device impact remain a separate follow-up.
+The core lane is complete; the independent Rail drawer diagnostic remains open.
 
 ## Limits
 
