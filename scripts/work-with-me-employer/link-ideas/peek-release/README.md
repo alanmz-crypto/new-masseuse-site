@@ -5,6 +5,9 @@ already verified in WordPress on staging39. It is a first-install candidate for 
 fresh copy of live, not authorization or tooling to change live. The installer
 accepts only `http://localhost:8090`; staging and live origins are refused.
 Actual iPhone Safari acceptance and the fresh-copy gates remain release blockers.
+The copy's containers use an internal Docker network from first boot, so copied
+plugins cannot call external integrations. The host retains access through the
+published loopback HTTP port for browser checks.
 
 The release creates five WPCode snippets, removes the exact old reading-progress
 CSS block from Additional CSS #29, and changes Astra's `scroll-to-top-enable`

@@ -129,8 +129,9 @@ Independent source review cleared installer SHA256
 `b9485188ea80f05567cbfb903c28da34148d39c2ff7db6541ceebe553db80a64`
 for isolated rehearsal. Its pinned-PHP SQLite/WordPress API model passed **913
 checks**, including **106 injected write-boundary failures**. The separate
-rehearsal evidence tests passed **117 controls** and detected eight deliberate
-guard removals. Adapter/profile tests passed **46 controls**, then accepted the
+rehearsal evidence tests passed **120 controls** and detected eleven deliberate
+guard removals, including three network-boundary mutations. Adapter/profile
+tests passed **46 controls**, then accepted the
 actual frozen manifest and independently captured 15-page inventory using stub
 browser entry points. These are offline results, not real WordPress or browser
 verification.
@@ -140,7 +141,10 @@ supplemental WebKit checks on localhost, and checks original rendered navigation
 after each rollback. It binds each phase to the actual immutable snapshot and
 five created IDs, including a separate rollback/reapply after browser activity.
 The source and destination stores, shared taxonomy counts and unrelated content
-must remain exact. Fresh-copy execution is still pending.
+must remain exact. A release-only internal Docker network isolates copied
+plugins from external integrations before the first container starts; host
+browser checks use the published loopback port. Fresh-copy execution is still
+pending.
 
 1. Capture and review the exact current live navigation baseline. Existing
    staging upgrade installers require owned snippet #1380 and historical

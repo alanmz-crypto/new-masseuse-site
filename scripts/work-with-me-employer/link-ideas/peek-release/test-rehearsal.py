@@ -241,6 +241,37 @@ def main():
         check("HTML path guard", invoke("original-html", original_html, "https://example.invalid/"), 1)
 
         source = REHEARSE.read_text()
+        compose_start = source.index('cat > "$work/compose.yml" <<YML')
+        compose_template = source[compose_start:source.index("\nYML\n", compose_start) + len("\nYML\n")]
+        compose_boot = source[compose_start:source.index("\nready=0", compose_start)]
+        compose_shim = r'''
+set -uo pipefail
+work=$1; release_rehearsal=$2; mkdir -p "$work"
+db_img=fixture-mariadb; wp_img=fixture-wordpress; cli_img=fixture-wpcli
+pub=/fixture/public_html; wwm=/fixture/wwm; bk=/fixture/backups
+invalid() { printf 'INVALID compose fixture: %s\n' "$*" >&2; exit 2; }
+dc() {
+  printf '%s\n' "$*" >> "$work/container-calls.txt"
+  cp "$work/compose.yml" "$work/at-first-start.yml"
+}
+'''
+        legacy = work / "compose-template"
+        check("original Compose template", shell(compose_shim + compose_template, (legacy, 0)), 0)
+        original_config = (legacy / "compose.yml").read_text()
+        configs = {}
+        for release in (0, 1):
+            case = work / f"compose-release-{release}"
+            check(f"Compose generated before first start, release={release}",
+                  shell(compose_shim + compose_boot, (case, release)), 0)
+            assert (case / "container-calls.txt").read_text().splitlines() == ["up -d db"], "fixture must stop at first container start"
+            configs[release] = (case / "at-first-start.yml").read_text()
+            assert configs[release] == (case / "compose.yml").read_text(), "network isolation was added after first start"
+        network = "networks:\n  default:\n    internal: true\n"
+        assert configs[0] == original_config and "networks:" not in configs[0], "existing rehearsal network configuration changed"
+        assert configs[1].count(network) == 1 and configs[1].replace(network, "") == configs[0], "release must add exactly one internal default network before first start"
+        assert "network_mode:" not in configs[1] and configs[1].count("networks:") == 1, "a copied service bypasses the internal default network"
+        assert 'ports: ["127.0.0.1:8090:80"]' in configs[1], "isolated copy must retain the loopback HTTP binding"
+
         recovery_label = source.index('echo; echo "[4f] exact visitor-release recovery')
         recovery_start = source.rfind('if [ "$release_rehearsal" = 1 ]; then', 0, recovery_label)
         recovery = source[recovery_start:source.index('\necho; echo "[5]', recovery_label)]

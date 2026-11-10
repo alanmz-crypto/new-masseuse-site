@@ -157,6 +157,15 @@ services:
     volumes: ["$pub:/var/www/html", "$wwm:/wwm:ro", "$bk:/backups"]
     environment: { WWM_BACKUP_DIR: /backups }
 YML
+if [ "$release_rehearsal" = 1 ]; then
+  # Copied plugin settings may contain live integrations. Isolate every copy
+  # service before first boot; the host can still use the loopback HTTP port.
+  cat >> "$work/compose.yml" <<'YML'
+networks:
+  default:
+    internal: true
+YML
+fi
 
 echo "[2] starting the pinned practice images and importing ..."
 dc up -d db >/dev/null 2>&1 || invalid "could not start the database container"
