@@ -153,7 +153,15 @@ const researchEnd = async (p, label) => {
   await settle(p);
   const after = await p.evaluate(() => {
     const card = document.querySelector('.ts-pk-card'), sum = card.querySelector('.sum'), last = sum.querySelector('li:last-child'), r = sum.getBoundingClientRect(), l = last.getBoundingClientRect(), c = card.getBoundingClientRect();
-    return { end: sum.scrollHeight - sum.scrollTop - sum.clientHeight <= 2, lastVisible: l.top >= Math.max(0, r.top, c.top) - 1 && l.bottom <= Math.min(innerHeight, r.bottom, c.bottom) + 1, faded: sum.classList.contains('has-more'), pinned: card.classList.contains('is-pinned'), y: scrollY, hash: location.hash };
+    const rect = box => ({ left: box.left, right: box.right, top: box.top, bottom: box.bottom, width: box.width, height: box.height });
+    const textStyle = node => { const style = getComputedStyle(node); return { fontSize: style.fontSize, lineHeight: style.lineHeight, marginTop: style.marginTop, marginBottom: style.marginBottom, paddingTop: style.paddingTop, paddingBottom: style.paddingBottom }; };
+    const range = document.createRange(), head = document.getElementById('masthead'); range.selectNodeContents(last);
+    return { end: sum.scrollHeight - sum.scrollTop - sum.clientHeight <= 2, lastVisible: l.top >= Math.max(0, r.top, c.top) - 1 && l.bottom <= Math.min(innerHeight, r.bottom, c.bottom) + 1, faded: sum.classList.contains('has-more'), pinned: card.classList.contains('is-pinned'), y: scrollY, hash: location.hash,
+      geometry: { viewport: { width: innerWidth, height: innerHeight }, rootFontSize: getComputedStyle(document.documentElement).fontSize, fit: card.className,
+        header: head && rect(head.getBoundingClientRect()), title: rect(card.querySelector('.open > b').getBoundingClientRect()), hint: rect(card.querySelector('.hint').getBoundingClientRect()),
+        card: { ...rect(c), scrollTop: card.scrollTop, scrollHeight: card.scrollHeight, clientHeight: card.clientHeight },
+        summary: { ...rect(r), scrollTop: sum.scrollTop, scrollHeight: sum.scrollHeight, clientHeight: sum.clientHeight, ...textStyle(sum) },
+        last: { ...rect(l), text: last.textContent, ...textStyle(last), textLines: [...range.getClientRects()].map(rect) } } };
   });
   ok(`${label}: keyboard reaches the final research qualification without a page jump`, after.end && after.lastVisible && !after.faded && after.pinned && after.y === before.y && after.hash === before.hash, after);
 };

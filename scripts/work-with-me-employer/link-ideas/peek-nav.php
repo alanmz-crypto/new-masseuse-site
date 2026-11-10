@@ -202,6 +202,7 @@ html .ts-pk .ts-pk-card.fit5 .open{margin:.15rem 0}
 html .ts-pk:not(.ts-pk-titles) .ts-pk-card.fit5 .open{padding-block:.25rem}   /* keep the neighbouring link without taking space from landscape reading */
 html .ts-pk .ts-pk-card.fit5 .open > b{font-size:.95rem;margin-top:0;min-height:40px;display:flex;align-items:center}
 html .ts-pk .ts-pk-card.fit5 .sum{display:block;max-height:4.4em;margin-top:.15rem}   /* gist and whole-paragraph summaries retain a scroll surface on the smallest fit */
+html .ts-pk .ts-pk-card.fit5 .sum.is-gist li{line-height:inherit}   /* compact gist lines use the summary's spacing, not the page list's taller leading */
 html .ts-pk .ts-pk-card.fit5 .hint{margin-top:.3rem;padding-top:.3rem}   /* very short screens or very large text retain the name, summary and jump hint */
 html .ts-pk .ts-pk-card.ts-pk-stack{overflow-y:auto;overscroll-behavior:contain}   /* last resort: the card scrolls, and fit() brings the open box into view */
 /* A form is a text/control block, not the full-width column around it. */
@@ -914,7 +915,12 @@ add_action( 'wp_footer', function () {
       // choice. A queued event from fitting's own clamp/restoration matches the
       // recorded rendered offset and must not turn an interior bookmark into End.
       var viewport = viewportBounds();
-      if (fitted && fitted.width === viewport.width && fitted.height === viewport.height && sameReadingSize(m) && m.scrollTop !== reading.rendered) rememberReading();
+      if (fitted && fitted.width === viewport.width && fitted.height === viewport.height && sameReadingSize(m)) {
+        // Firefox may briefly report a clamped offset beyond its integer scroll
+        // range. Compare within that range; real one-pixel reading moves remain.
+        var limit = Math.max(0, m.scrollHeight - m.clientHeight);
+        if (Math.max(0, Math.min(m.scrollTop, limit)) !== Math.max(0, Math.min(reading.rendered, limit))) rememberReading();
+      }
     }, true);
     card.addEventListener('pointerdown', function (e) {
       if (e.pointerType === 'mouse' || !e.isPrimary) return;

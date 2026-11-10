@@ -62,10 +62,10 @@ two available adjacent rows, compact fitting keeps those rows displayed, and
 viewport refitting avoids assigning an unchanged scroll position. The reading
 record now keeps the reader's intended position separate from a temporary
 rendered clamp. No flex-layout rewrite, touch-event rewrite or summary-data
-change was needed. Current candidate: 104,058 file bytes, SHA256
-`56739ffe25a21d542ce8f273d25f55e42b8bf8c18275f86bdd93f122b6057751`;
-104,052 stored bytes, SHA256
-`59758defe179b25b792f6dd12ba9e238f604ab43bf771655fd7a6a27bc7f8ad6`.
+change was needed. Current candidate: 104,522 file bytes, SHA256
+`0459b427a2169659ab82b0c1ab9a2e1f839ef6bd1d6b8c5770754bb1c4ba7e27`;
+104,516 stored bytes, SHA256
+`bff5d9c7e210b5948f31cd8c07daf1390c7f66b00f3915b8d7fb033acf7fe2e5`.
 
 A local structural-fixture probe passed **704/704** neighbour visibility and
 hit-test cases: all 22 service sections, both sides, 390×640, 390×500, 844×342
@@ -279,6 +279,64 @@ unchanged. Three paired Firefox traces reproduced the interference without that
 input and retained the correct heading with it. Existing isolated title fixtures
 passed Chromium **230/0** and Firefox **230/0**. No timeout or threshold was
 relaxed. No staging write has occurred.
+
+Checker commit `5bea750821c3bf0be66bfbd9bd59d87166cfd44e` passed all 42
+[source gates](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42778779038)
+at 07:58:57 UTC; the complete log was read. Request
+`19722cc7b0c5cbfadd591982c39dc4d75d8c8366` starts
+[copy rehearsal 5](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42779198077)
+with the same runtime SHA256 `56739ffe…7751`.
+
+## Fifth actual staging39-copy rehearsal
+
+Copy 5 finished **FAIL** at 08:16:33 UTC, **18,551/8** across 17 of 18 required
+logical suites. All focused engines, input focus, disclosures, Kiro layout,
+title rails and title strips passed. The corrected Firefox title matrix passed
+**1,342/0**. Page checks passed **295/0** per engine and native Chromium touch
+**451/0**. Clearance completed **3,540/4** per engine. Only the retained Thai
+suite and post-browser recovery remained unrun. Pre-browser native recovery
+and all four unchanged page-data records passed exact checks. The complete
+operation and browser evidence, including all 186 images, were audited.
+
+All eight failures were final-item visibility with doubled root text at 844×320
+page top: Therapeutic and Chair, both sides and both engines. The inner scroller
+reached End without moving the page, but the final single-line “etc.” was clipped.
+This check runs that stress case only on six-section pages, so it does not
+establish that Thai and Deep Tissue were unaffected. The failed states retained
+booleans but no geometry; the checker now includes rectangles, computed spacing,
+scroll dimensions and text-line bounds in failure diagnostics, with assertions
+and timeouts unchanged.
+
+The first simplified fixture did not reproduce the failure. Matching the actual
+89.90625px enlarged header and the site's `.entry-content li {line-height:1.7}`
+did: Chair's 791px content height matched the actual capture, and a 42.8px final
+line could not fit in a 39–40px reading window. The summary declares 1.3 spacing,
+but the page's direct list-item rule overrides that inheritance. The minimal
+correction, explained before building, gives only `fit5` gist list items
+`line-height:inherit`. Normal cards, text size, wording, margins, gestures and
+the fitter remain unchanged. No staging write has occurred.
+
+The matched local fixture passed all eight endpoint cases and 704 practical
+neighbour cases with the actual site list-leading rule included. The primary
+agent viewed before/after enlarged research and Thai middle-card captures. The
+compact ending is fully visible and the ordinary previous/open/next hierarchy
+is retained; these are fixture observations, not a new Safari result.
+
+The changed line spacing exposed a separate local Firefox reading-intent failure
+in seven of 200 checks. A trace showed saved interior intent 178px, temporarily
+clamped to reported 148px while the integer scroll range ended at 147px. Nine
+milliseconds later Firefox reported 147px without input or a geometry change;
+the exact raw comparison mistakenly recorded deliberate End intent. The narrow
+correction compares both rendered offsets within the current valid scroll range,
+keeping the original raw rendered record and exact interior movement detection.
+It adds no broad one-pixel tolerance and changes no test threshold.
+
+The corrected candidate passed the original strict local reading matrices:
+Chromium **208/0** and Firefox **200/0**, each including 16 genuine zero-range
+transitions with the site's list-spacing rule present. The focused Firefox
+trace passed all 25 checks. Independent source review found no blocker in the
+compact spacing or bounded-position comparison. A fresh complete copy gate is
+still required before staging writes.
 
 ## Required verification
 
