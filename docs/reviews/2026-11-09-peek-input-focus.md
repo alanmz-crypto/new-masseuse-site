@@ -1,6 +1,6 @@
 # Peek input and keyboard focus follow-up
 
-**In progress; no website write in this phase yet.** Ryan said “Continue” after
+**In progress: Rail practice repair deployed; shared-core focus fix pending.** Ryan said “Continue” after
 the completed Kiro fixes and the named next lane of older Thai/practice-page
 focus issues. Work stays on `claude/wizardly-bell-xu0rta`, staging39 only.
 The [previous Kiro fix record](2026-11-09-peek-kiro-fixes.md) remains the deployed
@@ -357,10 +357,100 @@ The final local `check-all.sh` has 26 PASS, four Docker-mount-related FAIL
 SKIP (missing shellcheck/ruff, no rendered URL). Streamed PHP harness evidence
 above is separate; Actions must complete the full gates before deployment.
 
-No apply or new staging recovery snapshot is recorded yet. Never substitute a
-throwaway-copy snapshot or an older core snapshot. The next update must record
-the actual guarded apply, fresh verified encrypted off-site backup, exact
-recovery snapshot, restored fingerprints and public/stored verification.
+Final deployment-source Gates [42723931080](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42723931080)
+passed **35/0 + 1 rendered-only skip**, source
+`7e19f0b232dbe3c8105aa6ead362230d3a3e0eb5`. Dry run 2
+[42723968704](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42723968704)
+passed at 23:53:17 UTC and confirmed the configured SSH home is an alias for
+`/home/customer`, explaining the first attempt's path comparison failure.
+
+Rail apply 2 [42724350260](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42724350260),
+source `637aeef869b996f2fc7239ca46769298a571c46c`, finished 23:58:04 UTC **PASS
+for deployment**. Actual content write was 23:56:52 UTC on page #1348 only.
+Actual recovery snapshot:
+**`rail-input-before-20261109-235652-0adc77b9.json`**.
+Fresh cold SQL `staging39-before-rail-input-cold-20261109-235610-9748.sql` and
+settled SQL `staging39-before-rail-input-settled-20261109-235636-10931.sql`
+were each 4,530,739 bytes, copied with identical hashes and stored encrypted
+off-site before apply. The actual JSON snapshot was likewise verified off-site
+before purge/render. Unlike the localhost copy, staging's old asset metadata
+remained at 708 bytes and its entire original state stayed
+`d502affb09862f28d3b7f462f5376561e679b74a2900d99549ebbe9e6da437dc`
+through all three old-page reads and both purges.
+
+The applied content is 37,750 bytes, SHA256
+`eb50ba823a668423b0a3408093e707f5cdb59dec3794adcff89885f64a50e2fa`.
+Full state `22c3ad02fdb83208a9542ae33817c2d8960fcaf61ce5074969e02d459e3b48a6`
+matched the actual snapshot before and after purge/HTTP200 rendering; exact Rail
+script/style, five ideas, six sections, shared strip and licence passed.
+Restore proof imported the settled SQL successfully, compared 104/104
+fingerprints, and found only the intended `rail-nav-ideas` page difference.
+The complete report and integrity-verified artifact were independently audited.
+
+Automatic `post-change-test.sh` received **HTTP202 INVALID: zero browser checks
+or captures**. This is neither a visual-reference failure nor browser proof.
+The fresh core copy rehearsal runs while the challenge clears; a later focused
+Rail public check and exact snapshot verification remain pending. No core write
+or new core recovery snapshot exists yet. Never substitute a throwaway snapshot
+or the earlier Kiro snapshot for the new core transition.
+
+Core copy rehearsal [42724735055](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42724735055),
+request `peek-core-input-focus-rehearse-1`, source
+`650fccb9cd7b25d53425e5356116a26730143780`, finished **2026-11-10 00:16:35 UTC,
+PASS**. All **15 distinct numeric suites passed 14,386/0**: 128 new native-focus
+assertions plus 14,258 retained Kiro/strip/rail/clearance/summary/Thai assertions.
+The 925-second browser run retained complete leaf logs with empty stderr, zero
+FAIL/INVALID and zero wrapper exits. The full artifact also contains the 27
+setup/baseline lines omitted from the published report: ten HTTP200 routes and
+ready preflight. Its SHA was verified; 73 JSON diagnostics parsed and 137 captures
+matched decoded bytes. Both wording gates and the PHP-error comparison passed.
+
+The actual re-apply snapshot on the throwaway copy,
+`peek-template-core-input-focus-before-20261110-000057-1afff167.json`, bound
+core state `52ca2f1514dead2439daca6a7ca9f06bb1ccaef0476b7c0378c12c568b5ed61a`
+before and after browsers. Rollback restored full state
+`ef655025b75b7f6d8f5f039de9218222135f279064218c9c75b24b83964eed58`
+and fingerprint A. Final reapply snapshot
+`peek-template-core-input-focus-before-20261110-001630-ea94b68f.json` bound
+state `c05aa64cd123004e9c2e7ea81c44daa74d34de64d9b2bda54815b58c62f1ade5`
+and reproduced B without ID normalization. All four page records retained hash
+`3e9acc4ea6dfedf7fe99e7a70534603ba0d32a1827793755c8ee10f4e55c9cc9`.
+These are **copy snapshots, never staging recovery**. Only core #1380 and its
+expected WPCode cache moved; the four page-data snippets stayed exact.
+
+All eight real-page native-focus traces retain the research H2 through the
+compatibility mouse events, land 11.86–12.53 px below the strip, and accept a
+genuine next pointer 130.4–131.1 ms later. The four new focus captures were
+reviewed; root additionally reviewed Therapeutic landscape research. The reading
+area remains substantial. Existing transient section labels can cover a small
+patch of body text in the captured jump state; that separate issue remains open.
+The delayed Rail public check and read-only core dry run followed this rehearsal.
+
+Rail public check [42724912292](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42724912292),
+source `d40d1de5b4ab2337c5e4a593a513747d3fb940b8`, finished **2026-11-10 00:19:55
+UTC, FAIL**. Chromium passed **121/0**; Firefox had **115/2**, both failures on
+drawer mouse opening at 390/1280 px after keyboard drawer tests passed. This is
+**236/2 partial evidence**, six loads and two Chromium captures. The remaining
+native-touch and both title suites stopped. Full integrity-verified artifact
+audit found empty stderr and no INVALID/HTTP202. Existing output does not record
+the failing click's events, so neither a product defect nor a harness cause is
+established. A full local Firefox sequence passed 121/0, and 32 repeated drawer
+activations across frozen v1/current code passed. Those local results cannot
+overrule the public failure. Add bounded event/hit-test/focus/modal tracing to
+the unchanged checks, then run one read-only Firefox diagnostic; no runtime
+workaround or assertion waiver is justified by current evidence.
+
+Core dry run [42727229928](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42727229928),
+source `00e0acd4a24bf6d12b7c194904f5891a192118cd`, passed **00:20:33 UTC**:
+exact frozen-v6 preflight is ready. Core deployment remains held during the Rail
+failure investigation. Rail snapshot verification
+[42727758208](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42727758208),
+source `d8b545c2dc4001c1ad372b80ea8c497055455057`, passed **00:22:33 UTC**.
+The actual `0adc77b9` snapshot still matches the entire applied page state
+`22c3ad02fdb83208a9542ae33817c2d8960fcaf61ce5074969e02d459e3b48a6`
+before and after an HTTP200 read; exact served script/style and scope passed.
+This rules out a different stored/served Rail payload; it does not resolve the
+Firefox interaction failure.
 
 ## Limits
 

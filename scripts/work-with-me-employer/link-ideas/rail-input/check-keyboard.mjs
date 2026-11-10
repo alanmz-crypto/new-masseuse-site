@@ -18,6 +18,7 @@ const ok = (label, value, detail) => { value ? pass++ : fail++; console.log(`${v
 const state = p => p.evaluate(() => ({ x: scrollX, y: scrollY, hash: location.hash, url: location.href, history: history.length,
   card: document.querySelector('.tsr-card').className, name: document.querySelector('.tsr-card b')?.textContent || '',
   focus: document.activeElement?.outerHTML.slice(0, 350), drawer: document.querySelector('.tsr-drawer').open }));
+const drawerTraceEvents = ['pointerdown', 'pointermove', 'pointerup', 'pointercancel', 'gotpointercapture', 'lostpointercapture', 'mousedown', 'mouseup', 'click', 'focusin', 'cancel', 'close'];
 const sameAddress = (a, b) => a.url === b.url && a.hash === b.hash && a.history === b.history;
 const still = (a, b) => sameAddress(a, b) && Math.abs(a.x - b.x) <= 1 && Math.abs(a.y - b.y) <= 1;
 const settle = async p => { await p.waitForTimeout(150); await p.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))); };
@@ -57,7 +58,17 @@ try {
   // where the stacked header/bars extend beyond the old quarter-height line.
   for (const [width, height] of [[390, 664], [1280, 844]]) {
     const ctx = await browser.newContext({ viewport: { width, height }, reducedMotion: 'reduce' });
-    await ctx.addInitScript(() => { try { localStorage.setItem('ts-pk-tip', 'seen'); } catch {} });
+    await ctx.addInitScript(types => {
+      try { localStorage.setItem('ts-pk-tip', 'seen'); } catch {}
+      // Register before site scripts so later propagation stops remain visible.
+      // Stay inactive outside the one existing drawer mouse action.
+      const listener = event => window.__tsRailInputDrawerWindowRecord?.(event);
+      for (const type of types) window.addEventListener(type, listener, { capture: true, passive: true });
+      window.__tsRailInputDrawerWindowCleanup = () => {
+        for (const type of types) window.removeEventListener(type, listener, true);
+        delete window.__tsRailInputDrawerWindowRecord; delete window.__tsRailInputDrawerWindowCleanup;
+      };
+    }, drawerTraceEvents);
     const { p, errors } = await open(ctx);
     await p.waitForSelector('.tsr-lab.is-js'); await p.waitForSelector('#ts-peek-title-strip');
     await p.evaluate(() => document.fonts.ready); await settle(p);
@@ -149,9 +160,59 @@ try {
       await p.keyboard.press('Escape'); await settle(p);
       ok(`${width}/drawer/${key}: Escape closes and returns focus to tab`, !(await state(p)).drawer && still(before, await state(p)) && await tab.evaluate(t => document.activeElement === t), await state(p));
     }
-    await reset(5); await p.locator('.tsr-tab').click(); await settle(p);
+    await reset(5);
+    // Observe the existing mouse action without retrying or changing its setup.
+    await p.evaluate(types => {
+      const tab = document.querySelector('.tsr-tab'), drawer = document.querySelector('.tsr-drawer'), rail = document.querySelector('.tsr-rail');
+      const describe = node => node instanceof Element ? node.tagName.toLowerCase() + (node.id ? '#' + node.id : '') + (node.getAttribute('class') ? '.' + node.getAttribute('class').trim().replace(/\s+/g, '.') : '') + (node.getAttribute('data-idea') ? '[idea=' + node.getAttribute('data-idea') + ']' : '') : node?.nodeName || 'none';
+      const time = () => Math.round(performance.now() * 10) / 10;
+      const captures = id => ({ tab: tab.hasPointerCapture(id), rail: rail.hasPointerCapture(id) });
+      const snapshot = () => {
+        const r = tab.getBoundingClientRect(), style = getComputedStyle(tab), hit = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2), path = [];
+        for (let n = hit; n && path.length < 6; n = n.parentElement) path.push(describe(n));
+        return { time: time(), rect: r.toJSON(), hitPath: path, focus: describe(document.activeElement), hasFocus: document.hasFocus(), visibility: document.visibilityState,
+          drawer: drawer.open, modal: describe(document.querySelector(':modal')), scroll: [scrollX, scrollY], viewport: [innerWidth, innerHeight],
+          hidden: tab.hidden, disabled: tab.disabled, inert: !!tab.closest('[inert]'), captures: [0, 1].map(id => ({ id, ...captures(id) })),
+          style: { display: style.display, visibility: style.visibility, pointerEvents: style.pointerEvents, position: style.position, zIndex: style.zIndex, transform: style.transform } };
+      };
+      const trace = { before: snapshot(), events: [], transitions: [], dropped: 0 }, listeners = [];
+      const record = scope => event => {
+        const row = { time: time(), scope, type: event.type, target: describe(event.target), trusted: event.isTrusted, defaultPrevented: event.defaultPrevented,
+            x: event.clientX, y: event.clientY, button: event.button, buttons: event.buttons, pointerId: event.pointerId, pointerType: event.pointerType,
+            capture: event.pointerId === undefined ? undefined : captures(event.pointerId), drawer: drawer.open, focus: describe(document.activeElement) };
+        if (trace.events.length < 120) trace.events.push(row); else trace.dropped++;
+      };
+      window.__tsRailInputDrawerWindowRecord = record('window');
+      for (const [scope, target] of [['document', document], ['tab', tab]]) {
+        const listener = record(scope);
+        for (const type of types) target.addEventListener(type, listener, { capture: true, passive: true });
+        listeners.push({ target, listener });
+      }
+      const recordTransitions = records => records.forEach((record, index) => {
+        const next = index + 1 < records.length ? records[index + 1].oldValue : drawer.getAttribute('open');
+        trace.transitions.push({ time: time(), from: record.oldValue !== null, to: next !== null, observedOpen: drawer.open });
+      });
+      const observer = new MutationObserver(recordTransitions);
+      observer.observe(drawer, { attributes: true, attributeFilter: ['open'], attributeOldValue: true });
+      window.__tsRailInputDrawerTrace = () => {
+        recordTransitions(observer.takeRecords()); observer.disconnect();
+        for (const { target, listener } of listeners) for (const type of types) target.removeEventListener(type, listener, true);
+        window.__tsRailInputDrawerWindowCleanup();
+        trace.after = snapshot(); delete window.__tsRailInputDrawerTrace; return trace;
+      };
+    }, drawerTraceEvents);
+    let drawerTrace;
+    try { await p.locator('.tsr-tab').click(); await settle(p); }
+    finally {
+      drawerTrace = await p.evaluate(() => window.__tsRailInputDrawerTrace());
+      console.log(`INFO Rail input drawer trace ${engine}/${width}: ` + JSON.stringify({ before: drawerTrace.before, after: drawerTrace.after,
+        events: drawerTrace.events.map(e => [e.time, e.scope, e.type, e.target, e.trusted, e.pointerId, e.capture, e.drawer]), transitions: drawerTrace.transitions, dropped: drawerTrace.dropped }));
+    }
     const beforeDrawer = await state(p);
-    ok(`${width}/drawer/mouse: tab opens the drawer`, beforeDrawer.drawer, beforeDrawer);
+    ok(`${width}/drawer/mouse: tab opens the drawer`, beforeDrawer.drawer, { ...beforeDrawer, trace: drawerTrace });
+    if (!beforeDrawer.drawer && engine === 'firefox') {
+      captures++; console.log(`INLINE rail-input-firefox-${width}-drawer-mouse-failure.jpg base64:${(await p.screenshot({ type: 'jpeg', quality: 76 })).toString('base64')}`);
+    }
     if (beforeDrawer.drawer) {
       const link = p.locator('.tsr-drawer a[href="#tsr-questions"]'); await link.focus(); await p.keyboard.press('Enter'); await landed(p, `${width}/drawer/chosen`);
     }
