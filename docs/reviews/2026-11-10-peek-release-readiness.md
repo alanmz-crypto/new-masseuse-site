@@ -92,6 +92,29 @@ Recommend a window when these conditions pass and someone can immediately check
 the live result and initiate the tested rollback if necessary. Traffic-dependent
 timing cannot be inferred from the evidence available here.
 
+## Supplemental engine preparation
+
+The focused WebKit paths preserve existing Chromium/Firefox assertions. The new
+read-only wrapper pins Playwright 1.63.0, keeps complete logs and requires exact
+page/capture counts and matching literal assertion totals. Independent review,
+12 offline evidence controls and origin/target refusal checks passed. Source
+`392ed10c6fbf10aff48df16a323c694daf4ce94e`
+[Gates 42740052057](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42740052057)
+passed **36/0 with one rendered-URL skip**.
+
+Public WebKit attempt
+[42740074026](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42740074026),
+source `b1288c9a7c7f7b956caef61ae2a85f4799346080`, finished **02:08:57 UTC,
+INVALID**. Official WebKit 26.6/build 2359 and its dependencies installed and the
+browser launched, but the first Privacy request returned HTTP202. There were
+**zero assertions, zero successful page loads and zero captures**; layout was
+skipped. This establishes runner capability, not site verification. The next
+WebKit check belongs on the isolated rendered copy; no public retry is queued.
+
+Ryan's short iPhone Safari check was requested while the unchanged visitor core
+remains frozen. Device/iOS and outcomes are pending. If a subsequent fix changes
+that core, the affected acceptance steps must be repeated.
+
 ## Separate follow-ups
 
 The practice drawer's public Firefox mouse-input failure remains open. The one
@@ -109,6 +132,16 @@ body bytes. Both cases have identical resource bodies and the exact current
 core/style. Captured assets support local investigation without further staging
 requests. The earlier challenged attempt remains zero evidence, and this
 diagnostic does not waive the full failed practice-page regression gate.
+
+Two offline replays had 29 passing interaction assertions and matched all
+captured body hashes and geometry, but both remain **INVALID**: a reject-only
+proxy blocked one browser-level CONNECT to staging39 outside Playwright's page
+request stream. No traffic escaped. Startup and idle-page controls were clean;
+the cause of that extra browser request and the public-only input failure remain
+unproved. No allowance, timing workaround or runtime change follows from this.
+The next useful discriminator is browser drag/capture state in the failing
+environment. This separate prototype investigation is paused while preparing
+the visitor release.
 
 Known transient label overlaps, real OS text scaling and broader assistive-
 technology coverage remain documented. They should not be described as newly
