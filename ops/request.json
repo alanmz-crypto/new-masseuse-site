@@ -1,12 +1,10 @@
 {
-  "id": "peek-rail-input-firefox-protocol-1",
+  "id": "peek-core-input-focus-public-1",
   "op": "run",
   "target": "staging39",
-  "script": "link-ideas/rail-input/check-keyboard.mjs",
+  "script": "link-ideas/core-input-focus/check-public.mjs",
   "args": [
-    "https://staging39.thaisolitude.com",
-    "--firefox",
-    "--protocol-diagnostic"
+    "https://staging39.thaisolitude.com"
   ],
   "tests": "auto"
 }
