@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-10 04:20 UTC  **FAIL**  `peek-visitor-release-rehearse-4`  [reports/2026-11-10/042007-peek-visitor-release-rehearse-4.md](reports/2026-11-10/042007-peek-visitor-release-rehearse-4.md)  (run 42754978423)
 - 2026-11-10 04:00 UTC  **FAIL**  `peek-visitor-release-rehearse-3`  [reports/2026-11-10/040041-peek-visitor-release-rehearse-3.md](reports/2026-11-10/040041-peek-visitor-release-rehearse-3.md)  (run 42752791077)
 - 2026-11-10 03:43 UTC  **FAIL**  `peek-visitor-release-rehearse-2`  [reports/2026-11-10/034349-peek-visitor-release-rehearse-2.md](reports/2026-11-10/034349-peek-visitor-release-rehearse-2.md)  (run 42751049392)
 - 2026-11-10 03:30 UTC  **FAIL**  `peek-visitor-release-rehearse-1`  [reports/2026-11-10/033019-peek-visitor-release-rehearse-1.md](reports/2026-11-10/033019-peek-visitor-release-rehearse-1.md)  (run 42749322045)
