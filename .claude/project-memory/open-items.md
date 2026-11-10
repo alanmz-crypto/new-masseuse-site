@@ -9,6 +9,18 @@ metadata:
 A phone cloud session (https://claude.ai/code, repo `alanmz-crypto/new-masseuse-site`) sees ONLY this repository: not his computer, not his global `~/.claude/CLAUDE.md`, not his local Claude memory, not convmem. Everything that must not be lost is therefore written here and in the notes this index points to.
 First message to send in a fresh phone session: **"Read .claude/project-memory/open-items.md and tell me what is due."**
 
+**Active task, November 10: small-screen index clearance, staging39 only.**
+Ryan authorized this fix after accepting the summary-neighbour layout on iPhone
+Safari. Fresh actual Thai captures reproduce the index over the booking notice
+at 390×500 and under the header at 844×342. The
+[index-clearance record](../../docs/reviews/2026-11-10-peek-index-clearance.md) tracks the candidate, independent geometry
+checks and guarded staging39-copy/deployment evidence. Candidate only; no new
+staging write yet. Accepted neighbours bytes are frozen as shared v8; the new
+`core-index-clearance` transition has its own snapshot and rollback to v8.
+Idle navigation waits only when it cannot fit at its existing target sizes;
+scrolling restores it, while summaries and the title strip remain available.
+Live remains unchanged and outside this task.
+
 **Current task, November 10: fixed summary neighbours, staging39 only.** Ryan
 reports missing neighbouring links and scrolling trouble across the four service
 pages with Safari’s address bar expanded. They requested only the immediate

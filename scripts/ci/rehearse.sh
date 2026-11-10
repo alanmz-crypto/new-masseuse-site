@@ -30,8 +30,8 @@ release_rehearsal=0
 read_only_discovery=0; copy_isolation=0
 # This new in-place core lane is authorized only from the actual staging39 copy.
 # It cannot select the separate live-sourced first-install release rehearsal.
-if [ "$inst" = link-ideas/core-neighbours/install-peek-core-neighbours.php ]; then
-  [ "$src" = staging39 ] && [ "$uploads" = 1 ] || invalid "core-neighbours requires a fresh staging39-sourced copy with uploads"
+if [ "$inst" = link-ideas/core-neighbours/install-peek-core-neighbours.php ] || [ "$inst" = link-ideas/core-index-clearance/install-peek-core-index-clearance.php ]; then
+  [ "$src" = staging39 ] && [ "$uploads" = 1 ] || invalid "this core update requires a fresh staging39-sourced copy with uploads"
   read_only_discovery=1; copy_isolation=1
 fi
 if [ "$inst" = link-ideas/peek-release/install-peek-release.php ]; then
@@ -284,7 +284,7 @@ inst_run() { # The filtered line is WP-CLI's PHP 8.5 deprecation, not the instal
   echo; echo "[$name] wp eval-file $inst $*"
   wpc --user=1 eval-file "/wwm/$inst" "$@" 2>&1 | grep -v 'phar:///usr/local/bin/wp/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php' | tee "$out/$name.log" | sed 's/^/    /'
   status=("${PIPESTATUS[@]}")
-  if [ "$release_rehearsal" = 1 ] || [ "$inst" = link-ideas/core-neighbours/install-peek-core-neighbours.php ]; then
+  if [ "$release_rehearsal" = 1 ] || core_guarded_lane; then
     [ "${status[0]}" -eq 0 ] && [ "${status[1]}" -eq 0 ] && [ "${status[2]}" -eq 0 ] && [ "${status[3]}" -eq 0 ]
   else
     return "${status[0]}"
@@ -292,14 +292,17 @@ inst_run() { # The filtered line is WP-CLI's PHP 8.5 deprecation, not the instal
 }
 core_focus_snapshot_from_log() {
   local path component=core-input-focus
-  if [ "${inst:-}" = link-ideas/core-neighbours/install-peek-core-neighbours.php ]; then component=core-neighbours; fi
+  case "${inst:-}" in
+    link-ideas/core-neighbours/install-peek-core-neighbours.php) component=core-neighbours ;;
+    link-ideas/core-index-clearance/install-peek-core-index-clearance.php) component=core-index-clearance ;;
+  esac
   path=$(sed -nE 's@^Success: .*Before-snapshot: (/backups/peek-template-'"$component"'-before-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}\.json)$@\1@p' "$1")
   [[ "$path" =~ ^/backups/peek-template-${component}-before-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}\.json$ ]] || return 1
   printf '%s\n' "$path"
 }
 core_focus_lane() {
   case "${inst:-}" in
-    link-ideas/core-input-focus/install-peek-core-input-focus.php|link-ideas/core-neighbours/install-peek-core-neighbours.php) return 0 ;;
+    link-ideas/core-input-focus/install-peek-core-input-focus.php|link-ideas/core-neighbours/install-peek-core-neighbours.php|link-ideas/core-index-clearance/install-peek-core-index-clearance.php) return 0 ;;
     *) return 1 ;;
   esac
 }
@@ -310,23 +313,30 @@ core_focus_verify() {
   local status=("${PIPESTATUS[@]}")
   [ "${status[0]}" -eq 0 ] && [ "${status[1]}" -eq 0 ] && [ "${status[2]}" -eq 0 ]
 }
+core_guarded_lane() {
+  case "${inst:-}" in
+    link-ideas/core-neighbours/install-peek-core-neighbours.php|link-ideas/core-index-clearance/install-peek-core-index-clearance.php) return 0 ;;
+    *) return 1 ;;
+  esac
+}
 core_neighbours_require_clean() {
-  [ "$inst" != link-ideas/core-neighbours/install-peek-core-neighbours.php ] || [ "$fails" -eq 0 ] || {
-    echo "REHEARSAL FAILED: core-neighbours $*; no subsequent mutation or browser work attempted."; exit 1;
+  ! core_guarded_lane || [ "$fails" -eq 0 ] || {
+    echo "REHEARSAL FAILED: guarded shared core $*; no subsequent mutation or browser work attempted."; exit 1;
   }
 }
 core_neighbours_cleanup() {
-  local result=$? file
-  local evidence="${RUNNER_TEMP:-$HOME/.cache}/ops-out/core-neighbours-native"
+  local result=$? file component=core-neighbours
+  [ "${inst:-}" != link-ideas/core-index-clearance/install-peek-core-index-clearance.php ] || component=core-index-clearance
+  local evidence="${RUNNER_TEMP:-$HOME/.cache}/ops-out/$component-native"
   if mkdir -p "$evidence"; then
     # Public gate logs, hashes and route inventory only; never private snapshots,
     # SQL exports, copied source files or database credentials.
     for file in "$out"/*.log "$out"/*.content "$out"/errors-*.txt "$out"/title-strip-pages.json; do
       [ -f "$file" ] || continue
-      cp "$file" "$evidence/" || { echo "FAIL core-neighbours rehearsal: could not retain ${file##*/}" >&2; result=1; }
+      cp "$file" "$evidence/" || { echo "FAIL $component rehearsal: could not retain ${file##*/}" >&2; result=1; }
     done
   else
-    echo "FAIL core-neighbours rehearsal: cannot retain complete native evidence" >&2
+    echo "FAIL $component rehearsal: cannot retain complete native evidence" >&2
     result=1
   fi
   cleanup
@@ -425,7 +435,7 @@ if [ "$inst" = link-ideas/rail-input/install-rail-input.php ]; then
   rail_observe_run rail-warm-compare wpc --user=1 eval-file "$rail_observer" compare "$rail_warm" || invalid "warm Rail GET changed complete page state"
 fi
 
-if [ "$inst" = link-ideas/core-neighbours/install-peek-core-neighbours.php ]; then
+if core_guarded_lane; then
   trap core_neighbours_cleanup EXIT
 fi
 
@@ -445,9 +455,9 @@ core_neighbours_require_clean "baseline/preflight gates failed"
 inst_run apply apply; rc=$?; check "apply" $rc
 [ "$rc" -eq 0 ] || { echo; echo "REHEARSAL FAILED: apply did not succeed, so nothing after it was tried."; exit 1; }
 fp B
-if [ "$inst" = link-ideas/core-neighbours/install-peek-core-neighbours.php ]; then
-  core_focus_first_snapshot=$(core_focus_snapshot_from_log "$out/apply.log") || invalid "core-neighbours first apply has no unique actual snapshot"
-  core_focus_verify verify-first-apply "$core_focus_first_snapshot"; check "exact first core-neighbours apply snapshot" $?
+if core_guarded_lane; then
+  core_focus_first_snapshot=$(core_focus_snapshot_from_log "$out/apply.log") || invalid "guarded core first apply has no unique actual snapshot"
+  core_focus_verify verify-first-apply "$core_focus_first_snapshot"; check "exact first guarded core apply snapshot" $?
   core_neighbours_require_clean "first apply snapshot verification failed"
 fi
 if cmp -s "$out/A.content" "$out/B.content"; then
@@ -467,8 +477,8 @@ else
 fi
 fp B2; cmp -s "$out/B.content" "$out/B2.content"; check "applying twice changes nothing more (idempotent)" $?
 core_neighbours_require_clean "repeat apply or B/B2 idempotence failed"
-if [ "$inst" = link-ideas/core-neighbours/install-peek-core-neighbours.php ]; then
-  core_focus_verify verify-repeat-apply "$core_focus_first_snapshot"; check "repeat apply retains exact first core-neighbours snapshot" $?
+if core_guarded_lane; then
+  core_focus_verify verify-repeat-apply "$core_focus_first_snapshot"; check "repeat apply retains exact first guarded core snapshot" $?
   core_neighbours_require_clean "repeat snapshot verification failed"
 fi
 snap_pattern='*.json'
@@ -484,8 +494,8 @@ fi
 if [ -z "$snap" ]; then echo "  no before-snapshot was written to WWM_BACKUP_DIR"; check "apply wrote a before-snapshot" 1; else
   inst_run rollback rollback "/backups/$snap"; check "rollback with $snap" $?
   core_neighbours_require_clean "first rollback failed"
-  if [ "$inst" = link-ideas/core-neighbours/install-peek-core-neighbours.php ]; then
-    core_focus_verify verify-first-original "$core_focus_first_snapshot" original; check "first rollback restores exact core-neighbours original snapshot" $?
+  if core_guarded_lane; then
+    core_focus_verify verify-first-original "$core_focus_first_snapshot" original; check "first rollback restores exact guarded core original snapshot" $?
     core_neighbours_require_clean "first original snapshot verification failed"
   fi
   if [ "$release_rehearsal" = 1 ]; then
@@ -577,7 +587,7 @@ if [ -f "$extra" ]; then
     link-ideas/peek-release/install-peek-release.php) browser_seconds=2400; browser_evidence=peek-release-browser.log ;;
     link-ideas/core-upgrade/install-peek-core-upgrade.php) browser_seconds=900; browser_evidence=peek-core-upgrade-browser.log ;;
     link-ideas/core-summary-touch/install-peek-core-summary-touch.php) browser_seconds=900; browser_evidence=peek-core-summary-touch-browser.log ;;
-    link-ideas/core-title-strip/install-peek-core-title-strip.php|link-ideas/core-title-rail/install-peek-core-title-rail.php|link-ideas/core-kiro-fixes/install-peek-core-kiro-fixes.php|link-ideas/core-input-focus/install-peek-core-input-focus.php|link-ideas/core-neighbours/install-peek-core-neighbours.php|link-ideas/rail-input/install-rail-input.php)
+    link-ideas/core-title-strip/install-peek-core-title-strip.php|link-ideas/core-title-rail/install-peek-core-title-rail.php|link-ideas/core-kiro-fixes/install-peek-core-kiro-fixes.php|link-ideas/core-input-focus/install-peek-core-input-focus.php|link-ideas/core-neighbours/install-peek-core-neighbours.php|link-ideas/core-index-clearance/install-peek-core-index-clearance.php|link-ideas/rail-input/install-rail-input.php)
       browser_seconds=900; browser_evidence=peek-core-title-strip-browser.log
       if [ "$inst" = link-ideas/core-title-rail/install-peek-core-title-rail.php ]; then
         browser_seconds=1500; browser_evidence=peek-core-title-rail-browser.log
@@ -587,6 +597,8 @@ if [ -f "$extra" ]; then
         browser_seconds=2100; browser_evidence=peek-core-input-focus-browser.log
       elif [ "$inst" = link-ideas/core-neighbours/install-peek-core-neighbours.php ]; then
         browser_seconds=2700; browser_evidence=peek-core-neighbours-browser.log
+      elif [ "$inst" = link-ideas/core-index-clearance/install-peek-core-index-clearance.php ]; then
+        browser_seconds=3000; browser_evidence=peek-core-index-clearance-browser.log
       elif [ "$inst" = link-ideas/rail-input/install-rail-input.php ]; then
         browser_seconds=900; browser_evidence=rail-input-browser.log
       fi

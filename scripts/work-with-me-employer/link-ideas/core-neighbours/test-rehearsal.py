@@ -13,6 +13,10 @@ import re
 import subprocess
 import tempfile
 
+PROFILE = globals().get('CORE_REHEARSAL_PROFILE', 'neighbours')
+assert PROFILE in ('neighbours', 'index-clearance')
+COMPONENT = 'core-' + PROFILE
+INSTALLER = 'link-ideas/' + COMPONENT + '/install-peek-' + COMPONENT + '.php'
 ROOT = Path(__file__).resolve().parents[4]
 SOURCE = (ROOT / 'scripts/ci/rehearse.sh').read_text()
 HELPERS = SOURCE[SOURCE.index('core_focus_snapshot_from_log() {'):SOURCE.index('\nrelease_manifest=')]
@@ -24,7 +28,7 @@ for match in re.finditer(r'^if \[ "\$inst" = link-ideas/rail-input/install-rail-
     rail_blocks.append(hashlib.sha256(SOURCE[match.start():end].encode()).hexdigest())
 assert rail_blocks == ['53c120e2225789e2e6bceb524af0932dbc13fef22c9dd7746876950e5bfa41e4',
                        'c7bd30bf1a6811d38d904e0f37ddb3a364f8cf9081899154908358dab1acd89f'], rail_blocks
-SNAPS = ['/backups/peek-template-core-neighbours-before-20261109-23595'+str(i)+'-'+str(i)*8+'.json' for i in [1,2,3]]
+SNAPS = ['/backups/peek-template-' + COMPONENT + '-before-20261109-23595'+str(i)+'-'+str(i)*8+'.json' for i in [1,2,3]]
 passed=0
 
 SHIM = r'''
@@ -98,15 +102,15 @@ cp() {
   command cp "$@"
 }
 timeout() { emit browser || return 73; printf 'INFO simulated browser gate passed\n'; return "${BROWSER_RC:-0}"; }
-'''
+'''.replace('core-neighbours', COMPONENT)
 
 
 def run_case(*, options=None, expected=None, valid=True, absent_browser=False):
     global passed
     with tempfile.TemporaryDirectory(prefix='core-rehearsal-') as temp:
         base=Path(temp)
-        for name in ['out','backups','wwm/link-ideas/core-neighbours']:(base/name).mkdir(parents=True,exist_ok=True)
-        if not absent_browser:(base/'wwm/link-ideas/core-neighbours/check-rehearsal.mjs').write_text('local stub\n')
+        for name in ['out','backups','wwm/link-ideas/' + COMPONENT]:(base/name).mkdir(parents=True,exist_ok=True)
+        if not absent_browser:(base/('wwm/link-ideas/' + COMPONENT + '/check-rehearsal.mjs')).write_text('local stub\n')
         # A newer unrelated file must never win over the actual returned path.
         (base/'backups/unrelated-latest.json').write_text('{}')
         (base/'state').write_text('old')
@@ -160,12 +164,12 @@ for lines,want in [
     ([],None),
     (['Success: Applied. Before-snapshot: '+SNAPS[0],'Success: Applied. Before-snapshot: '+SNAPS[1]],None),
     (['Success: Applied. Before-snapshot: '+SNAPS[0].replace('/backups/','/tmp/')],None),
-    (['Success: Applied. Before-snapshot: '+SNAPS[0].replace('core-neighbours','core-kiro-fixes')],None),
+    (['Success: Applied. Before-snapshot: '+SNAPS[0].replace(COMPONENT,'core-kiro-fixes')],None),
     (['Success: Applied. Before-snapshot: '+SNAPS[0]+';id'],None),
 ]:
     with tempfile.TemporaryDirectory(prefix='core-snapshot-parser-') as temp:
         path=Path(temp)/'apply.log';path.write_text('\n'.join(lines)+'\n')
-        result=subprocess.run(['bash','-s','--',str(path)],input='inst=link-ideas/core-neighbours/install-peek-core-neighbours.php\n'+HELPERS+'\ncore_focus_snapshot_from_log "$1"\n',capture_output=True,text=True)
+        result=subprocess.run(['bash','-s','--',str(path)],input='inst='+INSTALLER+'\n'+HELPERS+'\ncore_focus_snapshot_from_log "$1"\n',capture_output=True,text=True)
         assert (result.returncode==0)==(want is not None),(lines,result.returncode,result.stdout)
         if want is not None:assert result.stdout.strip()==want,(want,result.stdout)
         passed+=1
@@ -187,7 +191,7 @@ end = SOURCE.index('case "$src" in', start)
 scope = SOURCE[start:end]
 for src, uploads, valid in [('staging39','1',True), ('staging39','0',False),
                             ('live','1',False), ('staging38','1',False), ('','1',False)]:
-    prefix='invalid() { printf "INVALID %s\\n" "$*"; exit 2; }; src=$1; uploads=$2; inst=link-ideas/core-neighbours/install-peek-core-neighbours.php\n'
+    prefix='invalid() { printf "INVALID %s\\n" "$*"; exit 2; }; src=$1; uploads=$2; inst='+INSTALLER+'\n'
     result=subprocess.run(['bash','-s','--',src,uploads],input=prefix+scope+'\n[ "$release_rehearsal" = 0 ] && [ "$read_only_discovery" = 1 ] && [ "$copy_isolation" = 1 ]\n',capture_output=True,text=True)
     assert result.returncode == (0 if valid else 2),(src,uploads,result.stdout,result.stderr)
     passed+=1
@@ -214,7 +218,7 @@ grep() { command grep "$@"; [ "$broken" != grep ]; }
 tee() { command tee "$@"; [ "$broken" != tee ]; }
 sed() { command sed "$@"; [ "$broken" != sed ]; }
 '''
-        result=subprocess.run(['bash','-s','--',temp,broken],input=prefix+native+'\ninst_run fixture preflight\n',capture_output=True,text=True)
+        result=subprocess.run(['bash','-s','--',temp,broken],input=prefix.replace('core-neighbours',COMPONENT)+HELPERS+'\n'+native+'\ninst_run fixture preflight\n',capture_output=True,text=True)
         assert (result.returncode==0)==(broken=='none'),(broken,result.stdout,result.stderr)
         passed+=1
 # Artifact cleanup exports only complete public evidence, never private recovery
@@ -230,12 +234,12 @@ RUNNER_TEMP=$1; out=$1/out; broken=$2
 cleanup() { printf cleaned > "$RUNNER_TEMP/cleaned"; }
 cp() { [ "$broken" != yes ] || return 73; command cp "$@"; }
 '''
-        result=subprocess.run(['bash','-s','--',temp,'yes' if copy_fail else 'no'],input=prefix+HELPERS+'\ntrap core_neighbours_cleanup EXIT\nexit '+str(original)+'\n',capture_output=True,text=True)
+        result=subprocess.run(['bash','-s','--',temp,'yes' if copy_fail else 'no'],input=prefix+'\ninst='+INSTALLER+'\n'+HELPERS+'\ntrap core_neighbours_cleanup EXIT\nexit '+str(original)+'\n',capture_output=True,text=True)
         assert result.returncode==(1 if copy_fail else original),(original,copy_fail,result.stdout,result.stderr)
         assert (base/'cleaned').read_text()=='cleaned'
-        names=sorted(path.name for path in (base/'ops-out/core-neighbours-native').iterdir())
+        names=sorted(path.name for path in (base/('ops-out/'+COMPONENT+'-native')).iterdir())
         assert names==([] if copy_fail else sorted(allowed)),names
-        for name in names:assert (base/'ops-out/core-neighbours-native'/name).read_bytes()==(base/'out'/name).read_bytes()
+        for name in names:assert (base/('ops-out/'+COMPONENT+'-native')/name).read_bytes()==(base/'out'/name).read_bytes()
         passed+=1
 # Exercise the existing actual Compose/relay blocks with the NEW isolation flag
 # and release_rehearsal=0. Reuse only local command doubles from the established
@@ -335,4 +339,4 @@ for phase,duplicate,target_home in [('info',False,url) for url in valid_origins+
             export=next(args for args in events if 'export' in args)
             assert '--path='+str(base/'www/target') in export,export
         passed+=1
-print(f'Core neighbours rehearsal snapshot/order/recovery harness: {passed} cases passed; no Docker, browser, services or network.')
+print(f'Core {PROFILE} rehearsal snapshot/order/recovery harness: {passed} cases passed; no Docker, browser, services or network.')

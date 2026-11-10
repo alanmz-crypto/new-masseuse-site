@@ -5,6 +5,7 @@ function run_focus_render_tests() {
     $check = static function ( $ok, $label ) use ( &$passed ) { if ( ! $ok ) { throw new RuntimeException( 'FAIL input-focus renderer: ' . $label ); } $passed++; };
     $wrapper = file_get_contents( dirname( __DIR__ ) . '/push-peek-input-focus.sh' );
     $neighbours = file_get_contents( dirname( __DIR__ ) . '/push-peek-neighbours.sh' );
+    $index = file_get_contents( dirname( __DIR__ ) . '/push-peek-index-clearance.sh' );
     $historical = file_get_contents( dirname( __DIR__ ) . '/push-peek-nav.sh' );
     $pattern = <<<'REGEX'
 #    php -r '(.*?)' "\$source" "\$tmp/\$key\.html" "\$slug"#s
@@ -12,9 +13,11 @@ REGEX;
     $check( preg_match_all( $pattern, $wrapper, $programs ) === 1, 'one actual embedded renderer extracted' );
     $renderer = $programs[1][0];
     $check( preg_match_all( $pattern, $neighbours, $neighbours_programs ) === 1 && $neighbours_programs[1][0] === $renderer, 'neighbours uses the exact same tested renderer program' );
+    $check( preg_match_all( $pattern, $index, $index_programs ) === 1 && $index_programs[1][0] === $renderer, 'index clearance uses the exact same tested renderer program' );
     $inventory_pattern = "/read -r -d '' INVENTORY <<'PHP' \\|\\| true\\n(.*?)\\nPHP\\n/s";
     $check( preg_match( $inventory_pattern, $wrapper, $current_inventory ) === 1 && preg_match( $inventory_pattern, $historical, $old_inventory ) === 1 && $current_inventory[1] === $old_inventory[1], 'published inventory guard is identical to the fully exercised historical body' );
     $check( preg_match( $inventory_pattern, $neighbours, $neighbours_inventory ) === 1 && $neighbours_inventory[1] === $old_inventory[1], 'neighbours uses the same tested published inventory program' );
+    $check( preg_match( $inventory_pattern, $index, $index_inventory ) === 1 && $index_inventory[1] === $old_inventory[1], 'index clearance uses the same tested published inventory program' );
     $dir = sys_get_temp_dir() . '/peek-focus-render-' . bin2hex( random_bytes( 5 ) );
     if ( ! mkdir( $dir, 0700 ) ) { throw new RuntimeException( 'Cannot create renderer fixture directory.' ); }
     try {
@@ -23,7 +26,7 @@ REGEX;
         $header_pattern = <<<'REGEX'
 #^  php -r '(.*?)' "\$snap"$#m
 REGEX;
-        foreach ( array( 'core-input-focus' => $wrapper, 'core-neighbours' => $neighbours ) as $component => $source ) {
+        foreach ( array( 'core-input-focus' => $wrapper, 'core-neighbours' => $neighbours, 'core-index-clearance' => $index ) as $component => $source ) {
             $check( preg_match_all( $header_pattern, $source, $header_programs ) === 1, $component . ' has one actual header predicate' );
             $snapshot_file = $dir . '/peek-template-' . $component . '-before-20261110-100000-abcdef12.json';
             foreach ( array( 'valid', 'foreign', 'bundle', 'component', 'slug', 'missing-slug', 'null-slug', 'invalid-json', 'scalar', 'missing-file' ) as $mutation ) {
@@ -47,7 +50,7 @@ REGEX;
             }
         }
         $bodies = array();
-        foreach ( array( 'current' => 'peek-nav.php', 'v7' => 'peek-nav-shared-v7.php', 'v6' => 'peek-nav-shared-v6.php' ) as $version => $name ) {
+        foreach ( array( 'current' => 'peek-nav.php', 'v8' => 'peek-nav-shared-v8.php', 'v7' => 'peek-nav-shared-v7.php', 'v6' => 'peek-nav-shared-v6.php' ) as $version => $name ) {
             $source = file_get_contents( dirname( __DIR__ ) . '/' . $name );
             file_put_contents( $dir . '/' . $version . '.php', $source );
             foreach ( array( 'style' => 'ts-peek-nav-css', 'script' => 'ts-peek-nav-runtime' ) as $tag => $id ) {
@@ -70,11 +73,13 @@ REGEX;
             $rc = proc_close( $proc );
             $check( $should_pass ? $rc === 0 && $err === '' && str_contains( $out, 'exact served core/style and data scope: ' . $slug ) : $rc === 1 && str_contains( $err, 'FAIL ' ), $label );
         };
-        foreach ( array( 'current', 'v7', 'v6' ) as $version ) {
+        foreach ( array( 'current', 'v8', 'v7', 'v6' ) as $version ) {
             foreach ( array( 'thai-massage', 'therapeutic-massage', 'deep-tissue-massage', 'chair-massage', 'services', 'about' ) as $slug ) { $run( $version, $slug, $html( $version, $slug ), true, $version . ' exact runtime/style and page scope: ' . $slug ); }
         }
-        $run( 'current', 'thai-massage', $html( 'v7', 'thai-massage' ), false, 'frozen-v7 response cannot verify a neighbours deployment' );
-        $run( 'v7', 'thai-massage', $html( 'current', 'thai-massage' ), false, 'neighbours response cannot verify the historical input-focus deployment' );
+        $run( 'current', 'thai-massage', $html( 'v8', 'thai-massage' ), false, 'frozen neighbours response cannot verify index clearance' );
+        $run( 'v8', 'thai-massage', $html( 'current', 'thai-massage' ), false, 'index clearance response cannot verify historical neighbours' );
+        $run( 'v8', 'thai-massage', $html( 'v7', 'thai-massage' ), false, 'frozen-v7 response cannot verify a neighbours deployment' );
+        $run( 'v7', 'thai-massage', $html( 'v8', 'thai-massage' ), false, 'neighbours response cannot verify the historical input-focus deployment' );
         $run( 'current', 'thai-massage', $html( 'v6', 'thai-massage' ), false, 'frozen-v6 response cannot verify a current deployment' );
         $valid = $html( 'current', 'thai-massage' );
         $run( 'current', 'thai-massage', str_replace( '<script id="ts-peek-nav-runtime">', '<script id="ts-peek-nav-runtime">/* changed */', $valid ), false, 'changed runtime refused' );

@@ -50,6 +50,11 @@ html.ts-pk-title-ready .ts-pk-title-content :is(.tsx-pills,.tsx-seg,.tsp-bar,.ts
 html.ts-pk-title-ready .ts-pk-title-content :is(.tsx-lab,.tsp-lab,.tsr-lab) :is(.tsx-sec,.tsp-sec,.tsr-sec),html.ts-pk-title-ready .ts-pk-title-content :is(.tsx-lab,.tsp-lab,.tsr-lab) :is(.tsx-sec,.tsp-sec,.tsr-sec) [id]{scroll-margin-top:calc(var(--pk-title-end,0px) + var(--pk-demo-bar,0px) + 12px)}
 /* rail: right edge, thumb zone */
 .ts-pk-nav{position:fixed;right:calc(100% - var(--pk-vx,0px) - var(--pk-vw,100vw) + max(2px,env(safe-area-inset-right)));top:max(calc(var(--pk-vy,0px) + var(--pk-vh,100vh) * .3),calc(var(--pk-head,0px) + var(--pk-strip,0px) + 64px));bottom:calc(100% - var(--pk-vy,0px) - var(--pk-vh,100vh) + max(calc(var(--pk-vh,100vh) * .14),76px));z-index:91;width:44px}   /* % follows the visible viewport on iOS; the index icon stays clear of the header and strip */
+/* A rail that cannot fit below the visible page chrome waits for reading space.
+   Keep its DOM and the separate preview intact; no content is shifted. */
+.ts-pk-nav{--pk-safe-bottom:env(safe-area-inset-bottom,0px)}
+.ts-pk-nav.is-waiting{visibility:hidden;pointer-events:none}
+html .ts-pk .ts-pk-nav.is-compact .ts-pk-rail{gap:2px;padding:4px 0}
 .ts-pk-rail{position:absolute;inset:0;display:flex;flex-direction:column;gap:5px;margin:0;padding:8px 0;list-style:none;touch-action:none;-webkit-user-select:none;user-select:none;border-radius:22px;transition:background-color .2s,box-shadow .2s}
 .ts-pk-nav.is-active .ts-pk-rail{background:var(--pk-panel);background:color-mix(in srgb,var(--pk-panel) 92%,transparent);box-shadow:0 6px 24px -12px rgba(0,0,0,.45)}
 .ts-pk-rail li{position:relative;flex:var(--len,1) 1 0;min-height:22px;margin:0;padding:0}
@@ -672,6 +677,53 @@ add_action( 'wp_footer', function () {
     function setSide(left) { root.classList.toggle('ts-pk-left', left); store('ts-pk-side', left ? 'left' : 'right'); clearRail(); tip.querySelector('.flip').textContent = 'Use it on the ' + sideName(); lengths(); ask(); }
     tip.querySelector('.flip').textContent = 'Use it on the ' + sideName();
 
+    // Sticky height alone misses the still-visible header and booking notice.
+    // Keep the whole index/rail below their actual visible boundary. Reclaim
+    // empty bottom space, then only rail gaps/padding, before deferring an idle
+    // rail that physically cannot fit. Touch targets keep their original size.
+    var bookingBand = document.querySelector('.ts-corp-band');
+    function layoutRail() {
+      // Captured navigation keeps the geometry under the current finger until
+      // release. The summary card owns its separate fitting and reading state.
+      if (g || ixPress !== null || fdn) return;
+      var viewport = viewportBounds(), ceiling = Math.max(viewport.top, (parseFloat(getComputedStyle(strip).top) || 0) + strip.offsetHeight);
+      [head, bookingBand, strip].forEach(function (node) {
+        if (!node || !node.getClientRects().length || getComputedStyle(node).visibility === 'hidden') return;
+        var r = node.getBoundingClientRect();
+        if (r.top < viewport.bottom && r.bottom > viewport.top) ceiling = Math.max(ceiling, r.bottom);
+      });
+      var inset = parseFloat(getComputedStyle(nav).getPropertyValue('--pk-safe-bottom')) || 0;
+      var limit = viewport.bottom - Math.max(12, inset + 8), first = ceiling + 64;
+      var targets = segs.reduce(function (height, li) { return height + Math.max(22, parseFloat(getComputedStyle(li).minHeight) || 0); }, 0);
+      var plan = null;
+      [{ gap: 5, pad: 8, compact: false }, { gap: 2, pad: 4, compact: true }].some(function (space) {
+        var minimum = targets + Math.max(0, segs.length - 1) * space.gap + 2 * space.pad;
+        var start = Math.max(first, viewport.top + viewport.height * .3);
+        if (start + minimum > limit) start = first;
+        if (start + minimum > limit) return false;
+        plan = { top: start, bottom: Math.min(limit, Math.max(start + minimum, viewport.bottom - Math.max(viewport.height * .14, 76))), compact: space.compact };
+        return true;
+      });
+      // A focused or kept-open index remains owned by its current interaction.
+      // Defer hiding it until blur/close, without moving focus or cancelling it.
+      if (!plan && (nav.contains(document.activeElement) || tip.contains(document.activeElement) || ixOpen)) return;
+      nav.classList.toggle('is-waiting', !plan); nav.inert = !plan;
+      if (!plan) { nav.setAttribute('aria-hidden', 'true'); hideTip(); return; }
+      nav.removeAttribute('aria-hidden'); nav.classList.toggle('is-compact', plan.compact);
+      function style(key, value) { if (nav.style[key] !== value) nav.style[key] = value; }
+      style('top', plan.top + 'px');
+      if (S.length === 1) {
+        style('bottom', 'auto'); style('height', Math.min(120, viewport.height * .24, limit - plan.top) + 'px');
+      } else {
+        style('height', ''); style('bottom', 'calc(100% - ' + plan.bottom + 'px)');
+      }
+    }
+    nav.addEventListener('focusout', ask);
+    tip.addEventListener('focusout', ask);
+    nav.addEventListener('pointerup', ask);
+    nav.addEventListener('pointercancel', ask);
+    if (bookingBand && 'ResizeObserver' in window) new ResizeObserver(ask).observe(bookingBand);
+
     // the rail is one keyboard stop: Tab reaches the current section's piece, arrow keys move between pieces
     function rove(i) { segs.forEach(function (li, k) { li.firstChild.setAttribute('tabindex', k === i ? '0' : '-1'); }); }
     rove(0);
@@ -890,7 +942,19 @@ add_action( 'wp_footer', function () {
       if (lifted) up(); else document.addEventListener('pointerup', up, true);
       setTimeout(off, 5000);
     }
-    function focusSeg(i) { var a = segs[i] && segs[i].firstChild; if (a) { rove(i); a.focus({ preventScroll: true }); } }
+    function focusSeg(i) {
+      if (nav.inert) {
+        // Dismissal must not focus a hidden control or reveal an overlapping rail.
+        // Return to the reading region without moving the page; the strip is visual only.
+        var readingRegion = document.querySelector('#main,main,[role="main"]') || content;
+        if (!readingRegion.hasAttribute('tabindex')) {
+          readingRegion.setAttribute('tabindex', '-1');
+          readingRegion.addEventListener('blur', function () { readingRegion.removeAttribute('tabindex'); }, { once: true });
+        }
+        readingRegion.focus({ preventScroll: true }); return;
+      }
+      var a = segs[i] && segs[i].firstChild; if (a) { rove(i); a.focus({ preventScroll: true }); }
+    }
     // a tap on the pinned card: acted on when the finger lifts (a short, still touch), so it never depends on the browser turning the touch into a click;
     // mouse and keyboard use the click
     function activate(target) {
@@ -958,7 +1022,7 @@ add_action( 'wp_footer', function () {
     rail.addEventListener('pointerdown', function (e) { if (e.button > 0 || !e.isPrimary || g) return; tipSeen(); try { rail.setPointerCapture(e.pointerId); } catch (err) {} g = { id: e.pointerId, i: pickAt(e.clientY), y: e.clientY }; show(g.i, g.y, false); e.preventDefault(); });
     rail.addEventListener('pointermove', function (e) { if (!g || e.pointerId !== g.id) return; var i = pickAt(e.clientY); g.y = e.clientY; if (i !== g.i) { g.i = i; buzz(); } show(g.i, g.y, false); });
     rail.addEventListener('pointerup', function (e) { if (!g || e.pointerId !== g.id) return; var x = g; g = null; pressedAt = performance.now(); show(x.i, x.y, true); });
-    function cancelPress(e) { if (!g || e.pointerId !== g.id) return; g = null; pressedAt = performance.now(); hideCard(); if (collect) ask(); }
+    function cancelPress(e) { if (!g || e.pointerId !== g.id) return; g = null; pressedAt = performance.now(); hideCard(); ask(); }
     rail.addEventListener('pointercancel', cancelPress);
     rail.addEventListener('lostpointercapture', function (e) { if (g && e.pointerId === g.id) setTimeout(function () { cancelPress(e); }, 0); });   // after pointerup g is already cleared, so only a real loss cancels
     rail.addEventListener('click', function (e) {   // a finger or mouse press is handled above; a click without one (keyboard Enter, VoiceOver/TalkBack double-tap) opens the preview and focuses it
@@ -1019,16 +1083,17 @@ add_action( 'wp_footer', function () {
       refreshSections(); measurePractice(); practiceRailMode();
       var state = title.read(), fills = state.fills, w = state.whole; cur = state.cur;
       if (box.hidden) { title.paint(state); return; }
-      var rr = rail.getBoundingClientRect(), nr = nav.getBoundingClientRect();
+      layoutRail();
+      var rr = rail.getBoundingClientRect(), nr = nav.getBoundingClientRect(), railStyle = getComputedStyle(rail), railTop = parseFloat(railStyle.paddingTop) || 0, railBottom = parseFloat(railStyle.paddingBottom) || 0;
       title.paint(state);
       segs.forEach(function (li, k) { li.firstChild.firstChild.style.setProperty('--p', fills[k].toFixed(3)); var a = li.firstChild; if (k === cur) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
       var name = S[Math.max(cur, 0)].label;
       if (name !== lastLabel) { lastLabel = name; label.textContent = name; }
-      you.style.top = label.style.top = (rr.top - nr.top + 8 + w * (rr.height - 16)) + 'px';
+      you.style.top = label.style.top = (rr.top - nr.top + railTop + w * (rr.height - railTop - railBottom)) + 'px';
       if (cur !== lastRove && cur > -1 && !rail.contains(document.activeElement)) { rove(cur); lastRove = cur; }   // only when the section changes
       if (ixOpen) fanLayout();   // the fan stays current if the page moves while it is open (keyboard toggle)
       refitCard(false);
-      if (!tipDone && !tipWait && cur > -1) tipWait = setTimeout(function () { tipWait = 0; if (!tipDone && !card.classList.contains('is-on') && !ixOpen && !g && ixPress === null) maybeTip(); }, 1500);   // after 1.5 s of reading, never over a preview or the fan
+      if (!nav.inert && !tipDone && !tipWait && cur > -1) tipWait = setTimeout(function () { tipWait = 0; if (!tipDone && !card.classList.contains('is-on') && !ixOpen && !g && ixPress === null) maybeTip(); }, 1500);   // after 1.5 s of reading, never over a preview or the fan
     }
 
     // the index icon: hold it and every section name fans out beside its piece of the rail; lift and they slide back (a click without a press toggles)
@@ -1050,7 +1115,7 @@ add_action( 'wp_footer', function () {
       if (!on) { clearTimeout(keepT); keep(false); setOver(-1); }
       if (on === ixOpen) return; ixOpen = on;
       if (on) { hideCard(); hideTip(); fanLayout(); buzz(); }
-      nav.classList.toggle('is-index', on); ixBtn.setAttribute('aria-expanded', String(on)); fan.setAttribute('aria-hidden', String(!on));
+      nav.classList.toggle('is-index', on); ixBtn.setAttribute('aria-expanded', String(on)); fan.setAttribute('aria-hidden', String(!on)); ask();
     }
     function keep(on) { kept = on; nav.classList.toggle('is-kept', on); }
     ixBtn.addEventListener('contextmenu', function (e) { e.preventDefault(); });
@@ -1084,7 +1149,7 @@ add_action( 'wp_footer', function () {
     function ixRelease(e) {
       if (ixPress === null || e.pointerId !== ixPress) return;
       ixPress = null; ixPressedAt = performance.now(); clearTimeout(keepT);
-      if (collect) ask();
+      ask();
       var h = handed, up = e.type === 'pointerup'; handed = null;
       if (h && up) { show(h.i, h.y, true); return; }   // lifted on the rail: the preview stays, tap it to go there
       if (h) { hideCard(); return; }                   // cancelled while on the rail
@@ -1106,12 +1171,16 @@ add_action( 'wp_footer', function () {
     fan.addEventListener('pointerdown', function (e) { fdn = kept && e.isPrimary ? { id: e.pointerId, x: e.clientX, y: e.clientY } : null; });
     fan.addEventListener('pointerup', function (e) { var d = fdn; fdn = null; if (!d || e.pointerId !== d.id || Math.abs(e.clientX - d.x) > 10 || Math.abs(e.clientY - d.y) > 10) return; fanTapAt = performance.now(); swallowNextClick(true); fanGo(e.target); });
     fan.addEventListener('pointercancel', function () { fdn = null; });
+    function releaseFanPress(e) { if (fdn && e.pointerId === fdn.id) { fdn = null; ask(); } }
+    document.addEventListener('pointerup', releaseFanPress);
+    document.addEventListener('pointercancel', releaseFanPress);
     fan.addEventListener('click', function (e) { e.preventDefault(); if (performance.now() - fanTapAt < 700) return; fanGo(e.target); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && ixOpen) { setIndex(false); ixBtn.focus(); } });
 
     // first-time hint: once per visitor, when they start reading; it goes away by itself, on "Got it", or when they touch the rail
     var tipDone = store('ts-pk-tip') === 'seen' || /^#./.test(location.hash), tipT = 0;   // not for visitors who arrived at a section by link
     function maybeTip() {
+      if (nav.inert) return;
       tipDone = true; store('ts-pk-tip', 'seen');
       var rr = rail.getBoundingClientRect(); tip.hidden = false; tip.style.top = Math.max(12, rr.top + rr.height / 2 - tip.offsetHeight / 2) + 'px';
       requestAnimationFrame(function () { tip.classList.add('is-on'); }); nav.classList.add('is-hinting');

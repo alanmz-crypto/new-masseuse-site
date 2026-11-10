@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Exact shared-core v7 -> neighbours update, staging39 only; no page-data writes.
+# Exact shared-core v7 -> frozen v8 neighbours update, staging39 only; no page-data writes.
 # Public verification binds to the actual complete core + four-page snapshot.
 # shellcheck disable=SC2016
 set -euo pipefail
@@ -31,7 +31,7 @@ ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o 
 echo "Target site: $target   component: core-neighbours   mode: $mode"
 echo "[1] Uploading the reviewed package outside every web root ..."
 "${ssh_cmd[@]}" true 2>/dev/null || { echo "SSH login refused." >&2; exit 2; }
-tar -C "$here" -cf - install-peek-nav.php peek-nav.php peek-nav-legacy.php peek-nav-shared-v1.php peek-nav-shared-v2.php peek-nav-shared-v3.php peek-nav-shared-v4.php peek-nav-shared-v5.php peek-nav-shared-v6.php peek-nav-shared-v7.php peek-data title-strip-pages.json \
+tar -C "$here" -cf - install-peek-nav.php peek-nav.php peek-nav-legacy.php peek-nav-shared-v1.php peek-nav-shared-v2.php peek-nav-shared-v3.php peek-nav-shared-v4.php peek-nav-shared-v5.php peek-nav-shared-v6.php peek-nav-shared-v7.php peek-nav-shared-v8.php peek-data title-strip-pages.json \
   | "${ssh_cmd[@]}" 'mkdir -p "$HOME/wwm-package-peek-neighbours" && tar -xf - -C "$HOME/wwm-package-peek-neighbours"'
 
 read -r -d '' REMOTE <<'EOS' || true
@@ -146,7 +146,7 @@ case "$phase" in
   verify|verify-purged)
     verify_snapshot
     if [ "$phase" = verify-purged ]; then purge; fi
-    render_all "$package/peek-nav.php"
+    render_all "$package/peek-nav-shared-v8.php"
     verify_snapshot ;;
   rollback)
     rollback_ready
