@@ -1,6 +1,14 @@
 {
-  "id": "peek-live-readiness-baseline-1",
-  "op": "inspect",
-  "target": "live",
-  "query": "fingerprint"
+  "id": "peek-rail-input-firefox-hold-2",
+  "op": "run",
+  "target": "staging39",
+  "script": "link-ideas/rail-input/check-keyboard.mjs",
+  "args": [
+    "https://staging39.thaisolitude.com",
+    "--firefox",
+    "--protocol-diagnostic",
+    "--hold-history-diagnostic",
+    "--capture-har"
+  ],
+  "tests": "auto"
 }
