@@ -782,7 +782,9 @@ add_action( 'wp_footer', function () {
       // applied by fitting, including when all the text temporarily fits.
       reading = m ? { node: m, top: saved ? saved.top : m.scrollTop, atEnd: saved ? saved.atEnd : m.scrollTop > 0 && m.scrollHeight - m.scrollTop - m.clientHeight <= 2, rendered: m.scrollTop, width: m.clientWidth, height: m.clientHeight, total: m.scrollHeight } : null;
     }
-    function sameReadingSize(m) { return m && reading && reading.node === m && reading.width === m.clientWidth && reading.height === m.clientHeight && reading.total === m.scrollHeight; }
+    // Firefox can round scrollHeight one pixel differently after positioning the
+    // same fractional-height content; its viewport and client dimensions agree.
+    function sameReadingSize(m) { return m && reading && reading.node === m && reading.width === m.clientWidth && reading.height === m.clientHeight && Math.abs(reading.total - m.scrollHeight) <= 1; }
     function fit() {   // use the same visible boundary for fitting and placement
       card.style.maxHeight = '';
       var spaces = cardSpaces(), bounds = spaces.lower, mh = parseFloat(getComputedStyle(card).maxHeight), summary = card.querySelector('.sum');

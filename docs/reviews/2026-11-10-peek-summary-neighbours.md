@@ -62,10 +62,10 @@ two available adjacent rows, compact fitting keeps those rows displayed, and
 viewport refitting avoids assigning an unchanged scroll position. The reading
 record now keeps the reader's intended position separate from a temporary
 rendered clamp. No flex-layout rewrite, touch-event rewrite or summary-data
-change was needed. Current candidate: 103,727 file bytes, SHA256
-`5c0869698bcbdac2b2b2b2fd4cc90a2d91af6672fb2080f27387eb5786aa1939`;
-103,721 stored bytes, SHA256
-`b75b7d52a5ef557baeedf153b4abeda872e8fed8c4fe05c557381b9b07ea5cb9`.
+change was needed. Current candidate: 103,903 file bytes, SHA256
+`9bb2e83be8b8d78d21fe1e80fe7efc55807714ebaab19ac0f441970bc21c4bc7`;
+103,897 stored bytes, SHA256
+`0613b2601412a30223571a60231b5f86c4b6fcf691c592f7813573f71f96476c`.
 
 A local structural-fixture probe passed **704/704** neighbour visibility and
 hit-test cases: all 22 service sections, both sides, 390×640, 390×500, 844×342
@@ -118,7 +118,8 @@ its complete matrix was rerun against the corrected candidate. Pressing
 End when already clamped at the endpoint produces no movement and retains the
 prior intent; the correction adds no keyboard or gesture override for that case.
 
-The corrected complete focused fixture run passed **1,394/0**, all eight
+The reading-intent candidate `5c086969…` passed its complete focused fixture
+run **1,394/0**, all eight
 page/side cases, eight fixture loads and 16 captures. It verifies original
 bookmark retention and a real subsequent Home movement replacing that intent.
 The clearance regression now likewise retains its original test bookmark
@@ -161,6 +162,46 @@ research in right/light 844×342 layouts. Adjacent controls are visibly separate
 from the open summary, the real header/banner remain clear, and research keeps
 several readable lines. This supports the proposed design but does not replace
 the remaining browser gates or physical Safari acceptance.
+
+## Second actual staging39-copy rehearsal
+
+Theme-check commit `0151393f8d24dfbad61eb04cc83348d42ca4b8e5` passed all 42
+[CI gates](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42769928414).
+The complete log was read. [Copy rehearsal 2](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42770507508)
+used request commit `60920429c6e5dca1c09892c1bb1fc6aef8c89fb4` and finished
+**FAIL** at 06:49:04 UTC. Exact native apply/repeat/rollback/reapply, wording
+checks and pre-browser state verification passed again.
+
+Chromium passed **1,384/0**, all eight cases and 16 captures. The measured light
+background was RGB(245,244,239), dark RGB(21,28,38), with the correct preferences,
+attributes and visible controls. Firefox then lost Thai/right research's 40px
+bookmark on the first 500→620 resize, returning to 0. Four bookmark assertions
+failed; the subsequent Home precondition could not be exercised, so Firefox
+stopped **incomplete/INVALID**, 150 passed/4 failed, zero completed cases, one
+load and two captures. Those failures are diagnostic evidence, not a completed
+Firefox validation. WebKit, retained suites and post-browser recovery were not
+attempted. Local Firefox reproduction is next; no staging write has occurred.
+
+Local Firefox reproduced the reset and isolated its cause. Initial card
+placement changed reported `scrollHeight` from 278 to 279 while the same text,
+styles, 272×176 client dimensions and fractional content height were unchanged.
+The exact-height guard consequently ignored genuine scroll movements and
+retained a stale zero bookmark. The correction permits at most one pixel of
+total-height rounding, keeping node, client dimensions and viewport checks exact.
+No acceptance threshold, gesture listener or recovery guard was relaxed.
+
+The corrected candidate passed **200/0 Firefox** and **208/0 Chromium** local
+structural reading-state checks across all four pages and both sides. Before
+and after traces retain the original failure and show 40px surviving each
+resize after the correction. Chromium also covered 24 genuine zero-range
+transitions; the Firefox matrix had no exactly-zero range, so none is claimed.
+An independent review of the entire affected reading path and traces found no
+blocker. Fresh actual-copy verification is still required.
+
+Local WebKit could not launch because this managed environment lacks six
+required libraries. Its official isolated-image fallback hit Docker capacity;
+only task-owned failed resources are being removed. The Actions WebKit gate
+remains mandatory, with no skip substituted for actual browser evidence.
 
 ## Required verification
 
