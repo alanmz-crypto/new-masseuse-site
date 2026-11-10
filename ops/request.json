@@ -1,10 +1,11 @@
 {
-  "id": "peek-core-input-focus-dry-1",
+  "id": "peek-rail-input-verify-1",
   "op": "run",
   "target": "staging39",
-  "script": "link-ideas/push-peek-nav.sh",
+  "script": "link-ideas/push-rail-input.sh",
   "args": [
-    "core-input-focus"
+    "--verify",
+    "$HOME/private-backups/rail-input-before-20261109-235652-0adc77b9.json"
   ],
   "tests": "auto"
 }
