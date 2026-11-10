@@ -127,7 +127,40 @@ Final PHP rechecks passed 1,142 installer, 35 data-emission and 59 rendering
 checks. Independent source reviews found no remaining blocker in runtime,
 browser checks, deployment or rehearsal. The new rehearsal harness passed 100
 controls and the evidence wrapper 85; historical guards remain passing.
-Actual WordPress layout and Chromium/Firefox/WebKit results remain pending.
+These local results do not replace actual WordPress or complete browser-engine
+verification.
+
+## First actual staging39-copy rehearsal
+
+Source commit `cea4f37239df72cda30447583b537732dc667fac` passed all 42
+[CI gates](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42768109302).
+The complete job log was read; the sole skip was rendered checking without a URL.
+
+[Copy rehearsal 1](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42768644282)
+used request commit `1833c46ca9ce03549835bc51854f48794f813f0b`, sourced only
+staging39, and finished **FAIL** at 06:32:29 UTC. Its first apply, idempotence,
+exact original-state rollback, reapply, rendered wording gates and pre-browser
+state verification passed. The isolated copy changed only #1380 and WPCode's
+snippet-list cache. All four data records retained their exact state hash.
+
+Chromium completed all eight page/side cases and 16 captures: **1,380 passed,
+4 failed**. All failures were the new light-theme assertion expecting
+`data-ts-theme="light"`; the actual site intentionally represents light mode
+with no attribute. `theme-init.js`, `theme-toggle.js` and the existing theme
+test establish that contract. The runtime remains unchanged. The corrected
+checker requires the saved preference, exact attribute, one visible theme
+control with the matching pressed state, and an opaque light/dark body palette.
+Its actual-source local theme controls passed **25/0**, including deliberate
+wrong and missing states. This failed run is not relabelled
+as a pass. Firefox, WebKit, retained suites and post-browser recovery correctly
+did not run after the failure. No staging write or staging snapshot exists yet.
+
+The primary agent independently viewed actual-copy captures of Thai and Deep
+Tissue middle summaries in left/dark 390×500 layouts, and Therapeutic and Chair
+research in right/light 844×342 layouts. Adjacent controls are visibly separate
+from the open summary, the real header/banner remain clear, and research keeps
+several readable lines. This supports the proposed design but does not replace
+the remaining browser gates or physical Safari acceptance.
 
 ## Required verification
 

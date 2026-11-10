@@ -102,8 +102,19 @@ try {
       if (data?.slug !== slug || data.approval?.status !== 'approved' || JSON.stringify(original.links.map(a => a.label)) !== JSON.stringify(expected.expectedLabels)) throw new Error(`${label}: approved summaries or original destination order differs`);
       const count = original.links.length, middle = Math.floor(count / 2), research = original.links.findIndex(a => /research/i.test(a.label));
       if (count < 3 || research < 0) throw new Error(`${label}: edge/middle/research test destinations missing`);
-      const theme = await p.locator('html').getAttribute('data-ts-theme');
-      ok(`${label}: requested real theme preference is active`, theme === (side === 'left' ? 'dark' : 'light'), theme);
+      // The real theme implementation removes the attribute for light mode;
+      // the mock's explicit "light" attribute is not the site's contract.
+      const theme = await p.evaluate(() => ({
+        attribute: document.documentElement.getAttribute('data-ts-theme'), preference: localStorage.getItem('ts-theme'),
+        background: getComputedStyle(document.body).backgroundColor,
+        controls: [...document.querySelectorAll('.ts-theme-toggle')].filter(button => button.offsetParent).map(button => ({ pressed: button.getAttribute('aria-pressed'), label: button.getAttribute('aria-label') }))
+      }));
+      const dark = side === 'left', rgb = theme.background.match(/^rgb\((\d+), (\d+), (\d+)\)$/), channels = rgb?.slice(1).map(Number);
+      // Keep tools/theme-test.mjs's dark maximum <60; explicitly require an
+      // opaque light palette with all channels >200, plus saved choice/control.
+      const themeMatches = theme.preference === (dark ? 'dark' : 'light') && theme.attribute === (dark ? 'dark' : null) && theme.controls.length === 1 && theme.controls[0].label === 'Dark mode' && theme.controls[0].pressed === (dark ? 'true' : 'false') && !!channels && (dark ? Math.max(...channels) < 60 : Math.min(...channels) > 200);
+      console.log(`INFO neighbours theme ${engine}/${label}: ${JSON.stringify({ ...theme, thresholds: { darkMaximumExclusive: 60, lightMinimumExclusive: 200 } })}`);
+      ok(`${label}: requested real theme preference, visible control and palette are active`, themeMatches, theme);
       const cdp = engine === 'chromium' ? await context.newCDPSession(p) : null;
       const touch = (type, at) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchEnd' ? [] : [{ ...at, id: 1, radiusX: 3, radiusY: 3, force: 1 }] });
       const tap = async selector => { const at = await point(p, selector); await touch('touchStart', at); await p.waitForTimeout(35); await touch('touchEnd'); await settle(p); };
