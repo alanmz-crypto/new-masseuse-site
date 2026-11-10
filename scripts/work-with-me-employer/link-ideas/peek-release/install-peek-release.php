@@ -233,9 +233,10 @@ $release_owned_ok = static function ( $record, $role, $status, $code, $initial_f
     foreach ( $record['relationships'] as $i => $row ) { if ( $row !== array( 'object_id' => (string) $id, 'term_order' => '0', 'term_taxonomy_id' => (string) ( 9 + $i ) ) ) { $diagnose( array( 'relationship-row' ) ); $release_fail( 'Owned relationship differs.' ); } }
 };
 $release_expected = static function ( $old, $owned, $cleaned ) use ( $release_astra, $release_progress ) {
-    $out = $old; $out['owned'] = $owned; $published = 0;
-    foreach ( $owned as $record ) { if ( $record !== null && $record['post']['post_status'] === 'publish' ) { $published++; } }
-    foreach ( $out['taxonomies'] as &$row ) { $row['count'] = (string) ( (int) $row['count'] + $published ); } unset( $row );
+    // Copy4 proved both shared counts include our newly related inactive draft.
+    $out = $old; $out['owned'] = $owned; $members = 0;
+    foreach ( $owned as $record ) { if ( $record !== null ) { $members++; } }
+    foreach ( $out['taxonomies'] as &$row ) { $row['count'] = (string) ( (int) $row['count'] + $members ); } unset( $row );
     if ( $cleaned['css'] ) { $out['records'][29]['post']['post_content'] = str_replace( $release_progress, '', $out['records'][29]['post']['post_content'] ); }
     if ( $cleaned['astra'] ) { $out['options']['astra-settings'] = $release_astra( $old['options']['astra-settings'] ); }
     return $out;

@@ -267,6 +267,48 @@ attempt could not use Docker or local test sockets and failed eleven gates;
 rerunning in the permitted outer executor resolved those setup failures. PHP
 containers used UID 0 only to read the existing private checkout mount, which
 remained read-only. CI must still supply Ruff and verify the committed source.
+CI then verified that source, `d8824c6e0bac2f36e88abebceaaff230dede2ba7`, in
+Gates `42754592464`: **39 passed / 0 failed**, with only the expected rendered-URL
+skip, finished **04:16:50 UTC**. All 202 log lines were read by the primary agent
+and independently reviewed. Log SHA256 is
+`455de4688eb7b391e64f4b36dbd4688c2b2c6a8f599dd559f968d56a01969c6f`.
+
+Diagnostic copy request `peek-visitor-release-rehearse-4`, run `42754978423`,
+source `19dd6a09e1129b62f9830c4a5456dd74fc06e11f`, finished **04:20:06 UTC,
+FAIL**. Its primary diagnostic is untruncated and identifies exactly two
+differences: the counts on shared taxonomy rows #9 and #10. Both changed from
+**17 to 18 on first inactive creation**. The typed value hashes independently
+recompute to those strings. All other compared fields match the proposed
+creation state. The three preflight hashes match before the write.
+
+The installer incorrectly expected only published owned snippets to contribute
+to those counts. The next correction was explained before implementation:
+account for each owned snippet while its two relationships exist, including
+drafts; normalization, code correction and activation should not add another
+count. Removal must subtract each owned relationship exactly. Full-state
+comparison and unknown-state refusal remain required. The observed first-create
+increment supports this correction; the complete creation/activation/deletion
+cycle still needs fresh-copy verification.
+
+The copy-only journal was
+`/backups/peek-release-before-20261110-042003-91e0a251.json`. Recovery refused
+the unaccepted state, and no later installer or browser phase ran. This attempt
+is not a rollback pass or browser verification. No staging/live store changed.
+The checksum-verified artifact is 10,101 bytes, SHA256
+`8291661f722daab258bf3a4cfe42f6c3166030d340981833fe435e014eb93a89`,
+with eleven native/baseline files and no browser output or private snapshots.
+
+The count correction is implemented in installer SHA256
+`fd137b1b6d4e532dd77e94fa1678473cfcddc1810979827df24f74c5a4897457`.
+The pinned-PHP fixture passed **1,556 checks / 138 injected write-boundary
+failures**, including intermediate draft counts, unchanged normalization and
+publication counts, deletion decrements, exact partial recovery and rejection
+of rehashed journals using the superseded published-only model. These remain
+offline model results; actual activation and deletion are not yet verified.
+Independent review cleared the count correction and full test diff. The full
+local source check passed **38/0**, with the same Ruff and rendered-URL skips.
+All full-state and ownership checks remain enabled. Only the shared-count
+expectation changed; the other field expectations and runtime payload are exact.
 
 1. Capture and review the exact current live navigation baseline. Existing
    staging upgrade installers require owned snippet #1380 and historical

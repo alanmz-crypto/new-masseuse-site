@@ -127,15 +127,20 @@ unknown key names are hashed. Missing values, nulls and list/map shapes remain
 distinct. Output is bounded to 32 changes, eight path levels and 2,048 scanned
 child positions; a truncated branch is represented by hashes. The original
 comparison and refusal remain unchanged, with no extra database reads or writes.
-Copy3 (run `42752791077`, completed 2026-11-10 04:00:40 UTC) passed the first
-factory draft's owned-record shape, then failed full-state equality before
-adoption or attribute initialization. Its aggregate hashes do not identify the
-differing protected field; the new diagnostic is evidence gathering, not a fix
-or a reason to relax any guard.
+Copy3's aggregate hashes could not identify its first-draft full-state mismatch.
+Copy4 (run `42754978423`, completed 2026-11-10 04:20:06 UTC) identified exactly
+two changed fields, with no truncation: shared WPCode taxonomy rows #9 and #10
+each changed from count 17 to 18 on the first inactive draft. All other captured
+state matched the expected creation. The old published-only count assumption
+was therefore wrong.
 
-Shared WPCode taxonomy rows #9 and #10 start at count 17. The expected count adds
-exactly the number of published owned snippets and returns to 17 on rollback.
-All other fields and relationships remain exact. Counts are not normalized away.
+The expected shared count is now the original count plus every surviving owned
+record, whether draft or published. Each has the two exact reviewed relationships.
+The installer requires activation to preserve those counts and deletion to
+reduce them by one, returning to 17 after full rollback. Those later transitions
+remain to be verified on the actual fresh copy; copy4 stopped before attribute
+initialization, activation or deletion. All other fields and relationships remain
+exact. Counts are not normalized away or accepted from the current state.
 CSS and Astra use prepared binary compare-and-swap updates and require exactly
 one changed row. Existing posts' dates, metadata and revision history are not
 rewritten. New-snippet save calls permit only their documented content/status,

@@ -62,6 +62,7 @@ function event( $name, $id = 0, $after = false ) {
     $key = $name . ( $after ? ':after' : ':before' );
     $GLOBALS['event_counts'][$key] = ( $GLOBALS['event_counts'][$key] ?? 0 ) + 1;
     $GLOBALS['events'][] = array( $key, $id );
+    if ( in_array( $name, array( 'create', 'normalize-meta', 'correct-code', 'activate', 'delete' ), true ) ) { $GLOBALS['count_observations'][] = array( 'key' => $key, 'id' => $id, 'counts' => shared_counts() ); }
     foreach ( $GLOBALS['failures'] as $i => $failure ) {
         if ( $failure['key'] === $key && $failure['at'] === $GLOBALS['event_counts'][$key] ) {
             unset( $GLOBALS['failures'][$i] );
@@ -147,6 +148,7 @@ function wpcode() { static $instance; return $instance ??= (object) array( 'cach
         event( 'cache-refresh', 0, true );
     }
 } ); }
+function shared_counts() { return fixture_sql( 'SELECT term_taxonomy_id,count FROM wp_term_taxonomy WHERE term_taxonomy_id IN (9,10) ORDER BY term_taxonomy_id' )->fetchAll( PDO::FETCH_KEY_PAIR ); }
 function recount( $id, $delta ) {
     foreach ( fixture_sql( 'SELECT term_taxonomy_id FROM wp_term_relationships WHERE object_id=?', array( $id ) )->fetchAll( PDO::FETCH_COLUMN ) as $term ) {
         fixture_sql( 'UPDATE wp_term_taxonomy SET count=count+? WHERE term_taxonomy_id=?', array( $delta, $term ) );
@@ -164,7 +166,8 @@ class WPCode_Snippet {
             fixture_insert( 'wp_postmeta', array( 'post_id' => $id, 'meta_key' => $key, 'meta_value' => $value ) );
         }
         foreach ( array( 9, 10 ) as $term ) { fixture_insert( 'wp_term_relationships', array( 'object_id' => $id, 'term_taxonomy_id' => $term, 'term_order' => '0' ) ); }
-        if ( $active ) { recount( $id, 1 ); }
+        // Copy4 observed that WPCode taxonomy membership includes inactive drafts.
+        recount( $id, 1 );
         $GLOBALS['created_observations'][] = array( 'id' => $id, 'active' => $active, 'content' => $row['post_content'], 'meta' => rows( 'postmeta', 'post_id', $id, 'meta_id' ) );
         event( 'create', $id, true ); list( $forced, $value ) = result_override( 'create', 'after' ); return $forced ? $value : $id;
     }
@@ -202,7 +205,6 @@ function wp_update_post( $values, $wp_error = false ) {
     if ( ( $values['post_status'] ?? null ) === 'publish' && $old['post_name'] === '' ) { $values['post_name'] = wp_unique_post_slug( sanitize_title( $old['post_title'] ), $id, 'publish', $old['post_type'], $old['post_parent'] ); }
     $values['post_modified'] = current_time( 'mysql' ); $values['post_modified_gmt'] = current_time( 'mysql', true );
     fixture_update( 'wp_posts', 'ID', $id, $values );
-    if ( isset( $values['post_status'] ) && $old['post_status'] !== $values['post_status'] ) { recount( $id, $values['post_status'] === 'publish' ? 1 : -1 ); }
     if ( $name === 'activate' ) { $GLOBALS['activation_observations'][] = array( 'id' => $id, 'content' => $old['post_content'], 'meta' => rows( 'postmeta', 'post_id', $id, 'meta_id' ) ); }
     event( $name, $id, true ); list( $forced, $value ) = result_override( $name, 'after' ); return $forced ? $value : $id;
 }
@@ -211,7 +213,7 @@ function wp_delete_post( $id, $force = false ) {
     $row = fixture_sql( 'SELECT * FROM wp_posts WHERE ID=?', array( $id ) )->fetch( PDO::FETCH_ASSOC );
     if ( ! $row ) { return null; }
     if ( ! $force ) { fixture_update( 'wp_posts', 'ID', $id, array( 'post_status' => 'trash' ) ); return (object) $row; }
-    if ( $row['post_status'] === 'publish' ) { recount( $id, -1 ); }
+    recount( $id, -1 );
     fixture_sql( 'DELETE FROM wp_posts WHERE ID=?', array( $id ) ); fixture_sql( 'DELETE FROM wp_postmeta WHERE post_id=?', array( $id ) ); fixture_sql( 'DELETE FROM wp_term_relationships WHERE object_id=?', array( $id ) );
     event( 'delete', $id, true ); list( $forced, $value ) = result_override( 'delete', 'after' ); return $forced ? $value : (object) $row;
 }
@@ -237,7 +239,7 @@ function restore_state( $state ) {
         fixture_sql( "DELETE FROM wp_$table" );
         foreach ( $rows as $row ) { fixture_insert( "wp_$table", $row ); }
     }
-    $GLOBALS['events'] = $GLOBALS['event_counts'] = $GLOBALS['failures'] = $GLOBALS['created_observations'] = $GLOBALS['activation_observations'] = $GLOBALS['save_observations'] = $GLOBALS['normalization_observations'] = array(); $GLOBALS['clock'] = '2026-11-10 03:00:00'; $GLOBALS['encode_failure'] = null; $GLOBALS['result_overrides'] = array(); $GLOBALS['read_hook'] = null; $GLOBALS['fail_state_diagnostic_log'] = false;
+    $GLOBALS['events'] = $GLOBALS['event_counts'] = $GLOBALS['failures'] = $GLOBALS['created_observations'] = $GLOBALS['activation_observations'] = $GLOBALS['save_observations'] = $GLOBALS['normalization_observations'] = $GLOBALS['count_observations'] = array(); $GLOBALS['clock'] = '2026-11-10 03:00:00'; $GLOBALS['encode_failure'] = null; $GLOBALS['result_overrides'] = array(); $GLOBALS['read_hook'] = null; $GLOBALS['fail_state_diagnostic_log'] = false;
 }
 function create_schema() {
     $columns = array_keys( fixture_post() );
@@ -393,13 +395,20 @@ putenv( 'WWM_BACKUP_DIR=' . "$testdir/backups" );
 
 invoke( array( 'apply' ) ); $applied_marker = marker( 'RELEASE-SNAPSHOT' );
 $path = $applied_marker['snapshot']; $snapshot = json_decode( file_get_contents( $path ), true, 512, JSON_THROW_ON_ERROR );
-$applied = all_state(); $successful_event_counts = $event_counts; $ids = $applied_marker['ids']; $snapshot_bytes = file_get_contents( $path );
+$applied = all_state(); $successful_event_counts = $event_counts; $successful_count_observations = $count_observations; $ids = $applied_marker['ids']; $snapshot_bytes = file_get_contents( $path );
 check( $applied_marker['state_sha256'] === digest( $snapshot['new'] ) && stable( $applied_marker['ids'] ) === stable( $snapshot['ids'] ), 'success marker binds exact state and ownership IDs' );
 check( ! isset( $snapshot['old']['records'][1160]['meta'] ) && ! str_contains( $snapshot_bytes, 'raw quoted' ) && ! str_contains( $snapshot_bytes, 'SYNTHETIC_PRIVATE_UNRELATED_OPTION' ), 'unknown source metadata is witnessed by hash and unrelated option values are absent from snapshot' );
 check( count( $ids ) === 5 && count( array_unique( $ids ) ) === 5 && isset( $ids['core'] ), 'release owns exactly five distinct records' );
 check( ( fileperms( $path ) & 0777 ) === 0600 && dirname( $path ) === "$testdir/backups", 'snapshot stored privately outside webroot' );
 check( $applied_marker['snapshot_sha256'] === hash_file( 'sha256', $path ) && $applied_marker['manifest_sha256'] === hash_file( 'sha256', "$package/manifest.json" ), 'success marker binds actual snapshot and manifest bytes' );
 check( count( $created_observations ) === 5 && array_filter( $created_observations, static fn( $record ) => $record['active'] ) === array(), 'all five snippets created inactive' );
+$membership_count = 17;
+foreach ( $successful_count_observations as $observation ) {
+    if ( $observation['key'] === 'create:after' ) { $membership_count++; }
+    check( $observation['counts'] === array( 9 => (string) $membership_count, 10 => (string) $membership_count ), 'membership counts at ' . $observation['key'] . ' for ID ' . $observation['id'] );
+    if ( str_starts_with( $observation['key'], 'activate:' ) ) { check( $membership_count === 22, 'publication changes no count after all five inactive memberships exist' ); }
+}
+check( $membership_count === 22 && shared_counts() === array( 9 => '22', 10 => '22' ), 'creation increases both membership counts from 17 to 22 before publication' );
 check( count( $normalization_observations ) === 5, 'all five three-key drafts receive one explicit metadata normalization' );
 foreach ( $normalization_observations as $i => $normalization ) {
     $created = $created_observations[$i];
@@ -475,6 +484,12 @@ $link = "$testdir/backups/peek-release-before-20261110-030000-00000000.json"; sy
 restore_state( $applied ); invoke( array( 'rollback', $path ) ); $restored_marker = marker( 'RELEASE-SNAPSHOT' );
 check( all_state() === $original, 'rollback restores all original raw rows and shared counts exactly' );
 $deletions = array_values( array_filter( $events, static fn( $entry ) => $entry[0] === 'delete:before' ) );
+$membership_count = 22;
+foreach ( $count_observations as $observation ) {
+    if ( $observation['key'] === 'delete:after' ) { $membership_count--; }
+    check( $observation['counts'] === array( 9 => (string) $membership_count, 10 => (string) $membership_count ), 'reverse membership counts at ' . $observation['key'] . ' for ID ' . $observation['id'] );
+}
+check( $membership_count === 17, 'each permanent owned-record deletion decrements both shared counts exactly once' );
 check( count( $deletions ) === 5 && $deletions[0][1] === $ids['core'], 'rollback removes core before data and only five owned records' );
 check( file_get_contents( $path ) === $snapshot_bytes, 'complete snapshot is immutable through rollback' );
 $restored_snapshot_bytes = file_get_contents( $path ); $event_count = count( $events ); $writes = $wpdb->writes;
@@ -536,6 +551,8 @@ foreach ( array( 'delete', 'css-cas', 'astra-cas', 'cache-refresh' ) as $operati
             check( $caught !== null && str_contains( $caught->getMessage(), 'Synthetic ' . $key ), "rollback $key occurrence $at fault reached" );
             check( file_get_contents( $path ) === $snapshot_bytes, "rollback $key leaves complete snapshot immutable" );
             $partial = all_state();
+            $remaining = count( array_filter( $ids, static fn( $id ) => row( 'posts', 'ID', $id ) !== null ) );
+            check( shared_counts() === array( 9 => (string) ( 17 + $remaining ), 10 => (string) ( 17 + $remaining ) ), "rollback $key occurrence $at keeps exact counts for each remaining owned record" );
             fixture_insert( 'wp_postmeta', array( 'post_id' => 1160, 'meta_key' => 'after-crash-edit', 'meta_value' => 'SYNTHETIC_PRIVATE_CONCURRENT_EDIT' ) );
             refusal( array( 'rollback', $path ), "rollback $key partial prefix with independent edit" );
             restore_state( $partial ); invoke( array( 'rollback', $path ) );
@@ -603,6 +620,7 @@ foreach ( array( 'create', 'correct-code', 'css-cas', 'astra-cas', 'activate', '
         try { invoke( array( 'apply' ) ); } catch ( Refusal_Error $error ) { $caught = $error; }
         check( $caught !== null && str_contains( $caught->getMessage(), 'recovery stopped' ) && preg_match( '/Snapshot: (.+)$/', $caught->getMessage(), $found ) === 1, "$key $at retains an actual partial journal after interrupted recovery" );
         $partial_path = $found[1]; $partial_bytes = file_get_contents( $partial_path ); $partial_snapshot = json_decode( $partial_bytes, true, 512, JSON_THROW_ON_ERROR ); $partial_state = all_state();
+        check( array_column( $partial_snapshot['journal']['taxonomies'], 'count', 'term_taxonomy_id' ) === array( 9 => (string) ( 17 + count( $partial_snapshot['ids'] ) ), 10 => (string) ( 17 + count( $partial_snapshot['ids'] ) ) ), "$key $at journal counts every recorded draft or active member" );
         check( $partial_snapshot['complete'] === false && $partial_snapshot['journal_sha256'] === digest( $partial_snapshot['journal'] ), "$key $at journal has exact recorded state hash" );
         refusal( array( 'verify', $partial_path ), "$key $at partial cannot claim complete applied verification" );
         refusal( array( 'apply', $partial_path ), "$key $at partial cannot authorize repeat apply" );
@@ -633,6 +651,7 @@ for ( $at = 1; $at <= 5; $at++ ) {
     $partial_path = $found[1]; $partial_bytes = file_get_contents( $partial_path ); $partial_snapshot = json_decode( $partial_bytes, true, 512, JSON_THROW_ON_ERROR ); $partial_state = all_state();
     $role = array_merge( $manifest['summary_slugs'], array( 'core' ) )[$at - 1];
     $record = $partial_snapshot['journal']['owned'][$role]; $observation = $normalization_observations[$at - 1];
+    check( array_column( $partial_snapshot['journal']['taxonomies'], 'count', 'term_taxonomy_id' ) === array( 9 => (string) ( 17 + $at ), 10 => (string) ( 17 + $at ) ), "normalization $at leaves its recorded draft membership counts unchanged" );
     check( count( $record['meta'] ) === 4 && stable( $record['meta'] ) === stable( $observation['after'] ) && $partial_snapshot['complete'] === false && $partial_snapshot['journal_sha256'] === digest( $partial_snapshot['journal'] ), "normalization $at journal records exactly the returned new row and unchanged old IDs" );
     if ( $at === 1 ) { check( hash( 'sha256', $record['post']['post_content'] ) !== $manifest['payloads']['data'][$role]['code_sha256'], 'normalized Thai journal still has uncorrected PHP, proving a distinct recoverable intermediate phase' ); }
     refusal( array( 'verify', $partial_path ), "normalization $at incomplete journal is not a complete release" );
@@ -665,6 +684,18 @@ foreach ( array( 'css', 'astra', 'publish' ) as $phase ) {
     check( str_contains( $error->getMessage(), 'cleanup/activation phase differs' ), "$phase cannot bypass final three-key normalization even when PHP is correct" );
 }
 
+foreach ( array( 'missing-draft', 'one-extra', 'both-extra' ) as $drift ) {
+    restore_state( $partials['create:1']['state'] );
+    if ( $drift === 'missing-draft' ) { fixture_sql( 'UPDATE wp_term_taxonomy SET count=17 WHERE term_taxonomy_id IN (9,10)' ); }
+    elseif ( $drift === 'one-extra' ) { fixture_sql( 'UPDATE wp_term_taxonomy SET count=19 WHERE term_taxonomy_id=9' ); }
+    else { fixture_sql( 'UPDATE wp_term_taxonomy SET count=19 WHERE term_taxonomy_id IN (9,10)' ); }
+    refusal( array( 'rollback', snapshot_write( $partials['create:1']['snapshot'] ) ), "partial rollback refuses $drift membership counts without changing any row" );
+}
+restore_state( $partials['create:1']['state'] ); $forged_counts = $partials['create:1']['snapshot'];
+foreach ( $forged_counts['journal']['taxonomies'] as &$term ) { $term['count'] = '17'; } unset( $term );
+$forged_counts['journal_sha256'] = digest( $forged_counts['journal'] );
+$error = refusal( array( 'rollback', snapshot_write( $forged_counts ) ), 'rehashed journal cannot use the superseded published-only count model' );
+check( str_contains( $error->getMessage(), 'Snapshot permitted recorded transition differs' ), 'partial-journal validation includes inactive memberships before consulting current state' );
 $partial_base = $partials['css-cas:1'];
 foreach ( array( 'creation-gap', 'uncorrected-early-draft', 'activation-gap', 'astra-before-css', 'activation-before-cleanup', 'hash' ) as $mutation ) {
     restore_state( $partial_base['state'] ); $forged = $partial_base['snapshot']; $role = 'thai-massage';
@@ -924,7 +955,7 @@ foreach ( array( 'shared-counts', 'unrelated-witness', 'raw-content' ) as $mutat
     check( count( $phase ) === 1 && $phase[0]['truncated'] === false, "$mutation reports the exact initial-creation mismatch once without truncation" );
     $expected_changes = array();
     if ( $mutation === 'shared-counts' ) {
-        foreach ( array( '0', '1' ) as $index ) { $expected_changes[] = array( 'path' => array( 'taxonomies', $index, 'count' ), 'kind' => 'value', 'expected' => $state_descriptor( '17' ), 'actual' => $state_descriptor( '18' ) ); }
+        foreach ( array( '0', '1' ) as $index ) { $expected_changes[] = array( 'path' => array( 'taxonomies', $index, 'count' ), 'kind' => 'value', 'expected' => $state_descriptor( '18' ), 'actual' => $state_descriptor( '19' ) ); }
     } elseif ( $mutation === 'unrelated-witness' ) {
         $old_row = array_values( array_filter( $original['posts'], static fn( $row ) => $row['ID'] === '2000' ) )[0];
         $expected_changes[] = array( 'path' => array( 'witnesses', 'posts', '2000' ), 'kind' => 'value', 'expected' => $state_descriptor( digest( $old_row ) ), 'actual' => $state_descriptor( digest( row( 'posts', 'ID', 2000 ) ) ) );
