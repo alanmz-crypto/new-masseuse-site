@@ -1,10 +1,8 @@
 {
-  "id": "peek-release-webkit-1",
+  "id": "peek-live-navigation-baseline-1",
   "op": "run",
-  "target": "staging39",
-  "script": "link-ideas/check-peek-webkit.sh",
-  "args": [
-    "https://staging39.thaisolitude.com"
-  ],
+  "target": "live",
+  "script": "link-ideas/inspect-navigation-baseline.sh",
+  "args": [],
   "tests": "auto"
 }
