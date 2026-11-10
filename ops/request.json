@@ -1,5 +1,5 @@
 {
-  "id": "peek-visitor-release-rehearse-3",
+  "id": "peek-visitor-release-rehearse-4",
   "op": "rehearse",
   "target": "live",
   "installer": "link-ideas/peek-release/install-peek-release.php",
