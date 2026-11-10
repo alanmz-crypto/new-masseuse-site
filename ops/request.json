@@ -1,11 +1,9 @@
 {
-  "id": "peek-neighbours-verify-1",
-  "op": "run",
+  "id": "peek-index-clearance-rehearse-1",
+  "op": "rehearse",
   "target": "staging39",
-  "script": "link-ideas/push-peek-neighbours.sh",
+  "installer": "link-ideas/core-index-clearance/install-peek-core-index-clearance.php",
   "args": [
-    "--verify",
-    "$HOME/private-backups/peek-template-core-neighbours-before-20261110-143200-81725f33.json"
-  ],
-  "tests": "auto"
+    "--with-uploads"
+  ]
 }
