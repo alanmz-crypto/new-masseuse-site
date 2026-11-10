@@ -76,6 +76,22 @@ follow the write. INVALID evidence proves nothing.
 
 ## Validation in progress
 
+Actions [Gates 42922709343](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42922709343)
+passed at 23:26:49 UTC for `91604ad6b`: all 45 offline gates, including actual
+pinned PHP, shellcheck, ruff, installer recovery and the new browser-evidence
+harness. The complete job log was read. Rendered checks correctly remain for
+the separate staging-copy rehearsal.
+
+The retained Kiro and neighbour suites now recognize intentionally deferred
+idle controls. They reach a visible rail with real page input (wheel in
+Chromium/Firefox, keyboard PageDown in mobile WebKit), open the preview, then
+return that same preview to the original position for every existing summary
+assertion and capture. WebKit uses the suite's original programmatic position
+setup for the return because Playwright rejects wheel input in mobile WebKit.
+This does not count as physical touch validation. Thai-only retained replay
+passed 346 assertions but correctly reported incomplete (2/8 cases); it is a
+diagnostic, not a complete retained gate.
+
 Local full `check-all.sh`: 37 passed, five failed from Docker daemon bind paths
 being unavailable, three skipped (shellcheck and ruff absent; no rendered URL).
 The same PHP sources passed supplemental network-disabled container executions

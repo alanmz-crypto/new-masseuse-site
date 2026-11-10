@@ -24,6 +24,76 @@ const state = p => p.evaluate(() => {
 });
 const samePage = (a, b) => Math.abs(a.x - b.x) <= 1 && Math.abs(a.y - b.y) <= 1 && a.hash === b.hash && a.history === b.history;
 const samePreview = (a, b) => samePage(a, b) && b.pinned && a.index === b.index;
+// A short screen may intentionally defer idle navigation. Reach it by actual
+// page input, then carry the same open preview back for the original top checks.
+const pageWheel = async (p, delta) => {
+  if (engine === 'webkit') {
+    // Playwright rejects mouse.wheel in mobile WebKit. This engine's retained
+    // contract is keyboard-only: give trusted PageDown to the page itself.
+    const body = await p.evaluate(() => {
+      const body = document.body, original = body.getAttribute('tabindex');
+      document.activeElement?.blur();
+      const changed = document.activeElement !== body;
+      if (changed) { body.setAttribute('tabindex', '-1'); body.focus({ preventScroll: true }); }
+      return { original, changed };
+    });
+    try { await p.keyboard.press('PageDown'); }
+    finally {
+      if (body.changed) await p.evaluate(original => {
+        if (original === null) document.body.removeAttribute('tabindex'); else document.body.setAttribute('tabindex', original);
+      }, body.original);
+    }
+    await p.waitForTimeout(180); await settle(p); return;
+  }
+  const at = await p.evaluate(() => {
+    const v = visualViewport, left = v?.offsetLeft || 0, top = v?.offsetTop || 0;
+    const width = v?.width || innerWidth, height = v?.height || innerHeight;
+    for (const [x, y] of [[left + width / 2, top + 4], [left + 3, top + height / 2], [left + width - 3, top + height / 2], [left + width / 2, top + height - 4]]) {
+      const hit = document.elementFromPoint(x, y);
+      if (hit && !hit.closest('.ts-pk')) return { x: x - left, y: y - top };
+    }
+    throw new Error('No real page surface is available for the setup wheel input');
+  });
+  await p.mouse.move(at.x, at.y); await p.mouse.wheel(0, delta);
+  await p.waitForTimeout(180); await settle(p);
+};
+const deferredReadingSpace = async (p, label) => {
+  const deferred = await p.locator('.ts-pk-nav').evaluate(nav => {
+    const points = [...document.querySelectorAll('#masthead,.ts-corp-band,.ts-pk-top')].flatMap(node => {
+      const r = node.getBoundingClientRect();
+      return [0.1, 0.5, 0.9].flatMap(fraction => {
+        const x = r.left + r.width * fraction, y = Math.max(0, r.top) + (Math.min(innerHeight, r.bottom) - Math.max(0, r.top)) / 2;
+        return r.bottom > 0 && r.top < innerHeight && x >= 0 && x < innerWidth ? [{ x, y, blocked: nav.contains(document.elementFromPoint(x, y)) }] : [];
+      });
+    });
+    return { waiting: nav.classList.contains('is-waiting'), hidden: getComputedStyle(nav).visibility === 'hidden', inert: nav.inert, aria: nav.getAttribute('aria-hidden'), points };
+  });
+  if (!deferred.waiting) return false;
+  const valid = deferred.hidden && deferred.inert && deferred.aria === 'true' && deferred.points.length > 0 && deferred.points.every(at => !at.blocked);
+  ok(`${label}: intentionally deferred navigation is hidden, inert and does not intercept visible page chrome`, valid, deferred);
+  if (!valid) throw new Error(`${label}: deferred navigation is not safely unavailable`);
+  console.log(`INFO deferred navigation setup ${engine}/${label}: ${engine === 'webkit' ? 'trusted keyboard page input (PageDown); mobile WebKit has no wheel API' : 'trusted wheel input on the page outside Peek'}`);
+  for (let attempt = 0; attempt < 4; attempt++) {
+    await pageWheel(p, Math.max(240, p.viewportSize().height));
+    if (await p.locator('.ts-pk-nav').evaluate(nav => !nav.inert && getComputedStyle(nav).visibility === 'visible')) return true;
+  }
+  throw new Error(`${label}: real page scrolling did not restore usable navigation`);
+};
+const restoreReadingPosition = async (p, wanted) => {
+  if (engine === 'webkit') {
+    // Keep the now-open preview's focus/selection. This is the original
+    // geometry setup scroll, after a real keyboard path reached the rail.
+    await p.evaluate(y => scrollTo({ top: y, behavior: 'instant' }), wanted); await settle(p);
+    if (Math.abs(await p.evaluate(() => scrollY) - wanted) > 1) throw new Error(`Preview setup did not restore the intended reading position ${wanted}`);
+    return;
+  }
+  for (let attempt = 0; attempt < 4; attempt++) {
+    const y = await p.evaluate(() => scrollY);
+    if (Math.abs(y - wanted) <= 1) return;
+    await pageWheel(p, wanted - y);
+  }
+  throw new Error(`Real page input did not restore the intended reading position ${wanted}`);
+};
 const capture = async (p, label) => {
   if (engine !== 'chromium' && engine !== 'webkit') return;
   captures++;
@@ -40,7 +110,7 @@ const open = async (path, status = 200, options = {}) => {
   const response = await p.goto(base + path, { waitUntil: 'load', timeout: 45000 });
   if (!response || response.status() !== status || new URL(p.url()).origin !== base || /Robot Challenge/i.test(await p.title())) throw new Error(`INVALID ${path}: expected same-origin ${status}, got ${response?.status()}; stop further loads`);
   visits++; routes.add(path);
-  await p.waitForSelector('html.ts-pk-ready .ts-pk-nav', { timeout: 10000 });
+  await p.waitForSelector('html.ts-pk-ready .ts-pk-nav', { state: 'attached', timeout: 10000 });
   await p.waitForFunction(() => document.fonts.status === 'loaded', null, { timeout: 10000 });
   await settle(p);
   return { ctx, p, errors };
@@ -183,7 +253,17 @@ try {
           if (hand === 'right') await capture(p, 'therapeutic-font-only-strip');
         }
         await scroll(p, spec.y); await stableLayout(p, `${label}/reading-position`);
-        const before = await state(p); await tap(p, researchSelector);
+        const before = await state(p), deferred = await deferredReadingSpace(p, label);
+        const tapBefore = await state(p); await tap(p, researchSelector);
+        if (deferred) {
+          const tapped = await state(p), summary = await p.locator('.ts-pk-card .sum').elementHandle();
+          ok(`${label}: the visible research rail tap itself keeps the page still`, samePage(tapBefore, tapped) && tapped.pinned, { tapBefore, tapped });
+          await restoreReadingPosition(p, before.y); await stableLayout(p, `${label}/restored-top`);
+          const returned = await state(p), sameNode = await summary.evaluate(node => node === document.querySelector('.ts-pk-card .sum'));
+          await summary.dispose();
+          ok(`${label}: same preview returns to its original reading position`, samePage(before, returned) && returned.pinned && returned.index === tapped.index && sameNode, { before, returned, sameNode });
+          if (!samePage(before, returned) || !returned.pinned || returned.index !== tapped.index || !sameNode) throw new Error(`INVALID ${label}: original preview state was not restored for its existing geometry checks`);
+        }
         const opened = await state(p), g = await summaryGeometry(p);
         if (g.layoutViewport.width !== spec.width || g.layoutViewport.height !== spec.height || Math.abs(g.viewport.width - spec.width) > 0.5 || Math.abs(g.viewport.height - spec.height) > 0.5 || Math.abs(g.viewport.scale - 1) > 0.001) console.log(`INFO kiro-layout ${engine}/${label}: viewport overflow diagnostics ${JSON.stringify(await viewportDiagnostics(p))}`);
         ok(`${label}: preview keeps page and original research wording`, samePage(before, opened) && opened.pinned && JSON.stringify(g.words) === JSON.stringify(wanted), { before, opened, words: g.words });
