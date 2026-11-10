@@ -83,6 +83,12 @@ const bounds = async (p, label) => {
   return g;
 };
 const track = async (p, label, count) => {
+  // A preceding FAQ jump keeps correcting its landing until the visitor acts.
+  // Start this independent reading check with genuine scroll input, just as a
+  // reader would; scrollTo alone cannot cancel that still-pending arrival.
+  const viewport = p.viewportSize();
+  await p.mouse.move(viewport.width / 2, viewport.height / 2);
+  await p.mouse.wheel(0, -1); await settle(p);
   const original = await state(p);
   for (const index of [...new Set([0, Math.floor(count / 2), count - 1])]) {
     const candidate = await p.evaluate(index => {
@@ -94,16 +100,18 @@ const track = async (p, label, count) => {
     // Its complete ordered title list is still checked; do not invent scroll room.
     if (candidate.y < 0 || candidate.y > candidate.max) continue;
     await p.evaluate(y => scrollTo({ top: y, behavior: 'instant' }), candidate.y); await settle(p);
-    const current = await p.locator('#ts-peek-title-strip .is-now').textContent();
     const group = await p.evaluate(index => {
-      const items = window.__peekTitleExpected, top = items[index].node.getBoundingClientRect().top;
+      const items = window.__peekTitleExpected, top = items[index].node.getBoundingClientRect().top, strip = document.getElementById('ts-peek-title-strip');
       // A responsive results grid can put several headings on the same line.
       // They cross together; document order breaks that tie, as it does in the
       // complete title list. Untied headings still require their exact title.
       const tied = items.filter(item => Math.abs(item.node.getBoundingClientRect().top - top) <= 1);
-      return { expected: tied.at(-1).label, tied: tied.map(item => item.label), top };
+      return { expected: tied.at(-1).label, tied: tied.map(item => item.label), top,
+        current: strip.querySelector('.is-now')?.textContent,
+        line: Math.max(innerHeight / 4, (parseFloat(getComputedStyle(strip).top) || 0) + strip.offsetHeight + 24),
+        positions: items.map(item => ({ label: item.label, top: item.node.getBoundingClientRect().top })) };
     }, index);
-    ok(`${label}: scrolling to heading${index + 1} selects its reading-line title`, current === group.expected, { ...group, current });
+    ok(`${label}: scrolling to heading${index + 1} selects its reading-line title`, group.current === group.expected, { candidate, ...group });
     ok(`${label}: scrolling changes no address or history`, sameAddress(original, await state(p)));
   }
   // Sticky UI belongs to the main-content container, not the following footer.

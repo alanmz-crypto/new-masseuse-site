@@ -232,6 +232,54 @@ from `.45rem` to `.25rem`. The 40px title/close target, 26px neighbouring rows,
 horizontal padding and title-only cards retain their dimensions. This recovers
 about 5.5px at the observed root text size for the native reading surface.
 
+Independent source review found no blocker. Local structural checks measured
+116→122px of research reading height across all four services and both sides;
+all 704 practical neighbour cases passed. Reading-state checks passed Chromium
+208/0 and Firefox 200/0. The close button remains 40×40 and clear of the summary.
+An additional combined 150%-root-text/landscape stress case still falls short
+of its reading-height budget, improving 90→98px; neighbouring controls remain
+visible and tappable. This existing stress limitation is retained explicitly,
+not relabelled as a pass or used to reduce the 120px normal-size requirement.
+
+Commit `5a02bcf284387540a5f9f1f4d058ed3ed21ec375` passed all 42
+[source gates](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42774944954)
+at 07:27:12 UTC. The complete log was read. Request
+`9608607ecaf9cc928b430fe5187003d8bfe38022` starts
+[copy rehearsal 4](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42775499922)
+against that exact source.
+
+## Fourth actual staging39-copy rehearsal
+
+Copy 4 finished **FAIL** at 07:49:40 UTC. Native apply/repeat/rollback/reapply
+and all four unchanged data records passed exact verification. Focused Chromium
+**1,384/0**, Firefox **1,304/0** and WebKit **1,304/0** passed again. The retained
+landscape-height failure is corrected: Kiro layout passed Chromium **170/0**
+and Firefox **146/0**. Input focus, disclosure and both title-rail suites passed.
+The primary agent viewed the corrected actual landscape research capture and
+the WebKit Thai middle-card capture; the reading surface and adjacent topics
+remain clearly separated, with the site header clear.
+
+The Firefox title-strip matrix then failed one Privacy/1280 assertion: Online
+privacy was expected, but Client privacy was current. That leaf completed
+**1,341/1**. The aggregate stopped at **10,429/1**; six downstream leaves and
+post-browser recovery were not attempted. The complete operation and all native
+and browser logs were read from the artifact. The outer runner log could not be
+retrieved because the plugin transport closed and its fallback redirect returned
+403; that limitation does not omit the retained operation or browser evidence.
+
+A local Firefox trace reproduced the check's cross-scenario interference using
+the actual runtime. Its previous 768px Client jump still had an active arrival
+settler when the 1280px scenario began. Programmatic alignment placed Online at
+209px, then the previous jump realigned Client about 181ms later, putting Online
+at 76px. A trusted wheel event before the independent manual-scroll check cancels
+that prior arrival and keeps Online at 209px with the correct title. The checker
+now starts manual tracking with genuine browser input and samples the title and
+heading positions together. The exact title assertion and runtime remain
+unchanged. Three paired Firefox traces reproduced the interference without that
+input and retained the correct heading with it. Existing isolated title fixtures
+passed Chromium **230/0** and Firefox **230/0**. No timeout or threshold was
+relaxed. No staging write has occurred.
+
 ## Required verification
 
 Check all four service-page structures, both sides, first/middle/last sections,
