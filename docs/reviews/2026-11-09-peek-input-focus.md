@@ -676,6 +676,34 @@ Stop on another challenge. Read the complete report and verify artifacts before
 replay. A passing recorded diagnostic cannot erase the earlier unrecorded full
 suite failure; the full regression gate remains required after a causal fix.
 
+The one later hold/capture retry
+[42738993282](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42738993282),
+source `5a30396fadfb1baab8e0adc6aa24b9023c79c471`, finished **01:55:11 UTC,
+26/1**, two loads, one capture and no INVALID. Gestures 1–3 pass with 31 observed
+events; hold gesture 4 alone reproduces zero DOM events at the later drawer
+click despite correct coordinates and complete acknowledged protocol commands.
+This narrows sufficient history, not the root cause. Root read the full report
+and traces and viewed the screenshot; an independent artifact audit agrees.
+The 921,330-byte artifact SHA256 is
+`dc40f5340287dd0a356d48080c7918810138fca32e0808057c88f943aa9f8bbc`.
+
+Each sanitized HAR contains 11 HTTP200 GET entries, one document/style/script,
+four font responses and four images, with 760,956 decoded body bytes. Both cases
+contain identical resource bodies, including exact current core/style bytes.
+Manifests and all body counts/hashes were independently checked. No cookie/auth
+fields or private raw capture were published. HAR SHA256 values:
+`71edcafc4a2694a1c1472554e59fbb55dd782991cdada8089529de20a507654e`
+(gestures 1–3), and
+`f5cbce78aecd244fefd4023f0b35a9b1d6820cbd102efe5120b6ce3f68010174`
+(hold 4). Subsequent investigation uses these local assets; no further public
+Rail request is needed for that work. The earlier INVALID remains zero evidence.
+
+Ryan then asked for a decision on when to release live. The separate
+[release-readiness record](2026-11-10-peek-release-readiness.md) recommends a
+visitor-navigation release once its first-install/rollback and mobile acceptance
+conditions pass. The experimental Rail page remains on staging and does not
+block that narrower release. No live write or main merge has been started.
+
 ## Limits
 
 Native input is browser emulation. Physical devices, true OS text scale and real

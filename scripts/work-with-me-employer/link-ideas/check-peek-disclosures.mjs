@@ -2,14 +2,16 @@
 // case starts in a fresh context with the large Online panel open and Client
 // closed. A previously exercised accordion is not an equivalent initial state.
 // Native touch below means Chromium/CDP browser events, not a physical device.
+// WebKit uses Playwright's trusted browser tap. It adds no swipe, Safari or
+// physical-device claim; the existing Chromium/CDP gesture suite stays separate.
 import { createRequire } from 'node:module';
 const require = createRequire(process.env.TS_PLAYWRIGHT_ROOT || `${process.cwd()}/package.json`);
 const playwright = require('playwright');
 const base = process.argv[2], flags = process.argv.slice(3);
 const local = ['http://localhost:8090', 'http://localhost:8091'].includes(base);
 if (!local && base !== 'https://staging39.thaisolitude.com') throw new Error('exact staging39 or isolated localhost origin only');
-if (flags.length > 1 || flags.some(flag => flag !== '--firefox')) throw new Error('only --firefox is supported');
-const engine = flags.includes('--firefox') ? 'firefox' : 'chromium';
+if (flags.length > 1 || flags.some(flag => !['--firefox', '--webkit'].includes(flag))) throw new Error('expected at most one of --firefox or --webkit');
+const engine = flags.includes('--webkit') ? 'webkit' : flags.includes('--firefox') ? 'firefox' : 'chromium';
 const targetId = 'ts-client-privacy', precedingId = 'ts-online-privacy';
 const control = `.ts-pk-rail [href="#${targetId}"]`;
 let pass = 0, fail = 0, visited = 0, captures = 0, invalid = false, browser;
@@ -43,6 +45,7 @@ const tap = async (p, selector) => {
     if (r.width < 2 || r.height < 2 || x < 0 || x >= innerWidth || y < 0 || y >= innerHeight || !node.contains(document.elementFromPoint(x, y))) throw new Error('INVALID native touch target is not visible and unobstructed');
     return { x, y };
   });
+  if (engine === 'webkit') { await p.touchscreen.tap(point.x, point.y); return; }
   const session = await p.context().newCDPSession(p);
   try {
     await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ ...point, id: 1, radiusX: 3, radiusY: 3, force: 1 }] });
@@ -63,9 +66,9 @@ const activateJump = async (p, mode) => {
   else await p.locator('.ts-pk-card .open > b').click();
 };
 const capture = async (p, label) => {
-  if (engine !== 'chromium') return;
+  if (engine !== 'chromium' && engine !== 'webkit') return;
   captures++;
-  console.log(`INLINE peek-disclosure-${label}.jpg base64:${(await p.screenshot({ type: 'jpeg', quality: 76 })).toString('base64')}`);
+  console.log(`INLINE peek-disclosure-${engine === 'webkit' ? 'webkit-' : ''}${label}.jpg base64:${(await p.screenshot({ type: 'jpeg', quality: 76 })).toString('base64')}`);
 };
 const reset = async p => {
   await p.keyboard.press('Escape');
@@ -112,6 +115,7 @@ const cancellation = async (p, kind) => {
   if (kind === 'wheel') { await p.mouse.move(point.x, point.y); await p.mouse.wheel(0, 50); }
   else if (kind === 'key') await p.keyboard.press('Shift');
   else if (kind === 'pointer') { await p.mouse.move(point.x, point.y); await p.mouse.down(); await p.mouse.up(); }
+  else if (engine === 'webkit') await p.touchscreen.tap(point.x, point.y);
   else {
     const session = await p.context().newCDPSession(p);
     try {
@@ -155,7 +159,7 @@ try {
   const cases = [];
   for (const motion of ['no-preference', 'reduce']) {
     for (const side of ['right', 'left']) {
-      if (engine === 'chromium') cases.push({ mode: 'touch', motion, side });
+      if (engine === 'chromium' || engine === 'webkit') cases.push({ mode: 'touch', motion, side });
       cases.push({ mode: 'keyboard', motion, side });
     }
     cases.push({ mode: 'mouse', motion, side: 'right' });
@@ -163,7 +167,10 @@ try {
   for (const spec of cases) {
     const label = `${spec.mode}-${spec.motion}-${spec.side}`;
     const context = await browser.newContext({
-      ...(engine === 'chromium' && spec.mode !== 'keyboard' ? playwright.devices['iPhone 13'] : { viewport: { width: 1280, height: 800 }, hasTouch: engine === 'chromium' }),
+      // Playwright rejects wheel input in mobile WebKit. Its touch landing
+      // cases use phone emulation; mouse/interruption cases use the same desktop
+      // size as keyboard, with touch enabled for the genuine interruption tap.
+      ...(engine === 'chromium' && spec.mode !== 'keyboard' || engine === 'webkit' && spec.mode === 'touch' ? playwright.devices['iPhone 13'] : { viewport: { width: 1280, height: 800 }, hasTouch: engine === 'chromium' || engine === 'webkit' }),
       deviceScaleFactor: 1, reducedMotion: spec.motion
     });
     try {
@@ -190,6 +197,7 @@ try {
       ok(`${label}: rail activation previews without moving the page or changing panels`, still(before, preview) && preview.cardPinned && preview.previousActive && !preview.active, { before, preview });
       await activateJump(p, spec.mode); await p.waitForTimeout(1600); await frame(p);
       const after = await snapshot(p);
+      if (engine === 'webkit' && spec.mode === 'touch') ok(`${label}: browser delivered trusted pointer and touch tap events`, ['pointerdown', 'pointerup', 'touchstart', 'touchend'].every(type => after.events.some(event => event.type === type && event.trusted)), after.events);
       ok(`${label}: Client remains open and Online closes after activation`, after.active && !after.previousActive && after.expanded === 'true' && after.answerHidden === 'false', after);
       ok(`${label}: heading lands about 12 px below the strip`, after.targetTop >= after.stripBottom + 8 && after.targetTop <= after.stripBottom + 18 && after.targetBottom > after.stripBottom, after);
       ok(`${label}: destination retains focus and original fragment without a history entry`, after.focus && after.hash === '#' + targetId && after.history === before.history, after);
@@ -197,13 +205,14 @@ try {
       if (spec.side === 'right' && spec.motion === 'no-preference') await capture(p, label);
       if (spec.mode === 'keyboard' && spec.motion === 'no-preference' && spec.side === 'right') await buttonOwnership(p);
       if (spec.mode === 'mouse' && spec.motion === 'no-preference') {
-        for (const kind of ['wheel', 'key', 'pointer', ...(engine === 'chromium' ? ['touch'] : [])]) await cancellation(p, kind);
+        for (const kind of ['wheel', 'key', 'pointer', ...(engine === 'chromium' || engine === 'webkit' ? ['touch'] : [])]) await cancellation(p, kind);
       }
       ok(`${label}: no JavaScript errors`, errors.length === 0, errors);
     } finally { await context.close(); }
     if (!local) await new Promise(resolve => setTimeout(resolve, 5500));
   }
-  if (engine !== 'chromium') console.log('INFO disclosure Firefox: native touch is not exercised; mouse and full keyboard event sequences only.');
+  if (engine === 'firefox') console.log('INFO disclosure Firefox: native touch is not exercised; mouse and full keyboard event sequences only.');
+  if (engine === 'webkit') console.log('INFO disclosure WebKit: trusted Playwright taps, mouse and full keyboard event sequences; no swipe, Safari, physical-device or assistive-technology claim.');
 } catch (error) {
   invalid = true;
   console.log(`INVALID Peek disclosures ${engine}: ${error.message}`);

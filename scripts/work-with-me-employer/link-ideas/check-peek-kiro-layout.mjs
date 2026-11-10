@@ -7,8 +7,8 @@ const playwright = require('playwright');
 const base = (process.argv[2] || '').replace(/\/$/, '');
 if (!['http://localhost:8090', 'http://localhost:8091', 'https://staging39.thaisolitude.com'].includes(base)) throw new Error('staging39 or isolated localhost only');
 const flags = process.argv.slice(3);
-if (flags.some(flag => flag !== '--firefox')) throw new Error('Expected only --firefox');
-const engine = flags.includes('--firefox') ? 'firefox' : 'chromium';
+if (flags.length > 1 || flags.some(flag => !['--firefox', '--webkit'].includes(flag))) throw new Error('expected at most one of --firefox or --webkit');
+const engine = flags.includes('--webkit') ? 'webkit' : flags.includes('--firefox') ? 'firefox' : 'chromium';
 const data = JSON.parse(readFileSync(new URL('./peek-data/therapeutic-massage.json', import.meta.url), 'utf8'));
 const started = Date.now();
 let pass = 0, fail = 0, captures = 0, visits = 0, browser;
@@ -25,15 +25,15 @@ const state = p => p.evaluate(() => {
 const samePage = (a, b) => Math.abs(a.x - b.x) <= 1 && Math.abs(a.y - b.y) <= 1 && a.hash === b.hash && a.history === b.history;
 const samePreview = (a, b) => samePage(a, b) && b.pinned && a.index === b.index;
 const capture = async (p, label) => {
-  if (engine !== 'chromium') return;
+  if (engine !== 'chromium' && engine !== 'webkit') return;
   captures++;
-  console.log(`INLINE kiro-layout-${label}.jpg base64:${(await p.screenshot({ type: 'jpeg', quality: 80 })).toString('base64')}`);
+  console.log(`INLINE kiro-layout-${engine === 'webkit' ? 'webkit-' : ''}${label}.jpg base64:${(await p.screenshot({ type: 'jpeg', quality: 80 })).toString('base64')}`);
 };
 const open = async (path, status = 200, options = {}) => {
   // Ration public HTML loads. Local rehearsal has no hosting challenge budget.
   if (visits && base.startsWith('https:')) await new Promise(resolve => setTimeout(resolve, 5500));
   const viewport = options.viewport || { width: 390, height: 664 };
-  const ctx = await browser.newContext({ viewport, screen: viewport, deviceScaleFactor: 1, hasTouch: true, ...(engine === 'chromium' ? { isMobile: options.mobile !== false } : {}), reducedMotion: 'reduce' });
+  const ctx = await browser.newContext({ viewport, screen: viewport, deviceScaleFactor: 1, hasTouch: true, ...(engine === 'chromium' || engine === 'webkit' ? { isMobile: options.mobile !== false } : {}), reducedMotion: 'reduce' });
   await ctx.addInitScript(hand => { localStorage.setItem('ts-pk-tip', 'seen'); localStorage.setItem('ts-pk-side', hand); }, options.side || 'right');
   const p = await ctx.newPage(), errors = [];
   p.on('pageerror', error => errors.push(error.message));
@@ -57,6 +57,9 @@ const tap = async (p, selector) => {
     await p.waitForTimeout(35);
     await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
     await cdp.detach();
+  } else if (engine === 'webkit') {
+    const at = await point(p, selector);
+    await p.touchscreen.tap(at.x, at.y);
   } else await p.locator(selector).click();
   await p.waitForTimeout(100); await settle(p);
 };
@@ -345,5 +348,5 @@ try {
 } catch (error) {
   console.log(`INVALID kiro-layout ${engine}: ${error.message}`); process.exitCode = 2;
 } finally { if (browser) await browser.close(); }
-console.log(`INFO Peek Kiro layout ${engine}: ${pass} passed, ${fail} failed; ${routes.size} actual routes, ${visits} page loads, ${captures} captures, ${Math.round((Date.now() - started) / 1000)}s; ${engine === 'chromium' ? 'simulated native touch' : 'keyboard/mouse only'}, root text enlargement is not OS text scale.`);
+console.log(`INFO Peek Kiro layout ${engine}: ${pass} passed, ${fail} failed; ${routes.size} actual routes, ${visits} page loads, ${captures} captures, ${Math.round((Date.now() - started) / 1000)}s; ${engine === 'chromium' ? 'simulated native touch' : engine === 'webkit' ? 'trusted Playwright taps and keyboard/mouse; no swipe, Safari, physical-device or assistive-technology claim' : 'keyboard/mouse only'}, root text enlargement is not OS text scale.`);
 process.exit(process.exitCode || (fail ? 1 : 0));
