@@ -12,6 +12,15 @@ research-box step. The specific research scrolling/size/switching problem,
 Privacy versus hamburger outcome, iPhone model and iOS version are being
 clarified. Do not infer a complete Safari pass or a confirmed root cause.
 
+**Next copy rehearsal is blocked pending explicit scope permission.** Automatic
+approval review rejected the `peek-visitor-release-rehearse-6` dispatch before
+execution because copying live's database and uploads into a disposable Actions
+runner exceeds the user's explicit staging39 scope. The question now asks for
+that specific additional temporary data copy; it does not seek a live write.
+No retry or workaround was attempted. HEAD and `ops/request.json` were unchanged
+after rejection; the request file still names completed copy5. No copy6 run,
+snapshot, browser result or website change exists.
+
 ## Recommended scope
 
 - The currently verified shared Peek core, with the title strip and rails on
@@ -370,6 +379,12 @@ actual WordPress cycle still remains unverified.
 The complete local source check then passed **38/0**; Ruff was unavailable
 locally and rendered-page checks require the separate copy URL. Those two skips
 do not supply browser evidence. Repository Gates and a fresh copy remain next.
+Committed source `a42620c030f8db8f043407ff8795f321803e2487` then passed
+Gates `42758745983`: **39/0**, with only the expected rendered-URL skip, at
+**04:56:27 UTC**. The primary agent and independent reviewer read the complete
+202-line log, SHA256
+`aa19783b3a64f8a92d9fb78fb0893e67d65a2925dde7628a36e1eae68c3f41a8`.
+The subsequent copy6 dispatch was rejected before execution as recorded above.
 
 1. Capture and review the exact current live navigation baseline. Existing
    staging upgrade installers require owned snippet #1380 and historical

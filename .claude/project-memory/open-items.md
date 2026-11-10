@@ -24,9 +24,12 @@ an inactive snippet. The installer incorrectly counted only published records.
 That correction passed first-draft creation and attribute initialization in copy5.
 Code correction then stopped on WordPress 7.1.4's exact `&` to `&#038;` GUID
 conversion, confirmed against official source. A narrowly specified save-phase
-expectation is under verification; full-state and rollback checks remain exact.
-No complete install or browser phase has passed in this release-copy lane; see
-the readiness record for actual attempts and copy-only journals.
+expectation passed source CI (39/0); full-state and rollback checks remain exact.
+Automatic approval review blocked copy6 before execution because the new live
+database/uploads copy needs explicit scope permission beyond staging39. That
+question is pending; no copy6 request was committed or dispatched. No complete
+install or browser phase has passed in this release-copy lane; see the readiness
+record for actual attempts and copy-only journals.
 
 **Current: input-focus core and Rail practice updates deployed on staging39.**
 See the [canonical phase record](../../docs/reviews/2026-11-09-peek-input-focus.md) for complete attempts, hashes, backups
