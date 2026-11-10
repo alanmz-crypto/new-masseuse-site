@@ -155,15 +155,20 @@ $release_astra = static function ( $old ) use ( $release_fail, $release_hash, $r
     if ( unserialize( $new['option_value'], array( 'allowed_classes' => false ) ) !== $before || $release_hash( $new ) !== $release_manifest['baseline']['astra_new_row_sha256'] ) { $release_fail( 'Astra change is not the reviewed single boolean.' ); }
     return $new;
 };
-$release_owned_ok = static function ( $record, $role, $status, $code ) use ( $release_titles, $release_notes, $release_home, $release_fail ) {
+$release_owned_ok = static function ( $record, $role, $status, $code, $initial_factory = false ) use ( $release_titles, $release_notes, $release_home, $release_fail ) {
     $p = $record['post'] ?? array(); $id = (int) ( $p['ID'] ?? 0 );
     if ( $id < 1 || ( $p['post_type'] ?? null ) !== 'wpcode' || ( $p['post_title'] ?? null ) !== $release_titles[$role] || ( $p['post_status'] ?? null ) !== $status || ( $p['post_content'] ?? null ) !== $code || ( $p['post_password'] ?? null ) !== '' || ( $p['post_parent'] ?? null ) !== '0' || ( $p['guid'] ?? null ) !== $release_home . '/?post_type=wpcode&p=' . $id ) { $release_fail( 'Owned snippet identity/code differs: ' . $role ); }
     $expected = array( '_wpcode_auto_insert' => '1', '_wpcode_priority' => '10', '_wpcode_note' => $release_notes[$role], '_wpcode_shortcode_attributes' => 'a:0:{}' ); ksort( $expected );
-    $diagnose = static function ( $reasons ) use ( $record, $role, $expected ) {
+    $meta_expected = $expected;
+    if ( $initial_factory ) {
+        if ( $status !== 'draft' ) { $release_fail( 'Initial factory profile is only valid for an inactive draft.' ); }
+        unset( $meta_expected['_wpcode_shortcode_attributes'] );
+    }
+    $diagnose = static function ( $reasons ) use ( $record, $role, $expected, $meta_expected ) {
         $describe = static fn( $value ) => array( 'type' => $value === null ? 'null' : 'string', 'bytes' => $value === null ? null : strlen( $value ), 'sha256' => $value === null ? null : hash( 'sha256', $value ) );
         $groups = array(); foreach ( $record['meta'] as $row ) { $groups[(string) $row['meta_key']][] = $describe( $row['meta_value'] ); }
         $known = $unknown = array();
-        foreach ( $expected as $key => $value ) { $known[] = array( 'key' => $key, 'expected_count' => 1, 'actual_count' => count( $groups[$key] ?? array() ), 'expected' => $describe( $value ), 'actual' => $groups[$key] ?? array() ); unset( $groups[$key] ); }
+        foreach ( $expected as $key => $value ) { $known[] = array( 'key' => $key, 'expected_count' => array_key_exists( $key, $meta_expected ) ? 1 : 0, 'actual_count' => count( $groups[$key] ?? array() ), 'expected' => array_key_exists( $key, $meta_expected ) ? $describe( $value ) : null, 'actual' => $groups[$key] ?? array() ); unset( $groups[$key] ); }
         foreach ( $groups as $key => $values ) { $unknown[] = array( 'key_sha256' => hash( 'sha256', (string) $key ), 'count' => count( $values ), 'values' => $values ); }
         $relationships = array();
         foreach ( $record['relationships'] as $row ) {
@@ -182,8 +187,8 @@ $release_owned_ok = static function ( $record, $role, $status, $code ) use ( $re
         $meta[$row['meta_key']] = $row['meta_value'];
     }
     ksort( $meta );
-    if ( $meta !== $expected || count( $record['relationships'] ) !== 2 ) {
-        $reasons = array(); if ( $meta !== $expected ) { $reasons[] = 'metadata'; } if ( count( $record['relationships'] ) !== 2 ) { $reasons[] = 'relationship-count'; }
+    if ( $meta !== $meta_expected || count( $record['relationships'] ) !== 2 ) {
+        $reasons = array(); if ( $meta !== $meta_expected ) { $reasons[] = 'metadata'; } if ( count( $record['relationships'] ) !== 2 ) { $reasons[] = 'relationship-count'; }
         $diagnose( $reasons ); $release_fail( 'Owned metadata/relationships differ: ' . $role );
     }
     foreach ( $record['relationships'] as $i => $row ) { if ( $row !== array( 'object_id' => (string) $id, 'term_order' => '0', 'term_taxonomy_id' => (string) ( 9 + $i ) ) ) { $diagnose( array( 'relationship-row' ) ); $release_fail( 'Owned relationship differs.' ); } }
@@ -298,8 +303,11 @@ try {
             if ( ! is_int( $id ) || $id < 1 || isset( $s['old']['witnesses']['posts'][$id] ) || isset( $s['old']['records'][$id] ) || ( $record['post']['ID'] ?? null ) !== (string) $id ) { $release_fail( 'Snapshot owned ID was not newly created.' ); }
             $status = $record['post']['post_status'] ?? null; $code = $record['post']['post_content'] ?? null;
             if ( ! in_array( $status, $release_incomplete ? array( 'draft', 'publish' ) : array( 'publish' ), true ) || ! in_array( $code, $status === 'draft' ? array( $release_codes[$role], wp_unslash( $release_codes[$role] ) ) : array( $release_codes[$role] ), true ) ) { $release_fail( 'Snapshot frozen code/activation phase differs.' ); }
-            $release_owned_ok( $record, $role, $status, $code );
-            $uncorrected = $code !== $release_codes[$role];
+            $initial_factory = $release_incomplete && $status === 'draft' && ! in_array( '_wpcode_shortcode_attributes', array_column( $record['meta'], 'meta_key' ), true );
+            $release_owned_ok( $record, $role, $status, $code, $initial_factory );
+            // A three-key factory draft cannot be followed by another role or
+            // cleanup/publication, even if its initial code needed no unslashing.
+            $uncorrected = $initial_factory || $code !== $release_codes[$role];
             if ( $status === 'draft' ) { $draft_seen = true; } else { if ( $draft_seen ) { $release_fail( 'Snapshot activation order differs.' ); } $published++; }
         }
         $cleaned = array( 'css' => $target['records'][29]['post']['post_content'] !== $s['old']['records'][29]['post']['post_content'], 'astra' => $release_hash( $target['options']['astra-settings'] ) !== $release_hash( $s['old']['options']['astra-settings'] ) );
@@ -377,10 +385,31 @@ try {
             $record = $actual['owned'][$role]; $id = (int) ( $record['post']['ID'] ?? 0 );
             $code = $record['post']['post_content'] ?? null;
             if ( ! in_array( $code, array( $release_codes[$role], wp_unslash( $release_codes[$role] ) ), true ) || ( $result !== null && $result !== $id ) || isset( $release_old['witnesses']['posts'][$id] ) || isset( $release_old['records'][$id] ) || in_array( $id, $release_ids, true ) ) { $release_fail( 'Created draft is not an exact newly owned record.' ); }
-            $release_owned_ok( $record, $role, 'draft', $code );
+            $release_owned_ok( $record, $role, 'draft', $code, true );
             $owned = $release_owned; $owned[$role] = $record;
             $release_equal( $actual, $release_expected( $release_old, $owned, $release_cleaned ), 'Inactive creation full state' );
             $release_owned = $owned; $release_ids[$role] = $id;
+        } );
+        // Actual copy2 proved WPCode's inactive factory omits this metadata.
+        // Normalize only our just-journalled exact three-key draft. A unique
+        // insert must return its new meta ID; an unreturned row is never adopted.
+        $normalization_meta_id = null;
+        $release_step( static function () use ( $role, &$release_ids, &$normalization_meta_id, $release_fail ) {
+            $normalization_meta_id = add_post_meta( $release_ids[$role], '_wpcode_shortcode_attributes', array(), true );
+            if ( ! is_int( $normalization_meta_id ) || $normalization_meta_id < 1 ) { $release_fail( 'Unique attribute initialization did not return its new metadata ID.' ); }
+            return $normalization_meta_id;
+        }, static function ( $actual, $result ) use ( $role, &$release_owned, &$release_ids, &$normalization_meta_id, $release_owned_ok, $release_old, &$release_cleaned, $release_expected, $release_equal, $release_fail ) {
+            if ( ! is_int( $normalization_meta_id ) || $normalization_meta_id < 1 || $result !== $normalization_meta_id ) { $release_fail( 'Unreturned attribute row is not an owned initialization result.' ); }
+            $before = $release_owned[$role];
+            if ( $normalization_meta_id <= max( array_map( 'intval', array_column( $before['meta'], 'meta_id' ) ) ) ) { $release_fail( 'Initialization metadata ID is not newly allocated.' ); }
+            $expected = $before;
+            $expected['meta'][] = array( 'meta_id' => (string) $normalization_meta_id, 'meta_key' => '_wpcode_shortcode_attributes', 'meta_value' => 'a:0:{}', 'post_id' => (string) $release_ids[$role] );
+            $record = $actual['owned'][$role];
+            $release_equal( $record, $expected, 'Attribute initialization preserves original raw rows, post and relationships' );
+            $release_owned_ok( $record, $role, 'draft', $before['post']['post_content'] );
+            $owned = $release_owned; $owned[$role] = $record;
+            $release_equal( $actual, $release_expected( $release_old, $owned, $release_cleaned ), 'Attribute initialization full state' );
+            $release_owned = $owned;
         } );
         if ( $release_owned[$role]['post']['post_content'] !== $release_codes[$role] ) {
             $clocks = array( current_time( 'mysql' ), current_time( 'mysql', true ) );

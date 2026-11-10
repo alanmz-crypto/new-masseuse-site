@@ -126,9 +126,9 @@ The provisional first-install package now lives in
 `scripts/work-with-me-employer/link-ideas/peek-release/`. It accepts only exact
 `http://localhost:8090`; no staging/live installer or live request is enabled.
 Independent source review cleared installer SHA256
-`c4ae2186bfc470023ec4305dc41c7c8e658a87fb47e84e401516221c5cf5399e`
-for isolated rehearsal. Its pinned-PHP SQLite/WordPress API model passed **1,085
-checks**, including **106 injected write-boundary failures**. The separate
+`63dc97c39e551349f2b3c79d1e1778d387cae9bc496ef8ffa1bc482332b43d5b`
+for isolated rehearsal. Its pinned-PHP SQLite/WordPress API model passed **1,325
+checks**, including **138 injected write-boundary failures**. The separate
 rehearsal evidence tests passed **135 controls** and detected seventeen deliberate
 guard removals, including network and relay orchestration mutations. Adapter/profile
 tests passed **46 controls**, then accepted the
@@ -190,6 +190,38 @@ were reviewed. Artifact SHA256 is
 All eleven retained files are native logs, public navigation signatures,
 inventory and hash fingerprints; no private snapshot, SQL, source files or
 browser output was exported. No live or staging store changed.
+
+Diagnostic source `5b70d7d6ae55e24afaa66a35bc2bf44cdc56d94e` passed
+Gates `42750721428` at 03:40:08 UTC: **39/0**, one expected rendered-URL skip;
+the complete job log was independently read. Fresh request
+`peek-visitor-release-rehearse-2`, run `42751049392`, source
+`0334bc564ff3156cd26220e11c46076d0a17f717`, finished **03:43:48 UTC, FAIL**.
+The diagnostic proves that the first inactive Thai draft #1339 has the exact
+three configured metadata values and taxonomy relationships #9/#10, with no
+unknown metadata. Only `_wpcode_shortcode_attributes` is absent. This identifies
+the first guard's failure; full post-creation state comparison was not reached.
+Its copy-only journal was
+`/backups/peek-release-before-20261110-034344-cf52ca44.json`. No browser phase ran.
+
+The complete report and checksum-verified 10,141-byte artifact were reviewed;
+artifact SHA256 is
+`f0fd19c54657b3edb2b1cf9235799c47af9b8d7ffe49a0f68c03b454b2fc4cb7`.
+The baseline fingerprint, all 15 original navigation signatures and inventory
+are byte-identical to copy 1. Each run's warm/preflight hashes match internally;
+their aggregate hashes differ across copies, which these retained hash-only
+records do not explain. Comparisons remain bound to each copy's own baseline.
+
+The next change was explained before implementation: recognize and journal only
+that exact three-key new inactive draft, uniquely add the approved empty-array
+attribute field, and verify all old rows plus the returned new metadata ID.
+Strict four-key records remain required before correction/activation and in
+completed snapshots. An unreturned or concurrent insertion must remain unknown
+and stop recovery. No visitor runtime or wording change follows from this fix.
+This initialization is now implemented and independently reviewed. The expanded
+fixture uses the actual three-key factory profile; its 1,325 checks distinguish
+verified recovery from refused unreturned-ID writes, preserve all old raw rows,
+and reject any partial journal that skips initialization. A fresh real-copy run
+is still required.
 
 1. Capture and review the exact current live navigation baseline. Existing
    staging upgrade installers require owned snippet #1380 and historical

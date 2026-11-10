@@ -157,14 +157,28 @@ class WPCode_Snippet {
         $row = fixture_post( array( 'post_title' => $this->settings['title'], 'post_content' => wp_unslash( $this->settings['code'] ), 'post_type' => 'wpcode', 'post_status' => $active ? 'publish' : 'draft', 'post_date' => current_time( 'mysql' ), 'post_date_gmt' => '0000-00-00 00:00:00', 'post_modified' => current_time( 'mysql' ), 'post_modified_gmt' => current_time( 'mysql', true ), 'post_name' => '' ) );
         unset( $row['ID'] ); $id = fixture_insert( 'wp_posts', $row );
         fixture_update( 'wp_posts', 'ID', $id, array( 'guid' => home_url() . '/?post_type=wpcode&p=' . $id ) );
-        foreach ( array( '_wpcode_auto_insert' => '1', '_wpcode_priority' => (string) ( $this->settings['priority'] ?? 10 ), '_wpcode_note' => $this->settings['note'], '_wpcode_shortcode_attributes' => 'a:0:{}' ) as $key => $value ) {
+        foreach ( array( '_wpcode_auto_insert' => '1', '_wpcode_priority' => (string) ( $this->settings['priority'] ?? 10 ), '_wpcode_note' => $this->settings['note'] ) as $key => $value ) {
             fixture_insert( 'wp_postmeta', array( 'post_id' => $id, 'meta_key' => $key, 'meta_value' => $value ) );
         }
         foreach ( array( 9, 10 ) as $term ) { fixture_insert( 'wp_term_relationships', array( 'object_id' => $id, 'term_taxonomy_id' => $term, 'term_order' => '0' ) ); }
         if ( $active ) { recount( $id, 1 ); }
-        $GLOBALS['created_observations'][] = array( 'id' => $id, 'active' => $active, 'content' => $row['post_content'] );
+        $GLOBALS['created_observations'][] = array( 'id' => $id, 'active' => $active, 'content' => $row['post_content'], 'meta' => rows( 'postmeta', 'post_id', $id, 'meta_id' ) );
         event( 'create', $id, true ); list( $forced, $value ) = result_override( 'create', 'after' ); return $forced ? $value : $id;
     }
+}
+function add_post_meta( $post_id, $meta_key, $meta_value, $unique = false ) {
+    // Copy rehearsal 2 observed three initial WPCode keys; this models the
+    // separate WordPress normalization call, including [] -> a:0:{}.
+    $id = abs( (int) $post_id ); event( 'normalize-meta', $id );
+    list( $forced, $value ) = result_override( 'normalize-meta', 'before' ); if ( $forced ) { return $value; }
+    if ( ! $id || ! $meta_key ) { return false; }
+    $key = wp_unslash( $meta_key ); $value = wp_unslash( $meta_value );
+    if ( $unique && fixture_sql( 'SELECT COUNT(*) FROM wp_postmeta WHERE post_id=? AND meta_key=?', array( $id, $key ) )->fetchColumn() !== '0' ) { return false; }
+    $before = rows( 'postmeta', 'post_id', $id, 'meta_id' );
+    $stored = is_array( $value ) || is_object( $value ) ? serialize( $value ) : (string) $value;
+    $meta_id = fixture_insert( 'wp_postmeta', array( 'post_id' => $id, 'meta_key' => $key, 'meta_value' => $stored ) );
+    $GLOBALS['normalization_observations'][] = array( 'id' => $id, 'key' => $key, 'value' => $meta_value, 'unique' => $unique, 'meta_id' => $meta_id, 'before' => $before, 'after' => rows( 'postmeta', 'post_id', $id, 'meta_id' ) );
+    event( 'normalize-meta', $id, true ); list( $forced, $value ) = result_override( 'normalize-meta', 'after' ); return $forced ? $value : $meta_id;
 }
 function sanitize_title( $value ) { return trim( strtolower( preg_replace( '/[^a-z0-9]+/i', '-', $value ) ), '-' ); }
 function wp_unique_post_slug( $slug, $id, $status, $type, $parent ) {
@@ -186,7 +200,7 @@ function wp_update_post( $values, $wp_error = false ) {
     $values['post_modified'] = current_time( 'mysql' ); $values['post_modified_gmt'] = current_time( 'mysql', true );
     fixture_update( 'wp_posts', 'ID', $id, $values );
     if ( isset( $values['post_status'] ) && $old['post_status'] !== $values['post_status'] ) { recount( $id, $values['post_status'] === 'publish' ? 1 : -1 ); }
-    if ( $name === 'activate' ) { $GLOBALS['activation_observations'][] = array( 'id' => $id, 'content' => $old['post_content'] ); }
+    if ( $name === 'activate' ) { $GLOBALS['activation_observations'][] = array( 'id' => $id, 'content' => $old['post_content'], 'meta' => rows( 'postmeta', 'post_id', $id, 'meta_id' ) ); }
     event( $name, $id, true ); list( $forced, $value ) = result_override( $name, 'after' ); return $forced ? $value : $id;
 }
 function wp_delete_post( $id, $force = false ) {
@@ -220,7 +234,7 @@ function restore_state( $state ) {
         fixture_sql( "DELETE FROM wp_$table" );
         foreach ( $rows as $row ) { fixture_insert( "wp_$table", $row ); }
     }
-    $GLOBALS['events'] = $GLOBALS['event_counts'] = $GLOBALS['failures'] = $GLOBALS['created_observations'] = $GLOBALS['activation_observations'] = $GLOBALS['save_observations'] = array(); $GLOBALS['clock'] = '2026-11-10 03:00:00'; $GLOBALS['encode_failure'] = null; $GLOBALS['result_overrides'] = array(); $GLOBALS['read_hook'] = null;
+    $GLOBALS['events'] = $GLOBALS['event_counts'] = $GLOBALS['failures'] = $GLOBALS['created_observations'] = $GLOBALS['activation_observations'] = $GLOBALS['save_observations'] = $GLOBALS['normalization_observations'] = array(); $GLOBALS['clock'] = '2026-11-10 03:00:00'; $GLOBALS['encode_failure'] = null; $GLOBALS['result_overrides'] = array(); $GLOBALS['read_hook'] = null;
 }
 function create_schema() {
     $columns = array_keys( fixture_post() );
@@ -381,13 +395,22 @@ check( count( $ids ) === 5 && count( array_unique( $ids ) ) === 5 && isset( $ids
 check( ( fileperms( $path ) & 0777 ) === 0600 && dirname( $path ) === "$testdir/backups", 'snapshot stored privately outside webroot' );
 check( $applied_marker['snapshot_sha256'] === hash_file( 'sha256', $path ) && $applied_marker['manifest_sha256'] === hash_file( 'sha256', "$package/manifest.json" ), 'success marker binds actual snapshot and manifest bytes' );
 check( count( $created_observations ) === 5 && array_filter( $created_observations, static fn( $record ) => $record['active'] ) === array(), 'all five snippets created inactive' );
+check( count( $normalization_observations ) === 5, 'all five three-key drafts receive one explicit metadata normalization' );
+foreach ( $normalization_observations as $i => $normalization ) {
+    $created = $created_observations[$i];
+    check( array_column( $created['meta'], 'meta_key' ) === array( '_wpcode_auto_insert', '_wpcode_priority', '_wpcode_note' ), 'initial WPCode metadata matches the actual three-key copy evidence' );
+    check( $normalization['id'] === $created['id'] && $normalization['key'] === '_wpcode_shortcode_attributes' && $normalization['value'] === array() && $normalization['unique'] === true, 'normalization adds unique empty-array attributes to the currently created draft only' );
+    $new_rows = array_values( array_filter( $normalization['after'], static fn( $row ) => (int) $row['meta_id'] === $normalization['meta_id'] ) );
+    $old_rows = array_values( array_filter( $normalization['after'], static fn( $row ) => (int) $row['meta_id'] !== $normalization['meta_id'] ) );
+    check( $normalization['before'] === $created['meta'] && $old_rows === $created['meta'] && count( $new_rows ) === 1 && $new_rows[0]['post_id'] === (string) $created['id'] && $new_rows[0]['meta_value'] === 'a:0:{}', 'normalization preserves every original metadata ID/raw byte and adds exactly one serialized empty array' );
+}
 check( count( $save_observations ) >= 5 && array_filter( $save_observations, static fn( $record ) => $record['edit_date'] !== true ) === array(), 'all snippet corrections/activations explicitly preserve creation dates across advancing local/GMT clocks' );
 check( count( $activation_observations ) === 5 && end( $activation_observations )['id'] === $ids['core'], 'data activated before shared core' );
 foreach ( $ids as $role => $id ) {
     $record = row( 'posts', 'ID', $id ); $spec = $role === 'core' ? $manifest['payloads']['core'] : $manifest['payloads']['data'][$role];
     check( $record['post_type'] === 'wpcode' && $record['post_status'] === 'publish' && hash( 'sha256', $record['post_content'] ) === $spec['code_sha256'], "$role active with exact approved stored bytes" );
     $observed = array_values( array_filter( $activation_observations, static fn( $record ) => $record['id'] === $id ) );
-    check( count( $observed ) === 1 && hash( 'sha256', $observed[0]['content'] ) === $spec['code_sha256'], "$role corrected before activation" );
+    check( count( $observed ) === 1 && count( $observed[0]['meta'] ) === 4 && hash( 'sha256', $observed[0]['content'] ) === $spec['code_sha256'], "$role corrected before activation" );
 }
 $expected = $original;
 foreach ( $expected['posts'] as &$post ) { if ( $post['ID'] === '29' ) { $post['post_content'] = str_replace( file_get_contents( "$source/payload/reading-progress.css" ), '', $post['post_content'] ); } } unset( $post );
@@ -479,14 +502,19 @@ foreach ( array( 'old-meta', 'old-css-date', 'new-meta', 'new-date', 'foreign-id
 
 // Fail before and after every actual API/SQL boundary used by successful apply.
 $fault_cases = 0;
-foreach ( array( 'create', 'correct-code', 'activate', 'css-cas', 'astra-cas', 'cache-refresh' ) as $operation ) {
+foreach ( array( 'create', 'normalize-meta', 'correct-code', 'activate', 'css-cas', 'astra-cas', 'cache-refresh' ) as $operation ) {
     foreach ( array( 'before', 'after' ) as $side ) {
         $key = "$operation:$side";
         for ( $at = 1; $at <= ( $successful_event_counts[$key] ?? 0 ); $at++ ) {
-            restore_state( $original ); $failures = array( array( 'key' => $key, 'at' => $at ) ); $caught = null;
+            restore_state( $original ); $fault_state = null;
+            $failures = array( array( 'key' => $key, 'at' => $at, 'change' => static function () use ( &$fault_state ) { $fault_state = all_state(); } ) ); $caught = null;
             try { invoke( array( 'apply' ) ); } catch ( Refusal_Error $error ) { $caught = $error; }
-            check( $caught !== null && str_contains( $caught->getMessage(), 'Synthetic ' . $key ), "$key occurrence $at fault reached and reported" );
-            check( all_state() === $original, "$key occurrence $at restores all exact original rows" );
+            check( $caught !== null && $fault_state !== null && ( $event_counts[$key] ?? 0 ) >= $at, "$key occurrence $at fault reached and reported" );
+            if ( $operation === 'normalize-meta' && $side === 'after' ) {
+                check( all_state() === $fault_state && ( $event_counts['delete:before'] ?? 0 ) === 0 && str_contains( $caught->getMessage(), 'recovery stopped' ), "$key occurrence $at cannot adopt an inserted row without the returned metadata ID" );
+                check( preg_match( '/Snapshot: (.+)$/', $caught->getMessage(), $fault_path ) === 1, 'unreturned metadata insertion names its actual incomplete journal' );
+                refusal( array( 'rollback', $fault_path[1] ), "$key occurrence $at unknown insertion is outside the recorded journal" );
+            } else { check( all_state() === $original, "$key occurrence $at restores all exact original rows" ); }
             check( ! str_contains( implode( '\n', $logs ), 'RELEASE-SNAPSHOT ' ), "$key occurrence $at emits no success marker" );
             $fault_cases++;
         }
@@ -536,14 +564,18 @@ foreach ( array( 'created-code', 'source-meta', 'active-meta', 'css-race', 'astr
 }
 
 // API error returns and SQL zero/error/wrong-row returns are distinct from exceptions.
-foreach ( array( 'create', 'correct-code', 'activate', 'css-cas', 'astra-cas' ) as $operation ) {
+foreach ( array( 'create', 'normalize-meta', 'correct-code', 'activate', 'css-cas', 'astra-cas' ) as $operation ) {
     foreach ( array( 'before', 'after' ) as $side ) {
-        $values = in_array( $operation, array( 'css-cas', 'astra-cas' ), true ) ? array( false, 0, 2 ) : array( 0, new WP_Error( 'synthetic', 'Synthetic API failure' ) );
+        $values = in_array( $operation, array( 'css-cas', 'astra-cas' ), true ) ? array( false, 0, 2 ) : ( $operation === 'normalize-meta' ? array( false, 0, true, 'invalid', 999999, new WP_Error( 'synthetic', 'Synthetic API failure' ) ) : array( 0, new WP_Error( 'synthetic', 'Synthetic API failure' ) ) );
         foreach ( $values as $value ) {
             restore_state( $original ); $result_overrides = array( array( 'operation' => $operation, 'side' => $side, 'value' => $value ) ); $caught = null;
             try { invoke( array( 'apply' ) ); } catch ( Refusal_Error $error ) { $caught = $error; }
             check( $caught !== null && $result_overrides === array(), "$operation $side invalid return was exercised" );
-            check( all_state() === $original, "$operation $side invalid return leaves/restores exact original state" );
+            if ( $operation === 'normalize-meta' && $side === 'after' ) {
+                check( ( $event_counts['delete:before'] ?? 0 ) === 0 && str_contains( $caught->getMessage(), 'recovery stopped' ) && count( $normalization_observations ) === 1, 'invalid returned metadata ID never authorizes adoption or deletion of the inserted row' );
+                $observed = $normalization_observations[0];
+                check( rows( 'postmeta', 'post_id', $observed['id'], 'meta_id' ) === $observed['after'] && row( 'posts', 'ID', $observed['id'] )['post_status'] === 'draft', 'unproven metadata insertion stays intact on an inactive draft' );
+            } else { check( all_state() === $original, "$operation $side invalid return leaves/restores exact original state" ); }
             $fault_cases++;
         }
     }
@@ -577,6 +609,57 @@ foreach ( array( 'create', 'correct-code', 'css-cas', 'astra-cas', 'activate', '
         $fault_cases += 2;
     }
 }
+// A returned normalization ID is accepted and journalled before the next step.
+// Fail that next step, then fail automatic deletion, to exercise manual recovery
+// of four-key metadata whose PHP may still need its separate correction.
+for ( $at = 1; $at <= 5; $at++ ) {
+    restore_state( $original );
+    $failures = array(
+        array( 'key' => 'normalize-meta:after', 'at' => $at, 'throw' => false, 'change' => static function () {
+            $reads = 0;
+            $GLOBALS['read_hook'] = static function ( $query ) use ( &$reads ) {
+                if ( $query === 'SELECT * FROM wp_posts ORDER BY ID' && ++$reads === 2 ) { $GLOBALS['read_hook'] = null; throw new RuntimeException( 'Synthetic failure after returned normalization ID' ); }
+            };
+        } ),
+        array( 'key' => 'delete:before', 'at' => 1 ),
+    );
+    $caught = null; try { invoke( array( 'apply' ) ); } catch ( Refusal_Error $error ) { $caught = $error; }
+    check( $caught !== null && str_contains( $caught->getMessage(), 'Synthetic failure after returned normalization ID' ) && str_contains( $caught->getMessage(), 'recovery stopped' ) && preg_match( '/Snapshot: (.+)$/', $caught->getMessage(), $found ) === 1, "normalization $at accepted ID has a recoverable journal after interrupted recovery" );
+    $partial_path = $found[1]; $partial_bytes = file_get_contents( $partial_path ); $partial_snapshot = json_decode( $partial_bytes, true, 512, JSON_THROW_ON_ERROR ); $partial_state = all_state();
+    $role = array_merge( $manifest['summary_slugs'], array( 'core' ) )[$at - 1];
+    $record = $partial_snapshot['journal']['owned'][$role]; $observation = $normalization_observations[$at - 1];
+    check( count( $record['meta'] ) === 4 && stable( $record['meta'] ) === stable( $observation['after'] ) && $partial_snapshot['complete'] === false && $partial_snapshot['journal_sha256'] === digest( $partial_snapshot['journal'] ), "normalization $at journal records exactly the returned new row and unchanged old IDs" );
+    if ( $at === 1 ) { check( hash( 'sha256', $record['post']['post_content'] ) !== $manifest['payloads']['data'][$role]['code_sha256'], 'normalized Thai journal still has uncorrected PHP, proving a distinct recoverable intermediate phase' ); }
+    refusal( array( 'verify', $partial_path ), "normalization $at incomplete journal is not a complete release" );
+    fixture_insert( 'wp_postmeta', array( 'post_id' => 1160, 'meta_key' => 'after-normalization', 'meta_value' => 'SYNTHETIC_PRIVATE_AFTER_NORMALIZATION' ) );
+    refusal( array( 'rollback', $partial_path ), "normalization $at journal refuses an independent edit" );
+    restore_state( $partial_state ); invoke( array( 'rollback', $partial_path ) );
+    check( all_state() === $original && file_get_contents( $partial_path ) === $partial_bytes && ! str_contains( implode( '\n', $logs ), 'RELEASE-SNAPSHOT ' ), "normalization $at accepted four-key journal restores exact original without changing evidence" );
+    $partials["normalized:$at"] = array( 'snapshot' => $partial_snapshot, 'state' => $partial_state ); $fault_cases += 2;
+}
+// Remove normalization from an earlier role whose PHP is already correct. A
+// following role must be refused because of the missing key, not PHP escaping.
+restore_state( $partials['create:2']['state'] ); $forged = $partials['create:2']['snapshot'];
+$forged['journal']['owned']['thai-massage']['meta'] = array_values( array_filter( $forged['journal']['owned']['thai-massage']['meta'], static fn( $row ) => $row['meta_key'] !== '_wpcode_shortcode_attributes' ) );
+check( hash( 'sha256', $forged['journal']['owned']['thai-massage']['post']['post_content'] ) === $manifest['payloads']['data']['thai-massage']['code_sha256'], 'normalization-order forgery retains exact corrected PHP' );
+$forged['journal_sha256'] = digest( $forged['journal'] );
+$error = refusal( array( 'rollback', snapshot_write( $forged ) ), 'earlier three-key draft followed by another role' );
+check( str_contains( $error->getMessage(), 'creation/correction order differs' ), 'missing normalization is a creation-prefix barrier even with corrected PHP' );
+foreach ( array( 'css', 'astra', 'publish' ) as $phase ) {
+    restore_state( $partials['create:5']['state'] ); $forged = $partials['create:5']['snapshot'];
+    $forged['journal']['owned']['core']['post']['post_content'] = substr( file_get_contents( "$source/payload/core.php" ), 6 );
+    check( count( $forged['ids'] ) === 5 && count( $forged['journal']['owned']['core']['meta'] ) === 3, "$phase forgery has all five roles and exact three-key final draft" );
+    $forged['journal']['records'][29]['post']['post_content'] = str_replace( file_get_contents( "$source/payload/reading-progress.css" ), '', $forged['old']['records'][29]['post']['post_content'] );
+    if ( $phase !== 'css' ) {
+        $settings = unserialize( $forged['journal']['options']['astra-settings']['option_value'], array( 'allowed_classes' => false ) ); $settings['scroll-to-top-enable'] = false;
+        $forged['journal']['options']['astra-settings']['option_value'] = serialize( $settings );
+    }
+    if ( $phase === 'publish' ) { $forged['journal']['owned']['thai-massage']['post']['post_status'] = 'publish'; }
+    $forged['journal_sha256'] = digest( $forged['journal'] );
+    $error = refusal( array( 'rollback', snapshot_write( $forged ) ), "$phase before final draft normalization" );
+    check( str_contains( $error->getMessage(), 'cleanup/activation phase differs' ), "$phase cannot bypass final three-key normalization even when PHP is correct" );
+}
+
 $partial_base = $partials['css-cas:1'];
 foreach ( array( 'creation-gap', 'uncorrected-early-draft', 'activation-gap', 'astra-before-css', 'activation-before-cleanup', 'hash' ) as $mutation ) {
     restore_state( $partial_base['state'] ); $forged = $partial_base['snapshot']; $role = 'thai-massage';
@@ -644,7 +727,7 @@ $failures = array( array( 'key' => 'create:after', 'at' => 1, 'throw' => false,
     } ) );
 $caught = null; try { invoke( array( 'apply' ) ); } catch ( Refusal_Error $error ) { $caught = $error; }
 check( $caught !== null && str_contains( $caught->getMessage(), 'Snapshot' ), 'journal edit during next-step capture detected' );
-check( ( $event_counts['create:before'] ?? 0 ) === 1 && ( $event_counts['correct-code:before'] ?? 0 ) === 0 && ( $event_counts['activate:before'] ?? 0 ) === 0, 'journal edit permits no subsequent forward database write' );
+check( ( $event_counts['create:before'] ?? 0 ) === 1 && ( $event_counts['normalize-meta:before'] ?? 0 ) === 0 && ( $event_counts['correct-code:before'] ?? 0 ) === 0 && ( $event_counts['activate:before'] ?? 0 ) === 0, 'journal edit permits no subsequent forward database write' );
 check( all_state() === $original && file_get_contents( $changed_path ) === $changed_bytes, 'known in-memory recovery restores database while retaining changed journal bytes' );
 // Even an edit occurring during derived-cache refresh prevents a stale success marker.
 restore_state( $applied ); $bound = snapshot_write( $snapshot ); $before_bytes = file_get_contents( $bound );
@@ -655,12 +738,13 @@ check( ! str_contains( implode( '\n', $logs ), 'RELEASE-SNAPSHOT ' ), 'late roll
 
 // Rehearsal diagnostics identify rejected storage shapes without exposing values.
 // These are synthetic failures; they do not identify the actual WPCode copy's shape.
-foreach ( array( 'extra-meta', 'missing-meta', 'changed-meta', 'null-meta', 'null-first-duplicate', 'extra-relationship', 'missing-relationship', 'changed-relationship', 'private-relationship' ) as $mutation ) {
+foreach ( array( 'extra-meta', 'missing-meta', 'changed-meta', 'null-meta', 'null-first-duplicate', 'premature-attributes', 'extra-relationship', 'missing-relationship', 'changed-relationship', 'private-relationship' ) as $mutation ) {
     restore_state( $original ); $unexpected_state = null; $unexpected_id = null; $expected_diagnostic = null;
     $private_key = 'SYNTHETIC_PRIVATE_UNKNOWN_META_KEY'; $private_value = 'SYNTHETIC_PRIVATE_UNKNOWN_META_VALUE';
     $failures = array( array( 'key' => 'create:after', 'at' => 1, 'throw' => false,
         'change' => static function ( $id ) use ( $mutation, &$unexpected_state, &$unexpected_id, &$expected_diagnostic, $private_key, $private_value ) {
             $unexpected_id = $id; $before_meta = rows( 'postmeta', 'post_id', $id, 'meta_id' );
+            if ( $mutation === 'premature-attributes' ) { fixture_insert( 'wp_postmeta', array( 'post_id' => $id, 'meta_key' => '_wpcode_shortcode_attributes', 'meta_value' => 'a:0:{}' ) ); }
             if ( $mutation === 'extra-meta' ) { fixture_insert( 'wp_postmeta', array( 'post_id' => $id, 'meta_key' => $private_key, 'meta_value' => $private_value ) ); }
             if ( $mutation === 'missing-meta' ) { fixture_sql( 'DELETE FROM wp_postmeta WHERE post_id=? AND meta_key=?', array( $id, '_wpcode_priority' ) ); }
             if ( $mutation === 'changed-meta' || $mutation === 'null-meta' ) { fixture_sql( 'UPDATE wp_postmeta SET meta_value=? WHERE post_id=? AND meta_key=?', array( $mutation === 'null-meta' ? null : $private_value, $id, '_wpcode_priority' ) ); }
@@ -679,7 +763,7 @@ foreach ( array( 'extra-meta', 'missing-meta', 'changed-meta', 'null-meta', 'nul
     $caught = null; try { invoke( array( 'apply' ) ); } catch ( Refusal_Error $error ) { $caught = $error; }
     check( $caught !== null && $unexpected_state !== null && str_contains( $caught->getMessage(), 'recovery stopped' ), "$mutation diagnostic accompanies explicit unknown-state refusal" );
     check( all_state() === $unexpected_state && row( 'posts', 'ID', $unexpected_id )['post_status'] === 'draft', "$mutation retains the exact unexpected inactive draft and every external row" );
-    check( ( $event_counts['create:before'] ?? 0 ) === 1 && ( $event_counts['correct-code:before'] ?? 0 ) === 0 && ( $event_counts['activate:before'] ?? 0 ) === 0 && ( $event_counts['delete:before'] ?? 0 ) === 0 && ( $event_counts['css-cas:before'] ?? 0 ) === 0 && ( $event_counts['astra-cas:before'] ?? 0 ) === 0, "$mutation causes no subsequent correction, activation, deletion or settings write" );
+    check( ( $event_counts['create:before'] ?? 0 ) === 1 && ( $event_counts['normalize-meta:before'] ?? 0 ) === 0 && ( $event_counts['correct-code:before'] ?? 0 ) === 0 && ( $event_counts['activate:before'] ?? 0 ) === 0 && ( $event_counts['delete:before'] ?? 0 ) === 0 && ( $event_counts['css-cas:before'] ?? 0 ) === 0 && ( $event_counts['astra-cas:before'] ?? 0 ) === 0, "$mutation causes no subsequent correction, activation, deletion or settings write" );
     $output = $caught->getMessage() . implode( "\n", $logs );
     check( ! str_contains( $output, 'SYNTHETIC_PRIVATE' ) && ! str_contains( $output, $private_key ) && ! str_contains( $output, $private_value ), "$mutation diagnostics contain no private metadata key/value bytes" );
     check( ! str_contains( $output, 'RELEASE-SNAPSHOT ' ), "$mutation diagnostic emits no release success marker" );
@@ -693,12 +777,13 @@ foreach ( array( 'extra-meta', 'missing-meta', 'changed-meta', 'null-meta', 'nul
     check( $diagnostic['role'] === 'thai-massage' && $diagnostic['reasons'] === array( $reason ), "$mutation diagnosis names the exact refused shape" );
     $describe = static fn( $value ) => $value === null ? array( 'type' => 'null', 'bytes' => null, 'sha256' => null ) : array( 'type' => 'string', 'bytes' => strlen( $value ), 'sha256' => hash( 'sha256', $value ) );
     $expected_known = array();
-    foreach ( $expected_diagnostic['before_meta'] as $row ) { $expected_known[$row['meta_key']] = $row['meta_value']; } ksort( $expected_known );
-    check( array_column( $diagnostic['known_meta'], 'key' ) === array_keys( $expected_known ), "$mutation reports only the four approved literal metadata names" );
+    foreach ( $expected_diagnostic['before_meta'] as $row ) { $expected_known[$row['meta_key']] = $row['meta_value']; }
+    $present_expected = array_keys( $expected_known ); $expected_known['_wpcode_shortcode_attributes'] = null; ksort( $expected_known );
+    check( array_column( $diagnostic['known_meta'], 'key' ) === array_keys( $expected_known ), "$mutation reports only the current phase's approved literal metadata names" );
     foreach ( $diagnostic['known_meta'] as $item ) {
         $matching = array_values( array_filter( $expected_diagnostic['meta'], static fn( $row ) => $row['meta_key'] === $item['key'] ) );
         $descriptors = array_map( static fn( $row ) => $describe( $row['meta_value'] ), $matching );
-        check( $item['expected_count'] === 1 && $item['actual_count'] === count( $matching ) && $item['expected'] === $describe( $expected_known[$item['key']] ) && $item['actual'] === $descriptors, "$mutation accurately fingerprints known key " . $item['key'] );
+        check( $item['expected_count'] === ( in_array( $item['key'], $present_expected, true ) ? 1 : 0 ) && $item['actual_count'] === count( $matching ) && $item['expected'] === ( in_array( $item['key'], $present_expected, true ) ? $describe( $expected_known[$item['key']] ) : null ) && $item['actual'] === $descriptors, "$mutation accurately fingerprints known key " . $item['key'] );
     }
     $expected_unknown = $mutation === 'extra-meta' ? array( array( 'key_sha256' => hash( 'sha256', $private_key ), 'count' => 1, 'values' => array( $describe( $private_value ) ) ) ) : array();
     check( $diagnostic['unknown_meta'] === $expected_unknown, "$mutation unknown metadata names and values appear only as fingerprints" );
@@ -714,6 +799,40 @@ foreach ( array( 'extra-meta', 'missing-meta', 'changed-meta', 'null-meta', 'nul
     }
     check( preg_match( '/Snapshot: (.+)$/', $caught->getMessage(), $found ) === 1, "$mutation identifies actual incomplete journal" );
     refusal( array( 'rollback', $found[1] ), "$mutation incomplete journal cannot delete the unexpected draft" );
+}
+
+// Unique add_post_meta must not adopt even a concurrent row with the same bytes.
+foreach ( array( 'matching-row', 'null-row', 'private-row', 'old-id-edited', 'post-edited', 'relationship-edited', 'null-first-attributes' ) as $mutation ) {
+    restore_state( $original ); $unexpected_state = null; $unexpected_id = null;
+    $before_insert = in_array( $mutation, array( 'matching-row', 'null-row', 'private-row' ), true );
+    $failures = array( array( 'key' => $before_insert ? 'normalize-meta:before' : 'normalize-meta:after', 'at' => 1, 'throw' => false,
+        'change' => static function ( $id ) use ( $mutation, $before_insert, &$unexpected_state, &$unexpected_id ) {
+            $unexpected_id = $id;
+            if ( $before_insert ) {
+                $value = $mutation === 'matching-row' ? 'a:0:{}' : ( $mutation === 'null-row' ? null : 'SYNTHETIC_PRIVATE_CONCURRENT_ATTRIBUTE' );
+                fixture_insert( 'wp_postmeta', array( 'post_id' => $id, 'meta_key' => '_wpcode_shortcode_attributes', 'meta_value' => $value ) );
+            }
+            if ( $mutation === 'old-id-edited' ) {
+                $old = fixture_sql( 'SELECT meta_id FROM wp_postmeta WHERE post_id=? AND meta_key=?', array( $id, '_wpcode_priority' ) )->fetchColumn();
+                fixture_sql( 'UPDATE wp_postmeta SET meta_id=? WHERE meta_id=?', array( (int) $old + 10000, $old ) );
+            }
+            if ( $mutation === 'post-edited' ) { fixture_update( 'wp_posts', 'ID', $id, array( 'post_excerpt' => 'SYNTHETIC_PRIVATE_CONCURRENT_POST' ) ); }
+            if ( $mutation === 'relationship-edited' ) { fixture_sql( 'UPDATE wp_term_relationships SET term_order=3 WHERE object_id=? AND term_taxonomy_id=9', array( $id ) ); }
+            if ( $mutation === 'null-first-attributes' ) {
+                $attribute = fixture_sql( 'SELECT * FROM wp_postmeta WHERE post_id=? AND meta_key=?', array( $id, '_wpcode_shortcode_attributes' ) )->fetch( PDO::FETCH_ASSOC );
+                fixture_sql( 'UPDATE wp_postmeta SET meta_id=? WHERE meta_id=?', array( (int) $attribute['meta_id'] + 10000, $attribute['meta_id'] ) );
+                fixture_insert( 'wp_postmeta', array( 'meta_id' => $attribute['meta_id'], 'post_id' => $id, 'meta_key' => '_wpcode_shortcode_attributes', 'meta_value' => null ) );
+            }
+            $unexpected_state = all_state();
+        } ) );
+    $caught = null; try { invoke( array( 'apply' ) ); } catch ( Refusal_Error $error ) { $caught = $error; }
+    check( $caught !== null && str_contains( $caught->getMessage(), 'recovery stopped' ) && $unexpected_state !== null, "$mutation normalization race explicitly refuses adoption" );
+    check( all_state() === $unexpected_state && row( 'posts', 'ID', $unexpected_id )['post_status'] === 'draft', "$mutation retains every concurrent raw row and the inactive draft" );
+    check( ( $event_counts['create:before'] ?? 0 ) === 1 && ( $event_counts['normalize-meta:before'] ?? 0 ) === 1 && ( $event_counts['correct-code:before'] ?? 0 ) === 0 && ( $event_counts['activate:before'] ?? 0 ) === 0 && ( $event_counts['delete:before'] ?? 0 ) === 0 && ( $event_counts['css-cas:before'] ?? 0 ) === 0 && ( $event_counts['astra-cas:before'] ?? 0 ) === 0, "$mutation prevents subsequent correction, creation, activation, cleanup or deletion" );
+    if ( $before_insert ) { check( $normalization_observations === array(), "$mutation unique check returns false without inserting or replacing an existing value, including NULL" ); }
+    check( ! str_contains( $caught->getMessage() . implode( '\n', $logs ), 'SYNTHETIC_PRIVATE' ) && ! str_contains( implode( '\n', $logs ), 'RELEASE-SNAPSHOT ' ), "$mutation exposes no raw value or success marker" );
+    check( preg_match( '/Snapshot: (.+)$/', $caught->getMessage(), $found ) === 1, "$mutation identifies the actual pre-normalization journal" );
+    refusal( array( 'rollback', $found[1] ), "$mutation unowned normalization change cannot authorize removal" );
 }
 
 restore_state( $original );

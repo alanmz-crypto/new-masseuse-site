@@ -71,8 +71,17 @@ read-side metadata is a failure, not permission to weaken or rebase the snapshot
 A first `apply` creates a private 0600 journal before writes, using atomic
 no-overwrite publication. Later journal replacements require this invocation’s
 previously verified bytes and permissions to remain exact. Each snippet is
-created inactive, checked in full, and corrected for WPCode's initial unslashing
-while inactive. Data snippets activate first; the core activates last. Original
+created inactive and checked in full. The actual second copy rehearsal
+(run `42751049392`, completed 2026-11-10 03:43:48 UTC) showed the first factory
+draft had exactly auto-insert, priority and note metadata, with correct PHP and
+everywhere relationships; it omitted `_wpcode_shortcode_attributes`. The initial
+three-key profile is therefore journalled explicitly. A unique `add_post_meta`
+then creates the approved empty-array attributes and must return its exact new
+metadata ID. The old three raw rows, post, dates, relationships and all other
+protected state must remain unchanged. Four exact metadata keys are required
+before code correction, any later role, cleanup or activation. An unexplained
+four-key initial factory record is refused rather than silently adopted.
+WPCode's initial unslashing is corrected only after this inactive initialization. Data snippets activate first; the core activates last. Original
 jump links and the guide remain available throughout. The installer never reads
 remote JSON and changes only WordPress database storage.
 
@@ -85,10 +94,16 @@ Rollback removes only the snapshot's five exact owned records, restores the old
 CSS/Astra stores, and verifies the complete original state. Every reverse prefix
 has an exact expected state, allowing a retry after a known interrupted step.
 A valid incomplete journal also supports `rollback FILE`, after checking the
-recorded creation/correction/cleanup/activation order and every full known record.
+recorded creation/attribute-initialization/correction/cleanup/activation order and
+every full known record. A three-key factory record is allowed only as the last
+created inactive role; it cannot precede another role or any cleanup/publication.
 It emits no completed-release marker. If interruption occurs after a write but
 before its full state was journalled, that unrecorded state is refused and needs
-inspection; the installer never guesses ownership to delete it. Unknown edits
+inspection; the installer never guesses ownership to delete it. This includes
+an attribute insert that throws or returns false/invalid data before returning
+its new metadata ID: even a matching empty-array row is retained as unrecorded
+state. A before-write failure can recover the known three-key draft; a later
+failure after a returned-ID, verified four-key journal can recover that state. Unknown edits
 or foreign/reoccupied IDs stop the operation. It does not recreate
 deleted snippets or overwrite unknown state. A rollback retry may regenerate the
 derived WPCode cache even when stores are already original, so it can recover a
