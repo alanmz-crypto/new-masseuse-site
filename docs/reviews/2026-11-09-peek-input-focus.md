@@ -628,6 +628,54 @@ passed. Recording may affect timing; a passing recorded run would not erase
 prior unrecorded failures. Offline replay will also remain diagnostic evidence,
 not a substitute for a fresh public gate.
 
+
+Hold/capture attempt [42736953507](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42736953507),
+source `8840150a89b5f0b5f723482ca9cbdfe1a7803ccd`, finished **01:37:39 UTC,
+INVALID HTTP202** on the first document: **0 passed / 0 failed, one load, one
+second, zero captures**. Neither split case was tested. Root read the full report;
+an independent reviewer verified the complete artifact and job log. The 625-byte
+artifact contains only a 233-byte failure log, no HAR, manifest, screenshot,
+resource body or private raw file. Artifact SHA256:
+`eaf479beab21b88d12748c7c22c1c38d721b854fab64e5573565e41ab847c511`.
+Public requests stopped; no runtime change or workaround follows from this
+invalid attempt. Source `da293343f9ad0688142bf5bddfd131ad00061066`
+[Gates 42736925683](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42736925683)
+passed **36/0 with one URL-dependent skip**, including the 46 HAR checks.
+
+The latest valid public narrowing remains gestures 1–4 (64/1), not the blocked
+hold split. Prior apply/copy artifacts contain no complete archived HTML/assets
+for faithful offline replay. Resume with the exact hold/capture diagnostic only
+when public access is available; do not repeat the full failing sequence or
+claim a local fixture closes the public failure. A successful future capture
+can feed isolated HAR replay with unknown network requests aborted. Distinguish
+native browser delivery state from page handlers before proposing a runtime
+repair. Any new Rail runtime transition must freeze the currently deployed
+version and retain the meaning of actual snapshot `0adc77b9`; the existing
+v1-to-current installer must not silently acquire a different endpoint.
+
+
+Source inspection of the matching Firefox backend finds explicit no-DOM paths
+for internal browser-bounds rejection and drag handling. Its activation chain
+serializes the mouse commands, so concurrent client sends do not establish a
+race or justify a delay. Successful intervening Escape/keyboard cycles weaken
+a simple stuck drag-flag theory. Native drag-session state and internal browser
+bounds were not observed. If faithful offline replay reproduces the failure,
+trace drag/capture events through the gesture and use disposable browser-only
+logging of those internal states; no page-runtime patch is justified yet.
+
+Exact bounded resume command (use a fresh operation ID, after access recovers):
+
+```sh
+scripts/ci/request.sh run --target staging39 \
+  --script link-ideas/rail-input/check-keyboard.mjs \
+  --args 'https://staging39.thaisolitude.com --firefox --protocol-diagnostic --hold-history-diagnostic --capture-har' \
+  --id peek-rail-input-firefox-hold-2 --no-wait
+```
+
+Stop on another challenge. Read the complete report and verify artifacts before
+replay. A passing recorded diagnostic cannot erase the earlier unrecorded full
+suite failure; the full regression gate remains required after a causal fix.
+
 ## Limits
 
 Native input is browser emulation. Physical devices, true OS text scale and real

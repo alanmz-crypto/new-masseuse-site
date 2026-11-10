@@ -3,8 +3,11 @@
 **Superseded deployment:** the [input and keyboard focus phase](2026-11-09-peek-input-focus.md)
 updated Rail page #1348 on November 9 and core #1380 on November 10. Core public
 checks passed 12,374/0 and exact post-browser snapshot verification passed;
-independent artifact audits are complete. Two Rail Firefox drawer mouse-open failures
-remain under investigation. This completed Kiro payload is the previous frozen
+independent artifact audits are complete. Rail Firefox drawer failures remain
+unresolved: gesture-history diagnostic 42734807322 reproduced them (64/1), but
+the next split 42736953507 was INVALID HTTP202 (0/0, one load, no HAR). No public
+retry is queued; the linked phase record gives the precise next diagnostic.
+No runtime changed during these diagnostics. This Kiro payload is the previous frozen
 `peek-nav-shared-v6.php`; `core-kiro-fixes` still pins v5→v6. Historical results
 below remain unchanged. Current recovery starts with actual input-focus snapshot
 `peek-template-core-input-focus-before-20261110-004021-4570ecbf.json`

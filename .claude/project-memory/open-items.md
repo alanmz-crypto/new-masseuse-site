@@ -22,12 +22,16 @@ focus checks and all eight summary jump/focus cases. Snapshot verification
 focus captures match reviewed copy views. Broad wording/URLs/schema/PHP passed;
 **20/20 live-reference pixel differences are not a visual pass**.
 
-Rail apply **42724350260** updated #1348 in place at **2026-11-09 23:56:52 UTC**;
-its fresh copy passed **2,632/0**. Public Chromium passed **121/0**, but Firefox
-**115/2** drawer mouse-open failures remain under investigation; later suites
-stopped. Diagnostic repetition delivered no input events and established no
-underlying cause. Snapshot verification **42727758208** passed: the stored/served
-page is exact. This does not waive the interaction failures.
+Rail apply **42724350260** updated #1348 at **2026-11-09 23:56:52 UTC**; its
+fresh copy passed **2,632/0** and snapshot verification **42727758208** passed.
+Public Chromium passed **121/0**, but Firefox **115/2** drawer mouse-open failures
+remain unresolved. Diagnostic **42734807322 (64/1)** showed gestures 1–4 are
+sufficient to reproduce missing mouse input; the underlying cause is unproved.
+The next split, gestures 1–3 versus gesture 4 (hold to go), run **42736953507**,
+finished **2026-11-10 01:37:39 UTC, INVALID HTTP202** on its first request:
+**0/0, one load, no HAR**. No public retry is queued. After access recovers,
+resume that bounded split with capture; keep the original full gate unchanged.
+No website runtime changed during these diagnostics.
 
 Actual recovery snapshots, both verified encrypted off-site:
 
