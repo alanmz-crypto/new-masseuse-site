@@ -515,6 +515,28 @@ and confirmed cleanup. Filtering and pre-launch refusal checks passed. The next
 single public diagnostic will distinguish actual dispatch coordinates and
 acknowledgements; earlier public failures remain unresolved.
 
+Public protocol diagnostic [42731095161](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42731095161),
+source `13d90fe6197e0aadbf5a40288198f37895e80ec4`, finished **00:50:13 UTC,
+FAIL 115/2**. Both traces contain the correct tab quads and input coordinates
+((362,481) and (1252,585)); Firefox acknowledged all mousemove/down/up commands.
+Nevertheless, early page listeners recorded zero events and no drawer transition.
+The complete integrity-verified artifact, report and two screenshots agree.
+Traces had no dropped, missing or pending records and restored the logger.
+This rules out a misplaced protocol coordinate; acknowledgement alone does not
+prove input delivery or establish the cause. Source `1d1fd3acb` Gates passed
+**35/0 plus one rendered skip**. No runtime patch or assertion waiver follows.
+
+The next bounded `--drawer-history-diagnostic` compares two fresh 390px contexts:
+mouse-first, versus Enter/Escape and Space/Escape before mouse. It retains the
+same reset, click and traces, omits unrelated gesture history only in diagnostic
+mode, and leaves default checks unchanged. Loads are spaced at least 5.5 seconds
+apart, outside the measured interaction. A distinct final summary prevents this
+probe being mistaken for a full keyboard suite. The isolated fixture passed
+**12/0, two loads**, with complete protocol/DOM traces in both cases; required-flag
+refusals and independent source comparison passed. This does not erase the
+public failures. Core public checks and subsequent actual-snapshot verification
+are running/queued independently of this diagnostic.
+
 ## Limits
 
 Native input is browser emulation. Physical devices, true OS text scale and real
