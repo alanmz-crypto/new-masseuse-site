@@ -1,7 +1,7 @@
 {
-  "id": "peek-live-navigation-baseline-1",
+  "id": "peek-staging-navigation-baseline-1",
   "op": "run",
-  "target": "live",
+  "target": "staging39",
   "script": "link-ideas/inspect-navigation-baseline.sh",
   "args": [],
   "tests": "auto"
