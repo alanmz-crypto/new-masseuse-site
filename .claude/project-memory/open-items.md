@@ -9,6 +9,15 @@ metadata:
 A phone cloud session (https://claude.ai/code, repo `alanmz-crypto/new-masseuse-site`) sees ONLY this repository: not his computer, not his global `~/.claude/CLAUDE.md`, not his local Claude memory, not convmem. Everything that must not be lost is therefore written here and in the notes this index points to.
 First message to send in a fresh phone session: **"Read .claude/project-memory/open-items.md and tell me what is due."**
 
+**Current task, November 10: fixed summary neighbours, staging39 only.** Ryan
+reports missing neighbouring links and scrolling trouble across the four service
+pages with Safari’s address bar expanded. They requested only the immediate
+previous summary above and next below each open box. The
+[neighbour-layout record](../../docs/reviews/2026-11-10-peek-summary-neighbours.md)
+tracks preparation, exact frozen v7 and required copy/browser/recovery checks.
+Not deployed yet. Live-release preparation is paused; the blocked live-copy
+permission remains unapproved.
+
 **Release preparation, November 10: not ready for live.** The [readiness record](../../docs/reviews/2026-11-10-peek-release-readiness.md)
 contains the exact scope, new read-only live/staging inventories and current
 acceptance blockers. All 15 shared page bodies match after origin normalization;

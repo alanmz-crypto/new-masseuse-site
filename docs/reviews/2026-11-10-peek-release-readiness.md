@@ -5,6 +5,15 @@ when it is a good time to push live and continue. This assessment does not start
 a live write or authorize a main merge. Work remains on
 `claude/wizardly-bell-xu0rta`; the current visitor navigation is on staging39.
 
+**Paused for the November 10 summary-neighbour experiment.** Ryan has now
+requested only the previous and next summary controls around each open box;
+see the [active staging record](2026-11-10-peek-summary-neighbours.md). The
+provisional release payload remains frozen at the preceding input-focus core.
+It is not the new candidate, and its old browser evidence cannot validate the
+new layout. Reassess and prepare the accepted payload after staging and Safari
+acceptance; do not dispatch the previously blocked copy6 merely on a later
+permission reply without checking that the release package is still intended.
+
 **Actual iPhone Safari acceptance is not complete.** Ryan reported that the
 rail/index step and background-scroll containment passed. Their reply reports
 step 4 both passing and failing, and says only containment passed in the

@@ -18,6 +18,18 @@ if (labels.length !== 5) throw new Error('Update the Thai gesture regression for
 const b = await chromium.launch(process.env.TS_BROWSER_EXECUTABLE ? { executablePath: process.env.TS_BROWSER_EXECUTABLE } : {});
 const open = async (ctx, path) => { const p = await ctx.newPage(); const errors = []; p.on('pageerror', e => errors.push(e.message));
   const r = await p.goto(base + path, { waitUntil: 'load' }); if (!r || r.status() !== 200) { console.log(`INVALID ${path} answered ${r && r.status()}`); await b.close(); process.exit(2); } await p.waitForTimeout(400); return { p, errors }; };
+const neighbours = (p, i, total) => p.evaluate(({ i, total }) => {
+  const c = document.querySelector('.ts-pk-card'), o = c.querySelector('.open'), cr = c.getBoundingClientRect();
+  return { index: Number(c.dataset.i), expected: [i - 1, i + 1].filter(k => k >= 0 && k < total), folds: c.querySelectorAll('.more').length,
+    rows: [...c.querySelectorAll('.row')].map(row => {
+      const r = row.getBoundingClientRect(), style = getComputedStyle(row);
+      const shown = style.display !== 'none' && style.visibility === 'visible' && r.width > 0 && r.height > 0;
+      const visible = shown && r.left >= Math.max(0, cr.left) - 1 && r.right <= Math.min(innerWidth, cr.right) + 1 && r.top >= Math.max(0, cr.top) - 1 && r.bottom <= Math.min(innerHeight, cr.bottom) + 1;
+      return { index: Number(row.dataset.k), before: !!(o.compareDocumentPosition(row) & Node.DOCUMENT_POSITION_PRECEDING), number: row.querySelector('b')?.textContent, heading: row.querySelector('span')?.textContent || '', shown, visible,
+        hit: visible && [0.2, 0.5, 0.8].every(f => row.contains(document.elementFromPoint(r.left + r.width * f, r.top + r.height / 2))) };
+    }) };
+}, { i, total });
+const neighboursMatch = (state, i, requireVisible = true) => state.index === i && state.folds === 0 && JSON.stringify(state.rows.map(row => row.index)) === JSON.stringify(state.expected) && state.rows.every(row => row.before === (row.index < i) && row.number === String(row.index + 1) && row.heading.length > 5 && row.shown && (!requireVisible || (row.visible && row.hit)));
 for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['iPad Mini']]]) {
   for (const theme of ['light', 'dark']) {
     const tag = `${size}/${theme}`;
@@ -107,21 +119,21 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     ok(`${tag} the page does not move while browsing`, (await Y()) === y0);
     await touch('touchEnd'); await W(600);
     ok(`${tag} lifting keeps the preview, no jump`, (await card()).pinned && (await Y()) === y0);
-    // the stack (Ryan, 2026-11-08): closed boxes for the sections above and below the open one, numbered, with their headings
+    // Summary cards keep only the immediately previous/next topic, numbered and in source order.
     for (const k of [0, 2, 4]) {
       await slideTo(k, false); await W(150);
       const sk = await p.evaluate(() => { const c = document.querySelector('.ts-pk-card'), o = c.querySelector('.open'), rows = [...c.querySelectorAll('.row')], heads = [...document.querySelectorAll('.entry-content h2')].map(h => h.textContent.trim()), r = c.getBoundingClientRect(), orr = o.getBoundingClientRect();
         return { stripBottom: document.querySelector('.ts-pk-top').getBoundingClientRect().bottom, clipped: c.scrollHeight > c.clientHeight + 1, hasName: !!c.querySelector('.open > b') && getComputedStyle(c.querySelector('.open > b')).display !== 'none', hasHint: !!c.querySelector('.open .hint') && getComputedStyle(c.querySelector('.open .hint')).display !== 'none', fit: c.className.match(/fit\d/g) || [], above: rows.filter(x => o.compareDocumentPosition(x) & Node.DOCUMENT_POSITION_PRECEDING).map(x => x.querySelector('b').textContent + ' ' + x.querySelector('span').textContent), below: rows.filter(x => o.compareDocumentPosition(x) & Node.DOCUMENT_POSITION_FOLLOWING).map(x => x.querySelector('b').textContent + ' ' + x.querySelector('span').textContent), heads, top: r.top, bottom: r.bottom, vh: innerHeight, openMid: orr.top + orr.height / 2 }; });
-      const want = n => sk.heads.filter(h => h.length).slice(0, 5)[n];
       await touch('touchEnd'); await W(300);
-      ok(`${tag} stack, section ${k + 1} open: ${k} closed box(es) above and ${4 - k} below, each "number heading", in order`, sk.above.length === k && sk.below.length === 4 - k && sk.above.every((t, j) => t.startsWith((j + 1) + ' ')) && sk.below.every((t, j) => t.startsWith((k + 2 + j) + ' ')) && [...sk.above, ...sk.below].every(t => t.split(' ').slice(1).join(' ').length > 5), JSON.stringify({ above: sk.above, below: sk.below }));
+      const ns = await neighbours(p, k, labels.length);
+      ok(`${tag} stack, section ${k + 1} open: only immediate neighbours, each "number heading", are visible and touchable in order`, neighboursMatch(ns, k), JSON.stringify(ns));
       ok(`${tag} stack, section ${k + 1} open: the whole stack is on screen, below the strip, nothing cut off`, sk.top >= sk.stripBottom && sk.vh >= sk.bottom && sk.clipped === false && sk.hasName && sk.hasHint, JSON.stringify({ top: Math.round(sk.top), strip: Math.round(sk.stripBottom), bottom: Math.round(sk.bottom), vh: sk.vh, clipped: sk.clipped, fit: sk.fit }));
     }
     await slideTo(2); y0 = await Y();
     const row4 = await p.$eval('.ts-pk-card .row[data-k="3"]', e => { const r = e.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
     await touch('touchStart', row4.x, row4.y); await touch('touchEnd'); await W(500);
     c = await card(); ok(`${tag} stack: tapping a closed box opens it in the stack (no jump)`, c.pinned && c.name === 'Questions' && (await Y()) === y0, JSON.stringify(c));
-    ok(`${tag} stack: now 3 closed boxes above and 1 below`, await p.evaluate(() => { const c = document.querySelector('.ts-pk-card'), o = c.querySelector('.open'), rows = [...c.querySelectorAll('.row')]; return rows.filter(x => o.compareDocumentPosition(x) & Node.DOCUMENT_POSITION_PRECEDING).length === 3 && rows.filter(x => o.compareDocumentPosition(x) & Node.DOCUMENT_POSITION_FOLLOWING).length === 1; }));
+    { const ns = await neighbours(p, 3, labels.length); ok(`${tag} stack: Questions keeps only What to expect above and Research below`, neighboursMatch(ns, 3), JSON.stringify(ns)); }
     await touch('touchStart', 12, Math.round((await p.evaluate(() => innerHeight)) * 0.6)); await touch('touchEnd'); await W(400);
     for (const k of [0, 1, 2, 4]) { await slideTo(k, false); const ck = await card(); await touch('touchEnd'); await W(300);
       ok(`${tag} preview of "${labels[k]}" has a summary and no inner window`, ck.name === labels[k] && ck.sum.length > 8 && !ck.second, JSON.stringify(ck)); }
@@ -253,7 +265,7 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     const nameAt = await p.evaluate(() => { const r = document.querySelectorAll('.ts-pk-fan li')[3].getBoundingClientRect(); return { x: Math.round(r.left + r.width / 2), y: Math.round(r.top + r.height / 2) }; });
     await touch('touchStart', nameAt.x, nameAt.y); await touch('touchEnd'); await W(700);
     c = await card();
-    ok(`${tag} index: kept open, tapping a name opens its box with the summary (the others as closed boxes), no jump`, c.on && c.pinned && c.name === labels[3] && c.sum.length > 8 && !(await fanState()).open && (await Y()) === y0 && (await p.$$eval('.ts-pk-card .row', r => r.length)) === labels.length - 1, JSON.stringify(c));
+    { const ns = await neighbours(p, 3, labels.length); ok(`${tag} index: kept open, tapping a name opens its summary with only its immediate neighbours, no jump`, c.on && c.pinned && c.name === labels[3] && c.sum.length > 8 && !(await fanState()).open && (await Y()) === y0 && neighboursMatch(ns, 3), JSON.stringify({ ...c, neighbours: ns })); }
     await p.tap('.ts-pk-card .open > b'); await W(1600);
     L = await landed(await hrefOf(3)); ok(`${tag} index: ...and tapping that box then jumps there`, L.ok, JSON.stringify(L));
     await p.evaluate(y => scrollTo(0, y), y0); await W(900); y0 = await Y();
@@ -338,11 +350,12 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
   const { p, errors } = await open(ctx, regressionPath);
   const cdp = await ctx.newCDPSession(p); const touch = (type, x, y) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchEnd' ? [] : [{ x, y }] });
   await p.evaluate(() => { const t = document.querySelectorAll('.entry-content .ts-jump a')[1]; const h = document.getElementById(t.getAttribute('href').slice(1)); scrollTo(0, h.getBoundingClientRect().top + scrollY - 80); }); await p.waitForTimeout(600);
-  for (const k of [0, 4]) {
+  for (const k of [0, 2, 4]) {
     const z = await p.evaluate(i => { const r = document.querySelectorAll('.ts-pk-rail li')[i].getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; }, k);
     await touch('touchStart', z.x, z.y); await touch('touchEnd'); await p.waitForTimeout(500);
     const r = await p.evaluate(() => { const el = document.querySelector('.ts-pk-card'), c = el.getBoundingClientRect(); return { top: Math.round(c.top), bottom: Math.round(c.bottom), vh: innerHeight, clipped: el.scrollHeight > el.clientHeight + 1, rows: el.querySelectorAll('.row').length }; });
-    ok(`landscape phone: the stack for section ${k + 1} fits on screen with all boxes, nothing cut off`, r.top >= 0 && r.vh >= r.bottom && !r.clipped && r.rows === 4, JSON.stringify(r));
+    const ns = await neighbours(p, k, labels.length);
+    ok(`landscape phone: section ${k + 1} and only its immediate neighbours fit on screen, nothing cut off`, r.top >= 0 && r.vh >= r.bottom && !r.clipped && neighboursMatch(ns, k), JSON.stringify({ ...r, neighbours: ns }));
     await touch('touchStart', 10, 10); await touch('touchEnd'); await p.waitForTimeout(500);
   }
   const rb = await p.evaluate(() => ({ rail: Math.round(document.querySelector('.ts-pk-rail').getBoundingClientRect().bottom), vh: innerHeight }));
@@ -416,7 +429,7 @@ const addSections = () => document.addEventListener('DOMContentLoaded', () => { 
 const openVisible = (p) => p.evaluate(() => { const c = document.querySelector('.ts-pk-card'), cr = c.getBoundingClientRect(), o = c.querySelector('.open'), h = c.querySelector('.open .hint'), b = c.querySelector('.open > b'); if (!o || !h || !b) return { ok: false };
   const inside = el => { const r = el.getBoundingClientRect(); return r.height > 0 && r.top >= cr.top - 1 && r.bottom <= cr.bottom + 1 && r.top >= 0 && r.bottom <= innerHeight; };
   return { ok: inside(b) && inside(h), fit: c.className.match(/fit\d/g) || [], rows: [...c.querySelectorAll('.row')].filter(r => getComputedStyle(r).display !== 'none').length, more: [...c.querySelectorAll('.more')].filter(m => getComputedStyle(m).display !== 'none').map(m => m.textContent) }; });
-// The exact seven-section/26px last-section case keeps whole fallback paragraphs at fit5.
+// The exact seven-section/26px last-section case keeps whole fallback paragraphs.
 // If that card needs its existing outer scrollport, prove native reachability instead of
 // hiding those paragraphs. Every ordinary case keeps the simultaneous-visibility check.
 const fallbackReachable = async (p, cdp) => {
@@ -427,10 +440,11 @@ const fallbackReachable = async (p, cdp) => {
     const inside = x => !!x && x.width > 0 && x.height > 0 && x.left >= clip.left - 1 && x.right <= clip.right + 1 && x.top >= clip.top - 1 && x.bottom <= clip.bottom + 1;
     const range = document.createRange(); range.selectNodeContents(title);
     const lines = [...range.getClientRects()].filter(x => x.width > 0 && x.height > 0), hr = hint.getBoundingClientRect(), xr = close && close.getBoundingClientRect(), point = { x: (hr.left + hr.right) / 2, y: (hr.top + hr.bottom) / 2 };
-    return { y: scrollY, x: scrollX, href: location.href, index: c.dataset.i, pinned: c.classList.contains('is-pinned') && c.classList.contains('is-on'), left: document.documentElement.classList.contains('ts-pk-left'), focus: document.activeElement === c, same: c === document.querySelector('.ts-pk-card') && ref.open === c.querySelector('.open') && ref.sum === sum, inner: sum.scrollTop, text: sum.textContent, outer: c.scrollTop, max: c.scrollHeight - c.clientHeight, fit5: c.classList.contains('fit5'), titleLines: lines.map(x => ({ top: x.top, bottom: x.bottom, visible: inside(x) })), title: lines.length > 0 && lines.every(inside), close: inside(xr), closeHit: !!xr && close.contains(document.elementFromPoint((xr.left + xr.right) / 2, (xr.top + xr.bottom) / 2)), hint: inside(hr), hintHit: hint.contains(document.elementFromPoint(point.x, point.y)), point, card: { top: r.top, bottom: r.bottom }, hintRect: { top: hr.top, bottom: hr.bottom } };
+    const neighbours = [...c.querySelectorAll('.row')].map(row => { const r = row.getBoundingClientRect(); return { index: Number(row.dataset.k), visible: inside(r), hit: row.contains(document.elementFromPoint((r.left + r.right) / 2, (r.top + r.bottom) / 2)) }; });
+    return { y: scrollY, x: scrollX, href: location.href, index: c.dataset.i, pinned: c.classList.contains('is-pinned') && c.classList.contains('is-on'), left: document.documentElement.classList.contains('ts-pk-left'), focus: document.activeElement === c, same: c === document.querySelector('.ts-pk-card') && ref.open === c.querySelector('.open') && ref.sum === sum, inner: sum.scrollTop, text: sum.textContent, outer: c.scrollTop, max: c.scrollHeight - c.clientHeight, fit5: c.classList.contains('fit5'), neighbours, titleLines: lines.map(x => ({ top: x.top, bottom: x.bottom, visible: inside(x) })), title: lines.length > 0 && lines.every(inside), close: inside(xr), closeHit: !!xr && close.contains(document.elementFromPoint((xr.left + xr.right) / 2, (xr.top + xr.bottom) / 2)), hint: inside(hr), hintHit: hint.contains(document.elementFromPoint(point.x, point.y)), point, card: { top: r.top, bottom: r.bottom }, hintRect: { top: hr.top, bottom: hr.bottom } };
   }, refs);
   const before = await read();
-  if (!before.fit5 || before.max <= 1) { await refs.dispose(); return { ok: false, before, reason: 'No final-fit outer scroll range' }; }
+  if (before.max <= 1) { await refs.dispose(); return { ok: false, before, reason: 'No outer scroll range' }; }
   await p.locator('.ts-pk-card').evaluate(c => c.focus({ preventScroll: true }));
   const start = await read();
   const stable = s => s.same && s.pinned && s.focus && Math.abs(s.y - before.y) <= 1 && Math.abs(s.x - before.x) <= 1 && s.href === before.href && s.index === before.index && s.left === before.left && Math.abs(s.inner - before.inner) <= 1 && s.text === before.text;
@@ -446,7 +460,8 @@ const fallbackReachable = async (p, cdp) => {
     for (let i = 1; i <= 8; i++) { await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: path.start.x, y: path.start.y + (path.end.y - path.start.y) * i / 8 }] }); await p.waitForTimeout(24); }
     await p.waitForTimeout(100); await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] }); await p.waitForTimeout(300); swipe = await read();
   }
-  const result = { ok: stable(start) && stable(end) && stable(home) && !!swipe && stable(swipe) && end.outer > start.outer + 1 && end.hint && end.hintHit && home.outer <= 1 && home.title && home.close && home.closeHit && swipe.outer > home.outer + 1 && swipe.hint && swipe.hintHit, before, end, home, path, swipe };
+  const reached = new Set([...home.neighbours, ...end.neighbours].filter(row => row.visible && row.hit).map(row => row.index));
+  const result = { ok: stable(start) && stable(end) && stable(home) && !!swipe && stable(swipe) && end.outer > start.outer + 1 && end.hint && end.hintHit && home.outer <= 1 && home.title && home.close && home.closeHit && before.neighbours.every(row => reached.has(row.index)) && swipe.outer > home.outer + 1 && swipe.hint && swipe.hintHit, before, end, home, path, swipe };
   await refs.dispose(); return result;
 };
 const bigText = () => document.addEventListener('DOMContentLoaded', () => { document.documentElement.style.fontSize = '26px'; });
@@ -464,6 +479,8 @@ for (const [label, init] of [['landscape, 7 sections', [addSections]], ['landsca
     const v = await openVisible(p);
     const constrainedFallback = !v.ok && label === 'landscape, 7 sections and large text' && n === 7 && k === 6;
     const reach = constrainedFallback ? await fallbackReachable(p, cdp) : null;
+    const ns = await neighbours(p, k, n);
+    ok(`${label} (${n} sections): section ${k + 1} has only its immediate neighbours and no folds`, neighboursMatch(ns, k, !constrainedFallback), JSON.stringify(ns));
     ok(`${label} (${n} sections): section ${k + 1}'s open box ${constrainedFallback ? 'keeps every title line, close button and full jump hint reachable by native outer scrolling, without moving the page or summary' : 'shows its name and "Tap to go there"'}`, reach ? reach.ok : v.ok, JSON.stringify(reach || v));
     if (n === 7 && k === n - 1) { const fb = await p.evaluate(() => { const norm = t => t.replace(/\s+/g, ' ').trim(), paras = [...document.querySelectorAll('.entry-content p, .entry-content li')].map(x => norm(x.textContent)), sp = [...document.querySelectorAll('.ts-pk-card .open .sum:not(.is-gist) p')].map(x => norm(x.textContent)); return { n: sp.length, whole: sp.every(x => paras.includes(x)), tricky: sp.some(x => x.startsWith('A check line about a session of about 1.5 hours')) }; });
       ok(`${label}: a section without a glance line shows its own whole paragraphs; a line with "1.5", "U.S." and a closing quote stays whole (Kiro, sixth review)`, fb.n >= 1 && fb.whole && fb.tricky, JSON.stringify(fb)); }
@@ -500,6 +517,7 @@ for (const [label, init] of [['landscape, 7 sections', [addSections]], ['landsca
   });
   const topWanted = summaryData.items.filter(item => item[1] === 'ts-what-to-expect').map(item => item[0]);
   ok('at page top the preview clears the actual title strip and keeps its name, approved summary and jump hint usable', t0.y === 0 && t0.clear && t0.onScreen && t0.name && t0.hint && t0.summary && JSON.stringify(t0.items) === JSON.stringify(topWanted), JSON.stringify(t0));
+  { const ns = await neighbours(p, 2, labels.length); ok('at page top both immediate neighbours are visible and touchable without folds', neighboursMatch(ns, 2), JSON.stringify(ns)); }
   await p.keyboard.press('Escape'); await p.waitForTimeout(300);
   await p.evaluate(() => document.querySelectorAll('.ts-pk-rail a')[1].dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 }))); await p.waitForTimeout(300);
   const closedRow = await p.evaluate(() => {
@@ -507,7 +525,7 @@ for (const [label, init] of [['landscape, 7 sections', [addSections]], ['landsca
     const row = [...c.querySelectorAll('.row')].find(el => { const r = el.getBoundingClientRect(); return r.width > 0 && r.height > 0 && r.top >= Math.max(0, cr.top) && r.bottom <= Math.min(innerHeight, cr.bottom) && el.contains(document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2)); });
     return row ? { index: Number(row.dataset.k), y: scrollY, x: scrollX, hash: location.hash } : null;
   });
-  ok('keyboard: the closed-box test has a visible, reachable row', !!closedRow, JSON.stringify(closedRow));
+  { const ns = await neighbours(p, 1, labels.length); ok('keyboard: the closed-box test has only visible, reachable immediate neighbours', !!closedRow && [0, 2].includes(closedRow.index) && neighboursMatch(ns, 1), JSON.stringify({ closedRow, neighbours: ns })); }
   if (closedRow) {
     await p.focus(`.ts-pk-card .row[data-k="${closedRow.index}"]`);
     const focused = await p.evaluate(k => document.activeElement === document.querySelector(`.ts-pk-card .row[data-k="${k}"]`), closedRow.index);

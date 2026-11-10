@@ -100,6 +100,23 @@ const verifyCard = async (p, prefix) => {
   ok(`${prefix}: summary remains visible without horizontal text clipping`, summary.height > 0 && summary.top >= card.top && summary.bottom <= hint.top + 1 && summaryScroll.width <= summaryScroll.clientWidth + 1, geometry);
   console.log('INFO approved card geometry ' + JSON.stringify({ check: prefix, ...geometry }));
 };
+const verifyNeighbours = async (p, row, i, prefix) => {
+  const state = await p.evaluate(({ row, i }) => {
+    const card = document.querySelector('.ts-pk-card'), open = card.querySelector('.open'), cr = card.getBoundingClientRect();
+    const expected = [i - 1, i + 1].filter(k => k >= 0 && k < row.length);
+    const controls = [...card.querySelectorAll('.row')].map(button => {
+      const k = Number(button.dataset.k), r = button.getBoundingClientRect(), style = getComputedStyle(button);
+      const target = row[k] && document.getElementById(decodeURIComponent(row[k].href.slice(1)));
+      const heading = target?.matches('h1,h2,h3,h4,h5,h6') ? target : target?.querySelector('h1,h2,h3,h4,h5,h6,.uagb-question,summary');
+      const name = heading?.textContent.replace(/\s+/g, ' ').trim();
+      const visible = style.display !== 'none' && style.visibility === 'visible' && r.width > 0 && r.height > 0 && r.left >= Math.max(0, cr.left) - 1 && r.right <= Math.min(innerWidth, cr.right) + 1 && r.top >= Math.max(0, cr.top) - 1 && r.bottom <= Math.min(innerHeight, cr.bottom) + 1;
+      return { index: k, before: !!(open.compareDocumentPosition(button) & Node.DOCUMENT_POSITION_PRECEDING), number: button.querySelector('b')?.textContent, name: button.querySelector('span')?.textContent, expectedName: name && name.length <= 140 ? name : row[k]?.label, visible,
+        hit: visible && [0.2, 0.5, 0.8].every(f => button.contains(document.elementFromPoint(r.left + r.width * f, r.top + r.height / 2))) };
+    });
+    return { expected, controls, folds: card.querySelectorAll('.more').length };
+  }, { row, i });
+  ok(`${prefix}: only the immediate previous and next topics are visible and touchable, in order`, state.folds === 0 && JSON.stringify(state.controls.map(control => control.index)) === JSON.stringify(state.expected) && state.controls.every(control => control.before === (control.index < i) && control.number === String(control.index + 1) && control.name === control.expectedName && control.visible && control.hit), state);
+};
 const verifyEnabled = async (p, slug, data, prefix) => {
   const row = await rowOf(p), rail = await p.$$eval('.ts-pk-rail a', nodes => nodes.map(a => a.getAttribute('href')));
   ok(`${prefix}: runtime destinations follow the rendered row`, JSON.stringify(rail) === JSON.stringify(row.map(a => a.href)), rail);
@@ -122,6 +139,7 @@ const verifyEnabled = async (p, slug, data, prefix) => {
     const wanted = data.approval.status === 'approved' ? data.items.filter(item => item[1] === anchor).map(item => item[0]) : [];
     ok(`${prefix}: ${row[i].label} previews without moving the page`, actual.title === row[i].label && actual.visible && actual.y === before, actual);
     ok(`${prefix}: ${row[i].label} uses ${wanted.length ? 'approved summaries' : 'whole source paragraphs'}`, wanted.length ? actual.gist && JSON.stringify(actual.items) === JSON.stringify(wanted) : !actual.gist && actual.whole, actual);
+    if (data.approval.status === 'approved') await verifyNeighbours(p, row, i, `${prefix}/right/${row[i].label}`);
     if (slug === capturePage && data.approval.status === 'approved') {
       await verifyCard(p, `${prefix}/${row[i].label}`);
       if (i === 0) await capture(p, slug, 'first');
@@ -143,6 +161,12 @@ const verifyEnabled = async (p, slug, data, prefix) => {
   let edges = await measure(); ok(`${prefix}: right rail has no horizontal overflow`, edges.width === edges.viewport, edges);
   await preview(p, 0); await p.locator('.ts-pk-card .side').click(); await p.waitForTimeout(100);
   edges = await measure(); ok(`${prefix}: left rail has no horizontal overflow`, edges.width === edges.viewport, edges);
+  if (data.approval.status === 'approved') {
+    for (let i = 0; i < row.length; i++) {
+      await preview(p, i);
+      await verifyNeighbours(p, row, i, `${prefix}/left/${row[i].label}`);
+    }
+  }
   await p.emulateMedia({ media: 'print' });
   const print = await p.evaluate(() => {
     const visible = e => getComputedStyle(e).display !== 'none';

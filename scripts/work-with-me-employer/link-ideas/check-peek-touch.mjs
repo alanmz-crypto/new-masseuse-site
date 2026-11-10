@@ -43,6 +43,25 @@ const summarySurface = (p, margin = 18) => p.locator('.ts-pk-card .sum').evaluat
     visibleRows: [...card.querySelectorAll('.row')].filter(row => row.getBoundingClientRect().height > 0).length };
 }, margin);
 const usableSurface = (surface, height) => surface.height >= height && surface.width > 0 && surface.hits.every(hit => hit.summary);
+const neighborState = p => p.locator('.ts-pk-card').evaluate(card => {
+  const index = Number(card.dataset.i), count = document.querySelectorAll('.ts-pk-rail a').length;
+  const expected = [index - 1, index + 1].filter(k => k >= 0 && k < count);
+  const c = card.getBoundingClientRect(), v = visualViewport;
+  const left = Math.max(v?.offsetLeft || 0, c.left + card.clientLeft), right = Math.min((v?.offsetLeft || 0) + (v?.width || innerWidth), c.left + card.clientLeft + card.clientWidth);
+  const top = Math.max(v?.offsetTop || 0, c.top + card.clientTop), bottom = Math.min((v?.offsetTop || 0) + (v?.height || innerHeight), c.top + card.clientTop + card.clientHeight);
+  const rows = [...card.querySelectorAll('.row')].map(row => {
+    const r = row.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2;
+    return { index: Number(row.dataset.k), near: row.classList.contains('near'), visible: r.width > 0 && r.height > 0 && r.left >= left - 1 && r.right <= right + 1 && r.top >= top - 1 && r.bottom <= bottom + 1 && row.contains(document.elementFromPoint(x, y)) };
+  });
+  return { expected, rows, folds: card.querySelectorAll('.more').length };
+});
+const usableNeighbors = ({ expected, rows, folds }) => folds === 0 && JSON.stringify(rows.map(row => row.index)) === JSON.stringify(expected) && rows.every(row => row.near && row.visible);
+let visited = false;
+const openPage = async (p, url) => {
+  if (visited && base.startsWith('https:')) await p.waitForTimeout(5500);
+  const response = await p.goto(url, { waitUntil: 'load' }); visited = true;
+  return response;
+};
 try {
   for (const spec of pages) {
     const data = JSON.parse(readFileSync(new URL(`./peek-data/${spec.slug}.json`, import.meta.url), 'utf8'));
@@ -62,8 +81,8 @@ try {
       }
       const p = await ctx.newPage(), errors = [], label = `${spec.slug}/390/${side}`;
       p.on('pageerror', error => errors.push(error.message));
-      const response = await p.goto(`${base}/${spec.slug}/`, { waitUntil: 'load' });
-      if (!response || response.status() !== 200 || /Robot Challenge/i.test(await p.title())) throw new Error(`INVALID ${label}: response ${response?.status()}`);
+      const response = await openPage(p, `${base}/${spec.slug}/`);
+      if (!response || response.status() !== 200 || new URL(p.url()).origin !== base || /Robot Challenge/i.test(await p.title())) throw new Error(`INVALID ${label}: expected same-origin HTTP200, got ${response?.status()}`);
       await p.waitForSelector('html.ts-pk-ready .ts-pk-nav', { timeout: 10000 });
       await p.waitForFunction(() => document.fonts.status === 'loaded', null, { timeout: 10000 });
       if (baseline) {
@@ -90,9 +109,9 @@ try {
         const s = await state(p);
         ok(`${label}: native rail press opens section ${index + 1}`, s.pinned && s.index === index, s);
       };
-      const rowDrag = async (name, destination) => {
-        await reset();
-        const from = await point(p, '.ts-pk-card .row[data-k="1"]'), before = await state(p);
+      const rowDrag = async (name, destination, selected = 0) => {
+        await reset(selected);
+        const from = await point(p, `.ts-pk-card .row[data-k="${selected ? selected - 1 : 1}"]`), before = await state(p);
         await drag(from, await destination(from));
         const after = await state(p);
         ok(`${label}: ${name} stays with the closed row`, sameControl(before, after), { before, after });
@@ -101,7 +120,7 @@ try {
       await rowDrag('vertical downward drag', from => [{ x: from.x, y: Math.min(810, from.y + 70) }]);
       await rowDrag('horizontal drag', from => [{ x: from.x + 65, y: from.y }]);
       await rowDrag('drag ending over the open preview', async () => [await point(p, '.ts-pk-card .open > b')]);
-      await rowDrag('drag ending over another closed row', async () => [await point(p, `.ts-pk-card .row[data-k="${spec.expectedLabels.length - 1}"]`)]);
+      await rowDrag('drag ending over another closed row', async () => [await point(p, `.ts-pk-card .row[data-k="${baseline ? spec.expectedLabels.length - 1 : 2}"]`)], baseline ? 0 : 1);
       await rowDrag('drag released outside the card', from => [{ x: side === 'right' ? 8 : 382, y: from.y + 35 }]);
       await rowDrag('out-and-back drag', from => [{ x: from.x + 65, y: from.y }, from]);
       await reset();
@@ -200,7 +219,20 @@ try {
       ok(`${label}: same summary stops panning again when it fits after resize`, returned && before.innerMax <= 1 && before.outerMax <= 1 && sameControl(before, after), { before, after });
       before = await state(p); await tap(await point(p, '.ts-pk-card .sum')); after = await state(p);
       ok(`${label}: short-summary tap still reads without jumping`, sameControl(before, after), { before, after });
-      before = await state(p); await tap(await point(p, `.ts-pk-card .row[data-k="${research}"]`)); after = await state(p);
+      before = await state(p);
+      // Summary boxes expose adjacent destinations only. Walk the actual next
+      // controls; do not resurrect a distant row just for this transition test.
+      if (baseline) await tap(await point(p, `.ts-pk-card .row[data-k="${research}"]`));
+      else for (let index = before.index; index !== research;) {
+        index += Math.sign(research - index);
+        const stepBefore = await state(p);
+        await tap(await point(p, `.ts-pk-card .row[data-k="${index}"]`));
+        const stepAfter = await state(p);
+        const opened = samePage(stepBefore, stepAfter) && stepAfter.pinned && stepAfter.index === index;
+        ok(`${label}: adjacent section ${index + 1} opens on the path to research`, opened, { stepBefore, stepAfter });
+        if (!opened) throw new Error(`INVALID ${label}: cannot continue adjacent navigation after the recorded failure`);
+      }
+      after = await state(p);
       ok(`${label}: tapping research after a short summary opens the long preview`, samePage(before, after) && after.pinned && after.index === research, { before, after });
       const longPath = await summarySurface(p, 16);
       if (!usableSurface(longPath, 45)) throw new Error(`INVALID ${label}: long summary after short preview is not hit-testable: ${JSON.stringify(longPath)}`);
@@ -287,8 +319,8 @@ try {
       await ctx.addInitScript(side => { localStorage.setItem('ts-pk-tip', 'seen'); localStorage.setItem('ts-pk-side', side); }, side);
       const p = await ctx.newPage(), errors = [], label = `${slug}/390/${side}/rapid`;
       p.on('pageerror', error => errors.push(error.message));
-      const response = await p.goto(`${base}/${slug}/`, { waitUntil: 'load' });
-      if (!response || response.status() !== 200 || /Robot Challenge/i.test(await p.title())) throw new Error(`INVALID ${label}: response ${response?.status()}`);
+      const response = await openPage(p, `${base}/${slug}/`);
+      if (!response || response.status() !== 200 || new URL(p.url()).origin !== base || /Robot Challenge/i.test(await p.title())) throw new Error(`INVALID ${label}: expected same-origin HTTP200, got ${response?.status()}`);
       await p.waitForSelector('html.ts-pk-ready .ts-pk-nav', { timeout: 10000 });
       await p.waitForFunction(() => document.fonts.status === 'loaded', null, { timeout: 10000 });
       const cdp = await ctx.newCDPSession(p);
@@ -301,15 +333,17 @@ try {
       if (research < 3 || count < 4) throw new Error(`INVALID ${label}: expected service-page destinations`);
       await tapNow(await point(p, '.ts-pk-rail li:first-child a'));
       for (let round = 0; round < 2; round++) {
-        for (const index of [1, 2, 0, research]) {
+        const selected = (await state(p)).index;
+        const sequence = [...Array.from({ length: selected }, (_, i) => selected - i - 1), ...Array.from({ length: research }, (_, i) => i + 1)];
+        for (const index of sequence) {
           const before = await state(p);
           await tapNow(await point(p, `.ts-pk-card .row[data-k="${index}"]`));
           const after = await state(p);
           ok(`${label}/${round}: immediate row ${index + 1} opens without moving the page`, samePage(before, after) && after.pinned && after.index === index, { before, after });
         }
         const before = await state(p);
-        const path = await summarySurface(p);
-        ok(`${label}/${round}: long summary provides a generous finger stroke with every topic retained`, usableSurface(path, 180) && path.width >= 200 && before.innerMax > 1 && path.action === 'pan-y' && path.visibleRows === count - 1, { before, path });
+        const path = await summarySurface(p), neighbors = await neighborState(p);
+        ok(`${label}/${round}: long summary provides a generous finger stroke with only its available neighbors`, usableSurface(path, 180) && path.width >= 200 && before.innerMax > 1 && path.action === 'pan-y' && usableNeighbors(neighbors), { before, path, neighbors });
         if (!usableSurface(path, 180) || path.width < 200) throw new Error(`INVALID ${label}: rapid-scroll gesture has no generous visible summary surface: ${JSON.stringify(path)}`);
         await touch('touchStart', path.start);
         for (let step = 1; step <= 6; step++) {
@@ -323,24 +357,24 @@ try {
         await p.waitForTimeout(100); await touch('touchEnd'); await p.waitForTimeout(180);
       }
       // At the page top, the real strip/banner can reduce available height.
-      // Fold distant controls before sacrificing the summary's reading surface.
+      // Both available neighbors remain visible; summary mode has no folds.
       await p.keyboard.press('Escape');
       await p.evaluate(() => scrollTo({ top: 0, behavior: 'instant' }));
       await p.waitForTimeout(100);
       await tapNow(await point(p, `.ts-pk-rail li:nth-child(${research + 1}) a`));
       const fit = await p.locator('.ts-pk-card').evaluate(card => {
         const visible = node => !!node && node.getBoundingClientRect().height > 0;
-        return { compact: card.classList.contains('fit1'), summary: card.querySelector('.sum').getBoundingClientRect().height,
-          neighbors: [...card.querySelectorAll('.row.near')].every(visible), distant: [...card.querySelectorAll('.row:not(.near)')].some(visible),
-          more: [...card.querySelectorAll('.more')].some(visible), title: visible(card.querySelector('.open > b')), hint: visible(card.querySelector('.hint')) };
+        return { summary: card.querySelector('.sum').getBoundingClientRect().height,
+          title: visible(card.querySelector('.open > b')), hint: visible(card.querySelector('.hint')) };
       });
-      ok(`${label}: tight fit keeps the summary, nearest topic and jump visible`, fit.summary >= 160 && fit.neighbors && fit.title && fit.hint && (!fit.compact || (!fit.distant && fit.more)), fit);
-      if (fit.compact) {
+      const neighbors = await neighborState(p);
+      ok(`${label}: tight fit keeps the summary, available neighbors and jump visible`, fit.summary >= 160 && usableNeighbors(neighbors) && fit.title && fit.hint, { fit, neighbors });
+      if (neighbors.expected.length) {
         const before = await state(p);
         const neighbor = await p.locator('.ts-pk-card .row.near').first().getAttribute('data-k');
         await tapNow(await point(p, `.ts-pk-card .row[data-k="${neighbor}"]`));
         const after = await state(p);
-        ok(`${label}: folded stack's nearest topic still opens by native tap`, samePage(before, after) && after.pinned && after.index === Number(neighbor), { before, after });
+        ok(`${label}: tight stack's adjacent topic still opens by native tap`, samePage(before, after) && after.pinned && after.index === Number(neighbor), { before, after });
       }
       ok(`${label}: no JavaScript errors`, errors.length === 0, errors);
       await ctx.close();

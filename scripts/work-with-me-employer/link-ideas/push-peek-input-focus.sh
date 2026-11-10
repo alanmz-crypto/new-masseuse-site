@@ -31,7 +31,7 @@ ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o 
 echo "Target site: $target   component: core-input-focus   mode: $mode"
 echo "[1] Uploading the reviewed package outside every web root ..."
 "${ssh_cmd[@]}" true 2>/dev/null || { echo "SSH login refused." >&2; exit 2; }
-tar -C "$here" -cf - install-peek-nav.php peek-nav.php peek-nav-legacy.php peek-nav-shared-v1.php peek-nav-shared-v2.php peek-nav-shared-v3.php peek-nav-shared-v4.php peek-nav-shared-v5.php peek-nav-shared-v6.php peek-data title-strip-pages.json \
+tar -C "$here" -cf - install-peek-nav.php peek-nav.php peek-nav-legacy.php peek-nav-shared-v1.php peek-nav-shared-v2.php peek-nav-shared-v3.php peek-nav-shared-v4.php peek-nav-shared-v5.php peek-nav-shared-v6.php peek-nav-shared-v7.php peek-data title-strip-pages.json \
   | "${ssh_cmd[@]}" 'mkdir -p "$HOME/wwm-package-peek-input-focus" && tar -xf - -C "$HOME/wwm-package-peek-input-focus"'
 
 read -r -d '' REMOTE <<'EOS' || true
@@ -56,7 +56,10 @@ export WWM_BACKUP_DIR="$HOME/private-backups"
 package="$HOME/wwm-package-peek-input-focus"
 installer="$package/install-peek-nav.php"
 core() { wp --path="$doc" --user=1 eval-file "$installer" "$1" core-input-focus; }
-verify_snapshot() { wp --path="$doc" --user=1 eval-file "$installer" verify "$snap" "$@"; }
+verify_snapshot() {
+  php -r '$s=json_decode(file_get_contents($argv[1]),true); if(!is_array($s)||($s["bundle"]??"")!=="peek-core-input-focus-v1"||($s["component"]??"")!=="core-input-focus"||($s["slug"]??null)!==""){fwrite(STDERR,"Snapshot belongs to another update; nothing changed.\n");exit(1);}' "$snap"
+  wp --path="$doc" --user=1 eval-file "$installer" verify "$snap" "$@";
+}
 ready() {
   state=$(core preflight); printf '%s\n' "$state"
   case "$state" in *'core-input-focus ready;'*) ;; *) echo "Apply requires frozen v6. Use --verify with the recorded snapshot for an applied core." >&2; exit 1 ;; esac
@@ -138,7 +141,7 @@ case "$phase" in
   verify|verify-purged)
     verify_snapshot
     if [ "$phase" = verify-purged ]; then purge; fi
-    render_all "$package/peek-nav.php"
+    render_all "$package/peek-nav-shared-v7.php"
     verify_snapshot ;;
   rollback)
     rollback_ready

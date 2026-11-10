@@ -33,8 +33,12 @@ const snapshot = p => p.evaluate(() => {
     card: rect(c), strip: rect(strip), header: head && getComputedStyle(head).display !== 'none' ? rect(head) : null,
     title: rect(o?.querySelector('b')), hint: rect(o?.querySelector('.hint')), summary: rect(sum), name: o?.querySelector('b')?.textContent,
     pinned: c?.classList.contains('is-pinned'), index: Number(c?.dataset.i),
-    rows: [...c.querySelectorAll('.row')].map(row => ({ index: Number(row.dataset.k), visible: getComputedStyle(row).display !== 'none', rect: rect(row) })),
-    more: [...c.querySelectorAll('.more')].filter(node => getComputedStyle(node).display !== 'none').map(node => node.textContent),
+    rows: [...c.querySelectorAll('.row')].map(row => {
+      const r = row.getBoundingClientRect(), style = getComputedStyle(row);
+      return { index: Number(row.dataset.k), before: !!(o.compareDocumentPosition(row) & Node.DOCUMENT_POSITION_PRECEDING), number: row.querySelector('b')?.textContent, heading: row.querySelector('span')?.textContent || '', visible: style.display !== 'none' && style.visibility === 'visible' && r.width > 0 && r.height > 0, rect: rect(row),
+        hit: [0.2, 0.5, 0.8].every(f => row.contains(document.elementFromPoint(r.left + r.width * f, r.top + r.height / 2))) };
+    }),
+    more: [...c.querySelectorAll('.more')].map(node => node.textContent),
     items: [...c.querySelectorAll('.sum.is-gist li')].map(li => li.textContent),
     summaryScroll: sum && { top: sum.scrollTop, height: sum.scrollHeight, clientHeight: sum.clientHeight, width: sum.scrollWidth, clientWidth: sum.clientWidth },
     fit: c.className.match(/fit\d/g) || [], stickyTop: parseFloat(getComputedStyle(strip).top) || 0 };
@@ -63,6 +67,12 @@ const reachCardEnds = async p => {
   await outerKey(p, 'Home');
   await settle(p);
   const top = await snapshot(p);
+  const neighbourSeen = new Set();
+  const rememberNeighbours = state => {
+    const viewport = { left: 0, top: 0, right: state.viewport.width, bottom: state.viewport.height };
+    state.rows.filter(row => row.visible && row.hit && inside(row.rect, state.card) && inside(row.rect, viewport)).forEach(row => neighbourSeen.add(row.index));
+  };
+  rememberNeighbours(bottom); rememberNeighbours(top);
   const titleLines = () => p.evaluate(() => {
     const c = document.querySelector('.ts-pk-card'), title = c.querySelector('.open > b'), r = c.getBoundingClientRect(), range = document.createRange();
     range.selectNodeContents(title);
@@ -76,6 +86,7 @@ const reachCardEnds = async p => {
   while (seen.some(line => !line) && steps < 12) {
     await p.keyboard.press('ArrowDown'); await p.waitForTimeout(180); await settle(p);
     const visible = await titleLines();
+    rememberNeighbours(await snapshot(p));
     visible.forEach((line, i) => { seen[i] = seen[i] || line; }); steps++;
   }
   await p.evaluate(() => {
@@ -85,10 +96,11 @@ const reachCardEnds = async p => {
   }); await settle(p);
   const after = await snapshot(p);
   return { reachable: inside(bottom.hint, bottom.card) && seen.length > 0 && seen.every(Boolean) && bottom.pinned && top.pinned && bottom.y === before.y && top.y === before.y && after.y === before.y && bottom.hash === before.hash && top.hash === before.hash && after.hash === before.hash,
+    neighboursReachable: before.rows.every(row => neighbourSeen.has(row.index)), neighbourIndicesSeen: [...neighbourSeen],
     titleLineProof: { lines: seen.length, seen, arrowSteps: steps },
     before: { y: before.y, hash: before.hash }, bottom: { hint: bottom.hint, card: bottom.card, y: bottom.y }, top: { title: top.title, card: top.card, y: top.y } };
 };
-const checkCard = async (p, label, row, data, i, allRows = false) => {
+const checkCard = async (p, label, row, data, i, strictVisible = false) => {
   const g = await snapshot(p), viewport = { left: 0, top: 0, right: g.viewport.width, bottom: g.viewport.height };
   const wanted = data.items.filter(item => item[1] === row[i].href.slice(1)).map(item => item[0]);
   // A summary on a short screen may temporarily cover the display-only strip
@@ -97,17 +109,17 @@ const checkCard = async (p, label, row, data, i, allRows = false) => {
   const shortSummary = g.viewport.height <= 500 && g.summary && g.summary.height > 0;
   ok(`${label}: card clears the header and stays on screen${shortSummary ? ' (short-screen summary may cover strip)' : ' below the strip'}`, g.pinned && inside(g.card, viewport) && (shortSummary || !overlaps(g.card, g.strip)) && !overlaps(g.card, g.header), g);
   const visible = inside(g.title, g.card) && inside(g.hint, g.card) && inside(g.summary, g.card) && inside(g.title, viewport) && inside(g.hint, viewport) && inside(g.summary, viewport);
+  const rowsFit = g.rows.every(item => item.visible && item.hit && inside(item.rect, g.card) && inside(item.rect, viewport));
   // Normal portrait states remain strict. In deliberately constrained states,
   // prove the existing outer-card fallback works with actual keyboard scrolling.
-  const reach = !allRows && !visible && inside(g.card, viewport) ? await reachCardEnds(p) : null;
-  ok(`${label}: section title, summary and jump hint are ${allRows ? 'visible' : 'visible or keyboard-reachable'}`, (visible || reach?.reachable) && g.summary.height > 0 && g.summaryScroll.width <= g.summaryScroll.clientWidth + 1, { ...g, reach });
-  // Portrait fitting may now fold distant rows before shrinking the summary.
-  // Require the exact neighboring controls and accurate +N counts when folded;
-  // all visible controls must still fit. Wording and identity remain exact.
-  const folded = g.rows.some(item => !item.visible);
-  const wantedMore = [i > 1 ? `+${i - 1} more above` : null, row.length - i > 2 ? `+${row.length - i - 2} more below` : null].filter(Boolean);
-  const rowsFit = g.rows.every(item => item.visible === (!folded || Math.abs(item.index - i) === 1) && (!item.visible || (inside(item.rect, g.card) && inside(item.rect, viewport)))) && JSON.stringify(g.more) === JSON.stringify(folded ? wantedMore : []);
-  ok(`${label}: approved words, section identity and topic controls stay intact`, g.index === i && g.name === row[i].label && JSON.stringify(g.items) === JSON.stringify(wanted) && g.rows.length === row.length - 1 && (!allRows || rowsFit), g);
+  const reach = !strictVisible && (!visible || !rowsFit) && inside(g.card, viewport) ? await reachCardEnds(p) : null;
+  ok(`${label}: section title, summary and jump hint are ${strictVisible ? 'visible' : 'visible or keyboard-reachable'}`, (visible || reach?.reachable) && g.summary.height > 0 && g.summaryScroll.width <= g.summaryScroll.clientWidth + 1, { ...g, reach });
+  // Summary cards contain exactly the immediate neighbours, never hidden distant
+  // rows or fold labels. Ordinary screens keep both controls visible; constrained
+  // enlarged-text fallback must prove each control reachable with native keys.
+  const expected = [i - 1, i + 1].filter(k => k >= 0 && k < row.length);
+  const neighboursIntact = g.more.length === 0 && JSON.stringify(g.rows.map(item => item.index)) === JSON.stringify(expected) && g.rows.every(item => item.visible && item.before === (item.index < i) && item.number === String(item.index + 1) && item.heading.length > 0);
+  ok(`${label}: approved words, section identity and only immediate topic controls stay intact`, g.index === i && g.name === row[i].label && JSON.stringify(g.items) === JSON.stringify(wanted) && neighboursIntact && (rowsFit || (!strictVisible && reach?.reachable && reach.neighboursReachable)), { ...g, expected, reach });
   return g;
 };
 const shot = async (p, label, geometry) => {
@@ -129,7 +141,8 @@ const checkBookmark = async (p, label) => {
       expectedTop: b.atEnd ? Math.max(0, sum.scrollHeight - sum.clientHeight) : Math.min(b.top, Math.max(0, sum.scrollHeight - sum.clientHeight)), top: sum.scrollTop };
   });
   ok(`${label}: open DOM, visible focus, summary position and destination survive`, state.sameCard && state.sameSummary && state.sameFocus && state.focusedSummaryVisible && state.sameName && state.sameHash && Math.abs(state.top - state.expectedTop) <= 1, state);
-  await book(p);
+  // Keep the explicit reader bookmark through the whole resize sequence;
+  // a temporary clamp is a displayed position, not a new reading choice.
 };
 const researchEnd = async (p, label) => {
   const before = await snapshot(p);
@@ -211,7 +224,7 @@ try {
           for (const viewport of resized) {
             await p.setViewportSize(viewport); await settle(p);
             await checkBookmark(p, `${prefix}/resize-${viewport.width}x${viewport.height}`);
-            await checkCard(p, `${prefix}/resize-${viewport.width}x${viewport.height}`, row, data, research);
+            await checkCard(p, `${prefix}/resize-${viewport.width}x${viewport.height}`, row, data, research, true);
           }
           await closeCard(p);
           if (width === 390) {
@@ -220,8 +233,8 @@ try {
               const shortGap = await p.evaluate(() => { const strip = document.querySelector('.ts-pk-top'); return strip.getBoundingClientRect().top - (parseFloat(getComputedStyle(strip).top) || 0); });
               for (const [state, y] of [['top', 0], ['transition', shortGap / 2], ['pinned', shortGap + 24]]) {
                 await scroll(p, y);
-                for (const i of [0, research]) {
-                  await openCard(p, i); const g = await checkCard(p, `${prefix}/landscape-${height}-${state}/${i + 1}`, row, data, i);
+                for (const i of [...new Set([0, Math.floor(row.length / 2), research])]) {
+                  await openCard(p, i); const g = await checkCard(p, `${prefix}/landscape-${height}-${state}/${i + 1}`, row, data, i, true);
                   if (page.slug === 'chair-massage' && side === 'right' && state === 'top' && i === 0) await shot(p, `${page.slug}-844x${height}-top-${i + 1}`, g);
                   await closeCard(p);
                 }
@@ -246,7 +259,7 @@ try {
               const distance = await p.evaluate(() => { const s = document.querySelector('.ts-pk-top'); return s.getBoundingClientRect().top - (parseFloat(getComputedStyle(s).top) || 0) + 40; });
               for (const [state, y] of viewport.width === 390 ? [['pinned', distance]] : [['top', 0], ['pinned', distance]]) {
                 await scroll(p, y);
-                for (const i of [0, research]) {
+                for (const i of [...new Set([0, Math.floor(row.length / 2), research])]) {
                   await openCard(p, i); const label = `${prefix}/double-text-${viewport.width}x${viewport.height}-${state}/${i + 1}`;
                   const g = await checkCard(p, label, row, data, i);
                   if (i === research) await researchEnd(p, label);

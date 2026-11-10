@@ -76,7 +76,8 @@ html.ts-pk-title-ready .ts-pk-title-content :is(.tsx-lab,.tsp-lab,.tsr-lab) :is(
 .ts-pk-card.is-pinned.can-scroll{touch-action:pan-y}   /* the constrained outer-card fallback keeps its own native scrolling */
 .ts-pk-card small{display:block;font-size:.72rem;color:var(--pk-muted);text-transform:uppercase;letter-spacing:.08em}
 .ts-pk-card b{display:block;font-size:1.05rem;margin:.15rem 2rem .1rem 0}
-/* the stack: closed boxes for the sections above and below the open one, so its place on the page shows (Ryan, 2026-11-08) */
+/* Summary previews keep only the immediate previous/next topic (Ryan,
+   2026-11-10); title-only cards retain their existing section stack. */
 html .ts-pk .ts-pk-card.ts-pk-stack{padding:.4rem}
 .ts-pk-card .open{position:relative;margin:.3rem 0;padding:.75rem .9rem;border:1.5px solid var(--pk-preview);border-radius:14px;background:var(--pk-panel)}
 .ts-pk-card .open:first-child{margin-top:0}.ts-pk-card .open:last-child{margin-bottom:0}
@@ -182,8 +183,8 @@ html.ts-pk-title-ready #masthead .ast-mobile-header-content{max-height:calc(100v
 html.ts-pk-title-ready body.admin-bar #masthead .ast-mobile-header-content{max-height:calc(100dvh - var(--pk-head,0px) - var(--wp-admin--admin-bar--height,32px))}   /* the phone menu still opens fully from the pinned header */
 }
 @media screen and (min-height:501px) and (max-width:600px){html.ts-pk-title-ready body.admin-bar #masthead{top:0}}
-/* Reserve a useful finger stroke for every summary. When space is tight, fold
-   distant boxes before shrinking the summary; its neighbors, title and jump stay. */
+/* Reserve a useful finger stroke for every summary. Its two neighboring topic
+   controls stay visible as the viewport changes; title-only stacks may fold. */
 html .ts-pk .ts-pk-card.fit2 .sum{max-height:14em}
 html .ts-pk .ts-pk-card.fit3 .sum{max-height:10em}
 html .ts-pk .ts-pk-card.fit3 .row{min-height:26px;padding:.1rem .5rem;font-size:.75rem}
@@ -194,6 +195,7 @@ html .ts-pk .ts-pk-card.fit1 .row:not(.near){display:none}
 html .ts-pk .ts-pk-card.fit1 .more{display:block}
 html .ts-pk .ts-pk-card.fit4 .sum{max-height:6.6em}
 html .ts-pk .ts-pk-card.fit5 .row,html .ts-pk .ts-pk-card.fit5 .more{display:none}
+html .ts-pk:not(.ts-pk-titles) .ts-pk-card.fit5 .row{display:flex}
 html .ts-pk .ts-pk-card.fit5 .open small,html .ts-pk .ts-pk-card.fit5 .side,html .ts-pk .ts-pk-card.fit5 .sum{display:none}
 html .ts-pk .ts-pk-card.fit5{padding:.25rem}
 html .ts-pk .ts-pk-card.fit5 .open{margin:.15rem 0}
@@ -733,8 +735,13 @@ add_action( 'wp_footer', function () {
     function rowHTML(k, near) { return '<button type="button" class="row' + (near ? ' near' : '') + '" data-k="' + k + '" aria-label="Section ' + (k + 1) + ': ' + attr(S[k].heading) + ' (show its preview)"><b>' + (k + 1) + '</b><span>' + esc(S[k].heading) + '</span></button>'; }
     function cardHTML(i, pinned) {
       var above = '', below = '';
-      for (var k = 0; k < S.length; k++) { if (k < i) above += rowHTML(k, k === i - 1); else if (k > i) below += rowHTML(k, k === i + 1); }
-      var upN = Math.max(0, i - 1), downN = Math.max(0, S.length - i - 2);   // shown only when the far rows are folded away (fit4)
+      if (hasData) {
+        if (i > 0) above = rowHTML(i - 1, true);
+        if (i + 1 < S.length) below = rowHTML(i + 1, true);
+      } else {
+        for (var k = 0; k < S.length; k++) { if (k < i) above += rowHTML(k, k === i - 1); else if (k > i) below += rowHTML(k, k === i + 1); }
+      }
+      var upN = hasData ? 0 : Math.max(0, i - 1), downN = hasData ? 0 : Math.max(0, S.length - i - 2);
       return (upN ? '<span class="more" aria-hidden="true">+' + upN + ' more above</span>' : '') + above + '<div class="open" tabindex="-1" aria-label="Section ' + (i + 1) + ' preview: ' + attr(S[i].label) + '">' + openHTML(i, pinned) + '</div>' + below + (downN ? '<span class="more" aria-hidden="true">+' + downN + ' more below</span>' : '');
     }
     function openHTML(i, pinned) {
@@ -768,9 +775,12 @@ add_action( 'wp_footer', function () {
       }
     }
     var fitted = null, reading = null;
-    function rememberReading() {
-      var m = card.querySelector('.sum');
-      reading = m ? { node: m, top: m.scrollTop, atEnd: m.scrollTop > 0 && m.scrollHeight - m.scrollTop - m.clientHeight <= 2, width: m.clientWidth, height: m.clientHeight, total: m.scrollHeight } : null;
+    function rememberReading(preserveIntent) {
+      var m = card.querySelector('.sum'), saved = preserveIntent && reading && reading.node === m ? reading : null;
+      // A smaller scroll range may clamp the displayed offset without changing
+      // where the reader chose to be. Keep that intent separate from the offset
+      // applied by fitting, including when all the text temporarily fits.
+      reading = m ? { node: m, top: saved ? saved.top : m.scrollTop, atEnd: saved ? saved.atEnd : m.scrollTop > 0 && m.scrollHeight - m.scrollTop - m.clientHeight <= 2, rendered: m.scrollTop, width: m.clientWidth, height: m.clientHeight, total: m.scrollHeight } : null;
     }
     function sameReadingSize(m) { return m && reading && reading.node === m && reading.width === m.clientWidth && reading.height === m.clientHeight && reading.total === m.scrollHeight; }
     function fit() {   // use the same visible boundary for fitting and placement
@@ -784,12 +794,13 @@ add_action( 'wp_footer', function () {
         // Keep the existing scrollable-card fallback inside the selected space.
         card.style.maxHeight = cap + 'px';
         var avail = Math.max(0, cap - (card.offsetHeight - card.clientHeight));
-        // Fold distant rows first; then trim summary height and compact nearby
-        // controls. Only the smallest fit leaves the open box alone.
+        // Summary cards contain only their immediate neighbours. Compact the
+        // controls and summary within the space without removing those links;
+        // title-only cards retain their existing folding sequence.
         ['fit1', 'fit2', 'fit3', 'fit4', 'fit5'].some(function (c) { if (card.scrollHeight <= avail + 0.5) return true; card.classList.add(c); return false; });
         if (summary && (card.classList.contains('fit5') || (summary.scrollHeight > summary.clientHeight + 1 && summary.clientHeight < 120))) {
-          // Reading space takes priority over the neighboring rows. Use the
-          // space actually left after the compact title and jump controls.
+          // Use the space actually left after the neighboring links, compact
+          // title and jump controls. The summary keeps its own native scroller.
           card.classList.add('fit5');
           var chrome = card.scrollHeight - summary.clientHeight;
           summary.style.maxHeight = Math.max(1, avail - chrome) + 'px';
@@ -827,12 +838,15 @@ add_action( 'wp_footer', function () {
       var y = parseFloat(card.style.top), scroll = card.scrollTop;
       // Responsive styles have already reflowed by the time resize fires. Keep
       // the reading intent recorded before that reflow, especially an endpoint.
-      var saved = reading && reading.node === sum && !sameReadingSize(sum) ? reading : null;
+      var saved = reading && reading.node === sum ? reading : null;
       var sumScroll = saved ? saved.top : (sum ? sum.scrollTop : 0), atEnd = saved ? saved.atEnd : sum && sumScroll > 0 && sum.scrollHeight - sumScroll - sum.clientHeight <= 2;
       if (!isFinite(y)) y = card.getBoundingClientRect().top;
       fit();
-      card.scrollTop = scroll;
-      if (sum) sum.scrollTop = atEnd ? sum.scrollHeight : sumScroll;
+      if (card.scrollTop !== scroll) card.scrollTop = scroll;
+      if (sum) {
+        var restored = Math.min(Math.max(0, sum.scrollHeight - sum.clientHeight), atEnd ? sum.scrollHeight : sumScroll);
+        if (sum.scrollTop !== restored) sum.scrollTop = restored;
+      }
       // Clamp the existing position, rather than recentering or rebuilding the
       // card: its chosen section, focus and reading position stay with the reader.
       clampCard(y);
@@ -846,7 +860,7 @@ add_action( 'wp_footer', function () {
           else if (fr.bottom > edge + card.clientHeight) card.scrollTop += fr.bottom - edge - card.clientHeight;
         }
       }
-      moreHint(); rememberReading();
+      moreHint(); rememberReading(true);
     }
     var shown = '', clear = 0;
     function hideCard() { card.className = 'ts-pk-card'; shown = ''; reading = null; hover(-1); nav.classList.remove('is-active'); clearTimeout(clear); clear = setTimeout(function () { if (!shown) card.innerHTML = ''; }, 220); }   // empty it after the fade
@@ -893,10 +907,11 @@ add_action( 'wp_footer', function () {
       var m = e.target;
       if (!m.classList || !m.classList.contains('sum')) return;
       moreHint();
-      // A browser-generated clamp during responsive reflow is not a new reading
-      // choice. Refit restores the bookmark, then records its new dimensions.
+      // Only a changed position within the fitted geometry replaces the reading
+      // choice. A queued event from fitting's own clamp/restoration matches the
+      // recorded rendered offset and must not turn an interior bookmark into End.
       var viewport = viewportBounds();
-      if (fitted && fitted.width === viewport.width && fitted.height === viewport.height) rememberReading();
+      if (fitted && fitted.width === viewport.width && fitted.height === viewport.height && sameReadingSize(m) && m.scrollTop !== reading.rendered) rememberReading();
     }, true);
     card.addEventListener('pointerdown', function (e) {
       if (e.pointerType === 'mouse' || !e.isPrimary) return;

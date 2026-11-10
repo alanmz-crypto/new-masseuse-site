@@ -4,19 +4,50 @@ function run_focus_render_tests() {
     $passed = 0;
     $check = static function ( $ok, $label ) use ( &$passed ) { if ( ! $ok ) { throw new RuntimeException( 'FAIL input-focus renderer: ' . $label ); } $passed++; };
     $wrapper = file_get_contents( dirname( __DIR__ ) . '/push-peek-input-focus.sh' );
+    $neighbours = file_get_contents( dirname( __DIR__ ) . '/push-peek-neighbours.sh' );
     $historical = file_get_contents( dirname( __DIR__ ) . '/push-peek-nav.sh' );
     $pattern = <<<'REGEX'
 #    php -r '(.*?)' "\$source" "\$tmp/\$key\.html" "\$slug"#s
 REGEX;
     $check( preg_match_all( $pattern, $wrapper, $programs ) === 1, 'one actual embedded renderer extracted' );
     $renderer = $programs[1][0];
+    $check( preg_match_all( $pattern, $neighbours, $neighbours_programs ) === 1 && $neighbours_programs[1][0] === $renderer, 'neighbours uses the exact same tested renderer program' );
     $inventory_pattern = "/read -r -d '' INVENTORY <<'PHP' \\|\\| true\\n(.*?)\\nPHP\\n/s";
     $check( preg_match( $inventory_pattern, $wrapper, $current_inventory ) === 1 && preg_match( $inventory_pattern, $historical, $old_inventory ) === 1 && $current_inventory[1] === $old_inventory[1], 'published inventory guard is identical to the fully exercised historical body' );
+    $check( preg_match( $inventory_pattern, $neighbours, $neighbours_inventory ) === 1 && $neighbours_inventory[1] === $old_inventory[1], 'neighbours uses the same tested published inventory program' );
     $dir = sys_get_temp_dir() . '/peek-focus-render-' . bin2hex( random_bytes( 5 ) );
     if ( ! mkdir( $dir, 0700 ) ) { throw new RuntimeException( 'Cannot create renderer fixture directory.' ); }
     try {
+        // Execute each wrapper's actual lane-binding predicate before the full WP verifier.
+        // The fixture filename belongs to the requested lane even when its JSON belongs to another.
+        $header_pattern = <<<'REGEX'
+#^  php -r '(.*?)' "\$snap"$#m
+REGEX;
+        foreach ( array( 'core-input-focus' => $wrapper, 'core-neighbours' => $neighbours ) as $component => $source ) {
+            $check( preg_match_all( $header_pattern, $source, $header_programs ) === 1, $component . ' has one actual header predicate' );
+            $snapshot_file = $dir . '/peek-template-' . $component . '-before-20261110-100000-abcdef12.json';
+            foreach ( array( 'valid', 'foreign', 'bundle', 'component', 'slug', 'missing-slug', 'null-slug', 'invalid-json', 'scalar', 'missing-file' ) as $mutation ) {
+                $snapshot = array( 'bundle' => 'peek-' . $component . '-v1', 'component' => $component, 'slug' => '' );
+                if ( $mutation === 'foreign' ) { $foreign = 'core-neighbours' === $component ? 'core-input-focus' : 'core-neighbours'; $snapshot['bundle'] = 'peek-' . $foreign . '-v1'; $snapshot['component'] = $foreign; }
+                if ( $mutation === 'bundle' ) { $snapshot['bundle'] .= '-other'; }
+                if ( $mutation === 'component' ) { $snapshot['component'] = 'core-title-rail'; }
+                if ( $mutation === 'slug' ) { $snapshot['slug'] = 'thai-massage'; }
+                if ( $mutation === 'missing-slug' ) { unset( $snapshot['slug'] ); }
+                if ( $mutation === 'null-slug' ) { $snapshot['slug'] = null; }
+                if ( $mutation === 'scalar' ) { $snapshot = 'other'; }
+                $bytes = 'invalid-json' === $mutation ? '{' : json_encode( $snapshot );
+                file_put_contents( $snapshot_file, $bytes ); chmod( $snapshot_file, 0600 );
+                if ( $mutation === 'missing-file' ) { unlink( $snapshot_file ); }
+                $pipes = array();
+                $proc = proc_open( array( PHP_BINARY, '-r', $header_programs[1][0], $snapshot_file ), array( array( 'pipe', 'r' ), array( 'pipe', 'w' ), array( 'pipe', 'w' ) ), $pipes );
+                if ( ! is_resource( $proc ) ) { throw new RuntimeException( 'Cannot execute actual snapshot header predicate.' ); }
+                fclose( $pipes[0] ); $out = stream_get_contents( $pipes[1] ); $err = stream_get_contents( $pipes[2] ); fclose( $pipes[1] ); fclose( $pipes[2] ); $rc = proc_close( $proc );
+                $unchanged = 'missing-file' === $mutation ? ! file_exists( $snapshot_file ) : file_get_contents( $snapshot_file ) === $bytes && ( fileperms( $snapshot_file ) & 0777 ) === 0600;
+                $check( $unchanged && $out === '' && ( 'valid' === $mutation ? $rc === 0 && $err === '' : $rc === 1 && str_contains( $err, 'Snapshot belongs to another update; nothing changed.' ) ), $component . ' real header predicate: ' . $mutation );
+            }
+        }
         $bodies = array();
-        foreach ( array( 'current' => 'peek-nav.php', 'v6' => 'peek-nav-shared-v6.php' ) as $version => $name ) {
+        foreach ( array( 'current' => 'peek-nav.php', 'v7' => 'peek-nav-shared-v7.php', 'v6' => 'peek-nav-shared-v6.php' ) as $version => $name ) {
             $source = file_get_contents( dirname( __DIR__ ) . '/' . $name );
             file_put_contents( $dir . '/' . $version . '.php', $source );
             foreach ( array( 'style' => 'ts-peek-nav-css', 'script' => 'ts-peek-nav-runtime' ) as $tag => $id ) {
@@ -39,9 +70,11 @@ REGEX;
             $rc = proc_close( $proc );
             $check( $should_pass ? $rc === 0 && $err === '' && str_contains( $out, 'exact served core/style and data scope: ' . $slug ) : $rc === 1 && str_contains( $err, 'FAIL ' ), $label );
         };
-        foreach ( array( 'current', 'v6' ) as $version ) {
+        foreach ( array( 'current', 'v7', 'v6' ) as $version ) {
             foreach ( array( 'thai-massage', 'therapeutic-massage', 'deep-tissue-massage', 'chair-massage', 'services', 'about' ) as $slug ) { $run( $version, $slug, $html( $version, $slug ), true, $version . ' exact runtime/style and page scope: ' . $slug ); }
         }
+        $run( 'current', 'thai-massage', $html( 'v7', 'thai-massage' ), false, 'frozen-v7 response cannot verify a neighbours deployment' );
+        $run( 'v7', 'thai-massage', $html( 'current', 'thai-massage' ), false, 'neighbours response cannot verify the historical input-focus deployment' );
         $run( 'current', 'thai-massage', $html( 'v6', 'thai-massage' ), false, 'frozen-v6 response cannot verify a current deployment' );
         $valid = $html( 'current', 'thai-massage' );
         $run( 'current', 'thai-massage', str_replace( '<script id="ts-peek-nav-runtime">', '<script id="ts-peek-nav-runtime">/* changed */', $valid ), false, 'changed runtime refused' );

@@ -93,6 +93,8 @@ if [ -n "$img" ] && command -v docker >/dev/null; then gate "Peek visitor first-
 gate "Rail deployment backups, cache stability and snapshot verification (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/rail-input/test-push.py"
 gate "Peek input-focus deployment snapshot, rendering order and historical dispatch (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/core-input-focus/test-push.py"
 gate "Peek input-focus rehearsal snapshot binding and post-browser recovery (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/core-input-focus/test-rehearsal.py"
+gate "Peek neighbour deployment snapshot, rendering order and own-lane guards (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/core-neighbours/test-push.py"
+gate "Peek neighbour rehearsal snapshots, failure stops and post-browser recovery (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/core-neighbours/test-rehearsal.py"
 gate "Peek visitor-release snapshot, rollback rendering and evidence guards (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/peek-release/test-rehearsal.py"
 gate "Peek isolated-copy loopback transport (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/peek-release/test-loopback.py"
 peek_js_syntax() {
@@ -103,6 +105,7 @@ if command -v node >/dev/null; then
   gate "Peek browser checker and wrapper syntax (offline)" peek_js_syntax
   gate "Peek wrapper evidence, invalid and failure guards (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/tests/wrapper-selftest.py"
   gate "Peek input wrapper evidence, complete logs and stop guards (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/tests/input-wrappers-selftest.py"
+  gate "Peek neighbour browser evidence, complete logs and engine gates (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/core-neighbours/test-gates.py"
   gate "Rail anonymous HAR capture and artifact guards (offline)" node "$here/work-with-me-employer/link-ideas/rail-input/test-har-capture.mjs"
 else skip "Peek browser checker syntax and wrapper guards" "node is not installed"; fi
 # the generated Thai content must be what the builder produces (a hand edit or a stale build is caught here)

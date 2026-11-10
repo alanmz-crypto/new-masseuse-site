@@ -1,5 +1,14 @@
 # Peek shared template
 
+**Current work: one summary neighbour above and below, staging39 only.** Ryan
+requested this uniform layout after reporting missing links and scrolling
+trouble with Safari's expanded address bar. The
+[active phase record](../../../docs/reviews/2026-11-10-peek-summary-neighbours.md)
+tracks the candidate, tests and actual deployment status. `peek-nav.php` is now
+that candidate; the deployed input-focus core is frozen as shared v7. No new
+staging write or snapshot exists yet. Live-release preparation is paused, and
+its frozen first-install payload has not been updated to this candidate.
+
 **Release preparation, November 10: not ready for live.** The [readiness record](../../../docs/reviews/2026-11-10-peek-release-readiness.md)
 contains the exact scope, new read-only live/staging inventories and current
 acceptance blockers. All 15 shared page bodies match after origin normalization;
@@ -65,9 +74,9 @@ See the [completed fix record](../../../docs/reviews/2026-11-09-peek-kiro-fixes.
 `peek-nav-shared-v6.php` is the previous payload: 102,649 stored code bytes, SHA256
 `dec11c9e50cacba8986068e98748e966333aebe3366701f1f0e94e5e790113a1`.
 `core-title-rail` pins v4→v5 and `core-kiro-fixes` pins v5→v6. Current
-`peek-nav.php` is the deployed input-focus payload, with its separate route and
-actual snapshot above. Freeze and pin that payload before any future core edit;
-older snapshots retain their meaning.
+`peek-nav-shared-v7.php` is the deployed input-focus payload, with its separate
+v6→v7 route and actual snapshot above. The new `core-neighbours` route uses
+v7→current; older snapshots retain their meaning.
 
 Staging39 only. Title-only rails remain on visitor pages without an existing
 rail, including one-entry pages; they now use a shorter 120 px maximum there.

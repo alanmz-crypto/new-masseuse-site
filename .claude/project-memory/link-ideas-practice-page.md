@@ -5,6 +5,15 @@ metadata:
   type: project
 ---
 
+**Current task, November 10: fixed summary neighbours, staging39 only.** Ryan
+reports missing neighbouring links and scrolling trouble across the four service
+pages with Safari’s address bar expanded. They requested only the immediate
+previous summary above and next below each open box. The
+[neighbour-layout record](../../docs/reviews/2026-11-10-peek-summary-neighbours.md)
+tracks preparation, exact frozen v7 and required copy/browser/recovery checks.
+Not deployed yet. Live-release preparation is paused; the blocked live-copy
+permission remains unapproved.
+
 **Release preparation, November 10: not ready for live.** The [readiness record](../../docs/reviews/2026-11-10-peek-release-readiness.md)
 contains the exact scope, new read-only live/staging inventories and current
 acceptance blockers. All 15 shared page bodies match after origin normalization;

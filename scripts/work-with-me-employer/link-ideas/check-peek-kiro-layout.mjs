@@ -122,11 +122,17 @@ const summaryGeometry = p => p.evaluate(() => {
   if (final) range.selectNodeContents(final);
   const lines = final ? [...range.getClientRects()].filter(r => r.width > 0 && r.height > 0) : [];
   const last = lines.at(-1);
+  const selected = Number(card.dataset.i), count = document.querySelectorAll('.ts-pk-rail a').length;
+  const neighbors = { expected: [selected - 1, selected + 1].filter(index => index >= 0 && index < count), folds: card.querySelectorAll('.more').length,
+    rows: [...card.querySelectorAll('.row')].map(row => {
+      const r = row.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2;
+      return { index: Number(row.dataset.k), near: row.classList.contains('near'), visible: r.width > 0 && r.height > 0 && r.left >= Math.max(viewport.left, c.left + card.clientLeft) - 1 && r.right <= Math.min(right, c.left + card.clientLeft + card.clientWidth) + 1 && r.top >= Math.max(headBottom, c.top + card.clientTop) - 1 && r.bottom <= Math.min(bottom, c.top + card.clientTop + card.clientHeight) + 1 && row.contains(document.elementFromPoint(x, y)) };
+    }) };
   return { viewport, layoutViewport: { width: innerWidth, height: innerHeight, clientWidth: document.documentElement.clientWidth, clientHeight: document.documentElement.clientHeight }, card: c, summary: s, title: t, hint: j, strip: bar, header: h, rail: rect(document.querySelector('.ts-pk-nav')), boundary: headBottom, clearStrip, usable, expected,
     visibleHeight: Math.max(0, visible.bottom - visible.top), visibleWidth: Math.max(0, visible.right - visible.left), start, end, hit: hit(start) && hit(end),
     range: sum.scrollHeight - sum.clientHeight, inner: sum.scrollTop, outer: card.scrollTop, faded: sum.classList.contains('has-more'),
     lastVisible: !!last && last.top >= visible.top - 1 && last.bottom <= visible.bottom + 1 && last.left >= visible.left - 1 && last.right <= visible.right + 1,
-    sideText: card.querySelector('.side')?.textContent.trim(), words: [...sum.querySelectorAll('li')].map(li => li.textContent), scrollWidth: sum.scrollWidth, clientWidth: sum.clientWidth };
+    sideText: card.querySelector('.side')?.textContent.trim(), words: [...sum.querySelectorAll('li')].map(li => li.textContent), scrollWidth: sum.scrollWidth, clientWidth: sum.clientWidth, neighbors };
 });
 const dragSummary = async (p, reverse = false) => {
   const g = await summaryGeometry(p);
@@ -185,6 +191,7 @@ try {
         const insideVisible = rect => rect.left >= g.viewport.left - 1 && rect.right <= g.viewport.left + g.viewport.width + 1 && rect.top >= g.viewport.top - 1 && rect.bottom <= g.viewport.top + g.viewport.height + 1;
         const headerFits = !g.header || (g.header.left >= g.viewport.left - 1 && g.header.right <= g.viewport.left + g.viewport.width + 1);
         ok(`${label}: card and rail stay inside visible screen below header`, g.card.top >= g.boundary - 1 && insideVisible(g.card) && insideVisible(g.rail) && headerFits && (g.viewport.height <= 500 || g.clearStrip), g);
+        ok(`${label}: only available previous and next controls remain visible and hit-testable`, g.neighbors.folds === 0 && JSON.stringify(g.neighbors.rows.map(row => row.index)) === JSON.stringify(g.neighbors.expected) && g.neighbors.rows.every(row => row.near && row.visible), g.neighbors);
         ok(`${label}: research offers a useful visible finger area`, g.expected >= 60 && g.visibleHeight >= g.expected - 1 && g.visibleWidth >= 200 && g.hit && g.scrollWidth <= g.clientWidth + 1, g);
         ok(`${label}: side label uses readable text`, g.sideText === (hand === 'right' ? 'Left' : 'Right'), g.sideText);
         if (hand === 'right' || spec.name === 'landscape-scrolled') await capture(p, `therapeutic-${hand}-${spec.name}`);
