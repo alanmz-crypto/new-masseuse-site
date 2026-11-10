@@ -28,7 +28,10 @@ class WP_CLI {
         if ( preg_match( '/Call to undefined|Undefined (?:variable|array key)|Too few arguments|Unknown named parameter|must be of type/', $value ) ) { throw new Harness_Error( $value ); }
         throw new Refusal_Error( $value );
     }
-    static function log( $value ) { $GLOBALS['logs'][] = $value; }
+    static function log( $value ) {
+        if ( ( $GLOBALS['fail_state_diagnostic_log'] ?? false ) && str_starts_with( $value, 'RELEASE-STATE-DIAGNOSTIC ' ) ) { $GLOBALS['fail_state_diagnostic_log'] = false; throw new RuntimeException( 'Synthetic diagnostic log failure' ); }
+        $GLOBALS['logs'][] = $value;
+    }
     static function success( $value ) { $GLOBALS['message'] = $value; }
     static function warning( $value ) { $GLOBALS['logs'][] = 'Warning: ' . $value; }
 }
@@ -234,7 +237,7 @@ function restore_state( $state ) {
         fixture_sql( "DELETE FROM wp_$table" );
         foreach ( $rows as $row ) { fixture_insert( "wp_$table", $row ); }
     }
-    $GLOBALS['events'] = $GLOBALS['event_counts'] = $GLOBALS['failures'] = $GLOBALS['created_observations'] = $GLOBALS['activation_observations'] = $GLOBALS['save_observations'] = $GLOBALS['normalization_observations'] = array(); $GLOBALS['clock'] = '2026-11-10 03:00:00'; $GLOBALS['encode_failure'] = null; $GLOBALS['result_overrides'] = array(); $GLOBALS['read_hook'] = null;
+    $GLOBALS['events'] = $GLOBALS['event_counts'] = $GLOBALS['failures'] = $GLOBALS['created_observations'] = $GLOBALS['activation_observations'] = $GLOBALS['save_observations'] = $GLOBALS['normalization_observations'] = array(); $GLOBALS['clock'] = '2026-11-10 03:00:00'; $GLOBALS['encode_failure'] = null; $GLOBALS['result_overrides'] = array(); $GLOBALS['read_hook'] = null; $GLOBALS['fail_state_diagnostic_log'] = false;
 }
 function create_schema() {
     $columns = array_keys( fixture_post() );
@@ -315,6 +318,8 @@ function invoke( $arguments, $directory = null ) {
         throw $error;
     }
     if ( $GLOBALS['harness_error'] !== null ) { throw new Harness_Error( $GLOBALS['harness_error'] ); }
+    // Expose the exact included closure for pure diagnostic boundary tests only.
+    if ( isset( $release_equal ) ) { $GLOBALS['diagnostic_equal'] = $release_equal; }
     return $GLOBALS['message'];
 }
 function refusal( $arguments, $label, $directory = null ) {
@@ -833,6 +838,103 @@ foreach ( array( 'matching-row', 'null-row', 'private-row', 'old-id-edited', 'po
     check( ! str_contains( $caught->getMessage() . implode( '\n', $logs ), 'SYNTHETIC_PRIVATE' ) && ! str_contains( implode( '\n', $logs ), 'RELEASE-SNAPSHOT ' ), "$mutation exposes no raw value or success marker" );
     check( preg_match( '/Snapshot: (.+)$/', $caught->getMessage(), $found ) === 1, "$mutation identifies the actual pre-normalization journal" );
     refusal( array( 'rollback', $found[1] ), "$mutation unowned normalization change cannot authorize removal" );
+}
+
+// Probe the actual included comparison closure after read-only preflight. This
+// changes neither the production helper nor its state-machine inputs.
+restore_state( $original ); invoke( array( 'preflight' ) );
+$state_descriptor = static function ( $value, $present = true ) {
+    if ( ! $present ) { return array( 'present' => false ); }
+    $encoded = json_encode( stable( $value ), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_LINE_TERMINATORS | JSON_THROW_ON_ERROR );
+    $descriptor = array( 'present' => true, 'type' => get_debug_type( $value ), 'bytes' => is_string( $value ) ? strlen( $value ) : strlen( $encoded ), 'sha256' => hash( 'sha256', get_debug_type( $value ) . ':' . $encoded ) );
+    if ( is_array( $value ) ) { $descriptor['count'] = count( $value ); $descriptor['shape'] = array_is_list( $value ) ? 'list' : 'map'; }
+    return $descriptor;
+};
+$probe_state_diagnostic = static function ( $actual, $expected, $label, $log_failure = false ) {
+    $GLOBALS['logs'] = array(); $before = all_state(); $events_before = $GLOBALS['events']; $reads_before = $GLOBALS['wpdb']->reads; $writes_before = $GLOBALS['wpdb']->writes;
+    $GLOBALS['fail_state_diagnostic_log'] = $log_failure; $caught = null;
+    try { $GLOBALS['diagnostic_equal']( $actual, $expected, $label ); } catch ( RuntimeException $error ) { if ( $error instanceof Harness_Error ) { throw $error; } $caught = $error; }
+    check( $caught !== null && $caught->getMessage() === $label . ' differs (expected ' . digest( $expected ) . ', actual ' . digest( $actual ) . ').', "$label retains the exact original refusal and hashes" );
+    check( all_state() === $before && $GLOBALS['events'] === $events_before && $GLOBALS['wpdb']->reads === $reads_before && $GLOBALS['wpdb']->writes === $writes_before, "$label diagnostics use only captured values with no reads or writes" );
+    check( ! str_contains( $caught->getMessage() . implode( '\n', $GLOBALS['logs'] ), 'SYNTHETIC_PRIVATE' ) && ! str_contains( implode( '\n', $GLOBALS['logs'] ), 'RELEASE-SNAPSHOT ' ), "$label contains no raw private key/value or success marker" );
+    if ( $log_failure ) { check( $GLOBALS['logs'] === array() && $GLOBALS['fail_state_diagnostic_log'] === false, 'a diagnostic logging exception cannot replace or relax the state guard' ); return null; }
+    $diagnostic = marker( 'RELEASE-STATE-DIAGNOSTIC' );
+    check( $diagnostic['label'] === $label && is_bool( $diagnostic['truncated'] ) && count( $diagnostic['changes'] ) <= 32, "$label carries a bounded, accurately named diagnostic" );
+    check( strlen( implode( '\n', $GLOBALS['logs'] ) ) < 30000, "$label diagnostic output remains bounded" );
+    return $diagnostic;
+};
+// Equal values, including harmless map ordering, still produce no diagnostics.
+$logs = array(); $events_before = $events; $reads_before = $wpdb->reads;
+$diagnostic_equal( array( 'post' => array( 'count' => '17', 'ID' => '9' ) ), array( 'post' => array( 'ID' => '9', 'count' => '17' ) ), 'Equal comparison' );
+check( $logs === array() && all_state() === $original && $events === $events_before && $wpdb->reads === $reads_before, 'equal canonical states remain a silent no-op' );
+
+$diagnostic = $probe_state_diagnostic( array( 'post' => array( 'ID' => '9' ) ), array( 'post' => array( 'ID' => '9', 'post_excerpt' => null ) ), 'Absent versus null' );
+check( $diagnostic['truncated'] === false && $diagnostic['changes'] === array( array( 'path' => array( 'post', 'post_excerpt' ), 'kind' => 'missing', 'expected' => $state_descriptor( null ), 'actual' => array( 'present' => false ) ) ), 'a present null value is distinguished from an absent key' );
+$private_key = 'post_content/SYNTHETIC_PRIVATE_UNKNOWN_PATH.雪';
+$diagnostic = $probe_state_diagnostic( array( 'post' => array( 'ID' => '9', $private_key => null ) ), array( 'post' => array( 'ID' => '9' ) ), 'Unknown added path' );
+check( $diagnostic['changes'] === array( array( 'path' => array( 'post', 'sha256:' . hash( 'sha256', $private_key ) ), 'kind' => 'added', 'expected' => array( 'present' => false ), 'actual' => $state_descriptor( null ) ) ), 'unknown path keys are fully hashed even when they begin with a known schema name' );
+$before_private = 'SYNTHETIC_PRIVATE_BEFORE_雪'; $after_private = 'SYNTHETIC_PRIVATE_AFTER_雪';
+$diagnostic = $probe_state_diagnostic( array( 'post' => array( 'post_content' => $after_private ) ), array( 'post' => array( 'post_content' => $before_private ) ), 'Raw content changed' );
+check( $diagnostic['changes'][0] === array( 'path' => array( 'post', 'post_content' ), 'kind' => 'value', 'expected' => $state_descriptor( $before_private ), 'actual' => $state_descriptor( $after_private ) ), 'raw content diagnostics contain only exact typed hashes and byte lengths' );
+$diagnostic = $probe_state_diagnostic( array( 'count' => 1.0 ), array( 'count' => 1 ), 'Scalar type changed' );
+check( $diagnostic['changes'][0]['kind'] === 'type' && $diagnostic['changes'][0]['expected'] === $state_descriptor( 1 ) && $diagnostic['changes'][0]['actual'] === $state_descriptor( 1.0 ) && $diagnostic['changes'][0]['expected']['sha256'] !== $diagnostic['changes'][0]['actual']['sha256'], 'typed fingerprints distinguish integer and float despite identical canonical JSON bytes' );
+$diagnostic = $probe_state_diagnostic( array( 'records' => array( 'ID' => '9' ) ), array( 'records' => array( '9' ) ), 'Array shape changed' );
+check( $diagnostic['changes'][0]['kind'] === 'shape' && $diagnostic['changes'][0]['expected'] === $state_descriptor( array( '9' ) ) && $diagnostic['changes'][0]['actual'] === $state_descriptor( array( 'ID' => '9' ) ), 'list versus map reports a shape change with count and hash' );
+$diagnostic = $probe_state_diagnostic( array( 'witnesses' => array( 'posts' => array( 0 => 'new0', '00' => 'new00' ) ) ), array( 'witnesses' => array( 'posts' => array( 0 => 'old0', '00' => 'old00' ) ) ), 'Distinct numeric-looking keys' );
+check( count( $diagnostic['changes'] ) === 2 && array_column( $diagnostic['changes'], 'path' ) === array( array( 'witnesses', 'posts', '0' ), array( 'witnesses', 'posts', '00' ) ), 'zero and double-zero keys remain separate changed paths' );
+
+$numeric_private_key = '12345678901234567890';
+$diagnostic = $probe_state_diagnostic( array( $numeric_private_key => $after_private ), array( $numeric_private_key => $before_private ), 'Unknown numeric field' );
+check( $diagnostic['changes'][0]['path'] === array( 'sha256:' . hash( 'sha256', $numeric_private_key ) ) && ! str_contains( json_encode( $diagnostic ), $numeric_private_key ), 'numeric-looking unknown field names are hashed outside approved ID maps and lists' );
+$many_expected = $many_actual = array();
+for ( $i = 0; $i < 100; $i++ ) { $key = 'SYNTHETIC_PRIVATE_PATH_' . $i; $many_expected[$key] = $before_private; $many_actual[$key] = $after_private; }
+$diagnostic = $probe_state_diagnostic( array( 'witnesses' => $many_actual ), array( 'witnesses' => $many_expected ), 'Changed-path cap' );
+check( count( $diagnostic['changes'] ) === 32 && $diagnostic['truncated'] === true && count( array_filter( $diagnostic['changes'], static fn( $change ) => $change['kind'] === 'value' && str_starts_with( $change['path'][1], 'sha256:' ) && strlen( $change['path'][1] ) === 71 ) ) === 32, 'more than 32 differences are bounded without leaking unknown path keys' );
+$deep_expected = $before_private; $deep_actual = $after_private;
+for ( $i = 0; $i < 11; $i++ ) { $deep_expected = array( 'post' => $deep_expected ); $deep_actual = array( 'post' => $deep_actual ); }
+$diagnostic = $probe_state_diagnostic( $deep_actual, $deep_expected, 'Path-depth cap' );
+check( count( $diagnostic['changes'] ) === 1 && $diagnostic['truncated'] === true && $diagnostic['changes'][0]['kind'] === 'bounded' && count( $diagnostic['changes'][0]['path'] ) === 8 && $diagnostic['changes'][0]['expected']['shape'] === 'map', 'deep changes report one hashed bounded branch at depth eight' );
+$wide_expected = array_fill( 0, 3000, 'unchanged' ); $wide_actual = $wide_expected; $wide_actual[2999] = $after_private;
+$diagnostic = $probe_state_diagnostic( array( 'records' => $wide_actual ), array( 'records' => $wide_expected ), 'Scan-budget cap' );
+check( count( $diagnostic['changes'] ) === 1 && $diagnostic['truncated'] === true && $diagnostic['changes'][0]['kind'] === 'bounded' && $diagnostic['changes'][0]['path'] === array( 'records' ) && $diagnostic['changes'][0]['actual']['count'] === 3000, 'scan exhaustion reports a bounded branch instead of silently claiming no changes' );
+for ( $i = 0; $i < 32; $i++ ) { $wide_actual[$i] = $after_private; }
+$diagnostic = $probe_state_diagnostic( array( 'records' => $wide_actual ), array( 'records' => $wide_expected ), 'Combined entry and scan caps' );
+check( count( $diagnostic['changes'] ) === 32 && $diagnostic['truncated'] === true && count( array_filter( $diagnostic['changes'], static fn( $change ) => $change['kind'] === 'value' ) ) === 32, 'scan exhaustion after 32 changes cannot append a 33rd bounded entry' );
+$probe_state_diagnostic( array( 'count' => '18' ), array( 'count' => '17' ), 'Logging failure retains refusal', true );
+
+// State diagnostics describe the changed path without adopting the changed state.
+foreach ( array( 'shared-counts', 'unrelated-witness', 'raw-content' ) as $mutation ) {
+    restore_state( $original ); $unexpected_state = null; $unexpected_id = null;
+    $failures = array( array( 'key' => 'create:after', 'at' => 1, 'throw' => false,
+        'change' => static function ( $id ) use ( $mutation, &$unexpected_state, &$unexpected_id ) {
+            $unexpected_id = $id;
+            if ( $mutation === 'shared-counts' ) { fixture_sql( 'UPDATE wp_term_taxonomy SET count=count+1 WHERE term_taxonomy_id IN (9,10)' ); }
+            if ( $mutation === 'unrelated-witness' ) { fixture_update( 'wp_posts', 'ID', 2000, array( 'post_excerpt' => 'SYNTHETIC_PRIVATE_WITNESS_EDIT' ) ); }
+            if ( $mutation === 'raw-content' ) { fixture_update( 'wp_posts', 'ID', 1160, array( 'post_content' => 'SYNTHETIC_PRIVATE_RAW_CONTENT_EDIT' ) ); }
+            $unexpected_state = all_state();
+        } ) );
+    $caught = null; try { invoke( array( 'apply' ) ); } catch ( Refusal_Error $error ) { $caught = $error; }
+    check( $caught !== null && str_contains( $caught->getMessage(), 'Inactive creation full state differs' ) && str_contains( $caught->getMessage(), 'recovery stopped' ), "$mutation diagnostic preserves the original full-state refusal" );
+    check( all_state() === $unexpected_state && row( 'posts', 'ID', $unexpected_id )['post_status'] === 'draft', "$mutation diagnostics retain the exact unknown state and inactive draft" );
+    check( ( $event_counts['create:before'] ?? 0 ) === 1 && ( $event_counts['normalize-meta:before'] ?? 0 ) === 0 && ( $event_counts['correct-code:before'] ?? 0 ) === 0 && ( $event_counts['activate:before'] ?? 0 ) === 0 && ( $event_counts['delete:before'] ?? 0 ) === 0 && ( $event_counts['css-cas:before'] ?? 0 ) === 0 && ( $event_counts['astra-cas:before'] ?? 0 ) === 0, "$mutation diagnostic permits no adoption or subsequent database action" );
+    check( ! str_contains( $caught->getMessage() . implode( '\n', $logs ), 'SYNTHETIC_PRIVATE' ) && ! str_contains( implode( '\n', $logs ), 'RELEASE-SNAPSHOT ' ), "$mutation diagnostics contain neither raw values nor a success marker" );
+    $diagnostics = array();
+    foreach ( $logs as $line ) { if ( str_starts_with( $line, 'RELEASE-STATE-DIAGNOSTIC ' ) ) { $diagnostics[] = json_decode( substr( $line, strlen( 'RELEASE-STATE-DIAGNOSTIC ' ) ), true, 512, JSON_THROW_ON_ERROR ); } }
+    $phase = array_values( array_filter( $diagnostics, static fn( $item ) => $item['label'] === 'Inactive creation full state' ) );
+    check( count( $phase ) === 1 && $phase[0]['truncated'] === false, "$mutation reports the exact initial-creation mismatch once without truncation" );
+    $expected_changes = array();
+    if ( $mutation === 'shared-counts' ) {
+        foreach ( array( '0', '1' ) as $index ) { $expected_changes[] = array( 'path' => array( 'taxonomies', $index, 'count' ), 'kind' => 'value', 'expected' => $state_descriptor( '17' ), 'actual' => $state_descriptor( '18' ) ); }
+    } elseif ( $mutation === 'unrelated-witness' ) {
+        $old_row = array_values( array_filter( $original['posts'], static fn( $row ) => $row['ID'] === '2000' ) )[0];
+        $expected_changes[] = array( 'path' => array( 'witnesses', 'posts', '2000' ), 'kind' => 'value', 'expected' => $state_descriptor( digest( $old_row ) ), 'actual' => $state_descriptor( digest( row( 'posts', 'ID', 2000 ) ) ) );
+    } else {
+        $old_row = array_values( array_filter( $original['posts'], static fn( $row ) => $row['ID'] === '1160' ) )[0];
+        $expected_changes[] = array( 'path' => array( 'records', '1160', 'post', 'post_content' ), 'kind' => 'value', 'expected' => $state_descriptor( $old_row['post_content'] ), 'actual' => $state_descriptor( 'SYNTHETIC_PRIVATE_RAW_CONTENT_EDIT' ) );
+    }
+    check( $phase[0]['changes'] === $expected_changes, "$mutation pinpoints the actual captured difference using exact typed fingerprints" );
+    check( preg_match( '/Snapshot: (.+)$/', $caught->getMessage(), $found ) === 1, "$mutation retains the actual private recovery journal" );
+    refusal( array( 'rollback', $found[1] ), "$mutation diagnostic cannot authorize removal of the unknown draft" );
 }
 
 restore_state( $original );

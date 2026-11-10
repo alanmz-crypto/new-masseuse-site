@@ -125,7 +125,7 @@ itself took seconds; emitting its console copy delayed publication by minutes.
 The provisional first-install package now lives in
 `scripts/work-with-me-employer/link-ideas/peek-release/`. It accepts only exact
 `http://localhost:8090`; no staging/live installer or live request is enabled.
-Independent source review cleared installer SHA256
+Independent source review cleared the attribute-initialization installer SHA256
 `63dc97c39e551349f2b3c79d1e1778d387cae9bc496ef8ffa1bc482332b43d5b`
 for isolated rehearsal. Its pinned-PHP SQLite/WordPress API model passed **1,325
 checks**, including **138 injected write-boundary failures**. The separate
@@ -222,6 +222,51 @@ fixture uses the actual three-key factory profile; its 1,325 checks distinguish
 verified recovery from refused unreturned-ID writes, preserve all old raw rows,
 and reject any partial journal that skips initialization. A fresh real-copy run
 is still required.
+
+That source, `e5a86816ed15e4a6dbfdd68681116ff6418e96ef`, passed Gates
+`42752406115` at **03:56:51 UTC: 39/0**, with the expected rendered-URL skip.
+The complete 202-line job log was independently read. Fresh copy request
+`peek-visitor-release-rehearse-3`, run `42752791077`, source
+`a5b992df4f513d9740fff69baa03ef699e83b2a5`, finished **04:00:40 UTC, FAIL**.
+The first draft passed its exact identity, three metadata keys and two
+relationships, then failed the following full-state comparison. Attribute
+initialization was not reached. The aggregate hashes do not identify which
+surrounding field changed; taxonomy, hooks and other causes remain hypotheses.
+Recovery refused the unaccepted state. The private copy-only journal was
+`/backups/peek-release-before-20261110-040037-7a3f5751.json`.
+
+Full report, job and all eleven artifact files agree. The 9,309-byte artifact
+SHA256 is `ab9dfceea4637f1270e6193828d7b5dd60918db96169776d9837590da5ca8033`.
+The original navigation signatures, fingerprint, inventory and paths match copy
+2 byte for byte; all three preflight hashes agree within this run. There were
+**zero browser suites, assertions or screenshots; WebKit did not start**.
+No verified rollback or later release phase ran. Only the disposable copy was
+written; staging and live remain unchanged.
+
+The next diagnostic compares the already captured expected and actual values,
+reporting bounded changed paths with types, lengths and hashes. Unknown path
+components must be hashed. It must retain the original strict rejection and
+recovery refusal, without new database reads, state adoption or normalization.
+This is evidence gathering for the first-install package, not a visitor-runtime
+fix or a completed release rehearsal. The diagnostic-only installer SHA256
+`2cf3687e5bd6967fb69882ad3d230222db7b8eb4f248a4aac5af2a51fb387a0b`
+has passed independent source review and pinned-PHP syntax checking. It limits
+reports to 32 changes, eight path levels and 2,048 scanned child positions;
+unrecognized numeric field names are hashed, while actual list indexes and
+record/witness IDs remain identifiable. Failure to produce a diagnostic cannot
+replace the original guard error or permit a later write.
+The expanded offline installer suite passed **1,448 checks / 138 injected
+write-boundary failures**. It checks exact count/witness/content paths, raw-value
+and unknown-key redaction, missing/null/type/shape differences, combined output
+limits and logging failures. Integration controls retain the unknown draft and
+reject later writes or deletion. These synthetic results do not identify the
+actual copy mismatch.
+The full local source check then passed **38/0**, with Ruff unavailable locally
+and rendered-URL checks intentionally skipped. The first restricted-shell
+attempt could not use Docker or local test sockets and failed eleven gates;
+rerunning in the permitted outer executor resolved those setup failures. PHP
+containers used UID 0 only to read the existing private checkout mount, which
+remained read-only. CI must still supply Ruff and verify the committed source.
 
 1. Capture and review the exact current live navigation baseline. Existing
    staging upgrade installers require owned snippet #1380 and historical

@@ -120,6 +120,18 @@ exact; only the five new owned IDs are excluded from those original witnesses.
 Rejected newly owned records emit counts and typed value hashes, hashed unknown
 metadata names, and numeric relationship fields to identify storage mismatches.
 That diagnostic never authorizes adoption or deletion of unexpected state.
+Full-state equality failures also emit `RELEASE-STATE-DIAGNOSTIC` from the same
+captured values: the exact comparison phase, changed paths, presence/type/length
+and typed hashes. Only known structural names and numeric IDs appear in paths;
+unknown key names are hashed. Missing values, nulls and list/map shapes remain
+distinct. Output is bounded to 32 changes, eight path levels and 2,048 scanned
+child positions; a truncated branch is represented by hashes. The original
+comparison and refusal remain unchanged, with no extra database reads or writes.
+Copy3 (run `42752791077`, completed 2026-11-10 04:00:40 UTC) passed the first
+factory draft's owned-record shape, then failed full-state equality before
+adoption or attribute initialization. Its aggregate hashes do not identify the
+differing protected field; the new diagnostic is evidence gathering, not a fix
+or a reason to relax any guard.
 
 Shared WPCode taxonomy rows #9 and #10 start at count 17. The expected count adds
 exactly the number of published owned snippets and returns to 17 on rollback.

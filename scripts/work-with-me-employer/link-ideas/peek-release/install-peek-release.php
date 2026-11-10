@@ -26,8 +26,47 @@ $release_canonical = static function ( $value ) use ( &$release_canonical ) {
 };
 $release_json = static fn( $value ) => json_encode( $release_canonical( $value ), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_LINE_TERMINATORS | JSON_THROW_ON_ERROR );
 $release_hash = static fn( $value ) => hash( 'sha256', $release_json( $value ) );
-$release_equal = static function ( $actual, $expected, $label ) use ( $release_hash, $release_fail, $release_canonical ) {
-    if ( $release_canonical( $actual ) !== $release_canonical( $expected ) ) { $release_fail( $label . ' differs (expected ' . $release_hash( $expected ) . ', actual ' . $release_hash( $actual ) . ').' ); }
+$release_equal = static function ( $actual, $expected, $label ) use ( $release_hash, $release_fail, $release_canonical, $release_json ) {
+    $a = $release_canonical( $actual ); $e = $release_canonical( $expected );
+    if ( $a === $e ) { return; }
+    // Failure evidence only: use these captured values, never recapture or adopt.
+    try {
+    $safe = explode( ' ', 'records options taxonomies terms witnesses owned pages shared_termmeta_sha256 post meta relationships posts postmeta term_relationships term_taxonomy termmeta core thai-massage therapeutic-massage deep-tissue-massage chair-massage home siteurl template stylesheet show_on_front page_on_front page_for_posts permalink_structure astra-settings ID post_author post_date post_date_gmt post_content post_title post_excerpt post_status comment_status ping_status post_password post_name to_ping pinged post_modified post_modified_gmt post_content_filtered post_parent guid menu_order post_type post_mime_type comment_count meta_id post_id meta_key meta_value object_id term_taxonomy_id term_order term_id taxonomy description parent count name slug term_group option_id option_name option_value autoload id path title' );
+    $describe = static function ( $value, $present ) use ( $release_json ) {
+        if ( ! $present ) { return array( 'present' => false ); }
+        $type = get_debug_type( $value ); $bytes = $release_json( $value );
+        $out = array( 'present' => true, 'type' => $type, 'bytes' => strlen( is_string( $value ) ? $value : $bytes ), 'sha256' => hash( 'sha256', $type . ':' . $bytes ) );
+        if ( is_array( $value ) ) { $out['count'] = count( $value ); $out['shape'] = array_is_list( $value ) ? 'list' : 'map'; }
+        return $out;
+    };
+    $changes = array(); $truncated = false; $budget = 2048; $halt = false;
+    $walk = static function ( $av, $ev, $path, $ap = true, $ep = true ) use ( &$walk, &$changes, &$truncated, &$budget, &$halt, $safe, $describe ) {
+        if ( $halt || ( $ap === $ep && $av === $ev ) ) { return; }
+        if ( count( $changes ) >= 32 ) { $truncated = true; $halt = true; return; }
+        $kind = ! $ap ? 'missing' : ( ! $ep ? 'added' : ( get_debug_type( $av ) !== get_debug_type( $ev ) ? 'type' : 'value' ) );
+        if ( $ap && $ep && is_array( $av ) && is_array( $ev ) ) {
+            if ( array_is_list( $av ) !== array_is_list( $ev ) ) { $kind = 'shape'; }
+            elseif ( count( $path ) >= 8 ) { $kind = 'bounded'; $truncated = true; }
+            else {
+                foreach ( array_unique( array_merge( array_keys( $ev ), array_keys( $av ) ), SORT_STRING ) as $key ) {
+                    if ( --$budget < 0 ) { $kind = 'bounded'; $truncated = true; $halt = true; break; }
+                    $token = (string) $key;
+                    $id_map = $path === array( 'records' ) || ( count( $path ) === 2 && $path[0] === 'witnesses' && in_array( $path[1], array( 'posts', 'postmeta', 'term_relationships', 'term_taxonomy', 'terms', 'termmeta' ), true ) );
+                    $numeric = ( $id_map || array_is_list( $av ) ) && preg_match( '/^[0-9]{1,20}(?::[0-9]{1,20})?$/D', $token );
+                    if ( ! in_array( $token, $safe, true ) && ! $numeric ) { $token = 'sha256:' . hash( 'sha256', $token ); }
+                    $walk( $av[$key] ?? null, $ev[$key] ?? null, array_merge( $path, array( $token ) ), array_key_exists( $key, $av ), array_key_exists( $key, $ev ) );
+                    if ( $halt ) { return; }
+                }
+                if ( $kind !== 'bounded' ) { return; }
+            }
+        }
+        if ( count( $changes ) >= 32 ) { $truncated = true; $halt = true; return; }
+        $changes[] = array( 'path' => $path, 'kind' => $kind, 'expected' => $describe( $ev, $ep ), 'actual' => $describe( $av, $ap ) );
+    };
+    $walk( $a, $e, array() );
+    WP_CLI::log( 'RELEASE-STATE-DIAGNOSTIC ' . json_encode( array( 'label' => $label, 'changes' => $changes, 'truncated' => $truncated ), JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR ) );
+    } catch ( Throwable $release_diagnostic_error ) { /* Evidence failure must not replace the guard error. */ }
+    $release_fail( $label . ' differs (expected ' . $release_hash( $expected ) . ', actual ' . $release_hash( $actual ) . ').' );
 };
 try {
     $release_manifest_bytes = file_get_contents( __DIR__ . '/manifest.json' );

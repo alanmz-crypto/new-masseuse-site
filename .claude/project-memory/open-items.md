@@ -18,6 +18,11 @@ prepared; no live enablement or request exists. Ryan's iPhone reply confirms
 rail/index behavior and background containment but leaves research scrolling
 and the contradictory Privacy/hamburger result to clarify. No Safari pass is
 claimed; no website runtime changed during this preparation.
+The third live-sourced disposable-copy rehearsal stopped at the first draft's
+full-state check before initialization or browser tests. Its own metadata passed;
+the differing surrounding field is not yet identified. Strict refusal remains
+in place while bounded hash-only diagnostics are prepared. See the readiness
+record for all three failures and their actual copy-only journals.
 
 **Current: input-focus core and Rail practice updates deployed on staging39.**
 See the [canonical phase record](../../docs/reviews/2026-11-09-peek-input-focus.md) for complete attempts, hashes, backups
