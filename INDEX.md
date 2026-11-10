@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-10 01:55 UTC  **FAIL**  `peek-rail-input-firefox-hold-2`  [reports/2026-11-10/015512-peek-rail-input-firefox-hold-2.md](reports/2026-11-10/015512-peek-rail-input-firefox-hold-2.md)  (run 42738993282)
 - 2026-11-10 01:46 UTC  **PASS**  `peek-live-readiness-baseline-1`  [reports/2026-11-10/014610-peek-live-readiness-baseline-1.md](reports/2026-11-10/014610-peek-live-readiness-baseline-1.md)  (run 42738048595)
 - 2026-11-10 01:37 UTC  **INVALID**  `peek-rail-input-firefox-hold-1`  [reports/2026-11-10/013740-peek-rail-input-firefox-hold-1.md](reports/2026-11-10/013740-peek-rail-input-firefox-hold-1.md)  (run 42736953507)
 - 2026-11-10 01:22 UTC  **FAIL**  `peek-rail-input-firefox-split-1`  [reports/2026-11-10/012202-peek-rail-input-firefox-split-1.md](reports/2026-11-10/012202-peek-rail-input-firefox-split-1.md)  (run 42734807322)
