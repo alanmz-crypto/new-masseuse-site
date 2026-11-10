@@ -1,10 +1,10 @@
 {
-  "id": "peek-neighbours-apply-1",
+  "id": "peek-neighbours-public-1",
   "op": "run",
   "target": "staging39",
-  "script": "link-ideas/push-peek-neighbours.sh",
+  "script": "link-ideas/core-neighbours/check-public.mjs",
   "args": [
-    "--apply"
+    "https://staging39.thaisolitude.com"
   ],
   "tests": "auto"
 }
