@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-10 00:20 UTC  **PASS**  `peek-core-input-focus-dry-1`  [reports/2026-11-10/002035-peek-core-input-focus-dry-1.md](reports/2026-11-10/002035-peek-core-input-focus-dry-1.md)  (run 42727229928)
 - 2026-11-10 00:19 UTC  **FAIL**  `peek-rail-input-public-1`  [reports/2026-11-10/001957-peek-rail-input-public-1.md](reports/2026-11-10/001957-peek-rail-input-public-1.md)  (run 42724912292)
 - 2026-11-10 00:16 UTC  **PASS**  `peek-core-input-focus-rehearse-1`  [reports/2026-11-10/001638-peek-core-input-focus-rehearse-1.md](reports/2026-11-10/001638-peek-core-input-focus-rehearse-1.md)  (run 42724735055)
 - 2026-11-09 23:58 UTC  **PASS**  `peek-rail-input-apply-2`  [reports/2026-11-09/235806-peek-rail-input-apply-2.md](reports/2026-11-09/235806-peek-rail-input-apply-2.md)  (run 42724350260)
