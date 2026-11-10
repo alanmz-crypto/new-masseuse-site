@@ -1,8 +1,8 @@
 {
-  "id": "peek-visitor-release-rehearse-5",
+  "id": "peek-neighbours-rehearse-1",
   "op": "rehearse",
-  "target": "live",
-  "installer": "link-ideas/peek-release/install-peek-release.php",
+  "target": "staging39",
+  "installer": "link-ideas/core-neighbours/install-peek-core-neighbours.php",
   "args": [
     "--with-uploads"
   ]
