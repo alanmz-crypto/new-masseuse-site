@@ -88,12 +88,29 @@ async function readPage(p, label, original) {
   ok(`${label}/reading/page input preserves the address and history`, after.url === before.url && after.history === before.history, { before, after });
 }
 async function indexAppearance(p, label, open) {
-  const look = await p.locator('.ts-pk-ix').evaluate(node => {
+  const look = await p.locator('.ts-pk-ix').evaluate((node, open) => {
     const r = node.getBoundingClientRect(), s = getComputedStyle(node), toggle = [...document.querySelectorAll('#masthead .menu-toggle')].find(n => n.getBoundingClientRect().width > 0), hs = getComputedStyle(toggle);
-    return { width: r.width, height: r.height, borders: ['Top', 'Right', 'Bottom', 'Left'].map(side => [parseFloat(s[`border${side}Width`]), s[`border${side}Style`], s[`border${side}Color`]]), radius: parseFloat(s.borderTopLeftRadius), headerRadius: parseFloat(hs.borderTopLeftRadius), visible: s.visibility, hit: node.contains(document.elementFromPoint((r.left + r.right) / 2, (r.top + r.bottom) / 2)) };
-  });
+    const canvas = document.createElement('canvas'); canvas.width = canvas.height = 1; const draw = canvas.getContext('2d');
+    const rgba = color => { if (!CSS.supports('color', color)) return null; draw.clearRect(0, 0, 1, 1); draw.fillStyle = color; draw.fillRect(0, 0, 1, 1); return [...draw.getImageData(0, 0, 1, 1).data]; };
+    const background = rgba(s.backgroundColor), path = node.querySelector(open ? '.ts-pk-ix-close' : '.ts-pk-ix-list'), glyphStyle = getComputedStyle(path), glyph = rgba(glyphStyle.stroke);
+    let opacity = 1, glyphOpacity = Number(glyphStyle.strokeOpacity), unfiltered = s.backgroundImage === 'none';
+    for (let at = node; at; at = at.parentElement) { const cs = getComputedStyle(at); opacity *= Number(cs.opacity); unfiltered = unfiltered && cs.filter === 'none' && cs.mixBlendMode === 'normal'; }
+    for (let at = path; at && at !== node; at = at.parentElement) { const cs = getComputedStyle(at); glyphOpacity *= Number(cs.opacity); unfiltered = unfiltered && cs.filter === 'none'; }
+    const luminance = rgb => rgb.slice(0, 3).map(v => v / 255).map(v => v <= .04045 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4).reduce((sum, v, i) => sum + v * [.2126, .7152, .0722][i], 0);
+    const contrast = (ink, alpha = 1) => {
+      if (!ink || !background) return 0;
+      const amount = ink[3] / 255 * alpha, paint = ink.slice(0, 3).map((v, i) => v * amount + background[i] * (1 - amount)), a = luminance(paint), b = luminance(background);
+      return (Math.max(a, b) + .05) / (Math.min(a, b) + .05);
+    };
+    const borders = ['Top', 'Right', 'Bottom', 'Left'].map(side => [parseFloat(s[`border${side}Width`]), s[`border${side}Style`], s[`border${side}Color`]]);
+    const behind = document.elementsFromPoint((r.left + r.right) / 2, (r.top + r.bottom) / 2).find(n => !n.closest('.ts-pk'));
+    return { width: r.width, height: r.height, borders, radius: parseFloat(s.borderTopLeftRadius), headerRadius: parseFloat(hs.borderTopLeftRadius), visible: s.visibility, hit: node.contains(document.elementFromPoint((r.left + r.right) / 2, (r.top + r.bottom) / 2)),
+      surface: { color: s.backgroundColor, rgba: background, opacity, unfiltered, glyphColor: glyphStyle.stroke, glyphContrast: contrast(glyph, glyphOpacity), borderContrasts: borders.map(([, , color]) => contrast(rgba(color))), behind: behind ? { tag: behind.tagName, id: behind.id, class: typeof behind.className === 'string' ? behind.className : '', footer: !!behind.closest('footer,#colophon,[role="contentinfo"]') } : null } };
+  }, open);
   const s = await state(p);
   ok(`${label}/index-${open ? 'open' : 'closed'}/same full-size button has a visible rounded outline`, look.width >= 43 && look.height >= 43 && look.borders.every(([width, style, color]) => width >= .5 && style !== 'none' && !['transparent', 'rgba(0, 0, 0, 0)'].includes(color)) && look.radius > 0 && look.radius < look.width / 2 && look.headerRadius > 0 && look.visible === 'visible' && look.hit, look);
+  ok(`${label}/index-${open ? 'open' : 'closed'}/opaque surface keeps glyph and all borders at least three to one contrast`, look.surface.rgba?.[3] === 255 && look.surface.opacity === 1 && look.surface.unfiltered && look.surface.glyphContrast >= 3 && look.surface.borderContrasts.every(ratio => ratio >= 3), look.surface);
+  console.log(`INFO quiet-nav index surface ${engine}/${label}/${open ? 'open' : 'closed'}: ${JSON.stringify(look.surface)}`);
   ok(`${label}/index-${open ? 'open' : 'closed'}/glyph and accessible name match the state`, open ? s.expanded === 'true' && s.close && !s.list && s.closePath === 'M7 7l10 10M17 7L7 17' && s.name === 'Close section index' : s.expanded === 'false' && s.list && !s.close && s.name === 'Show all sections (press and hold)', s);
 }
 async function capture(p, slug, side, kind) {

@@ -282,6 +282,21 @@ check() { if [ "$2" -eq 0 ]; then echo "  -> PASS  $1"; else echo "  -> FAIL  $1
 inst_run() { # The filtered line is WP-CLI's PHP 8.5 deprecation, not the installer's.
   local name=$1 status; shift
   echo; echo "[$name] wp eval-file $inst $*"
+  if [ "$release_rehearsal" != 1 ] && core_guarded_lane; then
+    # WP-CLI writes its PHP 8.5 deprecation in fragments on stderr. Merging
+    # streams can prefix the actual stdout success line with "Deprecated: ".
+    # Keep the parser's stdout exact and retain every stderr byte separately.
+    local stderr_fd stderr_pid stderr_rc stderr_display_rc
+    exec {stderr_fd}> >(tee "$out/$name.stderr.log" >/dev/null) || return 1
+    stderr_pid=$!
+    wpc --user=1 eval-file "/wwm/$inst" "$@" 2>&"$stderr_fd" | tee "$out/$name.log" | sed 's/^/    /'
+    status=("${PIPESTATUS[@]}")
+    exec {stderr_fd}>&-
+    wait "$stderr_pid"; stderr_rc=$?
+    sed 's/^/    stderr: /' "$out/$name.stderr.log"; stderr_display_rc=$?
+    [ "${status[0]}" -eq 0 ] && [ "${status[1]}" -eq 0 ] && [ "${status[2]}" -eq 0 ] && [ "$stderr_rc" -eq 0 ] && [ "$stderr_display_rc" -eq 0 ]
+    return $?
+  fi
   wpc --user=1 eval-file "/wwm/$inst" "$@" 2>&1 | grep -v 'phar:///usr/local/bin/wp/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php' | tee "$out/$name.log" | sed 's/^/    /'
   status=("${PIPESTATUS[@]}")
   if [ "$release_rehearsal" = 1 ] || core_guarded_lane; then

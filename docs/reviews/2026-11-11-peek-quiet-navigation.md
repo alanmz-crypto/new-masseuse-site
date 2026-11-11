@@ -36,7 +36,7 @@ checks must not inherit that limitation as a claimed pass.
 
 The automatic label's DOM, CSS and timer are removed. The title strip, progress
 mark, fan names and preview cards retain their roles. The index gains a rounded
-outline, keeps its full 44×44px target in both states, and switches its existing
+outline and solid theme surface, keeps its full 44×44px target in both states, and switches its existing
 SVG from lines to an X. Its accessible label becomes “Close section index”
 while open. A second tap closes it; slide-to-name, slide-to-rail, two-second
 hold and keyboard paths remain covered by regression checks.
@@ -144,9 +144,37 @@ Thai prefix also passed **96/0** in phone/tablet, light/dark offline replay;
 its partial scope is not a complete browser gate.
 
 Fresh staging39-with-uploads copy1, request `peek-quiet-nav-rehearse-1`, source
-`64080478bd82c816c834893af093a37313609573`, is running in
+`64080478bd82c816c834893af093a37313609573`, completed **FAIL** in
 [Actions 42949099092](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42949099092).
 It uses the first corrected runtime above, not the next candidate below.
+Its complete browser graph passed **24,767/0 across 24 leaves**: retained
+index-clearance 23,249/0; focused Chromium 538/0, Firefox 490/0 and WebKit
+490/0, each with all 18 cases and 36 captures. The downloaded artifact was
+verified against GitHub's size (97,506,592 bytes) and SHA256
+`2e46e02cc2e07e195e5693893cd6d03e0ab439eb2ef4755323ddb4bf3203de2d`.
+
+Post-browser snapshot verification and rollback passed, restoring the exact
+original core and all four data records; the original fingerprint matched.
+Final reapply returned success, but a PHP warning interleaved with its stdout,
+producing `Deprecated: Success:`. The strict snapshot-line parser correctly
+refused that malformed result, so final snapshot verification and fingerprint
+comparison did not run. This is an incomplete recovery gate, not a staging
+write or a successful rehearsal. The output streams need separate capture;
+the exact snapshot parser and recovery requirements remain strict. The harness
+now keeps stdout and stderr in separate complete files, waits for both writers,
+and checks their exit statuses. Targeted tests retain the malformed-line,
+duplicate, wrong-path and wrong-lane refusals; fragmented or delayed stderr
+cannot supply a snapshot or corrupt valid stdout. Quiet/index/neighbour
+rehearsal models each passed 107 checks; historical input-focus passed 39.
+
+All 108 focused screenshots were visually reviewed, with native-size checks
+of eight representative or questionable views. The boxed button and X read
+clearly on ordinary content. The transparent surface became faint over the
+dark Privacy footer and a pale Services illustration. Before changing it,
+Ryan was told that the button would use the existing opaque theme surface.
+The final candidate uses `var(--pk-panel)` in normal, hover and focus states,
+retaining the same geometry and gestures. Still screenshots do not prove
+header-menu dismissal.
 
 While copy1 ran, a further actual-Thai replay exposed a reachable mixed-input
 case: keyboard-open the Common reasons preview and header, then touch the visible
@@ -155,20 +183,40 @@ normal motion landed 336px too high. Reduced motion passed. The four-case
 diagnostic reported 14 passes/two failures and no script errors. This is a real
 activation-order issue, distinct from the earlier test setup observations.
 
-The next candidate closes the header through the shared native-toggle helper
+The second interaction candidate closes the header through the shared native-toggle helper
 before both summary and title-only jumps measure their destinations. File:
 110812 bytes, SHA256
 `391a1c6fa553c1cf5b2ec5c6a0363d344e969f26f80d9d071d7c6fbcca56b88c`;
 stored: 110806 bytes, SHA256
 `18ca789e5c9f134b1b7cf8d44a783fabd8cfec084162db9e35e4d2340d4bdf91`.
-Independent source review found no further issue. It requires its own source
-gates and fresh full copy rehearsal; copy1 cannot authorize this new payload.
+Independent source review found no further issue. Source commit
+`2739210cd97d2d968661b62e5ead326e7e6844d9` passed all **48 offline gates**, zero
+failures, in [Actions 42953310227](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42953310227)
+at **03:36:59 UTC**; the complete log was read. The recovery-harness correction
+still needs its checks and a fresh full copy rehearsal; copy1 cannot authorize
+this new payload.
 Corrected offline replay passed **28/0**: all four real Thai title/hint and
 normal/reduced-motion combinations retain the correct heading focus and hash,
 land 12px below the strip, and consume the compatibility click; Corporate's
 original anchor passes both motion settings. The expanded focused Thai subset
 passed **92/0**, including every prior check and the added actual-preview cases.
 Its two cases/four captures still correctly remain INVALID as a full gate.
+
+The final visual candidate adds only the opaque button surface to that runtime:
+110787 file bytes, SHA256
+`4dfe97943898790b9c000f6dfcc129b4806183a23bc7cb7a55f1cc7db7172952`;
+110781 stored bytes, SHA256
+`58266413fe0e24e1dc44ef32c98f428d4537a9b63bf8f5299eb8d708a4d032e5`.
+Offline actual-Thai image/footer checks passed **12/0**, with the button closed
+and open, light/right and dark/left; all eight relevant images were viewed.
+The 44px target is unchanged and glyph-to-surface contrast is 7.20:1–14.68:1.
+This is cached-page Chromium evidence; Privacy/Services need the fresh copy.
+The focused checker now requires an opaque surface and at least 3:1 glyph and
+border contrast at its existing closed/open states. Its current actual-Thai
+offline subsets passed Chromium **98/0** and Firefox **88/0**, including the
+mixed-input jumps. Each remains correctly INVALID as a full gate (2/18 cases,
+two loads, four captures); WebKit and the full matrix need the fresh copy.
+Final source gates and a fresh complete copy rehearsal remain pending.
 
 No staging write, public-browser result or new actual snapshot exists yet for
 this phase. The prior index fix and summary-neighbour layout

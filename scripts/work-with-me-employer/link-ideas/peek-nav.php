@@ -154,8 +154,8 @@ html.ts-pk-left .ts-pk-nav.is-hinting .ts-pk-rail{animation-name:ts-pk-wiggle-l}
 @keyframes ts-pk-wiggle-l{0%,100%{transform:none}30%{transform:translateX(7px)}60%{transform:translateX(-3px)}}
 @media (prefers-reduced-motion:reduce){.ts-pk-nav.is-hinting .ts-pk-rail{animation:none}.ts-pk-tip{transition:none;transform:none}}
 /* A visible button above the rail; its X closes the open section index. */
-html .ts-pk .ts-pk-ix{position:absolute;right:0;bottom:100%;width:44px;height:44px;margin:0 0 8px;padding:0;border:1px solid currentColor;border-radius:8px;background:transparent;color:var(--pk-muted);box-shadow:none;cursor:pointer;touch-action:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;transition:color .2s}
-html .ts-pk .ts-pk-ix:hover,html .ts-pk .ts-pk-ix:focus{background:transparent;color:var(--pk-ink);box-shadow:none}   /* nothing sits under the icon (the text column stops before it), so no background: it takes the page's own */
+html .ts-pk .ts-pk-ix{position:absolute;right:0;bottom:100%;width:44px;height:44px;margin:0 0 8px;padding:0;border:1px solid currentColor;border-radius:8px;background:var(--pk-panel);color:var(--pk-muted);box-shadow:none;cursor:pointer;touch-action:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;transition:color .2s}
+html .ts-pk .ts-pk-ix:hover,html .ts-pk .ts-pk-ix:focus{background:var(--pk-panel);color:var(--pk-ink);box-shadow:none}   /* Keep the control legible over illustrations and the contrasting footer. */
 html .ts-pk .ts-pk-ix:focus-visible{outline:3px solid var(--pk-accent);outline-offset:2px}
 html .ts-pk .ts-pk-nav.is-index .ts-pk-ix{color:var(--pk-on)}
 .ts-pk-ix svg{display:block;width:22px;height:22px;margin:auto;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;pointer-events:none}

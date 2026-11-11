@@ -166,6 +166,7 @@ for lines,want in [
     (['Success: Applied. Before-snapshot: '+SNAPS[0].replace('/backups/','/tmp/')],None),
     (['Success: Applied. Before-snapshot: '+SNAPS[0].replace(COMPONENT,'core-kiro-fixes')],None),
     (['Success: Applied. Before-snapshot: '+SNAPS[0]+';id'],None),
+    (['Deprecated: Success: Applied. Before-snapshot: '+SNAPS[0]],None),
 ]:
     with tempfile.TemporaryDirectory(prefix='core-snapshot-parser-') as temp:
         path=Path(temp)/'apply.log';path.write_text('\n'.join(lines)+'\n')
@@ -208,25 +209,54 @@ for inst,src,uploads,flags in [
 # New native installer pipelines must fail when any evidence writer fails.
 start=SOURCE.index('inst_run() {')
 native=SOURCE[start:SOURCE.index('core_focus_snapshot_from_log() {',start)]
-for broken in ['none','wpc','grep','tee','sed']:
+for broken in ['none','wpc','stdout-tee','stderr-tee','stdout-sed','stderr-sed']:
     with tempfile.TemporaryDirectory(prefix='neighbours-native-pipeline-') as temp:
         prefix=r'''set -uo pipefail
 out=$1; broken=$2; release_rehearsal=0
 inst=link-ideas/core-neighbours/install-peek-core-neighbours.php
-wpc() { printf 'Success: fixture native output\n'; [ "$broken" != wpc ]; }
-grep() { command grep "$@"; [ "$broken" != grep ]; }
-tee() { command tee "$@"; [ "$broken" != tee ]; }
-sed() { command sed "$@"; [ "$broken" != sed ]; }
+wpc() { printf 'Success: fixture native output\n'; printf 'fixture stderr\n' >&2; [ "$broken" != wpc ]; }
+tee() { local stream=stdout; [[ "$1" != *.stderr.log ]] || stream=stderr; command tee "$@"; [ "$broken" != "$stream-tee" ]; }
+sed() { local stream=stdout; [ "$#" -eq 1 ] || stream=stderr; command sed "$@"; [ "$broken" != "$stream-sed" ]; }
 '''
         result=subprocess.run(['bash','-s','--',temp,broken],input=prefix.replace('core-neighbours',COMPONENT)+HELPERS+'\n'+native+'\ninst_run fixture preflight\n',capture_output=True,text=True)
         assert (result.returncode==0)==(broken=='none'),(broken,result.stdout,result.stderr)
+        passed+=1
+# Reproduce the real copy's fragmented warning around a stdout success line.
+# The two exact files, including a late stderr fragment, must be complete before
+# returning. A stderr-only snapshot must never supply the parser's authority.
+for mode in ['interleaved','stderr-only','stderr-decoy','duplicate','late-stderr']:
+    with tempfile.TemporaryDirectory(prefix='core-native-streams-') as temp:
+        prefix=r'''set -uo pipefail
+out=$1; mode=$2; snapshot=$3; decoy=$4; release_rehearsal=0
+inst=link-ideas/core-neighbours/install-peek-core-neighbours.php
+wpc() {
+  printf 'Deprecated: ' >&2
+  if [ "$mode" != stderr-only ]; then printf 'Success: Applied. Before-snapshot: %s\n' "$snapshot"; fi
+  if [ "$mode" = duplicate ]; then printf 'Success: Applied. Before-snapshot: %s\n' "$snapshot"; fi
+  printf 'Using null as an array offset in phar:///usr/local/bin/wp/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95\n' >&2
+  if [ "$mode" = stderr-only ] || [ "$mode" = stderr-decoy ]; then printf 'Success: Applied. Before-snapshot: %s\n' "$decoy" >&2; fi
+  if [ "$mode" = late-stderr ]; then ( sleep 0.05; printf 'late stderr fragment\n' >&2 ) & fi
+}
+'''
+        script=prefix.replace('core-neighbours',COMPONENT)+HELPERS+'\n'+native+'\ninst_run apply apply || exit 73\ncore_focus_snapshot_from_log "$out/apply.log"\n'
+        result=subprocess.run(['bash','-s','--',temp,mode,SNAPS[0],SNAPS[1]],input=script,capture_output=True,text=True)
+        valid=mode not in ['stderr-only','duplicate']
+        assert (result.returncode==0)==valid,(mode,result.returncode,result.stdout,result.stderr)
+        expected_out='' if mode=='stderr-only' else 'Success: Applied. Before-snapshot: '+SNAPS[0]+'\n'
+        if mode=='duplicate':expected_out*=2
+        expected_err='Deprecated: Using null as an array offset in phar:///usr/local/bin/wp/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95\n'
+        if mode in ['stderr-only','stderr-decoy']:expected_err+='Success: Applied. Before-snapshot: '+SNAPS[1]+'\n'
+        if mode=='late-stderr':expected_err+='late stderr fragment\n'
+        assert (Path(temp)/'apply.log').read_text()==expected_out,(mode,'stdout')
+        assert (Path(temp)/'apply.stderr.log').read_text()==expected_err,(mode,'stderr')
+        if valid:assert result.stdout.splitlines()[-1]==SNAPS[0],(mode,result.stdout)
         passed+=1
 # Artifact cleanup exports only complete public evidence, never private recovery
 # snapshot contents, copied source or SQL. Failed copying cannot report success.
 for original, copy_fail in [(0,False),(7,False),(0,True)]:
     with tempfile.TemporaryDirectory(prefix='neighbours-native-retain-') as temp:
         base=Path(temp); (base/'out').mkdir()
-        allowed=['apply.log','A.content','errors-before.txt','title-strip-pages.json']
+        allowed=['apply.log','apply.stderr.log','A.content','errors-before.txt','title-strip-pages.json']
         for name in allowed+['private-snapshot.json','db.sql','copied-source.php']:
             (base/'out'/name).write_text('fixture-'+name)
         prefix=r'''set -uo pipefail
