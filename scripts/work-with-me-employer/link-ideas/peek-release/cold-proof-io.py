@@ -91,6 +91,17 @@ def main(args):
         Path(args[2]).write_text(json.dumps(receipt, sort_keys=True) + "\n")
         sys.stdout.buffer.write(adapted)
         return 0
+    if len(args) == 4 and args[0] == "import-current-sql":
+        raw = Path(args[1]).read_bytes()
+        if not re.fullmatch(r"[a-f0-9]{64}", args[2]) or not 1000 < len(raw) < 64 * 1024 * 1024 or digest(raw) != args[2]:
+            raise ValueError("captured current SQL differs")
+        adapted, count = transform_sql(raw)
+        receipt = {"schema": 1, "scope": "fresh-current-live-copy", "source_sha256": digest(raw),
+                   "source_bytes": len(raw), "ddl_collation_substitutions": count,
+                   "import_sha256": digest(adapted), "data_rewritten": False}
+        Path(args[3]).write_text(json.dumps(receipt, sort_keys=True) + "\n")
+        sys.stdout.buffer.write(adapted)
+        return 0
     if len(args) == 6 and args[0] == "bootstrap":
         result = bootstrap_receipt(Path(args[1]).read_bytes(), Path(args[2]).read_bytes(),
                                    int(args[3]), Path(args[4]).read_bytes(), Path(args[5]).read_bytes())

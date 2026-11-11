@@ -28,8 +28,11 @@ Personal Automation pages, confirmed by hashed-key SQL inspection at 17:15:30
 (run **43066327533**). The fixed original SQL reader then identified old rows
 4701/4702 as the same cache key on posts 1255/1257 at **17:45:57 UTC**
 (run **43071249809**), with exact diagnostic witness hashes. Cold-copy
-reproduction of the new values remains required before the proposed narrow
-incident receipt can be accepted. Do not relax the guard or rewrite the actual snapshot. No purge,
+reproduction then **passed at 17:57:32 UTC** (run **43072850520**): ordinary
+page loads reproduce all five changes and exact live cache values; repeat loads
+are stable, all other protected rows match, and cleanup is verified. Targeted
+incident verification/recovery on a copy of the actual installed state is next.
+Do not relax the guard or rewrite the actual snapshot. No purge,
 rendered verification, rollback or reinstall has run since the failure.
 The complete evidence and actual recovery bindings are in the readiness record;
 current work branch is `codex/peek-live-verification-diagnostics`.

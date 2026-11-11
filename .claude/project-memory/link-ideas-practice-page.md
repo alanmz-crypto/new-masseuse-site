@@ -14,8 +14,10 @@ Read-only diagnosis found only five original metadata-row differences: two
 missing rows now identified from the exact original SQL as `_uag_page_assets`
 (run **43071249809**, 17:45:57 UTC), and three new caches on
 Personal Automation / its Privacy / Terms pages. Peek records and page content
-match the applied snapshot. An isolated cold-copy reproduction is next; an
-incident-specific verification/recovery receipt is not yet accepted. No purge, rendered verification, rollback or
+match the applied snapshot. Isolated cold-copy reproduction **passed**
+(run **43072850520**, 17:57:32 UTC): ordinary page loads reproduce the exact
+cache values, with stable repeats and verified cleanup. A targeted copy test of
+the incident-specific verification/recovery path is next. No purge, rendered verification, rollback or
 reinstallation since the failure; do not rerun apply or weaken guards. Follow
 the current release-readiness record and `codex/peek-live-verification-diagnostics`.
 Earlier no-live-run statements below are historical.

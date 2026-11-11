@@ -53,10 +53,12 @@ check('trap cold_cleanup EXIT' in SOURCE and 'release_cleanup_exit "$result"' in
       'late evidence retention must delegate to decisive cleanup with the original result')
 
 # Fixed source and origin guard is evaluated before any credentials or command.
-early = section('[ "$#" -eq 0 ]', 'creds=')
+early = section('proof_mode=cold', 'creds=')
 for target, args, override, valid in [
     ('live', (), '', True), ('staging39', (), '', False), ('', (), '', False),
     ('live', ('--apply',), '', False), ('live', (), 'source', False), ('live', (), 'prep', False),
+    ('live', ('--recovery',), '', True), ('live', ('--recovery','extra'), '', False),
+    ('staging39', ('--recovery',), '', False), ('live', ('--recovery',), 'source', False),
 ]:
     env = {'S_TARGET': target, 'TS_REHEARSAL_FROM_DIR': 'private' if override == 'source' else '',
            'TS_REHEARSAL_TEST_PREP': 'private' if override == 'prep' else ''}
@@ -82,6 +84,10 @@ if words==['config','get','table_prefix']:
     assert '--type=variable' in args
     if mode=='config-fails':sys.exit(47)
     print('invalid;' if mode=='bad-prefix' else 'iej_');sys.exit(0)
+if words==['db','export','-']:
+    assert all(flag in args for flag in ['--single-transaction','--skip-lock-tables','--quiet'])
+    if mode=='export-fails':sys.exit(49)
+    print('SYNTHETIC_PRIVATE_CURRENT_SQL');sys.exit(0)
 assert words==['db','query',"SELECT option_value FROM iej_options WHERE option_name='home';"]
 assert all(flag in args for flag in ['--skip-column-names','--batch','--raw'])
 if mode=='query-fails':sys.exit(48)
@@ -95,9 +101,12 @@ def remote_case(mode='valid', part='sql', valid=True):
         home=base/'home'; site=home/'www/site'; site.mkdir(parents=True)
         (site/'wp-config.php').write_text('SYNTHETIC_PRIVATE_CONFIG')
         unrelated=home/'www/unrelated'; unrelated.mkdir(); (unrelated/'wp-config.php').write_text('SYNTHETIC_PRIVATE_UNRELATED')
-        backup=home/'private-backups/live-before-peek-release-20261111-162615-74851.sql'; backup.parent.mkdir()
+        backup_name='peek-release-before-20261111-162615-e00022b6.json' if part=='journal' else 'live-before-peek-release-20261111-162615-74851.sql'
+        expected_size=1682009 if part=='journal' else SIZE
+        expected_pin='4038da0f9f77780ce355029bc87e53bff0479294711c821d253f51151e10751b' if part=='journal' else PIN
+        backup=home/'private-backups'/backup_name; backup.parent.mkdir()
         with backup.open('wb') as f:
-            f.write(b'SYNTHETIC_PRIVATE_SQL');f.truncate(SIZE if mode!='bad-size' else SIZE-1)
+            f.write(b'SYNTHETIC_PRIVATE_SQL');f.truncate(expected_size if mode!='bad-size' else expected_size-1)
         if mode=='backup-symlink':
             original=backup.with_suffix('.original');backup.rename(original);backup.symlink_to(original)
         if mode=='backup-missing':backup.unlink()
@@ -111,15 +120,19 @@ def remote_case(mode='valid', part='sql', valid=True):
                 (site/name).write_text('SYNTHETIC_PRIVATE_EXCLUDED')
             (site/'wp-content/cache').mkdir(parents=True);(site/'wp-content/cache/secret').write_text('SYNTHETIC_PRIVATE_CACHE')
         env={'PATH':str(commands)+os.pathsep+os.environ['PATH'],'COLD_TRACE':str(base/'trace'),
-             'COLD_REMOTE_MODE':mode,'COLD_PIN':PIN,'COLD_BACKUP':str(backup),'COLD_FIXTURE_HOME':str(home)}
+             'COLD_REMOTE_MODE':mode,'COLD_PIN':expected_pin,'COLD_BACKUP':str(backup),'COLD_FIXTURE_HOME':str(home)}
         result=shell(REMOTE.replace('$HOME','$COLD_FIXTURE_HOME'), (part,), env)
         events=[json.loads(line) for line in (base/'trace').read_text().splitlines()]
         check((result.returncode==0)==valid, ('remote',mode,part,result.returncode,result.stderr))
         check(all(e[0] in ['wp','sha256sum'] for e in events) and
-              all(not any(word in e for word in ['eval','eval-file','export','update','search-replace']) for e in events),
+              all(not any(word in e for word in ['eval','eval-file','update','search-replace']) for e in events) and
+              all('export' not in e or part=='current-sql' for e in events),
               ('read-only source commands',events))
-        if valid and part=='sql':
+        if valid and part in ['sql','journal']:
             check(result.stdout==backup.read_bytes(), 'the fixed SQL stream must remain byte-identical')
+        elif valid and part=='current-sql':
+            check(result.stdout==b'SYNTHETIC_PRIVATE_CURRENT_SQL\n' and sum('export' in e for e in events)==1,
+                  'fresh export uses stdout once without a remote backup write or WordPress bootstrap')
         elif valid and part=='files':
             with tarfile.open(fileobj=io.BytesIO(result.stdout)) as archive:
                 names=archive.getnames()
@@ -135,6 +148,11 @@ remote_case(part='files')
 for mode in ['bad-sha','bad-size','backup-symlink','backup-missing','duplicate','wrong-home','bad-prefix','config-fails','query-fails']:
     remote_case(mode,valid=False)
 remote_case(part='apply',valid=False)
+remote_case(part='journal')
+for mode in ['bad-sha','bad-size','backup-symlink','backup-missing']:
+    remote_case(mode,part='journal',valid=False)
+remote_case(part='current-sql')
+remote_case('export-fails',part='current-sql',valid=False)
 
 # IO primitives use synthetic dump bytes and the actual immutable profiles.
 io_module = runpy.run_path(str(HERE/'cold-proof-io.py'))
@@ -200,6 +218,23 @@ with tempfile.TemporaryDirectory(prefix='cold-io-') as directory:
     result=subprocess.run([sys.executable,'-I','-B',str(HERE/'cold-proof-io.py'),'import-sql',str(sqlfile),str(output)],capture_output=True)
     check(result.returncode == 1 and result.stdout == b'' and not output.exists() and b'SYNTHETIC_PRIVATE' not in result.stderr,
           'CLI rejects unpinned SQL before emitting import data or receipt')
+    current_raw=raw+b'-- synthetic padding\n'*100
+    for case in ['valid','wrong-hash','invalid-hash','too-short']:
+        sqlfile.write_bytes(raw if case=='too-short' else current_raw)
+        expected=hashlib.sha256(sqlfile.read_bytes()).hexdigest()
+        if case=='wrong-hash':expected='0'*64
+        if case=='invalid-hash':expected='not-a-hash'
+        output.unlink(missing_ok=True)
+        result=subprocess.run([sys.executable,'-I','-B',str(HERE/'cold-proof-io.py'),'import-current-sql',str(sqlfile),expected,str(output)],capture_output=True)
+        if case=='valid':
+            receipt_data=json.loads(output.read_text())
+            check(result.returncode==0 and result.stdout==transform(current_raw)[0] and
+                  receipt_data['source_sha256']==expected and receipt_data['scope']=='fresh-current-live-copy' and
+                  receipt_data['data_rewritten'] is False and 'SYNTHETIC_PRIVATE' not in output.read_text(),
+                  'fresh current import preserves data and emits only hash receipt')
+        else:
+            check(result.returncode==1 and result.stdout==b'' and not output.exists() and b'SYNTHETIC_PRIVATE' not in result.stderr,
+                  'changed, invalid or incomplete fresh current import refuses before emitting data')
 
 # Execute the actual import/bootstrap/request chain using command doubles. Each
 # stage can fail independently; no Docker, HTTP, WordPress or real SQL executes.
@@ -223,6 +258,21 @@ if name=='dc':
     if args[:2]==['ps','-q']:
         kind=args[2];hit('ps:'+kind);print('bad' if mode=='id:'+kind else ('a' if kind=='db' else 'b')*64);sys.exit(0)
     if args[0]=='run':
+        if '--entrypoint' in args and args[args.index('--entrypoint')+1]=='php':
+            assert args[:10]==['run','--rm','-T','--no-deps','--user','0','--entrypoint','php','wpcli','/wwm/link-ideas/peek-release/verify-render.php']
+            assert args[10:12]==['/home/customer/private-backups/recovery-response.private.html','/home/customer/private-backups/peek-release-before-20261111-162615-e00022b6.json']
+            assert 'SYNTHETIC_PRIVATE_RESPONSE' in (base/'work/backups/recovery-response.private.html').read_text()
+            hit('render-verify');print('Exact public response verified: '+args[12]+' '+args[13]);sys.exit(0)
+        if os.environ.get('COLD_PROOF_MODE')=='recovery':
+            n=counter('recovery-mode-count')
+            mode_arg=['verify-incident','verify-incident','recovery-check-incident','rollback-incident','verify-incident','recovery-check-incident','verify-incident'][n-1]
+            expected=['run','--rm','-T','--no-deps','--user','0','--entrypoint','wp','wpcli','--allow-root','--skip-plugins=sg-security','--user=1','eval-file','/wwm/link-ideas/peek-release/install-peek-release.php',mode_arg,'/home/customer/private-backups/peek-release-before-20261111-162615-e00022b6.json']
+            if n>4:expected.append('restored')
+            assert args==expected
+            print('SYNTHETIC_PRIVATE_RECOVERY_STDOUT');print('SYNTHETIC_PRIVATE_RECOVERY_STDERR',file=sys.stderr)
+            if mode=='private-input-changed' and n==7:(base/'work/backups/peek-release-before-20261111-162615-e00022b6.json').write_text('changed')
+            if mode=='private-mode-changed' and n==7:(base/'work/backups/peek-release-before-20261111-162615-e00022b6.json').chmod(0o644)
+            hit('recovery-mode:'+str(n));sys.exit(0)
         assert args==['run','--rm','-T','--no-deps','--entrypoint','wp','wpcli','--skip-plugins=sg-security','--user=1','eval-file','/wwm/link-ideas/peek-release/install-peek-release.php','preflight']
         print('SYNTHETIC_PRIVATE_BOOTSTRAP_STDOUT');print('SYNTHETIC_PRIVATE_BOOTSTRAP_STDERR',file=sys.stderr);hit('bootstrap');sys.exit(0)
     assert args[:6]==['exec','-T','db','mariadb','-uroot','-prehearsal']
@@ -242,25 +292,39 @@ if name=='docker':
     else:print('c'*64)
     sys.exit(0)
 if name=='curl':
-    n=counter('curl-count');hit('curl:'+str(n));print('302' if mode=='http:'+str(n) else '200');sys.exit(0)
+    n=counter('curl-count');hit('curl:'+str(n))
+    if os.environ.get('COLD_PROOF_MODE')=='recovery':
+        path=Path(args[args.index('-o')+1]);assert path==base/'work/backups/recovery-response.private.html';path.write_text('SYNTHETIC_PRIVATE_RESPONSE')
+    print('302' if mode=='http:'+str(n) else ('404' if args[-1].endswith('/peek-release-not-a-real-page/') else '200'));sys.exit(0)
 if name=='tee':
     raw=sys.stdin.buffer.read();n=counter('tee-count');hit('tee:'+str(n))
     with open(args[-1],'ab') as f:f.write(raw)
     sys.stdout.buffer.write(raw);sys.exit(0)
 assert name=='python3' and args[:2]==['-I','-B'];program=args[2];rest=args[3:]
 if program=='-':
-    raw=sys.stdin.read();assert 'socket.create_connection' in raw and 'http' not in raw.lower();hit('tcp');sys.exit(0)
+    raw=sys.stdin.read()
+    if rest[0].endswith('/manifest.json'):
+        assert "manifest['pages']" in raw
+        for page in json.loads(Path(rest[0]).read_text())['pages']:print(page['path'])
+        print('/?s=massage');print('/peek-release-not-a-real-page/');sys.exit(0)
+    assert 'socket.create_connection' in raw and 'http' not in raw.lower();hit('tcp');sys.exit(0)
 if program.endswith('/rehearsal-loopback.py'):
     hit('relay');print('READY rehearsal loopback 127.0.0.1:8090 -> '+rest[0]+':80',flush=True)
     while True:time.sleep(1)
 if program.endswith('/cold-proof-io.py'):
-    if rest[0]=='import-sql':
-        hit('import-source');Path(rest[2]).write_text('{"safe":"import"}\n');print('synthetic import');sys.exit(0)
+    if rest[0] in ['import-sql','import-current-sql']:
+        assert (rest[0]=='import-current-sql')==(os.environ.get('COLD_PROOF_MODE')=='recovery')
+        hit('import-source');Path(rest[-1]).write_text('{"safe":"import"}\n');print('synthetic import');sys.exit(0)
     assert rest[0]=='bootstrap'
     assert Path(rest[1]).parent==base/'work' and Path(rest[2]).parent==base/'work'
     assert 'SYNTHETIC_PRIVATE' in Path(rest[1]).read_text() and 'SYNTHETIC_PRIVATE' in Path(rest[2]).read_text()
     print('LIVE30-COLD-BOOTSTRAP {"safe":true}');hit('bootstrap-receipt');sys.exit(0)
-assert program.endswith('/cold-cache-evidence.py')
+if program.endswith('/recovery-copy-evidence.py') and rest[0]=='marker':
+    raw=sys.stdin.read();assert 'SYNTHETIC_PRIVATE_RECOVERY' in raw
+    hit('recovery-marker:'+rest[1]);print('{"safe":"marker"}');sys.exit(0)
+if program.endswith('/recovery-copy-evidence.py') and rest[0]=='verify':
+    hit('recovery-final');print('{"safe":"recovery-final"}');sys.exit(0)
+assert program.endswith(('/cold-cache-evidence.py','/recovery-copy-evidence.py'))
 if rest[0]=='sql':
     n=counter('observe-source');hit('sql:'+str(n));print('synthetic SQL query');sys.exit(0)
 if rest[0]=='capture':
@@ -271,20 +335,31 @@ assert rest[0]=='verify-final';hit('final');print('LIVE30-COLD-FINAL {"safe":tru
 '''.replace('@@PYTHON@@',sys.executable)
 
 
-def lifecycle_case(mode='', expected=0, gets=6):
+def lifecycle_case(mode='', expected=0, gets=6, recovery=False):
     with tempfile.TemporaryDirectory(prefix='cold-chain-') as directory:
         base=Path(directory);commands=base/'bin';commands.mkdir();work=base/'work';work.mkdir();out=work/'out';out.mkdir()
         (work/'db.sql').write_text('SYNTHETIC_PRIVATE_SQL')
+        if recovery:
+            private=work/'backups';private.mkdir()
+            for name in ['peek-release-before-20261111-162615-e00022b6.json','live-before-peek-release-20261111-162615-74851.sql']:
+                file=private/name;file.write_text('SYNTHETIC_PRIVATE_RECOVERY_INPUT');file.chmod(0o600)
+            (out/'recovery-context.json').write_text('{"safe":"context"}')
         for name in ['dc','docker','python3','curl','tee','sleep']:
             file=commands/name;file.write_text(COMMAND_DOUBLE);file.chmod(0o700)
         setup='''set -uo pipefail
 work=$COLD_FIXTURE/work; out=$work/out; here=$COLD_SOURCE; ci=$COLD_CI
+proof_mode=$COLD_PROOF_MODE; input_sql=$work/db.sql; current_sql_sha=$(sha256sum "$input_sql"); current_sql_sha=${current_sql_sha%% *}
+if [ "$proof_mode" = recovery ]; then
+  bk=$work/backups; private_inside=/home/customer/private-backups
+  expected_snapshot=$(sha256sum "$bk/peek-release-before-20261111-162615-e00022b6.json"); expected_snapshot=${expected_snapshot%% *}
+  backup_sha=$(sha256sum "$bk/live-before-peek-release-20261111-162615-74851.sql"); backup_sha=${backup_sha%% *}
+fi
 invalid() { echo "INVALID $*" >&2; exit 2; }
 fail() { echo "FAIL $*" >&2; exit 1; }
 trap 'result=$?; if [ -n "${release_relay_pid:-}" ]; then kill "$release_relay_pid" 2>/dev/null || true; wait "$release_relay_pid" 2>/dev/null || true; fi; exit "$result"' EXIT
 '''
         env={'PATH':str(commands)+os.pathsep+os.environ['PATH'],'COLD_FIXTURE':str(base),'COLD_MODE':mode,
-             'COLD_SOURCE':str(HERE),'COLD_CI':str(ROOT/'scripts/ci')}
+             'COLD_SOURCE':str(HERE),'COLD_CI':str(ROOT/'scripts/ci'),'COLD_PROOF_MODE':'recovery' if recovery else 'cold'}
         result=shell(setup+LIFECYCLE,env=env,timeout=12)
         events=[json.loads(line) for line in (base/'trace').read_text().splitlines()]
         requests=[event for event in events if event[0]=='curl']
@@ -293,8 +368,26 @@ trap 'result=$?; if [ -n "${release_relay_pid:-}" ]; then kill "$release_relay_p
         check(b'SYNTHETIC_PRIVATE' not in result.stdout+result.stderr and
               all('SYNTHETIC_PRIVATE' not in file.read_text() for file in out.iterdir()),
               ('raw bootstrap and SQL remain private',mode))
-        check((b'COLD PROOF PASSED' in result.stdout)==(expected==0), ('no false final PASS',mode))
-        if not mode:
+        pass_marker=b'RECOVERY COPY PASSED' if recovery else b'COLD PROOF PASSED'
+        check((pass_marker in result.stdout)==(expected==0), ('no false final PASS',mode))
+        if recovery:
+            check(not any(any('playwright' in arg or 'check-peek' in arg for arg in event) for event in events),
+                  'recovery runs only fixed static responses, without a browser suite')
+        if not mode and recovery:
+            check(sum(event[:2]==['dc','run'] and 'wp' in event for event in events)==7,
+                  'recovery executes exactly the seven incident modes without preflight or apply')
+            captures=[event[5] for event in events if len(event)>5 and event[0]=='python3' and event[4]=='capture']
+            check(captures==['before-bootstrap','after-verify-applied','after-verify-applied-after-render','after-recoverable','after-rollback',
+                             'after-verify-restored-after-render','after-recovery-restored','after-verify-restored'],
+                  'recovery observes actual cache state before bootstrap and after each incident mode')
+            paths=[page['path'] for page in spec['pages']]+['/?s=massage','/peek-release-not-a-real-page/']
+            check([event[-1] for event in requests]==['http://127.0.0.1:8090'+path for path in paths*2] and
+                  all(event[1:12]==['--noproxy','*','--proto','=http','--max-redirs','0','-sS','--max-time','30','-H','Host: thaisolitude.com'] for event in requests),
+                  'applied and original response passes stay on 17 fixed raw-host loopback routes without redirects')
+            check(not (work/'backups/recovery-response.private.html').exists() and
+                  all(len((out/('render-'+phase+'.log')).read_text().splitlines())==17 for phase in ['applied','original']),
+                  '34 safe response receipts retained, transient private response removed')
+        if not mode and not recovery:
             captures=[event[5] for event in events if event[0]=='python3' and len(event)>5 and event[4]=='capture']
             check(captures==['cold-import','after-bootstrap','first-1254','first-1255','first-1257','repeat-1254','repeat-1255','repeat-1257'],
                   'all eight captures are ordered around exact first/repeat requests')
@@ -331,17 +424,27 @@ for number in [1,4]:
         lifecycle_case(mode,1,number)
 for mode in ['final','tee:8']:
     lifecycle_case(mode,1,6)
+lifecycle_case(gets=34,recovery=True)
+for mode,gets in [('recovery-mode:4',17),('recovery-marker:rollback',17),('recovery-final',34),
+                  ('private-input-changed',34),('private-mode-changed',34),('render-verify',1),('http:1',1)]:
+    lifecycle_case(mode,1,gets,recovery=True)
 
 # Retention executes unchanged against exact synthetic output names. Unexpected
 # JSON, raw bootstrap logs, SQL/configuration and response bodies must stay out.
 RETAIN=section('cold_cleanup() {','trap cold_cleanup EXIT')
 NAMES={label+'.json' for label in labels}|{'import-receipt.json','bootstrap.log','source-binding.log','proof.log'}
+NAMES|={'recovery-context.json','before-bootstrap.json'}
+recovery_steps=['verify-applied','verify-applied-after-render','recoverable','rollback','verify-restored-after-render','recovery-restored','verify-restored']
+NAMES|={'after-'+step+'.json' for step in recovery_steps}
+NAMES|={step+'.marker.json' for step in recovery_steps}
+NAMES|={'render-applied.log','render-original.log'}
 for mode in ['ok','cp-fails','mkdir-fails']:
     for prior in [0,2,7]:
         with tempfile.TemporaryDirectory(prefix='cold-retain-') as directory:
             base=Path(directory);out=base/'out';out.mkdir();evidence=base/'evidence'
             for name in NAMES:(out/name).write_text('safe receipt '+name)
-            for name in ['unexpected.json','snapshot.json','bootstrap.stderr.log','bootstrap.private.stdout','db.sql','wp-config.php','response.html']:
+            for name in ['unexpected.json','snapshot.json','bootstrap.stderr.log','bootstrap.private.stdout','db.sql','wp-config.php','response.html',
+                         'rollback.private.stdout','rollback.private.stderr','current.sql','peek-release-before-20261111-162615-e00022b6.json']:
                 (out/name).write_text('SYNTHETIC_PRIVATE_'+name)
             setup='''set -uo pipefail
 out=$1; evidence=$2; mode=$3; prior=$4
@@ -366,6 +469,15 @@ check('internal: true' in SOURCE and 'ports:' not in SOURCE and '@sha256:[a-f0-9
       'copy uses pinned images on an internal network without published ports')
 check(SOURCE.index('copy network is not internal before bootstrap')<SOURCE.index('observe cold-import'),
       'isolation is verified before WordPress can bootstrap')
+check('if [ "$proof_mode" = cold ] && curl' in SOURCE,
+      'recovery does not even run the cold-mode loopback availability HTTP probe')
+check('volumes: ["$pub:/var/www/html", "$wwm:/wwm:ro", "$bk:$private_inside"]' in SOURCE and
+      'private_inside=/home/customer/private-backups' in SOURCE and
+      'chmod 600 "$bk/live-before-peek-release-20261111-162615-74851.sql" "$bk/peek-release-before-20261111-162615-e00022b6.json"' in SOURCE and
+      'chown' not in SOURCE, 'incident private inputs use their exact path and 0600 mode without ownership changes')
+wrapper=(HERE/'prove-live30-recovery.sh').read_text()
+check('"$#" -eq 0' in wrapper and 'exec bash "$here/prove-live30-cold.sh" --recovery' in wrapper,
+      'recovery wrapper exposes only the fixed selector and rejects arguments')
 
 # The cleanup implementation is byte-identical to the existing independently
 # fault-injected ownership/resource fixture; do not duplicate that matrix here.

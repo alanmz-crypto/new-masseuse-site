@@ -5,8 +5,10 @@ merged this release and started it November 11. The actual database backup and
 recovery snapshot were verified off-site. Read-only diagnosis found five
 metadata differences, including generated asset caches on Personal Automation
 pages; the Peek records and page content match. The two removed rows are now
-confirmed as older caches on those pages. Reproduction on an isolated copy is
-pending before accepting a narrowly bound verification/recovery receipt.
+confirmed as older caches on those pages. Ordinary page loads reproduced the
+exact cache changes on an isolated copy, with stable repeats and verified
+cleanup. The narrowly bound verification/recovery correction is being tested
+against a copy of the actual installed state.
 No purge, rollback or reinstall has been performed since
 the failure. **Do not repeat the launch steps below.** They are historical;
 see the [current diagnosis](2026-11-10-peek-release-readiness.md).

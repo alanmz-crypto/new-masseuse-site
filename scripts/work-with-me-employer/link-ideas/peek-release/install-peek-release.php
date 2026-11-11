@@ -3,6 +3,7 @@
  * Visitor release: exact copied or explicitly selected raw-live profile only.
  * wp eval-file install-peek-release.php preflight | apply [FILE] |
  *     verify FILE [original] | recovery-check FILE [original] | rollback FILE
+ *     verify-incident FILE [restored] | recovery-check-incident FILE [restored] | rollback-incident FILE
  * No page content, SEO or dependency edit. Live requires TS_PEEK_RELEASE_PROFILE=raw-live-v1.
  * Completed private snapshots are immutable, including rollback and repeats.
  */
@@ -16,7 +17,12 @@ if ( get_stylesheet() !== 'astra' || ! current_user_can( 'manage_options' ) || !
 global $wpdb, $wp_version;
 $args = isset( $args ) && is_array( $args ) ? $args : array();
 $release_mode = $args[0] ?? 'preflight';
-$release_original = in_array( $release_mode, array( 'verify', 'recovery-check' ), true ) && ( $args[2] ?? null ) === 'original';
+$release_incident = in_array( $release_mode, array( 'verify-incident', 'recovery-check-incident', 'rollback-incident' ), true );
+if ( $release_incident ) {
+    if ( ! $release_live ) { WP_CLI::error( 'LIVE30 incident modes require the exact raw-live profile.' ); }
+    $release_mode = substr( $release_mode, 0, -strlen( '-incident' ) );
+}
+$release_original = in_array( $release_mode, array( 'verify', 'recovery-check' ), true ) && ( $args[2] ?? null ) === ( $release_incident ? 'restored' : 'original' );
 if ( ! in_array( $release_mode, array( 'preflight', 'apply', 'rollback', 'verify', 'recovery-check' ), true ) || count( $args ) > ( $release_original ? 3 : ( $release_mode === 'preflight' ? 1 : 2 ) ) || ( in_array( $release_mode, array( 'verify', 'rollback', 'recovery-check' ), true ) && count( $args ) < 2 ) ) { WP_CLI::error( 'Use preflight, apply [FILE], verify FILE [original], recovery-check FILE [original], or rollback FILE.' ); }
 $release_fail = static function ( $message ) { throw new RuntimeException( $message ); };
 $release_canonical = static function ( $value ) use ( &$release_canonical ) {
@@ -371,7 +377,7 @@ try {
         if ( ! $release_private_ok || ! $release_path || $args[1] !== $release_path || is_link( $args[1] ) || dirname( $release_path ) !== $release_private || ! preg_match( '/^peek-release-before-\d{8}-\d{6}-[a-f0-9]{8}\.json$/D', basename( $release_path ) ) || ! is_file( $release_path ) || ( fileperms( $release_path ) & 0777 ) !== 0600 ) { $release_fail( 'Snapshot must be its exact private 0600 file in WWM_BACKUP_DIR.' ); }
         $release_snapshot_bytes = file_get_contents( $release_path );
         $release_expected_snapshot_hash = (string) getenv( 'TS_PEEK_RELEASE_EXPECT_SNAPSHOT_SHA256' );
-        if ( $release_live && in_array( $release_mode, array( 'apply', 'rollback' ), true ) && $release_expected_snapshot_hash === '' ) { $release_fail( 'Live snapshot-dependent writes require the caller-preserved exact journal hash.' ); }
+        if ( ( $release_incident || ( $release_live && in_array( $release_mode, array( 'apply', 'rollback' ), true ) ) ) && $release_expected_snapshot_hash === '' ) { $release_fail( 'Live snapshot-dependent writes and incident checks require the caller-preserved exact journal hash.' ); }
         if ( $release_expected_snapshot_hash !== '' && ( ! preg_match( '/^[a-f0-9]{64}$/D', $release_expected_snapshot_hash ) || hash( 'sha256', $release_snapshot_bytes ) !== $release_expected_snapshot_hash ) ) { $release_fail( 'Snapshot differs from caller-preserved exact bytes.' ); }
         $release_snapshot = json_decode( $release_snapshot_bytes, true, 512, JSON_THROW_ON_ERROR );
         $s = $release_snapshot;
@@ -404,6 +410,50 @@ try {
         $cleaned = array( 'css' => $target['records'][29]['post']['post_content'] !== $s['old']['records'][29]['post']['post_content'], 'astra' => $release_hash( $target['options']['astra-settings'] ) !== $release_hash( $s['old']['options']['astra-settings'] ) );
         if ( ( $cleaned['astra'] && ! $cleaned['css'] ) || ( ( $cleaned['css'] || $published ) && ( count( $s['ids'] ) !== 5 || $uncorrected ) ) || ( $published && ! $cleaned['astra'] ) || ( ! $release_incomplete && ( ! $cleaned['css'] || ! $cleaned['astra'] ) ) ) { $release_fail( 'Snapshot cleanup/activation phase differs.' ); }
         $release_equal( $target, $release_expected( $s['old'], $target['owned'], $cleaned ), 'Snapshot permitted recorded transition' );
+        if ( $release_incident ) {
+            // Only after the immutable original snapshot passes every original
+            // semantic/ownership check may this one proved external delta be
+            // projected onto expected states. Never alter $s or actual capture.
+            if ( $release_incomplete ) { $release_fail( 'LIVE30 receipt requires its completed original journal.' ); }
+            $adapter = require __DIR__ . '/incident-receipt.php';
+            $bound = $adapter['read']( __DIR__ ); $receipt = $bound['receipt'];
+            if ( basename( $release_path ) !== $receipt['snapshot']['file'] ) { $release_fail( 'LIVE30 actual journal filename differs.' ); }
+            $sql_path = $release_private . '/' . $receipt['sql']['file'];
+            $incident_guard = static function () use ( $release_path, $release_snapshot_bytes, $release_file_unchanged, $bound, $sql_path, $receipt, $release_fail ) {
+                $release_file_unchanged( $release_path, $release_snapshot_bytes );
+                foreach ( $bound['paths'] as $name => $file ) {
+                    clearstatcache( true, $file );
+                    if ( is_link( $file ) || ! is_file( $file ) || realpath( $file ) !== $file || file_get_contents( $file ) !== $bound['bytes'][$name] ) { $release_fail( 'LIVE30 bundled receipt binding changed.' ); }
+                }
+                clearstatcache( true, $sql_path );
+                if ( is_link( $sql_path ) || ! is_file( $sql_path ) || realpath( $sql_path ) !== $sql_path || ( fileperms( $sql_path ) & 0777 ) !== 0600 || filesize( $sql_path ) !== $receipt['sql']['bytes'] || hash_file( 'sha256', $sql_path ) !== $receipt['sql']['sha256'] ) { $release_fail( 'LIVE30 original private SQL differs.' ); }
+            };
+            $incident_guard();
+            $projection = $adapter['validate']( $bound['bytes']['receipt'], $bound['sha256'], $release_snapshot_bytes, $s, $release_manifest_hash, $release_profile_hash, hash_file( 'sha256', $sql_path ) );
+            // Full-state witness equality is retained. These extra raw checks
+            // establish the proved cache identities without disclosing values.
+            $cache_rows = $release_rows( "SELECT * FROM {$wpdb->postmeta} WHERE meta_id IN (4701,4702,5089,5090,5091) ORDER BY meta_id" );
+            if ( array_column( $cache_rows, 'meta_id' ) !== array( '5089', '5090', '5091' ) ) { $release_fail( 'LIVE30 exact five-row cache presence differs.' ); }
+            foreach ( $cache_rows as $row ) {
+                $proof = $receipt['added'][(int) $row['meta_id']];
+                if ( $row['post_id'] !== (string) $proof['post_id'] || $row['meta_key'] !== $proof['meta_key'] || ! is_string( $row['meta_value'] ) || strlen( $row['meta_value'] ) !== $proof['value_bytes'] || hash( 'sha256', $row['meta_value'] ) !== $proof['value_sha256'] || $release_hash( $row ) !== $proof['row_sha256'] ) { $release_fail( 'LIVE30 exact generated cache row differs.' ); }
+            }
+            if ( $release_mode === 'verify' ) {
+                $release_current = $release_capture( $s['ids'] );
+                $release_equal( $release_current, $projection[$release_original ? 'old' : 'new'], 'LIVE30 release state with exact proved cache delta' );
+                $incident_state = $release_original ? 'restored' : 'applied';
+            } else {
+                // The existing reverse planner still checks every complete raw
+                // state before/after each owned write; only expected cache
+                // witnesses differ. Cache rows themselves are never written.
+                $release_current = $release_reverse( $projection['old'], $projection['new'], $s['ids'], $incident_guard, $release_mode === 'recovery-check' );
+                if ( $release_original ) { $release_equal( $release_current, $projection['old'], 'LIVE30 owned release recovery with cache retained' ); }
+                $incident_state = $release_mode === 'rollback' || $release_original ? 'restored' : 'recoverable';
+            }
+            $incident_guard();
+            WP_CLI::log( 'RELEASE-INCIDENT ' . json_encode( $release_marker_fields( array( 'schema' => 1, 'bundle' => 'peek-visitor-release-v1', 'home' => $release_home, 'state' => $incident_state, 'snapshot' => $release_path, 'snapshot_sha256' => hash( 'sha256', $release_snapshot_bytes ), 'manifest_sha256' => $release_manifest_hash, 'state_sha256' => $release_hash( $release_current ), 'complete' => true, 'ids' => $s['ids'], 'receipt_sha256' => $bound['sha256'], 'sql_sha256' => $receipt['sql']['sha256'], 'cache_delta_retained' => true ) ), JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR ) );
+            WP_CLI::success( 'LIVE30 ' . $incident_state . ': exact release state with the proved external cache delta retained; historical database identity is not claimed. Original journal unchanged.' ); return;
+        }
         $release_current = $release_capture( $s['ids'] );
         if ( $release_mode === 'recovery-check' ) {
             $release_current = $release_reverse( $s['old'], $target, $s['ids'], static fn() => $release_file_unchanged( $release_path, $release_json( $s ) ), true );

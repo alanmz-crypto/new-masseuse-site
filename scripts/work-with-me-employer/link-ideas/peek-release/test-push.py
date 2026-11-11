@@ -2,6 +2,7 @@
 import hashlib
 import importlib.util
 import json
+import copy
 import os
 from pathlib import Path
 import socket
@@ -12,6 +13,8 @@ HERE = Path(__file__).resolve().parent
 PUSH = HERE.parent/'push-peek-release.sh'
 BACKUP = '/home/releasefixture/private-backups/live-before-peek-release-20261111-120000-123.sql'
 SNAP = '/home/releasefixture/private-backups/peek-release-before-20261111-120001-1234abcd.json'
+LIVE30_SNAP = '/home/customer/private-backups/peek-release-before-20261111-162615-e00022b6.json'
+LIVE30_SHA = '4038da0f9f77780ce355029bc87e53bff0479294711c821d253f51151e10751b'
 def sha(data): return hashlib.sha256(data).hexdigest()
 def canonical(obj): return json.dumps(obj, sort_keys=True, ensure_ascii=False, separators=(',', ':')).encode()
 SSH = r'''#!/usr/bin/env python3
@@ -31,6 +34,10 @@ def mark(kind,which):
  else:
   d.update(snapshot=state['snapshot'],snapshot_sha256=state['sha'],ids=state['ids'],state_sha256=state['new_sha'] if which=='applied' else state['old_sha'])
   if kind=='RELEASE-RECOVERY':d['complete']=state['complete']
+  if kind=='RELEASE-INCIDENT':
+   d.update(complete=True,receipt_sha256=state['receipt_sha'],sql_sha256=state['sql_sha'],cache_delta_retained=True)
+   d['state_sha256']=state['projected_old_sha'] if which=='restored' else state['projected_new_sha']
+   if scenario=='incident-marker':d['receipt_sha256']='0'*64
  if scenario=='wrong-profile':d['profile_sha256']='b'*64
  if scenario=='wrong-ids' and kind=='RELEASE-SNAPSHOT':d['ids']={'core':999}
  if scenario=='wrong-marker-hash' and kind=='RELEASE-SNAPSHOT':d['snapshot_sha256']='b'*64
@@ -46,7 +53,25 @@ if p[0]=='sha256sum':
  if scenario=='remote-changed':digest='1'*64
  print(digest+'  '+p[1]);sys.exit(0)
 assert p[:3]==['bash','-s','--'];sys.stdin.buffer.read();phase=p[3];event('remote:'+phase);assert p[4]=='live'
-if phase in ('prepare','prepare-rollback'):
+if phase.endswith('-live30'):
+ assert p[5]==state['snapshot'] and p[6]==state['sha'] and p[7]==state['receipt_sha']
+ if phase=='inspect-live30':
+  if scenario=='state-fail':print('RELEASE-STATE-DIAGNOSTIC {"fixture":"incident-drift"}');sys.exit(10)
+  mark('RELEASE-INCIDENT','applied');mark('RELEASE-INCIDENT','recoverable')
+ elif phase.startswith('prepare-'):
+  if scenario=='incident-precheck':print('RELEASE-STATE-DIAGNOSTIC {"fixture":"incident-drift"}');sys.exit(12)
+  if phase=='prepare-finish-live30':mark('RELEASE-INCIDENT','applied');print('RELEASE-FINAL-BEGIN')
+  mark('RELEASE-INCIDENT','recoverable');transfer('RELEASE-JOURNAL',state['snapshot'])
+  if scenario=='export-fail':sys.exit(7)
+  transfer('RELEASE-BACKUP',state['backup'])
+  if scenario=='duplicate-backup':transfer('RELEASE-BACKUP',state['backup'])
+ else:
+  if scenario in ('purge-fail','render-fail','state-fail'):
+   print('RELEASE-STATE-DIAGNOSTIC {"fixture":"incident-final-failure"}');sys.exit(10)
+  print('RELEASE-FINAL-BEGIN')
+  if scenario=='duplicate-final':print('RELEASE-FINAL-BEGIN')
+  mark('RELEASE-INCIDENT','restored' if phase=='rollback-live30' else 'applied')
+elif phase in ('prepare','prepare-rollback'):
  if scenario=='export-fail':sys.exit(7)
  if phase=='prepare':
   mark('RELEASE-PREFLIGHT','ready');print('RELEASE-INTENT',state['snapshot'])
@@ -70,7 +95,8 @@ elif phase=='inspect-state':
  mark('RELEASE-SNAPSHOT','applied')
 elif phase in ('verify','verify-purged','rollback'):
  assert p[5]==state['snapshot'] and p[6]==state['sha'];event('bound:'+p[6])
- if scenario in ('purge-fail','render-fail','state-fail'):sys.exit(10)
+ if scenario in ('purge-fail','render-fail','state-fail'):
+  print('RELEASE-STATE-DIAGNOSTIC {"fixture":"legacy-final-failure"}');sys.exit(10)
  print('RELEASE-FINAL-BEGIN')
  if scenario=='duplicate-final':print('RELEASE-FINAL-BEGIN')
  mark('RELEASE-RECOVERY' if phase=='rollback' else 'RELEASE-SNAPSHOT','original' if phase=='rollback' else 'applied')
@@ -85,8 +111,9 @@ import os,sys
 from pathlib import Path
 assert len(sys.argv)==3 and Path(sys.argv[1],sys.argv[2]).is_file()
 suffix=Path(sys.argv[2]).suffix
+if sys.argv[2]=='peek-release-live30-receipt.json':suffix='receipt'
 with open(os.environ['RELEASE_EVENTS'],'a') as f:f.write('offsite:'+suffix+'\n')
-if os.environ['RELEASE_CASE']==('offsite-db-fail' if suffix=='.sql' else 'offsite-journal-fail'):sys.exit(5)
+if os.environ['RELEASE_CASE']==('offsite-db-fail' if suffix=='.sql' else ('offsite-receipt-fail' if suffix=='receipt' else 'offsite-journal-fail')):sys.exit(5)
 '''
 checks=0
 def check(ok,label):
@@ -106,16 +133,45 @@ with tempfile.TemporaryDirectory(prefix='release-push-model-') as td:
  def run(case,args,partial=False,**overrides):
   copydir=root/f'backups-{checks}'
   (root/'events').write_text('')
-  snap=dict(base,complete=not partial,ids=[] if partial == 'empty' else ({'thai-massage':2001} if partial else ids),old=old,old_sha256=sha(canonical(old)))
-  snap.update({('journal' if partial else 'new'):new,('journal_sha256' if partial else 'new_sha256'):sha(canonical(new))})
+  incident=any(a in ('--finish-live30','--incident-live30','--inspect-live30') for a in args)
+  old_state=old;new_state=new
+  if incident:
+   old_state=dict(witnesses={'postmeta':{'4701':'c'*64,'4702':'d'*64,'777':'e'*64}},owned={role:None for role in ids},records={'29':{'post':{'post_content':'SYNTHETIC_PRIVATE_CSS'}}},options={'astra-settings':{'option_value':'SYNTHETIC_PRIVATE_ASTRA'}},taxonomies=[{'term_taxonomy_id':'9','count':'0'},{'term_taxonomy_id':'10','count':'0'}])
+   new_state=copy.deepcopy(old_state);new_state['owned']={role:{'post':{'ID':str(identity)}} for role,identity in ids.items()}
+   new_state['records']['29']['post']['post_content']='SYNTHETIC_PRIVATE_NEW_CSS';new_state['options']['astra-settings']['option_value']='SYNTHETIC_PRIVATE_NEW_ASTRA'
+   for row in new_state['taxonomies']:row['count']='5'
+  snap=dict(base,complete=not partial,ids=[] if partial == 'empty' else ({'thai-massage':2001} if partial else ids),old=old_state,old_sha256=sha(canonical(old_state)))
+  snap.update({('journal' if partial else 'new'):new_state,('journal_sha256' if partial else 'new_sha256'):sha(canonical(new_state))})
   raw=canonical(snap).decode()
-  state=dict(base=base,complete=not partial,ids=snap['ids'],old_sha=snap['old_sha256'],new_sha=sha(canonical(new)),snapshot=SNAP,backup=BACKUP,sha=sha(raw.encode()),files={SNAP:raw,BACKUP:'SYNTHETIC_PRIVATE_SQL\n'})
+  snapshot=LIVE30_SNAP if incident else SNAP
+  state=dict(base=base,complete=not partial,ids=snap['ids'],old_sha=snap['old_sha256'],new_sha=sha(canonical(new_state)),snapshot=snapshot,backup=BACKUP,sha=sha(raw.encode()),files={snapshot:raw,BACKUP:'SYNTHETIC_PRIVATE_SQL\n'})
+  push=PUSH
+  if incident:
+   # Explicit synthetic source/package copy: no production env or CLI pin bypass.
+   package=root/f'package-{checks}'/'peek-release';package.mkdir(parents=True)
+   for name in ('manifest.json','live-profile.json','validate-marker.py','incident-receipt.php'):(package/name).write_bytes((HERE/name).read_bytes())
+   for name in ('install-peek-release.php','source-binding.php','verify-render.php'):(package/name).write_text('synthetic command-double payload\n')
+   (package/'payload').mkdir()
+   removed={identity:dict(post_id=post,meta_key='_uag_page_assets',row_sha256=digest,value_sha256='a'*64,value_bytes=3) for identity,post,digest in [('4701',1255,'c'*64),('4702',1257,'d'*64)]}
+   added={identity:dict(post_id=post,meta_key='_uag_page_assets',row_sha256=sha(identity.encode()),value_sha256='b'*64,value_bytes=4) for identity,post in [('5089',1254),('5090',1255),('5091',1257)]}
+   def projected(value):
+    value=copy.deepcopy(value)
+    for identity in removed:del value['witnesses']['postmeta'][identity]
+    for identity,row in added.items():value['witnesses']['postmeta'][identity]=row['row_sha256']
+    return sha(canonical(value))
+   receipt=dict(base,incident='live30-assets-20261111',snapshot={'file':Path(snapshot).name,'sha256':state['sha'],'bytes':len(raw.encode())},sql={'file':Path(BACKUP).name,'sha256':sha(state['files'][BACKUP].encode()),'bytes':len(state['files'][BACKUP].encode())},ids=ids,original_applied_sha256=state['new_sha'],projected_applied_sha256=projected(new_state),removed=removed,added=added,proof_sha256='f'*64)
+   receipt_raw=canonical(receipt);state.update(receipt_sha=sha(receipt_raw),sql_sha=receipt['sql']['sha256'],projected_old_sha=projected(old_state),projected_new_sha=receipt['projected_applied_sha256'])
+   (package/'incident-live30.json').write_bytes(receipt_raw+(b' ' if case=='receipt-changed' else b''))
+   (package/'incident-live30-binding.json').write_bytes(canonical(dict(schema=1,incident='live30-assets-20261111',receipt_sha256=None if case=='incident-disabled' else state['receipt_sha'])))
+   push=package.parent/'push-peek-release.sh';source=PUSH.read_text()
+   check(source.count(LIVE30_SHA)==2,'exact two immutable snapshot pins in production wrapper')
+   push.write_text(source.replace(LIVE30_SHA,state['sha']))
   (root/'state.json').write_text(json.dumps(state))
   if case in ('existing-different','existing-symlink'):
    copydir.mkdir();dest=copydir/Path(BACKUP).name
    if case=='existing-symlink':dest.symlink_to(root/'state.json')
    else:dest.write_text('earlier evidence')
-  result=subprocess.run(['bash',str(PUSH),*args],env=dict(env,RELEASE_CASE=case,TS_SERVER_BACKUPS=str(copydir),**overrides),capture_output=True,text=True,timeout=15)
+  result=subprocess.run(['bash',str(push),*args],env=dict(env,RELEASE_CASE=case,TS_SERVER_BACKUPS=str(copydir),**overrides),capture_output=True,text=True,timeout=15)
   check('SYNTHETIC_PRIVATE' not in result.stdout+result.stderr,'private raw values leaked')
   return result,(root/'events').read_text().splitlines(),copydir
  r,seen,d=run('ok',['--apply'])
@@ -132,6 +188,7 @@ with tempfile.TemporaryDirectory(prefix='release-push-model-') as td:
   r,seen,_=run(case,['--apply']);check(r.returncode!=0 and 'remote:verify-purged' not in seen,case+' must stop before success/render')
  for case in ('purge-fail','render-fail','state-fail','duplicate-final'):
   r,seen,_=run(case,['--apply']);check(r.returncode!=0,case+' cannot produce success')
+  if case!='duplicate-final':check('RELEASE-STATE-DIAGNOSTIC ' in r.stdout,'legacy failed verification stdout retained')
  for partial in (False,True,'empty'):
   r,seen,_=run('ok',['--rollback',SNAP],partial=partial)
   check(r.returncode==0,'rollback fixture: '+r.stdout+r.stderr)
@@ -153,6 +210,29 @@ with tempfile.TemporaryDirectory(prefix='release-push-model-') as td:
  check('Dry run only' not in r.stdout and seen==['connect','upload','remote:preflight'],'failed preflight never continues or claims success')
  r,seen,_=run('ok',['--apply'],S_TARGET='staging39');check(r.returncode!=0 and not seen,'non-live target rejected before contact')
  r,seen,_=run('ok',['--apply'],TS_OFFSITE_HOOK='');check(r.returncode!=0 and not seen,'missing offsite hook stops before contact')
+ for args,phase in [(['--apply','--finish-live30'],'finish-live30'),(['--rollback',LIVE30_SNAP,'--incident-live30'],'rollback-live30')]:
+  r,seen,d=run('ok',args)
+  check(r.returncode==0,phase+' succeeds with independently validated fixture receipt: '+r.stdout+r.stderr)
+  check(all(seen.index(event)<seen.index('remote:'+phase) for event in ('offsite:.sql','offsite:.json','offsite:receipt')),phase+' preserves SQL, actual journal and receipt before mutation')
+  check(not any(event in seen for event in ('remote:apply','remote:preflight','remote:prepare','remote:rollback')),phase+' cannot enter ordinary install/recovery path')
+  check((d/'peek-release-live30-receipt.json').stat().st_mode&0o777==0o600,phase+' receipt preserved privately')
+  for case in ('incident-disabled','receipt-changed','incident-precheck','export-fail','backup-hash','journal-size','offsite-db-fail','offsite-journal-fail','offsite-receipt-fail','duplicate-backup','incident-marker'):
+   r,seen,_=run(case,args)
+   check(r.returncode!=0 and 'remote:'+phase not in seen,phase+' '+case+' stops before purge/rollback')
+   if case in ('incident-disabled','receipt-changed'):check(not seen,'invalid incident receipt refused before SSH')
+   if case=='incident-precheck':check('RELEASE-STATE-DIAGNOSTIC ' in r.stdout and r.returncode==12,'incident precheck diagnostic and exit retained')
+  for case in ('purge-fail','render-fail','state-fail','duplicate-final'):
+   r,seen,_=run(case,args);check(r.returncode!=0,phase+' final '+case+' cannot claim success')
+   if case!='duplicate-final':check('RELEASE-STATE-DIAGNOSTIC ' in r.stdout and r.returncode==10,'incident final diagnostic and exit retained')
+  r,seen,_=run('ok',args,TS_OFFSITE_HOOK='');check(r.returncode!=0 and not seen,'incident write requires offsite hook before contact')
+ r,seen,d=run('ok',['--inspect-live30'],TS_OFFSITE_HOOK='')
+ check(r.returncode==0 and seen==['connect','upload','remote:inspect-live30'] and not d.exists(),'incident inspection is state-only without journal copies, backup, purge or render')
+ r,seen,_=run('state-fail',['--inspect-live30'],TS_OFFSITE_HOOK='')
+ check(r.returncode==10 and 'RELEASE-STATE-DIAGNOSTIC ' in r.stdout,'incident inspection retains failure output')
+ r,seen,_=run('ok',['--rollback',SNAP,'--incident-live30'])
+ check(r.returncode!=0 and not seen,'incident rollback rejects any other snapshot before contact')
+ for args in (['--finish-live30'],['--incident-live30'],['--apply','--finish-live30','extra'],['--inspect-live30','extra']):
+  r,seen,_=run('ok',args);check(r.returncode!=0 and not seen,'incident mode rejects malformed/unclassified argument combination')
  sock.close()
 # Direct parser controls cover corruption independently of shell doubles.
 spec=importlib.util.spec_from_file_location('release_marker',HERE/'validate-marker.py')
@@ -191,16 +271,46 @@ with tempfile.TemporaryDirectory(prefix='release-root-alias-') as td:
  r=subprocess.run(['bash','-c','set -euo pipefail; doc=$1; '+canonical_root+'; echo continued','fixture',str(root/'missing')],text=True,capture_output=True)
  check(r.returncode!=0 and 'continued' not in r.stdout,'missing selected root stops before WordPress bootstrap')
 body=remote[remote.index('case "$phase" in'):]
-for phase,fail in [('verify-purged','purge'),('verify-purged','render'),('verify-purged','verify-final'),('rollback','purge'),('rollback','render'),('rollback','verify-final')]:
+# Execute the real pre-bootstrap guard against temporary regular files. Only a
+# copied test string substitutes the fixed production path/SHA; no runtime knob.
+incident_guard=remote[remote.index('phase=$1;'):remote.index('command -v wp')]
+with tempfile.TemporaryDirectory(prefix='release-incident-guard-') as td:
+ root=Path(td);package=root/'wwm-package-peek-release';package.mkdir()
+ snapshot=root/Path(LIVE30_SNAP).name;snapshot.write_bytes(b'SYNTHETIC_PRIVATE_JOURNAL');snapshot.chmod(0o600)
+ receipt=package/'incident-live30.json';receipt.write_bytes(b'SYNTHETIC_RECEIPT')
+ snapshot_sha=sha(snapshot.read_bytes());receipt_sha=sha(receipt.read_bytes())
+ guard=incident_guard.replace(LIVE30_SNAP,str(snapshot)).replace(LIVE30_SHA,snapshot_sha)
+ for scenario in ('ok','snapshot-changed','receipt-changed','snapshot-permissions','snapshot-symlink'):
+  snapshot.unlink();snapshot.write_bytes(b'SYNTHETIC_PRIVATE_JOURNAL');snapshot.chmod(0o600);receipt.write_bytes(b'SYNTHETIC_RECEIPT')
+  if scenario=='snapshot-changed':snapshot.write_bytes(b'drift')
+  if scenario=='receipt-changed':receipt.write_bytes(b'drift')
+  if scenario=='snapshot-permissions':snapshot.chmod(0o644)
+  if scenario=='snapshot-symlink':
+   alternate=root/'alternate';alternate.write_bytes(b'SYNTHETIC_PRIVATE_JOURNAL');alternate.chmod(0o600);snapshot.unlink();snapshot.symlink_to(alternate)
+  r=subprocess.run(['bash','-s','--','finish-live30','live',str(snapshot),snapshot_sha,receipt_sha],input='set -euo pipefail\n'+guard+'echo BOOTSTRAP-BOUNDARY\n',text=True,capture_output=True,env=dict(os.environ,HOME=str(root)))
+  check((r.returncode==0 and 'BOOTSTRAP-BOUNDARY' in r.stdout)==(scenario=='ok'),'real incident guard '+scenario+' before WordPress bootstrap')
+  check('SYNTHETIC' not in r.stdout+r.stderr,'real file guard leaks no private bytes')
+remote_faults=[('verify-purged','purge'),('verify-purged','render'),('verify-purged','verify-final'),('rollback','purge'),('rollback','render'),('rollback','verify-final')]
+remote_faults += [(phase,fail) for phase in ('finish-live30','rollback-live30') for fail in ('verify-start','recovery','purge','render','verify-final')]
+for phase,fail in remote_faults:
  with tempfile.TemporaryDirectory() as td:
   events=Path(td)/'events'
   prefix='''set -euo pipefail
 phase=$1; fail=$2; snap=/private/fixture.json; count=0
-run() { echo "run:$*" >> "$EVENTS"; count=$((count+1)); if [[ "$fail" = verify-final && ( "$count" -eq 2 && "$phase" = verify-purged || "$count" -eq 4 && "$phase" = rollback ) ]]; then return 7; fi; }
+run() { echo "run:$*" >> "$EVENTS"; count=$((count+1)); if [[ "$fail" = verify-start && "$count" -eq 1 || "$fail" = recovery && "$count" -eq 2 || "$fail" = verify-final && ( "$count" -eq 2 && "$phase" = verify-purged || "$count" -eq 3 && "$phase" = finish-live30 || "$count" -eq 4 && ( "$phase" = rollback || "$phase" = rollback-live30 ) ) ]]; then return 7; fi; }
 purge() { echo purge >> "$EVENTS"; [ "$fail" != purge ]; }
 render() { echo render >> "$EVENTS"; [ "$fail" != render ]; }
 '''
   r=subprocess.run(['bash','-s','--',phase,fail],input=prefix+body,text=True,capture_output=True,env=dict(os.environ,EVENTS=str(events)))
   check(r.returncode!=0,phase+' actual remote case refuses '+fail)
   if fail=='purge':check('render' not in events.read_text().splitlines(),'purge failure prevents rendered claim')
+  if fail in ('verify-start','recovery'):check('purge' not in events.read_text().splitlines(),'incident state refusal prevents purge')
+for phase,expected in (
+ ('finish-live30',['run:verify-incident /private/fixture.json','run:recovery-check-incident /private/fixture.json','purge','render:applied','run:verify-incident /private/fixture.json']),
+ ('rollback-live30',['run:recovery-check-incident /private/fixture.json','run:rollback-incident /private/fixture.json','run:recovery-check-incident /private/fixture.json restored','purge','render:original','run:recovery-check-incident /private/fixture.json restored'])):
+ with tempfile.TemporaryDirectory() as td:
+  events=Path(td)/'events'
+  prefix='set -euo pipefail\nphase=$1; snap=/private/fixture.json\nrun() { echo "run:$*" >> "$EVENTS"; }\npurge() { echo purge >> "$EVENTS"; }\nrender() { echo "render:$*" >> "$EVENTS"; }\n'
+  r=subprocess.run(['bash','-s','--',phase],input=prefix+body,text=True,capture_output=True,env=dict(os.environ,EVENTS=str(events)))
+  check(r.returncode==0 and events.read_text().splitlines()==expected,'actual '+phase+' calls only the intended incident actions in order')
 print(f'PASS release wrapper: {checks} offline controls; no live/encrypted-store proof.')

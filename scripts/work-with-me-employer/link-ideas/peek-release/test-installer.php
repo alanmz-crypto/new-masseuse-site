@@ -400,6 +400,9 @@ function invoke( $arguments, $directory = null ) {
     // Expose the exact included closure for pure diagnostic boundary tests only.
     if ( isset( $release_equal ) ) { $GLOBALS['diagnostic_equal'] = $release_equal; }
     if ( isset( $release_wpcode_save ) ) { $GLOBALS['scoped_wpcode_save'] = $release_wpcode_save; }
+    // Compare the pure incident projection with the actual SQL capture. This
+    // include-local exposure adds no production environment bypass.
+    if ( isset( $release_capture ) ) { $GLOBALS['model_release_capture'] = $release_capture; }
     return $GLOBALS['message'];
 }
 function refusal( $arguments, $label, $directory = null ) {
@@ -420,6 +423,13 @@ function marker( $prefix ) {
 function snapshot_write( $data ) {
     $path = $GLOBALS['testdir'] . '/backups/peek-release-before-20261110-030000-' . bin2hex( random_bytes( 4 ) ) . '.json';
     file_put_contents( $path, json_encode( $data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) ); chmod( $path, 0600 ); return $path;
+}
+function incident_row( $meta_id, $post_id, $value ) {
+    return array( 'meta_id' => (string) $meta_id, 'post_id' => (string) $post_id, 'meta_key' => '_uag_page_assets', 'meta_value' => $value );
+}
+function incident_descriptor( $row ) {
+    return array( 'post_id' => (int) $row['post_id'], 'meta_key' => $row['meta_key'], 'row_sha256' => digest( $row ),
+        'value_sha256' => hash( 'sha256', $row['meta_value'] ), 'value_bytes' => strlen( $row['meta_value'] ) );
 }
 function remove_tree( $path ) {
     if ( is_dir( $path ) && ! is_link( $path ) ) { foreach ( new DirectoryIterator( $path ) as $entry ) { if ( ! $entry->isDot() ) { remove_tree( $entry->getPathname() ); } } rmdir( $path ); }
@@ -1343,10 +1353,201 @@ invoke( array( 'rollback', $proposal_failed_path ) ); invoke( array( 'recovery-c
 check( all_state() === $proposal_original, 'incomplete live fixture journal restores exact original rows' );
 fixture_update( 'wp_posts', 'ID', 1160, array( 'post_content' => 'SYNTHETIC_PRIVATE_DRIFT' ) );
 refusal( array( 'preflight' ), 'future raw-live preflight rejects baseline drift' );
+$proposal_checks = $pass - $proposal_start;
+
+// LIVE30 adapter controls use synthetic rows and an explicitly synthetic bundled
+// receipt. Production receipt/binding and installer bytes are never rewritten.
+$incident_start = $pass; $incident_faults = 0;
+$incident_api = require "$package/incident-receipt.php";
+$production_incident_binding = file_get_contents( "$source/incident-live30-binding.json" );
+$production_incident_receipt = file_get_contents( "$source/incident-live30.json" );
+// Exercise disabled behavior even after a separately reviewed production proof
+// is pinned. Only this disposable fixture copy receives a null binding.
+file_put_contents( "$package/incident-live30-binding.json", json_encode( array( 'schema' => 1, 'incident' => 'live30-assets-20261111', 'receipt_sha256' => null ) ) );
+$incident_refusal = static function ( $operation, $label ) {
+    $before = all_state(); $before_events = $GLOBALS['events']; $before_writes = $GLOBALS['wpdb']->writes; $caught = null;
+    try { $operation(); } catch ( Harness_Error $error ) { throw $error; } catch ( Throwable $error ) { $caught = $error; }
+    check( $caught !== null, "$label: explicit refusal" );
+    check( all_state() === $before && $GLOBALS['events'] === $before_events && $GLOBALS['wpdb']->writes === $before_writes, "$label: no database or cache writes" );
+    check( ! str_contains( $caught->getMessage(), 'SYNTHETIC_PRIVATE' ), "$label: private bytes are not disclosed" );
+    return $caught;
+};
+$incident_refusal( static fn() => $incident_api['read']( $package ), 'null incident proof binding is disabled' );
+restore_state( $proposal_original );
+$incident_removed_rows = array( 4701 => incident_row( 4701, 1255, 'SYNTHETIC_PRIVATE_OLD_PRIVACY_CACHE' ), 4702 => incident_row( 4702, 1257, 'SYNTHETIC_PRIVATE_OLD_TERMS_CACHE' ) );
+foreach ( $incident_removed_rows as $row ) { check( row( 'postmeta', 'meta_id', $row['meta_id'] ) === null, 'incident before-row fixture uses an unoccupied metadata ID' ); fixture_insert( 'wp_postmeta', $row ); }
+$incident_original_raw = all_state();
+$incident_path = "$testdir/backups/peek-release-before-20261111-040000-1122aabb.json";
+putenv( 'TS_PEEK_RELEASE_EXPECT_SNAPSHOT_SHA256' ); putenv( 'TS_PEEK_RELEASE_NEW_JOURNAL=' . $incident_path );
+invoke( array( 'apply' ) ); $incident_marker = marker( 'RELEASE-SNAPSHOT' );
+$incident_bytes = file_get_contents( $incident_path ); $incident_snapshot = json_decode( $incident_bytes, true, 512, JSON_THROW_ON_ERROR );
+$incident_applied_raw = all_state(); $incident_ids = $incident_marker['ids'];
+$incident_capture = $GLOBALS['model_release_capture'];
+foreach ( array( 'apply-incident', 'preflight-incident' ) as $mode ) { refusal( array( $mode, $incident_path ), 'incident adapter never supports new installation or baseline adoption' ); }
+$incident_home = $home;
+foreach ( array( 'http://localhost:8090', 'https://staging39.thaisolitude.com' ) as $home ) { refusal( array( 'rollback-incident', $incident_path ), 'incident recovery requires its exact raw-live origin' ); }
+$home = $incident_home;
+foreach ( array( 'verify-incident', 'recovery-check-incident', 'rollback-incident' ) as $mode ) {
+    refusal( array( $mode, $incident_path ), "incident $mode requires the caller-preserved journal hash" );
+    putenv( 'TS_PEEK_RELEASE_EXPECT_SNAPSHOT_SHA256=' . hash( 'sha256', $incident_bytes ) );
+    $error = refusal( array( $mode, $incident_path ), "incident $mode refuses the disabled fixture proof binding" );
+    check( str_contains( $error->getMessage(), 'disabled' ), "$mode reaches the explicit disabled receipt guard" );
+    putenv( 'TS_PEEK_RELEASE_EXPECT_SNAPSHOT_SHA256' );
+}
+$incident_added_rows = array( 5089 => incident_row( 5089, 1254, 'SYNTHETIC_PRIVATE_NEW_PARENT_CACHE' ), 5090 => incident_row( 5090, 1255, 'SYNTHETIC_PRIVATE_NEW_PRIVACY_CACHE' ), 5091 => incident_row( 5091, 1257, 'SYNTHETIC_PRIVATE_NEW_TERMS_CACHE' ) );
+$incident_sql_name = 'live-before-peek-release-20261111-040000-12345.sql';
+$incident_sql_bytes = "-- SYNTHETIC_PRIVATE_SQL_ONLY; no actual live data\n";
+$incident_sql_path = "$testdir/backups/$incident_sql_name"; file_put_contents( $incident_sql_path, $incident_sql_bytes ); chmod( $incident_sql_path, 0600 );
+$incident_receipt = array( 'schema' => 1, 'incident' => 'live30-assets-20261111', 'bundle' => 'peek-visitor-release-v1', 'home' => $home,
+    'manifest_sha256' => hash_file( 'sha256', "$package/manifest.json" ), 'profile_sha256' => hash_file( 'sha256', "$package/live-profile.json" ),
+    'snapshot' => array( 'file' => basename( $incident_path ), 'sha256' => hash( 'sha256', $incident_bytes ), 'bytes' => strlen( $incident_bytes ) ),
+    'sql' => array( 'file' => $incident_sql_name, 'sha256' => hash( 'sha256', $incident_sql_bytes ), 'bytes' => strlen( $incident_sql_bytes ) ),
+    'ids' => $incident_ids, 'original_applied_sha256' => $incident_snapshot['new_sha256'],
+    'projected_applied_sha256' => str_repeat( '0', 64 ),
+    'removed' => array_map( 'incident_descriptor', $incident_removed_rows ), 'added' => array_map( 'incident_descriptor', $incident_added_rows ), 'proof_sha256' => hash( 'sha256', 'synthetic causal proof, never actual live evidence' ) );
+$incident_old = $incident_api['project']( $incident_snapshot['old'], $incident_receipt );
+$incident_new = $incident_api['project']( $incident_snapshot['new'], $incident_receipt );
+$incident_receipt['projected_applied_sha256'] = digest( $incident_new );
+$incident_receipt_bytes = json_encode( $incident_receipt, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR ) . "\n";
+$incident_receipt_sha = hash( 'sha256', $incident_receipt_bytes );
+$validate_incident = static function ( $bytes, $expected = null, $journal_bytes = null, $journal = null, $manifest_sha = null, $profile_sha = null, $sql_sha = null ) use ( $incident_api, $incident_receipt_sha, $incident_bytes, $incident_snapshot, $incident_receipt ) {
+    return $incident_api['validate']( $bytes, $expected ?? $incident_receipt_sha, $journal_bytes ?? $incident_bytes, $journal ?? $incident_snapshot,
+        $manifest_sha ?? $incident_receipt['manifest_sha256'], $profile_sha ?? $incident_receipt['profile_sha256'], $sql_sha ?? $incident_receipt['sql']['sha256'] );
+};
+$validated_incident = $validate_incident( $incident_receipt_bytes );
+check( $validated_incident === array( 'receipt' => $incident_receipt, 'old' => $incident_old, 'new' => $incident_new ), 'receipt validates its exact original journal, bindings and independently derived projected states' );
+foreach ( array( 'old' => $incident_old, 'new' => $incident_new ) as $key => $projected ) {
+    $expected = $incident_snapshot[$key]; unset( $expected['witnesses']['postmeta'][4701], $expected['witnesses']['postmeta'][4702] );
+    foreach ( $incident_added_rows as $id => $row ) { $expected['witnesses']['postmeta'][$id] = digest( $row ); }
+    check( $projected === $expected, "incident projection changes only the five fixed metadata witnesses in $key" );
+}
+check( file_get_contents( $incident_path ) === $incident_bytes && all_state() === $incident_applied_raw, 'pure receipt validation/projecting writes no snapshot or database rows' );
+$incident_refusal( static fn() => $validate_incident( $incident_receipt_bytes . ' ' ), 'receipt byte tamper' );
+$incident_refusal( static fn() => $validate_incident( $incident_receipt_bytes, null, $incident_bytes . ' ' ), 'actual immutable journal byte tamper' );
+$incident_refusal( static fn() => $validate_incident( $incident_receipt_bytes, null, null, array() ), 'parsed journal differs from exact bytes' );
+foreach ( array( 'manifest', 'profile', 'sql' ) as $binding ) {
+    $incident_refusal( static fn() => $validate_incident( $incident_receipt_bytes, null, null, null, $binding === 'manifest' ? str_repeat( '1', 64 ) : null, $binding === 'profile' ? str_repeat( '1', 64 ) : null, $binding === 'sql' ? str_repeat( '1', 64 ) : null ), "wrong external $binding binding" );
+}
+$receipt_mutations = array(
+    'unknown field' => static function ( &$r ) { $r['SYNTHETIC_PRIVATE_UNKNOWN'] = 'SYNTHETIC_PRIVATE_VALUE'; },
+    'wrong incident' => static function ( &$r ) { $r['incident'] = 'other'; },
+    'wrong origin' => static function ( &$r ) { $r['home'] = 'http://localhost:8090'; },
+    'wrong owned IDs' => static function ( &$r ) { $r['ids']['core']++; },
+    'duplicate owned IDs' => static function ( &$r ) { $r['ids']['core'] = $r['ids']['thai-massage']; },
+    'snapshot path traversal' => static function ( &$r ) { $r['snapshot']['file'] = '../' . $r['snapshot']['file']; },
+    'wrong snapshot size' => static function ( &$r ) { $r['snapshot']['bytes']++; },
+    'extra removed row' => static function ( &$r ) { $r['removed'][4703] = $r['removed'][4701]; },
+    'missing removed row' => static function ( &$r ) { unset( $r['removed'][4701] ); },
+    'wrong removed witness' => static function ( &$r ) { $r['removed'][4701]['row_sha256'] = str_repeat( '1', 64 ); },
+    'wrong fixed page' => static function ( &$r ) { $r['added'][5089]['post_id'] = 1160; },
+    'wrong cache key' => static function ( &$r ) { $r['added'][5089]['meta_key'] = 'SYNTHETIC_PRIVATE_OTHER_KEY'; },
+    'string byte count' => static function ( &$r ) { $r['added'][5089]['value_bytes'] = '4'; },
+    'missing addition' => static function ( &$r ) { unset( $r['added'][5091] ); },
+    'different addition ID' => static function ( &$r ) { $r['added'][5092] = $r['added'][5091]; unset( $r['added'][5091] ); },
+    'invalid proof hash' => static function ( &$r ) { $r['proof_sha256'] = 'SYNTHETIC_PRIVATE_PROOF'; },
+    'wrong applied origin hash' => static function ( &$r ) { $r['original_applied_sha256'] = str_repeat( '1', 64 ); },
+    'wrong projected applied hash' => static function ( &$r ) { $r['projected_applied_sha256'] = str_repeat( '1', 64 ); },
+    'unpermitted projected original pin' => static function ( &$r ) { $r['projected_original_sha256'] = str_repeat( '1', 64 ); },
+);
+foreach ( $receipt_mutations as $label => $mutate ) {
+    $changed = $incident_receipt; $mutate( $changed ); $changed_bytes = json_encode( $changed, JSON_THROW_ON_ERROR );
+    $incident_refusal( static fn() => $validate_incident( $changed_bytes, hash( 'sha256', $changed_bytes ) ), "rehash cannot authorize $label" );
+}
+$already_added = $incident_snapshot['old']; $already_added['witnesses']['postmeta'][5089] = digest( $incident_added_rows[5089] );
+$incident_refusal( static fn() => $incident_api['project']( $already_added, $incident_receipt ), 'projection refuses an already-present addition ID' );
+$incident_refusal( static fn() => $incident_api['project']( $incident_old, $incident_receipt ), 'projection is not a metadata normalization loop' );
+
+// Exact receipt files are enabled only inside this temporary fixture package.
+file_put_contents( "$package/incident-live30.json", $incident_receipt_bytes );
+file_put_contents( "$package/incident-live30-binding.json", json_encode( array( 'schema' => 1, 'incident' => 'live30-assets-20261111', 'receipt_sha256' => $incident_receipt_sha ) ) );
+check( $incident_api['read']( $package )['sha256'] === $incident_receipt_sha, 'synthetic bundled receipt is pinned without a production environment bypass' );
+foreach ( $incident_removed_rows as $id => $row ) { fixture_sql( 'DELETE FROM wp_postmeta WHERE meta_id=?', array( $id ) ); }
+foreach ( $incident_added_rows as $row ) { check( row( 'postmeta', 'meta_id', $row['meta_id'] ) === null, 'incident addition fixture uses an unoccupied metadata ID' ); fixture_insert( 'wp_postmeta', $row ); }
+$incident_projected_raw = all_state();
+check( digest( $incident_capture( $incident_ids ) ) === digest( $incident_new ), 'real raw capture equals the projected applied state after only the exact five-row fixture transition' );
+putenv( 'TS_PEEK_RELEASE_EXPECT_SNAPSHOT_SHA256=' . hash( 'sha256', $incident_bytes ) );
+refusal( array( 'verify', $incident_path ), 'ordinary verification retains exact original witness protection' );
+refusal( array( 'rollback', $incident_path ), 'ordinary rollback never silently adopts the incident projection' );
+$incident_events = $events; $incident_writes = $wpdb->writes;
+invoke( array( 'verify-incident', $incident_path ) );
+$incident_verified = marker( 'RELEASE-INCIDENT' );
+check( $incident_verified['state'] === 'applied' && $incident_verified['state_sha256'] === digest( $incident_new ) && $incident_verified['receipt_sha256'] === $incident_receipt_sha && $incident_verified['snapshot_sha256'] === hash( 'sha256', $incident_bytes ) && $incident_verified['sql_sha256'] === hash( 'sha256', $incident_sql_bytes ) && $incident_verified['cache_delta_retained'] === true, 'incident verification marker binds exact projected state and all immutable evidence' );
+invoke( array( 'recovery-check-incident', $incident_path ) );
+check( all_state() === $incident_projected_raw && $events === $incident_events && $wpdb->writes === $incident_writes && file_get_contents( $incident_path ) === $incident_bytes, 'actual incident verify/recovery entrypoints perform no database, cache or journal writes' );
+refusal( array( 'recovery-check-incident', $incident_path, 'restored' ), 'projected applied state is not restored' );
+invoke( array( 'rollback-incident', $incident_path ) ); $incident_restored_raw = all_state();
+$incident_restored_marker = marker( 'RELEASE-INCIDENT' );
+check( $incident_restored_marker['state'] === 'restored' && $incident_restored_marker['state_sha256'] === digest( $incident_old ) && $incident_restored_marker['cache_delta_retained'] === true, 'incident rollback reports retained external cache delta rather than historical database identity' );
+$incident_expected_restored = $incident_original_raw;
+$incident_expected_restored['postmeta'] = array_values( array_filter( $incident_expected_restored['postmeta'], static fn( $row ) => ! in_array( $row['meta_id'], array( '4701', '4702' ), true ) ) );
+foreach ( $incident_added_rows as $row ) { $incident_expected_restored['postmeta'][] = $row; }
+usort( $incident_expected_restored['postmeta'], static fn( $left, $right ) => (int) $left['meta_id'] <=> (int) $right['meta_id'] );
+check( $incident_restored_raw === $incident_expected_restored, 'full synthetic database returns to original except the exact five proved external metadata substitutions' );
+check( digest( $incident_capture( $incident_ids ) ) === digest( $incident_old ) && file_get_contents( $incident_path ) === $incident_bytes, 'actual incident rollback reaches exact projected original state and preserves immutable journal' );
+foreach ( $incident_added_rows as $id => $row ) { check( row( 'postmeta', 'meta_id', $id ) === $row, 'incident recovery retains exact regenerated cache row ' . $id ); }
+foreach ( $incident_removed_rows as $id => $row ) { check( row( 'postmeta', 'meta_id', $id ) === null, 'incident recovery never recreates stale cache row ' . $id ); }
+invoke( array( 'recovery-check-incident', $incident_path, 'restored' ) );
+invoke( array( 'rollback-incident', $incident_path ) );
+check( all_state() === $incident_restored_raw && file_get_contents( $incident_path ) === $incident_bytes, 'incident rollback repeat preserves projected original rows and journal bytes' );
+
+foreach ( array( 'delete' => 5, 'css-cas' => 1, 'astra-cas' => 1, 'cache-refresh' => 1 ) as $operation => $limit ) {
+    foreach ( array( 'before', 'after' ) as $side ) { for ( $at = 1; $at <= $limit; $at++ ) {
+        restore_state( $incident_projected_raw ); $key = "$operation:$side"; $failures = array( array( 'key' => $key, 'at' => $at ) ); $caught = null;
+        try { invoke( array( 'rollback-incident', $incident_path ) ); } catch ( Refusal_Error $error ) { $caught = $error; }
+        check( $caught !== null && str_contains( $caught->getMessage(), "Synthetic $key" ), "projected reverse fault $key occurrence $at reached" );
+        $partial = all_state(); $before_events = $events; $before_writes = $wpdb->writes;
+        invoke( array( 'recovery-check-incident', $incident_path ) );
+        check( all_state() === $partial && $events === $before_events && $wpdb->writes === $before_writes, "projected reverse prefix $key occurrence $at recognized read-only" );
+        invoke( array( 'rollback-incident', $incident_path ) );
+        check( all_state() === $incident_restored_raw && file_get_contents( $incident_path ) === $incident_bytes, "projected reverse resumes $key occurrence $at without changing incident metadata or journal" );
+        $incident_faults++;
+    } }
+}
+foreach ( array( 'journal' => $incident_path, 'SQL' => $incident_sql_path, 'receipt' => "$package/incident-live30.json", 'binding' => "$package/incident-live30-binding.json" ) as $evidence => $evidence_path ) {
+    restore_state( $incident_projected_raw ); $evidence_bytes = file_get_contents( $evidence_path );
+    $changed_evidence_bytes = $evidence_bytes . "\n";
+    if ( $evidence === 'binding' ) { $changed_binding = json_decode( $evidence_bytes, true ); $changed_binding['receipt_sha256'] = str_repeat( '0', 64 ); $changed_evidence_bytes = json_encode( $changed_binding ); }
+    $failures = array( array( 'key' => 'delete:after', 'at' => 1, 'throw' => false, 'change' => static fn() => file_put_contents( $evidence_path, $changed_evidence_bytes ) ) ); $caught = null;
+    try { invoke( array( 'rollback-incident', $incident_path ) ); } catch ( Refusal_Error $error ) { $caught = $error; }
+    check( $caught !== null && ( $event_counts['delete:before'] ?? 0 ) === 1 && ( $event_counts['css-cas:before'] ?? 0 ) === 0 && ( $event_counts['astra-cas:before'] ?? 0 ) === 0, "changed $evidence stops rollback before the next owned write" );
+    check( ! str_contains( implode( "\n", $logs ), 'RELEASE-INCIDENT ' ) && file_get_contents( $evidence_path ) === $changed_evidence_bytes, "changed $evidence stays untouched and receives no success marker" );
+    refusal( array( 'recovery-check-incident', $incident_path ), "changed $evidence blocks later recovery checks" );
+    file_put_contents( $evidence_path, $evidence_bytes );
+    invoke( array( 'recovery-check-incident', $incident_path ) ); invoke( array( 'rollback-incident', $incident_path ) );
+    check( all_state() === $incident_restored_raw && file_get_contents( $incident_path ) === $incident_bytes, "restoring exact synthetic $evidence permits known-prefix recovery only" );
+    $incident_faults++;
+}
+foreach ( array( 'added cache value', 'added cache identity', 'unrelated metadata', 'owned code', 'global cache version' ) as $drift ) {
+    restore_state( $incident_projected_raw );
+    if ( $drift === 'added cache value' ) { fixture_update( 'wp_postmeta', 'meta_id', 5089, array( 'meta_value' => 'SYNTHETIC_PRIVATE_NEW_DRIFT' ) ); }
+    if ( $drift === 'added cache identity' ) { fixture_update( 'wp_postmeta', 'meta_id', 5089, array( 'meta_id' => 5092 ) ); }
+    if ( $drift === 'unrelated metadata' ) { fixture_insert( 'wp_postmeta', array( 'post_id' => 1160, 'meta_key' => 'SYNTHETIC_PRIVATE_KEY', 'meta_value' => 'SYNTHETIC_PRIVATE_VALUE' ) ); }
+    if ( $drift === 'owned code' ) { fixture_update( 'wp_posts', 'ID', $incident_ids['core'], array( 'post_content' => 'SYNTHETIC_PRIVATE_CODE' ) ); }
+    if ( $drift === 'global cache version' ) { fixture_update( 'wp_options', 'option_name', '__uagb_asset_version', array( 'option_value' => '1794294001' ) ); }
+    refusal( array( 'verify-incident', $incident_path ), "incident verify refuses $drift" );
+    refusal( array( 'recovery-check-incident', $incident_path ), "incident recovery check refuses $drift" );
+    refusal( array( 'rollback-incident', $incident_path ), "incident rollback refuses $drift" );
+}
+restore_state( $incident_projected_raw );
+foreach ( array( 'old baseline', 'owned metadata', 'source hash', 'journal completion' ) as $mutation ) {
+    $forged = $incident_snapshot;
+    if ( $mutation === 'old baseline' ) { $forged['old']['records'][1160]['post']['post_content'] = 'SYNTHETIC_PRIVATE_CONTENT'; }
+    if ( $mutation === 'owned metadata' ) { $forged['new']['owned']['core']['meta'][0]['meta_value'] = 'SYNTHETIC_PRIVATE_META'; }
+    if ( $mutation === 'source hash' ) { $forged['manifest_sha256'] = str_repeat( '0', 64 ); }
+    if ( $mutation === 'journal completion' ) { $forged['complete'] = false; }
+    $forged['old_sha256'] = digest( $forged['old'] ); $forged['new_sha256'] = digest( $forged['new'] );
+    $forged_path = snapshot_write( $forged ); putenv( 'TS_PEEK_RELEASE_EXPECT_SNAPSHOT_SHA256=' . hash_file( 'sha256', $forged_path ) );
+    $error = refusal( array( 'rollback-incident', $forged_path ), "incident adapter cannot bypass original $mutation validation" );
+    check( ! str_contains( $error->getMessage(), 'LIVE30' ), "original $mutation is rejected before the incident adapter reads its receipt" );
+}
+check( file_get_contents( "$source/incident-live30-binding.json" ) === $production_incident_binding && file_get_contents( "$source/incident-live30.json" ) === $production_incident_receipt, 'production incident binding and receipt bytes stay untouched by every synthetic control' );
+check( hash_file( 'sha256', "$package/install-peek-release.php" ) === hash_file( 'sha256', "$source/install-peek-release.php" ), 'incident fixtures execute identical production installer bytes' );
+echo 'PASS synthetic LIVE30 incident adapter: ' . ( $pass - $incident_start ) . ' checks and ' . $incident_faults . " additional reverse-boundary failures; no site access.\n";
+
 restore_state( $original ); $home = 'http://localhost:8090'; putenv( 'TS_PEEK_RELEASE_PROFILE' ); putenv( 'TS_PEEK_RELEASE_NEW_JOURNAL' ); putenv( 'TS_PEEK_RELEASE_EXPECT_SNAPSHOT_SHA256' );
 file_put_contents( "$package/live-profile.json", $proposal_profile_bytes );
 check( file_get_contents( "$source/live-profile.json" ) === $proposal_profile_bytes, 'real raw-live public hash profile never modified by synthetic fixture' );
-echo 'PASS disabled live proposal: ' . ( $pass - $proposal_start ) . " additional profile/recovery controls.\n";
+echo 'PASS raw-live profile: ' . $proposal_checks . " additional profile/recovery controls.\n";
 
 remove_tree( $testdir );
 echo 'PASS Peek visitor release installer: ' . $pass . ' checks, ' . $fault_cases . " injected write-boundary failures; isolated SQLite/WP API model only, real WordPress copy rehearsal still required.\n";

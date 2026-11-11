@@ -1,0 +1,67 @@
+{
+  "schema": 1,
+  "incident": "live30-assets-20261111",
+  "bundle": "peek-visitor-release-v1",
+  "home": "http://thaisolitude.com",
+  "manifest_sha256": "5255d85c0d64cfe4bd4eed740f4273f993940e013a715f071cfe3eef9b8269b5",
+  "profile_sha256": "49ed31542554634dcd945d8048a116e6dd3ae61635d1ad47a2a6ae56df6c3cac",
+  "snapshot": {
+    "file": "peek-release-before-20261111-162615-e00022b6.json",
+    "sha256": "4038da0f9f77780ce355029bc87e53bff0479294711c821d253f51151e10751b",
+    "bytes": 1682009
+  },
+  "sql": {
+    "file": "live-before-peek-release-20261111-162615-74851.sql",
+    "sha256": "4f27b4644dca8a85a671e8cbad1326515e49c356314c3e81327eeba46dd032a0",
+    "bytes": 3919398
+  },
+  "ids": {
+    "thai-massage": 1339,
+    "therapeutic-massage": 1340,
+    "deep-tissue-massage": 1341,
+    "chair-massage": 1342,
+    "core": 1343
+  },
+  "original_applied_sha256": "c1bb9082d44a3cf1aa151678101b2509417d9e1f338e60365e7c8066c02ce874",
+  "projected_applied_sha256": "b34e86f75140a0e89b725e8dc9e56dd2fcc75e509155b768348bb3670daf4427",
+  "removed": {
+    "4701": {
+      "post_id": 1255,
+      "meta_key": "_uag_page_assets",
+      "row_sha256": "8a204a7db18edf9be297689861b987ec19a2cb373d65fb5b7a8ffab4419b2fe0",
+      "value_sha256": "a5e39e98f6d20e1f0f41994f0ee66c28ad6d882c09a2cf2f14b62f5534dd7e7d",
+      "value_bytes": 735
+    },
+    "4702": {
+      "post_id": 1257,
+      "meta_key": "_uag_page_assets",
+      "row_sha256": "80efacd2d6270111b8e880f396bf42e5fc77dcab94a44e8adb7e1354f2bbbef3",
+      "value_sha256": "07565e74285b1b9a9ec702f536431fc67560c54775411ed596d8ce48b37b37bb",
+      "value_bytes": 688
+    }
+  },
+  "added": {
+    "5089": {
+      "post_id": 1254,
+      "meta_key": "_uag_page_assets",
+      "row_sha256": "f01994fe793dd916e928f676e36e8500d3e1c68809df3262cab61a0e21bded1f",
+      "value_sha256": "30f619157647f3a5cd68219525b5b12a8dc210e828f0a130cf4f3fc9ed7d76ba",
+      "value_bytes": 740
+    },
+    "5090": {
+      "post_id": 1255,
+      "meta_key": "_uag_page_assets",
+      "row_sha256": "edbb65d903e2b60ad9a2a17d4c4a85aa1ec3eec32e13bb1ad722102ea3ec80c6",
+      "value_sha256": "30f619157647f3a5cd68219525b5b12a8dc210e828f0a130cf4f3fc9ed7d76ba",
+      "value_bytes": 740
+    },
+    "5091": {
+      "post_id": 1257,
+      "meta_key": "_uag_page_assets",
+      "row_sha256": "c272a43305be52f9510c44506d9f6060c80341e8eb44bc8226b0449ba657512f",
+      "value_sha256": "65156d9a7ff627f3726c259b781bbb272f6b3bc0eed91220fc6db1e65303bff6",
+      "value_bytes": 693
+    }
+  },
+  "proof_sha256": "c09de2231c44290b89d3c47935d2c8e2339879c2be2f7b86b3f9f725b7522450"
+}

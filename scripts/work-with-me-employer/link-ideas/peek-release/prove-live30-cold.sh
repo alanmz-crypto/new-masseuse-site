@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Isolated causal proof for LIVE #30; the server is read-only.
-# Fixed pre-apply SQL + current files, raw origin preserved, no warming/installer
-# apply. Only SQL descriptors, one explicit bootstrap and six localhost GETs.
+# Default: fixed pre-apply SQL + current files, no warming/installer apply.
+# --recovery: current SQL + exact private recovery inputs, isolated incident
+# checks/rollback and static responses. Both modes preserve raw origin/cleanup.
 # shellcheck disable=SC2016
 set -uo pipefail
 umask 077
@@ -11,12 +12,15 @@ wwm="$root/scripts/work-with-me-employer"
 ci="$root/scripts/ci"
 invalid() { echo "COLD PROOF INVALID: $*" >&2; exit 2; }
 fail() { echo "COLD PROOF FAIL: $*" >&2; exit 1; }
-[ "$#" -eq 0 ] && [ "${S_TARGET:-}" = live ] || invalid "requires fixed live read-only source and no arguments"
+proof_mode=cold
+if [ "$#" -eq 1 ] && [ "$1" = --recovery ]; then proof_mode=recovery
+elif [ "$#" -ne 0 ]; then invalid "only the fixed --recovery selector is supported"; fi
+[ "${S_TARGET:-}" = live ] || invalid "requires fixed live read-only source"
 [ -z "${TS_REHEARSAL_FROM_DIR:-}" ] && [ -z "${TS_REHEARSAL_TEST_PREP:-}" ] || invalid "source/preparation overrides are forbidden"
 creds="${S26_CREDS:-$root/remote_execution.txt}"
 [ -f "$creds" ] && [ -n "${SSH_AUTH_SOCK:-}" ] && [ -S "$SSH_AUTH_SOCK" ] || invalid "read-only SSH prerequisites missing"
 for executable in docker python3 ssh curl sha256sum; do command -v "$executable" >/dev/null || invalid "required executable missing"; done
-if curl --noproxy '*' -s -o /dev/null -m 2 http://127.0.0.1:8090/; then invalid "loopback endpoint already in use"; fi
+if [ "$proof_mode" = cold ] && curl --noproxy '*' -s -o /dev/null -m 2 http://127.0.0.1:8090/; then invalid "loopback endpoint already in use"; fi
 field() { sed -n "s/^$1:[[:space:]]*//p" "$creds" | head -1; }
 host=$(field Host); port=$(field Port); user=$(field User); user="${user%%@*}"
 [ -n "$host" ] && [[ "$port" =~ ^[0-9]+$ ]] && [ -n "$user" ] || invalid "read-only SSH configuration incomplete"
@@ -179,7 +183,7 @@ trap release_cleanup_exit EXIT
 mkdir -m 700 -- "$work" || invalid "exclusive temporary directory creation failed"
 release_work_owned=1
 mkdir -p -- "$pub" "$bk" "$out" && chmod 777 "$bk" || invalid "private copy directories unavailable"
-evidence="${RUNNER_TEMP:-$HOME/.cache}/ops-out/peek-live30-cold"
+evidence="${RUNNER_TEMP:-$HOME/.cache}/ops-out/peek-live30-$proof_mode"
 cold_cleanup() {
   local result=$? file
   trap - EXIT
@@ -189,7 +193,15 @@ cold_cleanup() {
     for file in "$out"/cold-import.json "$out"/after-bootstrap.json \
       "$out"/first-1254.json "$out"/first-1255.json "$out"/first-1257.json \
       "$out"/repeat-1254.json "$out"/repeat-1255.json "$out"/repeat-1257.json \
-      "$out"/import-receipt.json "$out"/bootstrap.log "$out"/source-binding.log "$out"/proof.log; do
+      "$out"/import-receipt.json "$out"/bootstrap.log "$out"/source-binding.log "$out"/proof.log \
+      "$out"/recovery-context.json "$out"/before-bootstrap.json \
+      "$out"/after-verify-applied.json "$out"/after-recoverable.json "$out"/after-rollback.json \
+      "$out"/after-recovery-restored.json "$out"/after-verify-restored.json \
+      "$out"/after-verify-applied-after-render.json "$out"/after-verify-restored-after-render.json \
+      "$out"/verify-applied.marker.json "$out"/recoverable.marker.json "$out"/rollback.marker.json \
+      "$out"/recovery-restored.marker.json "$out"/verify-restored.marker.json \
+      "$out"/verify-applied-after-render.marker.json "$out"/verify-restored-after-render.marker.json \
+      "$out"/render-applied.log "$out"/render-original.log; do
       [ -f "$file" ] || continue
       cp -- "$file" "$evidence/" || { [ "$result" -ne 0 ] || result=1; }
     done
@@ -228,6 +240,16 @@ case "$part" in
     digest=$(sha256sum -- "$backup"); digest=${digest%% *}
     [ "$digest" = 4f27b4644dca8a85a671e8cbad1326515e49c356314c3e81327eeba46dd032a0 ] || exit 1
     cat -- "$backup" ;;
+  journal)
+    backup="$HOME/private-backups/peek-release-before-20261111-162615-e00022b6.json"
+    [ -f "$backup" ] && [ ! -L "$backup" ] || exit 1
+    physical=$(realpath -- "$backup")
+    case "$physical" in "$doc"|"$doc"/*) exit 1 ;; esac
+    [ "$(stat -c%s "$backup")" = 1682009 ] || exit 1
+    digest=$(sha256sum -- "$backup"); digest=${digest%% *}
+    [ "$digest" = 4038da0f9f77780ce355029bc87e53bff0479294711c821d253f51151e10751b ] || exit 1
+    cat -- "$backup" ;;
+  current-sql) wp --path="$doc" db export - --single-transaction --skip-lock-tables --quiet ;;
   files)
     tar -C "$doc" -cf - --exclude=./wp-config.php --exclude=./.htaccess --exclude=./php_errorlog \
       --exclude='*.log' --exclude='*.sql' --exclude='*.sql.gz' --exclude='*.zip' --exclude='*.tar.gz' \
@@ -238,12 +260,27 @@ esac
 EOS
 remote() { ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 "$user@$host" bash -s -- "$1" <<< "$REMOTE"; }
 
-echo 'COLD proof: fixed LIVE #30 pre-apply SQL; current live files read-only; raw URLs preserved'
+echo "LIVE30 $proof_mode copy: server reads only; raw URLs preserved"
 remote sql > "$work/db.sql" || invalid "fixed backup read failed"
 [ "$(stat -c%s "$work/db.sql")" = 3919398 ] || invalid "SQL size differs"
 read -r backup_sha _ < <(sha256sum -- "$work/db.sql")
 [ "$backup_sha" = 4f27b4644dca8a85a671e8cbad1326515e49c356314c3e81327eeba46dd032a0 ] || invalid "SQL digest differs"
 echo "COLD-SQL bytes=3919398 sha256=$backup_sha"
+input_sql="$work/db.sql"; private_inside=/backups; expected_snapshot=""
+if [ "$proof_mode" = recovery ]; then
+  private_inside=/home/customer/private-backups
+  expected_snapshot=4038da0f9f77780ce355029bc87e53bff0479294711c821d253f51151e10751b
+  cp -- "$work/db.sql" "$bk/live-before-peek-release-20261111-162615-74851.sql" || invalid "private original SQL copy failed"
+  remote journal > "$bk/peek-release-before-20261111-162615-e00022b6.json" || invalid "fixed journal read failed"
+  chmod 600 "$bk/live-before-peek-release-20261111-162615-74851.sql" "$bk/peek-release-before-20261111-162615-e00022b6.json" || invalid "private input permissions failed"
+  python3 -I -B "$here/recovery-copy-evidence.py" prepare "$here/incident-live30.json" "$here/incident-live30-binding.json" \
+    "$bk/peek-release-before-20261111-162615-e00022b6.json" > "$out/recovery-context.json" || invalid "pinned incident context differs"
+  remote current-sql > "$work/current.sql" || invalid "read-only current SQL stream failed"
+  input_sql="$work/current.sql"
+  [ "$(stat -c%s "$input_sql")" -gt 1000 ] || invalid "current SQL stream is empty"
+  read -r current_sql_sha _ < <(sha256sum -- "$input_sql")
+  echo "RECOVERY-CURRENT-SQL bytes=$(stat -c%s "$input_sql") sha256=$current_sql_sha"
+fi
 remote files | tar --no-same-owner -C "$pub" -xf - || invalid "current file copy failed"
 [ -f "$pub/wp-includes/version.php" ] && [ ! -e "$pub/wp-config.php" ] || invalid "file copy prerequisites differ"
 python3 -I -B - "$pub" "$here/manifest.json" > "$out/source-binding.log" <<'PY' || invalid "copied plugin source differs"
@@ -293,8 +330,8 @@ services:
   wpcli:
     image: $cli_img
     depends_on: [db]
-    volumes: ["$pub:/var/www/html", "$wwm:/wwm:ro", "$bk:/backups"]
-    environment: { WWM_BACKUP_DIR: /backups, TS_PEEK_RELEASE_PROFILE: raw-live-v1 }
+    volumes: ["$pub:/var/www/html", "$wwm:/wwm:ro", "$bk:$private_inside"]
+    environment: { WWM_BACKUP_DIR: "$private_inside", TS_PEEK_RELEASE_PROFILE: raw-live-v1, TS_PEEK_RELEASE_EXPECT_SNAPSHOT_SHA256: "$expected_snapshot" }
 networks:
   default:
     internal: true
@@ -313,7 +350,9 @@ db_network=$(docker inspect --format '{{range .NetworkSettings.Networks}}{{.Netw
 [ "$(docker network inspect --format '{{.Internal}}' "$db_network")" = true ] || invalid "copy network is not internal before bootstrap"
 # Original SQL remains byte-exact and pinned. Only known CREATE TABLE DDL
 # collation syntax may adapt for pinned MariaDB; INSERT/data bytes stay exact.
-python3 -I -B "$here/cold-proof-io.py" import-sql "$work/db.sql" "$out/import-receipt.json" |
+import_args=(import-sql "$input_sql" "$out/import-receipt.json")
+[ "$proof_mode" != recovery ] || import_args=(import-current-sql "$input_sql" "$current_sql_sha" "$out/import-receipt.json")
+python3 -I -B "$here/cold-proof-io.py" "${import_args[@]}" |
   dc exec -T db mariadb -uroot -prehearsal --default-character-set=utf8mb4 wp >/dev/null 2>&1
 status=("${PIPESTATUS[@]}")
 [ "${status[0]}" -eq 0 ] && [ "${status[1]}" -eq 0 ] || invalid "SHA-bound SQL import failed"
@@ -333,21 +372,7 @@ compare() {
   local status=("${PIPESTATUS[@]}")
   [ "${status[0]}" -eq 0 ] && [ "${status[1]}" -eq 0 ] || fail "state comparison failed"
 }
-observe cold-import
-echo 'COLD step: SQL baseline captured before any WordPress bootstrap'
-dc run --rm -T --no-deps --entrypoint wp wpcli --skip-plugins=sg-security --user=1 \
-  eval-file /wwm/link-ideas/peek-release/install-peek-release.php preflight \
-  > "$work/bootstrap.private.stdout" 2> "$work/bootstrap.private.stderr"
-bootstrap_rc=$?
-python3 -I -B "$here/cold-proof-io.py" bootstrap "$work/bootstrap.private.stdout" "$work/bootstrap.private.stderr" \
-  "$bootstrap_rc" "$here/manifest.json" "$here/live-profile.json" > "$out/bootstrap.log"
-receipt_rc=$?
-cat "$out/bootstrap.log" || fail "bootstrap receipt unreadable"
-[ "$bootstrap_rc" -eq 0 ] || fail "explicit raw-profile preflight bootstrap failed"
-[ "$receipt_rc" -eq 0 ] || fail "explicit bootstrap receipt invalid"
-observe after-bootstrap
-compare cold-import after-bootstrap exact
-
+start_web() {
 # No readiness GET is allowed: it would conceal the first cold page request.
 dc up -d wordpress >/dev/null 2>&1 || invalid "isolated web startup failed"
 container=$(dc ps -q wordpress) || invalid "web container lookup failed"
@@ -376,6 +401,104 @@ for _ in range(30):
     except OSError:time.sleep(1)
 else:raise SystemExit(1)
 PY
+}
+
+if [ "$proof_mode" = recovery ]; then
+  recovery_context="$out/recovery-context.json"
+  recovery_observe() {
+    local label=$1 status
+    python3 -I -B "$here/recovery-copy-evidence.py" sql iej_ "$recovery_context" |
+      sql |
+      python3 -I -B "$here/recovery-copy-evidence.py" capture "$label" "$recovery_context" > "$out/$label.json"
+    status=("${PIPESTATUS[@]}")
+    [ "${status[0]}" -eq 0 ] && [ "${status[1]}" -eq 0 ] && [ "${status[2]}" -eq 0 ] || fail "complete recovery cache observation failed"
+  }
+  recovery_render() {
+    local which=$1 route expected code curl_rc output render_rc count=0
+    python3 -I -B - "$here/manifest.json" > "$work/recovery-routes.txt" <<'PY' || fail "fixed response inventory unavailable"
+import json,sys
+manifest=json.load(open(sys.argv[1]))
+for page in manifest['pages']:print(page['path'])
+print('/?s=massage')
+print('/peek-release-not-a-real-page/')
+PY
+    [ "$(wc -l < "$work/recovery-routes.txt")" = 17 ] || fail "response inventory count differs"
+    while IFS= read -r route; do
+      sleep 6
+      expected=200; [ "$route" != /peek-release-not-a-real-page/ ] || expected=404
+      code=$(curl --noproxy '*' --proto '=http' --max-redirs 0 -sS --max-time 30 \
+        -H 'Host: thaisolitude.com' -o "$bk/recovery-response.private.html" -w '%{http_code}' "http://127.0.0.1:8090$route")
+      curl_rc=$?
+      [ "$curl_rc" -eq 0 ] && [ "$code" = "$expected" ] || fail "isolated response status differs"
+      output=$(dc run --rm -T --no-deps --user 0 --entrypoint php wpcli \
+        /wwm/link-ideas/peek-release/verify-render.php "$private_inside/recovery-response.private.html" \
+        "$private_inside/peek-release-before-20261111-162615-e00022b6.json" "$which" "$route" \
+        2> "$work/render.private.stderr")
+      render_rc=$?
+      [ "$render_rc" -eq 0 ] && [ "$output" = "Exact public response verified: $which $route" ] || fail "isolated response verifier failed"
+      echo "RECOVERY-RENDER $which $route HTTP=$code exact=true" | tee -a "$out/render-$which.log" || fail "render evidence retention failed"
+      count=$((count + 1))
+    done < "$work/recovery-routes.txt"
+    [ "$count" = 17 ] || fail "response verification incomplete"
+    rm -f -- "$bk/recovery-response.private.html" || fail "transient response removal failed"
+  }
+  recovery_observe before-bootstrap
+  for step in verify-applied verify-applied-after-render recoverable rollback verify-restored-after-render recovery-restored verify-restored; do
+    if [ "$step" = verify-applied-after-render ]; then start_web; recovery_render applied; fi
+    if [ "$step" = verify-restored-after-render ]; then recovery_render original; fi
+    case "$step" in
+      verify-applied|verify-applied-after-render) mode_args=(verify-incident) ;;
+      recoverable) mode_args=(recovery-check-incident) ;;
+      rollback) mode_args=(rollback-incident) ;;
+      recovery-restored) mode_args=(recovery-check-incident) ;;
+      verify-restored|verify-restored-after-render) mode_args=(verify-incident) ;;
+    esac
+    mode_args+=("$private_inside/peek-release-before-20261111-162615-e00022b6.json")
+    case "$step" in recovery-restored|verify-restored|verify-restored-after-render) mode_args+=(restored) ;; esac
+    # Root is confined to this isolated copy and reads the host-owned 0600
+    # inputs directly. It does not change their ownership or original bytes.
+    dc run --rm -T --no-deps --user 0 --entrypoint wp wpcli --allow-root --skip-plugins=sg-security --user=1 \
+      eval-file /wwm/link-ideas/peek-release/install-peek-release.php "${mode_args[@]}" \
+      > "$work/$step.private.stdout" 2> "$work/$step.private.stderr"
+    mode_rc=$?
+    python3 -I -B "$here/recovery-copy-evidence.py" marker "$step" "$recovery_context" \
+      < "$work/$step.private.stdout" > "$out/$step.marker.json"
+    marker_rc=$?
+    echo "RECOVERY-STEP $step wp_exit=$mode_rc marker_exit=$marker_rc"
+    read -r mode_stderr_sha _ < <(sha256sum -- "$work/$step.private.stderr")
+    echo "RECOVERY-STDERR $step bytes=$(stat -c%s "$work/$step.private.stderr") sha256=$mode_stderr_sha"
+    [ "$mode_rc" -eq 0 ] && [ "$marker_rc" -eq 0 ] || fail "isolated recovery mode or exact marker failed"
+    recovery_observe "after-$step"
+  done
+  python3 -I -B "$here/recovery-copy-evidence.py" verify "$recovery_context" "$out" | tee -a "$out/proof.log"
+  status=("${PIPESTATUS[@]}")
+  [ "${status[0]}" -eq 0 ] && [ "${status[1]}" -eq 0 ] || fail "complete actual-state recovery receipt failed"
+  read -r restored_journal_sha _ < <(sha256sum -- "$bk/peek-release-before-20261111-162615-e00022b6.json")
+  read -r restored_sql_sha _ < <(sha256sum -- "$bk/live-before-peek-release-20261111-162615-74851.sql")
+  [ "$restored_journal_sha" = "$expected_snapshot" ] && [ "$restored_sql_sha" = "$backup_sha" ] || fail "private recovery input changed"
+  [ "$(stat -c%a "$bk/peek-release-before-20261111-162615-e00022b6.json")" = 600 ] && \
+    [ "$(stat -c%a "$bk/live-before-peek-release-20261111-162615-74851.sql")" = 600 ] || fail "private recovery permissions changed"
+  echo "RECOVERY-PRIVATE-INPUTS unchanged journal_sha256=$restored_journal_sha sql_sha256=$restored_sql_sha mode=0600"
+  echo 'RECOVERY COPY PASSED: actual current IDs and immutable journal, exact incident verification/recovery/rollback, retained external cache rows; server was read-only'
+  exit 0
+fi
+observe cold-import
+echo 'COLD step: SQL baseline captured before any WordPress bootstrap'
+dc run --rm -T --no-deps --entrypoint wp wpcli --skip-plugins=sg-security --user=1 \
+  eval-file /wwm/link-ideas/peek-release/install-peek-release.php preflight \
+  > "$work/bootstrap.private.stdout" 2> "$work/bootstrap.private.stderr"
+bootstrap_rc=$?
+python3 -I -B "$here/cold-proof-io.py" bootstrap "$work/bootstrap.private.stdout" "$work/bootstrap.private.stderr" \
+  "$bootstrap_rc" "$here/manifest.json" "$here/live-profile.json" > "$out/bootstrap.log"
+receipt_rc=$?
+cat "$out/bootstrap.log" || fail "bootstrap receipt unreadable"
+[ "$bootstrap_rc" -eq 0 ] || fail "explicit raw-profile preflight bootstrap failed"
+[ "$receipt_rc" -eq 0 ] || fail "explicit bootstrap receipt invalid"
+observe after-bootstrap
+compare cold-import after-bootstrap exact
+
+start_web
+
 previous=after-bootstrap
 for pass in first repeat; do
   for pair in '1254 /personal-automation/' '1255 /personal-automation/privacy/' '1257 /personal-automation/terms/'; do

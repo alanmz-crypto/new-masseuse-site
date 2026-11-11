@@ -1,5 +1,44 @@
 # Peek visitor-navigation release readiness
 
+**Cold reproduction PASS, November 11 at 17:57:32 UTC.**
+`peek-live30-cold-proof-1`, Actions **43072850520**, source
+`f13343b584253892c5797c2b70fd71f8f9fdadc6`, used the exact pre-apply SQL and
+current source on an internal-network copy. SQL imported byte-for-byte with
+**zero collation substitutions**; raw live URLs were preserved. All six pinned
+Spectra files matched. Before any frontend request, the explicit WordPress
+bootstrap reproduced the original protected-state hash `51fc7efb…c5814` and
+changed none of the six protected tables or ten protected options.
+
+Three individual HTTP200 requests reproduced the complete mismatch without any
+Peek installation: post 1254 acquired its absent cache; posts 1255 and 1257
+replaced their stale caches. The generated value bytes/SHA256s exactly match the
+three live values. Mapping only the known live metadata IDs onto those generated
+rows also reproduces every earlier live witness-descriptor hash:
+
+| Actual live ID (copy ID) | Canonical row SHA256 with actual live ID |
+|---|---|
+| 5089 (5069) | `f01994fe793dd916e928f676e36e8500d3e1c68809df3262cab61a0e21bded1f` |
+| 5090 (5070) | `edbb65d903e2b60ad9a2a17d4c4a85aa1ec3eec32e13bb1ad722102ea3ec80c6` |
+| 5091 (5071) | `c272a43305be52f9510c44506d9f6060c80341e8eb44bc8226b0449ba657512f` |
+
+Each first request changed only its own cache within protected state; all three
+repeat requests were stable, including all observed option rows. Across the
+entire copy run, five option rows outside the installer's existing ten-option
+contract were added and separately reported. Two names match `nonce_key` and
+`nonce_salt` (the isolated config does not copy production salts); the other
+three remain identified by hashes. No blanket whole-database equality or new
+option exclusion is claimed. The global Spectra version row remained exact.
+
+The full report was read, and cleanup proved the owned relay, containers,
+volumes, networks and temporary directory absent. The redacted final receipt is
+`peek-release/incident-live30-proof.json`, SHA256
+`c09de2231c44290b89d3c47935d2c8e2339879c2be2f7b86b3f9f725b7522450`.
+Focused source checks: **28 observer tests / 231 orchestration controls**.
+This proves ordinary page rendering can produce the exact transition; it does
+not identify which actual live request did so. A pinned incident adapter and
+targeted recovery test on a copy of the actual installed state are next. Live
+has not been purged, reinstalled or rolled back, and #30 will not be rerun.
+
 **LIVE #30 removed-row identification PASS, November 11 at 17:45:57 UTC.**
 `peek-live30-before-1`, Actions **43071249809**, source
 `9cee6838ddc75342adbf92846338605e0e8e5977`, read only the exact SHA/size-bound
