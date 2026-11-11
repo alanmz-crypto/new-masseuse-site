@@ -7,10 +7,15 @@ a live write or authorize a main merge. Work remains on
 
 **November 11: four further changes requested before live.** Removing the
 automatic rail-side scrolling label, outlining the index, adding its open-state
-X and dismissing the header menu on outside taps are now the active staging
-task. See the [quiet-navigation record](2026-11-11-peek-quiet-navigation.md).
-The accepted index-clearance version remains deployed while this work is
-validated. No new live work or acceptance result is implied.
+X and dismissing the header menu on outside taps are now deployed on staging39.
+See the [quiet-navigation record](2026-11-11-peek-quiet-navigation.md): source
+48/0, fresh-copy browsers 24,977/0 and exact recovery, then the actual backed-up
+apply with unchanged summaries and 19 exact rendered routes. Dedicated public
+browsers and final snapshot verification are pending. Only the changed controls
+need a narrow new Safari review; earlier user acceptances remain closed.
+No new live work or acceptance result is implied. A separate observed issue
+needs correction before live: dark Search result cards show pale text on white
+backgrounds. It is recorded separately from the four navigation changes.
 
 **November 10 summary-neighbour experiment accepted on Safari.** Ryan requested
 only the previous and next summary controls around each open box;

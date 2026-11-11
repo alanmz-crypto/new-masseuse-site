@@ -9,16 +9,27 @@ metadata:
 A phone cloud session (https://claude.ai/code, repo `alanmz-crypto/new-masseuse-site`) sees ONLY this repository: not his computer, not his global `~/.claude/CLAUDE.md`, not his local Claude memory, not convmem. Everything that must not be lost is therefore written here and in the notes this index points to.
 First message to send in a fresh phone session: **"Read .claude/project-memory/open-items.md and tell me what is due."**
 
-**New staging39 work, November 11: four navigation refinements in progress.**
-Ryan requested removing the automatic scrolling label beside the rail, outlining
-the index button, closing the header menu on an outside tap, and showing a
-tappable X on the open index. Interaction labels and existing index dismissal
-remain. See the [quiet-navigation record](../../docs/reviews/2026-11-11-peek-quiet-navigation.md).
-The deployed baseline below is frozen as shared v9; `core-quiet-nav` is its new
-guarded in-place upgrade route. No new staging write or snapshot yet. These
-changes precede release preparation; main/live remain outside this task.
+**Current staging39, November 11: four navigation refinements deployed.**
+The automatic rail-side scrolling label is removed; interaction names remain.
+The index has a solid outlined button and a tappable X while open. Outside taps
+close the header menu; the index's existing outside dismissal remains.
+See the [quiet-navigation record](../../docs/reviews/2026-11-11-peek-quiet-navigation.md) for exact evidence.
+Source gates passed **48/0**; the fresh staging39 copy passed **24,977/0 across
+24 browser suites**, with exact recovery after browser activity and all 108
+focused screenshots reviewed. Applied to #1380 at **04:38:46 UTC**; exact
+core/four-data state passed before and after all 19 rendered routes. Dedicated
+public-browser verification and final post-browser snapshot verification are
+pending. This is not a fresh physical-Safari acceptance result.
 
-**Current staging39, November 11: small-screen index clearance deployed.**
+Current recovery starts with `core-quiet-nav` → frozen v9, using only
+`peek-template-core-quiet-nav-before-20261111-043846-d52816fb.json`,
+after fresh verified backup and exact ownership/state checks. This actual
+snapshot and `staging39-before-peek-quiet-nav-20261111-043831-56757.sql` were
+verified encrypted off-site in the required order. Older recovery routes below
+apply only after this restoration. Main/live remain unchanged. A separate dark
+Search result-card contrast issue is recorded as a follow-up before live.
+
+**Previous accepted baseline, November 11: small-screen index clearance.**
 The idle index clears the visible header, booking notice and title strip, and the
 rail respects Corporate/Work With Me's fixed bottom actions. Idle navigation
 waits only when full-size targets cannot fit; scrolling or resizing restores it.
@@ -35,7 +46,7 @@ The single later public-browser run passed **18,460/0 across 18 suites** at
 **01:28:49 UTC**; all 72 focused images match the reviewed copy byte-for-byte.
 The earlier invalid check remains distinct. Main and live remain unchanged.
 
-Current recovery starts with `core-index-clearance` → frozen v8, using only
+At that previous baseline, recovery started with `core-index-clearance` → frozen v8, using only
 `peek-template-core-index-clearance-before-20261111-005357-31ca0040.json`,
 after fresh verified backup and exact ownership/state checks. This actual
 snapshot and `staging39-before-peek-index-clearance-20261111-005342-74246.sql`
