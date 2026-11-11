@@ -74,9 +74,16 @@ and after browsers, unchanged summaries/Search CSS, and verified cleanup.
 Independent raw-evidence and visual review found no new blocker. The
 [resize phase record](../../docs/reviews/2026-11-11-peek-title-resize.md) records
 actual copy-only snapshots and artifact bindings. Read-only staging preflight
-passed at **10:14:56 UTC**, run **43001945737**. Staging deployment and complete
-new live-copy release proof remain pending; neither site has been changed by
-this correction.
+passed at **10:14:56 UTC**, run **43001945737**. Staging39 core #1380 was
+updated at **10:18:08 UTC**; apply run **43002377065** passed at **10:28:47 UTC**.
+The fresh export and actual snapshot were verified encrypted off-site in order;
+all 19 routes served exact core/style/data, with unchanged summaries and CSS.
+Public focused run **43004137038**, final actual-snapshot/stored verification,
+and complete new live-copy release proof remain pending. Live is unchanged.
+Current guarded recovery starts with `core-title-resize` → frozen v10 using only
+`peek-template-core-title-resize-before-20261111-101808-92c3067f.json`, after
+fresh verified backup and exact ownership/state checks. Its pre-write export is
+`staging39-before-peek-title-resize-20261111-101757-98626.sql`.
 The reviewed live-enable proposal is saved as a disabled patch, with offline
 models and independent review recorded in the readiness note. It is not applied;
 no live request or deployment is authorized. No generic Safari retest or fluidity
@@ -101,7 +108,8 @@ on iPhone Safari on November 11:
 live push. No repeat of this acceptance check is needed; this does not claim
 broader device or assistive-technology coverage or authorize a live operation.
 
-Current recovery starts with `core-quiet-nav` → frozen v9, using only
+After the title-resize recovery above, historical `core-quiet-nav` recovery
+restores frozen v9, using only
 `peek-template-core-quiet-nav-before-20261111-043846-d52816fb.json`,
 after fresh verified backup and exact ownership/state checks. This actual
 snapshot and `staging39-before-peek-quiet-nav-20261111-043831-56757.sql` were

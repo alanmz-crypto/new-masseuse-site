@@ -156,5 +156,54 @@ scaling, and Linux WebKit is not physical iPhone Safari.
 
 Read-only staging preflight `peek-title-resize-dry-1` passed at **10:14:56 UTC**,
 Actions **43001945737**, source `33c6d263bedec8de83709ceff746a8210f182e9c`.
-It confirmed exact frozen-v10 readiness. Staging apply and public verification
-remain next; live remains unchanged and disabled.
+It confirmed exact frozen-v10 readiness.
+
+## Staging apply
+
+`peek-title-resize-apply-1`, Actions **43002377065**, source
+`4904b120d89b4b930d930076dcca4630e3bd7594`, passed at **10:28:47 UTC**.
+The existing core #1380 was updated at **10:18:08 UTC**. No snippet swap or
+fallback-only interval occurred. Source files are unchanged from the source
+that passed the rehearsal. Complete source Gates also passed **55/0** at
+**10:26:32 UTC**, run **43002376871**, on this exact request commit; the full
+job log was read.
+
+Fresh export: `staging39-before-peek-title-resize-20261111-101757-98626.sql`,
+4,548,876 plaintext bytes. Server/copy SHA equality and encrypted off-site
+read-back were verified before apply. Actual staging recovery snapshot:
+`/home/customer/private-backups/peek-template-core-title-resize-before-20261111-101808-92c3067f.json`.
+It was verified off-site before purge/render. Retained logs print SHA prefixes
+`807ee9946e96…` for the export and `f2be6217ba78…` for the snapshot; they do not
+contain the complete file hashes. No raw backups were downloaded for review.
+
+Exact applied core state before and after all 19 HTTP200 page renders:
+`e54fda8e0dbeba0f95e325b7fac470001befa3b04d7412ac4ae58ac4682c8a70`.
+Four-page state remained `3e9acc4ea6dfedf7fe99e7a70534603ba0d32a1827793755c8ee10f4e55c9cc9`;
+CSS29 remained `b024acc687b49a37115940b52976f3bdcfc6cb236ae7bb4a81422f8c2d02c69b`.
+Every route served exact core/style bytes with the correct page-data scope.
+The fresh export imported successfully into the restore-proof database; across
+104 fingerprints only core #1380 and the expected WPCode cache differed.
+This is export-import proof, not a rollback performed on staging39.
+
+The automatic wording/rendered gates, structured data and PHP-log checks passed.
+All 20 generic screenshots still differ from live, which has the old navigation;
+that informational comparison is not a visual pass. Independent backup/native
+audit found no blocker. Artifact **13847830563**, 29,539,996 bytes, SHA256
+`9d7f11e26f27d487e53943edf9060eb5cad71854c8c7d5fb643be5bb29453e1f`,
+was verified and contains 40 public screenshots and three logs, without private
+backup or snapshot data.
+
+Independent comparison of the 20 actual deployed-page captures against the
+accepted quiet staging apply found identical dimensions for every image and
+18/20 pixel-identical images. Services mobile differs only where the existing
+first-time navigation hint is visible; Thai mobile differs by nine pixels at
+the boxed index's rounded edge. No new layout regression was found. This matrix
+does not include Search; its separate approved CSS proof remains separate.
+
+Focused public checks `peek-title-resize-public-1` passed at **10:39:36 UTC**, run
+**43004137038**, source `f62e8aeacb4d55aac5fd1bd9f1bf07cfc65d727a`.
+All four phases passed, **752/0**: 48/0 focused resize assertions in each of
+Chromium, Firefox and WebKit, plus 608/0 quiet-navigation assertions in Chromium.
+There were 30 page loads and 60 captures. Raw evidence/capture review is finishing;
+exact actual-snapshot verification and the final stored CSS/core fingerprint
+comparison follow. Live remains unchanged and disabled.

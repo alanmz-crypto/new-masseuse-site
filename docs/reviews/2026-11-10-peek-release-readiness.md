@@ -346,8 +346,15 @@ exact recovery before/after browsers, unchanged four-page data/CSS and decisive
 cleanup. Independent raw-evidence and visual review found no new blocker.
 The [resize phase record](2026-11-11-peek-title-resize.md) binds the actual
 copy snapshots, state hashes and verified artifact. Read-only staging preflight
-passed at **10:14:56 UTC**, run **43001945737**. Actual staging deployment and a
-new complete live-sourced copy cycle remain pending.
+passed at **10:14:56 UTC**, run **43001945737**. The backed-up staging update
+passed at **10:28:47 UTC**, run **43002377065**: actual snapshot
+`peek-template-core-title-resize-before-20261111-101808-92c3067f.json`, exact
+core/four-data state before and after all 19 route renders, unchanged Search CSS,
+and fresh-export restore proof. Complete source Gates on that request passed
+55/0 at 10:26:32 UTC. Public focused checks are running as **43004137038**;
+final actual-snapshot/stored-fingerprint verification and the complete new
+live-sourced copy cycle remain pending. The resize record contains the exact
+backup evidence, state hashes, artifact and informational comparison limits.
 
 ## Disabled live-release proposal
 

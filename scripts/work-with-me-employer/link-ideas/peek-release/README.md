@@ -2,7 +2,9 @@
 
 This package contains the accepted shared Peek runtime plus a provisional
 title-strip observer timing correction, and four unchanged approved summaries.
-The observer correction still requires staging39 verification. It is a first-install candidate for a
+The observer correction passed all 29 staging-copy browser suites (25,343/0)
+and exact recovery, then a backed-up staging39 deployment. Public focused checks
+and final stored verification remain pending. It is a first-install candidate for a
 fresh copy of live, not authorization or tooling to change live. The installer
 accepts only `http://localhost:8090`; staging and live origins are refused.
 Ryan accepted the current controls on iPhone Safari on November 11: “It's
@@ -59,7 +61,9 @@ with unchanged metadata, and reapplication. It remains **FAIL**: retained core
 browsers passed 14,319/0 and WebKit disclosures 70/0, but WebKit enlarged-text
 Therapeutic layout reported two ResizeObserver errors (150/2). Only 17/28 leaf
 suites ran; post-browser recovery was skipped. Verified cleanup deleted the copy.
-Investigate these errors before another full release proof; live is unchanged.
+The minimal queued observer correction now passes those WebKit cases on the
+actual staging copy. Complete corrected live-copy proof is still required after
+staging verification; live is unchanged.
 
 The release creates five WPCode snippets, removes the exact old reading-progress
 CSS block and appends the frozen Search contrast block in one guarded update to

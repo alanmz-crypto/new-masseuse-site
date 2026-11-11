@@ -52,11 +52,17 @@ unproved. Cleanup verified deletion. The errors are under investigation, not
 excused. Live and staging39 were unchanged. The readiness record contains
 the actual copy-only snapshot and artifact bindings; the deleted journal is not
 a staging/live recovery file.
-A minimal title-strip ResizeObserver timing correction is now being prepared:
-local WebKit reproduced the original error in 6/6 trials and passed the queued
-callback in 6/6 with identical final geometry. Accepted quiet-navigation bytes
-are frozen as shared v10; the new `core-title-resize` lane preserves summaries
-and Search CSS. Staging deployment and complete new release proof remain pending.
+The minimal title-strip observer correction passed 55/0 source gates and a
+fresh actual staging-copy rehearsal: 25,343/0 across all 29 browser suites,
+rendered wording gates and exact recovery before/after browsers. Backed-up
+staging39 apply run 43002377065 passed at 10:28:47 UTC, with exact core/four-data
+state before/after all 19 routes and unchanged Search CSS. Public checks and
+final actual-snapshot/stored verification remain pending, followed by the full
+new live-copy release proof. See the resize phase record under docs/reviews.
+Current guarded recovery restores frozen v10 using only actual staging snapshot
+`peek-template-core-title-resize-before-20261111-101808-92c3067f.json`, after
+fresh verified backup and exact state checks. The pre-write export is
+`staging39-before-peek-title-resize-20261111-101757-98626.sql`. Live is unchanged.
 No generic Safari retest or fluidity expansion is required.
 
 **Current staging39, November 11: four navigation refinements complete and accepted.**
@@ -78,7 +84,8 @@ on iPhone Safari on November 11:
 live push. No repeat of this acceptance check is needed; this does not claim
 broader device or assistive-technology coverage or authorize a live operation.
 
-Current recovery starts with `core-quiet-nav` → frozen v9, using only
+After title-resize restoration, historical `core-quiet-nav` recovery restores
+frozen v9, using only
 `peek-template-core-quiet-nav-before-20261111-043846-d52816fb.json`,
 after fresh verified backup and exact ownership/state checks. This actual
 snapshot and `staging39-before-peek-quiet-nav-20261111-043831-56757.sql` were
