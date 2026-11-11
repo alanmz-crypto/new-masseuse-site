@@ -1,8 +1,10 @@
 {
-  "id": "search-contrast-dry-1",
+  "id": "search-contrast-apply-1",
   "op": "run",
   "target": "staging39",
   "script": "search-contrast/push-search-contrast.sh",
-  "args": [],
+  "args": [
+    "--apply"
+  ],
   "tests": "auto"
 }
