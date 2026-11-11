@@ -1,6 +1,9 @@
 {
-  "id": "peek-title-resize-stored-1",
-  "op": "inspect",
-  "target": "staging39",
-  "query": "fingerprint"
+  "id": "peek-visitor-release-quiet-search-copy-4",
+  "op": "rehearse",
+  "target": "live",
+  "installer": "link-ideas/peek-release/install-peek-release.php",
+  "args": [
+    "--with-uploads"
+  ]
 }
