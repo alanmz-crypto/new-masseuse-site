@@ -13,7 +13,7 @@ import tempfile
 
 HERE = Path(__file__).resolve().parent
 SLUGS = ['thai-massage', 'therapeutic-massage', 'deep-tissue-massage', 'chair-massage',
-         'services', 'work-with-me', 'privacy-policy', 'search']
+         'services', 'corporate-massage-portland', 'work-with-me', 'privacy-policy', 'search']
 CASES = [f'{slug}/{side}' for slug in SLUGS for side in ['right', 'left']]
 RETAINED = ['input focus chromium', 'disclosures chromium', 'disclosures firefox',
             'Kiro layout chromium', 'Kiro layout firefox', 'title rails chromium',
@@ -46,7 +46,13 @@ def run_case(mode='rehearsal', scenario='pass', bad='chromium', expected=0, actu
 
         for engine in engines:
             current = scenario if bad == engine else 'pass'
-            assertions = [f'PASS index-clearance {engine}/{case}/geometry [check {i}]' for i, case in enumerate(CASES)]
+            # Match both actual checker label forms, including the two terminal
+            # checks that follow each case's geometry/interaction assertions.
+            assertions = [line for i, case in enumerate(CASES) for line in [
+                f'PASS index-clearance {engine}/{case}/geometry [check {i * 3 + 1}]',
+                f'PASS index-clearance {engine}/{case}: content, wording, original links and destination count remain unchanged [check {i * 3 + 2}]',
+                f'PASS index-clearance {engine}/{case}: no JavaScript errors [check {i * 3 + 3}]',
+            ]]
             assertions[0] += 'x' * 18000
             completed = [f'INFO index-clearance completed {engine}/{case}' for case in CASES]
             captures = [f'INLINE peek-index-clearance-{engine}-{slug}-{side}-{kind}.jpg base64:/9j/2Q=='
@@ -54,24 +60,30 @@ def run_case(mode='rehearsal', scenario='pass', bad='chromium', expected=0, actu
             # Force a payload larger than pipe buffers through the new adapters.
             if actual_chain:
                 captures[0] = captures[0].replace('/9j/2Q==', base64.b64encode(b'\xff\xd8' + b'x' * 262144 + b'\xff\xd9').decode())
-            summary = f'INFO Peek index clearance {engine}: 16 passed, 0 failed; 16/16 cases, 16 page loads, 32 captures, 1s; {LIMITATION}'
+            case_count, assertion_count, capture_count = len(CASES), len(assertions), len(captures)
+            summary = f'INFO Peek index clearance {engine}: {assertion_count} passed, 0 failed; {case_count}/{case_count} cases, {case_count} page loads, {capture_count} captures, 1s; {LIMITATION}'
             stderr, exit_code, signal = RAW_ERR, 0, False
             if current == 'failed':
                 assertions[0] = assertions[0].replace('PASS ', 'FAIL ', 1)
-                summary = summary.replace('16 passed, 0 failed', '15 passed, 1 failed')
+                summary = summary.replace(f'{assertion_count} passed, 0 failed', f'{assertion_count - 1} passed, 1 failed')
                 exit_code = 1
             elif current == 'missing-summary': summary = ''
-            elif current == 'wrong-count': summary = summary.replace('16 passed', '17 passed')
+            elif current == 'wrong-count': summary = summary.replace(f'{assertion_count} passed', f'{assertion_count + 1} passed')
             elif current == 'zero':
                 assertions = []
-                summary = summary.replace('16 passed', '0 passed')
+                summary = summary.replace(f'{assertion_count} passed', '0 passed')
             elif current == 'wrong-engine': summary = summary.replace(f'clearance {engine}:', 'clearance wrong:')
-            elif current == 'missing-case-count': summary = summary.replace('16/16 cases', '15/16 cases')
-            elif current == 'wrong-loads': summary = summary.replace('16 page loads', '15 page loads')
-            elif current == 'wrong-captures': summary = summary.replace('32 captures', '31 captures')
+            elif current == 'missing-case-count': summary = summary.replace(f'{case_count}/{case_count} cases', f'{case_count - 1}/{case_count} cases')
+            elif current == 'wrong-loads': summary = summary.replace(f'{case_count} page loads', f'{case_count - 1} page loads')
+            elif current == 'wrong-captures': summary = summary.replace(f'{capture_count} captures', f'{capture_count - 1} captures')
             elif current == 'incomplete': summary += ' INCOMPLETE/INVALID.'
             elif current == 'duplicate-summary': summary += '\n' + summary
-            elif current == 'conflicting-summary': summary += '\n' + summary.replace('16 passed', '17 passed')
+            elif current == 'conflicting-summary': summary += '\n' + summary.replace(f'{assertion_count} passed', f'{assertion_count + 1} passed')
+            elif current == 'previous-eight-route-matrix':
+                assertions = [line for line in assertions if '/corporate-massage-portland/' not in line]
+                completed = [line for line in completed if '/corporate-massage-portland/' not in line]
+                captures = [line for line in captures if '-corporate-massage-portland-' not in line]
+                summary = f'INFO Peek index clearance {engine}: {len(assertions)} passed, 0 failed; {case_count - 2}/{case_count - 2} cases, {case_count - 2} page loads, {len(captures)} captures, 1s; {LIMITATION}'
             elif current == 'missing-completion': completed.pop()
             elif current == 'duplicate-completion': completed[-1] = completed[0]
             elif current == 'wrong-completion': completed[-1] = f'INFO index-clearance completed {engine}/unknown/right'
@@ -79,8 +91,22 @@ def run_case(mode='rehearsal', scenario='pass', bad='chromium', expected=0, actu
             elif current == 'wrong-assertion': assertions[0] = assertions[0].replace('index-clearance', 'wrong-source')
             elif current == 'wrong-case': assertions[0] = assertions[0].replace('thai-massage/right', 'unknown/right')
             elif current == 'unasserted-case':
-                assertions.pop()
-                summary = summary.replace('16 passed', '15 passed')
+                assertions = assertions[:-3]
+                summary = summary.replace(f'{assertion_count} passed', f'{assertion_count - 3} passed')
+            elif current == 'failed-terminal':
+                assertions[-1] = assertions[-1].replace('PASS ', 'FAIL ', 1)
+                summary = summary.replace(f'{assertion_count} passed, 0 failed', f'{assertion_count - 1} passed, 1 failed')
+                exit_code = 1
+            elif current == 'duplicate-terminal': assertions[-1] = assertions[-2]
+            elif current == 'missing-terminal': assertions.pop()
+            elif current == 'terminal-wrong-case': assertions[-1] = assertions[-1].replace('search/left:', 'unknown/left:')
+            elif current == 'terminal-wrong-side': assertions[-1] = assertions[-1].replace('search/left:', 'search/middle:')
+            elif current == 'terminal-wrong-engine': assertions[-1] = assertions[-1].replace(f'{engine}/', 'wrong-engine/', 1)
+            elif current == 'terminal-wrong-source': assertions[-1] = assertions[-1].replace('index-clearance', 'wrong-source')
+            elif current == 'terminal-missing-space': assertions[-1] = assertions[-1].replace(': ', ':', 1)
+            elif current == 'terminal-wrong-separator': assertions[-1] = assertions[-1].replace(': ', '; ', 1)
+            elif current == 'terminal-missing-detail': assertions[-1] = assertions[-1].split(': ', 1)[0] + ': '
+            elif current == 'mixed-delimiter-duplicate': assertions[1] = assertions[0].replace('/geometry', ': geometry', 1)
             elif current == 'missing-image': captures.pop()
             elif current == 'duplicate-image': captures[-1] = captures[0]
             elif current == 'extra-image': captures.append(captures[0])
@@ -210,7 +236,7 @@ def run_case(mode='rehearsal', scenario='pass', bad='chromium', expected=0, actu
                     assert Path(child_result['logs'][channel]).read_bytes() == data, (name, channel)
         if scenario == 'pass':
             assert saved['leaves'] == saved['expectedLeaves'] == (21 if mode == 'rehearsal' else 18)
-            assert saved['counts'] == {'passed': total + len(engines) * 16, 'failed': 0}
+            assert saved['counts'] == {'passed': total + len(engines) * len(CASES) * 3, 'failed': 0}
             if actual_chain:
                 # These full INLINE lines must survive all the way to caller.
                 for engine in engines:
@@ -230,12 +256,16 @@ for mode in ['rehearsal', 'public']:
     run_case(mode, actual_chain=True)
     for scenario in ['missing-summary', 'wrong-count', 'zero', 'wrong-engine', 'missing-case-count',
                      'wrong-loads', 'wrong-captures', 'incomplete', 'duplicate-summary', 'conflicting-summary',
-                     'missing-completion', 'duplicate-completion', 'wrong-completion', 'duplicate-assertion',
-                     'wrong-assertion', 'wrong-case', 'unasserted-case', 'missing-image', 'duplicate-image',
+                     'previous-eight-route-matrix', 'missing-completion', 'duplicate-completion', 'wrong-completion', 'duplicate-assertion',
+                     'wrong-assertion', 'wrong-case', 'unasserted-case', 'duplicate-terminal', 'missing-terminal',
+                     'terminal-wrong-case', 'terminal-wrong-side', 'terminal-wrong-engine', 'terminal-wrong-source',
+                     'terminal-missing-space', 'terminal-wrong-separator', 'terminal-missing-detail', 'mixed-delimiter-duplicate',
+                     'missing-image', 'duplicate-image',
                      'extra-image', 'wrong-image', 'malformed-image', 'invalid', 'stderr-invalid',
                      'crash', 'passed-crash', 'signal']:
         run_case(mode, scenario, expected=2)
     run_case(mode, 'failed', expected=1)
+    run_case(mode, 'failed-terminal', expected=1)
     for engine in ['firefox'] + (['webkit'] if mode == 'rehearsal' else []):
         run_case(mode, 'missing-image', engine, expected=2)
     for scenario in ['missing-leaf', 'empty-leaf', 'conflicting-leaf', 'unexpected-leaf',

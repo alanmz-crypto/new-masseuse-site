@@ -681,7 +681,7 @@ add_action( 'wp_footer', function () {
     // Keep the whole index/rail below their actual visible boundary. Reclaim
     // empty bottom space, then only rail gaps/padding, before deferring an idle
     // rail that physically cannot fit. Touch targets keep their original size.
-    var bookingBand = document.querySelector('.ts-corp-band');
+    var bookingBand = document.querySelector('.ts-corp-band'), actionBar = document.querySelector('.ts-wwm__sticky,.ts-corp__sticky');
     function layoutRail() {
       // Captured navigation keeps the geometry under the current finger until
       // release. The summary card owns its separate fitting and reading state.
@@ -694,6 +694,12 @@ add_action( 'wp_footer', function () {
       });
       var inset = parseFloat(getComputedStyle(nav).getPropertyValue('--pk-safe-bottom')) || 0;
       var limit = viewport.bottom - Math.max(12, inset + 8), first = ceiling + 64;
+      // Existing fixed contact actions own the lower screen edge. Only
+      // reclaim genuinely empty space; their buttons must remain unobstructed.
+      if (actionBar && actionBar.getClientRects().length) {
+        var actionStyle = getComputedStyle(actionBar), actionRect = actionBar.getBoundingClientRect();
+        if (actionStyle.position === 'fixed' && actionStyle.visibility !== 'hidden' && actionRect.top < viewport.bottom && actionRect.bottom > viewport.top) limit = Math.min(limit, actionRect.top - 8);
+      }
       var targets = segs.reduce(function (height, li) { return height + Math.max(22, parseFloat(getComputedStyle(li).minHeight) || 0); }, 0);
       var plan = null;
       [{ gap: 5, pad: 8, compact: false }, { gap: 2, pad: 4, compact: true }].some(function (space) {
@@ -723,6 +729,7 @@ add_action( 'wp_footer', function () {
     nav.addEventListener('pointerup', ask);
     nav.addEventListener('pointercancel', ask);
     if (bookingBand && 'ResizeObserver' in window) new ResizeObserver(ask).observe(bookingBand);
+    if (actionBar && 'ResizeObserver' in window) new ResizeObserver(ask).observe(actionBar);
 
     // the rail is one keyboard stop: Tab reaches the current section's piece, arrow keys move between pieces
     function rove(i) { segs.forEach(function (li, k) { li.firstChild.setAttribute('tabindex', k === i ? '0' : '-1'); }); }

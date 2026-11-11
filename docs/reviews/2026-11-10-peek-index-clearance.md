@@ -29,7 +29,8 @@ this task did not render v7 to establish the historical origin of the issue.
 The policy was explained before implementation. Place the complete 44px index
 below the visible header, booking notice and title strip, with 12px clearance
 and an 8px gap to the rail. Preserve rail targets at least 22px high. Reclaim
-unused lower space first, retaining the bottom safe area. If necessary, reduce
+unused lower space first, retaining the bottom safe area and 8px above the
+visible fixed contact bars on Work With Me and Corporate. If necessary, reduce
 empty rail gaps from 5px to 2px and end padding from 8px to 4px. If the controls
 still cannot fit, defer only the idle rail until scrolling or resizing creates
 enough room. The title strip and normal page scrolling remain available.
@@ -82,6 +83,12 @@ pinned PHP, shellcheck, ruff, installer recovery and the new browser-evidence
 harness. The complete job log was read. Rendered checks correctly remain for
 the separate staging-copy rehearsal.
 
+After the retained-test setup update, source commit `38d3899db` also passed all
+45 gates at 23:33:53 UTC in
+[Actions 42923769979](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42923769979).
+The complete job log was independently read; only the intended no-URL rendered
+checks were skipped. Runtime and approved data bytes did not change.
+
 The retained Kiro and neighbour suites now recognize intentionally deferred
 idle controls. They reach a visible rail with real page input (wheel in
 Chromium/Firefox, keyboard PageDown in mobile WebKit), open the preview, then
@@ -91,6 +98,75 @@ setup for the return because Playwright rejects wheel input in mobile WebKit.
 This does not count as physical touch validation. Thai-only retained replay
 passed 346 assertions but correctly reported incomplete (2/8 cases); it is a
 diagnostic, not a complete retained gate.
+
+The exact new setup helpers were then exercised directly against the Thai HAR
+at 844×342, both sides, both suites. All four known-waiting branches ran:
+trusted wheel moved the page from y=0 to y=342, native touch opened the chosen
+preview without a jump, then wheel returned y=0 with the exact same card,
+summary and immediate neighbours. 24 independent checks and four helper
+checks passed. Mobile WebKit was not locally cached; its actual engine run
+remains part of the copy rehearsal.
+
+The cached Firefox engine also passed the unchanged focused Thai assertions:
+204/0, two sides, two offline page loads and four captures. This is 2/16 cases
+only, not a complete focused engine gate. It used the same captured assets and
+candidate bytes without another website request or installation.
+
+Fresh-copy request `peek-index-clearance-rehearse-1`, commit `b8afa20d3`,
+[Actions 42923801883](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42923801883),
+finished **FAIL / browser evidence INVALID** at 23:58:44 UTC. Source staging39
+with uploads; no remote-site mutation. The full browser artifact was downloaded
+and checked against GitHub's size (63974633 bytes) and SHA256
+`6a8bb3c2c58fcf39c53ef99e29a593439fb097e6cb44ac065eb88c4e37bd38a4`.
+
+The retained 18 leaves reported 19073/0. Focused Chromium completed all 16 cases
+and 32 captures with 1206 literal passes and no failures. The new parser counted
+1174: it rejected the two terminal assertions per case, whose current checker
+labels separate the case and description with `: ` rather than `/`. This is a
+reporting-contract defect. The stop guard correctly prevented focused Firefox,
+focused WebKit and post-browser recovery. The overall rehearsal is not verified
+and cannot authorize a staging write; corrected parsing and a fresh complete
+rehearsal are required. No runtime or approved-data change is needed for this
+formatting correction.
+
+The parser now accepts exactly `/description` or `: description` after a known
+route/side, using the same canonical duplicate key for either form. The offline
+harness now includes the actual terminal-label texts and malicious/malformed
+variants: **131 cases passed**. Replaying the byte-for-byte captured Chromium
+stdout/stderr through the corrected gate accepted all **1206 passes, 16 cases
+and 32 captures**; other phases were test doubles, not new browser evidence.
+That parser replay used the copy1 runtime SHA256
+`905a7b528cb4723a0f5d0f637e354ba8cd6c29282b48f8c3f617974a5e63c11e`.
+
+Independent native-log review confirmed staging39 as source, all 19 reviewed
+published pages, and an isolated localhost home/site URL. Apply/repeat verified
+against snapshot suffix `0fdb726a`; the first rollback restored the complete
+baseline byte-for-byte, including the WPCode cache. Reapply used its own
+snapshot suffix `afbbe2eb`, verified before browser activity. Only #1380 and its
+expected cache changed; page data stayed unchanged. Home checks passed 35/0,
+client wording/structure 322/0, and no new PHP errors were found. This does not
+replace the missing post-browser recovery proof.
+
+The screenshot audit found that Work With Me's existing fixed contact bar also
+needs its lower-screen space reserved. The prior geometry oracle measured only
+the upper chrome. The next candidate measures that visible fixed bar and keeps
+the rail at least 8px above it, using the same defer/return policy when necessary.
+This was explained before implementation. The focused checker will independently
+measure the bar and hit-test its original buttons, including 320×420 on both
+sides. Source review identified Corporate's matching bar; one fresh HTTP200 load
+of each published page confirmed both fixed bars at 320×420, top 358.59px and
+height 61.41px. Both are included in the same clearance rule. This guarantees
+idle-navigation clearance; the stated active-interaction exceptions remain.
+No contact content, approved summary or frozen baseline is changed.
+
+Exact captured-asset replay reproduced copy1's bottom-button interception on
+both pages and sides at 320×420: Work With Me overlap 35.06×26.86px, Corporate
+35.06×24.86px. The hit belonged to a Peek button. The revised candidate defers
+the idle rail at that position and restores the original contact-button hits.
+Root reviewed both corrected narrow-screen captures. These are offline candidate
+renders of fresh captured staging HTML/assets, not deployed-site evidence.
+The expanded evidence harness passed **133 cases**, including rejection of the
+obsolete eight-route matrix; no browser/network/installer was used by the harness.
 
 Local full `check-all.sh`: 37 passed, five failed from Docker daemon bind paths
 being unavailable, three skipped (shellcheck and ruff absent; no rendered URL).
@@ -114,14 +190,14 @@ not evidence of a deployed update. Final Thai replay passed **242/0**, both
 sides, including focus return, first-time hint and cancellation checks, with
 two offline page loads and four captures. No further site requests were made.
 
-Candidate file: 109082 bytes, SHA256
-`905a7b528cb4723a0f5d0f637e354ba8cd6c29282b48f8c3f617974a5e63c11e`;
-stored code: 109076 bytes, SHA256
-`736be774023fec6ab0ecdbeab4a3b215c1a40c38567989325644417371889089`.
+Candidate file: 109772 bytes, SHA256
+`5c9a447583f22458b619dd5e1a2e75dcc8049739d99bdfafb1d0fedac3f2bd2e`;
+stored code: 109766 bytes, SHA256
+`955458c81bf136a2789d8f8d495a3e4e8660771014f65db601441a0af6b1b937`.
 
 The focused matrix measures actual visible rectangles independently of runtime
-CSS variables. Eight routes, both sides, short portrait and landscape captures:
-Thai, Therapeutic, Deep Tissue, Chair, Services, Work With Me, Privacy and
+CSS variables. Nine routes, both sides, short portrait and landscape captures:
+Thai, Therapeutic, Deep Tissue, Chair, Services, Corporate, Work With Me, Privacy and
 single-entry Search. It checks full index hit areas, target size, deferral and
 return, keyboard and trusted Chromium touch gestures, retained open summaries,
 menu access and ownership during resizing. The accepted neighbour and earlier

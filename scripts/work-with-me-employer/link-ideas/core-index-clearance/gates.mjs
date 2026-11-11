@@ -62,7 +62,10 @@ export async function runIndexClearanceGates(base, mode) {
       if (/^INVALID(?:\s|$)/.test(line)) invalid.push(line);
       if (/^FAIL(?:\s|$)/.test(line)) failureObserved = true;
       if (engine) {
-        const assertion = new RegExp(`^(PASS|FAIL) index-clearance ${engine}/([^/]+/[^/]+)/(.+)$`).exec(line);
+        // Geometry checks use case/suffix; the checker's two terminal checks
+        // use case: suffix. Keep the route/side boundary exact and normalize
+        // the delimiter for duplicate detection below.
+        const assertion = new RegExp(`^(PASS|FAIL) index-clearance ${engine}/([a-z0-9-]+/(?:right|left))(?:/|: )(.+)$`).exec(line);
         if (assertion) {
           assertion[1] === 'PASS' ? passed++ : failed++;
           if (!expectedCases.includes(assertion[2]) || assertions.has(`${assertion[2]}/${assertion[3]}`)) invalid.push('unexpected case or duplicate assertion label');

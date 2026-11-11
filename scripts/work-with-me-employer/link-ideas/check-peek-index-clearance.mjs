@@ -1,5 +1,5 @@
 // Index/rail clearance on actual rendered pages. The geometry oracle measures
-// the visible header, booking notice and title strip independently of Peek's
+// the visible header, booking notice, title strip and fixed bottom actions independently of Peek's
 // CSS variables and cramped-state classes. Browser resizing is an approximation.
 import { createRequire } from 'node:module';
 import { INDEX_SLUGS, INDEX_SIDES, INDEX_LIMITATION, indexCases } from './core-index-clearance/contract.mjs';
@@ -41,7 +41,10 @@ const measure = p => p.evaluate(() => {
     }
   }
   const targets = [...rail.querySelectorAll(':scope > li > :first-child')].map(node => ({ label: node.getAttribute('aria-label'), href: node.getAttribute('href'), tag: node.tagName, visible: visible(node), ...rect(node), hit: hit(node) }));
-  return { viewport, index: { ...rect(icon), visible: visible(icon), hit: hit(icon), expanded: icon.getAttribute('aria-expanded') }, nav: { ...rect(nav), visible: visible(nav), visibility: getComputedStyle(nav).visibility, inert: !!nav.closest('[inert]'), className: nav.className }, rail: rect(rail), targets, boxes, bandContent, side: document.documentElement.classList.contains('ts-pk-left') ? 'left' : 'right', page: { x: scrollX, y: scrollY, url: location.href, history: history.length }, contentWidth: document.documentElement.scrollWidth, fallbackRows: [...document.querySelectorAll('.ts-jump')].map(node => ({ visible: visible(node), ...rect(node) })) };
+  const actions = document.querySelector('.ts-wwm__sticky,.ts-corp__sticky');
+  const actionBar = actions ? { page: actions.classList.contains('ts-wwm__sticky') ? 'work-with-me' : 'corporate-massage-portland', visible: visible(actions), position: getComputedStyle(actions).position, ...rect(actions),
+    anchors: [...actions.querySelectorAll('a[href]')].map(node => ({ text: node.textContent.trim(), href: node.getAttribute('href'), visible: visible(node), ...rect(node), hit: hit(node) })) } : null;
+  return { viewport, index: { ...rect(icon), visible: visible(icon), hit: hit(icon), expanded: icon.getAttribute('aria-expanded') }, nav: { ...rect(nav), visible: visible(nav), visibility: getComputedStyle(nav).visibility, inert: !!nav.closest('[inert]'), className: nav.className }, rail: rect(rail), targets, boxes, bandContent, actionBar, side: document.documentElement.classList.contains('ts-pk-left') ? 'left' : 'right', page: { x: scrollX, y: scrollY, url: location.href, history: history.length }, contentWidth: document.documentElement.scrollWidth, fallbackRows: [...document.querySelectorAll('.ts-jump')].map(node => ({ visible: visible(node), ...rect(node) })) };
 });
 
 async function exerciseIndex(p, context, engine, label, ok, native) {
@@ -104,24 +107,36 @@ const readSource = p => p.evaluate(() => {
   let items = row ? [...row.querySelectorAll('a[href^="#"]')].map(a => { let id = a.hash.slice(1); try { id = decodeURIComponent(id); } catch {} return { node: document.getElementById(id), label: norm(a.textContent) }; }).filter(item => item.node) : [...content.querySelectorAll('h2')].filter(visible).map(node => ({ node, label: norm(node.innerText) }));
   items.sort((a, b) => a.node === b.node ? 0 : a.node.compareDocumentPosition(b.node) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1);
   const labels = config.mode === 'fixed' || !items.length ? [config.title] : items.map(item => item.label);
-  return { data: document.getElementById('ts-peek-nav-data')?.textContent || null, links: [...content.querySelectorAll('.ts-jump a')].map(a => [a.getAttribute('href'), a.textContent]), headings: [...content.querySelectorAll('h1,h2')].filter(node => !node.closest('.ts-pk')).map(node => [node.id, node.textContent]), count: labels.length, labels };
+  return { data: document.getElementById('ts-peek-nav-data')?.textContent || null, links: [...content.querySelectorAll('.ts-jump a')].map(a => [a.getAttribute('href'), a.textContent]), bottomActions: [...document.querySelectorAll('.ts-wwm__sticky a,.ts-corp__sticky a')].map(a => [a.getAttribute('href'), a.textContent]), headings: [...content.querySelectorAll('h1,h2')].filter(node => !node.closest('.ts-pk')).map(node => [node.id, node.textContent]), count: labels.length, labels };
 });
 const checkGeometry = async (p, label, count) => {
   const g = await measure(p), v = g.viewport;
   // Each rail target keeps22px; the tightest layout may use2px gaps,4px
   // padding at each end,44px icon,8px icon gap and12px at both screen edges.
+  // A visible original fixed action bar replaces the bottom screen boundary:
+  // reserve8px above its actual rectangle, independently of Peek's variables.
   const ceiling = Math.max(v.top, ...g.boxes.filter(box => box.visible).map(box => box.clip.bottom));
-  const required = 12 + 44 + 8 + count * 22 + Math.max(0, count - 1) * 2 + 8 + 12;
-  const room = v.bottom - ceiling, fits = room >= required - .1;
+  const fixedActions = g.actionBar?.visible && g.actionBar.position === 'fixed';
+  const floor = Math.min(v.bottom - 12, fixedActions ? g.actionBar.top - 8 : Infinity);
+  const required = 12 + 44 + 8 + count * 22 + Math.max(0, count - 1) * 2 + 8;
+  const room = floor - ceiling, fits = room >= required - .1;
   const inside = r => r.left >= v.left - 1 && r.right <= v.right + 1 && r.top >= v.top - 1 && r.bottom <= v.bottom + 1;
   const intersects = (a, b) => Math.min(a.right, b.right) - Math.max(a.left, b.left) > .5 && Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > .5;
-  const detail = { ...g, ceiling, required, room, fits };
+  const detail = { ...g, ceiling, floor, required, room, fits };
   ok(`${label}: original destination count and chosen side remain intact`, g.targets.length === count && g.side === label.split('/')[1], detail);
   ok(`${label}: viewport stays at normal scale without horizontal overflow`, Math.abs(v.scale - 1) < .001 && Math.abs(v.left) <= 1 && Math.abs(v.top) <= 1 && g.contentWidth <= v.width + 1, detail);
+  const slug = label.split('/')[0];
+  if (['work-with-me', 'corporate-massage-portland'].includes(slug) && v.width <= 600) {
+    ok(`${label}: the original narrow-screen fixed action bar and both links exist and remain visible`, fixedActions && g.actionBar.page === slug && inside(g.actionBar) && g.actionBar.anchors.length === 2 && g.actionBar.anchors.every(anchor => anchor.visible && anchor.text && anchor.href), detail);
+  }
+  if (fixedActions) {
+    ok(`${label}: every original bottom action owns its visible center and edge hits`, g.actionBar.anchors.length > 0 && g.actionBar.anchors.every(anchor => anchor.visible && inside(anchor) && anchor.hit.every(point => point.owned)), detail);
+  }
   if (fits) {
     ok(`${label}: idle controls are available whenever their minimum sizes fit`, g.nav.visible && !g.nav.inert && g.index.visible, detail);
     ok(`${label}: the complete44px index clears header, booking notice and strip`, g.index.width >= 44 - 1 && g.index.height >= 44 - 1 && inside(g.index) && g.index.top >= ceiling + 10 && g.boxes.filter(box => box.visible).every(box => !intersects(g.index, box.clip)), detail);
-    ok(`${label}: all rail targets retain22px and stay visible below the icon`, g.targets.every(target => target.visible && target.height >= 22 - .2 && inside(target) && target.top >= g.index.bottom + 7 && target.bottom <= v.bottom - 11), detail);
+    ok(`${label}: all rail targets retain22px and stay visible below the icon`, g.targets.every(target => target.visible && target.height >= 22 - .2 && inside(target) && target.top >= g.index.bottom + 7 && target.bottom <= floor + 1), detail);
+    if (fixedActions) ok(`${label}: the complete idle navigation leaves8px above the fixed bottom actions`, g.index.bottom <= floor + 1 && g.nav.bottom <= floor + 1 && g.rail.bottom <= floor + 1 && !intersects(g.nav, g.actionBar) && !intersects(g.index, g.actionBar), detail);
     ok(`${label}: the index and every rail target own their visible center and edge hits`, g.index.hit.every(point => point.owned) && g.targets.every(target => target.hit.every(point => point.owned)), detail);
   } else {
     ok(`${label}: impossible idle layout temporarily hides and inerts only the navigation`, !g.nav.visible && g.nav.visibility === 'hidden' && g.nav.inert && !g.index.visible, detail);
@@ -296,7 +311,14 @@ try {
       ]) {
         const [kind, width, height, y] = spec;
         await setView(p, width, height, y); await checkGeometry(p, `${label}/${kind}`, source.count);
-        if (['short-portrait', 'landscape-top'].includes(kind)) await capture(p, slug, side, kind);
+        // Keep36 mandatory captures. Both fixed-action pages use320x420 for
+        // short-portrait evidence; the metadata records the actual size.
+        const hasBottomActions = ['work-with-me', 'corporate-massage-portland'].includes(slug);
+        const captureKind = kind === 'landscape-top' ? kind : kind === (hasBottomActions ? 'narrow' : 'short-portrait') ? 'short-portrait' : null;
+        if (captureKind) await capture(p, slug, side, captureKind);
+        if (hasBottomActions && kind === 'narrow') {
+          await setView(p, width, height, 600); await checkGeometry(p, `${label}/narrow-reading`, source.count);
+        }
       }
       await setView(p, 390, 620, 0); await checkGeometry(p, `${label}/restored`, source.count);
       await exerciseIndex(p, context, engine, label, ok, ['thai-massage', 'therapeutic-massage', 'privacy-policy'].includes(slug));
