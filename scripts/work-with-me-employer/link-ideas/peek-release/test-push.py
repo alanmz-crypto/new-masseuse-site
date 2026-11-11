@@ -167,6 +167,16 @@ with tempfile.TemporaryDirectory(prefix='release-marker-model-') as td:
 # Execute the actual remote case body with simple command doubles: this proves
 # shell failure semantics, not only failure propagation from mocked SSH.
 source=PUSH.read_text(); remote=source.split("<<'EOS'",1)[1].split('\nEOS',1)[0]
+# Exercise the actual discovery correction against a real ancestor alias. The
+# strict plugin source binding remains unchanged; only WP-CLI's root is resolved.
+canonical_root=next(line for line in remote.splitlines() if line.startswith('doc=$(cd --'))
+with tempfile.TemporaryDirectory(prefix='release-root-alias-') as td:
+ root=Path(td);physical=root/'physical';physical.mkdir();alias=root/'logical';alias.symlink_to(physical,target_is_directory=True)
+ for path in (physical,alias):
+  r=subprocess.run(['bash','-c','set -euo pipefail; doc=$1; '+canonical_root+'; printf "%s" "$doc"','fixture',str(path)],text=True,capture_output=True)
+  check(r.returncode==0 and r.stdout==str(physical.resolve()),'canonical root resolves real and ancestor-alias paths identically')
+ r=subprocess.run(['bash','-c','set -euo pipefail; doc=$1; '+canonical_root+'; echo continued','fixture',str(root/'missing')],text=True,capture_output=True)
+ check(r.returncode!=0 and 'continued' not in r.stdout,'missing selected root stops before WordPress bootstrap')
 body=remote[remote.index('case "$phase" in'):]
 for phase,fail in [('verify-purged','purge'),('verify-purged','render'),('verify-purged','verify-final'),('rollback','purge'),('rollback','render'),('rollback','verify-final')]:
  with tempfile.TemporaryDirectory() as td:

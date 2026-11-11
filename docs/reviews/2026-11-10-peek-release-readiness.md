@@ -8,6 +8,17 @@ shell failure handling. The dry wrapper now prints that diagnostic while
 preserving the failing exit and stopping; no source guard or hash is changed.
 A focused failure-output test covers this. Diagnosis precedes a LIVE request.
 
+Diagnostic dry2, Actions **43055031280**, source
+`ae5172f2e25738cbc32ef3d6df1664898d323c10`, stopped at **16:07:10 UTC**:
+all six source paths were `missing-or-noncanonical`, with expected header/runtime
+2.20.6 and the expected save hook, but mismatched loaded-file paths. The wrapper
+now resolves the uniquely selected live document root with `pwd -P` before
+WordPress bootstrap, addressing SiteGround's logical-home ancestor alias.
+No source-binding, expected plugin hash, manifest or runtime is changed. The
+wrapper suite passes **104 controls**, including retained failing diagnostics,
+real-directory/ancestor-alias equivalence and missing-root refusal. A fresh
+read-only dry run must pass before request preparation.
+
 **Release go received November 11; guarded live dry run is next.** Ryan replied
 “Continue” to the explicit enablement/dry-run/PR question and asked to defer
 minutiae. The exact independently reviewed patch `96c2d71d…720a` is now applied.

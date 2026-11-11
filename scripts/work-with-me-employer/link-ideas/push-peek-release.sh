@@ -52,6 +52,9 @@ while IFS= read -r cfg; do
   esac
 done < "$cfgs"
 [ -n "$doc" ] || { echo "No exact live install found." >&2; exit 1; }
+# SiteGround's logical home is an ancestor alias. Bootstrap WordPress through
+# the selected site's physical root so its loaded plugin paths stay canonical.
+doc=$(cd -- "$doc" && pwd -P)
 wp() { command wp --skip-plugins=sg-security "$@"; }
 echo "$target is ${doc#"$HOME"/}"
 # SiteGround's logical home resolves to /home/customer. Resolve that ancestor
