@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-11 17:07 UTC  **FAIL**  `peek-live-state-inspect-1`  [reports/2026-11-11/170711-peek-live-state-inspect-1.md](reports/2026-11-11/170711-peek-live-state-inspect-1.md)  (run 43064935977)
 - 2026-11-11 16:26 UTC  **FAIL**  `live-peek-visitor-release-20261111-1`  [reports/2026-11-11/162650-live-peek-visitor-release-20261111-1.md](reports/2026-11-11/162650-live-peek-visitor-release-20261111-1.md)  (run 43058202011)
 - 2026-11-11 16:09 UTC  **PASS**  `peek-visitor-release-live-dry-3`  [reports/2026-11-11/160924-peek-visitor-release-live-dry-3.md](reports/2026-11-11/160924-peek-visitor-release-live-dry-3.md)  (run 43055400254)
 - 2026-11-11 16:07 UTC  **FAIL**  `peek-visitor-release-live-dry-2`  [reports/2026-11-11/160712-peek-visitor-release-live-dry-2.md](reports/2026-11-11/160712-peek-visitor-release-live-dry-2.md)  (run 43055031280)
