@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-11 08:02 UTC  **FAIL**  `peek-visitor-release-quiet-search-copy-2`  [reports/2026-11-11/080239-peek-visitor-release-quiet-search-copy-2.md](reports/2026-11-11/080239-peek-visitor-release-quiet-search-copy-2.md)  (run 42983523811)
 - 2026-11-11 07:44 UTC  **FAIL**  `peek-visitor-release-quiet-search-copy-1`  [reports/2026-11-11/074413-peek-visitor-release-quiet-search-copy-1.md](reports/2026-11-11/074413-peek-visitor-release-quiet-search-copy-1.md)  (run 42981371762)
 - 2026-11-11 07:00 UTC  **PASS**  `search-contrast-verify-1`  [reports/2026-11-11/070027-search-contrast-verify-1.md](reports/2026-11-11/070027-search-contrast-verify-1.md)  (run 42976293114)
 - 2026-11-11 06:59 UTC  **PASS**  `search-contrast-public-1`  [reports/2026-11-11/065929-search-contrast-public-1.md](reports/2026-11-11/065929-search-contrast-public-1.md)  (run 42975819331)
