@@ -5,6 +5,19 @@ metadata:
   type: project
 ---
 
+**LIVE #30 applied, then exact verification failed.** Ryan merged PR #80 and
+started run **43058202011** on November 11. Core 1343 / data 1339–1342 were
+installed; actual SQL and snapshot were verified encrypted off-site. The
+snapshot is `peek-release-before-20261111-162615-e00022b6.json`, SHA256
+`4038da0f9f77780ce355029bc87e53bff0479294711c821d253f51151e10751b`.
+Read-only diagnosis found only five original metadata-row differences: two
+missing rows still unclassified, and three new `_uag_page_assets` caches on
+Personal Automation / its Privacy / Terms pages. Peek records and page content
+match the applied snapshot. No purge, rendered verification, rollback or
+reinstallation since the failure; do not rerun apply or weaken guards. Follow
+the current release-readiness record and `codex/peek-live-verification-diagnostics`.
+Earlier no-live-run statements below are historical.
+
 **Release [PR #80](https://github.com/alanmz-crypto/new-masseuse-site/pull/80) is prepared.**
 Check final Gates there, then Ryan merges and manually starts Site ops (LIVE)
 with `live-peek-visitor-release-20261111-1`. No live run or snapshot yet.

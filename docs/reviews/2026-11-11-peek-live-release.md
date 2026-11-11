@@ -1,5 +1,14 @@
 # Peek release review
 
+**Current status: LIVE #30 installed Peek, then failed verification.** Ryan
+merged this release and started it November 11. The actual database backup and
+recovery snapshot were verified off-site. Read-only diagnosis found five
+metadata differences, including generated asset caches on Personal Automation
+pages; the Peek records and page content match. Two removed metadata rows still
+need classification. No purge, rollback or reinstall has been performed since
+the failure. **Do not repeat the launch steps below.** They are historical;
+see the [current diagnosis](2026-11-10-peek-release-readiness.md).
+
 **Release go received; live dry run passed; live is unchanged.** Your “Continue”
 authorized the reviewed tooling and PR/request preparation. You still merge and
 start the LIVE workflow. The accepted staging design

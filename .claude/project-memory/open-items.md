@@ -21,6 +21,16 @@ Read-only state diagnosis is next; no rollback or guard relaxation is authorized
 by the failed result. See the release-readiness record for all actual bindings.
 The statements below about no live run describe the preceding preparation.
 
+Read-only diagnosis now isolates exactly five metadata differences (no owned
+Peek/page-content/other protected-store changes): old rows 4701/4702 are missing;
+new rows 5089/5090/5091 are Spectra `_uag_page_assets` caches for the three
+Personal Automation pages, confirmed by hashed-key SQL inspection at 17:15:30
+(run **43066327533**). The two old rows and regeneration mechanism remain to be
+classified. Do not relax the guard or rewrite the actual snapshot. No purge,
+rendered verification, rollback or reinstall has run since the failure.
+The complete evidence and actual recovery bindings are in the readiness record;
+current work branch is `codex/peek-live-verification-diagnostics`.
+
 **Peek release PR prepared: [PR #80](https://github.com/alanmz-crypto/new-masseuse-site/pull/80).**
 Merge only after its final Gates is green, then manually start Site ops (LIVE)
 on main with `live-peek-visitor-release-20261111-1`. The PR contains the exact

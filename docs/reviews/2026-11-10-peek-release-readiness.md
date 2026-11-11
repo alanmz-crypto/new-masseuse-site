@@ -1,5 +1,39 @@
 # Peek visitor-navigation release readiness
 
+**LIVE #30 diagnosis, November 11 at 17:15 UTC: installed, verification incomplete.**
+State-only inspection `peek-live-state-inspect-1`, Actions **43064935977**, source
+`6b846de35f530a2717321b99648626563527983a`, completed at **17:07:09 UTC** with
+the expected exact-state refusal and a complete, untruncated difference list.
+Only original-row witnesses differ: postmeta **4701 / 4702 missing**, and
+**5089 / 5090 / 5091 added**. The actual state remains exactly `b34e86f7…af4427`,
+the same mismatch recorded at 16:26:48. All owned Peek records, page content and
+other protected stores match the applied snapshot. No purge/render/rollback or
+reinstallation was attempted by the diagnostic.
+
+The narrow SQL-only query `peek-live30-postmeta-2`, Actions **43066327533**,
+source `20e9af7a84783d99d133c80f3d062985ad300a39`, passed at **17:15:30 UTC**.
+It read five fixed IDs in a verified read-only repeatable-read transaction,
+without WordPress bootstrap. The earlier query **43065850949** failed its output
+validator because MySQL emitted JSON booleans; the corrected parser accepts
+only booleans or integer 0/1. That earlier result is not identification evidence.
+
+| Added meta ID | Post ID / reviewed route | Key | Value bytes | Value SHA256 |
+|---|---|---|---:|---|
+| 5089 | 1254 `/personal-automation/` | `_uag_page_assets` | 740 | `30f619157647f3a5cd68219525b5b12a8dc210e828f0a130cf4f3fc9ed7d76ba` |
+| 5090 | 1255 `/personal-automation/privacy/` | `_uag_page_assets` | 740 | `30f619157647f3a5cd68219525b5b12a8dc210e828f0a130cf4f3fc9ed7d76ba` |
+| 5091 | 1257 `/personal-automation/terms/` | `_uag_page_assets` | 693 | `65156d9a7ff627f3726c259b781bbb272f6b3bc0eed91220fc6db1e65303bff6` |
+
+Key identity was established locally by matching SHA256
+`2e9207df9631808ef7779f3a1abfdd1c2cdd1668b3cef4085730edb9e1fa26a4`
+against the reviewed Spectra source's literal `_uag_page_assets`; page IDs/routes
+match the previously captured live inventory. No raw metadata values were
+disclosed. The two removed rows remain unclassified. The new rows are generated
+asset-cache metadata, but their producer/timing and the removed-row identities
+are not yet proven. Do not treat this as permission to normalize or overwrite
+all metadata, edit the immutable live journal, rerun apply, or bypass recovery
+guards. Next essential work is those two identities and a narrowly proved way
+to complete verification/recovery; deployment is not yet declared successful.
+
 **LIVE #30: applied, then verification FAIL (November 11, 16:26:48 UTC).** Ryan
 merged PR #80 at 16:24:35 UTC and manually started request
 `live-peek-visitor-release-20261111-1`, Actions **43058202011**, main
