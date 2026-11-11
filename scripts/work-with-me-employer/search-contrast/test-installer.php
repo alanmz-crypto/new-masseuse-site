@@ -122,8 +122,17 @@ foreach ( array( array( 'delete' ), array( 'apply', 'extra' ), array( 'rollback'
 reset_model(); file_put_contents( $tmp . '/pkg/search-contrast.css', "\n", FILE_APPEND ); refused( array( 'apply' ), 'changed payload hash' );
 reset_model(); file_put_contents( $tmp . '/pkg/manifest.json', '{}' ); refused( array( 'apply' ), 'incomplete manifest' );
 reset_model(); $mock_json_failure = true; refused( array( 'apply' ), 'snapshot encoding failure' );
-foreach ( array( '', 'relative', ABSPATH, $tmp . '/missing' ) as $directory ) { reset_model(); putenv( 'WWM_BACKUP_DIR=' . $directory ); refused( array( 'apply' ), 'invalid private directory ' . $directory ); }
-reset_model(); symlink( $tmp . '/backup', $tmp . '/backup-link' ); putenv( 'WWM_BACKUP_DIR=' . $tmp . '/backup-link' ); refused( array( 'apply' ), 'symlink backup directory' );
+foreach ( array( '', 'relative', ABSPATH, $tmp . '/missing' ) as $directory ) {
+    reset_model(); putenv( 'WWM_BACKUP_DIR=' . $directory );
+    refused( array( 'preflight' ), 'dry run rejects invalid private directory ' . $directory );
+    refused( array( 'apply' ), 'invalid private directory ' . $directory );
+}
+reset_model(); symlink( $tmp . '/backup', $tmp . '/backup-link' ); putenv( 'WWM_BACKUP_DIR=' . $tmp . '/backup-link' );
+refused( array( 'preflight' ), 'dry run rejects symlink backup directory' );
+$path_message = WP_CLI::$messages[0] ?? '';
+$path_report = str_starts_with( $path_message, 'SEARCH-PATH ' ) ? json_decode( substr( $path_message, 12 ), true ) : null;
+assert_case( is_array( $path_report ) && array_keys( $path_report ) === array( 'input', 'realpath', 'webroot_realpath', 'input_is_link', 'is_dir', 'is_writable', 'owner_uid', 'group_gid', 'mode', 'process_euid' ) && $path_report['input'] === $tmp . '/backup-link' && $path_report['realpath'] === $tmp . '/backup' && $path_report['input_is_link'] === true && $path_report['is_writable'] === true, 'failed dry run reports only safe exact path predicates' );
+refused( array( 'apply' ), 'symlink backup directory' );
 
 foreach ( array( $base . 'drift', $new . 'later edit', str_replace( 'background-color', 'color', $new ), $new . "\n" . $block ) as $drift ) {
     reset_model(); $mock_post->post_content = $drift; refused( array( 'preflight' ), 'preflight changed CSS' ); refused( array( 'rollback', $snap ), 'CHANGED rollback' );

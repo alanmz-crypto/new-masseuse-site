@@ -43,12 +43,27 @@ if ( hash( 'sha256', $css ) === $baseline_sha && ! str_contains( $css, 'ts-searc
     $state = 'applied';
 }
 if ( 'CHANGED' === $state ) { $fail( 'Additional CSS is CHANGED; inspect it before any mutation or recovery.' ); }
-if ( 'preflight' === $mode ) { WP_CLI::success( 'search-contrast ' . $state . '; css_sha256=' . hash( 'sha256', $css ) . '; nothing changed.' ); return; }
-
 $backup = getenv( 'WWM_BACKUP_DIR' );
 $root = realpath( ABSPATH );
 $private = is_string( $backup ) && str_starts_with( $backup, '/' ) ? realpath( $backup ) : false;
-if ( ! $root || ! $private || $private !== rtrim( $backup, '/' ) || is_link( $backup ) || ! is_dir( $private ) || ! is_writable( $private ) || $private === $root || str_starts_with( $private . '/', rtrim( $root, '/' ) . '/' ) ) { $fail( 'WWM_BACKUP_DIR must be a real writable private directory outside the web root.' ); }
+if ( ! $root || ! $private || $private !== rtrim( $backup, '/' ) || is_link( $backup ) || ! is_dir( $private ) || ! is_writable( $private ) || $private === $root || str_starts_with( $private . '/', rtrim( $root, '/' ) . '/' ) ) {
+    // A dry run must expose the same path prerequisite before a fresh export or
+    // mutation. Report only these safe filesystem predicates, never credentials.
+    WP_CLI::log( 'SEARCH-PATH ' . wp_json_encode( array(
+        'input' => $backup,
+        'realpath' => $private,
+        'webroot_realpath' => $root,
+        'input_is_link' => is_string( $backup ) && '' !== $backup ? is_link( $backup ) : false,
+        'is_dir' => $private ? is_dir( $private ) : false,
+        'is_writable' => $private ? is_writable( $private ) : false,
+        'owner_uid' => $private ? fileowner( $private ) : null,
+        'group_gid' => $private ? filegroup( $private ) : null,
+        'mode' => $private ? sprintf( '%04o', fileperms( $private ) & 0777 ) : null,
+        'process_euid' => function_exists( 'posix_geteuid' ) ? posix_geteuid() : null,
+    ), JSON_UNESCAPED_SLASHES ) );
+    $fail( 'WWM_BACKUP_DIR must be a real writable private directory outside the web root.' );
+}
+if ( 'preflight' === $mode ) { WP_CLI::success( 'search-contrast ' . $state . '; css_sha256=' . hash( 'sha256', $css ) . '; nothing changed.' ); return; }
 $original = 'ready' === $state ? $css : substr( $css, 0, -strlen( $suffix ) );
 $applied = $original . $suffix;
 $snapshot = null;
