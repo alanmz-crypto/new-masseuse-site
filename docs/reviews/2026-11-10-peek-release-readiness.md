@@ -1,5 +1,195 @@
 # Peek visitor-navigation release readiness
 
+**Live incident verification PASS, November 11 at 18:20:00 UTC.**
+`peek-live30-incident-inspect-1`, Actions **43076682138**, source
+`b0288b4b80aab6f3c3eec01fac559bc8520ca570`, ran only `--inspect-live30`.
+Both applied and recoverable markers passed against exact current protected
+state `b34e86f75140a0e89b725e8dc9e56dd2fcc75e509155b768348bb3670daf4427`,
+actual IDs 1339–1343, the unchanged original journal/SQL, manifest/profile and
+receipt `9202c8fb…b9a0c`. All six live Spectra sources matched. No installer,
+purge or page requests ran. The full report was read. This and recovery copy 2
+support the new finish-only request `live-peek-finish-20261111-1`,
+`--apply --finish-live30`, with automatic post-change/restore checks. Ryan alone
+merges and starts it after final Gates passes. #30 must never be rerun.
+
+**Actual-state recovery copy 2 PASS, November 11 at 18:18:45 UTC.**
+`peek-live30-recovery-copy-2`, Actions **43075719186**, source
+`b31dc65d2b984edd2a893f76239924ec58343af1`, imported fresh current live SQL
+unchanged (4,189,962 bytes, SHA256
+`e2800ea70194fef1688c86b0271383dc95fbb64ec20594a690d191789fcbb14e`), with raw
+live URLs and zero collation substitutions. The actual immutable journal,
+actual snippet IDs 1339–1343 and all six pinned Spectra sources matched.
+
+All seven incident verification/recovery steps passed. All **17 HTML responses
+passed with Peek installed and all 17 passed after rollback**, including Search
+and the expected 404. These are exact static response checks, not a new browser
+matrix. Exact protected-state verification passed after each response phase:
+applied `b34e86f75140a0e89b725e8dc9e56dd2fcc75e509155b768348bb3670daf4427`;
+restored `629c1e66eece68a9d7c91b6de5d7b780582a688e4d885a14aa389e053dcf05a4`.
+Eight SQL observations independently confirmed the five cache-row identities,
+global asset version and raw origin stayed exact. Recovery retains the three
+independently generated cache rows; it does not recreate the two stale rows or
+claim historical whole-database identity. The incident receipt is SHA256
+`9202c8fb4e90babcba739a75660af944fc2a5adbfd1881278458312bc9ab9a0c`.
+
+The original journal and original SQL remained byte-identical and mode 0600.
+All owned relay/container/volume/network/temporary-directory resources were
+deleted with verified cleanup. The full report was read. Live was read-only;
+no live purge, rollback or reinstallation occurred. The successful run resolves
+the response-loop failure below. Focused source checks include 2,203 installer
+controls, 286 wrapper controls, 315 runner controls, 44 marker controls and 12
+recovery-evidence tests. The accepted visitor runtime and summaries are unchanged.
+
+**Actual-state recovery copy 1 stopped in its response loop, November 11 at
+18:08:52 UTC.** `peek-live30-recovery-copy-1`, Actions **43074759786**, source
+`9fb36811170675f766add419e49f160cac5e7f5a`, imported fresh current live SQL
+without data/URL changes (4,189,962 bytes, SHA256
+`8c3f6ba96d5ef0367e33df00dce56d899506f87deaa19d3b3d0a2e1dd90df5ad`).
+The initial incident verification passed with the actual journal, actual IDs
+and exact `b34e86f7…af4427` state. The homepage response also passed, but Compose
+inherited the route-list stdin, leaving only one of 17 responses checked. The
+explicit count guard failed; no rollback was reached and no full response or
+recovery success is claimed. All copy resources were deleted with verified
+cleanup; live was read-only. The correction redirects only the verifier child's
+stdin to `/dev/null`, with a fixture that drains stdin and reproduces the broken
+case without that redirection. A new isolated-copy run follows; never rerun #30.
+
+**Cold reproduction PASS, November 11 at 17:57:32 UTC.**
+`peek-live30-cold-proof-1`, Actions **43072850520**, source
+`f13343b584253892c5797c2b70fd71f8f9fdadc6`, used the exact pre-apply SQL and
+current source on an internal-network copy. SQL imported byte-for-byte with
+**zero collation substitutions**; raw live URLs were preserved. All six pinned
+Spectra files matched. Before any frontend request, the explicit WordPress
+bootstrap reproduced the original protected-state hash `51fc7efb…c5814` and
+changed none of the six protected tables or ten protected options.
+
+Three individual HTTP200 requests reproduced the complete mismatch without any
+Peek installation: post 1254 acquired its absent cache; posts 1255 and 1257
+replaced their stale caches. The generated value bytes/SHA256s exactly match the
+three live values. Mapping only the known live metadata IDs onto those generated
+rows also reproduces every earlier live witness-descriptor hash:
+
+| Actual live ID (copy ID) | Canonical row SHA256 with actual live ID |
+|---|---|
+| 5089 (5069) | `f01994fe793dd916e928f676e36e8500d3e1c68809df3262cab61a0e21bded1f` |
+| 5090 (5070) | `edbb65d903e2b60ad9a2a17d4c4a85aa1ec3eec32e13bb1ad722102ea3ec80c6` |
+| 5091 (5071) | `c272a43305be52f9510c44506d9f6060c80341e8eb44bc8226b0449ba657512f` |
+
+Each first request changed only its own cache within protected state; all three
+repeat requests were stable, including all observed option rows. Across the
+entire copy run, five option rows outside the installer's existing ten-option
+contract were added and separately reported. Two names match `nonce_key` and
+`nonce_salt` (the isolated config does not copy production salts); the other
+three remain identified by hashes. No blanket whole-database equality or new
+option exclusion is claimed. The global Spectra version row remained exact.
+
+The full report was read, and cleanup proved the owned relay, containers,
+volumes, networks and temporary directory absent. The redacted final receipt is
+`peek-release/incident-live30-proof.json`, SHA256
+`c09de2231c44290b89d3c47935d2c8e2339879c2be2f7b86b3f9f725b7522450`.
+Focused source checks: **28 observer tests / 231 orchestration controls**.
+This proves ordinary page rendering can produce the exact transition; it does
+not identify which actual live request did so. A pinned incident adapter and
+targeted recovery test on a copy of the actual installed state are next. Live
+has not been purged, reinstalled or rolled back, and #30 will not be rerun.
+
+**LIVE #30 removed-row identification PASS, November 11 at 17:45:57 UTC.**
+`peek-live30-before-1`, Actions **43071249809**, source
+`9cee6838ddc75342adbf92846338605e0e8e5977`, read only the exact SHA/size-bound
+pre-write SQL backup on the server. The temporary PHP reader was deleted;
+no SQL was imported, WordPress bootstrapped, page requested or site changed.
+Its parser passed **58 synthetic controls** before use. The full report was read.
+
+| Removed meta ID | Post / key | Value bytes / SHA256 | Canonical row SHA256 |
+|---|---|---|---|
+| 4701 | 1255 / `_uag_page_assets` | 735 / `a5e39e98f6d20e1f0f41994f0ee66c28ad6d882c09a2cf2f14b62f5534dd7e7d` | `8a204a7db18edf9be297689861b987ec19a2cb373d65fb5b7a8ffab4419b2fe0` |
+| 4702 | 1257 / `_uag_page_assets` | 688 / `07565e74285b1b9a9ec702f536431fc67560c54775411ed596d8ce48b37b37bb` | `80efacd2d6270111b8e880f396bf42e5fc77dcab94a44e8adb7e1354f2bbbef3` |
+
+Both witness-descriptor hashes exactly match the missing-row diagnostic.
+All five differences are therefore identified as Spectra page-asset metadata.
+Pinned Spectra source supports deletion/recreation of stale caches and insertion
+of missing caches during ordinary frontend rendering (Search can generate caches
+for several result pages). This is a supported mechanism, not proof of the
+particular request or requester. The earlier rehearsal warmed pages before its
+first protected-state baseline, so it did not exercise these cold-cache changes.
+
+The authorized next work is a narrow isolated proof using the exact original
+SQL, pinned current source, raw live URLs and no initial warm-up. It must reproduce
+the observed value hashes while keeping all other protected rows exact. Only
+then can an incident-specific receipt account for these exact five witnesses in
+verification and recovery. The immutable actual journal stays unchanged, normal
+guards remain exact, and any sixth or different change must refuse. No #30 retry,
+new live installation, purge or rollback is authorized by this diagnosis alone.
+
+**LIVE #30 diagnosis, November 11 at 17:15 UTC: installed, verification incomplete.**
+State-only inspection `peek-live-state-inspect-1`, Actions **43064935977**, source
+`6b846de35f530a2717321b99648626563527983a`, completed at **17:07:09 UTC** with
+the expected exact-state refusal and a complete, untruncated difference list.
+Only original-row witnesses differ: postmeta **4701 / 4702 missing**, and
+**5089 / 5090 / 5091 added**. The actual state remains exactly `b34e86f7…af4427`,
+the same mismatch recorded at 16:26:48. All owned Peek records, page content and
+other protected stores match the applied snapshot. No purge/render/rollback or
+reinstallation was attempted by the diagnostic.
+
+The narrow SQL-only query `peek-live30-postmeta-2`, Actions **43066327533**,
+source `20e9af7a84783d99d133c80f3d062985ad300a39`, passed at **17:15:30 UTC**.
+It read five fixed IDs in a verified read-only repeatable-read transaction,
+without WordPress bootstrap. The earlier query **43065850949** failed its output
+validator because MySQL emitted JSON booleans; the corrected parser accepts
+only booleans or integer 0/1. That earlier result is not identification evidence.
+
+| Added meta ID | Post ID / reviewed route | Key | Value bytes | Value SHA256 |
+|---|---|---|---:|---|
+| 5089 | 1254 `/personal-automation/` | `_uag_page_assets` | 740 | `30f619157647f3a5cd68219525b5b12a8dc210e828f0a130cf4f3fc9ed7d76ba` |
+| 5090 | 1255 `/personal-automation/privacy/` | `_uag_page_assets` | 740 | `30f619157647f3a5cd68219525b5b12a8dc210e828f0a130cf4f3fc9ed7d76ba` |
+| 5091 | 1257 `/personal-automation/terms/` | `_uag_page_assets` | 693 | `65156d9a7ff627f3726c259b781bbb272f6b3bc0eed91220fc6db1e65303bff6` |
+
+Key identity was established locally by matching SHA256
+`2e9207df9631808ef7779f3a1abfdd1c2cdd1668b3cef4085730edb9e1fa26a4`
+against the reviewed Spectra source's literal `_uag_page_assets`; page IDs/routes
+match the previously captured live inventory. No raw metadata values were
+disclosed. The two removed rows remain unclassified. The new rows are generated
+asset-cache metadata, but their producer/timing and the removed-row identities
+are not yet proven. Do not treat this as permission to normalize or overwrite
+all metadata, edit the immutable live journal, rerun apply, or bypass recovery
+guards. Next essential work is those two identities and a narrowly proved way
+to complete verification/recovery; deployment is not yet declared successful.
+
+**LIVE #30: applied, then verification FAIL (November 11, 16:26:48 UTC).** Ryan
+merged PR #80 at 16:24:35 UTC and manually started request
+`live-peek-visitor-release-20261111-1`, Actions **43058202011**, main
+`4e89eb25f5f5a68afdbb82aba45e3b385ec8a0b6`. The report and complete job log were
+read. Preflight and all plugin bindings passed. The install completed, with
+Thai 1339 / Therapeutic 1340 / Deep Tissue 1341 / Chair 1342 / core 1343.
+The first subsequent exact verification failed before purge or wrapper-render
+requests. Do not rerun apply or claim deployment verified.
+
+Actual private recovery files under `/home/customer/private-backups/`:
+
+| File | Plaintext bytes | SHA256 |
+|---|---:|---|
+| `live-before-peek-release-20261111-162615-74851.sql` | 3,919,398 | `4f27b4644dca8a85a671e8cbad1326515e49c356314c3e81327eeba46dd032a0` |
+| `peek-release-before-20261111-162615-e00022b6.json` | 1,682,009 | `4038da0f9f77780ce355029bc87e53bff0479294711c821d253f51151e10751b` |
+
+Both exact files were verified on server/local transfer/encrypted off-site
+readback. SQL preceded mutation; the actual journal was preserved before
+verification. Applied state was
+`c1bb9082d44a3cf1aa151678101b2509417d9e1f338e60365e7c8066c02ce874`;
+first subsequent state was
+`b34e86f75140a0e89b725e8dc9e56dd2fcc75e509155b768348bb3670daf4427`.
+The expected manifest/profile remain `5255d85c…8269b5` / `49ed3154…6c3cac`.
+The mismatch's changed-row diagnostic was swallowed by command-substitution
+failure handling; no cause is established from the aggregate hash alone.
+
+A state-only wrapper mode is prepared on `codex/peek-live-verification-diagnostics`:
+`--inspect-state FILE SHA256`. It invokes existing exact `verify` against the
+caller-bound actual snapshot, streams diagnostics including failures, and does
+not apply, roll back, purge, render or transfer a private journal. Installer,
+runtime and all source/state guards are unchanged. Focused wrapper tests pass
+**114 controls**, including successful/failed state-only behavior and malformed
+hash refusal. A read-only Actions diagnostic is next; no additional live write
+or weakened rollback is implied.
+
 **Release PR prepared: [#80](https://github.com/alanmz-crypto/new-masseuse-site/pull/80).**
 The manual request is committed; nothing has run on live. GitHub records final
 Gates and merge status. Once green, Ryan merges and starts Site ops (LIVE) on

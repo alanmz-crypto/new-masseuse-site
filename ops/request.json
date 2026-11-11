@@ -1,8 +1,10 @@
 {
-  "id": "peek-visitor-release-live-dry-3",
+  "id": "peek-live30-incident-inspect-1",
   "op": "run",
   "target": "live",
   "script": "link-ideas/push-peek-release.sh",
-  "args": [],
+  "args": [
+    "--inspect-live30"
+  ],
   "tests": "auto"
 }
