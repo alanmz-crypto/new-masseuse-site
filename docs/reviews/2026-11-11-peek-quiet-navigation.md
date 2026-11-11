@@ -1,6 +1,6 @@
 # Peek reading labels and menu buttons
 
-**In progress; staging39 still has the accepted index-clearance version.** Ryan
+**Deployed to staging39; dedicated public-browser verification is pending.** Ryan
 requested four changes before live: remove the automatic section label beside
 the rail while reading; outline the index button; close the header hamburger
 menu on an outside tap; and show a tappable X on the open index. Names shown by
@@ -266,7 +266,48 @@ checkout log independently confirms commit
 the large job log was resolved by reading it through the CLI. No new visual
 blocker was found in the four requested changes.
 
-No staging write, public-browser result or new actual snapshot exists yet for
-this phase. The prior index fix and summary-neighbour layout
+The prior index fix and summary-neighbour layout
 remain accepted by Ryan. Live release preparation stays paused at its older
 first-install payload and the previously recorded live-copy permission boundary.
+
+## Staging operation record
+
+Dry run `peek-quiet-nav-dry-1`, commit
+`0a2bcea76663b2b4323f1c74b1d3d3d9dedddfae`, passed at **04:37:15 UTC** in
+[Actions 42960381058](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42960381058).
+It selected exact staging39 and confirmed frozen-v9 readiness; no WordPress
+write occurred. Guarded apply `peek-quiet-nav-apply-1`, commit
+`96ce28e58421eebd8e0005856c3331f3ddf52cbf`, completed **PASS** at
+**04:48:03 UTC** in
+[Actions 42960510404](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42960510404).
+The complete report was read. The actual in-place #1380 apply occurred at
+**04:38:46 UTC**, with no fallback-only interval or page-data change.
+
+- Fresh DB export: `staging39-before-peek-quiet-nav-20261111-043831-56757.sql`,
+  4,546,217 bytes, verified server/copy SHA256 and encrypted off-site readback
+  before the write (reported plaintext hash prefix `9596ac97da62`).
+- Actual rollback snapshot:
+  `peek-template-core-quiet-nav-before-20261111-043846-d52816fb.json`,
+  verified server/copy SHA256 and encrypted off-site readback before purge or
+  rendering (reported plaintext hash prefix `5b263fe4a62e`).
+- Exact complete core state before/after 19 HTTP200 renders:
+  `74ea2dd67eaf86ea065abeba398d41df6fe0f5451e1e0b36d11e2b309d60e56f`.
+- Four-page data state remained
+  `3e9acc4ea6dfedf7fe99e7a70534603ba0d32a1827793755c8ee10f4e55c9cc9`.
+
+Automatic post-checks passed source/rendered gates, public page/sitemap/robots
+responses, structured data (27 items, zero parse errors, identical across the
+four compared pages), and PHP-log checks. The pixel comparison against live
+reported **20 differences, zero missing captures, zero identical**; this is
+not a pixel pass and live has the older navigation. The backup imported
+successfully; all 104 fingerprints were available and the only before/after
+differences were #1380 and its WPCode cache. Dedicated public-browser checks
+and final actual-snapshot verification are still required.
+
+## Separate visual follow-up before live
+
+The dark Search captures show very pale result-card text on white backgrounds,
+also visible in the older copy1 capture. This is separate from the four
+navigation changes and needs its own contrast correction before live. The
+index button itself has good contrast there. No search-card styling changed
+in this phase.
