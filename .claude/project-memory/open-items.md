@@ -9,7 +9,7 @@ metadata:
 A phone cloud session (https://claude.ai/code, repo `alanmz-crypto/new-masseuse-site`) sees ONLY this repository: not his computer, not his global `~/.claude/CLAUDE.md`, not his local Claude memory, not convmem. Everything that must not be lost is therefore written here and in the notes this index points to.
 First message to send in a fresh phone session: **"Read .claude/project-memory/open-items.md and tell me what is due."**
 
-**Current release preparation, November 11: navigation and Search verified on staging39.**
+**Current release preparation, November 11: staging and complete live-copy proof passed.**
 The [Search phase record](../../docs/reviews/2026-11-11-search-contrast.md)
 records final source Gates **51/0**, a fresh staging39 copy with **300/0** browser
 checks and exact recovery, followed by backed-up deployment at **06:45:11 UTC**.
@@ -33,8 +33,9 @@ The first-install release candidate contains the accepted quiet-navigation
 design with the minimal observer correction below and this exact Search CSS;
 all four approved data payloads are unchanged.
 Its refreshed models passed **1,843 installer checks** (138 injected failures)
-and **163 evidence controls**, but
-its complete first-install/rendered/recovery cycle remains unproved. The
+and **163 evidence controls**. The complete corrected live-copy cycle passed
+**24,737/0 across all 28 browser suites**, exact recovery and verified cleanup
+at **11:33:22 UTC**, run **43006077712**. The
 [readiness record](../../docs/reviews/2026-11-10-peek-release-readiness.md)
 contains the concrete copy request. On November 11 Ryan explicitly approved
 copying live's database/site files/uploads to a temporary GitHub Actions runner
@@ -58,11 +59,12 @@ install/repeat/exact rollback, unchanged metadata through restored-page visits,
 and reapplication. Retained core browsers passed **14,319/0**; WebKit disclosures
 passed **70/0**, but enlarged-text Therapeutic layout reported two ResizeObserver
 errors (**150/2**). The run stopped at **17/28 suites**; post-browser recovery is
-unproved. Cleanup verified deletion. The errors are under investigation, not
-excused. Live and staging39 were unchanged. The readiness record contains
+unproved in that failed run. Cleanup verified deletion. The observer correction
+and successful fresh proof below resolve these errors. Live and staging39 were
+unchanged by copy3. The readiness record contains
 the actual copy-only snapshot and artifact bindings; the deleted journal is not
 a staging/live recovery file.
-A minimal title-strip ResizeObserver timing correction is prepared: local
+The minimal title-strip ResizeObserver timing correction was verified: local
 WebKit reproduced the original error in 6/6 trials and passed the queued callback
 in 6/6 with identical final geometry. Accepted quiet-navigation bytes are frozen
 as shared v10. Complete corrected source Gates passed **55/0**, run **42993487769**,
@@ -83,8 +85,18 @@ all 60 captures were reviewed and all 24 resize captures match the successful
 copy exactly. Final actual-snapshot verification **43005630245** passed at
 **10:41:20 UTC**; stored inspection **43005811818** passed at **10:42:37 UTC**,
 confirming published core `f152fad9…73566` and unchanged CSS29 `b024acc6…2c69b`.
-Staging verification is complete. The full corrected live-copy first-install,
-browser and recovery cycle remains pending. Live is unchanged.
+Staging verification is complete. The already approved fresh live-copy
+first-install/browser/recovery cycle `peek-visitor-release-quiet-search-copy-4`
+passed at **11:33:22 UTC**, Actions **43006077712**, source
+`a2a165a6c1ddeec92a7c1dd9dd2db094f5d93697`: source **55/0**, browser
+**24,737/0**, all 28 unique leaves/13 phases, Home/client wording **35/0 and
+322/0**, exact repeat, recovery before/after browsers, and final reapply.
+All original navigation signatures and 90 metadata observations remained exact.
+Cleanup verified the temporary copy and owned resources absent; retained evidence
+contains no SQL, private journals or configuration. Independent audits found no
+blocker. The [release review](../../docs/reviews/2026-11-11-peek-live-release.md)
+is ready for Ryan's release go, then a guarded live dry run and prepared PR/request.
+Live is unchanged.
 Current guarded recovery starts with `core-title-resize` → frozen v10 using only
 `peek-template-core-title-resize-before-20261111-101808-92c3067f.json`, after
 fresh verified backup and exact ownership/state checks. Its pre-write export is

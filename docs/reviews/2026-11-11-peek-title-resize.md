@@ -226,6 +226,8 @@ The published core #1380 code SHA is exactly
 CSS29 still matches the apply's
 `b024acc687b49a37115940b52976f3bdcfc6cb236ae7bb4a81422f8c2d02c69b`.
 The full report was read. Staging verification is complete. The release payload
-and manifest are unchanged from the source that passed these checks; complete
-new live-copy first-install and post-browser recovery proof is next.
+and manifest are unchanged from the source that passed these checks. The complete
+new live-copy first-install and post-browser recovery cycle subsequently passed
+at 11:33:22 UTC, run 43006077712: all 28 browser suites, 24,737/0, exact recovery
+and verified cleanup. See the [release review](2026-11-11-peek-live-release.md).
 Live remains unchanged and disabled.

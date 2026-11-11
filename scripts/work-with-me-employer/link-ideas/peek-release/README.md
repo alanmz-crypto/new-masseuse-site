@@ -1,17 +1,21 @@
-# Provisional visitor release: isolated live copy only
+# Verified visitor release candidate: isolated live copy only
 
-This package contains the accepted shared Peek runtime plus a provisional
+This package contains the accepted shared Peek runtime plus the verified
 title-strip observer timing correction, and four unchanged approved summaries.
 The observer correction passed all 29 staging-copy browser suites (25,343/0)
 and exact recovery, then a backed-up staging39 deployment, public checks (752/0)
 and final actual-snapshot/stored verification at 10:42:37 UTC on November 11.
-The complete corrected live-copy release cycle remains pending. It is a first-install candidate for a
+The complete corrected live-copy cycle passed at 11:33:22 UTC on November 11,
+run 43006077712, source `a2a165a6c1ddeec92a7c1dd9dd2db094f5d93697`:
+24,737/0 across all 28 browser suites/13 phases, installation/repeat, exact
+recovery before and after browsers, final reapply and verified cleanup. The
+same source passed all 55 offline Gates. It remains a first-install candidate for a
 fresh copy of live, not authorization or tooling to change live. The installer
 accepts only `http://localhost:8090`; staging and live origins are refused.
 Ryan accepted the current controls on iPhone Safari on November 11: “It's
 correct.” Fluidity refinements are deferred until after live; no repeat generic
-Safari check is required. The fresh first-install and recovery gates remain
-required. A prior live-data copy request was rejected before execution because
+Safari check is required. The fresh first-install and recovery gates have passed.
+A prior live-data copy request was rejected before execution because
 it exceeded the then-current staging39-only scope. On November 11 Ryan explicitly
 approved the temporary GitHub Actions copy of live's database/site files/uploads,
 installation and recovery testing, cleanup, and retained logs/screenshots. That
@@ -64,7 +68,7 @@ Therapeutic layout reported two ResizeObserver errors (150/2). Only 17/28 leaf
 suites ran; post-browser recovery was skipped. Verified cleanup deleted the copy.
 The minimal queued observer correction now passes those WebKit cases on the
 actual staging copy and the focused public matrix. Staging verification is
-complete; corrected live-copy proof is next. The frozen manifest's provisional
+complete; the corrected live-copy proof above also passed. The frozen manifest's provisional
 status text records preparation time; dated evidence in the readiness/resize
 notes records subsequent verification without changing the tested manifest.
 Live is unchanged.
@@ -85,8 +89,8 @@ The November 11 provisional candidate includes the title-strip observer fix:
 111142 stored-code bytes, SHA256
 `f152fad975bb85ed4ad06a0ce5f0000cd656276b34efb38b748646a5fdc73566`.
 The accepted preceding runtime remains immutable as `peek-nav-shared-v10.php`.
-The corrected source passed local causal tests and independent review; it has
-not yet passed actual staging or the complete release cycle.
+The corrected source passed local causal tests, independent review, actual
+staging verification and the complete release cycle above.
 The four approved data payloads are unchanged. This includes immediate summary
 neighbours, small-screen index clearance and the four quiet-navigation changes.
 The prior payload and its historical evidence remain in git; they cannot verify
@@ -96,9 +100,9 @@ payload is the exact 536-byte correction now verified on staging39, SHA256
 It changes only screen styles for Search results/no-results panels, placeholders,
 the populated form's text button and current pagination. Search's separate
 staging copy and public checks each passed 300/0, with final actual-snapshot
-verification at 07:00:26 UTC on November 11. Its inclusion in this release still
-needs the fresh first-install and rendered-copy gates; in-place staging proof
-does not replace those.
+verification at 07:00:26 UTC on November 11. Its inclusion in this release passed
+the fresh first-install and rendered-copy gates; all 24 release Search captures
+match the accepted public staging captures byte for byte.
 
 `manifest.json` records the actual read-only live capture, the 15 route identities,
 all payload hashes and exact baseline hashes. The capture was operation
@@ -188,7 +192,7 @@ raw GUID; a published record requires the entity form. A four-key draft with
 final PHP can represent either skipped correction (the factory already preserved
 the code) or completed correction, so that one snapshot phase permits the two
 exact forms. Current state must still equal the entire recorded snapshot.
-Actual activation and later saves remain to be proved by the fresh-copy run.
+Actual activation and later saves passed in the fresh copy4 run above.
 
 `apply FILE` is a strict read-only repeat. `verify FILE [original]` uses the same
 complete snapshot validation and performs no database, cache or file writes.
@@ -242,9 +246,10 @@ was therefore wrong.
 The expected shared count is now the original count plus every surviving owned
 record, whether draft or published. Each has the two exact reviewed relationships.
 The installer requires activation to preserve those counts and deletion to
-reduce them by one, returning to 17 after full rollback. Those later transitions
-remain to be verified on the actual fresh copy; copy4 stopped before attribute
-initialization, activation or deletion. All other fields and relationships remain
+reduce them by one, returning to 17 after full rollback. The earlier November 10
+copy4 stopped before attribute initialization, activation or deletion. All these
+transitions passed in the complete November 11 copy4 (43006077712) above.
+All other fields and relationships remain
 exact. Counts are not normalized away or accepted from the current state.
 CSS and Astra use prepared binary compare-and-swap updates and require exactly
 one changed row. Existing posts' dates, metadata and revision history are not

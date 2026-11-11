@@ -1,6 +1,6 @@
 # Peek shared template
 
-**Current release preparation, November 11: navigation and Search verified on staging39.**
+**Current release preparation, November 11: staging and complete live-copy proof passed.**
 The [Search phase record](../../../docs/reviews/2026-11-11-search-contrast.md)
 records final source Gates **51/0**, a fresh staging39 copy with **300/0** browser
 checks and exact recovery, followed by backed-up deployment at **06:45:11 UTC**.
@@ -23,8 +23,9 @@ including recovery; dry preflight checks the same prerequisite as apply.
 The first-install release package now freezes the accepted quiet-navigation
 core and this exact Search CSS, with four approved data payloads unchanged.
 Its refreshed models passed **1,843 installer checks** (138 injected failures)
-and **163 evidence controls**, but
-its complete first-install/rendered/recovery cycle remains unproved. The
+and **163 evidence controls**. The complete corrected live-copy cycle passed
+**24,737/0 across all 28 browser suites**, exact recovery and verified cleanup
+at **11:33:22 UTC**, run **43006077712**. The
 [readiness record](../../../docs/reviews/2026-11-10-peek-release-readiness.md)
 contains the concrete copy request. On November 11 Ryan explicitly approved
 copying live's database/site files/uploads to a temporary GitHub Actions runner
@@ -48,8 +49,9 @@ install/repeat/exact rollback, unchanged metadata through restored-page visits,
 and reapplication. Retained core browsers passed **14,319/0**; WebKit disclosures
 passed **70/0**, but enlarged-text Therapeutic layout reported two ResizeObserver
 errors (**150/2**). The run stopped at **17/28 suites**; post-browser recovery is
-unproved. Cleanup verified deletion. The errors are under investigation, not
-excused. Live and staging39 were unchanged. The readiness record contains
+unproved in that failed run. Cleanup verified deletion. The observer correction
+and successful fresh proof below resolve these errors. Live and staging39 were
+unchanged by copy3. The readiness record contains
 the actual copy-only snapshot and artifact bindings; the deleted journal is not
 a staging/live recovery file.
 The minimal title-strip observer correction passed 55/0 source gates and a
@@ -59,8 +61,14 @@ staging39 apply run 43002377065 passed at 10:28:47 UTC, with exact core/four-dat
 state before/after all 19 routes and unchanged Search CSS. Public checks passed
 752/0; all 60 captures were reviewed. Final actual-snapshot and stored-fingerprint
 verification passed at 10:42:37 UTC, with exact published core and unchanged CSS.
-Staging verification is complete; the full corrected live-copy release cycle is
-next. See the resize phase record under docs/reviews for exact bindings.
+Staging verification is complete. The full corrected live-copy release cycle
+passed at 11:33:22 UTC, run 43006077712, source
+`a2a165a6c1ddeec92a7c1dd9dd2db094f5d93697`: 24,737/0 across all 28 suites,
+Home/client wording gates, installation/repeat and exact recovery before/after
+browsers, final reapply and verified cleanup. All original navigation and
+metadata witnesses remained exact. Source Gates passed 55/0. Independent audits
+found no blocker. See the [release review](../../../docs/reviews/2026-11-11-peek-live-release.md)
+and readiness record for exact bindings and the still-manual live sequence.
 Current guarded recovery restores frozen v10 using only actual staging snapshot
 `peek-template-core-title-resize-before-20261111-101808-92c3067f.json`, after
 fresh verified backup and exact state checks. The pre-write export is

@@ -1,8 +1,9 @@
 # Peek visitor-navigation release readiness
 
-**Decision: prepare the release; do not launch yet.** Ryan asked Codex to decide
-when it is a good time to push live and continue. This assessment does not start
-a live write or authorize a main merge. Work remains on
+**Decision: ready for Ryan's release go, followed by the guarded live dry run.**
+The accepted staging design and complete fresh live-copy installation, browser
+and recovery cycle have passed. The copy was deleted with verified cleanup.
+This assessment does not start a live write or authorize a main merge. Work remains on
 `claude/wizardly-bell-xu0rta`; the current visitor navigation is on staging39.
 
 **November 11: four further changes requested before live.** Removing the
@@ -23,13 +24,19 @@ work to the pre-live scope. The check did not authorize a live operation.
 A separate dark Search contrast issue is now corrected and verified on staging39;
 it is recorded separately from the four navigation changes.
 
-**November 11 release source refreshed; complete release cycle still unproved.** The
+**November 11 release source refreshed; complete release cycle passed.** The
 local first-install candidate now freezes the accepted quiet-navigation core,
 including immediate summary neighbours, index clearance and all four controls.
-The provisional source now also includes the narrow title-strip observer timing
+The tested source also includes the narrow title-strip observer timing
 correction described in the [resize record](2026-11-11-peek-title-resize.md).
-Its staging and complete release verification remain pending; the accepted
-quiet-navigation bytes are frozen as shared v10 for exact recovery.
+Its staging verification is complete: copied-site browsers **25,343/0** with
+exact recovery, public browsers **752/0**, and final actual-snapshot/stored
+verification at **10:42:37 UTC**. The accepted quiet-navigation bytes are frozen
+as shared v10 for exact recovery. The corrected complete live-copy release cycle
+passed as **43006077712** at **11:33:22 UTC**: **24,737/0 across all 28 browser
+suites**, installation/repeat/recovery before and after browsers, and verified
+cleanup. No live launch is enabled. The [release review](2026-11-11-peek-live-release.md)
+states the exact scope and the remaining manual launch sequence.
 Its four approved summary payloads are unchanged. The same reviewed 536-byte
 Search contrast fix is frozen as a separate required CSS payload. It is deployed
 and verified on staging39; live is unchanged. See the
@@ -82,7 +89,8 @@ passed. Complete leaf evidence was audited despite combined-console truncation;
 see the staging record. That phase
 identified a separate short-viewport index/announcement overlap, addressed by
 the November 11 staging update below. Both user acceptance checks are complete;
-the refreshed release still needs its own first-install/recovery rehearsal.
+the refreshed release's separate first-install/recovery rehearsal later passed
+as copy4 (43006077712), recorded below.
 Do not dispatch the previously blocked copy6 merely on a later permission reply
 without checking that the release package is still intended.
 
@@ -112,9 +120,11 @@ GitHub Actions runner to test installation and rollback, then delete the copy?
 Live stays unchanged; test logs and screenshots are retained.” This authorizes
 the complete isolated installation/repeat/rollback/reapply, rendered checks and
 cleanup lifecycle. It does not authorize a live write, live enablement or main
-merge. The pulled feature branch was current at `108e68a8788926393d4914ac0effa6dd696da9d3`.
-Payload bindings are unchanged from the final 51/0 source gate; only notes and
-operation requests changed. Do not ask for this same rehearsal permission again.
+merge. At that approval, the pulled feature branch was current at
+`108e68a8788926393d4914ac0effa6dd696da9d3`, with payload bindings unchanged
+from the then-final 51/0 source gate. Subsequent source corrections and their
+fresh evidence are recorded below. Do not ask for this same rehearsal permission
+again.
 
 **Earlier copy rehearsal rejection, now superseded for this approved scope.** Automatic
 approval review rejected the `peek-visitor-release-rehearse-6` dispatch before
@@ -324,7 +334,8 @@ snapshots, copied PHP tree, environment files or nested archives were retained.
 Independent browser audit confirmed the exact leaf totals and complete WebKit
 evidence; all 145 unique JPEGs decoded. All 16 Chromium layout captures match the
 accepted staging public captures byte for byte. The WebKit research box remained
-legible, but the two page errors remain release blockers.
+legible, but the two page errors blocked that candidate until the correction and
+successful fresh evidence below.
 
 The observer correction subsequently reproduced the error in six original-runtime
 WebKit structural-fixture trials and eliminated it in six corresponding trials,
@@ -332,9 +343,10 @@ with identical final geometry. It changes only the title-strip observer callback
 to coalesce layout work into the next frame. It does not filter errors. Source
 and focused-checker review found no blocker. Refreshed release models passed
 1,843 checks with all 138 injected failures; 163 evidence controls passed.
-These are offline results. The current candidate above awaits its own full
-source Gates, actual staging39-copy/deployment verification and complete
-live-sourced copy cycle. Live enablement remains disabled.
+These were offline results. At that stage the candidate still awaited full
+source Gates, actual staging39-copy/deployment verification and the complete
+live-sourced copy cycle; each subsequently passed as recorded below.
+Live enablement remains disabled.
 
 The corrected complete source Gates subsequently passed **55/0** at
 **09:23:32 UTC**, run **42993487769**, source
@@ -357,9 +369,71 @@ resize captures match the successful copy exactly. Final actual-snapshot
 verification **43005630245** passed at **10:41:20 UTC**, then stored inspection
 **43005811818** at **10:42:37 UTC** confirmed published core code `f152fad9…73566`
 and unchanged CSS29 `b024acc6…2c69b`. Staging verification is complete; the full
-new live-sourced first-install/browser/recovery cycle remains pending. The resize
+new live-sourced first-install/browser/recovery cycle passed as recorded next. The resize
 record contains exact source bindings, backup evidence, state hashes, artifacts
 and informational comparison limits.
+
+The already approved fresh live-copy cycle `peek-visitor-release-quiet-search-copy-4`
+was dispatched as Actions **43006077712**, source
+`a2a165a6c1ddeec92a7c1dd9dd2db094f5d93697`, after final staging verification.
+It uses the unchanged corrected runtime, installer and manifest recorded above.
+It passed at **11:33:22 UTC**. Its complete 28-leaf browser matrix,
+first-install/repeat/recovery sequence, post-browser recovery and verified cleanup
+all completed. No live website write or active live enablement was performed.
+Complete source Gates for that exact request commit passed **55/0** at
+**10:52:41 UTC**, Actions **43006077978**. All gate outcomes and the source
+binding were read; the separate rendered operation passed **24,737/0**, all
+**13/13 phases and 28/28 unique leaf suites**. Home and client-page regulated
+wording/structure/link checks passed, with no new PHP errors.
+
+The first apply and read-only repeat preserve the exact first snapshot binding.
+Both rollback cycles restore original state
+`b6a5bdc6415078fb7f1a68886309206194bb15fc91dee610233be36778227d56`,
+including after the complete browser matrix and restored-page GETs. All 15
+original navigation signatures return without Peek. Fingerprints A=C=E are
+byte-identical, B=B2 is identical, and B/D/F differ only in the five newly owned
+snippet IDs and derived WPCode cache. The actual second snapshot and its complete
+applied state are identical before/after browser activity. Final reapply uses a
+third distinct snapshot and five distinct IDs, verified in full.
+
+| Copy-only snapshot under `/backups/` | Snapshot SHA256 | IDs: Thai / Therapeutic / Deep / Chair / core | Applied state SHA256 |
+|---|---|---|---|
+| `peek-release-before-20261111-104623-a12201c1.json` | `4d3ab9ab233d807e7e3229b3108eb7f79dbe563a315d328a024dd51e1298c8a1` | 1339 / 1340 / 1341 / 1342 / 1343 | `47c2f59b08ec5cd44ac0b6be432602e517be7d57c1964f5510329f50b9b4ee0c` |
+| `peek-release-before-20261111-104641-86b32b22.json` | `69ef7264fb3086141d86c45858b3097e9202208e4e42459e321df59556e11bc2` | 1344 / 1345 / 1346 / 1347 / 1348 | `d4c0857f1d78bb7c5868f0db7c96feb74a93356895e80347abbb423eafbb2207` |
+| `peek-release-before-20261111-113314-7b9ee1d6.json` | `659d34619ee3c94d0267f00217343dd65fdaba79b362a2dfbc8c7458861e82a7` | 1349 / 1350 / 1351 / 1352 / 1353 | `37d6913208e4bec7da0dbc1515eb46d19b086f32db84225278dc86fd9690d34e` |
+
+These journals were deleted with the temporary copy; none is a staging or live
+recovery file. Cleanup verified the owned relay, containers, volumes, networks
+and temporary directory absent. Artifact **13850624672**, **98,045,226 bytes**,
+SHA256 `dbd27f04705ff45b087f6c9266b516444b7e61c0451d66c6b549df8ee961296a`,
+passed exact size/digest, ZIP integrity and safe-path checks. The full operation
+log was read instead of relying on the report's truncated last 400 lines.
+
+Independent native and browser audits found no blocker. All **90** before/after
+metadata observations contain the same **680 rows**, including 17 asset-cache
+rows: **61,200** validated descriptors, set SHA256
+`3792e5f62ab36c1e4d52a44dd3ae9b5470ca05f2e3b97369617f96931afb5fa8`.
+All three 15-route original-navigation records are byte-identical, SHA256
+`283c52115b172d4dbf808a0f51f81a75caa245febc3547f7091b22fa76bb33fa`.
+All 14 Spectra source witnesses match. Home gates passed **35/0** and client
+wording/structure/link gates **322/0**; PHP diagnostics remain identical, with
+only the pre-existing WP-CLI deprecation. The 230 regular retained files contain
+no private SQL, configuration, recovery journals, PHP source or backups. Twelve
+public Search HTML captures are intentional rendered evidence.
+
+The browser audit recomputed the unique leaf totals and replayed the strict
+focused/WebKit/Search parsers; browser stderr is empty. Both previously failing
+WebKit enlarged-text Therapeutic cases pass **9/9**. All **433 unique JPEGs**
+decode without conflicts. All 24 Search captures match accepted public staging
+byte for byte. Of 409 captures shared with the fresh staging rehearsal, 310 are
+byte-identical; reviewed differences show small rail/text-rendering variations,
+without a new visual regression. The enlarged research card itself is unchanged;
+its compared image differs in only 76 rail pixels. The existing artificial
+150% root-size fixture still wraps the site title; this is not new and does not
+claim OS text-scale coverage. Standalone resize tests belong to the earlier
+staging evidence, not this 28-leaf release count. Linux WebKit and simulated touch
+do not replace real-device or assistive-technology testing; Ryan's Safari
+acceptance is separately recorded above.
 
 ## Disabled live-release proposal
 
@@ -385,8 +459,8 @@ Actual PHP-emitted local markers passed the unchanged Python rehearsal parser.
 Raw-profile derivation, syntax, ShellCheck, existing installer-drift gates and
 patch applicability passed; independent review cleared the exact patch hash.
 These tests model execution and do not prove live SSH, backup-store availability
-or installation. Before asking Ryan for release go, finish the corrected staging
-and complete release-copy evidence and attach their exact source bindings here.
+or installation. The corrected staging and complete release-copy evidence above
+now supply the required site proof, with their exact source bindings.
 After that go, the repository's required sequence remains: enable the reviewed
 patch, run a read-only live dry run that refuses drift, prepare the live request
 and PR, then Ryan personally merges and starts Site ops (LIVE).
@@ -506,7 +580,9 @@ itself took seconds; emitting its console copy delayed publication by minutes.
 The refreshed first-install package lives in
 `scripts/work-with-me-employer/link-ideas/peek-release/`. It accepts only exact
 `http://localhost:8090`; no staging/live installer or live request is enabled.
-Its current hashes and **1,694 / 162** offline check totals are recorded above.
+Its current hashes and **1,843 installer / 163 evidence** offline check totals
+are recorded above. The complete source Gates passed **55/0**, and the actual
+copy cycle passed **24,737/0** with exact recovery as recorded above.
 The release browser adapter retains the original 15 visitor suites and two
 supplemental WebKit suites, then directly runs the existing neighbour,
 index-clearance and quiet-navigation suites in Chromium/Firefox/WebKit and the
@@ -775,19 +851,20 @@ The subsequent copy6 dispatch was rejected before execution as recorded above.
 1. **Complete:** Search's staging39 source, fresh-copy, deployment, public-browser
    and actual-snapshot gates passed as recorded above. Its exact CSS is frozen
    in this package. Earlier failed path-preflight attempts remain documented.
-2. **Source CI and copy permission complete:** reconfirm the captured
-   baseline against the actual copy; do not silently rebase changed stores or
-   retry the rejected copy6 request unchanged.
-3. Rehearse this exact transition on a fresh isolated copy of current live, including
+2. **Complete:** source CI, explicit copy permission and the exact captured
+   baseline comparison against the fresh copy passed without rebasing stores.
+3. **Complete in copy4 (43006077712):** rehearsed this exact transition on a fresh isolated copy of current live, including
    media: install, repeat, exact rollback, reapply, regulated-wording and rendered
-   browser gates, then post-browser recovery. Test the actual visitor inventory,
+   browser gates, then post-browser recovery. Tested the actual visitor inventory,
    including search/404; staging's 19-page inventory is not the live inventory.
-   Require all 28 leaf suites, including the supplemental Linux WebKit checks.
+   All 28 leaf suites passed, including the supplemental Linux WebKit checks.
    Linux WebKit remains engine evidence, not physical Safari testing. In
    particular, actual creation, later saves, activation, exact shared-count
-   changes and deletion must pass: copy5 stopped during first code correction.
-4. Prepare and independently review the live profile and dedicated first-install
-   push/recovery wrapper described below. Bind a live dry run to the exact current
+   changes and deletion passed; the historical November 10 copy5 had stopped
+   during first code correction.
+4. **Prepared and independently reviewed, still disabled:** the live profile and
+   dedicated first-install push/recovery wrapper described above. After Ryan's go,
+   bind a live dry run to the exact current
    baseline, require fresh verified off-site backups before apply and rollback,
    retain the actual journal, and make purge/rendered/full-state checks decisive.
    Preserve older staging rollback endpoints. Adding a live hostname to a
@@ -806,10 +883,11 @@ Recommend a window when these conditions pass and someone can immediately check
 the live result and initiate the tested rollback if necessary. Traffic-dependent
 timing cannot be inferred from the evidence available here.
 
-## Remote package still to prepare
+## Remote-package requirements, now implemented in the disabled proposal
 
-A source-only review identified these remaining implementation requirements;
-none enables live or changes an Actions workflow:
+A source-only review identified these implementation requirements. The disabled
+proposal above implements and tests them; no active live tooling or Actions
+workflow is changed:
 
 - Keep the shared frozen payloads and select explicit copy/live profiles. The
   existing manifest pins localhost-mapped post/option hashes and the mapped
@@ -836,7 +914,8 @@ none enables live or changes an Actions workflow:
 These findings were independently reviewed against `push-peek-input-focus.sh`,
 `run-op.sh`, the installer and evidence parser. The existing manual LIVE route
 remains sufficient after acceptance and Ryan's go; no new workflow, live request
-or live enablement has been prepared.
+or active live enablement has been performed. The reviewed preparation remains
+in the disabled patch above.
 
 ## Supplemental engine preparation
 
