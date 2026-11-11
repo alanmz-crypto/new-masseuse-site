@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-11 10:39 UTC  **PASS**  `peek-title-resize-public-1`  [reports/2026-11-11/103939-peek-title-resize-public-1.md](reports/2026-11-11/103939-peek-title-resize-public-1.md)  (run 43004137038)
 - 2026-11-11 10:28 UTC  **PASS**  `peek-title-resize-apply-1`  [reports/2026-11-11/102849-peek-title-resize-apply-1.md](reports/2026-11-11/102849-peek-title-resize-apply-1.md)  (run 43002377065)
 - 2026-11-11 10:14 UTC  **PASS**  `peek-title-resize-dry-1`  [reports/2026-11-11/101458-peek-title-resize-dry-1.md](reports/2026-11-11/101458-peek-title-resize-dry-1.md)  (run 43001945737)
 - 2026-11-11 10:11 UTC  **PASS**  `peek-title-resize-copy-1`  [reports/2026-11-11/101142-peek-title-resize-copy-1.md](reports/2026-11-11/101142-peek-title-resize-copy-1.md)  (run 42994882056)
