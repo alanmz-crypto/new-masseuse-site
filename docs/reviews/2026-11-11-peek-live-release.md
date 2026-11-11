@@ -60,7 +60,7 @@ and tested runtime bytes are unchanged. The [live dry run](https://github.com/al
 passed against the current live stores. Final source CI must also pass before
 merge; the copied-site proof does not waive either check.
 
-You retain both launch actions: merge the reviewed PR after Gates passes,
+You retain both launch actions: merge [PR #80](https://github.com/alanmz-crypto/new-masseuse-site/pull/80) after Gates passes,
 then start **Actions → Site ops (LIVE) → Run workflow** on **main**, using
 confirmation ID **`live-peek-visitor-release-20261111-1`**. The request runs
 `link-ideas/push-peek-release.sh --apply` with automatic post-change/restore
@@ -76,6 +76,6 @@ distinct release go. No further preparation approval is needed.
 I finished: the complete release rehearsal and review.
 Next step: After final Gates passes, Ryan merges the release PR and starts Site ops (LIVE) with the ID above.
 Next lane: Codex prepares; Ryan merges and starts live.
-See my work: [Detailed release evidence](2026-11-10-peek-release-readiness.md).
+See my work: [Release PR #80](https://github.com/alanmz-crypto/new-masseuse-site/pull/80).
 Arc: none (ad-hoc)
 TL;DR: Ready for the guarded live-release sequence; live remains unchanged.

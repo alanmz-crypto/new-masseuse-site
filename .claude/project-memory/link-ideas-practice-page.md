@@ -5,6 +5,10 @@ metadata:
   type: project
 ---
 
+**Release [PR #80](https://github.com/alanmz-crypto/new-masseuse-site/pull/80) is prepared.**
+Check final Gates there, then Ryan merges and manually starts Site ops (LIVE)
+with `live-peek-visitor-release-20261111-1`. No live run or snapshot yet.
+
 **Live preflight passed November 11 at 16:09:22 UTC.** Actions **43055400254**,
 source `36263729dc0b92ad4885748cd2f2d665cb2bb2ed`, verifies the exact raw-live
 baseline and all plugin source identities. The wrapper resolves SiteGround's

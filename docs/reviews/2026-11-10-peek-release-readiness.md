@@ -1,5 +1,12 @@
 # Peek visitor-navigation release readiness
 
+**Release PR prepared: [#80](https://github.com/alanmz-crypto/new-masseuse-site/pull/80).**
+The manual request is committed; nothing has run on live. GitHub records final
+Gates and merge status. Once green, Ryan merges and starts Site ops (LIVE) on
+main with `live-peek-visitor-release-20261111-1`. After that actual run, inspect
+its full report and record its own live backup and journal before claiming a
+completed deployment. No further preparation permission is pending.
+
 **Final live preflight PASS, November 11 at 16:09:22 UTC.** Request
 `peek-visitor-release-live-dry-3`, Actions **43055400254**, source
 `36263729dc0b92ad4885748cd2f2d665cb2bb2ed`, passes after resolving the selected

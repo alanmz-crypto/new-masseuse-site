@@ -9,13 +9,20 @@ metadata:
 A phone cloud session (https://claude.ai/code, repo `alanmz-crypto/new-masseuse-site`) sees ONLY this repository: not his computer, not his global `~/.claude/CLAUDE.md`, not his local Claude memory, not convmem. Everything that must not be lost is therefore written here and in the notes this index points to.
 First message to send in a fresh phone session: **"Read .claude/project-memory/open-items.md and tell me what is due."**
 
+**Peek release PR prepared: [PR #80](https://github.com/alanmz-crypto/new-masseuse-site/pull/80).**
+Merge only after its final Gates is green, then manually start Site ops (LIVE)
+on main with `live-peek-visitor-release-20261111-1`. The PR contains the exact
+two phone steps. No further preparation approval is pending; no live run yet.
+GitHub supplies the current CI/merge status. After Ryan starts it, read the actual
+report and record the new live backup/snapshot; do not reuse copy/staging records.
+
 **Live preflight passed; manual release preparation, November 11.** The final
 read-only dry run **43055400254** passed at **16:09:22 UTC**, source
 `36263729dc0b92ad4885748cd2f2d665cb2bb2ed`. SiteGround's logical-home alias was
 resolved before WordPress bootstrap; all strict plugin hashes and live baseline
 guards passed unchanged. The selected manual request is
 `live-peek-visitor-release-20261111-1`, script `link-ideas/push-peek-release.sh`,
-args `--apply`, automatic checks enabled. Finish final Gates and the release PR,
+args `--apply`, automatic checks enabled. The release PR is open; finish final Gates,
 then Ryan merges and starts **Site ops (LIVE)** on **main** with that ID. Live
 is unchanged; no live recovery snapshot exists before his actual run.
 
