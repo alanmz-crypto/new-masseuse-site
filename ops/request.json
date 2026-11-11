@@ -1,9 +1,8 @@
 {
-  "id": "peek-title-resize-copy-1",
-  "op": "rehearse",
+  "id": "peek-title-resize-dry-1",
+  "op": "run",
   "target": "staging39",
-  "installer": "link-ideas/core-title-resize/install-peek-core-title-resize.php",
-  "args": [
-    "--with-uploads"
-  ]
+  "script": "link-ideas/push-peek-title-resize.sh",
+  "args": [],
+  "tests": "auto"
 }
