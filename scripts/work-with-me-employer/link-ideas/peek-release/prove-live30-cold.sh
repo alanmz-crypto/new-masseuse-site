@@ -433,7 +433,7 @@ PY
       output=$(dc run --rm -T --no-deps --user 0 --entrypoint php wpcli \
         /wwm/link-ideas/peek-release/verify-render.php "$private_inside/recovery-response.private.html" \
         "$private_inside/peek-release-before-20261111-162615-e00022b6.json" "$which" "$route" \
-        2> "$work/render.private.stderr")
+        < /dev/null 2> "$work/render.private.stderr")
       render_rc=$?
       [ "$render_rc" -eq 0 ] && [ "$output" = "Exact public response verified: $which $route" ] || fail "isolated response verifier failed"
       echo "RECOVERY-RENDER $which $route HTTP=$code exact=true" | tee -a "$out/render-$which.log" || fail "render evidence retention failed"

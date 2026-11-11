@@ -1,5 +1,19 @@
 # Peek visitor-navigation release readiness
 
+**Actual-state recovery copy 1 stopped in its response loop, November 11 at
+18:08:52 UTC.** `peek-live30-recovery-copy-1`, Actions **43074759786**, source
+`9fb36811170675f766add419e49f160cac5e7f5a`, imported fresh current live SQL
+without data/URL changes (4,189,962 bytes, SHA256
+`8c3f6ba96d5ef0367e33df00dce56d899506f87deaa19d3b3d0a2e1dd90df5ad`).
+The initial incident verification passed with the actual journal, actual IDs
+and exact `b34e86f7…af4427` state. The homepage response also passed, but Compose
+inherited the route-list stdin, leaving only one of 17 responses checked. The
+explicit count guard failed; no rollback was reached and no full response or
+recovery success is claimed. All copy resources were deleted with verified
+cleanup; live was read-only. The correction redirects only the verifier child's
+stdin to `/dev/null`, with a fixture that drains stdin and reproduces the broken
+case without that redirection. A new isolated-copy run follows; never rerun #30.
+
 **Cold reproduction PASS, November 11 at 17:57:32 UTC.**
 `peek-live30-cold-proof-1`, Actions **43072850520**, source
 `f13343b584253892c5797c2b70fd71f8f9fdadc6`, used the exact pre-apply SQL and

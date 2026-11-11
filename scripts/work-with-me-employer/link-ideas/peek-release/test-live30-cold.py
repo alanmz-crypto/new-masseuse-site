@@ -241,7 +241,7 @@ with tempfile.TemporaryDirectory(prefix='cold-io-') as directory:
 LIFECYCLE = SOURCE[SOURCE.index('dc up -d db >'):]
 COMMAND_DOUBLE = r'''#!@@PYTHON@@
 from pathlib import Path
-import json,os,sys,time
+import hashlib,json,os,sys,time
 args=sys.argv[1:];name=Path(sys.argv[0]).name
 base=Path(os.environ['COLD_FIXTURE']);mode=os.environ['COLD_MODE']
 fd=os.open(base/'trace',os.O_WRONLY|os.O_CREAT|os.O_APPEND,0o600)
@@ -262,6 +262,9 @@ if name=='dc':
             assert args[:10]==['run','--rm','-T','--no-deps','--user','0','--entrypoint','php','wpcli','/wwm/link-ideas/peek-release/verify-render.php']
             assert args[10:12]==['/home/customer/private-backups/recovery-response.private.html','/home/customer/private-backups/peek-release-before-20261111-162615-e00022b6.json']
             assert 'SYNTHETIC_PRIVATE_RESPONSE' in (base/'work/backups/recovery-response.private.html').read_text()
+            consumed=sys.stdin.buffer.read()
+            fd=os.open(base/'trace',os.O_WRONLY|os.O_APPEND)
+            os.write(fd,(json.dumps(['render-stdin',args[12],args[13],len(consumed),hashlib.sha256(consumed).hexdigest()])+'\n').encode());os.close(fd)
             hit('render-verify');print('Exact public response verified: '+args[12]+' '+args[13]);sys.exit(0)
         if os.environ.get('COLD_PROOF_MODE')=='recovery':
             n=counter('recovery-mode-count')
@@ -360,7 +363,12 @@ trap 'result=$?; if [ -n "${release_relay_pid:-}" ]; then kill "$release_relay_p
 '''
         env={'PATH':str(commands)+os.pathsep+os.environ['PATH'],'COLD_FIXTURE':str(base),'COLD_MODE':mode,
              'COLD_SOURCE':str(HERE),'COLD_CI':str(ROOT/'scripts/ci'),'COLD_PROOF_MODE':'recovery' if recovery else 'cold'}
-        result=shell(setup+LIFECYCLE,env=env,timeout=12)
+        lifecycle=LIFECYCLE
+        if mode=='render-stdin-leak':
+            redirection='< /dev/null 2> "$work/render.private.stderr"'
+            check(lifecycle.count(redirection)==1, 'negative control removes only the response verifier stdin isolation')
+            lifecycle=lifecycle.replace(redirection,'2> "$work/render.private.stderr"',1)
+        result=shell(setup+lifecycle,env=env,timeout=12)
         events=[json.loads(line) for line in (base/'trace').read_text().splitlines()]
         requests=[event for event in events if event[0]=='curl']
         check(result.returncode==expected, ('lifecycle result',mode,result.returncode,result.stderr))
@@ -371,7 +379,7 @@ trap 'result=$?; if [ -n "${release_relay_pid:-}" ]; then kill "$release_relay_p
         pass_marker=b'RECOVERY COPY PASSED' if recovery else b'COLD PROOF PASSED'
         check((pass_marker in result.stdout)==(expected==0), ('no false final PASS',mode))
         if recovery:
-            check(not any(any('playwright' in arg or 'check-peek' in arg for arg in event) for event in events),
+            check(not any(any(isinstance(arg,str) and ('playwright' in arg or 'check-peek' in arg) for arg in event) for event in events),
                   'recovery runs only fixed static responses, without a browser suite')
         if not mode and recovery:
             check(sum(event[:2]==['dc','run'] and 'wp' in event for event in events)==7,
@@ -387,6 +395,16 @@ trap 'result=$?; if [ -n "${release_relay_pid:-}" ]; then kill "$release_relay_p
             check(not (work/'backups/recovery-response.private.html').exists() and
                   all(len((out/('render-'+phase+'.log')).read_text().splitlines())==17 for phase in ['applied','original']),
                   '34 safe response receipts retained, transient private response removed')
+            consumed=[event for event in events if event[0]=='render-stdin']
+            check(len(consumed)==34 and all(event[3]==0 and event[4]==hashlib.sha256(b'').hexdigest() for event in consumed),
+                  'all 34 PHP verifier calls consume isolated empty stdin and preserve the route inventory')
+        if mode=='render-stdin-leak':
+            paths=[page['path'] for page in spec['pages']]+['/?s=massage','/peek-release-not-a-real-page/']
+            remaining=('\n'.join(paths[1:])+'\n').encode()
+            consumed=[event for event in events if event[0]=='render-stdin']
+            check(consumed==[['render-stdin','applied',paths[0],len(remaining),hashlib.sha256(remaining).hexdigest()]] and
+                  b'response verification incomplete' in result.stderr,
+                  'without stdin isolation the first verifier consumes the remaining 16 routes and fails incomplete')
         if not mode and not recovery:
             captures=[event[5] for event in events if event[0]=='python3' and len(event)>5 and event[4]=='capture']
             check(captures==['cold-import','after-bootstrap','first-1254','first-1255','first-1257','repeat-1254','repeat-1255','repeat-1257'],
@@ -426,7 +444,8 @@ for mode in ['final','tee:8']:
     lifecycle_case(mode,1,6)
 lifecycle_case(gets=34,recovery=True)
 for mode,gets in [('recovery-mode:4',17),('recovery-marker:rollback',17),('recovery-final',34),
-                  ('private-input-changed',34),('private-mode-changed',34),('render-verify',1),('http:1',1)]:
+                  ('private-input-changed',34),('private-mode-changed',34),('render-verify',1),('http:1',1),
+                  ('render-stdin-leak',1)]:
     lifecycle_case(mode,1,gets,recovery=True)
 
 # Retention executes unchanged against exact synthetic output names. Unexpected
