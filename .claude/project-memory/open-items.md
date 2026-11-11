@@ -9,19 +9,30 @@ metadata:
 A phone cloud session (https://claude.ai/code, repo `alanmz-crypto/new-masseuse-site`) sees ONLY this repository: not his computer, not his global `~/.claude/CLAUDE.md`, not his local Claude memory, not convmem. Everything that must not be lost is therefore written here and in the notes this index points to.
 First message to send in a fresh phone session: **"Read .claude/project-memory/open-items.md and tell me what is due."**
 
-**Active task, November 10: small-screen index clearance, staging39 only.**
-Ryan authorized this fix after accepting the summary-neighbour layout on iPhone
-Safari. Fresh actual Thai captures reproduce the index over the booking notice
-at 390×500 and under the header at 844×342. The
-[index-clearance record](../../docs/reviews/2026-11-10-peek-index-clearance.md) tracks the candidate, independent geometry
-checks and guarded staging39-copy/deployment evidence. Candidate only; no new
-staging write yet. Accepted neighbours bytes are frozen as shared v8; the new
-`core-index-clearance` transition has its own snapshot and rollback to v8.
-Idle navigation waits only when it cannot fit at its existing target sizes;
-scrolling restores it, while summaries and the title strip remain available.
-Live remains unchanged and outside this task.
+**Current staging39, November 11: small-screen index clearance deployed.**
+The idle index clears the visible header, booking notice and title strip, and the
+rail respects Corporate/Work With Me's fixed bottom actions. Idle navigation
+waits only when full-size targets cannot fit; scrolling or resizing restores it.
+Accepted summaries, immediate neighbours and gestures remain intact.
+See the [index-clearance record](../../docs/reviews/2026-11-10-peek-index-clearance.md) for exact evidence.
+Source Gates passed **45/0**; a fresh staging39 copy passed **23,249/0 across
+21 browser leaves**, including Chromium/Firefox/WebKit and exact recovery after
+browser activity. All 108 focused screenshots were reviewed.
+Applied to #1380 at **00:53:57 UTC**; actual-snapshot verification passed at
+**00:57:48 UTC**, with exact core/four data state before/after 19 HTTP200 renders.
+The automatic public post-check was **INVALID HTTP202**, with nothing tested;
+one later public-browser attempt is pending. Do not describe it as verified or
+retry the hosting challenge in a loop. Main and live remain unchanged.
 
-**Current task, November 10: fixed summary neighbours, staging39 only.** Ryan
+Current recovery starts with `core-index-clearance` → frozen v8, using only
+`peek-template-core-index-clearance-before-20261111-005357-31ca0040.json`,
+after fresh verified backup and exact ownership/state checks. This actual
+snapshot and `staging39-before-peek-index-clearance-20261111-005342-74246.sql`
+were verified encrypted off-site. Older recovery routes below apply only after
+this restoration. The new index behavior still needs its narrow iPhone Safari
+check; the previously accepted summary layout does not need a generic retest.
+
+**Previous accepted baseline, November 10: fixed summary neighbours.** Ryan
 reports missing neighbouring links and scrolling trouble across the four service
 pages with Safari’s address bar expanded. They requested only the immediate
 previous summary above and next below each open box. The
@@ -35,11 +46,10 @@ verification passed at 15:19:21: exact core/four data state before and after
 10: “Looks good on Safari. No problems I see.” This closes the user acceptance
 check; it is not live-copy or deployment permission. Release-package work remains;
 the blocked temporary live-copy permission remains unapproved.
-Separate pre-live clearance item: the left index icon overlaps the announcement
-in 390×500 captures. Its positioning code is unchanged from v7, but a rendered
-v7 baseline and physical Safari hit-testing have not established its origin.
+The separate index overlap recorded in 390×500 captures is addressed by the
+November 11 staging update above; its narrow physical Safari check remains.
 
-Current recovery starts with `core-neighbours` → frozen v7, using
+At that previous baseline, recovery started with `core-neighbours` → frozen v7, using
 `peek-template-core-neighbours-before-20261110-143200-81725f33.json`,
 after a fresh verified backup and exact ownership/state checks. All older shared-core
 recovery sequences below apply only after that restoration.

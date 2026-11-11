@@ -13,13 +13,22 @@ It is not the new candidate, and its old browser evidence cannot validate the
 new layout. The neighbour core is deployed on staging39: copy **19,061/0**,
 public **15,646/0 across 16 suites**, and exact actual-snapshot verification
 passed. Complete leaf evidence was audited despite combined-console truncation;
-see the staging record. The live package remains the older payload. Short-viewport
-left-index/announcement overlap is a separate remaining clearance concern before
-live; its code is unchanged from v7, but its rendered origin is unproved.
-The user acceptance check is complete; next resolve the separate clearance item,
-refresh the release payload and complete its first-install/recovery rehearsal.
+see the staging record. The live package remains the older payload. That phase
+identified a separate short-viewport index/announcement overlap, addressed by
+the November 11 staging update below. The neighbours acceptance check is complete;
+finish the index verification, refresh the release payload and complete its
+first-install/recovery rehearsal.
 Do not dispatch the previously blocked copy6 merely on a later permission reply
 without checking that the release package is still intended.
+
+**November 11 index-clearance update is now on staging39.** The
+[index-clearance record](2026-11-10-peek-index-clearance.md) supersedes the
+clearance status above: source Gates 45/0, fresh-copy browsers 23,249/0 with
+exact post-browser recovery, then in-place deployment and exact actual-snapshot
+verification across all 19 routes. The automatic public check was INVALID
+HTTP202; its one later attempt is pending. A narrow iPhone Safari index-position
+check remains. The first-install release payload is still older and the
+live-data-copy permission boundary below remains unchanged.
 
 **Current iPhone Safari user acceptance passed.** After the neighbours deployment
 and requested check, Ryan reported on November 10: **“Looks good on Safari.

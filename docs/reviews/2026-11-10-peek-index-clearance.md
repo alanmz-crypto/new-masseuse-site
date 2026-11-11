@@ -241,8 +241,15 @@ server-side exact-render/state checks, but is not public-browser evidence.
 Do not retry in a loop. The export restore test imported successfully and
 compared all 104 fingerprints; only #1380 and `wpcode_snippets` differ, exactly
 the intended update. Its informational exit3 records those expected differences.
-The complete apply report was read. Standalone actual-snapshot verification and
-one later public-browser attempt remain before closing this phase.
+The complete apply report was read independently and by the primary agent.
+
+Standalone actual-snapshot verification `peek-index-clearance-s39-verify-1`,
+[Actions 42935340963](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42935340963),
+commit `7203ceba5`, finished **00:57:48 UTC, PASS**. It again matched the exact
+core/four data state before and after 19 HTTP200 renders with exact served
+core/style/data scope. The complete report was read.
+The one later public-browser attempt was requested as
+`peek-index-clearance-s39-public-1`, commit `4998bd688`, after this verification.
 
 Current recovery must start with `push-peek-index-clearance.sh --rollback`
 and this actual staging snapshot, after fresh verified backup and exact

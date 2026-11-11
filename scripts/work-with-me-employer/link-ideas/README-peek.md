@@ -1,23 +1,34 @@
 # Peek shared template
 
-**Active task, November 10: small-screen index clearance, staging39 only.**
-Ryan authorized this fix after accepting the summary-neighbour layout on iPhone
-Safari. Fresh actual Thai captures reproduce the index over the booking notice
-at 390×500 and under the header at 844×342. The
-[index-clearance record](../../../docs/reviews/2026-11-10-peek-index-clearance.md) tracks the candidate, independent geometry
-checks and guarded staging39-copy/deployment evidence. Candidate only; no new
-staging write yet. Accepted neighbours bytes are frozen as shared v8; the new
-`core-index-clearance` transition has its own snapshot and rollback to v8.
-Idle navigation waits only when it cannot fit at its existing target sizes;
-scrolling restores it, while summaries and the title strip remain available.
-Live remains unchanged and outside this task.
+**Current staging39, November 11: small-screen index clearance deployed.**
+The idle index clears the visible header, booking notice and title strip, and the
+rail respects Corporate/Work With Me's fixed bottom actions. Idle navigation
+waits only when full-size targets cannot fit; scrolling or resizing restores it.
+Accepted summaries, immediate neighbours and gestures remain intact.
+See the [index-clearance record](../../../docs/reviews/2026-11-10-peek-index-clearance.md) for exact evidence.
+Source Gates passed **45/0**; a fresh staging39 copy passed **23,249/0 across
+21 browser leaves**, including Chromium/Firefox/WebKit and exact recovery after
+browser activity. All 108 focused screenshots were reviewed.
+Applied to #1380 at **00:53:57 UTC**; actual-snapshot verification passed at
+**00:57:48 UTC**, with exact core/four data state before/after 19 HTTP200 renders.
+The automatic public post-check was **INVALID HTTP202**, with nothing tested;
+one later public-browser attempt is pending. Do not describe it as verified or
+retry the hosting challenge in a loop. Main and live remain unchanged.
 
-**Current work: one summary neighbour above and below, staging39 only.** Ryan
+Current recovery starts with `core-index-clearance` → frozen v8, using only
+`peek-template-core-index-clearance-before-20261111-005357-31ca0040.json`,
+after fresh verified backup and exact ownership/state checks. This actual
+snapshot and `staging39-before-peek-index-clearance-20261111-005342-74246.sql`
+were verified encrypted off-site. Older recovery routes below apply only after
+this restoration. The new index behavior still needs its narrow iPhone Safari
+check; the previously accepted summary layout does not need a generic retest.
+
+**Previous accepted baseline: one summary neighbour above and below.** Ryan
 requested this uniform layout after reporting missing links and scrolling
 trouble with Safari's expanded address bar. The
 [active phase record](../../../docs/reviews/2026-11-10-peek-summary-neighbours.md)
-tracks the deployed core, tests and actual recovery snapshot. `peek-nav.php`
-is deployed to staging39 #1380; the preceding input-focus core is frozen as
+tracks that deployed core, tests and actual recovery snapshot. Its accepted
+bytes are now frozen as shared v8; the preceding input-focus core is frozen as
 shared v7. Recovery snapshot:
 `peek-template-core-neighbours-before-20261110-143200-81725f33.json`.
 Copy rehearsal passed **19,061/0**; public browser checks passed **15,646/0**
@@ -30,7 +41,7 @@ first-install payload has not been updated to this core. The phase
 record also tracks a separate short-viewport left-index/announcement overlap;
 its positioning code is unchanged, and its rendered origin remains unproved.
 
-Current recovery starts with `core-neighbours` → frozen v7, using
+At that previous baseline, recovery started with `core-neighbours` → frozen v7, using
 `peek-template-core-neighbours-before-20261110-143200-81725f33.json`,
 after a fresh verified backup and exact ownership/state checks. All older shared-core
 recovery sequences below apply only after that restoration.
