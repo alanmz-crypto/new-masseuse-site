@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-11 05:32 UTC  **PASS**  `peek-quiet-nav-public-1`  [reports/2026-11-11/053231-peek-quiet-nav-public-1.md](reports/2026-11-11/053231-peek-quiet-nav-public-1.md)  (run 42961860790)
 - 2026-11-11 04:48 UTC  **PASS**  `peek-quiet-nav-apply-1`  [reports/2026-11-11/044804-peek-quiet-nav-apply-1.md](reports/2026-11-11/044804-peek-quiet-nav-apply-1.md)  (run 42960510404)
 - 2026-11-11 04:37 UTC  **PASS**  `peek-quiet-nav-dry-1`  [reports/2026-11-11/043717-peek-quiet-nav-dry-1.md](reports/2026-11-11/043717-peek-quiet-nav-dry-1.md)  (run 42960381058)
 - 2026-11-11 04:32 UTC  **PASS**  `peek-quiet-nav-rehearse-2`  [reports/2026-11-11/043200-peek-quiet-nav-rehearse-2.md](reports/2026-11-11/043200-peek-quiet-nav-rehearse-2.md)  (run 42955015715)
