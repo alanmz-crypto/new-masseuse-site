@@ -1,7 +1,7 @@
 # Peek release review
 
-**Release go received; live is unchanged.** Your “Continue” authorizes the
-reviewed tooling, live dry run and PR/request preparation. You still merge and
+**Release go received; live dry run passed; live is unchanged.** Your “Continue”
+authorized the reviewed tooling and PR/request preparation. You still merge and
 start the LIVE workflow. The accepted staging design
 and the complete installation/browser/rollback rehearsal on a fresh copy of
 live have passed. The temporary copy was deleted with verified cleanup.
@@ -36,6 +36,7 @@ The final evidence is complete:
 | Staging39 deployment and final verification | Fresh backups verified off-site; exact core, summaries and CSS |
 | Focused public staging browsers | 752 passed, 0 failed |
 | Fresh live-copy browsers | 24,737 passed, 0 failed; all 28 suites/13 phases |
+| Read-only live preflight | Exact live baseline and plugin source checks passed at 16:09:22 UTC |
 | Installation and recovery on the copy | Install, repeat, exact rollback, reapply, recovery after browsers and final reapply passed |
 | Copy cleanup | Temporary site, database and owned resources removed; only test evidence retained |
 
@@ -53,14 +54,18 @@ navigation/settings and removes only this release's exact records; unexpected
 changes stop recovery for inspection.
 
 The reviewed [live-enable patch](../inter-model/peek-visitor-release-enable-live.patch)
-has now been applied exactly as reviewed. The read-only live drift check must
-pass before preparing the release PR and exact LIVE request. That check must pass
-against the current live stores; the copied-site proof does not waive it.
+has now been applied. The wrapper additionally resolves SiteGround's selected
+document root physically and retains failed preflight diagnostics; strict guards
+and tested runtime bytes are unchanged. The [live dry run](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/43055400254)
+passed against the current live stores. Final source CI must also pass before
+merge; the copied-site proof does not waive either check.
 
-Then you retain both launch actions: merge the reviewed PR after Gates passes,
-and start **Actions → Site ops (LIVE) → Run workflow** on **main**, using the
-prepared request's confirmation ID. I will supply the exact PR and ID after the
-dry run. Choose a window when we can immediately review the live report and use
+You retain both launch actions: merge the reviewed PR after Gates passes,
+then start **Actions → Site ops (LIVE) → Run workflow** on **main**, using
+confirmation ID **`live-peek-visitor-release-20261111-1`**. The request runs
+`link-ideas/push-peek-release.sh --apply` with automatic post-change/restore
+checks. No workflow has been started. Choose a window when we can immediately
+review the live report and use
 the tested recovery if needed. No date or traffic window is inferred here.
 
 The repository's [CLAUDE.md, Cloud sessions](../../CLAUDE.md#cloud-sessions-claudeaicode-the-claude-app-claude_code_remotetrue)
@@ -69,7 +74,7 @@ approval completed the rehearsal; your subsequent “Continue” supplied the
 distinct release go. No further preparation approval is needed.
 
 I finished: the complete release rehearsal and review.
-Next step: Codex runs the guarded live dry run and prepares the PR/request.
+Next step: After final Gates passes, Ryan merges the release PR and starts Site ops (LIVE) with the ID above.
 Next lane: Codex prepares; Ryan merges and starts live.
 See my work: [Detailed release evidence](2026-11-10-peek-release-readiness.md).
 Arc: none (ad-hoc)

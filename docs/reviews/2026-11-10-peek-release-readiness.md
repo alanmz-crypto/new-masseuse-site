@@ -1,6 +1,32 @@
 # Peek visitor-navigation release readiness
 
-**Live preflight stopped safely, November 11 at 16:04:50 UTC.** Read-only request
+**Final live preflight PASS, November 11 at 16:09:22 UTC.** Request
+`peek-visitor-release-live-dry-3`, Actions **43055400254**, source
+`36263729dc0b92ad4885748cd2f2d665cb2bb2ed`, passes after resolving the selected
+document root physically. All six pinned plugin hashes, loaded classes and hook
+match; the raw-live baseline and marker validation pass without rebasing.
+Protected-state SHA256:
+`51fc7efb4a9cfc36bd205b75bc6bc0acc268d5cbc60d02e9652629a4063c5814`;
+profile SHA256:
+`49ed31542554634dcd945d8048a116e6dd3ae61635d1ad47a2a6ae56df6c3cac`.
+Enabled installer SHA256:
+`aa2ab6618a294861fbbe1f8f4f6e0301a6be28a1656e2b7e3db1c48c810da04d`;
+wrapper SHA256:
+`3be46e9518a85d75a204d31b253b26341d91622199e6d0ea54835ae988337406`.
+The report was read in full. No release database/cache write or installation
+occurred. Independent review cleared the wrapper-only correction and its 104
+offline controls. Final CI and PR preparation follow, with manual request
+`live-peek-visitor-release-20261111-1`. Ryan retains merge/manual LIVE start.
+
+Local `check-all.sh` could not supply a complete pass: seven PHP/container gates
+failed because the container user could not read this workspace's private-mode
+files; ShellCheck/Ruff were absent. Actual local-marker compatibility and the
+wrapper tests passed. The clean GitHub Actions checkout supplies authoritative
+full source Gates; do not report the local attempt as green. No additional
+browser rehearsal is needed for the enablement/wrapper-only changes: runtime,
+manifest and source-binding bytes remain identical to the successful copy4.
+
+**Earlier live preflight stopped safely, November 11 at 16:04:50 UTC.** Read-only request
 `peek-visitor-release-live-dry-1`, Actions **43054648677**, source
 `07ddb2bd2b69a9d4a0c24138d905534c1ee4d611`, refused the installed/loaded Spectra
 source binding before any release write. Its stdout diagnostic was swallowed by

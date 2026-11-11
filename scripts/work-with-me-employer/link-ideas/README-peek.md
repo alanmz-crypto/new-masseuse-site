@@ -1,5 +1,10 @@
 # Peek shared template
 
+**November 11 release preparation:** Ryan gave release go, the reviewed tooling
+is enabled, and read-only live preflight **43055400254** passed at **16:09:22 UTC**.
+Final Gates and PR/request preparation precede Ryan's manual merge/LIVE start.
+Request ID: `live-peek-visitor-release-20261111-1`. Live remains unchanged.
+
 **Current release preparation, November 11: staging and complete live-copy proof passed.**
 The [Search phase record](../../../docs/reviews/2026-11-11-search-contrast.md)
 records final source Gates **51/0**, a fresh staging39 copy with **300/0** browser

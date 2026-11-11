@@ -4,8 +4,10 @@ November 11: Ryan gave release go after the complete staging/live-copy proof.
 The exact reviewed enablement patch is now applied. The dedicated
 `../push-peek-release.sh` selects the raw-live profile explicitly, with exact
 baseline checks, fresh verified off-site backups and actual-journal recovery.
-Read-only live preflight and PR/request preparation are next; no live install
-has run. Ryan still merges and starts the manual LIVE workflow. The copy-only
+Read-only live preflight passed at 16:09:22 UTC, run 43055400254. Its wrapper
+resolves the selected root physically before WordPress bootstrap; no strict
+plugin-source guard changed. Final CI and PR/request preparation follow; no live
+install has run. Ryan still merges and starts the manual LIVE workflow. The copy-only
 description below records the successfully rehearsed package before enablement.
 
 This package contains the accepted shared Peek runtime plus the verified

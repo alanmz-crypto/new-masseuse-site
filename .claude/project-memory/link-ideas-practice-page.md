@@ -5,6 +5,13 @@ metadata:
   type: project
 ---
 
+**Live preflight passed November 11 at 16:09:22 UTC.** Actions **43055400254**,
+source `36263729dc0b92ad4885748cd2f2d665cb2bb2ed`, verifies the exact raw-live
+baseline and all plugin source identities. The wrapper resolves SiteGround's
+selected root through `pwd -P`; no source guard was weakened. Final Gates and
+PR/request preparation follow. Manual ID: `live-peek-visitor-release-20261111-1`.
+Ryan merges and starts LIVE; no live installation or live recovery snapshot yet.
+
 **Release go received November 11.** Ryan's “Continue” answers the explicit
 release-go question. The exact reviewed enable-live patch is applied for source
 checks, read-only live preflight and PR/request preparation. No live installation
