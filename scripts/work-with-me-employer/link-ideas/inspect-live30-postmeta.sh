@@ -49,24 +49,33 @@ wp --path="$doc" db query --skip-column-names --batch --raw < "$temp/capture.sql
 REMOTE
 read -r -d '' CHECK <<'PY' || true
 import json,re,sys
+stage='parse-json'; row_index=None; rows=None; current=None
+safe_fields={'kind','captured_utc','read_only','isolation','table','engine','exact','meta_id','present','post_id','meta_key_sha256','meta_value_bytes','meta_value_sha256'}
+def bit(value):
+    return type(value) in (bool,int) and value in (0,1)
 try:
     rows=[json.loads(line) for line in sys.stdin if line.strip()]
-    assert len(rows)==10
-    runtime=rows[0]
+    stage='row-count'; assert len(rows)==10
+    stage='runtime'; runtime=rows[0]; current=runtime
     assert set(runtime)=={'kind','captured_utc','read_only','isolation'}
-    assert runtime['kind']=='runtime' and runtime['read_only']==1 and runtime['isolation']=='REPEATABLE-READ'
+    assert runtime['kind']=='runtime' and bit(runtime['read_only']) and runtime['read_only']==1 and runtime['isolation']=='REPEATABLE-READ'
     assert re.fullmatch(r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}(?:\.\d+)?',runtime['captured_utc'])
+    stage='engines'; current=rows[1]
     assert {r['table']:r['engine'] for r in rows[1:3]}=={'options':'InnoDB','postmeta':'InnoDB'}
     assert all(set(r)=={'kind','table','engine'} and r['kind']=='engine' for r in rows[1:3])
-    assert rows[3]=={'kind':'origin','exact':1}
-    assert rows[-1]=={'kind':'complete','read_only':1}
-    data=rows[4:9]
+    stage='origin'; current=rows[3]
+    assert set(current)=={'kind','exact'} and current['kind']=='origin' and bit(current['exact']) and current['exact']==1
+    stage='complete'; current=rows[-1]
+    assert set(current)=={'kind','read_only'} and current['kind']=='complete' and bit(current['read_only']) and current['read_only']==1
+    stage='requested-ids'; current=None; data=rows[4:9]
     assert [r['meta_id'] for r in data]==[4701,4702,5089,5090,5091]
     fields={'kind','meta_id','present','post_id','meta_key_sha256','meta_value_bytes','meta_value_sha256'}
-    for row in data:
+    for row_index,row in enumerate(data):
+        stage='row-schema'; current=row
         assert set(row)==fields and row['kind']=='postmeta' and type(row['meta_id']) is int
-        assert type(row['present']) is int and row['present'] in (0,1)
+        stage='row-present'; assert bit(row['present'])
         if row['present']:
+            stage='row-present-data'
             assert type(row['post_id']) is int and row['post_id']>0
             assert row['meta_key_sha256'] is None or re.fullmatch('[a-f0-9]{64}',row['meta_key_sha256'])
             if row['meta_value_bytes'] is None:
@@ -75,8 +84,13 @@ try:
                 assert type(row['meta_value_bytes']) is int and row['meta_value_bytes']>=0
                 assert re.fullmatch('[a-f0-9]{64}',row['meta_value_sha256'])
         else:
+            stage='row-missing-data'
             assert all(row[k] is None for k in fields-{'kind','meta_id','present'})
 except Exception:
+    diagnostic={'stage':stage,'row_index':row_index,'row_count':len(rows) if isinstance(rows,list) else None,'row_type':type(current).__name__}
+    if isinstance(current,dict):
+        diagnostic['field_types']={key:type(current[key]).__name__ for key in sorted(safe_fields) if key in current}
+    print('LIVE30-POSTMETA-INVALID '+json.dumps(diagnostic,separators=(',',':')),file=sys.stderr)
     raise SystemExit('LIVE30 postmeta capture incomplete or invalid; no values disclosed.')
 print('LIVE30-POSTMETA '+json.dumps({'captured_utc':runtime['captured_utc'],'read_only':True,'wordpress_bootstrap':False,'requested':5,'found':sum(r['present'] for r in data)},separators=(',',':')))
 for row in data:
