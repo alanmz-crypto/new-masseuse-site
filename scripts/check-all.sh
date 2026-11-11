@@ -104,6 +104,10 @@ peek_release_proposal_test() {
 }
 if [ -n "$img" ] && command -v docker >/dev/null; then gate "Peek visitor live proposal local-marker compatibility and response identity (offline)" peek_release_proposal_test; else skip "Peek visitor proposal compatibility tests" "docker or the pinned image is not available"; fi
 gate "Peek visitor live proposal backup, partial recovery and exact marker binding (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/peek-release/test-push.py"
+peek_live30_reader_test() { docker run --rm --network none --entrypoint php -v "$here/work-with-me-employer/link-ideas:/pkg:ro" "$img" /pkg/peek-release/test-inspect-live30-before.php; }
+if [ -n "$img" ] && command -v docker >/dev/null; then gate "LIVE30 fixed backup reader and redaction (offline)" peek_live30_reader_test; else skip "LIVE30 backup reader tests" "docker or the pinned image is not available"; fi
+gate "LIVE30 cold-cache evidence and exact delta refusals (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/peek-release/test-cold-cache-evidence.py"
+gate "LIVE30 isolated cold-copy IO and failure controls (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/peek-release/test-live30-cold.py"
 search_contrast_test() { docker run --rm --network none --entrypoint php -v "$here/work-with-me-employer/search-contrast:/pkg:ro" "$img" /pkg/test-installer.php; }
 if [ -n "$img" ] && command -v docker >/dev/null; then gate "Search contrast exact CSS ownership and recovery (offline)" search_contrast_test; else skip "Search contrast installer tests" "docker or the pinned image is not available"; fi
 gate "Search contrast deployment backups and exact snapshot guards (offline)" python3 -I -B "$here/work-with-me-employer/search-contrast/test-push.py"

@@ -1,5 +1,33 @@
 # Peek visitor-navigation release readiness
 
+**LIVE #30 removed-row identification PASS, November 11 at 17:45:57 UTC.**
+`peek-live30-before-1`, Actions **43071249809**, source
+`9cee6838ddc75342adbf92846338605e0e8e5977`, read only the exact SHA/size-bound
+pre-write SQL backup on the server. The temporary PHP reader was deleted;
+no SQL was imported, WordPress bootstrapped, page requested or site changed.
+Its parser passed **58 synthetic controls** before use. The full report was read.
+
+| Removed meta ID | Post / key | Value bytes / SHA256 | Canonical row SHA256 |
+|---|---|---|---|
+| 4701 | 1255 / `_uag_page_assets` | 735 / `a5e39e98f6d20e1f0f41994f0ee66c28ad6d882c09a2cf2f14b62f5534dd7e7d` | `8a204a7db18edf9be297689861b987ec19a2cb373d65fb5b7a8ffab4419b2fe0` |
+| 4702 | 1257 / `_uag_page_assets` | 688 / `07565e74285b1b9a9ec702f536431fc67560c54775411ed596d8ce48b37b37bb` | `80efacd2d6270111b8e880f396bf42e5fc77dcab94a44e8adb7e1354f2bbbef3` |
+
+Both witness-descriptor hashes exactly match the missing-row diagnostic.
+All five differences are therefore identified as Spectra page-asset metadata.
+Pinned Spectra source supports deletion/recreation of stale caches and insertion
+of missing caches during ordinary frontend rendering (Search can generate caches
+for several result pages). This is a supported mechanism, not proof of the
+particular request or requester. The earlier rehearsal warmed pages before its
+first protected-state baseline, so it did not exercise these cold-cache changes.
+
+The authorized next work is a narrow isolated proof using the exact original
+SQL, pinned current source, raw live URLs and no initial warm-up. It must reproduce
+the observed value hashes while keeping all other protected rows exact. Only
+then can an incident-specific receipt account for these exact five witnesses in
+verification and recovery. The immutable actual journal stays unchanged, normal
+guards remain exact, and any sixth or different change must refuse. No #30 retry,
+new live installation, purge or rollback is authorized by this diagnosis alone.
+
 **LIVE #30 diagnosis, November 11 at 17:15 UTC: installed, verification incomplete.**
 State-only inspection `peek-live-state-inspect-1`, Actions **43064935977**, source
 `6b846de35f530a2717321b99648626563527983a`, completed at **17:07:09 UTC** with

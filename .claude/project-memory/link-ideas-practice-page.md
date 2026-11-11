@@ -11,9 +11,11 @@ installed; actual SQL and snapshot were verified encrypted off-site. The
 snapshot is `peek-release-before-20261111-162615-e00022b6.json`, SHA256
 `4038da0f9f77780ce355029bc87e53bff0479294711c821d253f51151e10751b`.
 Read-only diagnosis found only five original metadata-row differences: two
-missing rows still unclassified, and three new `_uag_page_assets` caches on
+missing rows now identified from the exact original SQL as `_uag_page_assets`
+(run **43071249809**, 17:45:57 UTC), and three new caches on
 Personal Automation / its Privacy / Terms pages. Peek records and page content
-match the applied snapshot. No purge, rendered verification, rollback or
+match the applied snapshot. An isolated cold-copy reproduction is next; an
+incident-specific verification/recovery receipt is not yet accepted. No purge, rendered verification, rollback or
 reinstallation since the failure; do not rerun apply or weaken guards. Follow
 the current release-readiness record and `codex/peek-live-verification-diagnostics`.
 Earlier no-live-run statements below are historical.

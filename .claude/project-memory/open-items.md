@@ -25,8 +25,11 @@ Read-only diagnosis now isolates exactly five metadata differences (no owned
 Peek/page-content/other protected-store changes): old rows 4701/4702 are missing;
 new rows 5089/5090/5091 are Spectra `_uag_page_assets` caches for the three
 Personal Automation pages, confirmed by hashed-key SQL inspection at 17:15:30
-(run **43066327533**). The two old rows and regeneration mechanism remain to be
-classified. Do not relax the guard or rewrite the actual snapshot. No purge,
+(run **43066327533**). The fixed original SQL reader then identified old rows
+4701/4702 as the same cache key on posts 1255/1257 at **17:45:57 UTC**
+(run **43071249809**), with exact diagnostic witness hashes. Cold-copy
+reproduction of the new values remains required before the proposed narrow
+incident receipt can be accepted. Do not relax the guard or rewrite the actual snapshot. No purge,
 rendered verification, rollback or reinstall has run since the failure.
 The complete evidence and actual recovery bindings are in the readiness record;
 current work branch is `codex/peek-live-verification-diagnostics`.
