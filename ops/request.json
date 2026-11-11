@@ -1,5 +1,5 @@
 {
-  "id": "peek-quiet-nav-rehearse-1",
+  "id": "peek-quiet-nav-rehearse-2",
   "op": "rehearse",
   "target": "staging39",
   "installer": "link-ideas/core-quiet-nav/install-peek-core-quiet-nav.php",
