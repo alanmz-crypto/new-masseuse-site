@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-11 06:59 UTC  **PASS**  `search-contrast-public-1`  [reports/2026-11-11/065929-search-contrast-public-1.md](reports/2026-11-11/065929-search-contrast-public-1.md)  (run 42975819331)
 - 2026-11-11 06:54 UTC  **PASS**  `search-contrast-apply-2`  [reports/2026-11-11/065431-search-contrast-apply-2.md](reports/2026-11-11/065431-search-contrast-apply-2.md)  (run 42974559394)
 - 2026-11-11 06:41 UTC  **PASS**  `search-contrast-rehearse-2`  [reports/2026-11-11/064153-search-contrast-rehearse-2.md](reports/2026-11-11/064153-search-contrast-rehearse-2.md)  (run 42973788876)
 - 2026-11-11 06:37 UTC  **PASS**  `search-contrast-dry-2`  [reports/2026-11-11/063729-search-contrast-dry-2.md](reports/2026-11-11/063729-search-contrast-dry-2.md)  (run 42973687236)
