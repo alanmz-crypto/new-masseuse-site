@@ -1,12 +1,8 @@
 {
-  "id": "peek-live-state-inspect-1",
+  "id": "peek-live30-postmeta-1",
   "op": "run",
   "target": "live",
-  "script": "link-ideas/push-peek-release.sh",
-  "args": [
-    "--inspect-state",
-    "/home/customer/private-backups/peek-release-before-20261111-162615-e00022b6.json",
-    "4038da0f9f77780ce355029bc87e53bff0479294711c821d253f51151e10751b"
-  ],
+  "script": "link-ideas/inspect-live30-postmeta.sh",
+  "args": [],
   "tests": "auto"
 }
