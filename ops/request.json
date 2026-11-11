@@ -1,11 +1,10 @@
 {
-  "id": "peek-index-clearance-s39-verify-1",
+  "id": "peek-index-clearance-s39-public-1",
   "op": "run",
   "target": "staging39",
-  "script": "link-ideas/push-peek-index-clearance.sh",
+  "script": "link-ideas/core-index-clearance/check-public.mjs",
   "args": [
-    "--verify",
-    "$HOME/private-backups/peek-template-core-index-clearance-before-20261111-005357-31ca0040.json"
+    "https://staging39.thaisolitude.com"
   ],
   "tests": "auto"
 }
