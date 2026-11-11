@@ -1,6 +1,6 @@
 # Peek reading labels and menu buttons
 
-**Deployed to staging39; dedicated public-browser verification is pending.** Ryan
+**Deployed to staging39; public browsers passed and final snapshot verification is pending.** Ryan
 requested four changes before live: remove the automatic section label beside
 the rail while reading; outline the index button; close the header hamburger
 menu on an outside tap; and show a tappable X on the open index. Names shown by
@@ -301,10 +301,30 @@ four compared pages), and PHP-log checks. The pixel comparison against live
 reported **20 differences, zero missing captures, zero identical**; this is
 not a pixel pass and live has the older navigation. The backup imported
 successfully; all 104 fingerprints were available and the only before/after
-differences were #1380 and its WPCode cache. Dedicated public-browser checks
-and final actual-snapshot verification are still required.
+differences were #1380 and its WPCode cache. Dedicated public-browser results
+follow; final actual-snapshot verification is still required.
+
+## Public verification
+
+Request `peek-quiet-nav-public-1`, commit
+`b2889262929070b8d95a92829293bcf453b740d0`, passed at **05:32:28 UTC** in
+[Actions 42961860790](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42961860790).
+All **20 browser suites completed: 19,628 passed, zero failed**. The retained
+index-clearance graph passed 18,460/0; focused Chromium 608/0 and Firefox 560/0,
+each with 18 cases, 18 loads and 36 captures. This run reached staging39 and
+was valid; no public retry was used. The complete raw artifact and captures
+are being reviewed before closing the phase, alongside final stored-state
+verification against the actual staging snapshot.
 
 ## Separate visual follow-up before live
+
+Ryan checked the four new controls on iPhone Safari and replied on November 11:
+“It's correct. Maybe not as fluid as possible, but that's a refinement that can
+wait till after this live push”. This closes the new-control user review.
+Fluidity refinements are explicitly deferred until after live; do not add them
+to this phase or ask for a repeat of accepted checks. This feedback concerns
+the requested controls, not broader device/assistive-technology coverage or
+authorization for a live operation.
 
 The dark Search captures show very pale result-card text on white backgrounds,
 also visible in the older copy1 capture. This is separate from the four

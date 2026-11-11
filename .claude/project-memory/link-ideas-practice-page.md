@@ -13,9 +13,13 @@ See the [quiet-navigation record](../../docs/reviews/2026-11-11-peek-quiet-navig
 Source gates passed **48/0**; the fresh staging39 copy passed **24,977/0 across
 24 browser suites**, with exact recovery after browser activity and all 108
 focused screenshots reviewed. Applied to #1380 at **04:38:46 UTC**; exact
-core/four-data state passed before and after all 19 rendered routes. Dedicated
-public-browser verification and final post-browser snapshot verification are
-pending. This is not a fresh physical-Safari acceptance result.
+core/four-data state passed before and after all 19 rendered routes. Public
+browsers passed **19,628/0 across all 20 suites** at **05:32:28 UTC**; final
+post-browser snapshot verification is pending. Ryan accepted these new controls
+on iPhone Safari on November 11:
+“It's correct.” They explicitly deferred fluidity refinements until after the
+live push. No repeat of this acceptance check is needed; this does not claim
+broader device or assistive-technology coverage or authorize a live operation.
 
 Current recovery starts with `core-quiet-nav` → frozen v9, using only
 `peek-template-core-quiet-nav-before-20261111-043846-d52816fb.json`,

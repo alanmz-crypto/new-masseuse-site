@@ -10,10 +10,14 @@ automatic rail-side scrolling label, outlining the index, adding its open-state
 X and dismissing the header menu on outside taps are now deployed on staging39.
 See the [quiet-navigation record](2026-11-11-peek-quiet-navigation.md): source
 48/0, fresh-copy browsers 24,977/0 and exact recovery, then the actual backed-up
-apply with unchanged summaries and 19 exact rendered routes. Dedicated public
-browsers and final snapshot verification are pending. Only the changed controls
-need a narrow new Safari review; earlier user acceptances remain closed.
-No new live work or acceptance result is implied. A separate observed issue
+apply with unchanged summaries and 19 exact rendered routes. Public browsers
+passed **19,628/0 across all 20 suites**; final snapshot verification is pending.
+Ryan accepted the new
+controls on iPhone Safari on November 11: “It's correct.” They explicitly
+deferred fluidity refinements until after the live push. This acceptance and
+the earlier ones remain closed; do not ask for a generic retest or add fluidity
+work to the pre-live scope. The check did not authorize a live operation.
+A separate observed issue
 needs correction before live: dark Search result cards show pale text on white
 backgrounds. It is recorded separately from the four navigation changes.
 
