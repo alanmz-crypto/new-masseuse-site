@@ -33,6 +33,29 @@ surface to the existing `--ts-panel` gives **11.36:1** and **13.81:1**, with gre
 links **8.04:1**. These are diagnostic fixture measurements, not actual-page
 browser results or a deployed correction.
 
+## Initial rendered diagnostic (incomplete)
+
+Read-only `peek-search-render-inspect-1`, commit
+`5c6660b6d5dc8fef0758a2cdb404d5e930f48353`, finished **INVALID** at
+**05:57:56 UTC** in Actions **42968966786**. Its diagnostic reached the real
+populated Search page and saved light/dark measurements and two captures, then
+stopped before empty Search. There were zero assertions; it is not a browser
+gate pass. The checker incorrectly required `data-ts-theme="light"` after the
+return toggle, while the site's light mode removes that attribute. The actual
+theme switch worked. The corrected diagnostic normalizes that existing state.
+
+The downloaded 458,616-byte artifact matched SHA256
+`7e6d70aca69e55236deb65132b26a758dfe71f017418659cfba23f51092be5af`
+and ZIP integrity checks. Its partial observations refine the CSS proposal:
+the outer result article is transparent and the white surface is on its nested
+`.ast-article-inner`. The full-page image also shows the affected Search title
+panel and selected pagination number outside the initial measurement root.
+Actual result headings measured 1.13:1, excerpts 1.37:1, green links on white
+1.94:1. The dark Search submit has white text on green at 1.94:1; its white
+input's placeholder is 2.54:1 in both themes. These are individual observations
+from an incomplete diagnostic, not verification of a correction. The expanded
+Search-only fix and placeholder change were explained before implementation.
+
 ## Proposed change and verification
 
 The proposal was explained before implementation: use the existing dark panel

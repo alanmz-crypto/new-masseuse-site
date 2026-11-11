@@ -5,6 +5,7 @@ import { createHash } from 'node:crypto';
 import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
+import { SEARCH_ROUTES, SEARCH_WIDTHS, SEARCH_THEMES, SEARCH_LIMITATION } from './check-contract.mjs';
 
 const base = process.argv[2], flags = process.argv.slice(3);
 if (!['http://localhost:8090', 'https://staging39.thaisolitude.com'].includes(base) || flags.some(f => !['--inspect', '--firefox'].includes(f)) || new Set(flags).size !== flags.length) {
@@ -13,8 +14,7 @@ if (!['http://localhost:8090', 'https://staging39.thaisolitude.com'].includes(ba
 }
 const require = createRequire(process.env.TS_PLAYWRIGHT_ROOT || `${process.cwd()}/package.json`), pw = require('playwright');
 const engine = flags.includes('--firefox') ? 'firefox' : 'chromium', inspect = flags.includes('--inspect');
-const widths = inspect ? [390] : [320, 390, 1280], themes = ['light', 'dark'];
-const routes = [{ name: 'results', path: '/?s=massage' }, { name: 'empty', path: '/?s=ts-no-results-7f3e0b49' }];
+const widths = inspect ? [390] : SEARCH_WIDTHS, themes = SEARCH_THEMES, routes = SEARCH_ROUTES;
 const expectedCases = routes.flatMap(r => widths.flatMap(w => themes.map(t => `${r.name}/${w}/${t}`)));
 const sha = text => createHash('sha256').update(text).digest('hex');
 const started = Date.now();
@@ -32,11 +32,11 @@ const settle = async page => { await page.waitForTimeout(300); await page.evalua
 // opacity or missing surface is unmeasurable, never an automatic contrast pass.
 async function measure(page) {
   return page.evaluate(() => {
-    const main = document.querySelector('#main') || document.querySelector('main');
+    const main = document.querySelector('#primary') || document.querySelector('#main') || document.querySelector('main');
     if (!main) throw new Error('No original main content');
     const norm = value => value.replace(/\s+/g, ' ').trim();
     const visible = el => {
-      if (el.closest('script,style,nav,.ts-pk,.screen-reader-text,[hidden],[aria-hidden="true"]')) return false;
+      if (el.closest('script,style,#masthead,#colophon,footer,.ts-pk,.screen-reader-text,[hidden],[aria-hidden="true"]')) return false;
       for (let node = el; node; node = node.parentElement) {
         const s = getComputedStyle(node);
         if (s.display === 'none' || s.visibility !== 'visible' || Number(s.opacity) === 0) return false;
@@ -53,7 +53,8 @@ async function measure(page) {
     const luminance = c => c.slice(0, 3).map(v => v / 255).map(v => v <= .04045 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4).reduce((s, v, i) => s + v * [.2126, .7152, .0722][i], 0);
     const appearance = (el, pseudo = null) => {
       const s = getComputedStyle(el, pseudo), ink = rgba(s.color), layers = [];
-      let reason = null;
+      if (pseudo && ink) ink[3] *= Number(s.opacity);
+      let reason = null, surfaceOwner = null;
       for (let n = el; n; n = n.parentElement) {
         const a = getComputedStyle(n);
         if (Number(a.opacity) !== 1 || a.filter !== 'none' || a.mixBlendMode !== 'normal' || (a.backdropFilter && a.backdropFilter !== 'none')) reason = 'opacity/filter/blend';
@@ -61,26 +62,28 @@ async function measure(page) {
       for (let n = el; n; n = n.parentElement) {
         const a = getComputedStyle(n), color = rgba(a.backgroundColor);
         if (a.backgroundImage !== 'none') { reason = 'background image/gradient'; break; }
-        if (color && color[3]) { layers.push(color); if (color[3] === 1) break; }
+        if (color && color[3]) { layers.push(color); if (color[3] === 1) { surfaceOwner = { tag: n.tagName.toLowerCase(), id: n.id, class: n.className }; break; } }
       }
       if (!ink || !layers.length || layers.at(-1)[3] !== 1) reason ||= 'missing opaque surface or text color';
       let background = layers.length ? layers.pop() : [255, 255, 255, 1];
       while (layers.length) background = over(layers.pop(), background);
       const paint = ink ? over(ink, background) : null, a = paint && luminance(paint), b = luminance(background);
       const ratio = reason ? null : (Math.max(a, b) + .05) / (Math.min(a, b) + .05);
-      return { color: s.color, background, ratio, reason, fontSize: s.fontSize, fontWeight: s.fontWeight };
+      return { color: s.color, background, surfaceOwner, ratio, reason, fontSize: s.fontSize, fontWeight: s.fontWeight };
     };
+    const roots = [main, ...document.querySelectorAll('body.search .ast-archive-description,body.search .ast-archive-entry-banner,body.search .ast-pagination,body.search nav.navigation.pagination')];
+    const nodes = new Set(roots.flatMap(root => [root, ...root.querySelectorAll('*')]));
     const rows = [];
-    for (const el of [main, ...main.querySelectorAll('*')]) {
+    for (const el of nodes) {
       if (!visible(el)) continue;
       const text = norm([...el.childNodes].filter(n => n.nodeType === Node.TEXT_NODE).map(n => n.textContent).join(' '));
       if (!text) continue;
-      rows.push({ tag: el.tagName.toLowerCase(), class: el.className, text: text.slice(0, 180), group: el.closest('.ast-article-post') ? 'result' : el.closest('.no-results') ? 'empty' : el.closest('.ast-archive-description') ? 'heading' : el.closest('.navigation,.pagination') ? 'pagination' : 'other', ...appearance(el) });
+      rows.push({ tag: el.tagName.toLowerCase(), class: el.className, text: text.slice(0, 180), group: el.closest('.ast-article-post') ? 'result' : el.closest('.no-results') ? 'empty' : el.closest('.ast-archive-description,.ast-archive-entry-banner') ? 'heading' : el.closest('.navigation,.pagination,.ast-pagination,.page-numbers') ? 'pagination' : 'other', ...appearance(el) });
     }
-    const surfaces = [...main.querySelectorAll('.ast-article-post,.ast-archive-description,.no-results')].map(el => ({ tag: el.tagName.toLowerCase(), class: el.className, color: getComputedStyle(el).color, background: getComputedStyle(el).backgroundColor, image: getComputedStyle(el).backgroundImage, panel: rgba(getComputedStyle(el).getPropertyValue('--ts-panel').trim()), rect: el.getBoundingClientRect().toJSON() }));
-    const fields = [...main.querySelectorAll('input:not([type="hidden"]),button,input[type="submit"]')].filter(visible).map(el => ({ tag: el.tagName.toLowerCase(), type: el.type, name: el.getAttribute('name'), label: el.getAttribute('aria-label'), placeholder: el.getAttribute('placeholder'), value: el.value, ...appearance(el), placeholderAppearance: el.placeholder ? appearance(el, '::placeholder') : null }));
-    return { title: document.title, bodyClass: document.body.className, theme: document.documentElement.dataset.tsTheme, rows, surfaces, fields,
-      counts: { result: main.querySelectorAll('.ast-article-post').length, title: main.querySelectorAll('.ast-article-post .entry-title').length, excerpt: main.querySelectorAll('.ast-article-post .entry-content').length, more: main.querySelectorAll('.ast-article-post .read-more a').length, empty: main.querySelectorAll('.no-results').length, search: main.querySelectorAll('form.search-form').length, pagination: main.querySelectorAll('.navigation.pagination,.ast-pagination').length },
+    const surfaces = [...nodes].filter(el => el.matches('.ast-article-inner,.ast-archive-description,.ast-archive-entry-banner,.no-results')).map(el => ({ tag: el.tagName.toLowerCase(), class: el.className, color: getComputedStyle(el).color, background: getComputedStyle(el).backgroundColor, image: getComputedStyle(el).backgroundImage, panel: rgba(getComputedStyle(el).getPropertyValue('--ts-panel').trim()), rect: el.getBoundingClientRect().toJSON() }));
+    const fields = [...nodes].filter(el => el.matches('form.search-form input:not([type="hidden"]),form.search-form button') && visible(el)).map(el => ({ tag: el.tagName.toLowerCase(), type: el.type, name: el.getAttribute('name'), label: el.getAttribute('aria-label'), placeholder: el.getAttribute('placeholder'), value: el.value, tabIndex: el.tabIndex, focused: document.activeElement === el, outline: getComputedStyle(el).outline, ...appearance(el), placeholderAppearance: el.placeholder ? appearance(el, '::placeholder') : null }));
+    return { title: document.title, bodyClass: document.body.className, theme: document.documentElement.dataset.tsTheme || 'light', rows, surfaces, fields,
+      counts: { result: main.querySelectorAll('.ast-article-post').length, title: main.querySelectorAll('.ast-article-post .entry-title').length, excerpt: main.querySelectorAll('.ast-article-post .ast-excerpt-container').length, more: main.querySelectorAll('.ast-article-post .read-more a').length, empty: main.querySelectorAll('.no-results').length, search: main.querySelectorAll('form.search-form').length, pagination: document.querySelectorAll('body.search .ast-pagination,body.search .navigation.pagination').length, currentPage: [...nodes].filter(el => el.matches('.page-numbers.current')).length },
       horizontalOverflow: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth) - innerWidth,
       content: { headings: [...main.querySelectorAll('h1,h2,h3')].filter(e => !e.closest('.ts-pk')).map(e => [e.id, norm(e.textContent)]), links: [...main.querySelectorAll('a[href]')].filter(e => !e.closest('.ts-pk')).map(e => [e.getAttribute('href'), norm(e.textContent)]) },
       nav: { config: document.querySelector('#ts-peek-nav-config')?.textContent || '', runtime: document.querySelector('#ts-peek-nav-runtime')?.textContent || '', css: document.querySelector('#ts-peek-nav-css')?.textContent || '', data: document.querySelector('#ts-peek-nav-data')?.textContent || null, strip: document.querySelectorAll('#ts-peek-title-strip').length, marker: document.querySelector('.ts-pk-nav')?.dataset.tsPkUi || null },
@@ -109,7 +112,8 @@ try {
       loads++;
       await page.waitForFunction(() => document.fonts.status === 'loaded', null, { timeout: 10000 }); await settle(page);
       const original = await measure(page), originalNav = digestNav(original.nav);
-      writeFileSync(join(out, `${route.name}-${width}-main.html`), await page.locator('#main').evaluate(e => e.outerHTML), { flag: 'wx', mode: 0o600 });
+      writeFileSync(join(out, `${route.name}-${width}-body.html`), await page.locator('body').evaluate(e => e.outerHTML), { flag: 'wx', mode: 0o600 });
+      if (inspect) writeFileSync(join(out, `${route.name}-${width}-page.html`), await page.content(), { flag: 'wx', mode: 0o600 });
       for (const theme of themes) {
         const label = `${route.name}/${width}/${theme}`;
         if (theme === 'dark') {
@@ -136,7 +140,7 @@ try {
       }
       // A second real toggle returns to the initial light surfaces without a reload.
       await page.locator('.ts-theme-toggle:visible').first().click();
-      await page.waitForFunction(() => document.documentElement.dataset.tsTheme === 'light'); await settle(page);
+      await page.waitForFunction(() => (document.documentElement.dataset.tsTheme || 'light') === 'light'); await settle(page);
       const returned = await measure(page);
       if (!inspect) check(`${route.name}/${width}/return-to-light/exact initial colors and content restored`, JSON.stringify(returned.rows) === JSON.stringify(original.rows) && JSON.stringify(returned.surfaces.map(s => [s.class, s.background, s.color])) === JSON.stringify(original.surfaces.map(s => [s.class, s.background, s.color])) && JSON.stringify(returned.content) === JSON.stringify(original.content) && requests === 1 && errors.length === 0);
     } finally { await context.close(); }
@@ -147,5 +151,5 @@ finally { if (browser) await browser.close(); }
 if (JSON.stringify(completed) !== JSON.stringify(expectedCases) || loads !== routes.length * widths.length || captures !== expectedCases.length) { invalid = true; console.log(`INVALID Search contrast ${engine}: incomplete route/theme/width/load/capture evidence`); }
 const summary = { base, engine, inspect, passed, failed, invalid, expectedCases, completed, loads, captures, results };
 writeFileSync(join(out, 'results.json'), JSON.stringify(summary, null, 2) + '\n', { flag: 'wx', mode: 0o600 });
-console.log(`INFO Search contrast ${engine}: ${inspect ? 'INSPECTION' : 'CHECK'}, ${passed} passed, ${failed} failed; ${completed.length}/${expectedCases.length} cases, ${loads} page loads, ${captures} captures; ${Math.round((Date.now() - started) / 1000)}s; evidence ${out}; automated browsers are not physical Safari or assistive technology.`);
+console.log(`INFO Search contrast ${engine}: ${inspect ? 'INSPECTION' : 'CHECK'}, ${passed} passed, ${failed} failed; ${completed.length}/${expectedCases.length} cases, ${loads} page loads, ${captures} captures; ${Math.round((Date.now() - started) / 1000)}s; evidence ${out}; ${SEARCH_LIMITATION}`);
 process.exitCode = invalid ? 2 : failed ? 1 : 0;
