@@ -166,6 +166,10 @@ and checks their exit statuses. Targeted tests retain the malformed-line,
 duplicate, wrong-path and wrong-lane refusals; fragmented or delayed stderr
 cannot supply a snapshot or corrupt valid stdout. Quiet/index/neighbour
 rehearsal models each passed 107 checks; historical input-focus passed 39.
+The actual cached pinned WP-CLI 2.12.0 / PHP 8.5.11 image also reproduced the
+Colors.php line 95 warning without a TTY, network or WordPress bootstrap:
+`WP_CLI::success()` returned exit 0, its success line alone on stdout, and the
+entire warning on stderr. This directly confirms the stream-separation cause.
 
 All 108 focused screenshots were visually reviewed, with native-size checks
 of eight representative or questionable views. The boxed button and X read
@@ -216,7 +220,51 @@ border contrast at its existing closed/open states. Its current actual-Thai
 offline subsets passed Chromium **98/0** and Firefox **88/0**, including the
 mixed-input jumps. Each remains correctly INVALID as a full gate (2/18 cases,
 two loads, four captures); WebKit and the full matrix need the fresh copy.
-Final source gates and a fresh complete copy rehearsal remain pending.
+Final source commit `2df138ff1e7dd0fdf48b11698b0e1a20123a5278` passed all
+**48 offline gates**, zero failures, in
+[Actions 42954931411](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42954931411),
+completed **03:53:00 UTC**. The full log was independently read; only the
+expected no-URL rendered skip occurred. Fresh staging39-with-uploads copy2,
+request `peek-quiet-nav-rehearse-2`, commit
+`741eff9932fbea8f3dc29ba51bd2ff4da759ce47`, completed **PASS** at
+**04:31:41 UTC** in
+[Actions 42955015715](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42955015715).
+The complete browser graph passed **24,977/0 across all 24 leaves**: retained
+index-clearance 23,249/0; focused Chromium 608/0, Firefox 560/0, WebKit 560/0.
+Each focused engine completed 18 cases, 18 loads and 36 captures. The artifact
+was verified against GitHub's 97,672,140-byte size and SHA256
+`03aba4ebc0b2349fd03f5f0124ec3fb7403e0490648b8b19d1d027d4706d9a8f`,
+plus ZIP integrity and safe extraction paths.
+
+The copy's actual snapshots were first apply
+`peek-template-core-quiet-nav-before-20261111-034939-fc2258c2.json`, browser
+candidate `peek-template-core-quiet-nav-before-20261111-034944-5b212c76.json`,
+and final reapply `peek-template-core-quiet-nav-before-20261111-043135-ef5e22bf.json`.
+These are rehearsal evidence, not staging rollback files. Exact first/repeat
+apply, original restoration, before/after-browser verification, post-browser
+rollback and final reapply verification passed. The final fingerprint matched
+the first applied fingerprint without ID normalization. Only #1380 and its
+WPCode cache changed; the four data records retained hash
+`3e9acc4ea6dfedf7fe99e7a70534603ba0d32a1827793755c8ee10f4e55c9cc9`.
+The PHP warning remained in separate stderr; the final snapshot line parsed
+and its complete state was verified successfully.
+Independent native audit confirmed **28/0** checks and all 87-row fingerprints:
+A/C/E were byte-identical; B/B2 were exact, and B/B2/D/F matched with only the
+existing WPCode-cache exclusion. The actual stored runtime hash was
+`58266413fe0e24e1dc44ef32c98f428d4537a9b63bf8f5299eb8d708a4d032e5`.
+All 19 inventory records matched; Home **35/0**, regulated client-page checks
+**322/0**, and no new PHP errors. The source was staging39 WordPress 7.1.4 with
+uploads, a 684,496-byte compressed DB and 268MB files, on the isolated network.
+Independent browser audit checked all 24 unique leaves, 414 input traces, 162
+surface records and 108 capture-state records, with no discrepancy. All 216
+quiet/index JPEGs decoded; all 108 focused screenshots and six native-size
+views were visually reviewed. The opaque index is clear over the actual dark
+Privacy footer and pale Services image; idle reading has no floating label.
+The minimum recorded glyph/border contrast was 7.1987:1. The completed job's
+checkout log independently confirms commit
+`741eff9932fbea8f3dc29ba51bd2ff4da759ce47`; a connector transport failure on
+the large job log was resolved by reading it through the CLI. No new visual
+blocker was found in the four requested changes.
 
 No staging write, public-browser result or new actual snapshot exists yet for
 this phase. The prior index fix and summary-neighbour layout
