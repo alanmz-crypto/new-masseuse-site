@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-11 06:33 UTC  **FAIL**  `search-contrast-path-preflight-1`  [reports/2026-11-11/063306-search-contrast-path-preflight-1.md](reports/2026-11-11/063306-search-contrast-path-preflight-1.md)  (run 42973176898)
 - 2026-11-11 06:29 UTC  **FAIL**  `search-contrast-apply-1`  [reports/2026-11-11/062922-search-contrast-apply-1.md](reports/2026-11-11/062922-search-contrast-apply-1.md)  (run 42972709329)
 - 2026-11-11 06:25 UTC  **PASS**  `search-contrast-dry-1`  [reports/2026-11-11/062551-search-contrast-dry-1.md](reports/2026-11-11/062551-search-contrast-dry-1.md)  (run 42972323425)
 - 2026-11-11 06:24 UTC  **PASS**  `search-contrast-rehearse-1`  [reports/2026-11-11/062430-search-contrast-rehearse-1.md](reports/2026-11-11/062430-search-contrast-rehearse-1.md)  (run 42971730830)
