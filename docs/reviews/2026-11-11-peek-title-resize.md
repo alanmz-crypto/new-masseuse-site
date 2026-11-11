@@ -94,3 +94,15 @@ JSON payloads remain byte-identical. The release candidate's separate models
 passed 1,843 checks including 138 injected write-boundary failures, plus 163
 rehearsal-evidence controls. These are local source/model results, not website
 verification. Full Actions Gates and the staging39-copy rehearsal follow.
+
+Complete Actions source Gates passed **55/0** at **09:23:32 UTC**, run
+**42993487769**, checkout `037fec5a6b95ecfcda02db98e8b2125326da9155`.
+The entire job log was read. Rendered-page checks were intentionally not part of
+that offline job; they remain required in the actual-copy operation.
+
+The fresh staging39-sourced rehearsal with uploads was dispatched as
+`peek-title-resize-copy-1`, Actions **42994882056**, source
+`95f823413b04fa8f683d77e0a0f82087aac3fa7b`. It exercises the focused resize
+matrix in three engines, retained WebKit layout/disclosures and the full
+quiet-navigation rehearsal, followed by exact post-browser recovery and decisive
+cleanup. Results are pending. Neither staging39 nor live has been changed.

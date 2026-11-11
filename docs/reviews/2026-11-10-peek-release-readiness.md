@@ -336,6 +336,43 @@ These are offline results. The current candidate above awaits its own full
 source Gates, actual staging39-copy/deployment verification and complete
 live-sourced copy cycle. Live enablement remains disabled.
 
+The corrected complete source Gates subsequently passed **55/0** at
+**09:23:32 UTC**, run **42993487769**, source
+`037fec5a6b95ecfcda02db98e8b2125326da9155`. Fresh staging39-copy rehearsal
+`peek-title-resize-copy-1` is running as **42994882056** from
+`95f823413b04fa8f683d77e0a0f82087aac3fa7b`. Staging deployment and a new complete
+live-sourced copy cycle remain pending.
+
+## Disabled live-release proposal
+
+The reviewable preparation patch is
+[`peek-visitor-release-enable-live.patch`](../inter-model/peek-visitor-release-enable-live.patch),
+SHA256 `96c2d71d2fab901ad0102bbb83422fc042af2f5c843504b57a115545b447720a`.
+It applies cleanly to the corrected source and was applied/tested only in scratch.
+The active installer remains localhost-only; `ops/live-request.json` is unchanged.
+It is not release approval or actual deployment evidence.
+
+The proposal adds exact raw-live profile selection using the dated November 10
+baseline, a dedicated backup/apply/verify/rollback wrapper, preselected private
+recovery journals, and read-only checks for recognized partial recovery states.
+Every write requires fresh verified off-site backup. The actual journal is
+preserved even if apply fails; snapshot-dependent raw-live writes require the
+caller-preserved SHA. Purge, each requested response's identity/core/data/CSS,
+and final exact-state verification are decisive. Local marker shapes remain
+compatible with the existing rehearsal parser. No existing live data is rebased.
+
+Offline proposal checks passed **1,914 installer controls** with all **138 fault
+boundaries**, **98 wrapper/marker controls**, and **23 response fixtures**.
+Actual PHP-emitted local markers passed the unchanged Python rehearsal parser.
+Raw-profile derivation, syntax, ShellCheck, existing installer-drift gates and
+patch applicability passed; independent review cleared the exact patch hash.
+These tests model execution and do not prove live SSH, backup-store availability
+or installation. Before asking Ryan for release go, finish the corrected staging
+and complete release-copy evidence and attach their exact source bindings here.
+After that go, the repository's required sequence remains: enable the reviewed
+patch, run a read-only live dry run that refuses drift, prepare the live request
+and PR, then Ryan personally merges and starts Site ops (LIVE).
+
 ## Recommended scope
 
 - The currently verified shared Peek core, with the title strip and rails on
