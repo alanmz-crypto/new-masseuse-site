@@ -1,10 +1,11 @@
 {
-  "id": "peek-quiet-nav-public-1",
+  "id": "peek-quiet-nav-final-verify-1",
   "op": "run",
   "target": "staging39",
-  "script": "link-ideas/core-quiet-nav/check-public.mjs",
+  "script": "link-ideas/push-peek-quiet-nav.sh",
   "args": [
-    "https://staging39.thaisolitude.com"
+    "--verify",
+    "/home/customer/private-backups/peek-template-core-quiet-nav-before-20261111-043846-d52816fb.json"
   ],
   "tests": "auto"
 }
