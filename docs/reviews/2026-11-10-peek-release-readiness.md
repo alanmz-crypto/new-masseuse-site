@@ -1,5 +1,45 @@
 # Peek visitor-navigation release readiness
 
+**Live incident verification PASS, November 11 at 18:20:00 UTC.**
+`peek-live30-incident-inspect-1`, Actions **43076682138**, source
+`b0288b4b80aab6f3c3eec01fac559bc8520ca570`, ran only `--inspect-live30`.
+Both applied and recoverable markers passed against exact current protected
+state `b34e86f75140a0e89b725e8dc9e56dd2fcc75e509155b768348bb3670daf4427`,
+actual IDs 1339–1343, the unchanged original journal/SQL, manifest/profile and
+receipt `9202c8fb…b9a0c`. All six live Spectra sources matched. No installer,
+purge or page requests ran. The full report was read. This and recovery copy 2
+support the new finish-only request `live-peek-finish-20261111-1`,
+`--apply --finish-live30`, with automatic post-change/restore checks. Ryan alone
+merges and starts it after final Gates passes. #30 must never be rerun.
+
+**Actual-state recovery copy 2 PASS, November 11 at 18:18:45 UTC.**
+`peek-live30-recovery-copy-2`, Actions **43075719186**, source
+`b31dc65d2b984edd2a893f76239924ec58343af1`, imported fresh current live SQL
+unchanged (4,189,962 bytes, SHA256
+`e2800ea70194fef1688c86b0271383dc95fbb64ec20594a690d191789fcbb14e`), with raw
+live URLs and zero collation substitutions. The actual immutable journal,
+actual snippet IDs 1339–1343 and all six pinned Spectra sources matched.
+
+All seven incident verification/recovery steps passed. All **17 HTML responses
+passed with Peek installed and all 17 passed after rollback**, including Search
+and the expected 404. These are exact static response checks, not a new browser
+matrix. Exact protected-state verification passed after each response phase:
+applied `b34e86f75140a0e89b725e8dc9e56dd2fcc75e509155b768348bb3670daf4427`;
+restored `629c1e66eece68a9d7c91b6de5d7b780582a688e4d885a14aa389e053dcf05a4`.
+Eight SQL observations independently confirmed the five cache-row identities,
+global asset version and raw origin stayed exact. Recovery retains the three
+independently generated cache rows; it does not recreate the two stale rows or
+claim historical whole-database identity. The incident receipt is SHA256
+`9202c8fb4e90babcba739a75660af944fc2a5adbfd1881278458312bc9ab9a0c`.
+
+The original journal and original SQL remained byte-identical and mode 0600.
+All owned relay/container/volume/network/temporary-directory resources were
+deleted with verified cleanup. The full report was read. Live was read-only;
+no live purge, rollback or reinstallation occurred. The successful run resolves
+the response-loop failure below. Focused source checks include 2,203 installer
+controls, 286 wrapper controls, 315 runner controls, 44 marker controls and 12
+recovery-evidence tests. The accepted visitor runtime and summaries are unchanged.
+
 **Actual-state recovery copy 1 stopped in its response loop, November 11 at
 18:08:52 UTC.** `peek-live30-recovery-copy-1`, Actions **43074759786**, source
 `9fb36811170675f766add419e49f160cac5e7f5a`, imported fresh current live SQL

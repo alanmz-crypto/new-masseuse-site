@@ -9,40 +9,32 @@ metadata:
 A phone cloud session (https://claude.ai/code, repo `alanmz-crypto/new-masseuse-site`) sees ONLY this repository: not his computer, not his global `~/.claude/CLAUDE.md`, not his local Claude memory, not convmem. Everything that must not be lost is therefore written here and in the notes this index points to.
 First message to send in a fresh phone session: **"Read .claude/project-memory/open-items.md and tell me what is due."**
 
-**LIVE #30 failed after installation; do not rerun the apply.** Ryan merged
-PR #80 and started `live-peek-visitor-release-20261111-1`, run **43058202011**,
-main `4e89eb25f5f5a68afdbb82aba45e3b385ec8a0b6`. The five snippets were applied
-and the actual SQL/snapshot verified encrypted off-site, but first exact-state
-verification failed at **16:26:48 UTC**, before purge/render. Live therefore has
-the release installed but deployment verification is incomplete. The actual
-snapshot is `peek-release-before-20261111-162615-e00022b6.json`, SHA256
+**Peek is installed on live; finish verification separately, never rerun #30.**
+Ryan merged PR #80 and started `live-peek-visitor-release-20261111-1`, run
+**43058202011**, main `4e89eb25f5f5a68afdbb82aba45e3b385ec8a0b6`.
+Installation and verified encrypted off-site backups succeeded; exact-state
+verification stopped before purge/render at 16:26:48 UTC. The original journal
+`peek-release-before-20261111-162615-e00022b6.json` remains immutable, SHA256
 `4038da0f9f77780ce355029bc87e53bff0479294711c821d253f51151e10751b`.
-Read-only state diagnosis is next; no rollback or guard relaxation is authorized
-by the failed result. See the release-readiness record for all actual bindings.
-The statements below about no live run describe the preceding preparation.
 
-Read-only diagnosis now isolates exactly five metadata differences (no owned
-Peek/page-content/other protected-store changes): old rows 4701/4702 are missing;
-new rows 5089/5090/5091 are Spectra `_uag_page_assets` caches for the three
-Personal Automation pages, confirmed by hashed-key SQL inspection at 17:15:30
-(run **43066327533**). The fixed original SQL reader then identified old rows
-4701/4702 as the same cache key on posts 1255/1257 at **17:45:57 UTC**
-(run **43071249809**), with exact diagnostic witness hashes. Cold-copy
-reproduction then **passed at 17:57:32 UTC** (run **43072850520**): ordinary
-page loads reproduce all five changes and exact live cache values; repeat loads
-are stable, all other protected rows match, and cleanup is verified. Targeted
-incident verification/recovery on a copy of the actual installed state is next.
-Do not relax the guard or rewrite the actual snapshot. No purge,
-rendered verification, rollback or reinstall has run since the failure.
-The complete evidence and actual recovery bindings are in the readiness record;
-current work branch is `codex/peek-live-verification-diagnostics`.
+The mismatch is proved: ordinary rendering regenerated three Spectra asset
+caches, replacing two stale rows. Cold-copy proof **43072850520** passed at
+17:57:32 UTC. A narrow receipt binds only those five differences; no other
+protected-state check is weakened. Actual-state recovery copy **43075719186**
+passed at **18:18:45 UTC**: all seven incident checks, 17 visitor responses in
+each state, exact rollback retaining the external caches, and verified cleanup.
+Live read-only incident check **43076682138** then passed at **18:20:00 UTC**
+with the same exact applied state and recoverable journal. The new manual request
+is `live-peek-finish-20261111-1`, args `--apply --finish-live30`, automatic checks
+enabled. Finish final Gates, then Ryan merges the new PR and manually starts
+Site ops (LIVE) on main with that ID. No live purge, rollback or reinstallation
+since #30.
+The accepted navigation and summaries are unchanged; no repeated Safari test
+or broad browser matrix is needed for this correction. Ryan alone merges main
+and starts Site ops (LIVE). Current review: `docs/reviews/2026-11-11-peek-live-release.md`;
+full evidence: `docs/reviews/2026-11-10-peek-release-readiness.md`.
 
-**Peek release PR prepared: [PR #80](https://github.com/alanmz-crypto/new-masseuse-site/pull/80).**
-Merge only after its final Gates is green, then manually start Site ops (LIVE)
-on main with `live-peek-visitor-release-20261111-1`. The PR contains the exact
-two phone steps. No further preparation approval is pending; no live run yet.
-GitHub supplies the current CI/merge status. After Ryan starts it, read the actual
-report and record the new live backup/snapshot; do not reuse copy/staging records.
+**Historical first-install preparation follows; its used request must not run again.**
 
 **Live preflight passed; manual release preparation, November 11.** The final
 read-only dry run **43055400254** passed at **16:09:22 UTC**, source

@@ -1,30 +1,31 @@
 ---
 name: link-ideas-practice-page
-description: Peek navigation on staging39 only; shared core and four approved service-page data snippets, with current evidence and guarded recovery records; original practice-page history retained
+description: Peek navigation on staging39 and installed on live; shared core, approved summaries, verification and guarded recovery evidence; original practice-page history retained
 metadata:
   type: project
 ---
 
-**LIVE #30 applied, then exact verification failed.** Ryan merged PR #80 and
-started run **43058202011** on November 11. Core 1343 / data 1339–1342 were
-installed; actual SQL and snapshot were verified encrypted off-site. The
-snapshot is `peek-release-before-20261111-162615-e00022b6.json`, SHA256
-`4038da0f9f77780ce355029bc87e53bff0479294711c821d253f51151e10751b`.
-Read-only diagnosis found only five original metadata-row differences: two
-missing rows now identified from the exact original SQL as `_uag_page_assets`
-(run **43071249809**, 17:45:57 UTC), and three new caches on
-Personal Automation / its Privacy / Terms pages. Peek records and page content
-match the applied snapshot. Isolated cold-copy reproduction **passed**
-(run **43072850520**, 17:57:32 UTC): ordinary page loads reproduce the exact
-cache values, with stable repeats and verified cleanup. A targeted copy test of
-the incident-specific verification/recovery path is next. No purge, rendered verification, rollback or
-reinstallation since the failure; do not rerun apply or weaken guards. Follow
-the current release-readiness record and `codex/peek-live-verification-diagnostics`.
-Earlier no-live-run statements below are historical.
+**Peek installed on live; finish verification separately, never rerun #30.**
+Ryan merged PR #80 and started **43058202011** on November 11. Core 1343 / data
+1339–1342 and the CSS/settings transition were installed; the actual SQL and
+journal were verified encrypted off-site. Exact verification then stopped before
+purge/render. Journal `peek-release-before-20261111-162615-e00022b6.json`, SHA256
+`4038da0f9f77780ce355029bc87e53bff0479294711c821d253f51151e10751b`, is unchanged.
 
-**Release [PR #80](https://github.com/alanmz-crypto/new-masseuse-site/pull/80) is prepared.**
-Check final Gates there, then Ryan merges and manually starts Site ops (LIVE)
-with `live-peek-visitor-release-20261111-1`. No live run or snapshot yet.
+Cold-copy proof **43072850520** passed at 17:57:32 UTC: ordinary rendering
+produced exactly the five Spectra cache-row differences. Actual-state recovery
+copy **43075719186** passed at **18:18:45 UTC**: seven incident checks, 17 visitor
+responses in each state, exact rollback preserving the external caches, and
+verified cleanup. The correction accepts only those five pinned differences.
+Every other guard remains; accepted runtime, summaries and wording are unchanged.
+Live read-only incident check **43076682138** passed at **18:20:00 UTC** with
+exact applied/recoverable state. New manual request `live-peek-finish-20261111-1`
+uses `--apply --finish-live30` with automatic checks. After final Gates passes,
+Ryan merges the new PR and starts LIVE on main with that ID. No live purge,
+rollback or reinstallation since #30. Follow `docs/reviews/2026-11-11-peek-live-release.md` and
+the detailed readiness record. Branch: `codex/peek-live-verification-diagnostics`.
+
+**Historical first-install preparation follows; its used request must not run again.**
 
 **Live preflight passed November 11 at 16:09:22 UTC.** Actions **43055400254**,
 source `36263729dc0b92ad4885748cd2f2d665cb2bb2ed`, verifies the exact raw-live
