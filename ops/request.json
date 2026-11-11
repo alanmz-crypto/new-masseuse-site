@@ -1,9 +1,8 @@
 {
-  "id": "peek-index-clearance-rehearse-2",
-  "op": "rehearse",
+  "id": "peek-index-clearance-s39-preflight-1",
+  "op": "run",
   "target": "staging39",
-  "installer": "link-ideas/core-index-clearance/install-peek-core-index-clearance.php",
-  "args": [
-    "--with-uploads"
-  ]
+  "script": "link-ideas/push-peek-index-clearance.sh",
+  "args": [],
+  "tests": "auto"
 }
