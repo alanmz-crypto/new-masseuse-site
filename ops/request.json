@@ -1,9 +1,8 @@
 {
-  "id": "peek-quiet-nav-rehearse-2",
-  "op": "rehearse",
+  "id": "peek-quiet-nav-dry-1",
+  "op": "run",
   "target": "staging39",
-  "installer": "link-ideas/core-quiet-nav/install-peek-core-quiet-nav.php",
-  "args": [
-    "--with-uploads"
-  ]
+  "script": "link-ideas/push-peek-quiet-nav.sh",
+  "args": [],
+  "tests": "auto"
 }
