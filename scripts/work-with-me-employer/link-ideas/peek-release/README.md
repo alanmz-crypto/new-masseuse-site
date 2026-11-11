@@ -35,11 +35,14 @@ The four approved data payloads are unchanged. This includes immediate summary
 neighbours, small-screen index clearance and the four quiet-navigation changes.
 The prior payload and its historical evidence remain in git; they cannot verify
 this refreshed first-install candidate. The separate mandatory Search contrast
-payload is the reviewed 536-byte source candidate, SHA256
+payload is the exact 536-byte correction now verified on staging39, SHA256
 `3225b279ae3d20adf696ac9ad6a16dc2be7c7c15c8fbe64ba59e5a74dc14e9e0`.
 It changes only screen styles for Search results/no-results panels, placeholders,
-the populated form's text button and current pagination. Its inclusion here is
-source preparation; fresh rendered-copy gates remain required.
+the populated form's text button and current pagination. Search's separate
+staging copy and public checks each passed 300/0, with final actual-snapshot
+verification at 07:00:26 UTC on November 11. Its inclusion in this release still
+needs the fresh first-install and rendered-copy gates; in-place staging proof
+does not replace those.
 
 `manifest.json` records the actual read-only live capture, the 15 route identities,
 all payload hashes and exact baseline hashes. The capture was operation

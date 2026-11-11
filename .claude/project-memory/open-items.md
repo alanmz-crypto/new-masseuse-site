@@ -9,18 +9,35 @@ metadata:
 A phone cloud session (https://claude.ai/code, repo `alanmz-crypto/new-masseuse-site`) sees ONLY this repository: not his computer, not his global `~/.claude/CLAUDE.md`, not his local Claude memory, not convmem. Everything that must not be lost is therefore written here and in the notes this index points to.
 First message to send in a fresh phone session: **"Read .claude/project-memory/open-items.md and tell me what is due."**
 
-**Release preparation, November 11: Search correction and current bundle prepared.**
+**Current release preparation, November 11: Search contrast complete on staging39.**
 The [Search phase record](../../docs/reviews/2026-11-11-search-contrast.md)
-records complete actual baseline inspection and the 536-byte CSS candidate.
-Cached actual-page replay passed 150/0 per Chromium/Firefox engine; this is not
-fresh-copy or public verification. No Search website change has happened yet.
-The first-install package now freezes the accepted quiet-navigation core and
-this same Search CSS, with four approved data payloads unchanged. Local models
-passed 1,694 installer checks and 162 evidence controls; a complete first-install,
-rendered and recovery cycle is still required. Temporary live DB/uploads copy
-permission remains unresolved after the earlier automatic approval rejection.
-No live enablement, live request or main merge exists. Safari acceptance is
-complete; fluidity refinements stay deferred.
+records final source Gates **51/0**, a fresh staging39 copy with **300/0** browser
+checks and exact recovery, followed by backed-up deployment at **06:45:11 UTC**.
+Public Chromium/Firefox passed **300/0** at **06:59:24 UTC**. Final actual-snapshot
+verification passed at **07:00:26 UTC** (Actions **42976293114**), with exact stored
+and served CSS before/after Search and Home renders. Core and approved summaries
+are unchanged. The generic comparison against live still reports the existing
+20 navigation-related pixel differences; it is not an aggregate visual pass.
+
+Actual CSS recovery snapshot:
+`search-contrast-before-20261111-064511-fcba9b49.json`; fresh export:
+`staging39-before-search-contrast-20261111-064500-29620.sql`. Both were verified
+encrypted off-site in the required order. Use this actual Search snapshot with
+its guarded wrapper after exact-state checks; copy snapshots and older Peek
+snapshots do not recover this CSS. The deployed Search manifest stays immutable.
+The initial apply stopped before mutation because SiteGround's logical home is
+an alias of `/home/customer`. The wrapper now supplies canonical private paths,
+including recovery; dry preflight checks the same prerequisite as apply.
+
+The first-install release package now freezes the accepted quiet-navigation
+core and this exact Search CSS, with four approved data payloads unchanged.
+Its models passed **1,694 installer checks** and **162 evidence controls**, but
+its complete first-install/rendered/recovery cycle remains unproved. The
+[readiness record](../../docs/reviews/2026-11-10-peek-release-readiness.md)
+contains a concrete next copy request, not dispatched. Explicit permission for
+the temporary live DB/uploads copy remains unresolved after automatic approval
+review rejected it as outside staging39 scope. No live enablement, live request
+or main merge exists. Safari acceptance is complete; fluidity stays deferred.
 
 **Current staging39, November 11: four navigation refinements complete and accepted.**
 The automatic rail-side scrolling label is removed; interaction names remain.
@@ -46,8 +63,8 @@ Current recovery starts with `core-quiet-nav` → frozen v9, using only
 after fresh verified backup and exact ownership/state checks. This actual
 snapshot and `staging39-before-peek-quiet-nav-20261111-043831-56757.sql` were
 verified encrypted off-site in the required order. Older recovery routes below
-apply only after this restoration. Main/live remain unchanged. A separate dark
-Search result-card contrast issue is recorded as a follow-up before live.
+apply only after this restoration. Main/live remain unchanged. The separate dark Search
+contrast correction is now complete as recorded above.
 
 **Previous accepted baseline, November 11: small-screen index clearance.**
 The idle index clears the visible header, booking notice and title strip, and the

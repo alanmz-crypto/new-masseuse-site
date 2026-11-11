@@ -1,6 +1,6 @@
 # Search contrast before the Peek release
 
-**In preparation; no Search website change yet.** Ryan asked to continue the
+**Complete on staging39; live remains unchanged.** Ryan asked to continue the
 remaining release preparation after accepting the four navigation controls on
 iPhone Safari. Fluidity refinements remain deferred until after live. This
 phase corrects Search contrast on staging39 and refreshes the separate release
@@ -179,6 +179,9 @@ unchanged. The actual rendered minimum regular-text contrast is **8.04:1** and
 field/placeholder contrast **7.26:1**. Full retained Home **35/0** and client-page
 **322/0** logs pass. The 15 separate native stderr files contain only the known
 WP-CLI Colors deprecation; original/applied PHP-error sets match.
+Independent visual review covered all 24 applied full-page captures and four
+baseline views, with no new clipping, collision or readability blocker. The
+390-pixel light comparisons differ only at the intended placeholder text.
 
 Read-only staging preflight `search-contrast-dry-1`, commit
 `85381d9547ce89d7feb36c5b882cb6e79f3d8a2b`, passed in Actions **42972323425**
@@ -224,3 +227,117 @@ directory. Exports also use the physical directory. Real filesystem alias tests
 and the existing backup/refusal tests passed **48/0**; the installer model passed
 **98/0**, including dry-run refusal and canonicalized-path acceptance. Payload
 and manifest bytes are unchanged. New source, dry-run and copy gates follow.
+
+Correction source is `1e3dd69866cc2e41918c0ef0a898b218d584ed43`.
+`search-contrast-dry-2`, commit `ef98506a897877a7e6a7dc49bbfbd98fab139ac9`,
+Actions **42973687236**, passed **06:37:27 UTC**, now including the actual
+private-directory prerequisite. Original CSS remained exact and ready. Source
+Gates **42973687235** and fresh staging39 copy `search-contrast-rehearse-2`
+(commit `ba94bb55a8c9bd19cb00594e3d7cb398f0b21c77`, Actions **42973788876**)
+were started for the corrected source; staging apply remains blocked until both
+pass and evidence is read.
+
+Second rehearsal completed **PASS at 06:41:51 UTC**. Its full operation report
+was read. Independent raw-evidence review again confirmed **150/0 per browser**,
+all 12 cases, six loads and 12 captures per engine, with no INVALID/stderr.
+All 87 fingerprints satisfy exact A=C=E and B=B2=D=F, only CSS #29 changes,
+and all snapshot/readback bindings match. Home **35/0**, client **322/0**, and
+unchanged PHP errors pass. All **24 applied JPEGs match the first copy byte for
+byte**, so its full visual review applies without differences. The archive is
+**10,955,276 bytes**, SHA256
+`a1f27020f75f7de13712ba834548039f172aaf6856827bc1fdfa07fef514f210`,
+with verified download size/hash, ZIP CRC and safe extraction. Root and the
+independent reviewer confirmed the exact checked-out request commit.
+
+Final corrected source Gates **42973687235** passed **51/0 at 06:43:38 UTC**.
+The complete relevant log was read and checkout verified against
+`ef98506a897877a7e6a7dc49bbfbd98fab139ac9`; all PHP, ShellCheck, Python, wording,
+builder and recovery gates passed. The final staging apply may now proceed with
+a new export; the earlier export is not reused.
+
+## Actual staging deployment
+
+`search-contrast-apply-2`, commit `9e48056834d2d8920a94b51cfbd5a79384d16b00`,
+Actions **42974559394**, applied at **06:45:11 UTC** and completed its report
+**PASS at 06:54:29 UTC**. The complete report was read. Exact CSS is now
+**69,380 bytes**, SHA256
+`b024acc687b49a37115940b52976f3bdcfc6cb236ae7bb4a81422f8c2d02c69b`.
+
+Fresh actual export, verified on server, in the copied file and through
+encrypted off-site readback **before the write**:
+`staging39-before-search-contrast-20261111-064500-29620.sql`, **4,548,317 bytes**,
+SHA256 `23ac801734d1f1f5c4f4839f9616aaf972f24fba1cf3cb14b99c8bab3092c798`.
+
+Actual recovery snapshot, verified off-site **before purge/render**:
+`/home/customer/private-backups/search-contrast-before-20261111-064511-fcba9b49.json`,
+**141,536 bytes**, SHA256
+`9da4ca7fe4542276ab8113ddf24dc06694527c52038afbe7c722d93e866a1af6`.
+Use this actual file for Search verification/recovery, never either copy's
+snapshot or an older Peek core snapshot. The installed manifest stays frozen.
+
+Stored CSS matched before and after the required cache purge and HTTP200
+Search/Home renders; both renders served the exact applied CSS. Automatic
+post-change source/rendered/wording/posture gates, 12 HTTP responses, structured
+data (27/27, zero parse errors) and PHP-error checks passed. The broad pixel
+comparison is **not an aggregate pass**: all 20 views differ between staged
+Peek navigation and the unchanged live site, as already recorded for that
+separate accepted navigation release. Both sets had all 20 captures with zero
+capture problems. No new non-Search content change is attributed to this CSS.
+
+Automatic restore import exited **0**, comparing **104 fingerprints** on each
+side: CSS1/options12/pages19/rows21/SEO21/snippets30. Its only difference was
+**CSS #29**, exactly the intended change. Subsequent public and final
+actual-snapshot results are recorded below.
+
+Independent deployment review read the full report and complete **425-line**
+job log, confirmed the exact checkout, and verified timestamp ordering:
+DB off-site **06:45:07**, CSS apply **06:45:11**, snapshot off-site **06:45:17**,
+purge **06:45:21**, exact Search/Home renders and stored recheck **06:45:22**.
+No deployment blocker was found. The restore totals above come from its report;
+the full row files are not retained there, so no second row-by-row computation
+of those 104 fingerprints is claimed.
+
+Public request `search-contrast-public-1`, commit
+`2084fe258210bcec54cde527ce4cc9d7e80f0d13`, Actions **42975819331**, ran
+the focused Chromium/Firefox checks without writing to WordPress.
+
+## Completed public and final verification
+
+That public request completed **PASS at 06:59:24 UTC**: Chromium **150/0** and
+Firefox **150/0**, all 12 cases, six actual public loads and 12 captures per
+engine. Total **300/0**, in 163 seconds. Populated and empty Search, 320/390/1280
+widths, both themes, actual controls, print/light scope and preserved Peek code
+were checked. The complete operation report was read. These automated browsers
+do not add physical Safari or assistive-technology coverage; prior Safari
+acceptance of the unchanged Peek navigation remains closed.
+
+The public artifact is **7,419,725 bytes**, SHA256
+`fbdd6a65b3b4fd75d3ca1cd6bd66074f13f8f81785c6de57813b6eb231747b22`;
+download hash/size, ZIP CRC and extraction paths were verified.
+Independent audit of the complete separate stdout/stderr streams confirmed the
+exact 150 assertions per engine, all cases/captures, no INVALID evidence, and
+served core/style hashes matching the checked-out source in every case. All
+**24 public JPEGs are byte-identical to the reviewed second copy**. Minimum
+regular-text and field/placeholder contrast remain **8.04:1** and **7.26:1**.
+No extra public request or expanded test was needed for this artifact review.
+
+Final read-only request `search-contrast-verify-1`, commit
+`e03e75e39f321baad53d41ef48c0f0e1100cecd1`, Actions **42976293114**, passed at
+**07:00:26 UTC**, after public browsers. The whole report was read. The actual
+snapshot's path, SHA256 and 141,536-byte size matched before and after exact
+Search/Home HTTP200 renders; stored and served CSS remained
+`b024acc687b49a37115940b52976f3bdcfc6cb236ae7bb4a81422f8c2d02c69b`.
+
+Recovery, only after checking this exact current state, uses
+`search-contrast/push-search-contrast.sh --rollback /home/customer/private-backups/search-contrast-before-20261111-064511-fcba9b49.json`
+through a **new staging39-only operations request**. The wrapper requires its
+own fresh verified off-site export and exact snapshot/state checks. No rollback
+has been requested on staging. Keep the deployed manifest immutable; do not
+replace this snapshot with a copy-rehearsal file or guess the latest filename.
+
+The release bundle now contains the accepted core, four approved data payloads
+and this exact staged Search CSS. It still needs its own first-install,
+rendered and recovery rehearsal. The concrete live-data-copy request and
+permission boundary are recorded in the [release readiness record](2026-11-10-peek-release-readiness.md).
+No live-data copy, live enablement, live request or main merge was performed
+in this phase. Fluidity remains deferred until after live.

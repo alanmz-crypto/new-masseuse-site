@@ -1,5 +1,11 @@
 # Dark Search result-card contrast
 
+Verified on staging39 on November 11. Source gates passed 51/0; fresh-copy and
+public Chromium/Firefox checks each passed 300/0, with exact recovery and final
+actual-snapshot verification. See the [deployment and recovery record](../../../docs/reviews/2026-11-11-search-contrast.md)
+for the actual export/snapshot and the initially stopped path-alias attempt.
+Live remains outside this package's allow-list.
+
 This package appends one marked Additional CSS block to Astra CSS record #29.
 On screen, dark-mode Search result cards, the Search heading panel and the
 empty-result panel receive the existing `--ts-panel` background. Search-field

@@ -20,17 +20,20 @@ controls on iPhone Safari on November 11: “It's correct.” They explicitly
 deferred fluidity refinements until after the live push. This acceptance and
 the earlier ones remain closed; do not ask for a generic retest or add fluidity
 work to the pre-live scope. The check did not authorize a live operation.
-A separate observed issue
-needs correction before live: dark Search result cards show pale text on white
-backgrounds. It is recorded separately from the four navigation changes.
+A separate dark Search contrast issue is now corrected and verified on staging39;
+it is recorded separately from the four navigation changes.
 
 **November 11 release source refreshed; no fresh first-install proof yet.** The
 local first-install candidate now freezes the accepted quiet-navigation core,
 including immediate summary neighbours, index clearance and all four controls.
 Its four approved summary payloads are unchanged. The same reviewed 536-byte
-Search contrast candidate is frozen as a separate required CSS payload. It has
-not yet been deployed to staging39 or live; see the
-[Search preparation record](2026-11-11-search-contrast.md). The single guarded
+Search contrast fix is frozen as a separate required CSS payload. It is deployed
+and verified on staging39; live is unchanged. See the
+[completed Search record](2026-11-11-search-contrast.md): source **51/0**, fresh
+copy **300/0** with exact recovery, public **300/0**, all 24 public captures
+identical to the reviewed copy, and final actual-snapshot verification passed
+at **07:00:26 UTC** (Actions **42976293114**). Fresh SQL and the actual snapshot
+were verified encrypted off-site in the required order. The single guarded
 CSS transition removes the exact legacy progress block and appends one LF plus
 the full Search payload, without trimming. Rollback restores the whole exact
 original CSS record.
@@ -50,8 +53,11 @@ Independent source review found no defect in the refreshed CSS transition and
 rollback. Pinned-PHP tests passed **1,694 checks with 138 injected write-boundary
 failures**; the release evidence suite passed **162 offline controls**, including
 missing/changed Search payload refusals. PHP/Node syntax, exact current/frozen
-payload bindings and diff checks passed. These are local source/model results,
-not repository CI, WordPress installation or browser results. The candidate still
+payload bindings and diff checks passed. Complete repository source Gates then
+passed **51/0** in Actions **42971422219** and, after the staging Search wrapper's
+canonical-path correction, **42973687235** at **06:43:38 UTC**. These source/model
+results do not prove the first WordPress installation or release browser cycle.
+The candidate still
 accepts only exact `http://localhost:8090`; no live profile or push wrapper is
 enabled. The historical evidence below does not validate this refreshed bundle.
 
@@ -132,8 +138,8 @@ No permission for this live-data transfer is recorded yet.
   visitor pages, plus the four approved service-page summary data snippets.
 - Remove the exact superseded reading-progress CSS block and disable Astra's
   scroll-to-top button, matching the reviewed staging design.
-- Include the same reviewed Search contrast CSS after its staging copy,
-  deployment and verification gates pass; it is frozen source, not a deployed fix.
+- Include the exact Search contrast CSS now verified on staging39, frozen in
+  the release payload above.
 - Keep existing jump-row snippet #1232 and native-guide snippet #1338 unchanged.
   Peek hides the native guide only after it initializes; the plain jump row
   remains the destination source and no-JavaScript fallback.
@@ -507,11 +513,11 @@ Gates `42758745983`: **39/0**, with only the expected rendered-URL skip, at
 `aa19783b3a64f8a92d9fb78fb0893e67d65a2925dde7628a36e1eae68c3f41a8`.
 The subsequent copy6 dispatch was rejected before execution as recorded above.
 
-1. Complete the Search correction's staging39 source, fresh-copy, deployment,
-   public-browser and exact actual-snapshot gates. Its reviewed source is frozen
-   in this package, but no Search website change is recorded at this refresh.
-2. Verify the refreshed release source in repository CI and obtain explicit
-   scope permission for the temporary live-data copy. Reconfirm the captured
+1. **Complete:** Search's staging39 source, fresh-copy, deployment, public-browser
+   and actual-snapshot gates passed as recorded above. Its exact CSS is frozen
+   in this package. Earlier failed path-preflight attempts remain documented.
+2. **Source CI complete; permission pending:** obtain explicit scope permission
+   for the temporary live-data copy. Reconfirm the captured
    baseline against the actual copy; do not silently rebase changed stores or
    retry the rejected copy6 request unchanged.
 3. Rehearse this exact transition on a fresh isolated copy of current live, including
