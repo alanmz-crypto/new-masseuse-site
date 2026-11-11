@@ -1,9 +1,8 @@
 {
-  "id": "peek-visitor-release-quiet-search-copy-4",
-  "op": "rehearse",
+  "id": "peek-visitor-release-live-dry-1",
+  "op": "run",
   "target": "live",
-  "installer": "link-ideas/peek-release/install-peek-release.php",
-  "args": [
-    "--with-uploads"
-  ]
+  "script": "link-ideas/push-peek-release.sh",
+  "args": [],
+  "tests": "auto"
 }
