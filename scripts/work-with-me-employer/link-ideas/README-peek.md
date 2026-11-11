@@ -22,8 +22,10 @@ Current recovery starts with `core-index-clearance` → frozen v8, using only
 after fresh verified backup and exact ownership/state checks. This actual
 snapshot and `staging39-before-peek-index-clearance-20261111-005342-74246.sql`
 were verified encrypted off-site. Older recovery routes below apply only after
-this restoration. The new index behavior still needs its narrow iPhone Safari
-check; the previously accepted summary layout does not need a generic retest.
+this restoration. Ryan accepted the index fix on November 11: **“Looks good.”**
+This closes the requested user review; no generic retest remains pending. It
+does not establish broader device/assistive-technology coverage or authorize
+a live-data copy or deployment.
 
 **Previous accepted baseline: one summary neighbour above and below.** Ryan
 requested this uniform layout after reporting missing links and scrolling

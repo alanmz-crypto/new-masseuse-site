@@ -269,8 +269,10 @@ It finished **01:30:30 UTC, PASS**, in
 [Actions 42939387258](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42939387258).
 The complete report confirms the same applied core/four-page state before and
 after all 19 HTTP200 exact renders. No state drift followed the public browsers.
-The only remaining acceptance step for this change is the narrow iPhone Safari
-index-position/gesture check with the address bar expanded and collapsed.
+On November 11, Ryan accepted the current index fix: **“Looks good.”** This
+closes the requested user review. No device-version, per-route checklist or
+assistive-technology result is inferred, and it does not authorize a live copy
+or deployment.
 
 Current recovery must start with `push-peek-index-clearance.sh --rollback`
 and this actual staging snapshot, after fresh verified backup and exact
@@ -318,9 +320,9 @@ and WebKit; public verification uses Chromium and Firefox.
 
 Browser viewport resizing is not physical Safari address-bar testing. Ryan's
 November 10 “Looks good on Safari. No problems I see” accepts the preceding
-neighbours deployment. After this separate index change, only the affected
-index position and gesture check remains for iPhone Safari; no new broad
-acceptance or assistive-technology certification is inferred.
+neighbours deployment. Their November 11 **“Looks good”** accepts the separate
+index change. No generic retest remains pending; no broader device coverage or
+assistive-technology certification is inferred.
 
 Actual operation IDs, results, backup/snapshot and deployed hashes are recorded
 above. Live release preparation remains

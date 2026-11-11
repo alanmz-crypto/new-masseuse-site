@@ -15,9 +15,8 @@ public **15,646/0 across 16 suites**, and exact actual-snapshot verification
 passed. Complete leaf evidence was audited despite combined-console truncation;
 see the staging record. The live package remains the older payload. That phase
 identified a separate short-viewport index/announcement overlap, addressed by
-the November 11 staging update below. The neighbours acceptance check is complete;
-finish the index verification, refresh the release payload and complete its
-first-install/recovery rehearsal.
+the November 11 staging update below. Both user acceptance checks are complete;
+refresh the release payload and complete its first-install/recovery rehearsal.
 Do not dispatch the previously blocked copy6 merely on a later permission reply
 without checking that the release package is still intended.
 
@@ -27,13 +26,14 @@ clearance status above: source Gates 45/0, fresh-copy browsers 23,249/0 with
 exact post-browser recovery, then in-place deployment and exact actual-snapshot
 verification across all 19 routes. After the automatic check was INVALID
 HTTP202, the single later public-browser run passed **18,460/0 across 18 suites**.
-A narrow iPhone Safari index-position
-check remains. The first-install release payload is still older and the
+Ryan accepted the index fix on November 11: **“Looks good.”** No generic
+acceptance retest remains pending. The first-install release payload is still older and the
 live-data-copy permission boundary below remains unchanged.
 
 **Current iPhone Safari user acceptance passed.** After the neighbours deployment
 and requested check, Ryan reported on November 10: **“Looks good on Safari.
-No problems I see.”** Accept this as their current experience of the new layout.
+No problems I see.”** They accepted the subsequent index fix on November 11:
+**“Looks good.”** Record both as user acceptance of the respective deployed changes.
 The earlier partial and contradictory Privacy/menu reply remains historical;
 do not ask them to repeat the same generic check. No per-route checklist,
 iPhone/iOS version, OS text-scale or assistive-technology result was supplied.
@@ -430,8 +430,8 @@ The subsequent copy6 dispatch was rejected before execution as recorded above.
    including search/404; staging's 19-page inventory is not the live inventory.
 4. Complete supplemental Linux WebKit disclosure/layout checks. Linux WebKit
    remains engine evidence, not a claim of Safari or physical-device testing.
-5. **Current neighbours layout accepted by Ryan on iPhone Safari, November 10.**
-   Their no-problems report is recorded above. If a subsequent runtime fix changes
+5. **Neighbours accepted November 10; index fix accepted November 11.**
+   Ryan's reports are recorded above. If a subsequent runtime fix changes
    relevant behavior, recheck the affected path rather than repeating the entire
    acceptance process. VoiceOver and OS text scaling remain separate coverage;
    no result was supplied for them.
