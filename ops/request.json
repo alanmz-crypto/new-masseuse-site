@@ -1,8 +1,10 @@
 {
-  "id": "peek-live30-recovery-copy-2",
+  "id": "peek-live30-incident-inspect-1",
   "op": "run",
   "target": "live",
-  "script": "link-ideas/peek-release/prove-live30-recovery.sh",
-  "args": [],
+  "script": "link-ideas/push-peek-release.sh",
+  "args": [
+    "--inspect-live30"
+  ],
   "tests": "auto"
 }
