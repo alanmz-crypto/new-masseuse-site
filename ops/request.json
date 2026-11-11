@@ -1,8 +1,12 @@
 {
-  "id": "peek-visitor-release-live-dry-3",
+  "id": "peek-live-state-inspect-1",
   "op": "run",
   "target": "live",
   "script": "link-ideas/push-peek-release.sh",
-  "args": [],
+  "args": [
+    "--inspect-state",
+    "/home/customer/private-backups/peek-release-before-20261111-162615-e00022b6.json",
+    "4038da0f9f77780ce355029bc87e53bff0479294711c821d253f51151e10751b"
+  ],
   "tests": "auto"
 }
