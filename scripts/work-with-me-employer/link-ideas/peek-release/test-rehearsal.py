@@ -7,8 +7,10 @@ browser, credentials, stored site baseline or network is used.
 from copy import deepcopy
 from hashlib import sha256
 from pathlib import Path
+import base64
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -51,6 +53,263 @@ def function(source, name, end):
     # Execute the current production function, not a copied approximation of it.
     start = source.index(name + "() {")
     return source[start:source.index(end, start)]
+
+
+def focused_fixture(family, engine):
+    slugs = ["thai-massage", "therapeutic-massage", "deep-tissue-massage", "chair-massage"]
+    if family != "neighbours":
+        slugs += ["services", "corporate-massage-portland", "work-with-me", "privacy-policy", "search"]
+    cases = [f"{slug}/{side}" for slug in slugs for side in ("right", "left")]
+    kinds = {"neighbours": ("middle-short", "research-landscape"),
+             "index-clearance": ("short-portrait", "landscape-top"),
+             "quiet-nav": ("idle-reading", "index-open")}[family]
+    assertions = []
+    for case in cases:
+        for label in ("geometry", "original content", "no JavaScript errors"):
+            separator = ": " if family == "neighbours" else "/"
+            assertions.append(f"PASS {family} {engine}/{case}{separator}{label} [check {len(assertions) + 1}]")
+    completed = [] if family == "neighbours" else [f"INFO {family} completed {engine}/{case}" for case in cases]
+    captures = [f"INLINE peek-{family}-{engine}-{slug}-{side}-{kind}.jpg base64:/9j/2Q=="
+                for slug in slugs for side in ("right", "left") for kind in kinds]
+    label = {"neighbours": "neighbours", "index-clearance": "index clearance", "quiet-nav": "quiet nav"}[family]
+    limitation = "viewport resizing is not Safari, physical-device or OS text-scale validation."
+    if family == "neighbours":
+        touch = "trusted CDP touch and keyboard" if engine == "chromium" else "keyboard only"
+        tail = f"8/8 completed cases, 8 page loads, 16 captures; 1s; {touch}; {limitation}"
+    else:
+        if family == "quiet-nav":
+            limitation = "browser touch emulation is not physical-device, Safari or assistive-technology validation."
+        tail = f"18/18 cases, 18 page loads, 36 captures, 1s; {limitation}"
+    summary = f"INFO Peek {label} {engine}: {len(assertions)} passed, 0 failed; {tail}"
+    return assertions + completed + captures + [summary]
+
+
+def search_fixture(engine, contract):
+    lines, number = [], 0
+    for route in contract["routes"]:
+        for width in contract["widths"]:
+            for theme in contract["themes"]:
+                case = f"{route['name']}/{width}/{theme}"
+                for label in contract["assertions"][theme]:
+                    number += 1
+                    lines.append(f"PASS search-contrast {engine}/{case}/{label} [check {number}]")
+                measures = {"rows": [{"contrast": 7.2}, {"contrast": 8.1}], "surfaces": [{"background": "rgb(20,30,40)"}]}
+                lines += [f"INFO Search contrast {engine}/{case}: {json.dumps(measures)}",
+                          f"INLINE search-contrast-{engine}-{route['name']}-{width}-{theme}.jpg base64:/9j/2Q==",
+                          f"INFO Search contrast completed {engine}/{case}"]
+            number += 1
+            lines.append(f"PASS search-contrast {engine}/{route['name']}/{width}/return-to-light/{contract['returnAssertion']} [check {number}]")
+    assert number == 150, "release fixture requires the complete current Search assertion contract"
+    lines.append(f"INFO Search contrast {engine}: CHECK, {number} passed, 0 failed; 12/12 cases, 6 page loads, 12 captures; 1s; evidence fixture; {contract['limitation']}")
+    return lines
+
+
+def browser_contract_tests(work):
+    """Exercise actual parser/adapter with synthetic complete child streams."""
+    parser_cases = []
+    for family in ("neighbours", "index-clearance", "quiet-nav"):
+        for engine in ("chromium", "firefox", "webkit"):
+            parser_cases.append({"family": family, "engine": engine,
+                                 "name": f"valid-{family}-{engine}", "valid": True,
+                                 "lines": focused_fixture(family, engine)})
+        original = focused_fixture(family, "chromium")
+        for mutation in ("missing-summary", "duplicate-summary", "wrong-count", "wrong-loads", "missing-image",
+                         "duplicate-image", "wrong-image", "malformed-image", "wrong-case", "missing-case",
+                         "check-number", "missing-check-number", "wrong-source", "stderr-error", "stderr-invalid"):
+            lines = list(original)
+            if mutation == "missing-summary": lines.pop()
+            elif mutation == "duplicate-summary": lines.append(lines[-1])
+            elif mutation == "wrong-count": lines[-1] = lines[-1].replace(" passed,", "0 passed,", 1)
+            elif mutation == "wrong-loads": lines[-1] = lines[-1].replace(" page loads,", "0 page loads,", 1)
+            elif mutation == "missing-image": lines.pop(next(i for i, line in enumerate(lines) if line.startswith("INLINE ")))
+            elif mutation == "duplicate-image": lines.append(next(line for line in lines if line.startswith("INLINE ")))
+            elif mutation == "wrong-image":
+                index = next(i for i, line in enumerate(lines) if line.startswith("INLINE "))
+                lines[index] = lines[index].replace(".jpg", "-unknown.jpg")
+            elif mutation == "malformed-image":
+                index = next(i for i, line in enumerate(lines) if line.startswith("INLINE "))
+                lines[index] = lines[index].replace("/9j/2Q==", "AAAA")
+            elif mutation == "wrong-case": lines[0] = lines[0].replace("thai-massage/right", "unknown/right")
+            elif mutation == "missing-case":
+                # Keep the count and sequence plausible while omitting one
+                # actual case; the independent case set must reject it.
+                lines = [line.replace("thai-massage/right", "thai-massage/left") if line.startswith("PASS ") else line for line in lines]
+            elif mutation == "check-number": lines[0] = lines[0].replace("[check 1]", "[check 2]")
+            elif mutation == "missing-check-number": lines[0] = lines[0].split(" [check", 1)[0]
+            elif mutation == "wrong-source": lines[0] = lines[0].replace(f"PASS {family}", "PASS unknown")
+            elif mutation == "stderr-error": lines.append("ERROR browser child failed")
+            elif mutation == "stderr-invalid": lines.append("INVALID child evidence incomplete")
+            parser_cases.append({"family": family, "engine": "chromium", "name": f"{family}-{mutation}", "valid": False, "lines": lines})
+        if family != "neighbours":
+            for mutation in ("missing-completion", "duplicate-completion"):
+                lines = list(original)
+                index = next(i for i, line in enumerate(lines) if line.startswith(f"INFO {family} completed "))
+                if mutation == "missing-completion": lines.pop(index)
+                else: lines.append(lines[index])
+                parser_cases.append({"family": family, "engine": "chromium", "name": f"{family}-{mutation}", "valid": False, "lines": lines})
+        if family == "quiet-nav":
+            lines = list(original)
+            lines[1] = lines[0].replace("[check 1]", "[check 2]")
+            parser_cases.append({"family": family, "engine": "chromium", "name": "quiet-repeated-label", "valid": False, "lines": lines})
+        lines = list(original)
+        lines[0] = lines[0].replace("PASS ", "FAIL ", 1)
+        count = sum(line.startswith(("PASS ", "FAIL ")) for line in lines)
+        lines[-1] = lines[-1].replace(f"{count} passed, 0 failed", f"{count - 1} passed, 1 failed")
+        parser_cases.append({"family": family, "engine": "chromium", "name": f"{family}-literal-failure", "valid": True, "failed": 1, "lines": lines})
+    fixture = work / "focused-parser-fixtures.json"
+    fixture.write_text(json.dumps(parser_cases))
+    parser_runner = work / "check-focused-parser.mjs"
+    parser_runner.write_text("import { readFileSync } from 'node:fs';\n"
+                            f"import {{ focusedSpec, parseFocused }} from {json.dumps((HERE / 'focused-evidence.mjs').as_uri())};\n"
+                            "const cases=JSON.parse(readFileSync(process.argv[2]));\n"
+                            "for (const c of cases) { const r=parseFocused(c.lines, focusedSpec(c.family,c.engine));\n"
+                            " if ((!r.invalid.length)!==c.valid || (c.failed && (r.failed!==c.failed || !r.failureObserved))) throw new Error(c.name+': '+JSON.stringify(r)); }\n"
+                            "console.log('PASS '+cases.length+' focused evidence controls');\n")
+    check("focused current-runtime evidence controls", subprocess.run(["node", str(parser_runner), str(fixture)],
+          capture_output=True, text=True, timeout=15), 0, f"PASS {len(parser_cases)} focused evidence controls")
+
+    package_root = work / "browser-package"
+    package = package_root / "peek-release"
+    shutil.copytree(HERE, package, ignore=shutil.ignore_patterns("*.py", "test-installer.php"))
+    shutil.copy2(HERE.parent / "peek-nav.php", package_root / "peek-nav.php")
+    shutil.copytree(HERE.parent / "peek-data", package_root / "peek-data")
+    for name in ("core-index-clearance", "core-quiet-nav"):
+        (package_root / name).mkdir()
+        shutil.copy2(HERE.parent / name / "contract.mjs", package_root / name / "contract.mjs")
+    search = work / "search-contrast"
+    search.mkdir()
+    for name in ("check-contract.mjs", "check-evidence.mjs", "search-contrast.css"):
+        shutil.copy2(HERE.parent.parent / "search-contrast" / name, search / name)
+    (package_root / "core-input-focus").mkdir()
+    declared = json.loads((package / "manifest.json").read_text())
+    inventory = work / "release-browser-inventory.json"
+    inventory.write_text(json.dumps({"pages": declared["pages"]}))
+    names = ["input focus chromium", "disclosures chromium", "disclosures firefox", "Kiro layout chromium",
+             "Kiro layout firefox", "title rails chromium", "title rails firefox", "title strip chromium",
+             "title strip firefox", "clearance chromium", "clearance firefox", "pages chromium", "pages firefox",
+             "native touch", "retained Thai chromium"]
+    retained = [f"INFO Peek {name}: 2 passed, 0 failed; 17 actual routes, fixture" for name in names]
+    retained += [f"INFO core-input-focus rehearsal wrapper {name}: child_exit=0; signal=none; effective_exit=0; 15 leaf suites"
+                 for name in ("input-focus-chromium", "retained-kiro-fixes")]
+    retained += ["INFO core-input-focus rehearsal: PASSED, 2 wrapper suites, 30 passed, 0 failed; 1s"]
+    supplemental = [f"INFO Peek {name} webkit: 2 passed, 0 failed; fixture" for name in ("disclosures", "Kiro layout")]
+    supplemental += [f"INFO Peek WebKit suite {name}: child_exit=0; effective_exit=0; 2 passed, 0 failed; stdout=fixture; stderr=fixture"
+                     for name in ("disclosures", "layout")]
+    supplemental += ["INFO Peek WebKit supplemental verification: PASSED, 2/2 suites, 4 passed, 0 failed; complete logs: fixture"]
+    outputs = {"retained-core": retained, "webkit": supplemental}
+    for family in ("neighbours", "index-clearance", "quiet-nav"):
+        for engine in ("chromium", "firefox", "webkit"):
+            outputs[f"{family}-{engine}"] = focused_fixture(family, engine)
+    # More than a pipe buffer, and terminal stderr without a newline, must
+    # survive the real regular-file child logging unchanged.
+    large_jpeg = base64.b64encode(b"\xff\xd8" + b"x" * 262144 + b"\xff\xd9").decode()
+    rows = outputs["quiet-nav-webkit"]
+    image_index = next(i for i, line in enumerate(rows) if line.startswith("INLINE "))
+    rows[image_index] = rows[image_index].replace("/9j/2Q==", large_jpeg)
+    # Load the exported browser contract rather than copying its semantic
+    # assertion labels into another navigation map or a permissive count test.
+    contract_source = HERE.parent.parent / "search-contrast/check-contract.mjs"
+    contract_result = subprocess.run(["node", "--input-type=module", "-e",
+        "const c=await import(process.argv[1]); console.log(JSON.stringify({routes:c.SEARCH_ROUTES,widths:c.SEARCH_WIDTHS,themes:c.SEARCH_THEMES,assertions:Object.fromEntries(c.SEARCH_THEMES.map(t=>[t,c.searchAssertions(t)])),returnAssertion:c.SEARCH_RETURN_ASSERTION,limitation:c.SEARCH_LIMITATION}));",
+        contract_source.as_uri()], capture_output=True, text=True, timeout=10, check=True)
+    search_contract = json.loads(contract_result.stdout)
+    for engine in ("chromium", "firefox"):
+        outputs[f"search-contrast-{engine}"] = search_fixture(engine, search_contract)
+    output_file = package_root / "fixture-output.json"
+    output_file.write_text(json.dumps(outputs))
+    fixture_runner = package_root / "fixture-child.mjs"
+    fixture_runner.write_text("import { appendFileSync, readFileSync, writeSync } from 'node:fs';\n"
+        "export function run(name) {\n"
+        "const rows=JSON.parse(readFileSync(new URL('./fixture-output.json',import.meta.url)))[name];\n"
+        "appendFileSync(process.env.RELEASE_FIXTURE_TRACE,JSON.stringify(name)+'\\n');\n"
+        "let code=0; const broken=process.env.RELEASE_FIXTURE_PHASE===name?process.env.RELEASE_FIXTURE_MODE:'';\n"
+        "if(broken==='failed'){rows[0]=rows[0].replace('PASS ','FAIL '); const last=rows.length-1; rows[last]=rows[last].replace(/(\\d+) passed, 0 failed/,(_,n)=>(Number(n)-1)+' passed, 1 failed'); code=1;}\n"
+        "if(broken==='missing-image')rows.splice(rows.findIndex(x=>x.startsWith('INLINE ')),1);\n"
+        "if(broken==='inspection')rows[rows.length-1]=rows[rows.length-1].replace(': CHECK,',': INSPECTION,');\n"
+        "if(broken==='wrong-search-label')rows[0]=rows[0].slice(0,rows[0].lastIndexOf('/')+1)+'unexpected assertion label [check 1]';\n"
+        "writeSync(1, rows.join('\\r\\n')+'\\r\\n'); if(!name.startsWith('search-contrast-'))writeSync(2,'fixture stderr: Unicode →; backslash \\\\; last byte');\n"
+        "if(broken==='stderr-error')writeSync(2,'\\nERROR child failed after its apparent pass\\n');\n"
+        "if(broken==='signal')process.kill(process.pid,'SIGTERM'); else process.exitCode=code;\n}\n")
+    (package_root / "core-input-focus/check-rehearsal.mjs").write_text("import {run} from '../fixture-child.mjs';run('retained-core');\n")
+    (package_root / "webkit-fixture.mjs").write_text("import {run} from './fixture-child.mjs';run('webkit');\n")
+    (package_root / "check-peek-webkit.sh").write_text('#!/bin/sh\nexec node "$(dirname "$0")/webkit-fixture.mjs"\n')
+    for family in ("neighbours", "index-clearance", "quiet-nav"):
+        (package_root / f"check-peek-{family}.mjs").write_text("import {run} from './fixture-child.mjs';\n"
+            "const engine=process.argv.includes('--webkit')?'webkit':process.argv.includes('--firefox')?'firefox':'chromium';\n"
+            f"run({json.dumps(family + '-')}+engine);\n")
+    (search / "check-search-contrast.mjs").write_text("import {run} from '../browser-package/fixture-child.mjs';\n"
+        "run('search-contrast-'+(process.argv.includes('--firefox')?'firefox':'chromium'));\n")
+    phases = list(outputs)
+    expected_total = 34 + sum(sum(line.startswith("PASS ") for line in outputs[name]) for name in phases[2:])
+    for mode, bad, expected in (("pass", "", 0), ("failed", "neighbours-firefox", 1),
+                                ("missing-image", "quiet-nav-webkit", 2), ("signal", "index-clearance-chromium", 2),
+                                ("stderr-error", "retained-core", 2), ("stderr-error", "webkit", 2),
+                                ("failed", "search-contrast-firefox", 1), ("inspection", "search-contrast-chromium", 2),
+                                ("missing-image", "search-contrast-firefox", 2), ("stderr-error", "search-contrast-chromium", 2),
+                                ("wrong-search-label", "search-contrast-chromium", 2)):
+        case = work / ("browser-graph-" + mode + "-" + bad)
+        case.mkdir()
+        trace = case / "trace.jsonl"
+        env = dict(os.environ, RUNNER_TEMP=str(case), TS_PEEK_TITLE_INVENTORY=str(inventory),
+                   RELEASE_FIXTURE_TRACE=str(trace), RELEASE_FIXTURE_MODE=mode, RELEASE_FIXTURE_PHASE=bad)
+        env.pop("TS_PEEK_REHEARSAL_PROFILE", None)
+        env.pop("S_TARGET", None)
+        result = subprocess.run(["node", str(package / "check-rehearsal.mjs"), "http://localhost:8090"],
+                                env=env, capture_output=True, text=True, timeout=20)
+        check("actual current release browser graph " + mode, result, expected)
+        wanted = phases if not bad else phases[:phases.index(bad) + 1]
+        assert [json.loads(line) for line in trace.read_text().splitlines()] == wanted, (mode, "child order/stop")
+        folders = list((case / "ops-out").glob("peek-release-browser-*"))
+        assert len(folders) == 1
+        saved = json.loads((folders[0] / "results.json").read_text())
+        assert saved["code"] == expected and [row["name"] for row in saved["results"]] == wanted
+        for row in saved["results"]:
+            stderr = "" if row["name"].startswith("search-contrast-") else "fixture stderr: Unicode →; backslash \\; last byte"
+            if mode == "stderr-error" and row["name"] == bad:
+                stderr += "\nERROR child failed after its apparent pass\n"
+            assert Path(row["logs"]["stderr"]).read_bytes() == stderr.encode()
+            if mode == "pass":
+                assert Path(row["logs"]["stdout"]).read_bytes() == ("\r\n".join(outputs[row["name"]]) + "\r\n").encode()
+        if mode == "pass":
+            assert len(saved["results"]) == 13 and sum(len(row["summaries"]) for row in saved["results"]) == 28
+            assert saved["counts"] == {"passed": expected_total, "failed": 0}
+            assert "13/13 phases, 28/28 leaf suites" in result.stdout
+            assert rows[image_index] in result.stdout, "complete large JPEG must survive every adapter"
+    for guard in ("live-origin", "inherited-profile", "missing-inventory", "wrong-inventory", "frozen-drift", "source-drift",
+                  "frozen-search-drift", "source-search-drift", "missing-search-declaration"):
+        case = work / ("browser-guard-" + guard)
+        case.mkdir()
+        trace = case / "trace.jsonl"
+        env = dict(os.environ, RUNNER_TEMP=str(case), TS_PEEK_TITLE_INVENTORY=str(inventory),
+                   RELEASE_FIXTURE_TRACE=str(trace), RELEASE_FIXTURE_MODE="pass", RELEASE_FIXTURE_PHASE="")
+        env.pop("TS_PEEK_REHEARSAL_PROFILE", None)
+        env.pop("S_TARGET", None)
+        origin = "https://thaisolitude.com" if guard == "live-origin" else "http://localhost:8090"
+        if guard == "inherited-profile": env["TS_PEEK_REHEARSAL_PROFILE"] = "visitor-release-v1"
+        if guard == "missing-inventory": env.pop("TS_PEEK_TITLE_INVENTORY")
+        if guard == "wrong-inventory":
+            changed = case / "inventory.json"
+            changed.write_text(json.dumps({"pages": declared["pages"][:-1]}))
+            env["TS_PEEK_TITLE_INVENTORY"] = str(changed)
+        drift_file = {"frozen-drift": package / "payload/core.php",
+                      "source-drift": package_root / "peek-nav.php",
+                      "frozen-search-drift": package / "payload/search-contrast.css",
+                      "source-search-drift": search / "search-contrast.css",
+                      "missing-search-declaration": package / "manifest.json"}.get(guard)
+        before = drift_file.read_bytes() if drift_file else None
+        if guard == "missing-search-declaration":
+            changed = json.loads(before)
+            changed["payloads"].pop("search_contrast")
+            drift_file.write_text(json.dumps(changed))
+        elif drift_file:
+            drift_file.write_bytes(before + b"\n/* synthetic changed bytes */\n")
+        try:
+            result = subprocess.run(["node", str(package / "check-rehearsal.mjs"), origin],
+                                    env=env, capture_output=True, text=True, timeout=10)
+        finally:
+            if drift_file: drift_file.write_bytes(before)
+        check("release browser preflight " + guard, result, 2, "no browser suites started")
+        assert not trace.exists(), "bad release identity must stop before every browser child"
 
 
 def main():
@@ -518,16 +777,49 @@ fixture_rows=$2; fixture_sql_exit=$3
 set -uo pipefail
 out=$1/out; broken=$2; mkdir -p "$out"
 inst=link-ideas/peek-release/install-peek-release.php; release_rehearsal=1
-wpc() { printf 'Synthetic installer result\n'; [ "$broken" != wpc ]; }
-tee() { command tee "$@"; local result=$?; [ "$broken" != tee ] || return 1; return "$result"; }
-grep() { command grep "$@"; local result=$?; [ "$broken" != grep ] || return 1; return "$result"; }
+wpc() { printf 'Synthetic installer result\n'; printf 'Synthetic stderr result\n' >&2; [ "$broken" != wpc ]; }
+tee() {
+  command tee "$@"; local result=$?
+  [ "$broken" != stdout-tee ] || [ "$1" != "$out/test.log" ] || return 1
+  [ "$broken" != stderr-tee ] || [ "$1" != "$out/test.stderr.log" ] || return 1
+  return "$result"
+}
+grep() { printf 'unexpected merged-output filtering\n' >&2; return 1; }
 sed() { command sed "$@"; local result=$?; [ "$broken" != sed ] || return 1; return "$result"; }
 curl() { if [ "$broken" = http ]; then printf 500; else printf 200; fi; [ "$broken" != curl ]; }
 '''
-        for broken in ("none", "wpc", "tee", "grep", "sed"):
+        for broken in ("none", "wpc", "stdout-tee", "stderr-tee", "sed"):
             check("installer pipeline " + broken,
                   shell(runner_shim + inst_run + "\ninst_run test apply\n", (work / ("runner-" + broken), broken)),
                   0 if broken == "none" else 1)
+            folder = work / ("runner-" + broken) / "out"
+            assert (folder / "test.log").read_text() == "Synthetic installer result\n"
+            assert (folder / "test.stderr.log").read_text() == "Synthetic stderr result\n"
+        # Execute the production stream capture around fragmented and delayed
+        # stderr. Only stdout can supply a strict release marker.
+        for mode in ("fragmented", "late-stderr", "stderr-decoy"):
+            folder = work / ("runner-marker-" + mode)
+            emitted_marker = logs[0].read_text()
+            runner = runner_shim + r'''
+wpc() {
+  printf 'Deprecated: ' >&2
+  cat "$3"
+  printf 'Using null as array offset\n' >&2
+  if [ "$broken" = late-stderr ]; then (sleep .02; printf 'late stderr fragment\n' >&2) & fi
+  if [ "$broken" = stderr-decoy ]; then cat "$4" >&2; fi
+}
+'''
+            # The double receives fixed fixture paths after the real eval-file
+            # arguments. It does not invoke PHP or read a snapshot.
+            runner = runner.replace('cat "$3"', 'cat "$fixture_stdout"').replace('cat "$4" >&2', 'cat "$fixture_decoy" >&2')
+            runner += '\nfixture_stdout=$3; fixture_decoy=$4\n' + inst_run + '\ninst_run test apply\n'
+            check("strict release stdout marker " + mode, shell(runner, (folder, mode, logs[0], logs[1])), 0)
+            assert (folder / "out/test.log").read_text() == emitted_marker
+            expected_stderr = "Deprecated: Using null as array offset\n"
+            if mode == "late-stderr": expected_stderr += "late stderr fragment\n"
+            if mode == "stderr-decoy": expected_stderr += logs[1].read_text()
+            assert (folder / "out/test.stderr.log").read_text() == expected_stderr
+            check("strict release marker parser " + mode, invoke("snapshot", folder / "out/test.log", manifest, "applied"), 0, first["snapshot"])
         for broken in ("none", "http", "curl"):
             check("page status " + broken,
                   shell(runner_shim + load_pages + "\npages=(/ /privacy-policy/); load_pages\n", (work / ("pages-" + broken), broken)),
@@ -538,7 +830,7 @@ curl() { if [ "$broken" = http ]; then printf 500; else printf 200; fi; [ "$brok
             case = work / f"cleanup-{initial}"
             out = case / "out"
             out.mkdir(parents=True)
-            allowed = {"apply.log", "A.content", "errors-before.txt", "original-before-navigation.jsonl", "title-strip-pages.json", "release-paths.txt"}
+            allowed = {"apply.log", "apply.stderr.log", "A.content", "errors-before.txt", "original-before-navigation.jsonl", "title-strip-pages.json", "release-paths.txt"}
             for name in allowed | {"private.sql", "snapshot.json", "release-original-page.html"}:
                 (out / name).write_text("Synthetic " + name + "\n")
             cleanup_shim = r'''
@@ -550,6 +842,8 @@ cleanup() { touch "$RUNNER_TEMP/cleanup-ran"; }
             check(f"EXIT retains status {initial}", result, initial)
             kept = {path.name for path in (case / "ops-out/peek-release-native").iterdir()}
             assert kept == allowed and (case / "cleanup-ran").exists(), ("retained evidence scope", initial, kept)
+
+        browser_contract_tests(work)
 
     print(f"Peek visitor-release rehearsal evidence: {PASSED} offline controls passed; no site or browser requests.")
 

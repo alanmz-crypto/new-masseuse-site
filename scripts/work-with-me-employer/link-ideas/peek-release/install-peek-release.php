@@ -97,6 +97,11 @@ try {
         token_get_all( "<?php\n" . $release_code, TOKEN_PARSE );
     }
     $release_progress = $release_payload( $release_manifest['payloads']['reading_progress'], 'payload/reading-progress.css' );
+    $release_search = $release_payload( $release_manifest['payloads']['search_contrast'], 'payload/search-contrast.css' );
+    if ( ! str_starts_with( $release_search, '/* ts-search-contrast:start */' ) || ! str_ends_with( $release_search, "/* ts-search-contrast:end */\n" ) || substr_count( $release_search, 'ts-search-contrast:start' ) !== 1 || substr_count( $release_search, 'ts-search-contrast:end' ) !== 1 ) { $release_fail( 'Malformed Search contrast payload.' ); }
+    // Same exact append contract as staging: retain every preceding byte,
+    // remove only the frozen obsolete progress block, then one LF and Search.
+    $release_css_result = static fn( $css ) => str_replace( $release_progress, '', $css ) . "\n" . $release_search;
     $release_titles = $release_notes = array();
     foreach ( $release_roles as $release_role ) {
         $release_titles[$release_role] = $release_role === 'core' ? 'TSPeekNav visitor release v1' : 'TSPeekData ' . $release_role . ' visitor release v1';
@@ -172,7 +177,7 @@ $release_capture = static function ( $bound_ids = array() ) use ( $wpdb, $releas
     }
     return $out;
 };
-$release_baseline = static function ( $state ) use ( $release_manifest, $release_hash, $release_equal, $release_fail, $release_roles, $release_progress ) {
+$release_baseline = static function ( $state ) use ( $release_manifest, $release_hash, $release_equal, $release_fail, $release_roles, $release_progress, $release_css_result ) {
     $b = $release_manifest['baseline'];
     $release_equal( $state['pages'], $release_manifest['pages'], 'Published visitor inventory' );
     foreach ( $b['post_sha256'] as $id => $hash ) { if ( $release_hash( $state['records'][$id]['post'] ?? null ) !== $hash ) { $release_fail( 'Reviewed source post differs: ' . $id ); } }
@@ -183,7 +188,7 @@ $release_baseline = static function ( $state ) use ( $release_manifest, $release
     if ( $state['shared_termmeta_sha256'] !== $b['termmeta_sha256'] ) { $release_fail( 'Reviewed shared term metadata differs.' ); }
     foreach ( $release_roles as $role ) { if ( $state['owned'][$role] !== null ) { $release_fail( 'Peek already exists; use a recorded complete snapshot to verify/repeat.' ); } }
     $css = $state['records'][29]['post']['post_content'];
-    if ( substr_count( $css, $release_progress ) !== 1 || hash( 'sha256', $css ) !== $b['css']['old_content_sha256'] || hash( 'sha256', str_replace( $release_progress, '', $css ) ) !== $b['css']['new_content_sha256'] ) { $release_fail( 'Exact reading-progress block differs.' ); }
+    if ( substr_count( $css, $release_progress ) !== 1 || str_contains( $css, 'ts-search-contrast:' ) || hash( 'sha256', $css ) !== $b['css']['old_content_sha256'] || hash( 'sha256', $release_css_result( $css ) ) !== $b['css']['new_content_sha256'] ) { $release_fail( 'Exact progress/Search CSS transition differs.' ); }
 };
 $release_astra = static function ( $old ) use ( $release_fail, $release_hash, $release_manifest ) {
     $before = unserialize( $old['option_value'], array( 'allowed_classes' => false ) );
@@ -235,12 +240,12 @@ $release_owned_ok = static function ( $record, $role, $status, $code, $initial_f
     }
     foreach ( $record['relationships'] as $i => $row ) { if ( $row !== array( 'object_id' => (string) $id, 'term_order' => '0', 'term_taxonomy_id' => (string) ( 9 + $i ) ) ) { $diagnose( array( 'relationship-row' ) ); $release_fail( 'Owned relationship differs.' ); } }
 };
-$release_expected = static function ( $old, $owned, $cleaned ) use ( $release_astra, $release_progress ) {
+$release_expected = static function ( $old, $owned, $cleaned ) use ( $release_astra, $release_css_result ) {
     // Copy4 proved both shared counts include our newly related inactive draft.
     $out = $old; $out['owned'] = $owned; $members = 0;
     foreach ( $owned as $record ) { if ( $record !== null ) { $members++; } }
     foreach ( $out['taxonomies'] as &$row ) { $row['count'] = (string) ( (int) $row['count'] + $members ); } unset( $row );
-    if ( $cleaned['css'] ) { $out['records'][29]['post']['post_content'] = str_replace( $release_progress, '', $out['records'][29]['post']['post_content'] ); }
+    if ( $cleaned['css'] ) { $out['records'][29]['post']['post_content'] = $release_css_result( $out['records'][29]['post']['post_content'] ); }
     if ( $cleaned['astra'] ) { $out['options']['astra-settings'] = $release_astra( $old['options']['astra-settings'] ); }
     return $out;
 };

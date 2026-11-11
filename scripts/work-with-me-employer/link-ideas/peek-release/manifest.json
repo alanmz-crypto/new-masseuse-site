@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "bundle": "peek-visitor-release-v1",
-  "candidate_status": "provisional; frozen staged runtime, pending Safari acceptance",
+  "candidate_status": "provisional; approved quiet-navigation runtime; fresh first-install and recovery rehearsal still required; Safari acceptance complete",
   "source": {
     "operation": "peek-live-navigation-baseline-1",
     "run": 42741958557,
@@ -127,8 +127,8 @@
   "payloads": {
     "core": {
       "file": "payload/core.php",
-      "file_sha256": "ddd7e3b9df4a3c6cd45b3f7c46bc56c4e2c1df6c4553846879681843e60f639f",
-      "code_sha256": "a3a503f59dc8a557a24e5a03967481af824f29136668b1158d9cfa47ae3e537c"
+      "file_sha256": "4dfe97943898790b9c000f6dfcc129b4806183a23bc7cb7a55f1cc7db7172952",
+      "code_sha256": "58266413fe0e24e1dc44ef32c98f428d4537a9b63bf8f5299eb8d708a4d032e5"
     },
     "data": {
       "thai-massage": {
@@ -155,6 +155,10 @@
     "reading_progress": {
       "file": "payload/reading-progress.css",
       "file_sha256": "f7cbdd8c307ca1fb270b3109d1b705847dba835926b2f7cca2f4df88a3dc0072"
+    },
+    "search_contrast": {
+      "file": "payload/search-contrast.css",
+      "file_sha256": "3225b279ae3d20adf696ac9ad6a16dc2be7c7c15c8fbe64ba59e5a74dc14e9e0"
     }
   },
   "baseline": {
@@ -191,7 +195,7 @@
     "css": {
       "id": 29,
       "old_content_sha256": "1b9d4a6fcc783830a508edb3a00390d698998621391facf49ea05d77ce09fc7f",
-      "new_content_sha256": "2806a8a19e13aab2c672a4f62bb8265c091944652c54d45c5bb3845629ee38ae"
+      "new_content_sha256": "b024acc687b49a37115940b52976f3bdcfc6cb236ae7bb4a81422f8c2d02c69b"
     },
     "taxonomies": [
       {

@@ -4,7 +4,12 @@ This package freezes the shared Peek runtime and four approved summary payloads
 already verified in WordPress on staging39. It is a first-install candidate for a
 fresh copy of live, not authorization or tooling to change live. The installer
 accepts only `http://localhost:8090`; staging and live origins are refused.
-Actual iPhone Safari acceptance and the fresh-copy gates remain release blockers.
+Ryan accepted the current controls on iPhone Safari on November 11: “It's
+correct.” Fluidity refinements are deferred until after live; no repeat generic
+Safari check is required. The fresh first-install and recovery gates remain
+required. A prior live-data copy request was rejected before execution because
+it exceeded the staging39-only scope; no replacement rehearsal is authorized
+by this source refresh.
 The copy's containers use an internal Docker network from first boot, so copied
 plugins cannot call external integrations. An owned host TCP relay binds only
 127.0.0.1:8090 and forwards unchanged bytes to port 80 of the exact inspected
@@ -12,13 +17,29 @@ WordPress container on that internal network. It stops during copy cleanup.
 The host browser itself is not a network-isolated process.
 
 The release creates five WPCode snippets, removes the exact old reading-progress
-CSS block from Additional CSS #29, and changes Astra's `scroll-to-top-enable`
-boolean to false. It preserves jump snippet #1232 and section-guide #1338. The
+CSS block and appends the frozen Search contrast block in one guarded update to
+Additional CSS #29, and changes Astra's `scroll-to-top-enable` boolean to false.
+It preserves jump snippet #1232 and section-guide #1338. The
 runtime hides the guide only after initialization. Existing page content,
 metadata, dates, SEO and route identities remain unchanged. The four experimental
 navigation pages are absent from the reviewed 15-page visitor inventory.
 
 ## Source and copied baseline
+
+The November 11 refresh freezes the exact accepted quiet-navigation runtime:
+110787 file bytes, SHA256
+`4dfe97943898790b9c000f6dfcc129b4806183a23bc7cb7a55f1cc7db7172952`;
+110781 stored-code bytes, SHA256
+`58266413fe0e24e1dc44ef32c98f428d4537a9b63bf8f5299eb8d708a4d032e5`.
+The four approved data payloads are unchanged. This includes immediate summary
+neighbours, small-screen index clearance and the four quiet-navigation changes.
+The prior payload and its historical evidence remain in git; they cannot verify
+this refreshed first-install candidate. The separate mandatory Search contrast
+payload is the reviewed 536-byte source candidate, SHA256
+`3225b279ae3d20adf696ac9ad6a16dc2be7c7c15c8fbe64ba59e5a74dc14e9e0`.
+It changes only screen styles for Search results/no-results panels, placeholders,
+the populated form's text button and current pagination. Its inclusion here is
+source preparation; fresh rendered-copy gates remain required.
 
 `manifest.json` records the actual read-only live capture, the 15 route identities,
 all payload hashes and exact baseline hashes. The capture was operation
@@ -36,9 +57,14 @@ exact-byte row-selection condition and nested-serialization handling. The four
 step hashes are recorded. A simple serialize/unserialize round trip is **not**
 byte-preserving for the actual Astra option and is never used to write it.
 
-The CSS payload includes the original 1,093-byte block plus exactly one following
-LF (1,094 bytes total). Removing it produces the exact staged CSS bytes, SHA-256
+The progress CSS payload includes the original 1,093-byte block plus exactly one
+following LF (1,094 bytes total). Removing it produces the 68,843-byte staging
+baseline, SHA256
 `2806a8a19e13aab2c672a4f62bb8265c091944652c54d45c5bb3845629ee38ae`.
+The release appends exactly one LF and the entire Search payload, without
+trimming either input, for 69,380 bytes, SHA256
+`b024acc687b49a37115940b52976f3bdcfc6cb236ae7bb4a81422f8c2d02c69b`.
+Rollback restores the whole original CSS record; it does not reconstruct it.
 Astra changes only the unique serialized top-level boolean token. Decoding before
 and after proves that only that boolean changes; all other raw bytes and autoload
 are preserved.
@@ -181,6 +207,19 @@ Those require the fresh live-sourced copy with uploads and retained operation
 reports. No successful local fixture result authorizes a live release.
 
 ## Machine evidence
+
+The browser adapter requires the exact current runtime/data bytes and fresh
+15-page visitor inventory, plus search and 404. It retains the original 15
+visitor suites and two supplemental WebKit suites, then runs the existing
+neighbour, index-clearance and quiet-navigation checks in Chromium, Firefox
+and WebKit, plus Search contrast in Chromium and Firefox: **28 unique leaves
+across 13 phases**. Search uses the same pure evidence parser as its staging
+gate, requiring the full result/no-result, theme/width and return-to-light
+matrix. The newer staging aggregate
+guards remain unchanged; this release-owned adapter invokes their focused
+checkers with complete literal assertion, case, load and capture checks. Every
+child stdout/stderr stream is retained. Failed or incomplete evidence stops
+later phases. Linux WebKit is engine evidence, not a physical Safari claim.
 
 Successful preflight emits one `RELEASE-PREFLIGHT` JSON line with schema, bundle,
 home, manifest SHA, ready state and complete protected-state SHA. The rehearsal

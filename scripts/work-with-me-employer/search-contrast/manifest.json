@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "bundle": "search-contrast-v1",
+  "css_id": 29,
+  "css_name": "astra",
+  "baseline": {
+    "staging39": "2806a8a19e13aab2c672a4f62bb8265c091944652c54d45c5bb3845629ee38ae",
+    "local": "2806a8a19e13aab2c672a4f62bb8265c091944652c54d45c5bb3845629ee38ae"
+  },
+  "payload_sha256": "3225b279ae3d20adf696ac9ad6a16dc2be7c7c15c8fbe64ba59e5a74dc14e9e0",
+  "source_evidence": {
+    "request": "peek-search-css-inspect-1",
+    "css_bytes": 68843,
+    "note": "Exact staging39 Additional CSS; no mapped staging origins in this CSS."
+  }
+}

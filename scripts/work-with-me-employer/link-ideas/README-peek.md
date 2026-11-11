@@ -1,5 +1,18 @@
 # Peek shared template
 
+**Release preparation, November 11: Search correction and current bundle prepared.**
+The [Search phase record](../../../docs/reviews/2026-11-11-search-contrast.md)
+records complete actual baseline inspection and the 536-byte CSS candidate.
+Cached actual-page replay passed 150/0 per Chromium/Firefox engine; this is not
+fresh-copy or public verification. No Search website change has happened yet.
+The first-install package now freezes the accepted quiet-navigation core and
+this same Search CSS, with four approved data payloads unchanged. Local models
+passed 1,694 installer checks and 162 evidence controls; a complete first-install,
+rendered and recovery cycle is still required. Temporary live DB/uploads copy
+permission remains unresolved after the earlier automatic approval rejection.
+No live enablement, live request or main merge exists. Safari acceptance is
+complete; fluidity refinements stay deferred.
+
 **Current staging39, November 11: four navigation refinements complete and accepted.**
 The automatic rail-side scrolling label is removed; interaction names remain.
 The index has a solid outlined button and a tappable X while open. Outside taps
@@ -67,8 +80,7 @@ across all 16 suites. Complete leaf evidence was audited despite truncation of
 the combined console log. Actual-snapshot verification passed at 15:19:21 UTC:
 exact core/four data state before and after all 19 published HTTP200 renders.
 Ryan accepted the current layout on iPhone Safari on November 10: “Looks good
-on Safari. No problems I see.” Release-package work remains; its frozen
-first-install payload has not been updated to this core. The phase
+on Safari. No problems I see.” Release-package work remains; its first-install payload is now refreshed to the accepted quiet-navigation core above. The phase
 record also tracks the short-viewport index overlap later addressed above.
 At that previous phase, its positioning code was unchanged and its rendered
 origin was unproved.
@@ -83,7 +95,7 @@ contains the exact scope, new read-only live/staging inventories and current
 acceptance blockers. At that inventory, all 15 shared page bodies matched after
 origin normalization, and staged core/four data payloads matched source. Live
 metadata is preserved. The localhost-only first-install/rollback package is
-still frozen at the preceding core; no live enablement or request exists. Ryan's
+now refreshed to the accepted quiet-navigation core and Search candidate above; no live enablement or request exists. Ryan's
 latest Safari report accepts the current neighbours layout; the earlier
 ambiguous Privacy/menu reply remains historical. Device/iOS details, per-route
 results and assistive-technology certification are not inferred. This acceptance

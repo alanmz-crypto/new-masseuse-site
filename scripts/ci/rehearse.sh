@@ -38,6 +38,10 @@ if [ "$inst" = link-ideas/peek-release/install-peek-release.php ]; then
   release_rehearsal=1; read_only_discovery=1; copy_isolation=1
   [ "$src" = live ] && [ "$uploads" = 1 ] || invalid "visitor release requires a fresh live-sourced copy with uploads"
 fi
+if [ "$inst" = search-contrast/install-search-contrast.php ]; then
+  [ "$src" = staging39 ] && [ "$uploads" = 1 ] || invalid "Search contrast requires a fresh staging39-sourced copy with uploads"
+  read_only_discovery=1; copy_isolation=1
+fi
 case "$src" in
   live) want="thaisolitude.com" ;;
   staging[0-9]|staging[0-9][0-9]) want="$src.thaisolitude.com" ;;
@@ -282,7 +286,7 @@ check() { if [ "$2" -eq 0 ]; then echo "  -> PASS  $1"; else echo "  -> FAIL  $1
 inst_run() { # The filtered line is WP-CLI's PHP 8.5 deprecation, not the installer's.
   local name=$1 status; shift
   echo; echo "[$name] wp eval-file $inst $*"
-  if [ "$release_rehearsal" != 1 ] && core_guarded_lane; then
+  if [ "$release_rehearsal" = 1 ] || core_guarded_lane || search_contrast_lane; then
     # WP-CLI writes its PHP 8.5 deprecation in fragments on stderr. Merging
     # streams can prefix the actual stdout success line with "Deprecated: ".
     # Keep the parser's stdout exact and retain every stderr byte separately.
@@ -358,6 +362,129 @@ core_neighbours_cleanup() {
   fi
   cleanup
   exit "$result"
+}
+search_contrast_lane() { [ "${inst:-}" = search-contrast/install-search-contrast.php ]; }
+search_contrast_marker() {
+  local marker
+  marker=$(grep '^SEARCH-SNAPSHOT ' "$1") || return 1
+  [[ "$marker" =~ ^SEARCH-SNAPSHOT\ /backups/search-contrast-before-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}\.json\ [a-f0-9]{64}\ [1-9][0-9]*$ ]] || return 1
+  printf '%s\n' "$marker"
+}
+search_contrast_snapshot() {
+  local marker path
+  marker=$(search_contrast_marker "$1") || return 1
+  path=$(sed -nE 's@^Success: Applied exact search-contrast CSS\. Before-snapshot: (/backups/search-contrast-before-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}\.json)$@\1@p' "$1") || return 1
+  [[ "$path" =~ ^/backups/search-contrast-before-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}\.json$ ]] || return 1
+  [[ "$marker" = "SEARCH-SNAPSHOT $path "* ]] || return 1
+  printf '%s\n' "$path"
+}
+search_contrast_verified() {
+  local label=$1 reference=$2 snapshot=$3 expected=$4 marker original_marker
+  if [ "$expected" = original ]; then
+    inst_run "$label" verify "$snapshot" original || return 1
+  else
+    inst_run "$label" verify "$snapshot" || return 1
+  fi
+  marker=$(search_contrast_marker "$out/$label.log") || return 1
+  original_marker=$(search_contrast_marker "$out/$reference.log") || return 1
+  [ "$marker" = "$original_marker" ]
+}
+search_contrast_cleanup() {
+  local result=$? file evidence="${RUNNER_TEMP:-$HOME/.cache}/ops-out/search-contrast-native"
+  if mkdir -p "$evidence"; then
+    # Full native logs and hash-only fingerprints; never CSS/private snapshots,
+    # copied WordPress source, database exports or configuration credentials.
+    for file in "$out"/*.log "$out"/*.content "$out"/errors-*.txt; do
+      [ -f "$file" ] || continue
+      cp "$file" "$evidence/" || { echo "FAIL Search rehearsal: could not retain ${file##*/}" >&2; result=1; }
+    done
+  else
+    echo "FAIL Search rehearsal: cannot retain complete native evidence" >&2; result=1
+  fi
+  cleanup
+  exit "$result"
+}
+search_contrast_step() {
+  local label=$1; shift
+  "$@"; local status=$?
+  check "$label" "$status"
+  [ "$status" -eq 0 ]
+}
+search_contrast_css_only() {
+  local before=$1 after=$2
+  [ "$(grep -c -P '^css\t29\t[a-f0-9]{64}$' "$before")" = 1 ] &&
+    [ "$(grep -c -P '^css\t29\t[a-f0-9]{64}$' "$after")" = 1 ] || return 1
+  cmp -s <(grep -v -P '^css\t29\t' "$before") <(grep -v -P '^css\t29\t' "$after")
+}
+search_contrast_rehearse() {
+  local first active final extra browser_rc new
+  echo; echo "[3] Search contrast: exact CSS transition on the isolated copy"
+  search_contrast_step "baseline pages answer 200" load_pages || return 1
+  extra="$wwm/search-contrast/check-search-contrast.mjs"
+  search_contrast_step "Search baseline inspection exists" test -f "$extra" || return 1
+  timeout 180 node "$extra" http://localhost:8090 --inspect > "$out/search-baseline-inspection.log" 2>&1; local inspect_rc=$?
+  cat "$out/search-baseline-inspection.log" || return 1
+  check "complete original Search/empty inspection (observations only, not a contrast pass)" "$inspect_rc"; [ "$inspect_rc" -eq 0 ] || return 1
+  errs > "$out/errors-before.txt" || return 1
+  fp A
+  search_contrast_step "Search preflight" inst_run preflight preflight || return 1
+  search_contrast_step "Search apply" inst_run apply apply || return 1
+  first=$(search_contrast_snapshot "$out/apply.log") || { check "first Search apply returned one exact snapshot binding" 1; return 1; }
+  search_contrast_step "exact first Search snapshot and CSS" search_contrast_verified verify-first-apply apply "$first" applied || return 1
+  fp B
+  if cmp -s "$out/A.content" "$out/B.content"; then invalid "Search apply moved no fingerprint; an already-applied change proves no rollback"; fi
+  search_contrast_step "Search apply changes only Additional CSS 29" search_contrast_css_only "$out/A.content" "$out/B.content" || return 1
+  search_contrast_step "Search repeat apply" inst_run apply-again apply || return 1
+  search_contrast_step "repeat Search retains exact snapshot and CSS" search_contrast_verified verify-repeat-apply apply "$first" applied || return 1
+  fp B2
+  search_contrast_step "Search repeat preserves every fingerprint" cmp -s "$out/B.content" "$out/B2.content" || return 1
+  search_contrast_step "first Search rollback" inst_run rollback rollback "$first" || return 1
+  search_contrast_step "first Search rollback restores exact original CSS" search_contrast_verified verify-first-original apply "$first" original || return 1
+  fp C
+  search_contrast_step "first Search rollback exactly restores A" cmp -s "$out/A.content" "$out/C.content" || return 1
+  search_contrast_step "Search reapply" inst_run re-apply apply || return 1
+  active=$(search_contrast_snapshot "$out/re-apply.log") || { check "Search reapply returned one exact snapshot binding" 1; return 1; }
+  search_contrast_step "Search reapply returns its own snapshot" test "$active" != "$first" || return 1
+  search_contrast_step "exact Search reapplied CSS" search_contrast_verified verify-reapply re-apply "$active" applied || return 1
+  fp D
+  search_contrast_step "Search reapply exactly matches B without cache or ID exclusions" cmp -s "$out/B.content" "$out/D.content" || return 1
+
+  echo; echo "[4] Search contrast: rendered copy gates and browser checks"
+  search_contrast_step "applied pages answer 200" load_pages || return 1
+  errs > "$out/errors-after.txt" || return 1
+  new=$(comm -13 "$out/errors-before.txt" "$out/errors-after.txt") || return 1
+  if [ -n "$new" ]; then printf '%s\n' "$new"; check "Search creates no new PHP errors, warnings, notices or deprecations" 1; return 1; fi
+  check "Search creates no new PHP errors, warnings, notices or deprecations" 0
+  python3 -I -B "$wwm/home/verify-home.py" http://localhost:8090 > "$out/home-gates.log" 2>&1; local home_rc=$?
+  tail -n 6 "$out/home-gates.log"
+  check "Home copy and links" "$home_rc"; [ "$home_rc" -eq 0 ] || return 1
+  python3 -I -B "$wwm/client-pages/verify-client-pages.py" http://localhost:8090 > "$out/client-gates.log" 2>&1; local client_rc=$?
+  grep '^FAIL' "$out/client-gates.log" || true
+  tail -n 2 "$out/client-gates.log"
+  check "client-page regulated copy, structure and links" "$client_rc"; [ "$client_rc" -eq 0 ] || return 1
+  search_contrast_step "exact Search CSS and snapshot before browser" search_contrast_verified verify-before-browser re-apply "$active" applied || return 1
+  extra="$wwm/search-contrast/check-rehearsal.mjs"
+  search_contrast_step "required Search browser gate exists" test -f "$extra" || return 1
+  timeout 600 node "$extra" http://localhost:8090 > "$out/package-browser.log" 2>&1; browser_rc=$?
+  cat "$out/package-browser.log" || return 1
+  check "complete Search browser gate" "$browser_rc"; [ "$browser_rc" -eq 0 ] || return 1
+
+  echo; echo "[5] Search contrast: exact recovery after browser activity"
+  search_contrast_step "exact Search CSS and snapshot after browser" search_contrast_verified verify-after-browser re-apply "$active" applied || return 1
+  search_contrast_step "Search rollback after browser" inst_run rollback-after-browser rollback "$active" || return 1
+  search_contrast_step "post-browser Search rollback restores original CSS" search_contrast_verified verify-original-after-browser re-apply "$active" original || return 1
+  fp E
+  search_contrast_step "post-browser Search rollback exactly restores A" cmp -s "$out/A.content" "$out/E.content" || return 1
+  search_contrast_step "Search reapply after browser recovery" inst_run reapply-after-browser apply || return 1
+  final=$(search_contrast_snapshot "$out/reapply-after-browser.log") || { check "final Search reapply returned one exact snapshot binding" 1; return 1; }
+  search_contrast_step "final Search snapshot differs from the first apply" test "$final" != "$first" || return 1
+  search_contrast_step "final Search snapshot differs from the browser candidate" test "$final" != "$active" || return 1
+  search_contrast_step "final Search CSS and snapshot match exactly" search_contrast_verified verify-final-reapply reapply-after-browser "$final" applied || return 1
+  fp F
+  search_contrast_step "final Search reapply exactly matches B without exclusions" cmp -s "$out/B.content" "$out/F.content" || return 1
+  echo "Search fingerprint differences A -> B (hash-only record identity):"
+  diff "$out/A.content" "$out/B.content" | grep '^>' | cut -f1-2 | sed 's/^> /  changed: /'
+  echo "REHEARSAL PASSED: Search contrast on a staging39 copy; exact snapshot-bound CSS, all fingerprints, rendered gates and post-browser rollback/reapply."
 }
 release_manifest="$wwm/link-ideas/peek-release/manifest.json"
 release_evidence() { python3 -I -B "$wwm/link-ideas/peek-release/rehearsal-evidence.py" "$@"; }
@@ -454,6 +581,11 @@ fi
 
 if core_guarded_lane; then
   trap core_neighbours_cleanup EXIT
+fi
+if search_contrast_lane; then
+  trap search_contrast_cleanup EXIT
+  search_contrast_rehearse
+  exit $?
 fi
 
 echo; echo "[3] baseline: fingerprint A and the ${#pages[@]} pages"
@@ -601,7 +733,7 @@ if [ -f "$extra" ]; then
   # touch, then retains the timing-sensitive Thai gesture suite in isolation.
   browser_evidence=""
   case "$inst" in
-    link-ideas/peek-release/install-peek-release.php) browser_seconds=2400; browser_evidence=peek-release-browser.log ;;
+    link-ideas/peek-release/install-peek-release.php) browser_seconds=3900; browser_evidence=peek-release-browser.log ;;
     link-ideas/core-upgrade/install-peek-core-upgrade.php) browser_seconds=900; browser_evidence=peek-core-upgrade-browser.log ;;
     link-ideas/core-summary-touch/install-peek-core-summary-touch.php) browser_seconds=900; browser_evidence=peek-core-summary-touch-browser.log ;;
     link-ideas/core-title-strip/install-peek-core-title-strip.php|link-ideas/core-title-rail/install-peek-core-title-rail.php|link-ideas/core-kiro-fixes/install-peek-core-kiro-fixes.php|link-ideas/core-input-focus/install-peek-core-input-focus.php|link-ideas/core-neighbours/install-peek-core-neighbours.php|link-ideas/core-index-clearance/install-peek-core-index-clearance.php|link-ideas/core-quiet-nav/install-peek-core-quiet-nav.php|link-ideas/rail-input/install-rail-input.php)

@@ -81,12 +81,33 @@ async function measure(page) {
       rows.push({ tag: el.tagName.toLowerCase(), class: el.className, text: text.slice(0, 180), group: el.closest('.ast-article-post') ? 'result' : el.closest('.no-results') ? 'empty' : el.closest('.ast-archive-description,.ast-archive-entry-banner') ? 'heading' : el.closest('.navigation,.pagination,.ast-pagination,.page-numbers') ? 'pagination' : 'other', ...appearance(el) });
     }
     const surfaces = [...nodes].filter(el => el.matches('.ast-article-inner,.ast-archive-description,.ast-archive-entry-banner,.no-results')).map(el => ({ tag: el.tagName.toLowerCase(), class: el.className, color: getComputedStyle(el).color, background: getComputedStyle(el).backgroundColor, image: getComputedStyle(el).backgroundImage, panel: rgba(getComputedStyle(el).getPropertyValue('--ts-panel').trim()), rect: el.getBoundingClientRect().toJSON() }));
-    const fields = [...nodes].filter(el => el.matches('form.search-form input:not([type="hidden"]),form.search-form button') && visible(el)).map(el => ({ tag: el.tagName.toLowerCase(), type: el.type, name: el.getAttribute('name'), label: el.getAttribute('aria-label'), placeholder: el.getAttribute('placeholder'), value: el.value, tabIndex: el.tabIndex, focused: document.activeElement === el, outline: getComputedStyle(el).outline, ...appearance(el), placeholderAppearance: el.placeholder ? appearance(el, '::placeholder') : null }));
+    const fields = [...nodes].filter(el => el.matches('form.search-form input:not([type="hidden"]),form.search-form button') && visible(el)).map(el => {
+      const text = appearance(el), style = getComputedStyle(el), color = rgba(style.color), field = el.closest('form').querySelector('input[type="search"]');
+      const transparentSubmit = el.tagName === 'INPUT' && el.type === 'submit' && color?.[3] === 0;
+      const icon = el.querySelector('svg path');
+      let paint = { kind: 'text', ratio: text.ratio, reason: text.reason };
+      if (transparentSubmit && rgba(style.backgroundColor)?.[3] === 0 && style.backgroundImage === 'none' && ['Top', 'Right', 'Bottom', 'Left'].every(side => parseFloat(style[`border${side}Width`]) === 0) && ['::before', '::after'].every(pseudo => ['none', 'normal', '""'].includes(getComputedStyle(el, pseudo).content))) {
+        paint = { kind: 'no painted text', textNotApplicable: true, ratio: null, reason: 'Existing transparent submit text has no glyph or painted surface; no contrast or keyboard-access claim for this separate control.', decorativeShadow: style.boxShadow };
+      }
+      if (icon && visible(icon)) {
+        const r = icon.getBoundingClientRect(), control = el.getBoundingClientRect(), fieldRect = field?.getBoundingClientRect(), x = (r.left + r.right) / 2, y = (r.top + r.bottom) / 2;
+        const includes = rect => rect && x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+        const gs = getComputedStyle(icon), ink = rgba(gs.fill), surface = field && appearance(field), glyphBase = appearance(icon);
+        const behind = includes(fieldRect) && document.elementsFromPoint(x, y).includes(field);
+        let reason = glyphBase.reason || (!ink ? 'no painted SVG fill' : !includes(control) ? 'icon is outside this control' : !behind ? 'search field is not behind icon' : surface?.reason);
+        if (ink) ink[3] *= Number(gs.fillOpacity);
+        const background = surface?.background;
+        const inkL = ink && background ? luminance(over(ink, background)) : null, bgL = background ? luminance(background) : null;
+        if (inkL === null || bgL === null) reason ||= 'missing glyph/surface color';
+        paint = { kind: 'SVG', fill: gs.fill, background, behindSearchField: behind, ratio: reason ? null : (Math.max(inkL, bgL) + .05) / (Math.min(inkL, bgL) + .05), reason: reason || null };
+      }
+      return { tag: el.tagName.toLowerCase(), type: el.type, name: el.getAttribute('name'), label: el.getAttribute('aria-label'), placeholder: el.getAttribute('placeholder'), value: el.value, tabIndex: el.tabIndex, focused: document.activeElement === el, outline: getComputedStyle(el).outline, ...text, paint, placeholderAppearance: el.placeholder ? appearance(el, '::placeholder') : null };
+    });
     return { title: document.title, bodyClass: document.body.className, theme: document.documentElement.dataset.tsTheme || 'light', rows, surfaces, fields,
       counts: { result: main.querySelectorAll('.ast-article-post').length, title: main.querySelectorAll('.ast-article-post .entry-title').length, excerpt: main.querySelectorAll('.ast-article-post .ast-excerpt-container').length, more: main.querySelectorAll('.ast-article-post .read-more a').length, empty: main.querySelectorAll('.no-results').length, search: main.querySelectorAll('form.search-form').length, pagination: document.querySelectorAll('body.search .ast-pagination,body.search .navigation.pagination').length, currentPage: [...nodes].filter(el => el.matches('.page-numbers.current')).length },
       horizontalOverflow: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth) - innerWidth,
       content: { headings: [...main.querySelectorAll('h1,h2,h3')].filter(e => !e.closest('.ts-pk')).map(e => [e.id, norm(e.textContent)]), links: [...main.querySelectorAll('a[href]')].filter(e => !e.closest('.ts-pk')).map(e => [e.getAttribute('href'), norm(e.textContent)]) },
-      nav: { config: document.querySelector('#ts-peek-nav-config')?.textContent || '', runtime: document.querySelector('#ts-peek-nav-runtime')?.textContent || '', css: document.querySelector('#ts-peek-nav-css')?.textContent || '', data: document.querySelector('#ts-peek-nav-data')?.textContent || null, strip: document.querySelectorAll('#ts-peek-title-strip').length, marker: document.querySelector('.ts-pk-nav')?.dataset.tsPkUi || null },
+      nav: { config: document.querySelector('#ts-peek-nav-config')?.textContent || '', runtime: document.querySelector('#ts-peek-nav-runtime')?.textContent || '', css: document.querySelector('#ts-peek-nav-css')?.textContent || '', codePresent: ['ts-peek-nav-config', 'ts-peek-nav-runtime', 'ts-peek-nav-css'].every(id => document.querySelectorAll(`#${id}`).length === 1 && document.getElementById(id).textContent.trim().length > 0), data: document.querySelector('#ts-peek-nav-data')?.textContent || null, strip: document.querySelectorAll('#ts-peek-title-strip').length, marker: document.querySelector('.ts-pk-nav')?.dataset.tsPkUi || null },
       payloadCount: [...document.querySelectorAll('style')].reduce((sum, s) => sum + (s.textContent.match(/ts-search-contrast:start/g) || []).length, 0) };
   });
 }
@@ -98,6 +119,71 @@ async function capture(page, label) {
   console.log(`INLINE ${filename} base64:${bytes.toString('base64')}`); captures++;
 }
 const digestNav = value => Object.fromEntries(Object.entries(value).map(([k, v]) => [k, typeof v === 'string' && ['config', 'runtime', 'css'].includes(k) ? sha(v) : v]));
+const readableFields = fields => {
+  const painted = fields.filter(field => !field.paint.textNotApplicable);
+  return painted.length >= 2 && painted.every(field => field.paint.ratio !== null && field.paint.ratio >= 4.5 && (!field.placeholderAppearance || (field.placeholderAppearance.ratio !== null && field.placeholderAppearance.ratio >= 4.5)));
+};
+async function controlStates(page, label) {
+  const buttons = page.locator('#primary form.search-form input[type="submit"]:visible,#primary form.search-form button:visible');
+  const hovered = [];
+  for (let i = 0; i < await buttons.count(); i++) {
+    if (await buttons.nth(i).evaluate(el => el.tagName === 'INPUT' && getComputedStyle(el).color.replace(/\s/g, '') === 'rgba(0,0,0,0)')) continue;
+    await buttons.nth(i).scrollIntoViewIfNeeded();
+    const point = await buttons.nth(i).evaluate(el => { const r = (el.querySelector('svg path') || el).getBoundingClientRect(); return { x: (r.left + r.right) / 2, y: (r.top + r.bottom) / 2 }; });
+    await page.mouse.move(point.x, point.y); await settle(page);
+    const target = await page.evaluate(({ x, y }) => { const hit = document.elementFromPoint(x, y); return { x, y, tag: hit?.tagName, class: typeof hit?.className === 'string' ? hit.className : null, buttonHovered: [...document.querySelectorAll('#primary .search-submit')].filter(el => el.matches(':hover')).map(el => el.tagName) }; }, point);
+    hovered.push({ fields: (await measure(page)).fields, target });
+  }
+  check(`${label}/Search submit hover remains readable`, hovered.length >= 1 && hovered.every(row => readableFields(row.fields)), hovered);
+  await page.mouse.move(0, 0);
+  // Programmatic focus measures focus colors only; it is not evidence that the
+  // existing Search field is reachable through sequential keyboard navigation.
+  const inputs = page.locator('#primary form.search-form input[type="search"]:visible'), focused = [];
+  for (let i = 0; i < await inputs.count(); i++) {
+    await inputs.nth(i).focus(); await settle(page);
+    const fields = (await measure(page)).fields; focused.push(fields);
+  }
+  check(`${label}/focused Search text and placeholder remain readable`, focused.length >= 1 && focused.every(fields => readableFields(fields) && fields.some(field => field.type === 'search' && field.focused)), focused);
+  console.log(`INFO Search contrast controls ${engine}/${label}: ${JSON.stringify({ hovered, focused, limitation: 'Programmatic focus colors only; existing field tab order is reported, not certified.' })}`);
+  await page.evaluate(() => document.activeElement?.blur()); await settle(page);
+}
+async function unchangedOutsideScope(page, label, theme) {
+  const readings = {};
+  const colors = data => ({ rows: data.rows, fields: data.fields, surfaces: data.surfaces.map(s => [s.class, s.color, s.background, s.image]) });
+  for (const media of theme === 'light' ? ['screen', 'print'] : ['print']) {
+    await page.emulateMedia({ media }); await settle(page);
+    const before = await measure(page);
+    // A temporary browser-only fixture removes exactly this package's block,
+    // preserving every other style. Always restore its exact text before exit.
+    await page.evaluate(() => {
+      const expression = /\/\* ts-search-contrast:start \*\/[\s\S]*?\/\* ts-search-contrast:end \*\//g;
+      const found = [...document.querySelectorAll('style')].map(style => ({ style, matches: [...style.textContent.matchAll(expression)] })).filter(row => row.matches.length);
+      if (found.length !== 1 || found[0].matches.length !== 1) throw new Error('Cannot isolate the exact Search CSS block for scope comparison');
+      const { style, matches } = found[0], text = style.textContent, removed = text.replace(matches[0][0], '');
+      window.__searchContrastStyleProbe = { style, text, removed }; style.textContent = removed;
+    });
+    let without;
+    try { await settle(page); without = await measure(page); }
+    finally {
+      await page.evaluate(() => {
+        const probe = window.__searchContrastStyleProbe;
+        if (!probe || probe.style.textContent !== probe.removed) throw new Error('Search CSS scope probe changed unexpectedly; refuse ambiguous restoration');
+        probe.style.textContent = probe.text; delete window.__searchContrastStyleProbe;
+      });
+    }
+    await settle(page);
+    const beforeColors = colors(before), withoutColors = colors(without);
+    if (media === 'screen') {
+      // The placeholder correction is intentionally shared by both themes;
+      // ordinary light text, panels and pagination must keep their appearance.
+      delete beforeColors.fields; delete withoutColors.fields;
+    }
+    readings[media] = { unchanged: JSON.stringify(beforeColors) === JSON.stringify(withoutColors), textRows: before.rows.length, fields: before.fields.length, surfaces: before.surfaces.length };
+  }
+  await page.emulateMedia({ media: 'screen' }); await settle(page);
+  check(`${label}/screen-only correction preserves print${theme === 'light' ? ' and ordinary light colors' : ''}`, Object.values(readings).every(r => r.unchanged), readings);
+  console.log(`INFO Search contrast scope ${engine}/${label}: ${JSON.stringify(readings)}`);
+}
 try {
   browser = await pw[engine].launch(engine === 'chromium' && process.env.TS_BROWSER_EXECUTABLE ? { executablePath: process.env.TS_BROWSER_EXECUTABLE } : {});
   for (const route of routes) for (const width of widths) {
@@ -131,9 +217,12 @@ try {
           check(`${label}/all visible main text is measurable and at least 4.5 to one`, data.rows.length >= (route.name === 'results' ? 4 : 2) && bad.length === 0, { count: data.rows.length, minimum: detail.minimum, bad });
           check(`${label}/panel surfaces are opaque and match the intended theme`, data.surfaces.length >= 1 && data.surfaces.every(s => s.image === 'none' && (theme === 'light' ? s.background === 'rgb(255, 255, 255)' : s.background === `rgb(${s.panel?.slice(0, 3).join(', ')})`)), data.surfaces);
           check(`${label}/theme switch preserves content and all Peek code data and configuration`, JSON.stringify(data.content) === JSON.stringify(original.content) && JSON.stringify(nav) === JSON.stringify(originalNav), { original: originalNav, current: nav });
-          check(`${label}/accepted title strip remains present without summary data`, nav.strip === 1 && nav.data === null && nav.config.length > 0 && nav.runtime.length > 0, nav);
+          check(`${label}/accepted title strip remains present without summary data`, nav.strip === 1 && nav.data === null && nav.codePresent && nav.marker === 'quiet-v1', nav);
           check(`${label}/no horizontal page overflow`, data.horizontalOverflow <= 1, data.horizontalOverflow);
           check(`${label}/one original page load and no JavaScript errors`, requests === 1 && errors.length === 0, { requests, errors });
+          check(`${label}/painted Search input submit and placeholder have at least 4.5 to one contrast`, readableFields(data.fields), data.fields);
+          await controlStates(page, label);
+          await unchangedOutsideScope(page, label, theme);
         }
         await capture(page, label); completed.push(label);
         console.log(`INFO Search contrast completed ${engine}/${label}`);

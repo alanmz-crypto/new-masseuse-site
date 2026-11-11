@@ -1,5 +1,6 @@
 // First-install visitor release: reuse the complete retained core suite, then
-// supplemental WebKit on the same isolated copy. No runtime/data injection or
+// supplemental WebKit and accepted neighbour/index/quiet-navigation matrices
+// on the same isolated copy. No runtime/data injection or
 // published practice routes; existing local structural fixtures remain tests.
 import { spawn } from 'node:child_process';
 import { closeSync, mkdirSync, mkdtempSync, openSync, readFileSync, writeFileSync } from 'node:fs';
@@ -7,6 +8,8 @@ import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { focusedSpec, parseFocused } from './focused-evidence.mjs';
+import { parseSearchContrast } from '../../search-contrast/check-evidence.mjs';
 
 const base = process.argv[2], started = Date.now();
 const slugs = ['thai-massage', 'therapeutic-massage', 'deep-tissue-massage', 'chair-massage'];
@@ -40,6 +43,7 @@ try {
     payloads.push({ file: path, sha256: sha(bytes) }); return bytes;
   };
   verifyPayload(manifest.payloads.core, 'payload/core.php', '../peek-nav.php');
+  verifyPayload(manifest.payloads.search_contrast, 'payload/search-contrast.css', '../../search-contrast/search-contrast.css');
   for (const slug of slugs) {
     const data = JSON.parse(verifyPayload(manifest.payloads.data[slug], `payload/data/${slug}.json`, `../peek-data/${slug}.json`));
     if (data.slug !== slug || data.approval?.status !== 'approved') throw new Error(`frozen summary approval or identity differs: ${slug}`);
@@ -67,6 +71,29 @@ const run = spec => new Promise(resolve => {
   child.on('error', error => { launchError = error.message; });
   child.on('close', (exitCode, signal) => {
     for (const fd of Object.values(descriptors)) try { closeSync(fd); } catch (error) { logError = error.message; }
+    if (spec.searchEngine) {
+      let result;
+      try {
+        const raw = readFileSync(logs.stdout, 'utf8'), err = readFileSync(logs.stderr, 'utf8');
+        for (const line of [raw, err].flatMap(text => text.split(/\r?\n/))) if (line && !/^PASS(?:\s|$)/.test(line)) process.stdout.write(line + '\n');
+        result = parseSearchContrast(raw, err, spec.searchEngine);
+      } catch (error) { result = { passed: 0, failed: 0, invalid: [`Search evidence read/parse failure: ${error.message}`], summary: null }; }
+      if (launchError || signal || logError) result.invalid.push(`process/log failure: ${launchError || signal || logError}`);
+      const code = result.failed ? 1 : exitCode !== 0 || result.invalid.length ? 2 : 0;
+      const summaries = result.summary ? [{ name: `INFO Search contrast ${spec.searchEngine}`, passed: result.passed, failed: result.failed, line: result.summary }] : [];
+      resolve({ name: spec.name, code, exitCode, signal, logs, ...result, summaries }); return;
+    }
+    if (spec.focused) {
+      let result;
+      try {
+        const lines = Object.values(logs).flatMap(path => readFileSync(path, 'utf8').split(/\r?\n/));
+        for (const line of lines) if (line && !/^PASS(?:\s|$)/.test(line)) process.stdout.write(line + '\n');
+        result = parseFocused(lines, spec.focused);
+      } catch (error) { result = { summaries: [], passed: 0, failed: 0, invalid: [`focused evidence read/parse failure: ${error.message}`] }; }
+      if (launchError || signal || logError) result.invalid.push(`process/log failure: ${launchError || signal || logError}`);
+      const code = result.failed || result.failureObserved ? 1 : exitCode !== 0 || result.invalid.length ? 2 : 0;
+      resolve({ name: spec.name, code, exitCode, signal, logs, ...result }); return;
+    }
     const summaries = new Map(), verdicts = new Map(), invalid = [], aggregates = [];
     let failed = false;
     try {
@@ -88,7 +115,7 @@ const run = spec => new Promise(resolve => {
           if (!spec.children.includes(verdict[1]) || !spec.successVerdict.test(line)) invalid.push(`incomplete or unexpected wrapper result: ${line}`);
         }
         if (spec.aggregate.test(line)) aggregates.push(line);
-        if (/^INVALID(?:\s|$)/.test(line)) invalid.push(line);
+        if (/^(?:INVALID|ERROR)(?:\s|$)/.test(line)) invalid.push(line);
         if (/^FAIL(?:\s|$)/.test(line)) failed = true;
       }
     } catch (error) { logError = error.message; }
@@ -108,7 +135,17 @@ const specs = [
   { name: 'webkit', command: 'bash', args: [fileURLToPath(new URL('../check-peek-webkit.sh', import.meta.url)), base], env: {},
     names: ['INFO Peek disclosures webkit', 'INFO Peek Kiro layout webkit'], children: ['disclosures', 'layout'],
     verdict: /^INFO Peek WebKit suite ([^:]+):/, successVerdict: /: child_exit=0; effective_exit=0;/,
-    aggregate: /^INFO Peek WebKit supplemental verification: /, successAggregate: /^INFO Peek WebKit supplemental verification: PASSED, 2\/2 suites,/ }
+    aggregate: /^INFO Peek WebKit supplemental verification: /, successAggregate: /^INFO Peek WebKit supplemental verification: PASSED, 2\/2 suites,/ },
+  ...['neighbours', 'index-clearance', 'quiet-nav'].flatMap(family => ['chromium', 'firefox', 'webkit'].map(engine => ({
+    name: `${family}-${engine}`, command: process.execPath,
+    args: [fileURLToPath(new URL(`../check-peek-${family}.mjs`, import.meta.url)), base, ...(engine === 'chromium' ? [] : [`--${engine}`])],
+    env: {}, focused: focusedSpec(family, engine)
+  }))),
+  ...['chromium', 'firefox'].map(engine => ({
+    name: `search-contrast-${engine}`, command: process.execPath,
+    args: [fileURLToPath(new URL('../../search-contrast/check-search-contrast.mjs', import.meta.url)), base, ...(engine === 'chromium' ? [] : ['--firefox'])],
+    env: {}, searchEngine: engine
+  }))
 ], results = [];
 for (const spec of specs) {
   const result = await run(spec); results.push(result);
@@ -122,5 +159,6 @@ for (const result of results) {
   console.log(`INFO Peek visitor-release phase ${result.name}: child_exit=${result.exitCode ?? 'unavailable'}; effective_exit=${result.code}; ${result.summaries.length} leaf suites; stdout=${result.logs.stdout}; stderr=${result.logs.stderr}`);
   for (const reason of result.invalid) console.log(`INVALID Peek visitor-release ${result.name}: ${reason}`);
 }
-console.log(`INFO Peek visitor-release rehearsal: ${code === 2 ? 'INVALID' : code ? 'FAILED' : 'PASSED'}, ${results.length}/2 phases, ${results.reduce((sum, result) => sum + result.summaries.length, 0)}/17 leaf suites; ${counts.passed} passed, ${counts.failed} failed; ${Math.round((Date.now() - started) / 1000)}s; complete logs: ${logDir}`);
-process.exit(code);
+console.log(`INFO Peek visitor-release rehearsal: ${code === 2 ? 'INVALID' : code ? 'FAILED' : 'PASSED'}, ${results.length}/${specs.length} phases, ${results.reduce((sum, result) => sum + result.summaries.length, 0)}/28 leaf suites; ${counts.passed} passed, ${counts.failed} failed; ${Math.round((Date.now() - started) / 1000)}s; complete logs: ${logDir}`);
+// Complete retained JPEG/log output may still be draining to the parent pipe.
+process.exitCode = code;

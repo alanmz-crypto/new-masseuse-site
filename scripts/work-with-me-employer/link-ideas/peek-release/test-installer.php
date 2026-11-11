@@ -306,7 +306,7 @@ function fixture_profile( $manifest, $source ) {
     foreach ( $profile['option_sha256'] as $name => $_ ) { $profile['option_sha256'][$name] = digest( row( 'options', 'option_name', $name ) ); }
     $css = row( 'posts', 'ID', 29 )['post_content'];
     $profile['css']['old_content_sha256'] = hash( 'sha256', $css );
-    $profile['css']['new_content_sha256'] = hash( 'sha256', str_replace( file_get_contents( "$source/payload/reading-progress.css" ), '', $css ) );
+    $profile['css']['new_content_sha256'] = hash( 'sha256', str_replace( file_get_contents( "$source/payload/reading-progress.css" ), '', $css ) . "\n" . file_get_contents( "$source/payload/search-contrast.css" ) );
     $astra = row( 'options', 'option_name', 'astra-settings' );
     $settings = unserialize( $astra['option_value'], array( 'allowed_classes' => false ) );
     $settings['scroll-to-top-enable'] = false; $astra['option_value'] = serialize( $settings );
@@ -353,7 +353,7 @@ function remove_tree( $path ) {
 $source = $argv[1] ?? __DIR__;
 $manifest_bytes = file_get_contents( "$source/manifest.json" );
 $manifest = json_decode( $manifest_bytes, true, 512, JSON_THROW_ON_ERROR );
-$payload_specs = array_merge( array( 'core' => $manifest['payloads']['core'], 'progress' => $manifest['payloads']['reading_progress'] ), $manifest['payloads']['data'] );
+$payload_specs = array_merge( array( 'core' => $manifest['payloads']['core'], 'progress' => $manifest['payloads']['reading_progress'], 'search' => $manifest['payloads']['search_contrast'] ), $manifest['payloads']['data'] );
 foreach ( $payload_specs as $role => $spec ) {
     check( hash_file( 'sha256', "$source/{$spec['file']}" ) === $spec['file_sha256'], "production $role payload matches frozen manifest" );
 }
@@ -393,6 +393,15 @@ $mutations = array(
 );
 foreach ( $mutations as $label => $mutate ) { restore_state( $original ); $mutate(); refusal( array( 'apply' ), $label ); }
 restore_state( $original );
+$search_bytes = file_get_contents( "$package/payload/search-contrast.css" );
+file_put_contents( "$package/payload/search-contrast.css", $search_bytes . ' ' );
+refusal( array( 'apply' ), 'changed frozen Search payload' );
+file_put_contents( "$package/payload/search-contrast.css", $search_bytes );
+$changed_manifest = $fixture_manifest;
+$changed_manifest['baseline']['css']['new_content_sha256'] = hash( 'sha256', str_replace( file_get_contents( "$source/payload/reading-progress.css" ), '', row( 'posts', 'ID', 29 )['post_content'] ) );
+file_put_contents( "$package/manifest.json", json_encode( $changed_manifest ) );
+refusal( array( 'apply' ), 'obsolete progress-only CSS destination cannot omit Search styling' );
+file_put_contents( "$package/manifest.json", json_encode( $fixture_manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) . "\n" );
 foreach ( array( '', '.', ABSPATH ) as $directory ) { putenv( 'WWM_BACKUP_DIR=' . $directory ); refusal( array( 'apply' ), 'unsafe snapshot directory' ); }
 putenv( 'WWM_BACKUP_DIR=' . "$testdir/backups" );
 
@@ -440,7 +449,7 @@ foreach ( $ids as $role => $id ) {
     check( count( $observed ) === 1 && count( $observed[0]['meta'] ) === 4 && hash( 'sha256', $observed[0]['content'] ) === $spec['code_sha256'], "$role corrected before activation" );
 }
 $expected = $original;
-foreach ( $expected['posts'] as &$post ) { if ( $post['ID'] === '29' ) { $post['post_content'] = str_replace( file_get_contents( "$source/payload/reading-progress.css" ), '', $post['post_content'] ); } } unset( $post );
+foreach ( $expected['posts'] as &$post ) { if ( $post['ID'] === '29' ) { $post['post_content'] = str_replace( file_get_contents( "$source/payload/reading-progress.css" ), '', $post['post_content'] ) . "\n" . file_get_contents( "$source/payload/search-contrast.css" ); } } unset( $post );
 foreach ( $expected['options'] as &$option ) { if ( $option['option_name'] === 'astra-settings' ) { $data = unserialize( $option['option_value'], array( 'allowed_classes' => false ) ); $data['scroll-to-top-enable'] = false; $option['option_value'] = serialize( $data ); } } unset( $option );
 foreach ( $expected['term_taxonomy'] as &$term ) { if ( in_array( $term['term_taxonomy_id'], array( '9', '10' ), true ) ) { $term['count'] = (string) ( (int) $term['count'] + 5 ); } } unset( $term );
 $cache = unserialize( row( 'options', 'option_name', 'wpcode_snippets' )['option_value'], array( 'allowed_classes' => false ) );
@@ -449,7 +458,8 @@ check( array_map( 'intval', array_column( $cache, 'ID' ) ) === $expected_cache_i
 foreach ( $expected['options'] as &$option ) { if ( $option['option_name'] === 'wpcode_snippets' ) { $option['option_value'] = row( 'options', 'option_name', 'wpcode_snippets' )['option_value']; } } unset( $option );
 $unowned = $applied;
 foreach ( array( 'posts' => 'ID', 'postmeta' => 'post_id', 'term_relationships' => 'object_id' ) as $table => $key ) { $unowned[$table] = array_values( array_filter( $unowned[$table], static fn( $record ) => ! in_array( (int) $record[$key], $ids, true ) ) ); }
-check( $unowned === $expected, 'only five owned records, exact progress CSS removal, one Astra bool, two count deltas and derived cache changed; all unrelated bytes preserved' );
+check( $unowned === $expected, 'only five owned records, exact progress CSS removal and Search append, one Astra bool, two count deltas and derived cache changed; all unrelated bytes preserved' );
+check( substr_count( row( 'posts', 'ID', 29 )['post_content'], 'ts-search-contrast:start' ) === 1 && str_ends_with( row( 'posts', 'ID', 29 )['post_content'], "\n" . $search_bytes ), 'Search styling occurs exactly once after one literal LF, preserving original CSS whitespace' );
 $event_count = count( $events ); $writes = $wpdb->writes;
 invoke( array( 'verify', $path ) ); marker( 'RELEASE-SNAPSHOT' ); invoke( array( 'apply', $path ) ); marker( 'RELEASE-SNAPSHOT' );
 check( all_state() === $applied && count( $events ) === $event_count && $wpdb->writes === $writes && file_get_contents( $path ) === $snapshot_bytes, 'verify and snapshot-bound repeat are strictly read-only' );
@@ -467,6 +477,8 @@ $drifts = array(
     'original source unknown metadata' => static fn() => fixture_insert( 'wp_postmeta', array( 'post_id' => 1160, 'meta_key' => 'new external state', 'meta_value' => 'SYNTHETIC_PRIVATE_NEW_VALUE' ) ),
     'unrelated snippet code' => static fn() => fixture_update( 'wp_posts', 'ID', 1701, array( 'post_content' => 'External unrelated edit' ) ),
     'Astra autoload' => static fn() => fixture_update( 'wp_options', 'option_name', 'astra-settings', array( 'autoload' => 'off' ) ),
+    'Search CSS missing' => static fn() => fixture_update( 'wp_posts', 'ID', 29, array( 'post_content' => substr( row( 'posts', 'ID', 29 )['post_content'], 0, -strlen( "\n" . $GLOBALS['search_bytes'] ) ) ) ),
+    'Search CSS changed' => static fn() => fixture_update( 'wp_posts', 'ID', 29, array( 'post_content' => row( 'posts', 'ID', 29 )['post_content'] . ' ' ) ),
     'shared count' => static fn() => fixture_update( 'wp_term_taxonomy', 'term_taxonomy_id', 10, array( 'count' => '23' ) ),
     'shared term' => static fn() => fixture_update( 'wp_terms', 'term_id', 9, array( 'slug' => 'changed' ) ),
     'shared term metadata' => static fn() => fixture_insert( 'wp_termmeta', array( 'term_id' => 10, 'meta_key' => 'external', 'meta_value' => 'keep' ) ),
@@ -687,7 +699,7 @@ foreach ( array( 'css', 'astra', 'publish' ) as $phase ) {
     restore_state( $partials['create:5']['state'] ); $forged = $partials['create:5']['snapshot'];
     $forged['journal']['owned']['core']['post']['post_content'] = substr( file_get_contents( "$source/payload/core.php" ), 6 );
     check( count( $forged['ids'] ) === 5 && count( $forged['journal']['owned']['core']['meta'] ) === 3, "$phase forgery has all five roles and exact three-key final draft" );
-    $forged['journal']['records'][29]['post']['post_content'] = str_replace( file_get_contents( "$source/payload/reading-progress.css" ), '', $forged['old']['records'][29]['post']['post_content'] );
+    $forged['journal']['records'][29]['post']['post_content'] = str_replace( file_get_contents( "$source/payload/reading-progress.css" ), '', $forged['old']['records'][29]['post']['post_content'] ) . "\n" . file_get_contents( "$source/payload/search-contrast.css" );
     if ( $phase !== 'css' ) {
         $settings = unserialize( $forged['journal']['options']['astra-settings']['option_value'], array( 'allowed_classes' => false ) ); $settings['scroll-to-top-enable'] = false;
         $forged['journal']['options']['astra-settings']['option_value'] = serialize( $settings );
@@ -730,7 +742,7 @@ foreach ( array( 'creation-gap', 'uncorrected-early-draft', 'activation-gap', 'a
 }
 // A cleanup phase cannot precede creation of all five records.
 restore_state( $partials['create:1']['state'] ); $forged = $partials['create:1']['snapshot'];
-$forged['journal']['records'][29]['post']['post_content'] = str_replace( file_get_contents( "$source/payload/reading-progress.css" ), '', $forged['old']['records'][29]['post']['post_content'] ); $forged['journal_sha256'] = digest( $forged['journal'] );
+$forged['journal']['records'][29]['post']['post_content'] = str_replace( file_get_contents( "$source/payload/reading-progress.css" ), '', $forged['old']['records'][29]['post']['post_content'] ) . "\n" . file_get_contents( "$source/payload/search-contrast.css" ); $forged['journal_sha256'] = digest( $forged['journal'] );
 $error = refusal( array( 'rollback', snapshot_write( $forged ) ), 'cleanup before five owned drafts' );
 check( str_contains( $error->getMessage(), 'phase differs' ), 'premature cleanup rejected by phase semantics' );
 

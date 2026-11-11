@@ -56,6 +56,26 @@ input's placeholder is 2.54:1 in both themes. These are individual observations
 from an incomplete diagnostic, not verification of a correction. The expanded
 Search-only fix and placeholder change were explained before implementation.
 
+Corrected read-only `peek-search-render-inspect-2`, commit
+`9f1a6e8a22b30411e8f7f3846274cb2b58ebf543`, completed the diagnostic at
+**06:02:56 UTC** in Actions **42969567826**: populated/empty Search in both
+themes, **four cases, two loads and four captures**. There are intentionally
+zero contrast assertions in inspection mode; this is complete baseline
+evidence, not a correction pass. The 822,485-byte archive matched SHA256
+`c551b680df841a208ef6a2dc11fc611b252c4a36e3ea54ec499cd5e4593b6a42`
+and ZIP checks. Full actual page/body HTML and measured painted surface owners
+are retained in the artifact. The full report and measurements were read.
+
+The actual surfaces are `.ast-archive-description`, `.ast-article-inner` and
+`.no-results`. All are white in dark mode. The selected pagination number also
+has white text on green at 1.94:1. Both themes' empty-result screenshot and
+actual controls are considered separately: a submit element's computed text
+color does not establish its icon's contrast when the rendered control is an
+SVG magnifier. Root visually inspected the populated and empty dark captures.
+The final candidate uses the existing panel/night colors for these specific
+Search surfaces and controls; the placeholder uses the input's existing dark
+text color. No further public baseline retry is needed.
+
 ## Proposed change and verification
 
 The proposal was explained before implementation: use the existing dark panel
@@ -64,6 +84,31 @@ block. Scope it to dark mode and screen media so light mode and printing retain
 their existing rules. Actual populated and empty Search markup will determine
 the exact selectors before the payload is finalized. No Peek gestures, summary
 words, destinations, page content or global palette tokens are changed.
+
+The finalized payload is **536 bytes**, SHA256
+`3225b279ae3d20adf696ac9ad6a16dc2be7c7c15c8fbe64ba59e5a74dc14e9e0`.
+Appending exactly one LF and that payload produces **69,380 bytes**, SHA256
+`b024acc687b49a37115940b52976f3bdcfc6cb236ae7bb4a81422f8c2d02c69b`.
+The title, nested result-card and empty-result panels use `--ts-panel` only
+in dark screen media. Placeholders use `#475569` in both themes. The populated
+form's text button and selected page number use `--ts-night` in dark mode.
+The empty form's existing magnifier and transparent submit input are preserved.
+
+Cached actual-page replay passed **150/0 in each of Chromium and Firefox**:
+populated/empty routes, three widths, both themes, 12 captures per engine.
+Every request was fulfilled from captured HTML/assets or blocked; this is
+fixture evidence, not a fresh WordPress copy or public deployment test.
+Root reviewed both dark phone captures. The retained diagnostic failures were
+checker errors: serialized generated controls needed rebuilding in the replay,
+and transparent submit text had incorrectly been treated as painted text.
+The corrected checker reports that text as N/A, retains its decorative shadow
+in evidence, and measures the actual magnifier independently. It also checks
+placeholder, hover, focus, print, light-mode scope and unchanged Peek bytes.
+
+The installer model passed **89 checks**, deployment-wrapper doubles **37**,
+and the rehearsal harness **130**. These cover one binary CSS compare-and-swap,
+changed-state refusal, exact snapshot binding and backup failure stops. They
+do not replace the fresh WordPress and off-site checks below.
 
 The staging installer must bind the exact baseline and payload, retain its
 actual private before-snapshot, refuse changed-state rollback, and verify exact
@@ -74,8 +119,11 @@ readback; the actual snapshot must also be verified off-site before purge and
 rendered verification. Public checks and final actual-snapshot verification
 follow. INVALID evidence verifies nothing.
 
-The release candidate will freeze the accepted quiet-navigation runtime and the
-same finalized Search CSS. Its first-install rehearsal remains separate from
+The release candidate now freezes the accepted quiet-navigation runtime and the
+same finalized Search CSS. Its local PHP model passed **1,694 checks**, including
+**138 injected write-boundary failures**; the evidence harness passed **162**.
+Its 28 browser leaves across 13 phases have not run on a fresh first-install
+copy. Its first-install rehearsal remains separate from
 the completed in-place staging upgrade. The earlier automatic rejection of a
 temporary live-data copy is not bypassed by this preparation; no new live-copy
 request or live enablement has been dispatched.

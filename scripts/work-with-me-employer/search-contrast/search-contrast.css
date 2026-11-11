@@ -1,0 +1,15 @@
+/* ts-search-contrast:start */
+@media screen {
+  html[data-ts-theme="dark"] body.search.ast-separate-container :is(.ast-archive-description, .ast-article-inner, .no-results) {
+    background-color: var(--ts-panel);
+  }
+  body.search #primary .search-form .search-field::placeholder {
+    color: #475569;
+    opacity: 1;
+  }
+  html[data-ts-theme="dark"] body.search #primary .ts-review-search .search-submit,
+  html[data-ts-theme="dark"] body.search .page-numbers.current {
+    color: var(--ts-night);
+  }
+}
+/* ts-search-contrast:end */

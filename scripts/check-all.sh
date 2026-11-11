@@ -90,6 +90,10 @@ peek_test() {
 if [ -n "$img" ] && command -v docker >/dev/null; then gate "Peek installer ownership, recovery and current-page JSON (offline)" peek_test; else skip "Peek installer and JSON tests" "docker or the pinned image is not available"; fi
 peek_release_test() { docker run --rm --network none --entrypoint php -v "$here/work-with-me-employer/link-ideas:/pkg:ro" "$img" /pkg/peek-release/test-installer.php; }
 if [ -n "$img" ] && command -v docker >/dev/null; then gate "Peek visitor first-install ownership and exact recovery (offline)" peek_release_test; else skip "Peek visitor first-install tests" "docker or the pinned image is not available"; fi
+search_contrast_test() { docker run --rm --network none --entrypoint php -v "$here/work-with-me-employer/search-contrast:/pkg:ro" "$img" /pkg/test-installer.php; }
+if [ -n "$img" ] && command -v docker >/dev/null; then gate "Search contrast exact CSS ownership and recovery (offline)" search_contrast_test; else skip "Search contrast installer tests" "docker or the pinned image is not available"; fi
+gate "Search contrast deployment backups and exact snapshot guards (offline)" python3 -I -B "$here/work-with-me-employer/search-contrast/test-push.py"
+gate "Search contrast rehearsal, browser and post-browser recovery guards (offline)" python3 -I -B "$here/work-with-me-employer/search-contrast/test-rehearsal.py"
 gate "Rail deployment backups, cache stability and snapshot verification (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/rail-input/test-push.py"
 gate "Peek input-focus deployment snapshot, rendering order and historical dispatch (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/core-input-focus/test-push.py"
 gate "Peek input-focus rehearsal snapshot binding and post-browser recovery (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/core-input-focus/test-rehearsal.py"
@@ -103,7 +107,7 @@ gate "Peek visitor-release snapshot, rollback rendering and evidence guards (off
 gate "Peek isolated-copy loopback transport (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/peek-release/test-loopback.py"
 peek_js_syntax() {
   local file
-  while IFS= read -r file; do node --check "$file" || return 1; done < <(find "$here/work-with-me-employer/link-ideas" -name '*.mjs' -not -path '*/node_modules/*' | sort)
+  while IFS= read -r file; do node --check "$file" || return 1; done < <(find "$here/work-with-me-employer/link-ideas" "$here/work-with-me-employer/search-contrast" -name '*.mjs' -not -path '*/node_modules/*' | sort)
 }
 if command -v node >/dev/null; then
   gate "Peek browser checker and wrapper syntax (offline)" peek_js_syntax

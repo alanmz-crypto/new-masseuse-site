@@ -24,18 +24,49 @@ A separate observed issue
 needs correction before live: dark Search result cards show pale text on white
 backgrounds. It is recorded separately from the four navigation changes.
 
+**November 11 release source refreshed; no fresh first-install proof yet.** The
+local first-install candidate now freezes the accepted quiet-navigation core,
+including immediate summary neighbours, index clearance and all four controls.
+Its four approved summary payloads are unchanged. The same reviewed 536-byte
+Search contrast candidate is frozen as a separate required CSS payload. It has
+not yet been deployed to staging39 or live; see the
+[Search preparation record](2026-11-11-search-contrast.md). The single guarded
+CSS transition removes the exact legacy progress block and appends one LF plus
+the full Search payload, without trimming. Rollback restores the whole exact
+original CSS record.
+
+| Current candidate | Bytes | SHA256 |
+|---|---:|---|
+| Core PHP file | 110,787 | `4dfe97943898790b9c000f6dfcc129b4806183a23bc7cb7a55f1cc7db7172952` |
+| Core stored code | 110,781 | `58266413fe0e24e1dc44ef32c98f428d4537a9b63bf8f5299eb8d708a4d032e5` |
+| Search CSS payload | 536 | `3225b279ae3d20adf696ac9ad6a16dc2be7c7c15c8fbe64ba59e5a74dc14e9e0` |
+| Desired combined Additional CSS | 69,380 | `b024acc687b49a37115940b52976f3bdcfc6cb236ae7bb4a81422f8c2d02c69b` |
+
+The current installer SHA256 is
+`64e95f6351f553a4658ebfe9f5443f7cecc9cf51409749e3018238e8fa78b17f`;
+manifest SHA256 is
+`296318acfd3f086e45fb7bd68548f81393566e1b38b90afb7f065bd14ad0826e`.
+Independent source review found no defect in the refreshed CSS transition and
+rollback. Pinned-PHP tests passed **1,694 checks with 138 injected write-boundary
+failures**; the release evidence suite passed **162 offline controls**, including
+missing/changed Search payload refusals. PHP/Node syntax, exact current/frozen
+payload bindings and diff checks passed. These are local source/model results,
+not repository CI, WordPress installation or browser results. The candidate still
+accepts only exact `http://localhost:8090`; no live profile or push wrapper is
+enabled. The historical evidence below does not validate this refreshed bundle.
+
 **November 10 summary-neighbour experiment accepted on Safari.** Ryan requested
 only the previous and next summary controls around each open box;
-see the [active staging record](2026-11-10-peek-summary-neighbours.md). The
-provisional release payload remains frozen at the preceding input-focus core.
-It is not the new candidate, and its old browser evidence cannot validate the
-new layout. The neighbour core is deployed on staging39: copy **19,061/0**,
+see the [active staging record](2026-11-10-peek-summary-neighbours.md). At that
+stage the provisional release payload was still frozen at the preceding
+input-focus core; the November 11 source refresh above supersedes it. The
+neighbour core was deployed on staging39: copy **19,061/0**,
 public **15,646/0 across 16 suites**, and exact actual-snapshot verification
 passed. Complete leaf evidence was audited despite combined-console truncation;
-see the staging record. The live package remains the older payload. That phase
+see the staging record. That phase
 identified a separate short-viewport index/announcement overlap, addressed by
 the November 11 staging update below. Both user acceptance checks are complete;
-refresh the release payload and complete its first-install/recovery rehearsal.
+the refreshed release still needs its own first-install/recovery rehearsal.
 Do not dispatch the previously blocked copy6 merely on a later permission reply
 without checking that the release package is still intended.
 
@@ -46,8 +77,8 @@ exact post-browser recovery, then in-place deployment and exact actual-snapshot
 verification across all 19 routes. After the automatic check was INVALID
 HTTP202, the single later public-browser run passed **18,460/0 across 18 suites**.
 Ryan accepted the index fix on November 11: **“Looks good.”** No generic
-acceptance retest remains pending. The first-install release payload is still older and the
-live-data-copy permission boundary below remains unchanged.
+acceptance retest remains pending. The first-install source now includes this
+fix; the live-data-copy permission boundary below remains unchanged.
 
 **Current iPhone Safari user acceptance passed.** After the neighbours deployment
 and requested check, Ryan reported on November 10: **“Looks good on Safari.
@@ -63,7 +94,8 @@ This is not authorization for a temporary live-data copy or a live write.
 approval review rejected the `peek-visitor-release-rehearse-6` dispatch before
 execution because copying live's database and uploads into a disposable Actions
 runner exceeds the user's explicit staging39 scope. The question now asks for
-that specific additional temporary data copy; it does not seek a live write.
+that specific additional temporary data copy; no approval is recorded here.
+It does not seek a live write.
 No retry or workaround was attempted. At that rejection, HEAD and
 `ops/request.json` were unchanged and the request file still named completed
 live-sourced copy5. No live-sourced copy6 run, snapshot, browser result or website
@@ -75,6 +107,8 @@ change exists. Later requests concern staging39 only.
   visitor pages, plus the four approved service-page summary data snippets.
 - Remove the exact superseded reading-progress CSS block and disable Astra's
   scroll-to-top button, matching the reviewed staging design.
+- Include the same reviewed Search contrast CSS after its staging copy,
+  deployment and verification gates pass; it is frozen source, not a deployed fix.
 - Keep existing jump-row snippet #1232 and native-guide snippet #1338 unchanged.
   Peek hides the native guide only after it initializes; the plain jump row
   remains the destination source and no-JavaScript fallback.
@@ -179,10 +213,24 @@ itself took seconds; emitting its console copy delayed publication by minutes.
 
 ## Conditions for recommending launch
 
-The provisional first-install package now lives in
+The refreshed first-install package lives in
 `scripts/work-with-me-employer/link-ideas/peek-release/`. It accepts only exact
 `http://localhost:8090`; no staging/live installer or live request is enabled.
-Independent source review cleared the attribute-initialization installer SHA256
+Its current hashes and **1,694 / 162** offline check totals are recorded above.
+The release browser adapter retains the original 15 visitor suites and two
+supplemental WebKit suites, then directly runs the existing neighbour,
+index-clearance and quiet-navigation suites in Chromium/Firefox/WebKit and the
+Search contrast suite in Chromium/Firefox: **28 unique leaves across 13 phases**.
+It requires the exact current/frozen core, four summaries and Search payload,
+the fresh 15-page visitor inventory plus search/404, complete literal assertions,
+case/load/capture evidence and all child streams. A failed or incomplete phase
+stops later work. Existing staging aggregate guards remain unchanged. Search
+uses its shared pure parser with 150 exact assertions per engine, 12 cases,
+six page loads and 12 captures. The larger browser graph has a 3,900-second
+rehearsal budget; this is a limit, not a completed run or measured duration.
+
+The following November 10 preparation results are historical. Independent source
+review cleared the attribute-initialization installer SHA256
 `63dc97c39e551349f2b3c79d1e1778d387cae9bc496ef8ffa1bc482332b43d5b`
 for isolated rehearsal. Its pinned-PHP SQLite/WordPress API model passed **1,325
 checks**, including **138 injected write-boundary failures**. The separate
@@ -434,30 +482,35 @@ Gates `42758745983`: **39/0**, with only the expected rendered-URL skip, at
 `aa19783b3a64f8a92d9fb78fb0893e67d65a2925dde7628a36e1eae68c3f41a8`.
 The subsequent copy6 dispatch was rejected before execution as recorded above.
 
-1. Capture and review the exact current live navigation baseline. Existing
-   staging upgrade installers require owned snippet #1380 and historical
-   payloads; adding the live hostname would not provide a first-install path.
-2. Prepare a separate first-install transition and initially allow writes only
-   on the isolated localhost rehearsal. Bind its source, ownership, snapshots,
-   partial-failure recovery and rollback to reviewed bytes. Preserve older
-   staging rollback endpoints. The older cleanup wrapper must not be reused
-   unchanged: its rollback lacks a fresh verified backup and its progress-block
-   matching is broader than the reviewed exact payload.
-3. Rehearse the transition on a fresh isolated copy of current live, including
+1. Complete the Search correction's staging39 source, fresh-copy, deployment,
+   public-browser and exact actual-snapshot gates. Its reviewed source is frozen
+   in this package, but no Search website change is recorded at this refresh.
+2. Verify the refreshed release source in repository CI and obtain explicit
+   scope permission for the temporary live-data copy. Reconfirm the captured
+   baseline against the actual copy; do not silently rebase changed stores or
+   retry the rejected copy6 request unchanged.
+3. Rehearse this exact transition on a fresh isolated copy of current live, including
    media: install, repeat, exact rollback, reapply, regulated-wording and rendered
    browser gates, then post-browser recovery. Test the actual visitor inventory,
    including search/404; staging's 19-page inventory is not the live inventory.
-4. Complete supplemental Linux WebKit disclosure/layout checks. Linux WebKit
-   remains engine evidence, not a claim of Safari or physical-device testing.
-5. **Neighbours accepted November 10; index fix accepted November 11.**
-   Ryan's reports are recorded above. If a subsequent runtime fix changes
-   relevant behavior, recheck the affected path rather than repeating the entire
-   acceptance process. VoiceOver and OS text scaling remain separate coverage;
-   no result was supplied for them.
-6. Present the exact release and recovery package with fresh verified off-site
-   backup requirements and a live dry run. The repository's manual LIVE workflow
-   leaves the main merge and live start with Ryan; no live request is prepared or
-   dispatched yet.
+   Require all 28 leaf suites, including the supplemental Linux WebKit checks.
+   Linux WebKit remains engine evidence, not physical Safari testing. In
+   particular, actual creation, later saves, activation, exact shared-count
+   changes and deletion must pass: copy5 stopped during first code correction.
+4. Prepare and independently review the live profile and dedicated first-install
+   push/recovery wrapper described below. Bind a live dry run to the exact current
+   baseline, require fresh verified off-site backups before apply and rollback,
+   retain the actual journal, and make purge/rendered/full-state checks decisive.
+   Preserve older staging rollback endpoints. Adding a live hostname to a
+   staging installer or reusing the older cleanup wrapper does not meet this gate.
+5. Present the concrete tested release and recovery package for Ryan's explicit
+   live go. The repository's manual LIVE workflow leaves the main merge and live
+   start with Ryan; no live request is prepared or dispatched yet.
+
+Safari acceptance is complete for neighbours, index clearance and the four quiet
+controls. Fluidity is deferred until after live. Only a subsequent change to an
+accepted behavior warrants checking that affected path; no generic Safari retest
+is pending. VoiceOver and OS text scaling remain separate unverified coverage.
 
 No arbitrary calendar date or amount of elapsed time makes the release ready.
 Recommend a window when these conditions pass and someone can immediately check

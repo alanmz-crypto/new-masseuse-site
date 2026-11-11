@@ -9,6 +9,19 @@ metadata:
 A phone cloud session (https://claude.ai/code, repo `alanmz-crypto/new-masseuse-site`) sees ONLY this repository: not his computer, not his global `~/.claude/CLAUDE.md`, not his local Claude memory, not convmem. Everything that must not be lost is therefore written here and in the notes this index points to.
 First message to send in a fresh phone session: **"Read .claude/project-memory/open-items.md and tell me what is due."**
 
+**Release preparation, November 11: Search correction and current bundle prepared.**
+The [Search phase record](../../docs/reviews/2026-11-11-search-contrast.md)
+records complete actual baseline inspection and the 536-byte CSS candidate.
+Cached actual-page replay passed 150/0 per Chromium/Firefox engine; this is not
+fresh-copy or public verification. No Search website change has happened yet.
+The first-install package now freezes the accepted quiet-navigation core and
+this same Search CSS, with four approved data payloads unchanged. Local models
+passed 1,694 installer checks and 162 evidence controls; a complete first-install,
+rendered and recovery cycle is still required. Temporary live DB/uploads copy
+permission remains unresolved after the earlier automatic approval rejection.
+No live enablement, live request or main merge exists. Safari acceptance is
+complete; fluidity refinements stay deferred.
+
 **Current staging39, November 11: four navigation refinements complete and accepted.**
 The automatic rail-side scrolling label is removed; interaction names remain.
 The index has a solid outlined button and a tappable X while open. Outside taps
@@ -90,7 +103,7 @@ contains the exact scope, new read-only live/staging inventories and current
 acceptance blockers. At that inventory, all 15 shared page bodies matched after
 origin normalization, and staged core/four data payloads matched source. Live
 metadata is preserved. The localhost-only first-install/rollback package is
-still frozen at the preceding core; no live enablement or request exists. Ryan's
+now refreshed to the accepted quiet-navigation core and Search candidate above; no live enablement or request exists. Ryan's
 latest no-problems Safari report accepts the current neighbours layout. The
 earlier contradictory Privacy/menu reply is historical, not a renewed generic
 retest requirement. No per-route, device-version or assistive-technology
