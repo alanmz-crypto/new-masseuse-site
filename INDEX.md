@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-11 00:51 UTC  **PASS**  `peek-index-clearance-s39-preflight-1`  [reports/2026-11-11/005115-peek-index-clearance-s39-preflight-1.md](reports/2026-11-11/005115-peek-index-clearance-s39-preflight-1.md)  (run 42934508577)
 - 2026-11-11 00:47 UTC  **PASS**  `peek-index-clearance-rehearse-2`  [reports/2026-11-11/004738-peek-index-clearance-rehearse-2.md](reports/2026-11-11/004738-peek-index-clearance-rehearse-2.md)  (run 42929855631)
 - 2026-11-10 23:59 UTC  **FAIL**  `peek-index-clearance-rehearse-1`  [reports/2026-11-10/235904-peek-index-clearance-rehearse-1.md](reports/2026-11-10/235904-peek-index-clearance-rehearse-1.md)  (run 42923801883)
 - 2026-11-10 15:19 UTC  **PASS**  `peek-neighbours-verify-1`  [reports/2026-11-10/151923-peek-neighbours-verify-1.md](reports/2026-11-10/151923-peek-neighbours-verify-1.md)  (run 42843020616)
