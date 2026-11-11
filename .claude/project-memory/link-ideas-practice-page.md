@@ -25,8 +25,9 @@ The initial apply stopped before mutation because SiteGround's logical home is
 an alias of `/home/customer`. The wrapper now supplies canonical private paths,
 including recovery; dry preflight checks the same prerequisite as apply.
 
-The first-install release package now freezes the accepted quiet-navigation
-core and this exact Search CSS, with four approved data payloads unchanged.
+The first-install release candidate contains the accepted quiet-navigation
+design with the minimal observer correction below and this exact Search CSS;
+all four approved data payloads are unchanged.
 Its refreshed models passed **1,843 installer checks** (138 injected failures)
 and **163 evidence controls**, but
 its complete first-install/rendered/recovery cycle remains unproved. The
@@ -57,12 +58,25 @@ unproved. Cleanup verified deletion. The errors are under investigation, not
 excused. Live and staging39 were unchanged. The readiness record contains
 the actual copy-only snapshot and artifact bindings; the deleted journal is not
 a staging/live recovery file.
-A minimal title-strip ResizeObserver timing correction is now being prepared:
-local WebKit reproduced the original error in 6/6 trials and passed the queued
-callback in 6/6 with identical final geometry. Accepted quiet-navigation bytes
-are frozen as shared v10; the new `core-title-resize` lane preserves summaries
-and Search CSS. Staging deployment and complete new release proof remain pending.
-No generic Safari retest or fluidity expansion is required.
+A minimal title-strip ResizeObserver timing correction is prepared: local
+WebKit reproduced the original error in 6/6 trials and passed the queued callback
+in 6/6 with identical final geometry. Accepted quiet-navigation bytes are frozen
+as shared v10. Complete corrected source Gates passed **55/0**, run **42993487769**,
+source `037fec5a6b95ecfcda02db98e8b2125326da9155`. The fresh staging39-copy
+rehearsal `peek-title-resize-copy-1` passed at **10:11:22 UTC**, run **42994882056**,
+source `95f823413b04fa8f683d77e0a0f82087aac3fa7b`: all 29 browser suites
+**25,343/0**, Home/client wording gates **35/0 and 322/0**, exact recovery before
+and after browsers, unchanged summaries/Search CSS, and verified cleanup.
+Independent raw-evidence and visual review found no new blocker. The
+[resize phase record](../../docs/reviews/2026-11-11-peek-title-resize.md) records
+actual copy-only snapshots and artifact bindings. Read-only staging preflight
+passed at **10:14:56 UTC**, run **43001945737**. Staging deployment and complete
+new live-copy release proof remain pending; neither site has been changed by
+this correction.
+The reviewed live-enable proposal is saved as a disabled patch, with offline
+models and independent review recorded in the readiness note. It is not applied;
+no live request or deployment is authorized. No generic Safari retest or fluidity
+expansion is required.
 
 **Current staging39, November 11: four navigation refinements complete and accepted.**
 The automatic rail-side scrolling label is removed; interaction names remain.

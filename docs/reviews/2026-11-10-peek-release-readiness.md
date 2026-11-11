@@ -339,9 +339,15 @@ live-sourced copy cycle. Live enablement remains disabled.
 The corrected complete source Gates subsequently passed **55/0** at
 **09:23:32 UTC**, run **42993487769**, source
 `037fec5a6b95ecfcda02db98e8b2125326da9155`. Fresh staging39-copy rehearsal
-`peek-title-resize-copy-1` is running as **42994882056** from
-`95f823413b04fa8f683d77e0a0f82087aac3fa7b`. Staging deployment and a new complete
-live-sourced copy cycle remain pending.
+`peek-title-resize-copy-1`, **42994882056**, source
+`95f823413b04fa8f683d77e0a0f82087aac3fa7b`, subsequently passed at **10:11:22 UTC**:
+all 29 browser leaves **25,343/0**, rendered Home/client gates **35/0 and 322/0**,
+exact recovery before/after browsers, unchanged four-page data/CSS and decisive
+cleanup. Independent raw-evidence and visual review found no new blocker.
+The [resize phase record](2026-11-11-peek-title-resize.md) binds the actual
+copy snapshots, state hashes and verified artifact. Read-only staging preflight
+passed at **10:14:56 UTC**, run **43001945737**. Actual staging deployment and a
+new complete live-sourced copy cycle remain pending.
 
 ## Disabled live-release proposal
 

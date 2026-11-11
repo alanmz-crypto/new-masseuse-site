@@ -105,4 +105,56 @@ The fresh staging39-sourced rehearsal with uploads was dispatched as
 `95f823413b04fa8f683d77e0a0f82087aac3fa7b`. It exercises the focused resize
 matrix in three engines, retained WebKit layout/disclosures and the full
 quiet-navigation rehearsal, followed by exact post-browser recovery and decisive
-cleanup. Results are pending. Neither staging39 nor live has been changed.
+cleanup. It passed at **10:11:22 UTC**. Neither staging39 nor live was changed.
+
+## Actual staging-copy proof
+
+All **29 unique browser leaves passed, 25,343/0**, across all five phases.
+The focused resize checks passed 48/0 in each engine. WebKit disclosures passed
+70/0 and layout 152/0, including both previously failing Therapeutic 150% cases.
+The retained quiet-navigation matrix passed 24,977/0. Independent review
+recomputed the totals from the raw, nonduplicated leaf evidence and replayed the
+strict parsers. Home rendered gates passed 35/0 and regulated client-page gates
+322/0. No new PHP errors appeared; the existing WP-CLI deprecation was unchanged.
+
+Actual copy-only snapshots were:
+
+- First apply: `peek-template-core-title-resize-before-20261111-092637-26167859.json`.
+- Reapply used before/after browsers: `peek-template-core-title-resize-before-20261111-092643-db47cb69.json`.
+- Final reapply: `peek-template-core-title-resize-before-20261111-101116-42804e9e.json`.
+
+First/repeat applied core state was
+`84a867a04169bdd4b6bafe87f0d01ab8e592a91ffb2e1abf9f6cb4fd43806607`;
+the reapply state remained
+`7d30fcfca2f9bc69112943191c246e02023b26f99af6bed9b8156a256527a8a1`
+before and after browsers. Both rollback cycles restored original core state
+`74ea2dd67eaf86ea065abeba398d41df6fe0f5451e1e0b36d11e2b309d60e56f`.
+Final reapply verified
+`bec04e2f63bfe211b766e7a3f262ae1ddfffb89cfac3416d3cf0dd2b7b1605d0`.
+Every complete four-page state remained
+`3e9acc4ea6dfedf7fe99e7a70534603ba0d32a1827793755c8ee10f4e55c9cc9`.
+All seven fingerprints preserved CSS29
+`b024acc687b49a37115940b52976f3bdcfc6cb236ae7bb4a81422f8c2d02c69b`.
+A=C=E byte for byte; B=B2, with only the existing WPCode snippet cache exception
+across separate reapplications. Core #1380 alone changed code.
+
+Artifact **13846236915**, 120,755,379 bytes, SHA256
+`5aa2129d96ae0c925774c221bbda55501b02507af35589188f643059eb006b8c`,
+passed size/digest/ZIP integrity and path checks. Its 102 evidence files contain
+no SQL, private snapshots, configuration or source files. All 445 unique JPEGs
+decoded without conflicting copies. All 16 retained Chromium layout captures
+match the accepted quiet staging captures exactly. The WebKit enlarged research
+card retains its text geometry; its old/new pixel differences are inside the
+rail. Broader captures include the separately accepted Search contrast change
+and rendering differences, so this is not an all-images-identical claim.
+Root and independent review found no new visual blocker.
+
+Cleanup verified removal and absence of the owned relay, containers, volumes,
+networks and temporary directory. These deleted copy-only snapshots are evidence,
+not recovery files for staging or live. Root-font enlargement is not OS text
+scaling, and Linux WebKit is not physical iPhone Safari.
+
+Read-only staging preflight `peek-title-resize-dry-1` passed at **10:14:56 UTC**,
+Actions **43001945737**, source `33c6d263bedec8de83709ceff746a8210f182e9c`.
+It confirmed exact frozen-v10 readiness. Staging apply and public verification
+remain next; live remains unchanged and disabled.
