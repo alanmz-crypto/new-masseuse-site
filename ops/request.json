@@ -1,5 +1,5 @@
 {
-  "id": "peek-live30-incident-inspect-1",
+  "id": "peek-live-finished-inspect-20261111-2",
   "op": "run",
   "target": "live",
   "script": "link-ideas/push-peek-release.sh",
