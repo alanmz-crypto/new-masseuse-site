@@ -1,9 +1,8 @@
 {
-  "id": "search-contrast-rehearse-1",
-  "op": "rehearse",
+  "id": "search-contrast-dry-1",
+  "op": "run",
   "target": "staging39",
-  "installer": "search-contrast/install-search-contrast.php",
-  "args": [
-    "--with-uploads"
-  ]
+  "script": "search-contrast/push-search-contrast.sh",
+  "args": [],
+  "tests": "auto"
 }
