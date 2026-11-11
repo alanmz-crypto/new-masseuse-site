@@ -1,6 +1,14 @@
 # Peek visitor-navigation release readiness
 
-**Decision: ready for Ryan's release go, followed by the guarded live dry run.**
+**Release go received November 11; guarded live dry run is next.** Ryan replied
+“Continue” to the explicit enablement/dry-run/PR question and asked to defer
+minutiae. The exact independently reviewed patch `96c2d71d…720a` is now applied.
+Required source checks and the read-only live preflight precede the PR/request.
+No live installation has run; Ryan retains the merge and manual LIVE start.
+Earlier disabled/awaiting-go statements in this chronological record describe
+the preceding stage, not another permission request.
+
+**Completed readiness decision:**
 The accepted staging design and complete fresh live-copy installation, browser
 and recovery cycle have passed. The copy was deleted with verified cleanup.
 This assessment does not start a live write or authorize a main merge. Work remains on

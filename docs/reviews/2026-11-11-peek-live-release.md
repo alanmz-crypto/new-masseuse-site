@@ -1,6 +1,8 @@
 # Peek release review
 
-**Ready for your release go. Live is unchanged.** The accepted staging design
+**Release go received; live is unchanged.** Your “Continue” authorizes the
+reviewed tooling, live dry run and PR/request preparation. You still merge and
+start the LIVE workflow. The accepted staging design
 and the complete installation/browser/rollback rehearsal on a fresh copy of
 live have passed. The temporary copy was deleted with verified cleanup.
 
@@ -51,8 +53,8 @@ navigation/settings and removes only this release's exact records; unexpected
 changes stop recovery for inspection.
 
 The reviewed [live-enable patch](../inter-model/peek-visitor-release-enable-live.patch)
-is still disabled. Your go permits applying it, running the read-only live drift
-check, and preparing the release PR and exact LIVE request. That check must pass
+has now been applied exactly as reviewed. The read-only live drift check must
+pass before preparing the release PR and exact LIVE request. That check must pass
 against the current live stores; the copied-site proof does not waive it.
 
 Then you retain both launch actions: merge the reviewed PR after Gates passes,
@@ -63,10 +65,11 @@ the tested recovery if needed. No date or traffic window is inferred here.
 
 The repository's [CLAUDE.md, Cloud sessions](../../CLAUDE.md#cloud-sessions-claudeaicode-the-claude-app-claude_code_remotetrue)
 requires: “Show Ryan the exact change and wait for his go.” Your temporary-copy
-approval completed the rehearsal; the distinct live-release go is the next step.
+approval completed the rehearsal; your subsequent “Continue” supplied the
+distinct release go. No further preparation approval is needed.
 
 I finished: the complete release rehearsal and review.
-Next step: Ryan gives the release go; Codex runs the guarded live dry run and prepares the PR/request.
+Next step: Codex runs the guarded live dry run and prepares the PR/request.
 Next lane: Codex prepares; Ryan merges and starts live.
 See my work: [Detailed release evidence](2026-11-10-peek-release-readiness.md).
 Arc: none (ad-hoc)

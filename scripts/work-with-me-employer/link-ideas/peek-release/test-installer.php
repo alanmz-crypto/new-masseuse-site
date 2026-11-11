@@ -463,6 +463,21 @@ $comparison = $fixture_manifest; $comparison['baseline'] = $manifest['baseline']
 check( $comparison === $manifest, 'fixture changes only row/source hashes; production routes, payloads, host rules, Spectra version and public source provenance remain intact' );
 check( hash_file( 'sha256', "$package/install-peek-release.php" ) === hash_file( 'sha256', "$source/install-peek-release.php" ), 'fixture runs identical production installer bytes' );
 foreach ( $payload_specs as $role => $spec ) { check( hash_file( 'sha256', "$package/{$spec['file']}" ) === $spec['file_sha256'], "fixture retains production $role payload bytes" ); }
+// Emit actual local installer markers at the real /backups path for the
+// unchanged Python rehearsal parser. Run only in an isolated offline container.
+if ( $source_case === 'local-marker-contract' ) {
+    $output = $argv[3] ?? '';
+    if ( ! str_starts_with( $output, '/tmp/' ) || file_exists( '/backups' ) || ! mkdir( '/backups', 0700 ) || ! mkdir( $output, 0700 ) ) { throw new Harness_Error( 'Local marker contract requires isolated /backups and new /tmp output' ); }
+    putenv( 'WWM_BACKUP_DIR=/backups' );
+    try {
+        copy( "$package/manifest.json", "$output/manifest.json" );
+        invoke( array( 'preflight' ) ); file_put_contents( "$output/preflight.log", implode( "\n", $logs ) . "\n" );
+        invoke( array( 'apply' ) ); $actual = marker( 'RELEASE-SNAPSHOT' ); file_put_contents( "$output/applied.log", implode( "\n", $logs ) . "\n" );
+        invoke( array( 'rollback', $actual['snapshot'] ) ); file_put_contents( "$output/original.log", implode( "\n", $logs ) . "\n" );
+        check( all_state() === $original, 'actual local marker round trip preserves every fixture byte' );
+    } finally { remove_tree( '/backups' ); }
+    echo "PASS emitted actual local markers without rewriting fields or paths.\n"; exit;
+}
 if ( $source_case !== '' ) {
     if ( ! in_array( $source_case, array( 'runtime-version', 'main-not-loaded', 'helper-not-loaded', 'loader-not-loaded', 'class-loaded-elsewhere' ), true ) ) { throw new Harness_Error( 'Unknown isolated source-identity case' ); }
     refusal( array( 'apply' ), 'isolated Spectra loaded-source identity: ' . $source_case );
@@ -1256,5 +1271,82 @@ foreach ( array( 'wrong-host', 'wrong-id', 'amp-entity', 'hex-entity', 'double-e
 restore_state( $original );
 check( file_get_contents( "$source/manifest.json" ) === $manifest_bytes, 'production manifest was never modified by synthetic fixture' );
 foreach ( $payload_specs as $role => $spec ) { check( hash_file( 'sha256', "$source/{$spec['file']}" ) === $spec['file_sha256'], "production $role payload unchanged after all controls" ); }
+// Disabled live-enable proposal controls: synthetic rows only, never network.
+$proposal_start = $pass;
+putenv( 'TS_PEEK_RELEASE_PROFILE=raw-live-v1' );
+refusal( array( 'preflight' ), 'raw-live profile cannot be selected on localhost' );
+putenv( 'TS_PEEK_RELEASE_PROFILE' );
+$home = 'http://thaisolitude.com'; refusal( array( 'preflight' ), 'live requires explicit raw-live profile' );
+putenv( 'TS_PEEK_RELEASE_PROFILE=raw-live-v1' );
+refusal( array( 'preflight' ), 'raw-live profile rejects copied synthetic row hashes' );
+$home = 'https://thaisolitude.com'; refusal( array( 'preflight' ), 'HTTPS stored origin is not the exact reviewed raw origin' );
+$home = 'http://thaisolitude.com';
+fixture_update( 'wp_options', 'option_name', 'home', array( 'option_value' => $home ) );
+fixture_update( 'wp_options', 'option_name', 'siteurl', array( 'option_value' => $home ) );
+$proposal_profile_bytes = file_get_contents( "$package/live-profile.json" );
+$proposal_profile = json_decode( $proposal_profile_bytes, true, 512, JSON_THROW_ON_ERROR );
+$proposal_profile['baseline'] = fixture_profile( $fixture_manifest, $source );
+file_put_contents( "$package/live-profile.json", json_encode( $proposal_profile, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) . "\n" );
+$proposal_original = all_state();
+invoke( array( 'preflight' ) ); $proposal_ready = marker( 'RELEASE-PREFLIGHT' );
+check( $proposal_ready['profile_sha256'] === hash_file( 'sha256', "$package/live-profile.json" ), 'live preflight binds exact separate raw profile bytes' );
+refusal( array( 'apply' ), 'first live apply without caller-selected journal' );
+$proposal_path = "$testdir/backups/peek-release-before-20261111-030000-1234abcd.json";
+foreach ( array( "$testdir/peek-release-before-20261111-030000-1234abcd.json", "$testdir/backups/not-owned.json" ) as $bad_path ) {
+    putenv( 'TS_PEEK_RELEASE_NEW_JOURNAL=' . $bad_path ); refusal( array( 'apply' ), 'unowned selected journal path' );
+}
+file_put_contents( $proposal_path, 'SYNTHETIC_PRIVATE_EXISTING' );
+putenv( 'TS_PEEK_RELEASE_NEW_JOURNAL=' . $proposal_path ); refusal( array( 'apply' ), 'selected journal never overwrites existing evidence' ); unlink( $proposal_path );
+invoke( array( 'apply' ) ); $proposal_marker = marker( 'RELEASE-SNAPSHOT' );
+check( $proposal_marker['snapshot'] === $proposal_path && $proposal_marker['profile_sha256'] === $proposal_ready['profile_sha256'], 'live apply uses exact preselected path and profile marker' );
+$proposal_applied = all_state(); $proposal_bytes = file_get_contents( $proposal_path );
+putenv( 'TS_PEEK_RELEASE_EXPECT_SNAPSHOT_SHA256=' . str_repeat( '0', 64 ) );
+refusal( array( 'rollback', $proposal_path ), 'caller-preserved journal hash mismatch stops rollback' );
+refusal( array( 'recovery-check', $proposal_path ), 'caller-preserved journal hash mismatch stops recovery verification' );
+putenv( 'TS_PEEK_RELEASE_EXPECT_SNAPSHOT_SHA256=' . hash( 'sha256', $proposal_bytes ) );
+invoke( array( 'verify', $proposal_path ) ); marker( 'RELEASE-SNAPSHOT' );
+putenv( 'TS_PEEK_RELEASE_EXPECT_SNAPSHOT_SHA256' );
+
+$proposal_writes = $wpdb->writes; $proposal_events = $events;
+invoke( array( 'recovery-check', $proposal_path ) ); $proposal_recovery = marker( 'RELEASE-RECOVERY' );
+check( $proposal_recovery['complete'] === true && digest( $proposal_recovery['ids'] ) === digest( $proposal_marker['ids'] ) && $proposal_recovery['snapshot_sha256'] === hash( 'sha256', $proposal_bytes ), 'recovery check binds complete actual snapshot and exact role IDs' );
+check( $wpdb->writes === $proposal_writes && $events === $proposal_events && all_state() === $proposal_applied && file_get_contents( $proposal_path ) === $proposal_bytes, 'recognized recovery check writes neither DB/cache nor private evidence' );
+refusal( array( 'recovery-check', $proposal_path, 'original' ), 'applied recovery is not original' );
+refusal( array( 'rollback', $proposal_path ), 'direct live rollback without caller-preserved hash' );
+putenv( 'TS_PEEK_RELEASE_EXPECT_SNAPSHOT_SHA256=' . hash( 'sha256', $proposal_bytes ) );
+$event_counts = array(); $failures = array( array( 'key' => 'delete:after', 'at' => 1 ) );
+try { invoke( array( 'rollback', $proposal_path ) ); } catch ( Refusal_Error $ignored ) {}
+$failures = array(); $proposal_partial = all_state(); $proposal_writes = $wpdb->writes; $proposal_events = $events;
+invoke( array( 'recovery-check', $proposal_path ) ); marker( 'RELEASE-RECOVERY' );
+check( $proposal_partial !== $proposal_applied && $proposal_partial !== $proposal_original && $wpdb->writes === $proposal_writes && $events === $proposal_events, 'read-only check accepts exact interrupted rollback prefix without requiring applied verify' );
+fixture_update( 'wp_posts', 'ID', 1160, array( 'post_content' => 'SYNTHETIC_PRIVATE_DRIFT' ) );
+refusal( array( 'recovery-check', $proposal_path ), 'unknown edit in interrupted recovery prefix' );
+restore_state( $proposal_partial ); invoke( array( 'rollback', $proposal_path ) );
+invoke( array( 'recovery-check', $proposal_path, 'original' ) ); $proposal_restored = marker( 'RELEASE-RECOVERY' );
+check( all_state() === $proposal_original && $proposal_restored['state'] === 'original', 'recognized partial rollback restores exact original live fixture rows' );
+putenv( 'TS_PEEK_RELEASE_EXPECT_SNAPSHOT_SHA256' );
+$proposal_corrupt = json_decode( $proposal_bytes, true ); $proposal_corrupt['profile_sha256'] = str_repeat( '0', 64 );
+refusal( array( 'recovery-check', snapshot_write( $proposal_corrupt ) ), 'snapshot cannot cross raw-profile identity' );
+putenv( 'TS_PEEK_RELEASE_EXPECT_SNAPSHOT_SHA256' );
+// Apply crash evidence is recoverable even though no completion marker exists.
+$proposal_failed_path = "$testdir/backups/peek-release-before-20261111-030001-1234abcd.json";
+putenv( 'TS_PEEK_RELEASE_NEW_JOURNAL=' . $proposal_failed_path );
+$event_counts = array(); $failures = array( array( 'key' => 'create:after', 'at' => 1 ), array( 'key' => 'delete:before', 'at' => 1 ) );
+try { invoke( array( 'apply' ) ); } catch ( Refusal_Error $ignored ) {}
+$failures = array(); $proposal_incomplete = json_decode( file_get_contents( $proposal_failed_path ), true );
+check( $proposal_incomplete['complete'] === false && count( $proposal_incomplete['ids'] ) === 1, 'failed apply preserves exact caller-selected incomplete recovery journal' );
+$proposal_writes = $wpdb->writes; $proposal_events = $events;
+invoke( array( 'recovery-check', $proposal_failed_path ) ); $proposal_partial_marker = marker( 'RELEASE-RECOVERY' );
+check( $proposal_partial_marker['complete'] === false && $wpdb->writes === $proposal_writes && $events === $proposal_events, 'incomplete recognized journal can be checked without preflight or completed verify' );
+putenv( 'TS_PEEK_RELEASE_EXPECT_SNAPSHOT_SHA256=' . hash_file( 'sha256', $proposal_failed_path ) );
+invoke( array( 'rollback', $proposal_failed_path ) ); invoke( array( 'recovery-check', $proposal_failed_path, 'original' ) ); marker( 'RELEASE-RECOVERY' );
+check( all_state() === $proposal_original, 'incomplete live fixture journal restores exact original rows' );
+fixture_update( 'wp_posts', 'ID', 1160, array( 'post_content' => 'SYNTHETIC_PRIVATE_DRIFT' ) );
+refusal( array( 'preflight' ), 'future raw-live preflight rejects baseline drift' );
+restore_state( $original ); $home = 'http://localhost:8090'; putenv( 'TS_PEEK_RELEASE_PROFILE' ); putenv( 'TS_PEEK_RELEASE_NEW_JOURNAL' ); putenv( 'TS_PEEK_RELEASE_EXPECT_SNAPSHOT_SHA256' );
+file_put_contents( "$package/live-profile.json", $proposal_profile_bytes );
+check( file_get_contents( "$source/live-profile.json" ) === $proposal_profile_bytes, 'real raw-live public hash profile never modified by synthetic fixture' );
+echo 'PASS disabled live proposal: ' . ( $pass - $proposal_start ) . " additional profile/recovery controls.\n";
+
 remove_tree( $testdir );
 echo 'PASS Peek visitor release installer: ' . $pass . ' checks, ' . $fault_cases . " injected write-boundary failures; isolated SQLite/WP API model only, real WordPress copy rehearsal still required.\n";

@@ -9,6 +9,14 @@ metadata:
 A phone cloud session (https://claude.ai/code, repo `alanmz-crypto/new-masseuse-site`) sees ONLY this repository: not his computer, not his global `~/.claude/CLAUDE.md`, not his local Claude memory, not convmem. Everything that must not be lost is therefore written here and in the notes this index points to.
 First message to send in a fresh phone session: **"Read .claude/project-memory/open-items.md and tell me what is due."**
 
+**Release go received November 11.** After the completed review and explicit
+question about enabling the tooling, live dry run and release PR, Ryan replied
+“Continue” and asked to defer diminishing-return refinements. This authorizes
+the reviewed enablement and PR/request preparation. The exact reviewed patch
+has been applied; required source checks and the read-only live preflight are
+next. No live installation has run. Ryan still merges and starts Site ops (LIVE).
+The earlier disabled/awaiting-go statements below record the preceding stage.
+
 **Current release preparation, November 11: staging and complete live-copy proof passed.**
 The [Search phase record](../../docs/reviews/2026-11-11-search-contrast.md)
 records final source Gates **51/0**, a fresh staging39 copy with **300/0** browser

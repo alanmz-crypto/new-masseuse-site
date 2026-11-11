@@ -1,21 +1,23 @@
 <?php
 /**
- * Provisional visitor release. FIRST INSTALL ON AN ISOLATED LIVE COPY ONLY.
+ * Visitor release: exact copied or explicitly selected raw-live profile only.
  * wp eval-file install-peek-release.php preflight | apply [FILE] |
- *     verify FILE [original] | rollback FILE
- * No live/staging origin is enabled. No page content, SEO or dependency edit.
+ *     verify FILE [original] | recovery-check FILE [original] | rollback FILE
+ * No page content, SEO or dependency edit. Live requires TS_PEEK_RELEASE_PROFILE=raw-live-v1.
  * Completed private snapshots are immutable, including rollback and repeats.
  */
 if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) ) { exit( 'Run with WP-CLI.' ); }
 $release_home = untrailingslashit( home_url() );
 $release_local_host = 'localhost:8090';
-if ( $release_home !== 'http://' . $release_local_host ) { WP_CLI::error( 'Only exact http://localhost:8090 is enabled; nothing changed.' ); }
+$release_profile_request = (string) getenv( 'TS_PEEK_RELEASE_PROFILE' );
+$release_live = $release_home === 'http://thaisolitude.com' && $release_profile_request === 'raw-live-v1';
+if ( ! $release_live && ( $release_home !== 'http://' . $release_local_host || $release_profile_request !== '' ) ) { WP_CLI::error( 'Exact origin and explicit profile selection are required; nothing changed.' ); }
 if ( get_stylesheet() !== 'astra' || ! current_user_can( 'manage_options' ) || ! current_user_can( 'unfiltered_html' ) || ! function_exists( 'wpcode' ) || ! class_exists( 'WPCode_Snippet' ) ) { WP_CLI::error( 'Requires Astra, WPCode and an administrator.' ); }
 global $wpdb, $wp_version;
 $args = isset( $args ) && is_array( $args ) ? $args : array();
 $release_mode = $args[0] ?? 'preflight';
-$release_original = $release_mode === 'verify' && ( $args[2] ?? null ) === 'original';
-if ( ! in_array( $release_mode, array( 'preflight', 'apply', 'rollback', 'verify' ), true ) || count( $args ) > ( $release_original ? 3 : ( $release_mode === 'preflight' ? 1 : 2 ) ) || ( in_array( $release_mode, array( 'verify', 'rollback' ), true ) && count( $args ) < 2 ) ) { WP_CLI::error( 'Use preflight, apply [FILE], verify FILE [original], or rollback FILE.' ); }
+$release_original = in_array( $release_mode, array( 'verify', 'recovery-check' ), true ) && ( $args[2] ?? null ) === 'original';
+if ( ! in_array( $release_mode, array( 'preflight', 'apply', 'rollback', 'verify', 'recovery-check' ), true ) || count( $args ) > ( $release_original ? 3 : ( $release_mode === 'preflight' ? 1 : 2 ) ) || ( in_array( $release_mode, array( 'verify', 'rollback', 'recovery-check' ), true ) && count( $args ) < 2 ) ) { WP_CLI::error( 'Use preflight, apply [FILE], verify FILE [original], recovery-check FILE [original], or rollback FILE.' ); }
 $release_fail = static function ( $message ) { throw new RuntimeException( $message ); };
 $release_canonical = static function ( $value ) use ( &$release_canonical ) {
     if ( is_array( $value ) ) {
@@ -72,7 +74,20 @@ try {
     $release_manifest_bytes = file_get_contents( __DIR__ . '/manifest.json' );
     $release_manifest = json_decode( $release_manifest_bytes, true, 512, JSON_THROW_ON_ERROR );
     $release_manifest_hash = hash( 'sha256', $release_manifest_bytes );
-    if ( ( $release_manifest['schema'] ?? null ) !== 1 || ( $release_manifest['bundle'] ?? null ) !== 'peek-visitor-release-v1' || ( $release_manifest['copy_mapping']['origin'] ?? null ) !== $release_home || ( $release_manifest['source']['core_version'] ?? null ) !== $wp_version ) { $release_fail( 'Manifest/site/core version differs.' ); }
+    if ( ( $release_manifest['schema'] ?? null ) !== 1 || ( $release_manifest['bundle'] ?? null ) !== 'peek-visitor-release-v1' || ( $release_manifest['copy_mapping']['origin'] ?? null ) !== 'http://localhost:8090' || ( $release_manifest['source']['core_version'] ?? null ) !== $wp_version ) { $release_fail( 'Manifest/site/core version differs.' ); }
+    $release_profile_hash = null;
+    if ( $release_live ) {
+        $release_profile_bytes = file_get_contents( __DIR__ . '/live-profile.json' );
+        $release_profile = json_decode( $release_profile_bytes, true, 512, JSON_THROW_ON_ERROR );
+        if ( ( $release_profile['schema'] ?? null ) !== 1 || ( $release_profile['bundle'] ?? null ) !== $release_manifest['bundle'] || ( $release_profile['origin'] ?? null ) !== $release_home ) { $release_fail( 'Raw-live profile identity differs.' ); }
+        $release_equal( $release_profile['source'] ?? null, $release_manifest['source'], 'Raw-live baseline provenance' );
+        $release_equal( array_keys( $release_profile['baseline'] ?? array() ), array_keys( $release_manifest['baseline'] ), 'Raw-live baseline fields' );
+        $release_manifest['baseline'] = $release_profile['baseline'];
+        $release_profile_hash = hash( 'sha256', $release_profile_bytes );
+    }
+    // Preserve the existing local rehearsal contract exactly. The additional
+    // profile binding belongs only to the explicit raw-live path.
+    $release_marker_fields = static fn( $fields ) => $release_profile_hash === null ? $fields : array_merge( $fields, array( 'profile_sha256' => $release_profile_hash ) );
     require __DIR__ . '/source-binding.php';
     $release_slugs = array( 'thai-massage', 'therapeutic-massage', 'deep-tissue-massage', 'chair-massage' );
     $release_equal( $release_manifest['summary_slugs'], $release_slugs, 'Approved page roles' );
@@ -271,7 +286,7 @@ $release_expected = static function ( $old, $owned, $cleaned ) use ( $release_as
 };
 $release_private_input = (string) getenv( 'WWM_BACKUP_DIR' );
 $release_private = realpath( $release_private_input ); $release_webroot = realpath( ABSPATH );
-$release_private_ok = str_starts_with( $release_private_input, '/' ) && $release_private && $release_webroot && is_dir( $release_private ) && is_writable( $release_private ) && $release_private !== $release_webroot && ! str_starts_with( $release_private . '/', rtrim( $release_webroot, '/' ) . '/' );
+$release_private_ok = ! is_link( $release_private_input ) && $release_private_input === $release_private && str_starts_with( $release_private_input, '/' ) && $release_private && $release_webroot && is_dir( $release_private ) && is_writable( $release_private ) && $release_private !== $release_webroot && ! str_starts_with( $release_private . '/', rtrim( $release_webroot, '/' ) . '/' );
 $release_file_unchanged = static function ( $path, $bytes ) use ( $release_fail ) {
     clearstatcache( true, $path );
     if ( is_link( $path ) || ! is_file( $path ) || ( fileperms( $path ) & 0777 ) !== 0600 || file_get_contents( $path ) !== $bytes ) { $release_fail( 'Private snapshot/journal changed; no further writes or success marker.' ); }
@@ -311,14 +326,14 @@ $release_astra_set = static function ( $from, $to ) use ( $wpdb, $release_fail )
     finally { wp_cache_delete( 'astra-settings', 'options' ); wp_cache_delete( 'alloptions', 'options' ); wp_cache_delete( 'notoptions', 'options' ); }
     if ( $rows !== 1 ) { $release_fail( 'Astra compare-and-swap did not update exactly one row.' ); }
 };
-$release_marker = static function ( $path, $snapshot, $state, $current ) use ( $release_hash, $release_home, $release_manifest_hash, $release_json, $release_file_unchanged ) {
+$release_marker = static function ( $path, $snapshot, $state, $current ) use ( $release_hash, $release_home, $release_manifest_hash, $release_marker_fields, $release_json, $release_file_unchanged ) {
     $release_file_unchanged( $path, $release_json( $snapshot ) );
-    WP_CLI::log( 'RELEASE-SNAPSHOT ' . json_encode( array( 'schema' => 1, 'bundle' => 'peek-visitor-release-v1', 'home' => $release_home, 'state' => $state, 'snapshot' => $path, 'snapshot_sha256' => hash_file( 'sha256', $path ), 'manifest_sha256' => $release_manifest_hash, 'state_sha256' => $release_hash( $current ), 'ids' => $snapshot['ids'] ), JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR ) );
+    WP_CLI::log( 'RELEASE-SNAPSHOT ' . json_encode( $release_marker_fields( array( 'schema' => 1, 'bundle' => 'peek-visitor-release-v1', 'home' => $release_home, 'state' => $state, 'snapshot' => $path, 'snapshot_sha256' => hash_file( 'sha256', $path ), 'manifest_sha256' => $release_manifest_hash, 'state_sha256' => $release_hash( $current ), 'ids' => $snapshot['ids'] ) ), JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR ) );
 };
 
 // Each reverse prefix has an exact complete state. A stopped rollback may resume
 // only at one of these prefixes. Unknown edits are never adopted or overwritten.
-$release_reverse = static function ( $old, $start, $ids, $file_guard = null ) use ( $release_capture, $release_expected, $release_equal, $release_hash, $release_roles, $release_order, $release_css_set, $release_astra_set, $release_refresh, $release_fail ) {
+$release_reverse = static function ( $old, $start, $ids, $file_guard = null, $read_only = false ) use ( $release_capture, $release_expected, $release_equal, $release_hash, $release_roles, $release_order, $release_css_set, $release_astra_set, $release_refresh, $release_fail ) {
     $owned = $start['owned'];
     $cleaned = array( 'css' => $start['records'][29]['post']['post_content'] !== $old['records'][29]['post']['post_content'], 'astra' => $start['options']['astra-settings'] !== $old['options']['astra-settings'] );
     $states = array( $start ); $actions = array();
@@ -332,6 +347,7 @@ $release_reverse = static function ( $old, $start, $ids, $file_guard = null ) us
     $current = $release_capture( $ids ); $position = null;
     foreach ( $states as $i => $state ) { if ( $release_hash( $current ) === $release_hash( $state ) ) { $position = $i; break; } }
     if ( $position === null ) { $release_fail( 'State is not an exact recognized rollback prefix; nothing overwritten.' ); }
+    if ( $read_only ) { if ( $file_guard ) { $file_guard(); } return $current; }
     for ( $i = $position; $i < count( $actions ); $i++ ) {
         $release_equal( $release_capture( $ids ), $states[$i], 'State before rollback step' );
         if ( $file_guard ) { $file_guard(); }
@@ -353,11 +369,15 @@ try {
     if ( isset( $args[1] ) ) {
         $release_path = realpath( $args[1] );
         if ( ! $release_private_ok || ! $release_path || $args[1] !== $release_path || is_link( $args[1] ) || dirname( $release_path ) !== $release_private || ! preg_match( '/^peek-release-before-\d{8}-\d{6}-[a-f0-9]{8}\.json$/D', basename( $release_path ) ) || ! is_file( $release_path ) || ( fileperms( $release_path ) & 0777 ) !== 0600 ) { $release_fail( 'Snapshot must be its exact private 0600 file in WWM_BACKUP_DIR.' ); }
-        $release_snapshot = json_decode( file_get_contents( $release_path ), true, 512, JSON_THROW_ON_ERROR );
+        $release_snapshot_bytes = file_get_contents( $release_path );
+        $release_expected_snapshot_hash = (string) getenv( 'TS_PEEK_RELEASE_EXPECT_SNAPSHOT_SHA256' );
+        if ( $release_live && in_array( $release_mode, array( 'apply', 'rollback' ), true ) && $release_expected_snapshot_hash === '' ) { $release_fail( 'Live snapshot-dependent writes require the caller-preserved exact journal hash.' ); }
+        if ( $release_expected_snapshot_hash !== '' && ( ! preg_match( '/^[a-f0-9]{64}$/D', $release_expected_snapshot_hash ) || hash( 'sha256', $release_snapshot_bytes ) !== $release_expected_snapshot_hash ) ) { $release_fail( 'Snapshot differs from caller-preserved exact bytes.' ); }
+        $release_snapshot = json_decode( $release_snapshot_bytes, true, 512, JSON_THROW_ON_ERROR );
         $s = $release_snapshot;
-        if ( ( $s['schema'] ?? null ) !== 1 || ( $s['bundle'] ?? null ) !== 'peek-visitor-release-v1' || ( $s['home'] ?? null ) !== $release_home || ( $s['manifest_sha256'] ?? null ) !== $release_manifest_hash || ! is_bool( $s['complete'] ?? null ) || $release_hash( $s['old'] ?? null ) !== ( $s['old_sha256'] ?? null ) ) { $release_fail( 'Snapshot bundle/site/manifest/completion/original hash differs.' ); }
+        if ( ( $s['schema'] ?? null ) !== 1 || ( $s['bundle'] ?? null ) !== 'peek-visitor-release-v1' || ( $s['home'] ?? null ) !== $release_home || ( $s['manifest_sha256'] ?? null ) !== $release_manifest_hash || ( $s['profile_sha256'] ?? null ) !== $release_profile_hash || ! is_bool( $s['complete'] ?? null ) || $release_hash( $s['old'] ?? null ) !== ( $s['old_sha256'] ?? null ) ) { $release_fail( 'Snapshot bundle/site/manifest/completion/original hash differs.' ); }
         $release_incomplete = ! $s['complete'];
-        if ( $release_incomplete && $release_mode !== 'rollback' ) { $release_fail( 'Incomplete journals support exact recovery rollback only.' ); }
+        if ( $release_incomplete && ! in_array( $release_mode, array( 'rollback', 'recovery-check' ), true ) ) { $release_fail( 'Incomplete journals support exact recovery rollback only.' ); }
         $target_key = $release_incomplete ? 'journal' : 'new';
         if ( $release_hash( $s[$target_key] ?? null ) !== ( $s[$target_key . '_sha256'] ?? null ) ) { $release_fail( 'Snapshot recorded state hash differs.' ); }
         $release_baseline( $s['old'] );
@@ -385,6 +405,12 @@ try {
         if ( ( $cleaned['astra'] && ! $cleaned['css'] ) || ( ( $cleaned['css'] || $published ) && ( count( $s['ids'] ) !== 5 || $uncorrected ) ) || ( $published && ! $cleaned['astra'] ) || ( ! $release_incomplete && ( ! $cleaned['css'] || ! $cleaned['astra'] ) ) ) { $release_fail( 'Snapshot cleanup/activation phase differs.' ); }
         $release_equal( $target, $release_expected( $s['old'], $target['owned'], $cleaned ), 'Snapshot permitted recorded transition' );
         $release_current = $release_capture( $s['ids'] );
+        if ( $release_mode === 'recovery-check' ) {
+            $release_current = $release_reverse( $s['old'], $target, $s['ids'], static fn() => $release_file_unchanged( $release_path, $release_json( $s ) ), true );
+            if ( $release_original ) { $release_equal( $release_current, $s['old'], 'Recovery exact original state' ); }
+            WP_CLI::log( 'RELEASE-RECOVERY ' . json_encode( $release_marker_fields( array( 'schema' => 1, 'bundle' => 'peek-visitor-release-v1', 'home' => $release_home, 'state' => $release_original ? 'original' : 'recoverable', 'snapshot' => $release_path, 'snapshot_sha256' => hash_file( 'sha256', $release_path ), 'manifest_sha256' => $release_manifest_hash, 'state_sha256' => $release_hash( $release_current ), 'complete' => $s['complete'], 'ids' => $s['ids'] ) ), JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR ) );
+            WP_CLI::success( 'Recognized exact recovery state; no database, cache or snapshot writes.' ); return;
+        }
         if ( $release_mode === 'verify' || $release_mode === 'apply' ) {
             $release_state = $release_original ? 'original' : 'applied';
             $release_equal( $release_current, $s[$release_original ? 'old' : 'new'], 'Exact ' . $release_state . ' state' );
@@ -398,15 +424,19 @@ try {
     }
     $release_current = $release_capture(); $release_baseline( $release_current );
     if ( $release_mode === 'preflight' ) {
-        WP_CLI::log( 'RELEASE-PREFLIGHT ' . json_encode( array( 'schema' => 1, 'bundle' => 'peek-visitor-release-v1', 'home' => $release_home, 'manifest_sha256' => $release_manifest_hash, 'state' => 'ready', 'protected_state_sha256' => $release_hash( $release_current ) ), JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR ) );
+        WP_CLI::log( 'RELEASE-PREFLIGHT ' . json_encode( $release_marker_fields( array( 'schema' => 1, 'bundle' => 'peek-visitor-release-v1', 'home' => $release_home, 'manifest_sha256' => $release_manifest_hash, 'state' => 'ready', 'protected_state_sha256' => $release_hash( $release_current ) ) ), JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR ) );
         WP_CLI::success( 'Original visitor baseline ready; nothing changed.' ); return;
     }
     if ( ! $release_private_ok ) { $release_fail( 'Existing writable private WWM_BACKUP_DIR outside the webroot required.' ); }
 } catch ( Throwable $release_error ) { WP_CLI::error( $release_error->getMessage() . ' No further writes.' ); }
 
 $release_old = $release_current; $release_ids = array(); $release_owned = $release_old['owned']; $release_cleaned = array( 'css' => false, 'astra' => false );
-$release_path = $release_private . '/peek-release-before-' . gmdate( 'Ymd-His' ) . '-' . bin2hex( random_bytes( 4 ) ) . '.json';
+$release_path_request = (string) getenv( 'TS_PEEK_RELEASE_NEW_JOURNAL' );
+if ( $release_live && $release_path_request === '' ) { WP_CLI::error( 'First live apply requires its preselected private recovery journal; nothing changed.' ); }
+$release_path = $release_path_request !== '' ? $release_path_request : $release_private . '/peek-release-before-' . gmdate( 'Ymd-His' ) . '-' . bin2hex( random_bytes( 4 ) ) . '.json';
+if ( dirname( $release_path ) !== $release_private || ! preg_match( '/^peek-release-before-\d{8}-\d{6}-[a-f0-9]{8}\.json$/D', basename( $release_path ) ) || file_exists( $release_path ) || is_link( $release_path ) ) { WP_CLI::error( 'New journal must be an unused exact canonical private path; nothing changed.' ); }
 $release_snapshot = array( 'schema' => 1, 'bundle' => 'peek-visitor-release-v1', 'home' => $release_home, 'manifest_sha256' => $release_manifest_hash, 'created' => gmdate( 'c' ), 'complete' => false, 'ids' => array(), 'old' => $release_old, 'old_sha256' => $release_hash( $release_old ), 'journal' => $release_old, 'journal_sha256' => $release_hash( $release_old ) );
+$release_snapshot = $release_marker_fields( $release_snapshot );
 try { $release_save( $release_path, $release_snapshot ); $release_equal( $release_capture(), $release_old, 'State after initial private snapshot' ); }
 catch ( Throwable $release_error ) { WP_CLI::error( $release_error->getMessage() . ' Nothing changed.' ); }
 
@@ -529,4 +559,4 @@ try {
     WP_CLI::error( $release_error->getMessage() . '; exact original state restored. Snapshot: ' . $release_path );
 }
 $release_marker( $release_path, $release_snapshot, 'applied', $release_last );
-WP_CLI::success( 'Applied visitor release on isolated localhost only. Snapshot: ' . $release_path );
+WP_CLI::success( 'Applied exact profile-bound visitor release. Snapshot: ' . $release_path );

@@ -90,6 +90,20 @@ peek_test() {
 if [ -n "$img" ] && command -v docker >/dev/null; then gate "Peek installer ownership, recovery and current-page JSON (offline)" peek_test; else skip "Peek installer and JSON tests" "docker or the pinned image is not available"; fi
 peek_release_test() { docker run --rm --network none --entrypoint php -v "$here/work-with-me-employer/link-ideas:/pkg:ro" "$img" /pkg/peek-release/test-installer.php; }
 if [ -n "$img" ] && command -v docker >/dev/null; then gate "Peek visitor first-install ownership and exact recovery (offline)" peek_release_test; else skip "Peek visitor first-install tests" "docker or the pinned image is not available"; fi
+# Proposed live path retains the real localhost marker contract. Only synthetic
+# rows/markers are used; /backups exists only inside this disposable container.
+peek_release_proposal_test() {
+  local temp rc=0
+  temp=$(mktemp -d) || return 1
+  docker run --rm --network none --user 0 --entrypoint sh -v "$here/work-with-me-employer/link-ideas:/pkg:ro" "$img" -c \
+    'php /pkg/peek-release/test-installer.php /pkg/peek-release local-marker-contract /tmp/emitted >/dev/null && tar -cf - -C /tmp/emitted .' > "$temp/markers.tar" || rc=$?
+  if [ "$rc" -eq 0 ]; then tar -xf "$temp/markers.tar" -C "$temp" && python3 -I -B "$here/work-with-me-employer/link-ideas/peek-release/test-local-markers.py" "$temp" || rc=$?; fi
+  if [ "$rc" -eq 0 ]; then docker run --rm --network none --entrypoint php -v "$here/work-with-me-employer/link-ideas:/pkg:ro" "$img" /pkg/peek-release/test-render.php || rc=$?; fi
+  rm -rf "$temp"
+  return "$rc"
+}
+if [ -n "$img" ] && command -v docker >/dev/null; then gate "Peek visitor live proposal local-marker compatibility and response identity (offline)" peek_release_proposal_test; else skip "Peek visitor proposal compatibility tests" "docker or the pinned image is not available"; fi
+gate "Peek visitor live proposal backup, partial recovery and exact marker binding (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/peek-release/test-push.py"
 search_contrast_test() { docker run --rm --network none --entrypoint php -v "$here/work-with-me-employer/search-contrast:/pkg:ro" "$img" /pkg/test-installer.php; }
 if [ -n "$img" ] && command -v docker >/dev/null; then gate "Search contrast exact CSS ownership and recovery (offline)" search_contrast_test; else skip "Search contrast installer tests" "docker or the pinned image is not available"; fi
 gate "Search contrast deployment backups and exact snapshot guards (offline)" python3 -I -B "$here/work-with-me-employer/search-contrast/test-push.py"

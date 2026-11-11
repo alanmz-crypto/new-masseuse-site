@@ -1,4 +1,12 @@
-# Verified visitor release candidate: isolated live copy only
+# Verified visitor release candidate
+
+November 11: Ryan gave release go after the complete staging/live-copy proof.
+The exact reviewed enablement patch is now applied. The dedicated
+`../push-peek-release.sh` selects the raw-live profile explicitly, with exact
+baseline checks, fresh verified off-site backups and actual-journal recovery.
+Read-only live preflight and PR/request preparation are next; no live install
+has run. Ryan still merges and starts the manual LIVE workflow. The copy-only
+description below records the successfully rehearsed package before enablement.
 
 This package contains the accepted shared Peek runtime plus the verified
 title-strip observer timing correction, and four unchanged approved summaries.

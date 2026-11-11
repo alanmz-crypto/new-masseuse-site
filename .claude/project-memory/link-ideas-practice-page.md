@@ -5,6 +5,12 @@ metadata:
   type: project
 ---
 
+**Release go received November 11.** Ryan's “Continue” answers the explicit
+release-go question. The exact reviewed enable-live patch is applied for source
+checks, read-only live preflight and PR/request preparation. No live installation
+has run; Ryan retains the merge and manual LIVE start. Refinements stay deferred.
+Earlier disabled/awaiting-go statements below record the preceding stage.
+
 **Current release preparation, November 11: staging and complete live-copy proof passed.**
 The [Search phase record](../../docs/reviews/2026-11-11-search-contrast.md)
 records final source Gates **51/0**, a fresh staging39 copy with **300/0** browser
