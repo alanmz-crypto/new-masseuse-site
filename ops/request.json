@@ -1,5 +1,5 @@
 {
-  "id": "peek-live30-postmeta-1",
+  "id": "peek-live30-postmeta-2",
   "op": "run",
   "target": "live",
   "script": "link-ideas/inspect-live30-postmeta.sh",
