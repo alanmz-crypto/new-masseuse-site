@@ -646,12 +646,34 @@ release_inventory() {
   mapfile -t pages < "$out/release-paths.txt"
   [ "${#pages[@]}" -eq 15 ]
 }
+release_render_meta() {
+  local phase=$1 path=$2 position=$3 tag destination statuses
+  local observer="$wwm/link-ideas/peek-release/observe-render-meta.py"
+  [[ "$phase" =~ ^original-(before|after-rollback|after-browser)$ ]] &&
+    [[ "$position" =~ ^(before|after)$ ]] || return 1
+  tag=$(printf '%s' "$path" | sha256sum) || return 1
+  tag=${tag%% *}
+  destination="$out/$phase-render-meta-$tag-$position.log"
+  # Query only the owned copied DB container. Raw HEX fields travel directly
+  # through the pipe, never through WordPress bootstrap or retained files.
+  python3 -I -B "$observer" sql "$prefix" "$release_manifest" |
+    sql |
+    python3 -I -B "$observer" capture "$release_manifest" "$phase" "$path" "$position" > "$destination"
+  statuses=("${PIPESTATUS[@]}")
+  [ "${statuses[0]}" -eq 0 ] && [ "${statuses[1]}" -eq 0 ] && [ "${statuses[2]}" -eq 0 ] || {
+    echo "FAIL release metadata: database observation incomplete; no render follows"
+    return 1
+  }
+  python3 -I -B "$observer" validate "$destination" "$release_manifest" "$phase" "$path" "$position"
+}
 release_original_render() {
   local label=$1 reference=${2:-} path code curl_rc
   local destination="$out/$label-navigation.jsonl" html="$out/release-original-page.html"
   : > "$destination" || return 1
   for path in "${pages[@]}"; do
+    release_render_meta "$label" "$path" before || return 1
     code=$(curl -sS -o "$html" -m 30 -w '%{http_code}' "http://localhost:8090$path"); curl_rc=$?
+    release_render_meta "$label" "$path" after || return 1
     [ "$curl_rc" -eq 0 ] && [ "$code" = 200 ] || { echo "FAIL release original page $path: HTTP$code curl_exit=$curl_rc"; return 1; }
     release_evidence original-html "$html" "$path" >> "$destination" || return 1
   done

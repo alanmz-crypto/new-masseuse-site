@@ -161,6 +161,50 @@ passed; independent review found no blocker. The frozen runtime/installer and
 manifest hashes above are unchanged. Complete Actions Gates and the approved
 real-copy rehearsal still follow; these synthetic tests are not copy proof.
 
+Complete source Gates then passed **51/0** at **07:40:52 UTC** on November 11,
+run **42980390364**, checkout `01dd5dcf9a342404aa1e996c074d1bf3bf496b1d`.
+The full job log was read, including the release evidence and cleanup gate.
+The approved request above was dispatched from
+`54e2f5a4fa56819adffa7f4f382eb296f2c228d5` as Actions **42981371762**.
+The operation finished **FAIL at 07:44:11 UTC**; the temporary copy's cleanup
+was separately verified successful. Live was unchanged.
+
+The fresh copy used WordPress 7.1.4 and the exact 15-page visitor inventory.
+Two warm passes and preflight agreed on protected state
+`b002dcc5d0fa81a3ac9796c52a5f370a577ac031314ef7f2c1604eeb1f880481`.
+First installation succeeded, creating data IDs 1339–1342 and core 1343.
+Repeat installation preserved the exact complete snapshot and state, with
+byte-identical B/B2 fingerprints. The actual copy-only snapshot was
+`/backups/peek-release-before-20261111-074400-a653010f.json`, SHA256
+`edb35401a992a55328ef145c279cb9b87cc8c23eeebd1aa4f87998dd2ec9f6e0`;
+applied-state SHA256 was
+`259e2fb873452ae91e721c84c0fe6d8a0b385619795577036dbbedc0b0106606`.
+
+Rollback initially restored the exact original protected-state hash. All 15
+restored pages then returned matching navigation signatures. A subsequent
+exact-state verification found 15 removed postmeta rows (5069–5083) and 15 new
+rows (5104–5118), with no other diagnostic differences and no truncation.
+This supports read-triggered metadata regeneration, but the existing hashed
+witnesses do not identify the keys/posts/values. It is not yet proof of a
+particular asset-cache cause. The run stopped before reapplication and browser
+checks. No release browser result or complete recovery-cycle pass exists.
+The next copy adds read-only, hash-only metadata observations before and after
+each original-page request. It uses direct SQL in the owned copied container,
+avoiding WordPress bootstrap; raw values travel only in a pipe. Retained logs
+include row IDs, key/value hashes and complete-row/without-ID hashes, with only
+the known `_uag_page_assets` key labelled. Exact localhost origin, manifest
+inventory and pipeline success are required. **38 focused controls and 163
+combined release-evidence controls passed**, as did Bash syntax, required
+ShellCheck and diff checks. Installer guards and frozen payloads stay unchanged.
+
+Cleanup confirmed the owned relay, Compose containers/volumes/network and exact
+temporary directory were absent. The copy-only journal above was deleted with
+the copy and is not a staging or live recovery file. The 25-file evidence
+artifact was verified: **25,349 bytes**, SHA256
+`0a4e2e0f35a4dc2cef55bfe2edeb5d3659ee867ff0f23157e9b8ec17ecf656e1`.
+It contains no SQL, private snapshots or copied source. Independent audit agreed
+with these results; the full operation report and 390-line job log were read.
+
 ## Recommended scope
 
 - The currently verified shared Peek core, with the title strip and rails on

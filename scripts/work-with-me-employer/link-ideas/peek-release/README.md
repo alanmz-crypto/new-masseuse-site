@@ -25,6 +25,17 @@ The retained cleanup log contains fixed statuses only. The 51-case cleanup
 fixture is included in the existing release-evidence gate; a separate synthetic
 Docker probe verified actual removal while preserving unrelated resources.
 
+The approved November 11 first-install attempt (`42981371762`) passed install,
+repeat and immediate exact rollback, then failed after the 15 original-page
+requests replaced 15 metadata rows. It stopped before reapply/browser checks;
+cleanup verified deletion. `observe-render-meta.py` now brackets each original
+page request with direct, read-only queries against the owned copied database,
+without bootstrapping WordPress. Raw HEX travels only through a pipe. Retained
+logs contain row IDs, key/value hashes and row hashes with/without metadata ID;
+only the known `_uag_page_assets` key can be labelled. Exact localhost origin,
+manifest inventory, capture binding and pipeline success are required. These
+observations identify drift; they never excuse it or rebase installer guards.
+
 The release creates five WPCode snippets, removes the exact old reading-progress
 CSS block and appends the frozen Search contrast block in one guarded update to
 Additional CSS #29, and changes Astra's `scroll-to-top-enable` boolean to false.

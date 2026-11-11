@@ -38,6 +38,16 @@ that rehearsal; do not ask again for the same scope. Live writes, live enablemen
 and main merges remain unauthorized. Safari acceptance is complete; fluidity
 stays deferred.
 
+The approved fresh live-copy rehearsal `peek-visitor-release-quiet-search-copy-1`
+(run **42981371762**) failed on November 11 at **07:44:11 UTC**. First install,
+repeat and initial exact rollback passed. Loading the 15 restored pages then
+replaced 15 metadata rows, so exact verification stopped the run before browser
+checks. The metadata purpose is not yet identified; read-only hash diagnostics
+are next, with guards unchanged. Cleanup proved the temporary copy and all its
+owned resources were removed. Live was unchanged. The readiness record contains
+the actual copy-only snapshot and artifact bindings; the deleted journal is not
+a staging/live recovery file.
+
 **Current staging39, November 11: four navigation refinements complete and accepted.**
 The automatic rail-side scrolling label is removed; interaction names remain.
 The index has a solid outlined button and a tappable X while open. Outside taps

@@ -698,6 +698,11 @@ set -uo pipefail
 out=$1; helper=$2; fixture_html=$3; fixture_mode=$4
 mkdir -p "$out"; mapfile -t pages < "$out/paths.txt"
 release_evidence() { command python3 -I -B "$helper" "$@"; }
+release_render_meta() {
+  [ "$1" = original-before ] || return 8
+  printf 'meta-%s\t%s\n' "$3" "$2" >> "$out/render-events.txt"
+  if [ "$2" = /fixture-page-7/ ] && [ "$fixture_mode" = "metadata-$3" ]; then return 7; fi
+}
 curl() {
   local output='' url='' path
   while [ "$#" -gt 0 ]; do
@@ -707,6 +712,7 @@ curl() {
   [ -n "$output" ] && [ -n "$url" ] || return 9
   path=${url#http://localhost:8090}
   printf '%s\n' "$path" >> "$out/requested-paths.txt"
+  printf 'GET\t%s\n' "$path" >> "$out/render-events.txt"
   cp "$fixture_html" "$output"
   if [ "$path" = /fixture-page-7/ ]; then
     case "$fixture_mode" in
@@ -725,6 +731,9 @@ curl() {
         check("all original routes rendered", shell(render_body, (render_baseline, HELPER, original_html, "none")), 0)
         reference = render_baseline / "original-before-navigation.jsonl"
         assert len(reference.read_text().splitlines()) == 15, "render evidence must cover all routes"
+        assert (render_baseline / "render-events.txt").read_text().splitlines() == [
+            f"{event}\t{page['path']}" for page in pages for event in ("meta-before", "GET", "meta-after")
+        ], "each original GET must be bracketed by separate read-only metadata captures"
         rendered_changes = {
             "unchanged": html,
             "unrelated markup": html.replace("Unrelated paragraph.", "Other unrelated paragraph."),
@@ -735,6 +744,8 @@ curl() {
             "stale Peek": html_mutations["stale Peek runtime"],
             "http": html,
             "curl": html,
+            "metadata-before": html,
+            "metadata-after": html,
             "missing route": html,
         }
         for name, content in rendered_changes.items():
@@ -746,6 +757,9 @@ curl() {
             check("rendered original " + name, result, 0 if name in ("unchanged", "unrelated markup") else 1)
             if name in ("http", "curl"):
                 assert len((case / "requested-paths.txt").read_text().splitlines()) == 8, "route failure must stop further requests"
+            if name in ("metadata-before", "metadata-after"):
+                assert len((case / "requested-paths.txt").read_text().splitlines()) == (7 if name == "metadata-before" else 8), "metadata failure must stop subsequent GETs"
+                assert (case / "render-events.txt").read_text().splitlines()[-1] == f"meta-{name.removeprefix('metadata-')}\t/fixture-page-7/"
 
         fp = function(source, "fp", "\npages=(")
         shim = r'''
@@ -829,6 +843,11 @@ wpc() {
               subprocess.run([sys.executable, "-I", "-B", str(HERE / "test-cleanup.py")],
                              capture_output=True, text=True, timeout=60),
               0, "51 offline ownership, teardown, status and evidence controls passed")
+
+        check("release render-metadata redaction, scope and row identity",
+              subprocess.run([sys.executable, "-I", "-B", str(HERE / "test-render-meta.py")],
+                             capture_output=True, text=True, timeout=60),
+              0, "offline controls passed; no database or network requests.")
 
         browser_contract_tests(work)
 
