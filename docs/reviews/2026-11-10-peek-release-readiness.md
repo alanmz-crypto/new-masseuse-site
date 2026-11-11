@@ -96,18 +96,28 @@ iPhone/iOS version, OS text-scale or assistive-technology result was supplied.
 Those limits do not negate their acceptance or create another approval hurdle.
 This is not authorization for a temporary live-data copy or a live write.
 
-**Next copy rehearsal is blocked pending explicit scope permission.** Automatic
+**Temporary live-copy rehearsal approved November 11.** Ryan explicitly approved:
+“May I copy live’s database and site files, including uploads, into a temporary
+GitHub Actions runner to test installation and rollback, then delete the copy?
+Live stays unchanged; test logs and screenshots are retained.” This authorizes
+the complete isolated installation/repeat/rollback/reapply, rendered checks and
+cleanup lifecycle. It does not authorize a live write, live enablement or main
+merge. The pulled feature branch was current at `108e68a8788926393d4914ac0effa6dd696da9d3`.
+Payload bindings are unchanged from the final 51/0 source gate; only notes and
+operation requests changed. Do not ask for this same rehearsal permission again.
+
+**Earlier copy rehearsal rejection, now superseded for this approved scope.** Automatic
 approval review rejected the `peek-visitor-release-rehearse-6` dispatch before
 execution because copying live's database and uploads into a disposable Actions
-runner exceeds the user's explicit staging39 scope. The question now asks for
-that specific additional temporary data copy; no approval is recorded here.
-It does not seek a live write.
+runner exceeded the then-current staging39 scope. The explicit approval above
+now covers that additional temporary data copy, while preserving the live-write
+prohibition.
 No retry or workaround was attempted. At that rejection, HEAD and
 `ops/request.json` were unchanged and the request file still named completed
 live-sourced copy5. No live-sourced copy6 run, snapshot, browser result or website
-change exists. Later requests concern staging39 only.
+change exists. The subsequent Search requests concerned staging39 only.
 
-Concrete next rehearsal request, **prepared here only, not dispatched**:
+Concrete approved rehearsal request (dispatch and results recorded below):
 
 ```json
 {
@@ -119,8 +129,8 @@ Concrete next rehearsal request, **prepared here only, not dispatched**:
 }
 ```
 
-This selects the refreshed localhost-only bundle above, after Search staging
-verification passes. Permission would cover reading live's database and site
+This selects the refreshed localhost-only bundle above, after completed Search
+staging verification. Permission covers reading live's database and site
 files/uploads into the repository's disposable GitHub Actions runner, then
 installation, repeat, rollback/reapply, browser tests and cleanup inside that
 copy. It does not authorize live writes or a main merge. The whole database can
@@ -130,7 +140,26 @@ use an isolated network. SQL, source files and private recovery snapshots are
 excluded from retained evidence; logs, fingerprints and public-page screenshots
 are kept for 30 days, while the operations report persists. Full diagnostic
 stderr is retained, so this is not a claim of automatic secret scrubbing.
-No permission for this live-data transfer is recorded yet.
+The explicit approval above is limited to this rehearsal lifecycle.
+
+Pre-dispatch review found and corrected a cleanup-result gap in the rehearsal
+runner: Compose removal errors were suppressed, and cleanup could return the
+saved test result despite removal failure. No failed cleanup or data leak was
+observed. Release cleanup now verifies absence of its owned relay, labelled
+Compose containers/volumes/network and exclusively created temporary directory,
+including early setup failures. Cleanup failure prevents a successful result;
+an earlier nonzero result is preserved. Unproved teardown retains the copy only
+inside the disposable runner rather than exporting it or claiming deletion.
+Only status evidence enters the retained cleanup log.
+
+The focused cleanup suite passed **51 cases**, integrated into the existing
+release-evidence gate (**160 top-level controls**). An actual synthetic Docker
+probe also verified removal of the owned container, volume, internal network
+and directory while unrelated synthetic resources remained intact. No website
+data or requests were used. Bash syntax, required ShellCheck and diff checks
+passed; independent review found no blocker. The frozen runtime/installer and
+manifest hashes above are unchanged. Complete Actions Gates and the approved
+real-copy rehearsal still follow; these synthetic tests are not copy proof.
 
 ## Recommended scope
 
@@ -516,8 +545,7 @@ The subsequent copy6 dispatch was rejected before execution as recorded above.
 1. **Complete:** Search's staging39 source, fresh-copy, deployment, public-browser
    and actual-snapshot gates passed as recorded above. Its exact CSS is frozen
    in this package. Earlier failed path-preflight attempts remain documented.
-2. **Source CI complete; permission pending:** obtain explicit scope permission
-   for the temporary live-data copy. Reconfirm the captured
+2. **Source CI and copy permission complete:** reconfirm the captured
    baseline against the actual copy; do not silently rebase changed stores or
    retry the rejected copy6 request unchanged.
 3. Rehearse this exact transition on a fresh isolated copy of current live, including

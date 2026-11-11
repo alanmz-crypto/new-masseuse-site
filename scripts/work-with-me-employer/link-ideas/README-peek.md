@@ -25,10 +25,13 @@ core and this exact Search CSS, with four approved data payloads unchanged.
 Its models passed **1,694 installer checks** and **162 evidence controls**, but
 its complete first-install/rendered/recovery cycle remains unproved. The
 [readiness record](../../../docs/reviews/2026-11-10-peek-release-readiness.md)
-contains a concrete next copy request, not dispatched. Explicit permission for
-the temporary live DB/uploads copy remains unresolved after automatic approval
-review rejected it as outside staging39 scope. No live enablement, live request
-or main merge exists. Safari acceptance is complete; fluidity stays deferred.
+contains the concrete copy request. On November 11 Ryan explicitly approved
+copying live's database/site files/uploads to a temporary GitHub Actions runner
+for installation and rollback testing, then deleting the copy while retaining
+logs/screenshots. This supersedes the earlier automatic scope rejection for
+that rehearsal; do not ask again for the same scope. Live writes, live enablement
+and main merges remain unauthorized. Safari acceptance is complete; fluidity
+stays deferred.
 
 **Current staging39, November 11: four navigation refinements complete and accepted.**
 The automatic rail-side scrolling label is removed; interaction names remain.
@@ -116,7 +119,8 @@ now refreshed to the accepted quiet-navigation core and Search candidate above; 
 latest Safari report accepts the current neighbours layout; the earlier
 ambiguous Privacy/menu reply remains historical. Device/iOS details, per-route
 results and assistive-technology certification are not inferred. This acceptance
-is not permission for the blocked temporary live-data copy or live deployment.
+did not itself authorize a live-data copy or live deployment. The separate
+November 11 approval above now covers the temporary copy only.
 
 **Previous baseline: input-focus core and Rail practice updates on staging39.**
 See the [canonical phase record](../../../docs/reviews/2026-11-09-peek-input-focus.md) for complete attempts, hashes, backups

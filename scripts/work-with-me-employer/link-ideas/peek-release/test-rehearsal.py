@@ -825,23 +825,10 @@ wpc() {
                   shell(runner_shim + load_pages + "\npages=(/ /privacy-policy/); load_pages\n", (work / ("pages-" + broken), broken)),
                   0 if broken == "none" else 1)
 
-        exit_cleanup = function(source, "release_cleanup", '\n\nif [ "$release_rehearsal"')
-        for initial in (0, 1, 2):
-            case = work / f"cleanup-{initial}"
-            out = case / "out"
-            out.mkdir(parents=True)
-            allowed = {"apply.log", "apply.stderr.log", "A.content", "errors-before.txt", "original-before-navigation.jsonl", "title-strip-pages.json", "release-paths.txt"}
-            for name in allowed | {"private.sql", "snapshot.json", "release-original-page.html"}:
-                (out / name).write_text("Synthetic " + name + "\n")
-            cleanup_shim = r'''
-set -uo pipefail
-RUNNER_TEMP=$1; out=$1/out
-cleanup() { touch "$RUNNER_TEMP/cleanup-ran"; }
-'''
-            result = shell(cleanup_shim + exit_cleanup + '\ntrap release_cleanup EXIT\nexit "$2"\n', (case, initial))
-            check(f"EXIT retains status {initial}", result, initial)
-            kept = {path.name for path in (case / "ops-out/peek-release-native").iterdir()}
-            assert kept == allowed and (case / "cleanup-ran").exists(), ("retained evidence scope", initial, kept)
+        check("release cleanup ownership, teardown, status and evidence",
+              subprocess.run([sys.executable, "-I", "-B", str(HERE / "test-cleanup.py")],
+                             capture_output=True, text=True, timeout=60),
+              0, "51 offline ownership, teardown, status and evidence controls passed")
 
         browser_contract_tests(work)
 

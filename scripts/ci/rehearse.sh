@@ -65,8 +65,17 @@ db_img=$(img mariadb); wp_img=$(img 'wordpress:php'); cli_img=$(img 'wordpress:c
 [ -n "$db_img" ] && [ -n "$wp_img" ] && [ -n "$cli_img" ] || invalid "could not read the pinned images from docker-compose.yml"
 
 work="${RUNNER_TEMP:-$HOME/.cache}/ts-rehearsal-$$"   # never /tmp on Ryan's computer (its tmpfs runs out of inodes)
+# Only the release copy requires exclusive ownership and decisive deletion proof.
+# Resolve the parent before creating anything; never adopt an existing run folder.
+release_work_parent=""; release_work_owned=0
+if [ "$release_rehearsal" = 1 ]; then
+  release_work_parent=$(cd -- "${RUNNER_TEMP:-$HOME/.cache}" && pwd -P) || invalid "release temporary parent is unavailable"
+  work="$release_work_parent/ts-rehearsal-$$"
+fi
 pub="$work/public_html"; bk="$work/backups"; out="$work/out"
-mkdir -p "$pub" "$bk" "$out"; chmod 777 "$bk"
+if [ "$release_rehearsal" != 1 ]; then
+  mkdir -p "$pub" "$bk" "$out"; chmod 777 "$bk"
+fi
 project="ts-rehearsal-$$"
 release_relay_pid=""
 dc() { docker compose --progress quiet -p "$project" -f "$work/compose.yml" "$@"; }
@@ -81,6 +90,147 @@ cleanup() { # files the containers wrote belong to their user, so remove those f
   rm -rf "$work" 2>/dev/null || { docker run --rm --user 0 --entrypoint sh -v "$work:/w" "$cli_img" -c 'rm -rf /w/public_html /w/backups /w/out /w/db.sql.gz /w/compose.yml /w/fp.sql' >/dev/null 2>&1; rm -rf "$work" 2>/dev/null; }
 }
 trap cleanup EXIT
+
+release_cleanup_resources() {
+  local failed=0 directory_safe=1 current_parent resource ids relay_parent n
+  local cleanup_log="${RUNNER_TEMP:-$HOME/.cache}/ops-out/peek-release-native/cleanup.log"
+  # Only fixed statuses/counts enter this retained log. Docker output, copied
+  # source/configuration, SQL and private recovery snapshots are never retained.
+  if ! mkdir -p -- "${cleanup_log%/*}" || ! touch -- "$cleanup_log" || ! chmod 600 -- "$cleanup_log"; then
+    echo "FAIL release cleanup: cannot retain cleanup evidence" >&2
+    failed=1; cleanup_log=/dev/null
+  fi
+  release_cleanup_note() {
+    printf '%s\n' "$*" >> "$cleanup_log" && printf '%s\n' "$*"
+  }
+  current_parent=$(cd -- "${release_work_parent:-/nonexistent}" 2>/dev/null && pwd -P) || current_parent=""
+  if [ "${release_rehearsal:-0}" != 1 ] || [ "${release_work_owned:-0}" != 1 ] ||
+     [ "$project" != "ts-rehearsal-$$" ] || [ -z "$release_work_parent" ] ||
+     [ "$current_parent" != "$release_work_parent" ] ||
+     [ "$work" != "$release_work_parent/ts-rehearsal-$$" ] || [ -L "$work" ]; then
+    release_cleanup_note "FAIL release cleanup: exact owned project and directory identity not established; no cleanup mutation attempted" || true
+    return 1
+  fi
+
+  if [ -n "${release_relay_pid:-}" ]; then
+    if ! [[ "$release_relay_pid" =~ ^[1-9][0-9]*$ ]]; then
+      release_cleanup_note "FAIL release cleanup: invalid relay identity; no signal sent" || true
+      failed=1; directory_safe=0
+    elif kill -0 "$release_relay_pid" 2>/dev/null; then
+      relay_parent=$(ps -o ppid= -p "$release_relay_pid" 2>/dev/null) || relay_parent=""
+      relay_parent=${relay_parent//[[:space:]]/}
+      if [ "$relay_parent" != "$$" ]; then
+        release_cleanup_note "FAIL release cleanup: relay is not this process's child; no signal sent" || true
+        failed=1; directory_safe=0
+      else
+        kill -TERM "$release_relay_pid" 2>/dev/null || true
+        for n in {1..30}; do kill -0 "$release_relay_pid" 2>/dev/null || break; sleep 0.1; done
+        if kill -0 "$release_relay_pid" 2>/dev/null; then
+          kill -KILL "$release_relay_pid" 2>/dev/null || true
+          for n in {1..20}; do kill -0 "$release_relay_pid" 2>/dev/null || break; sleep 0.1; done
+        fi
+        if kill -0 "$release_relay_pid" 2>/dev/null; then
+          release_cleanup_note "FAIL release cleanup: owned relay still exists after bounded stop" || true
+          failed=1; directory_safe=0
+        else
+          wait "$release_relay_pid" 2>/dev/null || true
+          release_relay_pid=""
+        fi
+      fi
+    else
+      wait "$release_relay_pid" 2>/dev/null || true
+      release_relay_pid=""
+    fi
+  fi
+  if [ -z "${release_relay_pid:-}" ]; then
+    release_cleanup_note "INFO release cleanup: owned relay absent" || failed=1
+  fi
+
+  if [ -f "$work/compose.yml" ] && [ ! -L "$work/compose.yml" ]; then
+    if dc down -v --remove-orphans >/dev/null 2>&1; then
+      release_cleanup_note "INFO release cleanup: Compose teardown completed" || failed=1
+    else
+      release_cleanup_note "FAIL release cleanup: Compose teardown failed" || true
+      failed=1; directory_safe=0
+    fi
+  elif [ -e "$work/compose.yml" ] || [ -L "$work/compose.yml" ]; then
+    release_cleanup_note "FAIL release cleanup: unsafe Compose file; no Compose command attempted" || true
+    failed=1; directory_safe=0
+  else
+    release_cleanup_note "INFO release cleanup: no Compose file was created" || failed=1
+  fi
+
+  # Successful empty results are required even on an early setup failure.
+  # Exact Compose project labels scope every query; never use global prune.
+  for resource in container volume network; do
+    case "$resource" in
+      container) ids=$(docker ps --all --quiet --filter "label=com.docker.compose.project=$project" 2>/dev/null); n=$? ;;
+      volume) ids=$(docker volume ls --quiet --filter "label=com.docker.compose.project=$project" 2>/dev/null); n=$? ;;
+      network) ids=$(docker network ls --quiet --filter "label=com.docker.compose.project=$project" 2>/dev/null); n=$? ;;
+    esac
+    if [ "$n" -ne 0 ] || [ -n "$ids" ]; then
+      release_cleanup_note "FAIL release cleanup: owned $resource absence unproved" || true
+      failed=1; directory_safe=0
+    else
+      release_cleanup_note "INFO release cleanup: owned $resource resources absent" || failed=1
+    fi
+  done
+
+  if [ "$directory_safe" = 1 ]; then
+    if ! rm -rf -- "$work" 2>/dev/null; then
+      # The copy may contain files written by a container UID. This fallback
+      # mounts only the exact owned folder and cannot reach any network.
+      if [ -d "$work" ] && [ ! -L "$work" ]; then
+        docker run --rm --network none --user 0 --entrypoint sh \
+          --label "com.docker.compose.project=$project" --label com.docker.compose.service=release-cleanup \
+          -v "$work:/w" "$cli_img" -c 'find /w -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +' >/dev/null 2>&1 || failed=1
+        rm -rf -- "$work" 2>/dev/null || failed=1
+      else
+        failed=1
+      fi
+    fi
+    if [ -e "$work" ] || [ -L "$work" ]; then
+      release_cleanup_note "FAIL release cleanup: owned temporary directory still exists" || true
+      failed=1
+    else
+      release_cleanup_note "INFO release cleanup: owned temporary directory absent" || failed=1
+    fi
+    # The fallback also carries the project label; its --rm completion must
+    # leave no owned container, volume or network behind.
+    for resource in container volume network; do
+      case "$resource" in
+        container) ids=$(docker ps --all --quiet --filter "label=com.docker.compose.project=$project" 2>/dev/null); n=$? ;;
+        volume) ids=$(docker volume ls --quiet --filter "label=com.docker.compose.project=$project" 2>/dev/null); n=$? ;;
+        network) ids=$(docker network ls --quiet --filter "label=com.docker.compose.project=$project" 2>/dev/null); n=$? ;;
+      esac
+      if [ "$n" -ne 0 ] || [ -n "$ids" ]; then
+        release_cleanup_note "FAIL release cleanup: final owned $resource absence unproved" || true
+        failed=1
+      fi
+    done
+  else
+    release_cleanup_note "FAIL release cleanup: copy directory retained inside runner because resource teardown is unproved" || true
+  fi
+  if [ "$failed" -eq 0 ]; then
+    release_cleanup_note "INFO release cleanup: PASSED; owned relay, containers, volumes, networks and temporary directory absent" || return 1
+    return 0
+  fi
+  release_cleanup_note "FAIL release cleanup: deletion not fully verified" || true
+  return 1
+}
+release_cleanup_exit() {
+  local result=${1:-$?}
+  trap - EXIT
+  release_cleanup_resources || { [ "$result" -ne 0 ] || result=1; }
+  exit "$result"
+}
+if [ "$release_rehearsal" = 1 ]; then
+  trap release_cleanup_exit EXIT
+  [ ! -e "$work" ] && [ ! -L "$work" ] || invalid "release temporary directory already exists; refusing to adopt it"
+  mkdir -m 700 -- "$work" || invalid "could not create the exclusive release temporary directory"
+  release_work_owned=1
+  mkdir -p -- "$pub" "$bk" "$out" && chmod 777 "$bk" || invalid "could not prepare the release temporary directories"
+fi
 
 read -r -d '' REMOTE <<'EOS' || true
 set -euo pipefail
@@ -522,14 +672,13 @@ release_cleanup() {
     # snapshots, SQL exports, source files or database credentials.
     for file in "$out"/*.log "$out"/*.content "$out"/errors-*.txt "$out"/*-navigation.jsonl "$out"/title-strip-pages.json "$out"/release-paths.txt; do
       [ -f "$file" ] || continue
-      cp "$file" "$evidence/" || result=1
+      cp "$file" "$evidence/" || { [ "$result" -ne 0 ] || result=1; }
     done
   else
     echo "FAIL release rehearsal: cannot retain complete native evidence" >&2
-    result=1
+    [ "$result" -ne 0 ] || result=1
   fi
-  cleanup
-  exit "$result"
+  release_cleanup_exit "$result"
 }
 
 if [ "$release_rehearsal" = 1 ]; then

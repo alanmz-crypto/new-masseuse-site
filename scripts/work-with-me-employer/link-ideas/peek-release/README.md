@@ -8,13 +8,22 @@ Ryan accepted the current controls on iPhone Safari on November 11: “It's
 correct.” Fluidity refinements are deferred until after live; no repeat generic
 Safari check is required. The fresh first-install and recovery gates remain
 required. A prior live-data copy request was rejected before execution because
-it exceeded the staging39-only scope; no replacement rehearsal is authorized
-by this source refresh.
+it exceeded the then-current staging39-only scope. On November 11 Ryan explicitly
+approved the temporary GitHub Actions copy of live's database/site files/uploads,
+installation and recovery testing, cleanup, and retained logs/screenshots. That
+approval is recorded in the release-readiness notes; it does not enable or
+authorize live writes or a main merge.
 The copy's containers use an internal Docker network from first boot, so copied
 plugins cannot call external integrations. An owned host TCP relay binds only
 127.0.0.1:8090 and forwards unchanged bytes to port 80 of the exact inspected
 WordPress container on that internal network. It stops during copy cleanup.
 The host browser itself is not a network-isolated process.
+Release cleanup is part of the result: it verifies removal of the owned relay,
+project-labelled containers/volumes/network and exact temporary directory,
+including early setup exits. Failure cannot produce a successful rehearsal.
+The retained cleanup log contains fixed statuses only. The 51-case cleanup
+fixture is included in the existing release-evidence gate; a separate synthetic
+Docker probe verified actual removal while preserving unrelated resources.
 
 The release creates five WPCode snippets, removes the exact old reading-progress
 CSS block and appends the frozen Search contrast block in one guarded update to

@@ -30,10 +30,13 @@ core and this exact Search CSS, with four approved data payloads unchanged.
 Its models passed **1,694 installer checks** and **162 evidence controls**, but
 its complete first-install/rendered/recovery cycle remains unproved. The
 [readiness record](../../docs/reviews/2026-11-10-peek-release-readiness.md)
-contains a concrete next copy request, not dispatched. Explicit permission for
-the temporary live DB/uploads copy remains unresolved after automatic approval
-review rejected it as outside staging39 scope. No live enablement, live request
-or main merge exists. Safari acceptance is complete; fluidity stays deferred.
+contains the concrete copy request. On November 11 Ryan explicitly approved
+copying live's database/site files/uploads to a temporary GitHub Actions runner
+for installation and rollback testing, then deleting the copy while retaining
+logs/screenshots. This supersedes the earlier automatic scope rejection for
+that rehearsal; do not ask again for the same scope. Live writes, live enablement
+and main merges remain unauthorized. Safari acceptance is complete; fluidity
+stays deferred.
 
 **Current staging39, November 11: four navigation refinements complete and accepted.**
 The automatic rail-side scrolling label is removed; interaction names remain.
@@ -102,7 +105,7 @@ verification passed at 15:19:21: exact core/four data state before and after
 19 HTTP200 renders. Ryan accepted the current iPhone Safari layout on November
 10: “Looks good on Safari. No problems I see.” This closes the user acceptance
 check; it is not live-copy or deployment permission. Release-package work remains;
-the blocked temporary live-copy permission remains unapproved.
+the temporary live-copy scope was subsequently approved on November 11, as recorded above.
 The separate index overlap recorded in 390×500 captures is addressed by the
 November 11 staging update above, accepted by Ryan with “Looks good.”
 
@@ -129,8 +132,8 @@ Code correction then stopped on WordPress 7.1.4's exact `&` to `&#038;` GUID
 conversion, confirmed against official source. A narrowly specified save-phase
 expectation passed source CI (39/0); full-state and rollback checks remain exact.
 Automatic approval review blocked copy6 before execution because the new live
-database/uploads copy needs explicit scope permission beyond staging39. That
-question is pending; no copy6 request was committed or dispatched. No complete
+database/uploads copy needed explicit scope permission beyond staging39. That
+scope was subsequently approved on November 11; no copy6 request was committed or dispatched. No complete
 install or browser phase has passed in this release-copy lane; see the readiness
 record for actual attempts and copy-only journals.
 
