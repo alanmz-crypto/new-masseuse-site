@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-11 05:57 UTC  **INVALID**  `peek-search-render-inspect-1`  [reports/2026-11-11/055757-peek-search-render-inspect-1.md](reports/2026-11-11/055757-peek-search-render-inspect-1.md)  (run 42968966786)
 - 2026-11-11 05:51 UTC  **PASS**  `peek-search-css-inspect-1`  [reports/2026-11-11/055121-peek-search-css-inspect-1.md](reports/2026-11-11/055121-peek-search-css-inspect-1.md)  (run 42968382007)
 - 2026-11-11 05:35 UTC  **PASS**  `peek-quiet-nav-final-verify-1`  [reports/2026-11-11/053531-peek-quiet-nav-final-verify-1.md](reports/2026-11-11/053531-peek-quiet-nav-final-verify-1.md)  (run 42966700614)
 - 2026-11-11 05:32 UTC  **PASS**  `peek-quiet-nav-public-1`  [reports/2026-11-11/053231-peek-quiet-nav-public-1.md](reports/2026-11-11/053231-peek-quiet-nav-public-1.md)  (run 42961860790)
