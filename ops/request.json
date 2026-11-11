@@ -1,8 +1,8 @@
 {
-  "id": "peek-live30-postmeta-2",
+  "id": "peek-live30-before-1",
   "op": "run",
   "target": "live",
-  "script": "link-ideas/inspect-live30-postmeta.sh",
+  "script": "link-ideas/inspect-live30-before.sh",
   "args": [],
   "tests": "auto"
 }
