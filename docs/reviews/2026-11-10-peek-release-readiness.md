@@ -1,5 +1,57 @@
 # Peek visitor-navigation release readiness
 
+**Final post-check inspection PASS, November 11 at 22:22:34 UTC.**
+`peek-live-finished-inspect-20261111-2`, Actions **43111166451**, source
+`399ed4b2751034b78948f3d848dda094c309d0d0` directly descends from merged PR #81.
+Read-only `--inspect-live30` confirmed both applied and recoverable states at
+exact `b34e86f7…af4427`, with the same journal, original SQL, receipt, IDs,
+manifest/profile and six Spectra sources. The full report was read. No purge,
+page request, installation or rollback ran. This closes the post-deployment
+verification after the automatic checks; no further LIVE action is pending.
+
+The earlier extra inspection **43111020439**, request
+`peek-live-finished-inspect-20261111-1`, failed on an unsupported argument before
+contacting the site. Its local branch was incorrectly based on stale
+`origin/main` (4e89…) despite a fetch: this checkout's configured refspec tracks
+only the older feature branch, so `git fetch origin main` did not update that
+tracking ref. The corrected inspection used the explicit verified merge SHA
+`dd1b0cc001e4557360cae6dea93071588a9f6f17`. That tooling mistake changed no site
+state and does not invalidate successful LIVE #32. Both reports were read.
+
+**LIVE finish PASS, November 11 at 19:34:34 UTC.** Ryan merged PR #81 at
+19:04:28 UTC, main `dd1b0cc001e4557360cae6dea93071588a9f6f17`; branch and merged
+source Gates passed. LIVE #31 (**43083839402**) refused the old confirmation at
+19:05:18 UTC before any operation. Ryan then started LIVE #32 (**43086291426**),
+request `live-peek-finish-20261111-1`, at 19:20:47 UTC. Full reports were read.
+
+The finish wrapper passed applied/recoverable checks, verified fresh SQL plus
+the original journal and receipt encrypted off-site before purge, purged the
+SiteGround cache, verified 16 HTTP200 responses and the intended HTTP404, and
+passed final exact applied-state verification. State remained
+`b34e86f75140a0e89b725e8dc9e56dd2fcc75e509155b768348bb3670daf4427`, IDs 1339–1343,
+manifest/profile/source bindings unchanged. There was no reinstall/live rollback.
+
+| Actual private file | Bytes | SHA256 |
+|---|---:|---|
+| `live-before-peek-release-20261111-192059-11005.sql` | 4190422 | `cf8132bb1da1a5abde9e813a60b96c366fdcb99220ffc5f4ef67e12ae552b332` |
+| `peek-release-before-20261111-162615-e00022b6.json` | 1682009 | `4038da0f9f77780ce355029bc87e53bff0479294711c821d253f51151e10751b` |
+
+Receipt `peek-release-live30-receipt.json`, SHA256
+`9202c8fb4e90babcba739a75660af944fc2a5adbfd1881278458312bc9ab9a0c`, was also
+preserved encrypted in `offsite-2026-11` with exact readback. The fresh SQL is an
+installed-state export; it does not replace the original rollback journal/SQL.
+
+Automatic post-change checks: rendered content/wording/posture PASS, all listed
+pages/sitemap/robots HTTP200, no site PHP errors/warnings/deprecations. Generic
+reference comparison exits 1: schema counts 27 versus 23 (four route differences,
+zero malformed blocks), and 20/20 pixel differences versus historical staging36,
+zero missing captures. This is not an aggregate visual pass and does not prove
+every pixel difference harmless. Backup import exits 0, fingerprints 100/100;
+restore comparison exits 3 with only `iej_sgs_log_events` and
+`iej_sgs_log_visitors` differences. No CSS/option/page/SEO/snippet differences
+were reported. These ancillary differences are recorded separately from the
+successful release-specific gates. No further LIVE operation is pending.
+
 **Live incident verification PASS, November 11 at 18:20:00 UTC.**
 `peek-live30-incident-inspect-1`, Actions **43076682138**, source
 `b0288b4b80aab6f3c3eec01fac559bc8520ca570`, ran only `--inspect-live30`.

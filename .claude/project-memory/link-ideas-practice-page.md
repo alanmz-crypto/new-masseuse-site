@@ -5,25 +5,31 @@ metadata:
   type: project
 ---
 
-**Peek installed on live; finish verification separately, never rerun #30.**
-Ryan merged PR #80 and started **43058202011** on November 11. Core 1343 / data
-1339–1342 and the CSS/settings transition were installed; the actual SQL and
-journal were verified encrypted off-site. Exact verification then stopped before
-purge/render. Journal `peek-release-before-20261111-162615-e00022b6.json`, SHA256
-`4038da0f9f77780ce355029bc87e53bff0479294711c821d253f51151e10751b`, is unchanged.
+**Peek rollout completed on live, November 11 at 19:34:34 UTC.**
+Ryan merged PR #81 (`dd1b0cc001e4557360cae6dea93071588a9f6f17`) and started
+Site ops (LIVE) **#32**, run **43086291426**, request
+`live-peek-finish-20261111-1`. Fresh SQL, original journal and incident receipt
+were verified encrypted off-site before purge. All 17 public responses and final
+exact applied-state verification passed. No reinstallation or live rollback ran.
+The used first-install and finish requests must not run again; no LIVE action
+remains pending. #31 only refused the old confirmation and changed nothing.
 
-Cold-copy proof **43072850520** passed at 17:57:32 UTC: ordinary rendering
-produced exactly the five Spectra cache-row differences. Actual-state recovery
-copy **43075719186** passed at **18:18:45 UTC**: seven incident checks, 17 visitor
-responses in each state, exact rollback preserving the external caches, and
-verified cleanup. The correction accepts only those five pinned differences.
-Every other guard remains; accepted runtime, summaries and wording are unchanged.
-Live read-only incident check **43076682138** passed at **18:20:00 UTC** with
-exact applied/recoverable state. New manual request `live-peek-finish-20261111-1`
-uses `--apply --finish-live30` with automatic checks. After final Gates passes,
-Ryan merges the new PR and starts LIVE on main with that ID. No live purge,
-rollback or reinstallation since #30. Follow `docs/reviews/2026-11-11-peek-live-release.md` and
-the detailed readiness record. Branch: `codex/peek-live-verification-diagnostics`.
+Final read-only inspection **43111166451** passed at **22:22:34 UTC** after
+all automatic checks: exact applied and recoverable state, original journal,
+receipt and owned IDs unchanged. No further deployment check is pending.
+
+Rendered content/wording, page availability and PHP-log checks passed. The generic
+comparison still reports four structured-data count differences and 20 pixel
+differences against old staging36; this is not an aggregate visual pass. Backup
+import succeeded; only the two SiteGround traffic-log table fingerprints differed.
+Accepted navigation and summaries remain unchanged; fluidity is deferred.
+
+Fresh finish backup: `live-before-peek-release-20261111-192059-11005.sql`.
+Actual immutable recovery journal: `peek-release-before-20261111-162615-e00022b6.json`.
+Recovery must use the pinned incident path, preserve the proved external cache
+rows and check current ownership/state first; never blindly run an old rollback.
+See `docs/reviews/2026-11-11-peek-live-release.md` for the completion record and
+`docs/reviews/2026-11-10-peek-release-readiness.md` for hashes and earlier proof.
 
 **Historical first-install preparation follows; its used request must not run again.**
 
