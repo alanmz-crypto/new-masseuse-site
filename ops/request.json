@@ -1,11 +1,9 @@
 {
-  "id": "search-contrast-verify-1",
-  "op": "run",
-  "target": "staging39",
-  "script": "search-contrast/push-search-contrast.sh",
+  "id": "peek-visitor-release-quiet-search-copy-1",
+  "op": "rehearse",
+  "target": "live",
+  "installer": "link-ideas/peek-release/install-peek-release.php",
   "args": [
-    "--verify",
-    "/home/customer/private-backups/search-contrast-before-20261111-064511-fcba9b49.json"
-  ],
-  "tests": "auto"
+    "--with-uploads"
+  ]
 }
