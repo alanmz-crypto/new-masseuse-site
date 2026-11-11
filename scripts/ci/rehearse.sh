@@ -30,7 +30,7 @@ release_rehearsal=0
 read_only_discovery=0; copy_isolation=0
 # This new in-place core lane is authorized only from the actual staging39 copy.
 # It cannot select the separate live-sourced first-install release rehearsal.
-if [ "$inst" = link-ideas/core-neighbours/install-peek-core-neighbours.php ] || [ "$inst" = link-ideas/core-index-clearance/install-peek-core-index-clearance.php ]; then
+if [ "$inst" = link-ideas/core-neighbours/install-peek-core-neighbours.php ] || [ "$inst" = link-ideas/core-index-clearance/install-peek-core-index-clearance.php ] || [ "$inst" = link-ideas/core-quiet-nav/install-peek-core-quiet-nav.php ]; then
   [ "$src" = staging39 ] && [ "$uploads" = 1 ] || invalid "this core update requires a fresh staging39-sourced copy with uploads"
   read_only_discovery=1; copy_isolation=1
 fi
@@ -295,6 +295,7 @@ core_focus_snapshot_from_log() {
   case "${inst:-}" in
     link-ideas/core-neighbours/install-peek-core-neighbours.php) component=core-neighbours ;;
     link-ideas/core-index-clearance/install-peek-core-index-clearance.php) component=core-index-clearance ;;
+    link-ideas/core-quiet-nav/install-peek-core-quiet-nav.php) component=core-quiet-nav ;;
   esac
   path=$(sed -nE 's@^Success: .*Before-snapshot: (/backups/peek-template-'"$component"'-before-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}\.json)$@\1@p' "$1")
   [[ "$path" =~ ^/backups/peek-template-${component}-before-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}\.json$ ]] || return 1
@@ -302,7 +303,7 @@ core_focus_snapshot_from_log() {
 }
 core_focus_lane() {
   case "${inst:-}" in
-    link-ideas/core-input-focus/install-peek-core-input-focus.php|link-ideas/core-neighbours/install-peek-core-neighbours.php|link-ideas/core-index-clearance/install-peek-core-index-clearance.php) return 0 ;;
+    link-ideas/core-input-focus/install-peek-core-input-focus.php|link-ideas/core-neighbours/install-peek-core-neighbours.php|link-ideas/core-index-clearance/install-peek-core-index-clearance.php|link-ideas/core-quiet-nav/install-peek-core-quiet-nav.php) return 0 ;;
     *) return 1 ;;
   esac
 }
@@ -315,7 +316,7 @@ core_focus_verify() {
 }
 core_guarded_lane() {
   case "${inst:-}" in
-    link-ideas/core-neighbours/install-peek-core-neighbours.php|link-ideas/core-index-clearance/install-peek-core-index-clearance.php) return 0 ;;
+    link-ideas/core-neighbours/install-peek-core-neighbours.php|link-ideas/core-index-clearance/install-peek-core-index-clearance.php|link-ideas/core-quiet-nav/install-peek-core-quiet-nav.php) return 0 ;;
     *) return 1 ;;
   esac
 }
@@ -327,6 +328,7 @@ core_neighbours_require_clean() {
 core_neighbours_cleanup() {
   local result=$? file component=core-neighbours
   [ "${inst:-}" != link-ideas/core-index-clearance/install-peek-core-index-clearance.php ] || component=core-index-clearance
+  [ "${inst:-}" != link-ideas/core-quiet-nav/install-peek-core-quiet-nav.php ] || component=core-quiet-nav
   local evidence="${RUNNER_TEMP:-$HOME/.cache}/ops-out/$component-native"
   if mkdir -p "$evidence"; then
     # Public gate logs, hashes and route inventory only; never private snapshots,
@@ -587,7 +589,7 @@ if [ -f "$extra" ]; then
     link-ideas/peek-release/install-peek-release.php) browser_seconds=2400; browser_evidence=peek-release-browser.log ;;
     link-ideas/core-upgrade/install-peek-core-upgrade.php) browser_seconds=900; browser_evidence=peek-core-upgrade-browser.log ;;
     link-ideas/core-summary-touch/install-peek-core-summary-touch.php) browser_seconds=900; browser_evidence=peek-core-summary-touch-browser.log ;;
-    link-ideas/core-title-strip/install-peek-core-title-strip.php|link-ideas/core-title-rail/install-peek-core-title-rail.php|link-ideas/core-kiro-fixes/install-peek-core-kiro-fixes.php|link-ideas/core-input-focus/install-peek-core-input-focus.php|link-ideas/core-neighbours/install-peek-core-neighbours.php|link-ideas/core-index-clearance/install-peek-core-index-clearance.php|link-ideas/rail-input/install-rail-input.php)
+    link-ideas/core-title-strip/install-peek-core-title-strip.php|link-ideas/core-title-rail/install-peek-core-title-rail.php|link-ideas/core-kiro-fixes/install-peek-core-kiro-fixes.php|link-ideas/core-input-focus/install-peek-core-input-focus.php|link-ideas/core-neighbours/install-peek-core-neighbours.php|link-ideas/core-index-clearance/install-peek-core-index-clearance.php|link-ideas/core-quiet-nav/install-peek-core-quiet-nav.php|link-ideas/rail-input/install-rail-input.php)
       browser_seconds=900; browser_evidence=peek-core-title-strip-browser.log
       if [ "$inst" = link-ideas/core-title-rail/install-peek-core-title-rail.php ]; then
         browser_seconds=1500; browser_evidence=peek-core-title-rail-browser.log
@@ -599,6 +601,8 @@ if [ -f "$extra" ]; then
         browser_seconds=2700; browser_evidence=peek-core-neighbours-browser.log
       elif [ "$inst" = link-ideas/core-index-clearance/install-peek-core-index-clearance.php ]; then
         browser_seconds=3000; browser_evidence=peek-core-index-clearance-browser.log
+      elif [ "$inst" = link-ideas/core-quiet-nav/install-peek-core-quiet-nav.php ]; then
+        browser_seconds=3300; browser_evidence=peek-core-quiet-nav-browser.log
       elif [ "$inst" = link-ideas/rail-input/install-rail-input.php ]; then
         browser_seconds=900; browser_evidence=rail-input-browser.log
       fi

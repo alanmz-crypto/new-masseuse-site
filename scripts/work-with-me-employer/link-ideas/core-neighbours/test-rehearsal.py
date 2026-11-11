@@ -14,7 +14,7 @@ import subprocess
 import tempfile
 
 PROFILE = globals().get('CORE_REHEARSAL_PROFILE', 'neighbours')
-assert PROFILE in ('neighbours', 'index-clearance')
+assert PROFILE in ('neighbours', 'index-clearance', 'quiet-nav')
 COMPONENT = 'core-' + PROFILE
 INSTALLER = 'link-ideas/' + COMPONENT + '/install-peek-' + COMPONENT + '.php'
 ROOT = Path(__file__).resolve().parents[4]

@@ -15,11 +15,11 @@ import tempfile
 
 SOURCE = Path(__file__).resolve().parents[1]
 PROFILE = globals().get('CORE_PUSH_PROFILE', 'input-focus')
-assert PROFILE in ('input-focus', 'neighbours', 'index-clearance'), 'Unknown fixed push fixture profile'
+assert PROFILE in ('input-focus', 'neighbours', 'index-clearance', 'quiet-nav'), 'Unknown fixed push fixture profile'
 COMPONENT = 'core-' + PROFILE
 WRAPPER_NAME = 'push-peek-' + PROFILE + '.sh'
-APPLIED_SOURCE = {'input-focus':'peek-nav-shared-v7.php', 'neighbours':'peek-nav-shared-v8.php', 'index-clearance':'peek-nav.php'}[PROFILE]
-ORIGINAL_SOURCE = {'input-focus':'peek-nav-shared-v6.php', 'neighbours':'peek-nav-shared-v7.php', 'index-clearance':'peek-nav-shared-v8.php'}[PROFILE]
+APPLIED_SOURCE = {'input-focus':'peek-nav-shared-v7.php', 'neighbours':'peek-nav-shared-v8.php', 'index-clearance':'peek-nav-shared-v9.php', 'quiet-nav':'peek-nav.php'}[PROFILE]
+ORIGINAL_SOURCE = {'input-focus':'peek-nav-shared-v6.php', 'neighbours':'peek-nav-shared-v7.php', 'index-clearance':'peek-nav-shared-v8.php', 'quiet-nav':'peek-nav-shared-v9.php'}[PROFILE]
 WRAPPER = (SOURCE / WRAPPER_NAME).read_text()
 SHARED = (SOURCE / 'push-peek-nav.sh').read_text()
 REMOTE = WRAPPER.split("read -r -d '' REMOTE <<'EOS' || true\n", 1)[1].split('\nEOS\n', 1)[0]
@@ -62,7 +62,7 @@ if name=='ssh':
     sys.exit(0)
 if name=='wp':
     words=[a for a in args if not a.startswith('--')]
-    if '@@COMPONENT@@' in ['core-neighbours','core-index-clearance']:
+    if '@@COMPONENT@@' in ['core-neighbours','core-index-clearance','core-quiet-nav']:
         paths=[a.split('=',1)[1] for a in args if a.startswith('--path=')];assert len(paths)==1,args
         candidate=Path(paths[0]).name
         model=json.loads(os.environ.get('CORE_DISCOVERY_MAP','{}')).get(candidate,{})
@@ -132,7 +132,7 @@ def fixture(temp):
     (package/WRAPPER_NAME).chmod(0o700)
     (package/'push-peek-nav.sh').write_text(SHARED)
     for name in ['install-peek-nav.php','peek-nav.php','peek-nav-legacy.php','title-strip-pages.json',
-                 *['peek-nav-shared-v'+str(i)+'.php' for i in range(1,9)]]:
+                 *['peek-nav-shared-v'+str(i)+'.php' for i in range(1,10)]]:
         (package/name).write_text('offline payload fixture\n')
     (package/'peek-data').mkdir()
     creds=base/'creds.txt';creds.write_text('Host: mock.invalid\nPort: 22\nUser: coretest\n')
@@ -213,7 +213,7 @@ def renders(source):
             'get:/thai-massage/','render:'+source+':thai-massage']
 
 
-DISCOVERY = ['config-prefix','raw-home'] if PROFILE in ('neighbours', 'index-clearance') else ['discover']
+DISCOVERY = ['config-prefix','raw-home'] if PROFILE in ('neighbours', 'index-clearance', 'quiet-nav') else ['discover']
 REMOTE_CASES={
     'preflight':[*DISCOVERY,'inventory-reviewed','preflight:'+COMPONENT],
     'prepare':[*DISCOVERY,'inventory-reviewed','preflight:'+COMPONENT,'export'],
@@ -278,7 +278,7 @@ run_remote('apply',[],target='live',valid=False)
 run_remote('apply',DISCOVERY,options={'CORE_HOME_URL':'https://thaisolitude.com'},valid=False)
 run_remote('apply',DISCOVERY*2,duplicate=True,valid=False)
 run_remote('not-a-phase',DISCOVERY,valid=False)
-if PROFILE in ('neighbours', 'index-clearance'):
+if PROFILE in ('neighbours', 'index-clearance', 'quiet-nav'):
     # Neither malformed prefixes nor failing before-WP-load commands may reach
     # a SQL interpolation, plugin bootstrap, export or write.
     for prefix in ['', 'wp-', 'wp ', ' wp_', 'wp_\nother_', 'wp_`', "wp_; DROP TABLE x;--", 'wp.']:

@@ -70,9 +70,6 @@ html .ts-pk .ts-pk-nav.is-compact .ts-pk-rail{gap:2px;padding:4px 0}
 .ts-pk-rail a i{position:absolute;left:50%;top:0;bottom:0;width:6px;margin-left:-3px;border-radius:9px;background:var(--pk-on);transform-origin:top;transform:scaleY(var(--p,0));transition:width .15s,margin .15s}
 .ts-pk-rail li.is-hover a::before,.ts-pk-rail li.is-hover a i{width:12px;margin-left:-6px}
 .ts-pk-rail li.is-hover a::before{background:var(--pk-accent)}
-.ts-pk-label{position:absolute;right:48px;max-width:60vw;margin-top:-14px;padding:.3rem .65rem;border-radius:999px;background:var(--pk-ink);color:var(--pk-panel);font-size:.75rem;font-weight:700;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none;opacity:0;transition:opacity .3s,top .2s}
-.ts-pk-nav.is-moving .ts-pk-label{opacity:.92}
-.ts-pk-nav.is-active .ts-pk-label{opacity:0}
 .ts-pk-you{position:absolute;right:28px;width:10px;height:10px;margin-top:-5px;border-radius:50%;background:var(--pk-ink);box-shadow:0 0 0 3px var(--pk-ground);pointer-events:none;transition:top .2s}
 /* peek card */
 .ts-pk-card{position:fixed;right:calc(100% - var(--pk-vx,0px) - var(--pk-vw,100vw) + 58px);z-index:92;width:min(300px,calc(var(--pk-vw,100vw) - 78px));max-height:calc(100vh - 90px);max-height:calc(100dvh - 90px);overflow:hidden;padding:.85rem 1rem;border:1px solid var(--pk-rule);border-radius:18px;background:var(--pk-panel);color:var(--pk-ink);box-shadow:var(--pk-shadow);pointer-events:none;opacity:0;transform:translateX(10px) scale(.98);transition:opacity .15s,transform .2s var(--pk-ease);font-size:1rem;line-height:1.4}
@@ -130,7 +127,6 @@ html .ts-pk .ts-pk-rail{padding:8px 0}
 html .ts-pk a{text-decoration:none!important;border:0!important;box-shadow:none!important;background:none!important}   /* staging39: a more specific theme rule underlined these links */
 /* left-hand option: everything mirrored to the left edge */
 html.ts-pk-left .ts-pk-nav{right:auto;left:calc(var(--pk-vx,0px) + max(2px,env(safe-area-inset-left)))}
-html.ts-pk-left .ts-pk-label{right:auto;left:48px}
 html.ts-pk-left .ts-pk-you{right:auto;left:28px}
 html.ts-pk-left .ts-pk-card{right:auto;left:calc(58px + var(--pk-vx,0px));transform:translateX(-10px) scale(.98)}
 html.ts-pk-left .ts-pk-card.is-on{transform:none}
@@ -157,12 +153,14 @@ html.ts-pk-left .ts-pk-tip{right:auto;left:calc(58px + var(--pk-vx,0px))}
 html.ts-pk-left .ts-pk-nav.is-hinting .ts-pk-rail{animation-name:ts-pk-wiggle-l}
 @keyframes ts-pk-wiggle-l{0%,100%{transform:none}30%{transform:translateX(7px)}60%{transform:translateX(-3px)}}
 @media (prefers-reduced-motion:reduce){.ts-pk-nav.is-hinting .ts-pk-rail{animation:none}.ts-pk-tip{transition:none;transform:none}}
-/* index icon: always above the rail, drawn in the page's own colours (no box, border or shadow); hold it to fan out every section name */
-html .ts-pk .ts-pk-ix{position:absolute;right:0;bottom:100%;width:44px;height:44px;margin:0 0 8px;padding:0;border:0;border-radius:50%;background:transparent;color:var(--pk-muted);box-shadow:none;cursor:pointer;touch-action:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;transition:color .2s,transform .2s var(--pk-ease)}
+/* A visible button above the rail; its X closes the open section index. */
+html .ts-pk .ts-pk-ix{position:absolute;right:0;bottom:100%;width:44px;height:44px;margin:0 0 8px;padding:0;border:1px solid currentColor;border-radius:8px;background:transparent;color:var(--pk-muted);box-shadow:none;cursor:pointer;touch-action:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;transition:color .2s}
 html .ts-pk .ts-pk-ix:hover,html .ts-pk .ts-pk-ix:focus{background:transparent;color:var(--pk-ink);box-shadow:none}   /* nothing sits under the icon (the text column stops before it), so no background: it takes the page's own */
 html .ts-pk .ts-pk-ix:focus-visible{outline:3px solid var(--pk-accent);outline-offset:2px}
-html .ts-pk .ts-pk-nav.is-index .ts-pk-ix{color:var(--pk-on);transform:scale(.92)}
+html .ts-pk .ts-pk-nav.is-index .ts-pk-ix{color:var(--pk-on)}
 .ts-pk-ix svg{display:block;width:22px;height:22px;margin:auto;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;pointer-events:none}
+.ts-pk-ix-close,.ts-pk-nav.is-index .ts-pk-ix-list{display:none}
+.ts-pk-nav.is-index .ts-pk-ix-close{display:block}
 html.ts-pk-left .ts-pk .ts-pk-ix{right:auto;left:0}
 .ts-pk-fan{position:absolute;inset:0;pointer-events:none}
 html .ts-pk .ts-pk-fan li{position:absolute;right:52px;top:0;display:flex;align-items:center;gap:.55rem;max-width:min(48vw,220px);min-height:34px;box-sizing:border-box;margin:calc(var(--pk-fan-h,34px) / -2) 0 0;padding:.3rem .6rem;border:1px solid var(--pk-rule);border-radius:10px;background:var(--pk-stone);color:var(--pk-ink);font-size:.82rem;font-weight:600;line-height:1.25;white-space:nowrap;opacity:0;box-shadow:0 8px 20px -14px rgba(0,0,0,.5);transform:translateX(26px) scale(.55);transform-origin:right center;transition:opacity .2s,transform .3s var(--pk-ease);transition-delay:var(--d-close,0ms)}   /* the same form as the closed boxes in the stack (.ts-pk-card .row) */
@@ -178,7 +176,6 @@ html .ts-pk .ts-pk-nav.is-kept .ts-pk-ix{box-shadow:inset 0 0 0 2px var(--pk-on)
 html.ts-pk-left .ts-pk .ts-pk-fan li{right:auto;left:52px;transform:translateX(-26px) scale(.55);transform-origin:left center}
 html.ts-pk-left .ts-pk .ts-pk-nav.is-index .ts-pk-fan li{transform:none}
 html .ts-pk .ts-pk-fan li.is-over{background:var(--pk-on);color:var(--pk-on-text);border-color:var(--pk-on)}   /* the finger is on it: lift and it stays */
-.ts-pk-nav.is-index .ts-pk-label{opacity:0}
 @media (prefers-reduced-motion:reduce){html .ts-pk .ts-pk-fan li,html .ts-pk .ts-pk-ix{transition-duration:.01ms!important;transition-delay:0ms!important}}
 /* the site header stays on top (Ryan, 2026-11-08: "make the header persistent too"); not on short landscape screens, where header, strip and rail would not fit */
 @media screen and (min-height:501px){
@@ -255,7 +252,7 @@ add_action( 'wp_footer', function () {
 <script id="ts-peek-nav-runtime">
 (function () {
   'use strict';
-  var revealingQuestion = null;
+  var revealingQuestion = null, closingHeaderToggle = null;
   function esc(t) { var d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
   function attr(t) { return esc(t).replace(/"/g, '&quot;'); }
   function byHref(h) { var id = h.slice(1); try { id = decodeURIComponent(id); } catch (e) {} return document.getElementById(id); }
@@ -284,6 +281,21 @@ add_action( 'wp_footer', function () {
     try { var config = JSON.parse(document.getElementById('ts-peek-nav-config').textContent); if (typeof config.title === 'string' && config.title.trim()) return config.title.trim(); } catch (e) {}
     return document.title;
   }
+  function dismissMobileMenu(head) {
+    if (!head) return;
+    document.addEventListener('click', function (event) {
+      var mobile = head.querySelector('#ast-mobile-header[data-type="dropdown"]');
+      var toggle = mobile && mobile.querySelector('.menu-toggle.main-header-menu-toggle');
+      var panel = mobile && mobile.querySelector('.ast-mobile-header-content');
+      function open() { return toggle && panel && toggle.isConnected && panel.isConnected && toggle.getBoundingClientRect().height > 0 && panel.getBoundingClientRect().height > 0 && toggle.getAttribute('aria-expanded') === 'true'; }
+      if (event.button > 0 || !open() || toggle.contains(event.target) || panel.contains(event.target)) return;
+      // The final click already owns its target. Close now, before an in-page
+      // jump measures the flow header. Only this exact native toggle bypasses
+      // Peek's one-click guard; the original preview-owned tap stays consumed.
+      closingHeaderToggle = toggle;
+      try { toggle.click(); } finally { closingHeaderToggle = null; }
+    }, true);
+  }
   // All modes share the same strip, pinned-header measurement and reading line.
   function titleStrip(content, sections, resolve, row, titleOnly) {
     var root = document.documentElement, strip = document.createElement('div');
@@ -291,6 +303,7 @@ add_action( 'wp_footer', function () {
     strip.innerHTML = '<div class="in"><span class="before">' + esc(pageIdentity()) + '</span><div class="tr"></div></div>';
     if (row) row.parentNode.insertBefore(strip, row.nextSibling); else content.insertBefore(strip, content.firstChild);
     var topIn = strip.querySelector('.in'), topTr = strip.querySelector('.tr'), items = [], head = document.getElementById('masthead');
+    dismissMobileMenu(head);
     root.classList.add('ts-pk-title-ready');
     if (content !== document.body) content.classList.add('ts-pk-title-content');
     function measureHead() {
@@ -628,15 +641,15 @@ add_action( 'wp_footer', function () {
     }
     function fanHTML() { return S.map(function (s, i) { return '<li><b>' + (i + 1) + '</b><span>' + esc(s.label) + '</span></li>'; }).join(''); }
     var box = document.createElement('div'); box.className = 'ts-pk' + (hasData ? '' : ' ts-pk-titles') + (S.length === 1 ? ' is-single' : '');
-    box.innerHTML = '<nav class="ts-pk-nav" aria-label="Sections on this page"><button type="button" class="ts-pk-ix" aria-expanded="false" aria-controls="ts-pk-fan" aria-label="Show all sections (press and hold)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 7h12M6 12h9M6 17h6"/></svg></button>' +
-      '<ol class="ts-pk-fan" id="ts-pk-fan" aria-label="All sections" aria-hidden="true">' + fanHTML() + '</ol><ol class="ts-pk-rail">' + railHTML() + '</ol><span class="ts-pk-you" aria-hidden="true"></span><span class="ts-pk-label" aria-hidden="true"></span></nav>' +
+    box.innerHTML = '<nav class="ts-pk-nav" data-ts-pk-ui="quiet-v1" aria-label="Sections on this page"><button type="button" class="ts-pk-ix" aria-expanded="false" aria-controls="ts-pk-fan" aria-label="Show all sections (press and hold)"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="ts-pk-ix-list" d="M6 7h12M6 12h9M6 17h6"/><path class="ts-pk-ix-close" d="M7 7l10 10M17 7L7 17"/></svg></button>' +
+      '<ol class="ts-pk-fan" id="ts-pk-fan" aria-label="All sections" aria-hidden="true">' + fanHTML() + '</ol><ol class="ts-pk-rail">' + railHTML() + '</ol><span class="ts-pk-you" aria-hidden="true"></span></nav>' +
       '<div class="ts-pk-card" role="group" aria-label="Section preview" tabindex="-1"></div>' +
       '<div class="ts-pk-tip" role="note" hidden><p>Slide your thumb along this bar to preview each section. Lift, then tap the preview to go there. Press the icon above it to see them all, and slide onto a name to open it.</p><div class="row"><button type="button" class="ok">Got it</button><button type="button" class="flip"></button></div></div>';
     var host = strip.parentNode, okHost = true;
     for (var an = host; an && an !== document.documentElement; an = an.parentElement) { var cs = getComputedStyle(an); if (cs.transform !== 'none' || cs.filter !== 'none' || cs.perspective !== 'none' || (cs.backdropFilter || cs.webkitBackdropFilter || 'none') !== 'none' || /transform|filter|perspective/.test(cs.willChange || '') || (cs.containerType && cs.containerType !== 'normal') || /paint|layout|strict|content/.test(cs.contain || '')) { okHost = false; break; } }   // any of these would make position:fixed relative to that ancestor
     if (okHost) host.insertBefore(box, strip.nextSibling); else document.body.appendChild(box);   // keyboard order: row, strip, rail, then the sections
     var top = strip, nav = box.querySelector('.ts-pk-nav'), rail = nav.querySelector('.ts-pk-rail'),
-      you = nav.querySelector('.ts-pk-you'), label = nav.querySelector('.ts-pk-label'), card = box.querySelector('.ts-pk-card');
+      you = nav.querySelector('.ts-pk-you'), card = box.querySelector('.ts-pk-card');
     segs = [].slice.call(rail.children);
     var tip = box.querySelector('.ts-pk-tip'), ixBtn = nav.querySelector('.ts-pk-ix'), fan = nav.querySelector('.ts-pk-fan'), fanItems = [].slice.call(fan.children);
     var head = title.head; title.watch(ask);
@@ -935,7 +948,7 @@ add_action( 'wp_footer', function () {
     // "this tap is already handled": swallow the click the browser may still send (to the card, or to whatever is under it once the card is gone)
     function swallowNextClick(lifted, keepTouchFocus) {
       var on = true, t = 0;
-      function sw(c) { if (revealingQuestion && c.target === revealingQuestion && !c.isTrusted) return; c.preventDefault(); c.stopPropagation(); off(); }
+      function sw(c) { if (!c.isTrusted && ((revealingQuestion && c.target === revealingQuestion) || (closingHeaderToggle && c.target === closingHeaderToggle))) return; c.preventDefault(); c.stopPropagation(); off(); }
       // A navigation card can disappear on pointerup before the compatibility
       // mousedown. Its default action would blur the destination just focused
       // by the jump. Reserve that same touch's mouse events; a fresh pointer
@@ -1040,7 +1053,7 @@ add_action( 'wp_footer', function () {
 
     // draw on scroll, once per frame
     var ticking = false;
-    var lastLabel = '', lastRove = -2, tipWait = 0;
+    var lastRove = -2, tipWait = 0;
     function refreshSections() {
       // A captured gesture owns its original target until release. Reconcile
       // afterward by DOM identity, never by an index that may now name another
@@ -1056,7 +1069,7 @@ add_action( 'wp_footer', function () {
       hideCard(); setIndex(false);
       S = next; box.classList.toggle('is-single', S.length === 1); describe(); rail.innerHTML = railHTML(); fan.innerHTML = fanHTML();
       segs = [].slice.call(rail.children); fanItems = [].slice.call(fan.children);
-      title.setSections(S); lengths(); lastRove = -2; lastLabel = '';
+      title.setSections(S); lengths(); lastRove = -2;
       var selectedIndex = S.findIndex(function (s) { return s.target === selected; }), focusedIndex = S.findIndex(function (s) { return s.target === focusedTarget; });
       var currentIndex = S.findIndex(function (s) { return s.target === currentTarget; });
       rove(focusedIndex >= 0 ? focusedIndex : currentIndex >= 0 ? currentIndex : Math.min(oldIndex, S.length - 1));
@@ -1094,9 +1107,7 @@ add_action( 'wp_footer', function () {
       var rr = rail.getBoundingClientRect(), nr = nav.getBoundingClientRect(), railStyle = getComputedStyle(rail), railTop = parseFloat(railStyle.paddingTop) || 0, railBottom = parseFloat(railStyle.paddingBottom) || 0;
       title.paint(state);
       segs.forEach(function (li, k) { li.firstChild.firstChild.style.setProperty('--p', fills[k].toFixed(3)); var a = li.firstChild; if (k === cur) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
-      var name = S[Math.max(cur, 0)].label;
-      if (name !== lastLabel) { lastLabel = name; label.textContent = name; }
-      you.style.top = label.style.top = (rr.top - nr.top + railTop + w * (rr.height - railTop - railBottom)) + 'px';
+      you.style.top = (rr.top - nr.top + railTop + w * (rr.height - railTop - railBottom)) + 'px';
       if (cur !== lastRove && cur > -1 && !rail.contains(document.activeElement)) { rove(cur); lastRove = cur; }   // only when the section changes
       if (ixOpen) fanLayout();   // the fan stays current if the page moves while it is open (keyboard toggle)
       refitCard(false);
@@ -1123,6 +1134,7 @@ add_action( 'wp_footer', function () {
       if (on === ixOpen) return; ixOpen = on;
       if (on) { hideCard(); hideTip(); fanLayout(); buzz(); }
       nav.classList.toggle('is-index', on); ixBtn.setAttribute('aria-expanded', String(on)); fan.setAttribute('aria-hidden', String(!on)); ask();
+      ixBtn.setAttribute('aria-label', on ? 'Close section index' : 'Show all sections (press and hold)');
     }
     function keep(on) { kept = on; nav.classList.toggle('is-kept', on); }
     ixBtn.addEventListener('contextmenu', function (e) { e.preventDefault(); });
@@ -1140,7 +1152,7 @@ add_action( 'wp_footer', function () {
       return best;
     }
     function setOver(k) { if (k === over) return; over = k; fanItems.forEach(function (it, j) { it.classList.toggle('is-over', j === k); }); if (k > -1) buzz(); }
-    ixBtn.addEventListener('pointerdown', function (e) { if (e.button > 0 || !e.isPrimary) return; tipSeen(); ixPress = e.pointerId; handed = null; ixStart = { x: e.clientX, y: e.clientY, t: performance.now(), moved: 0 }; lean = false; try { ixBtn.setPointerCapture(e.pointerId); } catch (err) {} setIndex(true); keep(false); clearTimeout(keepT); keepT = setTimeout(function () { if (ixPress !== null && !handed && over < 0) { keep(true); buzz(); } }, 2000); e.preventDefault(); });
+    ixBtn.addEventListener('pointerdown', function (e) { if (e.button > 0 || !e.isPrimary) return; tipSeen(); ixPress = e.pointerId; handed = null; ixStart = { x: e.clientX, y: e.clientY, t: performance.now(), moved: 0, open: ixOpen }; lean = false; try { ixBtn.setPointerCapture(e.pointerId); } catch (err) {} setIndex(true); keep(false); clearTimeout(keepT); keepT = setTimeout(function () { if (ixPress !== null && !handed && over < 0) { keep(true); buzz(); } }, 2000); e.preventDefault(); });
     ixBtn.addEventListener('pointermove', function (e) {
       if (ixPress === null || e.pointerId !== ixPress) return;
       var x = e.clientX, y = e.clientY, rr = rail.getBoundingClientRect();
@@ -1162,7 +1174,7 @@ add_action( 'wp_footer', function () {
       if (h) { hideCard(); return; }                   // cancelled while on the rail
       if (over > -1 && up) { var k = over, r = fanItems[k].getBoundingClientRect(); setIndex(false); swallowNextClick(true); show(k, r.top + r.height / 2, true); return; }   // lifted on a name: its box opens
       setOver(-1);
-      if (up && !kept && ixStart && performance.now() - ixStart.t < 250 && ixStart.moved < 8) { keep(true); return; }   // a quick tap: the names stay open (Kiro: a tap did nothing)
+      if (up && !kept && ixStart && performance.now() - ixStart.t < 250 && ixStart.moved < 8) { if (ixStart.open) setIndex(false); else keep(true); return; }   // tap opens the names; tap the X closes them
       if (kept && up) return;                          // held 2 s: the names stay open (tap one, the rail, or anywhere else)
       setIndex(false);
     }
@@ -1198,8 +1210,7 @@ add_action( 'wp_footer', function () {
     tip.querySelector('.ok').addEventListener('click', hideTip);
     tip.querySelector('.flip').addEventListener('click', function () { setSide(sideName() === 'left'); var rr = rail.getBoundingClientRect(); tip.style.top = Math.max(12, rr.top + rr.height / 2 - tip.offsetHeight / 2) + 'px'; nav.classList.remove('is-hinting'); void nav.offsetWidth; nav.classList.add('is-hinting'); clearTimeout(tipT); tipT = setTimeout(autoHide, 6000); });
     function ask() { if (!ticking) { ticking = true; window.requestAnimationFrame(draw); } }
-    var still = 0;
-    window.addEventListener('scroll', function () { ask(); nav.classList.add('is-moving'); clearTimeout(still); still = setTimeout(function () { nav.classList.remove('is-moving'); }, 900); }, { passive: true });   // the section name shows beside the rail while the page scrolls
+    window.addEventListener('scroll', ask, { passive: true });   // reading position stays in the strip and rail, without a floating label
     window.addEventListener('resize', function () { lengths(); ask(); refitCard(true); });   // rotation or zoom: keep the open card inside the current visible bounds
     var lastCW = -1;
     if ('ResizeObserver' in window) new ResizeObserver(function (en) { lengths(); ask(); var w = Math.round(en[0].contentRect.width); if (w !== lastCW) { lastCW = w; scheduleClear(true); } }).observe(content);   // re-measure the rail clearance only when the width changes (an FAQ opening changes the height every frame)   // FAQ answers or late fonts move block edges   // FAQ answers opening change the lengths

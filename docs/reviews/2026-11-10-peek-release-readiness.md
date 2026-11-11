@@ -5,6 +5,13 @@ when it is a good time to push live and continue. This assessment does not start
 a live write or authorize a main merge. Work remains on
 `claude/wizardly-bell-xu0rta`; the current visitor navigation is on staging39.
 
+**November 11: four further changes requested before live.** Removing the
+automatic rail-side scrolling label, outlining the index, adding its open-state
+X and dismissing the header menu on outside taps are now the active staging
+task. See the [quiet-navigation record](2026-11-11-peek-quiet-navigation.md).
+The accepted index-clearance version remains deployed while this work is
+validated. No new live work or acceptance result is implied.
+
 **November 10 summary-neighbour experiment accepted on Safari.** Ryan requested
 only the previous and next summary controls around each open box;
 see the [active staging record](2026-11-10-peek-summary-neighbours.md). The

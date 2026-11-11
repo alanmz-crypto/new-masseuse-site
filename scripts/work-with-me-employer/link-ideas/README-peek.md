@@ -1,5 +1,14 @@
 # Peek shared template
 
+**New staging39 work, November 11: four navigation refinements in progress.**
+Ryan requested removing the automatic scrolling label beside the rail, outlining
+the index button, closing the header menu on an outside tap, and showing a
+tappable X on the open index. Interaction labels and existing index dismissal
+remain. See the [quiet-navigation record](../../../docs/reviews/2026-11-11-peek-quiet-navigation.md).
+The deployed baseline below is frozen as shared v9; `core-quiet-nav` is its new
+guarded in-place upgrade route. No new staging write or snapshot yet. These
+changes precede release preparation; main/live remain outside this task.
+
 **Current staging39, November 11: small-screen index clearance deployed.**
 The idle index clears the visible header, booking notice and title strip, and the
 rail respects Corporate/Work With Me's fixed bottom actions. Idle navigation

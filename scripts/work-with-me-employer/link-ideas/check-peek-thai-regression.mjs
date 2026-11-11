@@ -36,6 +36,11 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     const ctx = await b.newContext({ ...dev, deviceScaleFactor: 1 });
     if (theme === 'dark') await ctx.addInitScript(() => { try { localStorage.setItem('ts-theme', 'dark'); } catch (e) {} });
     const { p, errors } = await open(ctx, regressionPath);
+    // Historical cores keep their exact accepted label/icon expectations. The
+    // quiet revision declares its own UI explicitly; unknown revisions fail.
+    const ui = await p.locator('.ts-pk-nav').getAttribute('data-ts-pk-ui');
+    if (ui !== null && ui !== 'quiet-v1') { console.log(`INVALID unknown Peek UI revision: ${ui}`); await b.close(); process.exit(2); }
+    const quietUI = ui === 'quiet-v1';
     const cdp = await ctx.newCDPSession(p);
     const touch = (type, x, y) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchEnd' ? [] : [{ x, y }] });
     const W = ms => p.waitForTimeout(ms);
@@ -103,9 +108,10 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     await p.keyboard.press('Enter'); await W(500);
     ok(`${tag} "Got it" hides the hint and gives focus to the rail`, await p.evaluate(() => document.querySelector('.ts-pk-tip').hidden && !!document.activeElement.closest('.ts-pk-rail')));
     await p.mouse.wheel(0, 60); await W(250);
-    const lab = await p.evaluate(() => { const n = document.querySelector('.ts-pk-nav'), l = n.querySelector('.ts-pk-label'); return { moving: n.classList.contains('is-moving'), text: l.textContent, op: +getComputedStyle(l).opacity }; });
-    ok(`${tag} while the page scrolls, the section name shows beside the rail`, lab.moving && lab.text === 'Common reasons' && lab.op > 0.5, JSON.stringify(lab));
-    await W(1300); ok(`${tag} ...and fades once scrolling stops`, !(await p.evaluate(() => document.querySelector('.ts-pk-nav').classList.contains('is-moving'))));
+    const lab = await p.evaluate(() => { const n = document.querySelector('.ts-pk-nav'), l = n.querySelector('.ts-pk-label'); return { moving: n.classList.contains('is-moving'), text: l?.textContent || '', op: l ? +getComputedStyle(l).opacity : 0 }; });
+    if (quietUI) ok(`${tag} quiet UI: page scrolling does not reveal an automatic name beside the rail`, !lab.moving && lab.op <= 0.05 && (await strip()) === 'Common reasons / 2 of 5', JSON.stringify(lab));
+    else ok(`${tag} while the page scrolls, the section name shows beside the rail`, lab.moving && lab.text === 'Common reasons' && lab.op > 0.5, JSON.stringify(lab));
+    await W(1300); ok(`${tag} ${quietUI ? 'quiet UI: the rail stays quiet after scrolling stops' : '...and fades once scrolling stops'}`, !(await p.evaluate(() => document.querySelector('.ts-pk-nav').classList.contains('is-moving'))));
     ok(`${tag} the rail sits on the right edge in the thumb zone`, st.rail.top >= st.vh * 0.25 && st.vh >= st.rail.bottom && st.rail.right >= st.vw - 8, JSON.stringify(st.rail));
     ok(`${tag} the bottom "On this page" button is replaced by the rail`, await p.evaluate(() => { const t = document.getElementById('ts-section-guide-trigger'); return !t || getComputedStyle(t).display === 'none'; }));
 
@@ -219,15 +225,16 @@ for (const [size, dev] of [['phone', devices['iPhone 13']], ['tablet', devices['
     ok(`${tag} arrow keys move along the rail`, await p.evaluate(() => document.activeElement === document.querySelectorAll('.ts-pk-rail a')[2] && document.activeElement.getAttribute('tabindex') === '0'));
     const thm = await p.evaluate(() => { const o = getComputedStyle(document.querySelector('.ts-pk-rail')), l = getComputedStyle(document.querySelector('.ts-pk-rail li')), so = getComputedStyle(document.querySelector('.ts-pk-top .tr')), a = getComputedStyle(document.querySelector('.ts-pk-rail a')); return { ml: o.marginLeft, pl: o.paddingLeft, ls: o.listStyleType, lim: l.marginTop + ' ' + l.marginLeft, sol: so.marginLeft + ' ' + so.paddingLeft, td: a.textDecorationLine }; });
     ok(`${tag} the theme's content styles do not reach the rail or strip`, thm.ml === '0px' && thm.pl === '0px' && thm.ls === 'none' && thm.lim === '0px 0px' && thm.sol === '0px 0px' && thm.td === 'none', JSON.stringify(thm));
-    // index icon (Ryan, 2026-11-08: design 1 "Fan", always at the top of the rail, blended into the page)
+    // The original Fan gestures remain; quiet-v1 adds an outlined button.
     const fanState = () => p.evaluate(() => { const nav = document.querySelector('.ts-pk-nav'), segs = [...document.querySelectorAll('.ts-pk-rail li')].map(l => { const r = l.getBoundingClientRect(); return r.top + r.height / 2; }), rail = document.querySelector('.ts-pk-rail').getBoundingClientRect();
       return { open: nav.classList.contains('is-index'), exp: document.querySelector('.ts-pk-ix').getAttribute('aria-expanded'), hid: document.querySelector('.ts-pk-fan').getAttribute('aria-hidden'), railL: rail.left, railR: rail.right, vw: innerWidth,
         items: [...document.querySelectorAll('.ts-pk-fan li')].map((l, k) => { const r = l.getBoundingClientRect(); return { name: l.querySelector('span').textContent, op: +getComputedStyle(l).opacity, d: Math.round(r.top + r.height / 2 - segs[k]), l: r.left, r: r.right, now: l.classList.contains('is-now') }; }) }; });
     const ixg = await p.evaluate(() => { const b = document.querySelector('.ts-pk-ix'), i = b.getBoundingClientRect(), r = document.querySelector('.ts-pk-rail').getBoundingClientRect(), cs = getComputedStyle(b);
       const probe = document.createElement('span'); probe.style.background = 'var(--pk-ground)'; document.querySelector('.ts-pk').appendChild(probe); const ground = getComputedStyle(probe).backgroundColor; probe.remove();
-      return { shown: cs.display !== 'none' && cs.visibility === 'visible' && +cs.opacity === 1, gap: Math.round(r.top - i.bottom), dx: Math.round(Math.abs(i.right - r.right)), w: Math.round(i.width), bg: cs.backgroundColor, ground, shadow: cs.boxShadow, border: cs.borderTopWidth, before: !!(b.compareDocumentPosition(document.querySelector('.ts-pk-rail')) & Node.DOCUMENT_POSITION_FOLLOWING) }; });
+      return { shown: cs.display !== 'none' && cs.visibility === 'visible' && +cs.opacity === 1, gap: Math.round(r.top - i.bottom), dx: Math.round(Math.abs(i.right - r.right)), w: Math.round(i.width), h: Math.round(i.height), bg: cs.backgroundColor, ground, shadow: cs.boxShadow, border: cs.borderTopWidth, borderStyle: cs.borderTopStyle, radius: cs.borderTopLeftRadius, before: !!(b.compareDocumentPosition(document.querySelector('.ts-pk-rail')) & Node.DOCUMENT_POSITION_FOLLOWING) }; });
     ok(`${tag} index icon: always shown, directly above the rail`, ixg.shown && ixg.gap >= 0 && 16 >= ixg.gap && 2 >= ixg.dx && ixg.w >= 44, JSON.stringify(ixg));
-    ok(`${tag} index icon: blended into the page (no background of its own, no border or shadow)`, (ixg.bg === 'rgba(0, 0, 0, 0)' || ixg.bg === 'transparent') && ixg.shadow === 'none' && ixg.border === '0px', JSON.stringify(ixg));
+    if (quietUI) ok(`${tag} quiet UI: index has a rounded outline around its full 44px button`, ixg.w >= 44 && ixg.h >= 44 && parseFloat(ixg.border) >= 1 && ixg.borderStyle === 'solid' && parseFloat(ixg.radius) > 0 && ixg.shadow === 'none', JSON.stringify(ixg));
+    else ok(`${tag} index icon: blended into the page (no background of its own, no border or shadow)`, (ixg.bg === 'rgba(0, 0, 0, 0)' || ixg.bg === 'transparent') && ixg.shadow === 'none' && ixg.border === '0px', JSON.stringify(ixg));
     ok(`${tag} index icon: comes right before the rail for the keyboard`, ixg.before);
     y0 = await Y();
     const ixAt = await p.$eval('.ts-pk-ix', e => { const r = e.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });

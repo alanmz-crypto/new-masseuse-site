@@ -1,4 +1,4 @@
-"""Run the shared guarded push harness against the exact v8→index-clearance lane.
+"""Run the shared guarded push harness against the exact v8→frozen-v9 index-clearance lane.
 
 The historical input-focus entry keeps its independent v6→v7 profile. Both run
 real Bash with local command doubles; neither contacts a site or models PHP as

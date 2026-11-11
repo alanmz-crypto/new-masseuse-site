@@ -74,6 +74,8 @@ function invoke_neighbours_rehearsal( $args ) { $GLOBALS['message'] = ''; requir
 function neighbours_rehearsal_refusal( $args, $label ) { $before = $GLOBALS['db']; $error = null; try { invoke_neighbours_rehearsal( $args ); } catch ( Throwable $e ) { $error = $e; } check( $error !== null && $GLOBALS['db'] === $before, 'neighbours adapter: ' . $label ); }
 function invoke_index_rehearsal( $args ) { $GLOBALS['message'] = ''; require __DIR__ . '/core-index-clearance/install-peek-core-index-clearance.php'; return $GLOBALS['message']; }
 function index_rehearsal_refusal( $args, $label ) { $before = $GLOBALS['db']; $error = null; try { invoke_index_rehearsal( $args ); } catch ( Throwable $e ) { $error = $e; } check( $error !== null && $GLOBALS['db'] === $before, 'index-clearance adapter: ' . $label ); }
+function invoke_quiet_rehearsal( $args ) { $GLOBALS['message'] = ''; require __DIR__ . '/core-quiet-nav/install-peek-core-quiet-nav.php'; return $GLOBALS['message']; }
+function quiet_rehearsal_refusal( $args, $label ) { $before = $GLOBALS['db']; $error = null; try { invoke_quiet_rehearsal( $args ); } catch ( Throwable $e ) { $error = $e; } check( $error !== null && $GLOBALS['db'] === $before, 'quiet-nav adapter: ' . $label ); }
 function invoke_package( $package, $args ) { require $package . '/install-peek-nav.php'; }
 function snapshot_path() { preg_match( '/Before-snapshot: (.+)$/', $GLOBALS['message'], $m ); if ( ! isset( $m[1] ) ) { throw new RuntimeException( 'No completed snapshot: ' . $GLOBALS['message'] ); } return $m[1]; }
 function snap_write( $data, $name ) { $p = $GLOBALS['testdir'] . '/backups/' . $name . '.json'; file_put_contents( $p, json_encode( $data ) ); return $p; }
@@ -268,7 +270,7 @@ invoke( array( 'rollback', $upgrade_snap ) ); invoke( array( 'rollback', $core_s
 check( $db[1380] === $legacy && array_diff_key( $db, array( 1380 => true ) ) === $data_before, 'original migration recovery still works after upgrade reversal with all page data preserved' );
 // Frozen baseline corruption is tested in a disposable package, never by editing source.
 $package = $testdir . '/package'; mkdir( $package );
-foreach ( array( 'install-peek-nav.php', 'peek-nav-legacy.php', 'peek-nav-shared-v1.php', 'peek-nav-shared-v2.php', 'peek-nav-shared-v3.php', 'peek-nav-shared-v4.php', 'peek-nav-shared-v5.php', 'peek-nav-shared-v6.php', 'peek-nav-shared-v7.php', 'peek-nav-shared-v8.php', 'peek-nav.php' ) as $name ) { copy( __DIR__ . '/' . $name, $package . '/' . $name ); }
+foreach ( array( 'install-peek-nav.php', 'peek-nav-legacy.php', 'peek-nav-shared-v1.php', 'peek-nav-shared-v2.php', 'peek-nav-shared-v3.php', 'peek-nav-shared-v4.php', 'peek-nav-shared-v5.php', 'peek-nav-shared-v6.php', 'peek-nav-shared-v7.php', 'peek-nav-shared-v8.php', 'peek-nav-shared-v9.php', 'peek-nav.php' ) as $name ) { copy( __DIR__ . '/' . $name, $package . '/' . $name ); }
 $db = $upgrade_before; file_put_contents( $package . '/peek-nav-shared-v1.php', "\n// changed", FILE_APPEND ); $error = null;
 try { invoke_package( $package, array( 'apply', 'core-upgrade' ) ); } catch ( Throwable $e ) { $error = $e; }
 check( $error !== null && str_contains( $error->getMessage(), 'Frozen shared v1 payload differs' ) && $db === $upgrade_before, 'altered frozen v1 file hash stops upgrade before any write' );
@@ -285,22 +287,28 @@ copy( __DIR__ . '/peek-nav-shared-v4.php', $package . '/peek-nav-shared-v4.php' 
 try { invoke_package( $package, array( 'apply', 'core-kiro-fixes' ) ); } catch ( Throwable $e ) { $error = $e; }
 check( $error !== null && str_contains( $error->getMessage(), 'Frozen shared v5 payload differs' ) && $db === $upgrade_before, 'altered frozen v5 file hash stops Kiro fixes before any write' );
 copy( __DIR__ . '/peek-nav-shared-v5.php', $package . '/peek-nav-shared-v5.php' ); file_put_contents( $package . '/peek-nav-shared-v6.php', "\n// changed", FILE_APPEND );
-foreach ( array( 'core-kiro-fixes', 'core-input-focus', 'core-neighbours', 'core-index-clearance' ) as $component ) {
+foreach ( array( 'core-kiro-fixes', 'core-input-focus', 'core-neighbours', 'core-index-clearance', 'core-quiet-nav' ) as $component ) {
     $error = null;
     try { invoke_package( $package, array( 'apply', $component ) ); } catch ( Throwable $e ) { $error = $e; }
     check( $error !== null && str_contains( $error->getMessage(), 'Frozen shared v6 payload differs' ) && $db === $upgrade_before, 'altered frozen v6 file hash stops ' . $component . ' before any write' );
 }
 copy( __DIR__ . '/peek-nav-shared-v6.php', $package . '/peek-nav-shared-v6.php' ); file_put_contents( $package . '/peek-nav-shared-v7.php', "\n// changed", FILE_APPEND );
-foreach ( array( 'core-input-focus', 'core-neighbours', 'core-index-clearance' ) as $component ) {
+foreach ( array( 'core-input-focus', 'core-neighbours', 'core-index-clearance', 'core-quiet-nav' ) as $component ) {
     $error = null;
     try { invoke_package( $package, array( 'apply', $component ) ); } catch ( Throwable $e ) { $error = $e; }
     check( $error !== null && str_contains( $error->getMessage(), 'Frozen shared v7 payload differs' ) && $db === $upgrade_before, 'altered frozen v7 stops ' . $component . ' before any write' );
 }
 copy( __DIR__ . '/peek-nav-shared-v7.php', $package . '/peek-nav-shared-v7.php' ); file_put_contents( $package . '/peek-nav-shared-v8.php', "\n// changed", FILE_APPEND );
-foreach ( array( 'core-neighbours', 'core-index-clearance' ) as $component ) {
+foreach ( array( 'core-neighbours', 'core-index-clearance', 'core-quiet-nav' ) as $component ) {
     $error = null;
     try { invoke_package( $package, array( 'apply', $component ) ); } catch ( Throwable $e ) { $error = $e; }
     check( $error !== null && str_contains( $error->getMessage(), 'Frozen shared v8 payload differs' ) && $db === $upgrade_before, 'altered frozen v8 stops ' . $component . ' before any write' );
+}
+copy( __DIR__ . '/peek-nav-shared-v8.php', $package . '/peek-nav-shared-v8.php' ); file_put_contents( $package . '/peek-nav-shared-v9.php', "\n// changed", FILE_APPEND );
+foreach ( array( 'core-index-clearance', 'core-quiet-nav' ) as $component ) {
+    $error = null;
+    try { invoke_package( $package, array( 'apply', $component ) ); } catch ( Throwable $e ) { $error = $e; }
+    check( $error !== null && str_contains( $error->getMessage(), 'Frozen shared v9 payload differs' ) && $db === $upgrade_before, 'altered frozen v9 stops ' . $component . ' before any write' );
 }
 foreach ( glob( $package . '/*' ) as $f ) { unlink( $f ); } rmdir( $package ); $clock = '2026-11-09 05:00:00';
 // A second explicit transition binds v2, leaving both earlier recoveries intact.
@@ -892,7 +900,7 @@ $expected_drift = $index_before; $expected_drift[ $drift_id ]['post']['post_modi
 try { invoke( array( 'apply', 'core-index-clearance' ) ); } catch ( Throwable $e ) { $error = $e; }
 check( $error !== null && $db === $expected_drift, 'index concurrent page drift restores core without overwriting independent change' );
 $db = $index_before; invoke_index_rehearsal( array( 'apply' ) ); $index_snap = snapshot_path(); $index_applied = $db;
-$expected_index = $index_before; $expected_index[1380]['post']['post_content'] = substr( file_get_contents( __DIR__ . '/peek-nav.php' ), 6 ); $expected_index[1380]['post']['post_modified'] = $expected_index[1380]['post']['post_modified_gmt'] = $clock;
+$expected_index = $index_before; $expected_index[1380]['post']['post_content'] = substr( file_get_contents( __DIR__ . '/peek-nav-shared-v9.php' ), 6 ); $expected_index[1380]['post']['post_modified'] = $expected_index[1380]['post']['post_modified_gmt'] = $clock;
 check( $db === $expected_index, 'index changes only #1380 code/dates, preserving every complete page record and core setting' );
 invoke_index_rehearsal( array( 'apply' ) ); check( $db === $index_applied, 'index apply is idempotent' );
 refusal( array( 'apply', 'core-neighbours' ), 'frozen core-neighbours cannot overwrite index' );
@@ -956,6 +964,86 @@ $db = $index_before; $clock = '2026-11-10 18:02:00'; invoke_index_rehearsal( arr
 snapshot_verify_check( array( 'verify', $index_snap ), false, 'old index snapshot cannot verify a later apply with new dates' );
 snapshot_verify_check( array( 'verify', $reapplied_index_snap ), true, 'later apply binds its own returned snapshot' );
 invoke_index_rehearsal( array( 'rollback', $reapplied_index_snap ) ); check( $db === $index_before, 'later apply rollback restores the same exact v8 baseline' );
+// Quiet navigation advances only v9; the historical index snapshot remains v8 -> v9.
+$db = $index_applied; $quiet_before = $db; $clock = '2026-11-11 02:00:00';
+check( hash( 'sha256', $db[1380]['post']['post_content'] ) === '955458c81bf136a2789d8f8d495a3e4e8660771014f65db601441a0af6b1b937', 'core-index-clearance still produces the exact deployed v9, independent of current runtime' );
+invoke_quiet_rehearsal( array() ); check( $db === $quiet_before && str_contains( $message, 'core-quiet-nav ready;' ), 'quiet preflight is read-only on exact v9' );
+foreach ( array( 'https://thaisolitude.com', 'https://staging38.thaisolitude.com', 'https://staging39.thaisolitude.com/other', 'https://staging39.thaisolitude.com:443' ) as $bad ) { $home = $bad; refusal( array( 'apply', 'core-quiet-nav' ), 'quiet refuses foreign/inexact origin ' . $bad ); }
+foreach ( array( 'https://staging39.thaisolitude.com', 'http://localhost:8090/other' ) as $bad ) { $home = $bad; quiet_rehearsal_refusal( array( 'apply' ), 'non-exact rehearsal origin refused' ); }
+$home = 'http://localhost:8090'; $environment_type = 'staging'; quiet_rehearsal_refusal( array( 'apply' ), 'non-local environment refused' ); $environment_type = 'local';
+foreach ( array( array( 'other' ), array( 'apply', 'core-index-clearance' ), array( 'rollback' ), array( 'rollback', $index_snap, 'extra' ), array( 'rollback', $index_snap ) ) as $bad_args ) { quiet_rehearsal_refusal( $bad_args, 'wrong mode/arguments/component refused' ); }
+$db = $index_before; refusal( array( 'apply', 'core-quiet-nav' ), 'quiet cannot skip v8 to its current payload' );
+$db = $quiet_before;
+foreach ( array( 'fail_write', 'fail_cache', 'fail_snapshot_complete' ) as $failure ) { $GLOBALS[ $failure ] = true; refusal( array( 'apply', 'core-quiet-nav' ), 'quiet ' . $failure . ' recovers exact v9 and every page' ); }
+$mutate_page_on_refresh = static function () use ( $drift_id ) { $GLOBALS['db'][ $drift_id ]['post']['post_modified'] = '2026-11-11 02:01:00'; };
+$expected_drift = $quiet_before; $expected_drift[ $drift_id ]['post']['post_modified'] = '2026-11-11 02:01:00'; $error = null;
+try { invoke( array( 'apply', 'core-quiet-nav' ) ); } catch ( Throwable $e ) { $error = $e; }
+check( $error !== null && $db === $expected_drift, 'quiet concurrent page drift restores core without overwriting independent change' );
+$db = $quiet_before; invoke_quiet_rehearsal( array( 'apply' ) ); $quiet_snap = snapshot_path(); $quiet_applied = $db;
+$expected_quiet = $quiet_before; $expected_quiet[1380]['post']['post_content'] = substr( file_get_contents( __DIR__ . '/peek-nav.php' ), 6 ); $expected_quiet[1380]['post']['post_modified'] = $expected_quiet[1380]['post']['post_modified_gmt'] = $clock;
+check( $db === $expected_quiet, 'quiet changes only #1380 code/dates, preserving every complete page record and core setting' );
+invoke_quiet_rehearsal( array( 'apply' ) ); check( $db === $quiet_applied, 'quiet apply is idempotent' );
+refusal( array( 'apply', 'core-index-clearance' ), 'frozen core-index-clearance cannot overwrite quiet' );
+refusal( array( 'rollback', $index_snap ), 'historical index snapshot cannot overwrite quiet' );
+index_rehearsal_refusal( array( 'rollback', $quiet_snap ), 'quiet snapshot cannot enter historical index adapter' );
+$quiet_snapshot = json_decode( file_get_contents( $quiet_snap ), true );
+check( $quiet_snapshot['bundle'] === 'peek-core-quiet-nav-v1' && $quiet_snapshot['payloads']['before_sha256'] === '955458c81bf136a2789d8f8d495a3e4e8660771014f65db601441a0af6b1b937' && $quiet_snapshot['old'] === $index_snapshot['new'], 'quiet snapshot binds exact historical index result including dates' );
+foreach ( array( 'applied' => $quiet_applied, 'original' => $quiet_before ) as $verify_state => $baseline ) {
+    $args = 'original' === $verify_state ? array( 'verify', $quiet_snap, 'original' ) : array( 'verify', $quiet_snap );
+    $db = $baseline; snapshot_verify_check( $args, true, 'quiet exact ' . $verify_state );
+    snapshot_verify_check( 'original' === $verify_state ? array( 'verify', $quiet_snap ) : array( 'verify', $quiet_snap, 'original' ), false, 'quiet cannot claim opposite state' );
+    foreach ( array_keys( $baseline ) as $record_id ) {
+        foreach ( array( 'missing', 'code', 'date', 'gmt-date', 'author', 'meta', 'terms', 'status', 'duplicate-trash', 'id' ) as $mutation ) {
+            $db = $baseline;
+            if ( $mutation === 'missing' ) { unset( $db[$record_id] ); }
+            if ( $mutation === 'code' ) { $db[$record_id]['post']['post_content'] .= '// drift'; }
+            if ( $mutation === 'date' ) { $db[$record_id]['post']['post_modified'] = '2027-01-01 00:00:00'; }
+            if ( $mutation === 'gmt-date' ) { $db[$record_id]['post']['post_modified_gmt'] = '2027-01-01 00:00:00'; }
+            if ( $mutation === 'author' ) { $db[$record_id]['post']['post_author'] = '99'; }
+            if ( $mutation === 'meta' ) { $db[$record_id]['meta']['unknown'] = array( 'independent' ); }
+            if ( $mutation === 'terms' ) { $db[$record_id]['terms']['wpcode_location'] = array( 'footer' ); }
+            if ( $mutation === 'status' ) { $db[$record_id]['post']['post_status'] = 'draft'; }
+            if ( $mutation === 'duplicate-trash' || $mutation === 'id' ) { $db[9999] = $db[$record_id]; $db[9999]['id'] = $db[9999]['post']['ID'] = 9999; }
+            if ( $mutation === 'duplicate-trash' ) { $db[9999]['post']['post_status'] = 'trash'; }
+            if ( $mutation === 'id' ) { unset( $db[$record_id] ); }
+            snapshot_verify_check( $args, false, 'quiet ' . $verify_state . ' record ' . $record_id . ' ' . $mutation );
+            if ( 'applied' === $verify_state ) { refusal( array( 'rollback', $quiet_snap ), 'quiet rollback refuses ' . $record_id . ' ' . $mutation ); }
+            elseif ( ! in_array( $mutation, array( 'date', 'gmt-date', 'author' ), true ) && ( 'id' !== $mutation || 1380 === $record_id ) ) { refusal( array( 'apply', 'core-quiet-nav' ), 'quiet apply refuses ' . $record_id . ' ' . $mutation ); }
+        }
+    }
+}
+$db = $quiet_applied;
+foreach ( array( 'bundle', 'component', 'slug', 'missing-slug', 'home', 'incomplete', 'before-payload', 'new-payload', 'old-hash', 'new-hash', 'old-content-rehashed', 'new-author-rehashed', 'ids-rehashed', 'pages-hash', 'pages-missing', 'page-date-rehashed' ) as $mutation ) {
+    $s = $quiet_snapshot;
+    if ( $mutation === 'bundle' ) { $s['bundle'] = 'peek-core-index-clearance-v1'; }
+    if ( $mutation === 'component' ) { $s['component'] = 'core-index-clearance'; }
+    if ( $mutation === 'slug' ) { $s['slug'] = 'thai-massage'; }
+    if ( $mutation === 'missing-slug' ) { unset( $s['slug'] ); }
+    if ( $mutation === 'home' ) { $s['home'] = 'https://staging39.thaisolitude.com'; }
+    if ( $mutation === 'incomplete' ) { $s['complete'] = false; }
+    if ( $mutation === 'before-payload' ) { $s['payloads']['before_sha256'] = str_repeat( '0', 64 ); }
+    if ( $mutation === 'new-payload' ) { $s['payloads']['code_sha256'] = str_repeat( '0', 64 ); }
+    if ( $mutation === 'old-hash' ) { $s['old_sha256'] = str_repeat( '0', 64 ); }
+    if ( $mutation === 'new-hash' ) { $s['new_sha256'] = str_repeat( '0', 64 ); }
+    if ( $mutation === 'old-content-rehashed' ) { $s['old']['post']['post_content'] .= '// drift'; $s['old_sha256'] = hash( 'sha256', json_encode( $s['old'] ) ); }
+    if ( $mutation === 'new-author-rehashed' ) { $s['new']['post']['post_author'] = '99'; $s['new_sha256'] = hash( 'sha256', json_encode( $s['new'] ) ); }
+    if ( $mutation === 'ids-rehashed' ) { foreach ( array( 'old', 'new' ) as $which ) { $s[$which]['id'] = $s[$which]['post']['ID'] = 9999; $s[$which . '_sha256'] = hash( 'sha256', json_encode( $s[$which] ) ); } }
+    if ( $mutation === 'pages-hash' ) { $s['pages_sha256'] = str_repeat( '0', 64 ); }
+    if ( $mutation === 'pages-missing' ) { unset( $s['pages']['chair-massage'] ); $s['pages_sha256'] = hash( 'sha256', json_encode( $s['pages'] ) ); }
+    if ( $mutation === 'page-date-rehashed' ) { $s['pages']['thai-massage']['post']['post_modified'] = '2000-01-01 00:00:00'; $s['pages_sha256'] = hash( 'sha256', json_encode( $s['pages'] ) ); }
+    $bad_quiet = snap_write( $s, 'quiet-' . $mutation );
+    snapshot_verify_check( array( 'verify', $bad_quiet ), false, 'quiet snapshot ' . $mutation );
+    quiet_rehearsal_refusal( array( 'rollback', $bad_quiet ), 'quiet rollback snapshot ' . $mutation );
+}
+$db = $quiet_applied; invoke_quiet_rehearsal( array( 'rollback', $quiet_snap ) ); check( $db === $quiet_before, 'quiet rollback restores exact v9 and every complete page record' );
+$writes = $write_calls; $refreshes = $cache_refreshes; $files = backup_hashes();
+invoke_quiet_rehearsal( array( 'rollback', $quiet_snap ) ); check( $db === $quiet_before && $writes === $write_calls && $refreshes === $cache_refreshes && $files === backup_hashes(), 'quiet repeated rollback has no writes/cache/file changes' );
+snapshot_verify_check( array( 'verify', $index_snap ), true, 'original index snapshot still verifies restored v9 with exact historical dates' );
+invoke( array( 'rollback', $index_snap ) ); check( $db === $index_before, 'original index snapshot retains exact v8 recovery after quiet rollback' );
+$db = $quiet_before; $clock = '2026-11-11 02:02:00'; invoke_quiet_rehearsal( array( 'apply' ) ); $reapplied_quiet_snap = snapshot_path();
+snapshot_verify_check( array( 'verify', $quiet_snap ), false, 'old quiet snapshot cannot verify a later apply with new dates' );
+snapshot_verify_check( array( 'verify', $reapplied_quiet_snap ), true, 'later apply binds its own returned snapshot' );
+invoke_quiet_rehearsal( array( 'rollback', $reapplied_quiet_snap ) ); check( $db === $quiet_before, 'later apply rollback restores the same exact v9 baseline' );
 // Execute the actual read-only origin inventory program from the push wrapper.
 // Changing published coverage must block a forward deployment, without adding a runtime map.
 $push_source = file_get_contents( __DIR__ . '/push-peek-nav.sh' );
@@ -1021,7 +1109,7 @@ function phase_check( $phase, $component, $coverage ) {
     fclose( $pipes[0] ); $out = stream_get_contents( $pipes[1] ); $err = stream_get_contents( $pipes[2] ); fclose( $pipes[1] ); fclose( $pipes[2] );
     return array( proc_close( $proc ), $out, $err );
 }
-foreach ( array( 'core-title-strip', 'core-title-rail', 'core-kiro-fixes', 'core-input-focus', 'core-neighbours', 'core-index-clearance' ) as $component ) {
+foreach ( array( 'core-title-strip', 'core-title-rail', 'core-kiro-fixes', 'core-input-focus', 'core-neighbours', 'core-index-clearance', 'core-quiet-nav' ) as $component ) {
     foreach ( array( 'preflight', 'apply' ) as $phase ) {
         $result = phase_check( $phase, $component, 'changed' );
         check( 0 !== $result[0] && ! str_contains( $result[1], 'RUN ' ), $component . ' ' . $phase . ' refuses changed published coverage before installer call' );
@@ -1041,8 +1129,12 @@ cfgs=$(mktemp); doc=/unused; installer=/unused; want=staging39.thaisolitude.com
 wp() {
   local part="${*: -1}"
   case "$part" in
+    core-quiet-nav)
+      if [ "$model" = latest ]; then echo 'Success: core-quiet-nav applied; nothing written.'
+      elif [ "$model" = v9 ] && [ -z "$missing_data" ]; then echo 'Success: core-quiet-nav ready; nothing written.'
+      else return 1; fi ;;
     core-index-clearance)
-      if [ "$model" = latest ]; then echo 'Success: core-index-clearance applied; nothing written.'
+      if [ "$model" = v9 ]; then echo 'Success: core-index-clearance applied; nothing written.'
       elif [ "$model" = v8 ] && [ -z "$missing_data" ]; then echo 'Success: core-index-clearance ready; nothing written.'
       else return 1; fi ;;
     core-neighbours)
@@ -1095,14 +1187,14 @@ curl() {
   done
   route=${url#https://staging39.thaisolitude.com}; pg=${route#/}; pg=${pg%/}
   case "$pg" in thai-massage|therapeutic-massage|deep-tissue-massage|chair-massage) jump=1; if [ "$render_mode" != legacy ] && [ "$pg" != "$missing_data" ]; then has_data=1; has_core=1; fi ;; services) jump=1 ;; esac
-  case "$render_mode" in latest|v8|v7|v6|v5|v4) has_core=1 ;; esac
+  case "$render_mode" in latest|v9|v8|v7|v6|v5|v4) has_core=1 ;; esac
   if [ "$render_mode" = legacy ] && [ "$pg" = thai-massage ]; then has_core=1; fi
   if [ "$fault" = missing-core ] && [ "$pg" = parent/unlisted ]; then has_core=0; fi
   if [ "$fault" = extra-data ] && [ "$pg" = services ]; then has_data=1; fi
   if [ "$fault" = removed-jump ] && [ "$pg" = services ]; then jump=0; fi
   {
     if [ "$has_core" = 1 ]; then printf '<style id="ts-peek-nav-css"></style><script id="ts-peek-nav-runtime"></script>'; fi
-    case "$render_mode" in latest|v8|v7|v6|v5|v4) printf '<script id="ts-peek-nav-config"></script>' ;; esac
+    case "$render_mode" in latest|v9|v8|v7|v6|v5|v4) printf '<script id="ts-peek-nav-config"></script>' ;; esac
     if [ "$has_data" = 1 ]; then printf '<script id="ts-peek-nav-data"></script>'; fi
     if [ "$jump" = 1 ]; then printf '<nav class="ts-jump"></nav>'; fi
     if [ "$fault" = duplicate-core ] && [ "$pg" = '' ]; then printf '<script id="ts-peek-nav-runtime"></script>'; fi
@@ -1119,8 +1211,8 @@ function origin_check( $model, $render_mode, $missing_data = '', $fault = '' ) {
     fclose( $pipes[0] ); $out = stream_get_contents( $pipes[1] ); $err = stream_get_contents( $pipes[2] ); fclose( $pipes[1] ); fclose( $pipes[2] );
     return array( proc_close( $proc ), $out, $err );
 }
-foreach ( array( 'latest', 'v8', 'v7', 'v6', 'v5', 'v4', 'v3', 'v2', 'v1', 'legacy' ) as $version ) { $result = origin_check( $version, $version ); check( 0 === $result[0] && str_contains( $result[1], '200 /parent/unlisted/' ), 'origin verifier checks all actual pages with exact ' . $version . ' scope' ); }
-foreach ( array( 'latest', 'v8', 'v7', 'v6', 'v5', 'v4', 'v3' ) as $version ) { $result = origin_check( $version, $version, 'chair-massage' ); check( 0 === $result[0], 'origin verifier preserves separate page removal under ' . $version ); }
+foreach ( array( 'latest', 'v9', 'v8', 'v7', 'v6', 'v5', 'v4', 'v3', 'v2', 'v1', 'legacy' ) as $version ) { $result = origin_check( $version, $version ); check( 0 === $result[0] && str_contains( $result[1], '200 /parent/unlisted/' ), 'origin verifier checks all actual pages with exact ' . $version . ' scope' ); }
+foreach ( array( 'latest', 'v9', 'v8', 'v7', 'v6', 'v5', 'v4', 'v3' ) as $version ) { $result = origin_check( $version, $version, 'chair-massage' ); check( 0 === $result[0], 'origin verifier preserves separate page removal under ' . $version ); }
 $result = origin_check( 'v3', 'latest' ); check( 0 !== $result[0] && str_contains( $result[1], 'FAIL' ), 'ready predecessor cannot be mistaken for applied sitewide core' );
 $result = origin_check( 'unknown', 'latest' ); check( 0 !== $result[0] && ! str_contains( $result[1], '200 ' ), 'unknown core fails before any origin fetch' );
 foreach ( array( 'missing-core', 'extra-data', 'duplicate-core', 'removed-jump', 'challenge' ) as $fault ) {
