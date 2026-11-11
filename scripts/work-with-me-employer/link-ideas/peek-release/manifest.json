@@ -9,6 +9,20 @@
     "baseline_sha256": "a6c6e923d484576d96060ab8d9f84110c5d785f9fec64c5ae7e5b0ef3f37f013",
     "core_version": "7.1.4"
   },
+  "spectra": {
+    "version": "2.20.6",
+    "official_package_url": "https://downloads.wordpress.org/plugin/ultimate-addons-for-gutenberg.2.20.6.zip",
+    "official_package_sha256": "d6ec81341a6e8351db21497f213e40f08f2f8bf8300098cd04fc94800a980caf",
+    "source_commit": "d1852cd27c9ac93e8fd7606261c2a023c5c253da",
+    "files": {
+      "ultimate-addons-for-gutenberg.php": "84960e2aab455bcaf90ca1fa12e1d7916fb783f933666cb838ce96b06c4e2265",
+      "classes/class-uagb-helper.php": "ddb31e3c3a200537fac002fba6ab964149f9b459a71b38a9723af84e17da70fd",
+      "classes/class-uagb-rest-api.php": "f9308c31294d9493533fcde3b326e29f2ccd8c6980a824e4f213472c6efc12d3",
+      "classes/class-uagb-loader.php": "7b6b14efe37e012bc920ce6abed8a5c25c19f508b36390b64b3104d8e61fda98",
+      "classes/class-uagb-post-assets.php": "565651321cef5b64a29e91df9bf8e267ebc34c4112294f2671ade008e637d6be",
+      "classes/class-uagb-front-assets.php": "329d3330bf4c46e537a864f417e6903f7e1607f928c03cd6244ee69f700d195a"
+    }
+  },
   "copy_mapping": {
     "origin": "http://localhost:8090",
     "from": [

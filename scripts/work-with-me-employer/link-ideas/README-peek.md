@@ -22,7 +22,8 @@ including recovery; dry preflight checks the same prerequisite as apply.
 
 The first-install release package now freezes the accepted quiet-navigation
 core and this exact Search CSS, with four approved data payloads unchanged.
-Its models passed **1,694 installer checks** and **162 evidence controls**, but
+Its refreshed models passed **1,843 installer checks** (138 injected failures)
+and **163 evidence controls**, but
 its complete first-install/rendered/recovery cycle remains unproved. The
 [readiness record](../../../docs/reviews/2026-11-10-peek-release-readiness.md)
 contains the concrete copy request. On November 11 Ryan explicitly approved
@@ -37,9 +38,11 @@ The approved fresh live-copy rehearsal `peek-visitor-release-quiet-search-copy-1
 (run **42981371762**) failed on November 11 at **07:44:11 UTC**. First install,
 repeat and initial exact rollback passed. Loading the 15 restored pages then
 replaced 15 metadata rows, so exact verification stopped the run before browser
-checks. The metadata purpose is not yet identified; read-only hash diagnostics
-are next, with guards unchanged. Cleanup proved the temporary copy and all its
-owned resources were removed. Live was unchanged. The readiness record contains
+checks. Diagnostic copy2 (run **42983523811**, FAIL at **08:02:36 UTC**) identified
+exactly one regenerated `_uag_page_assets` row per page: values changed as well
+as IDs. Both copies were deleted with verified cleanup. A narrow, source-bound
+Spectra filter around the installer's own WPCode save calls is implemented and reviewed;
+all exact-state guards remain. No complete reapply/browser cycle has passed. Live was unchanged. The readiness record contains
 the actual copy-only snapshot and artifact bindings; the deleted journal is not
 a staging/live recovery file.
 

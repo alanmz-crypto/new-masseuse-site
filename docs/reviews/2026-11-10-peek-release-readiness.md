@@ -45,12 +45,15 @@ original CSS record.
 | Search CSS payload | 536 | `3225b279ae3d20adf696ac9ad6a16dc2be7c7c15c8fbe64ba59e5a74dc14e9e0` |
 | Desired combined Additional CSS | 69,380 | `b024acc687b49a37115940b52976f3bdcfc6cb236ae7bb4a81422f8c2d02c69b` |
 
-The current installer SHA256 is
-`64e95f6351f553a4658ebfe9f5443f7cecc9cf51409749e3018238e8fa78b17f`;
+After the Spectra correction below, current installer SHA256 is
+`a972ad0c135c7b2da42fe2d1c27efee5396988676393b70bc44fd050e04e4cdf`;
 manifest SHA256 is
-`296318acfd3f086e45fb7bd68548f81393566e1b38b90afb7f065bd14ad0826e`.
+`81eb8f2650ff1763ef0d78adcc2468652a815306e568d2da2d3991b7330e6881`;
+source-binding helper SHA256 is
+`5b75b761b0146163d54c26e0b7a99265850d7168cbd48438061e2cb45297c02b`.
+Earlier attempts used installer `64e95f63…` and manifest `296318ac…`.
 Independent source review found no defect in the refreshed CSS transition and
-rollback. Pinned-PHP tests passed **1,694 checks with 138 injected write-boundary
+rollback. Before the cache correction, pinned-PHP tests passed **1,694 checks with 138 injected write-boundary
 failures**; the release evidence suite passed **162 offline controls**, including
 missing/changed Search payload refusals. PHP/Node syntax, exact current/frozen
 payload bindings and diff checks passed. Complete repository source Gates then
@@ -204,6 +207,69 @@ artifact was verified: **25,349 bytes**, SHA256
 `0a4e2e0f35a4dc2cef55bfe2edeb5d3659ee867ff0f23157e9b8ec17ecf656e1`.
 It contains no SQL, private snapshots or copied source. Independent audit agreed
 with these results; the full operation report and 390-line job log were read.
+
+The diagnostic source then passed complete **51/0 Gates** at **07:59:01 UTC**,
+run **42982828312**, checkout `988b3377a4e34c75bf745dc82de0235c8825d270`.
+The same approved copy lifecycle was retried as
+`peek-visitor-release-quiet-search-copy-2`, Actions **42983523811**, source
+`e81115f490c11abcf450a33c5a4b928198768496`. It finished **FAIL at 08:02:36 UTC**,
+with cleanup again verified. No installer, manifest, frozen payload or exact-state
+guard changed for this diagnostic attempt.
+
+Independent audit validated **60 captures / 40,800 metadata descriptors**.
+All 30 pre-install original-page captures were identical. Immediately after
+rollback, the first capture still matched that original state. Each subsequent
+page GET replaced exactly that page's `_uag_page_assets` row. Every replacement
+had the same byte length but a different value hash and different row hash even
+after removing the metadata ID. All other existing rows stayed unchanged; the
+capture chain was continuous, and all 30 diagnostic hashes bound the observed
+rows. This proves asset-cache regeneration, not merely database-ID churn.
+
+The copy-only snapshot was
+`/backups/peek-release-before-20261111-080216-25285ac2.json`, SHA256
+`bc0694629095b3798b478c1891173be9b5bec82c1445cfc19c949b749a9e8838`.
+Original protected-state SHA256 was
+`f6c2b8fbdbc414567bdfb2de3934786e85fd55f6f9c043f24723a331f934315f`;
+applied SHA256 was
+`f8ba1c792f7188e9260847974b569ab763bc74ce90c848b9f93eeb0b0a858b49`.
+The five owned IDs again were data 1339–1342 and core 1343. Apply/repeat/initial
+rollback bindings and all 15 original navigation signatures matched. No reapply
+or browser phase ran. The journal was deleted with the copy. The full report
+and 450-line job log were read. The verified **85-file / 4,679,549-byte** artifact
+has SHA256 `ae3e5400e05161df2741bcb292e2693456144467602785ee7f87dd36b1a1e307`;
+it excludes raw metadata values, SQL, private snapshots and copied source.
+
+Public Spectra 2.20.6 source at commit
+`d1852cd27c9ac93e8fd7606261c2a023c5c253da` explains a matching mechanism:
+`save_post` calls its asset invalidator, which changes `__uagb_asset_version`;
+later GETs delete/rebuild page assets when their `uag_version` differs. The
+documented `uagb_delete_page_assets_skip_post_types` filter returns before those
+writes. The proposed correction was explained before implementation: append
+`wpcode` to existing exclusions only during the installer's factory/correction/
+publication calls, then remove that exact callback in `finally`. This is temporal
+post-type scope; the filter has no individual post-ID argument. Preserve every
+exact-state guard and also protect the global asset-version row. Bind the actual
+installed Spectra files/version to reviewed published source before any writes.
+Do not normalize asset values/IDs, restore cache timestamps, remove general
+save hooks, or install a persistent filter. The copied runtime disables WP-Cron;
+the separate deferred asset callback needs its own source/model review, not a
+claim that the browser rehearsal exercises cron. Actual installed-source binding
+and the corrected complete rehearsal remain pending.
+
+The official WordPress.org Spectra 2.20.6 package was verified: **8,617,905 bytes**,
+SHA256 `d6ec81341a6e8351db21497f213e40f08f2f8bf8300098cd04fc94800a980caf`.
+Its main header and five relevant class files match the pinned GitHub source
+byte for byte. The correction is implemented with that source profile and no
+changes to the frozen runtime/data/CSS. Expanded pinned-PHP models passed
+**1,843 checks**, retaining all **138 injected write-boundary failures**. They
+include source mismatch refusals, callback cleanup, existing-filter preservation,
+the unscoped invalidation positive control and the deferred callback's behaviour
+on owned/deleted IDs. The **163 rehearsal-evidence controls** also passed.
+Independent review found no blocker and separately exercised the actual shipped
+deferred-callback class with synthetic metadata: no writes for five asset-free
+owned IDs or five deleted IDs; a matching-page positive control wrote once.
+This is isolated class execution, not real cron or WordPress execution. Full
+Actions Gates and the corrected copy remain next.
 
 ## Recommended scope
 

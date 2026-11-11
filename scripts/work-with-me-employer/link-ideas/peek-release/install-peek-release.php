@@ -31,7 +31,7 @@ $release_equal = static function ( $actual, $expected, $label ) use ( $release_h
     if ( $a === $e ) { return; }
     // Failure evidence only: use these captured values, never recapture or adopt.
     try {
-    $safe = explode( ' ', 'records options taxonomies terms witnesses owned pages shared_termmeta_sha256 post meta relationships posts postmeta term_relationships term_taxonomy termmeta core thai-massage therapeutic-massage deep-tissue-massage chair-massage home siteurl template stylesheet show_on_front page_on_front page_for_posts permalink_structure astra-settings ID post_author post_date post_date_gmt post_content post_title post_excerpt post_status comment_status ping_status post_password post_name to_ping pinged post_modified post_modified_gmt post_content_filtered post_parent guid menu_order post_type post_mime_type comment_count meta_id post_id meta_key meta_value object_id term_taxonomy_id term_order term_id taxonomy description parent count name slug term_group option_id option_name option_value autoload id path title' );
+    $safe = explode( ' ', 'records options taxonomies terms witnesses owned pages shared_termmeta_sha256 post meta relationships posts postmeta term_relationships term_taxonomy termmeta core thai-massage therapeutic-massage deep-tissue-massage chair-massage home siteurl template stylesheet show_on_front page_on_front page_for_posts permalink_structure astra-settings __uagb_asset_version ID post_author post_date post_date_gmt post_content post_title post_excerpt post_status comment_status ping_status post_password post_name to_ping pinged post_modified post_modified_gmt post_content_filtered post_parent guid menu_order post_type post_mime_type comment_count meta_id post_id meta_key meta_value object_id term_taxonomy_id term_order term_id taxonomy description parent count name slug term_group option_id option_name option_value autoload id path title' );
     $describe = static function ( $value, $present ) use ( $release_json ) {
         if ( ! $present ) { return array( 'present' => false ); }
         $type = get_debug_type( $value ); $bytes = $release_json( $value );
@@ -73,6 +73,7 @@ try {
     $release_manifest = json_decode( $release_manifest_bytes, true, 512, JSON_THROW_ON_ERROR );
     $release_manifest_hash = hash( 'sha256', $release_manifest_bytes );
     if ( ( $release_manifest['schema'] ?? null ) !== 1 || ( $release_manifest['bundle'] ?? null ) !== 'peek-visitor-release-v1' || ( $release_manifest['copy_mapping']['origin'] ?? null ) !== $release_home || ( $release_manifest['source']['core_version'] ?? null ) !== $wp_version ) { $release_fail( 'Manifest/site/core version differs.' ); }
+    require __DIR__ . '/source-binding.php';
     $release_slugs = array( 'thai-massage', 'therapeutic-massage', 'deep-tissue-massage', 'chair-massage' );
     $release_equal( $release_manifest['summary_slugs'], $release_slugs, 'Approved page roles' );
     $release_roles = array_merge( array( 'core' ), $release_slugs );
@@ -110,6 +111,21 @@ try {
     $release_taxonomies = get_object_taxonomies( 'wpcode' );
     if ( ! in_array( 'wpcode_type', $release_taxonomies, true ) || ! in_array( 'wpcode_location', $release_taxonomies, true ) ) { $release_fail( 'WPCode taxonomies unavailable.' ); }
 } catch ( Throwable $release_error ) { WP_CLI::error( $release_error->getMessage() . ' Nothing changed.' ); }
+
+// Spectra's reviewed save_post callback invalidates every page's assets even
+// for a WPCode save. Its own exclusion filter returns before those writes.
+// Preserve all existing filters and exclusions; only our three owned save
+// call sites get this temporal post-type exclusion (the API has no post ID).
+$release_wpcode_save = static function ( callable $save ) use ( $release_fail ) {
+    $skip = static function ( $types ) use ( $release_fail ) {
+        if ( ! is_array( $types ) ) { $release_fail( 'Spectra exclusion filter returned a non-array.' ); }
+        if ( ! in_array( 'wpcode', $types, true ) ) { $types[] = 'wpcode'; }
+        return $types;
+    };
+    add_filter( 'uagb_delete_page_assets_skip_post_types', $skip, PHP_INT_MAX, 1 );
+    try { return $save(); }
+    finally { remove_filter( 'uagb_delete_page_assets_skip_post_types', $skip, PHP_INT_MAX ); }
+};
 
 // SQL reads deliberately bypass WordPress object/query caches and virtual post fields.
 // Raw unknown metadata is hashed in memory, never copied into the private snapshot.
@@ -161,7 +177,9 @@ $release_capture = static function ( $bound_ids = array() ) use ( $wpdb, $releas
         }
         $out['witnesses'][$name] = $witness;
     }
-    foreach ( array_keys( $release_manifest['baseline']['option_sha256'] ) as $name ) {
+    // The current Spectra version token is dynamic, but its entire raw row
+    // must remain exactly as first captured through apply, undo and page GETs.
+    foreach ( array_merge( array_keys( $release_manifest['baseline']['option_sha256'] ), array( '__uagb_asset_version' ) ) as $name ) {
         $rows = $release_rows( $wpdb->prepare( "SELECT * FROM {$wpdb->options} WHERE option_name=%s ORDER BY option_id", $name ) );
         if ( count( $rows ) !== 1 ) { $release_fail( 'Required option missing or duplicated: ' . $name ); }
         $out['options'][$name] = $rows[0];
@@ -183,6 +201,8 @@ $release_baseline = static function ( $state ) use ( $release_manifest, $release
     foreach ( $b['post_sha256'] as $id => $hash ) { if ( $release_hash( $state['records'][$id]['post'] ?? null ) !== $hash ) { $release_fail( 'Reviewed source post differs: ' . $id ); } }
     foreach ( array( 'meta' => 'meta_sha256', 'relationships' => 'relationship_sha256' ) as $field => $hashes ) { foreach ( $b[$hashes] as $id => $hash ) { if ( $release_hash( $state['records'][$id][$field] ?? null ) !== $hash ) { $release_fail( 'Reviewed source ' . $field . ' differs: ' . $id ); } } }
     foreach ( $b['option_sha256'] as $name => $hash ) { if ( $release_hash( $state['options'][$name] ?? null ) !== $hash ) { $release_fail( 'Reviewed option differs: ' . $name ); } }
+    $asset = $state['options']['__uagb_asset_version'] ?? null;
+    if ( ! is_array( $asset ) || array_keys( $asset ) !== array( 'autoload', 'option_id', 'option_name', 'option_value' ) || $asset['option_name'] !== '__uagb_asset_version' || ! ctype_digit( $asset['option_id'] ) || ! is_string( $asset['option_value'] ) || ! is_string( $asset['autoload'] ) ) { $release_fail( 'Required exact Spectra version option row is missing or malformed.' ); }
     $release_equal( $state['taxonomies'], $b['taxonomies'], 'Shared taxonomy baseline' );
     $release_equal( $state['terms'], $b['terms'], 'Shared term baseline' );
     if ( $state['shared_termmeta_sha256'] !== $b['termmeta_sha256'] ) { $release_fail( 'Reviewed shared term metadata differs.' ); }
@@ -430,9 +450,9 @@ try {
     // exact known draft, then correct it while still inactive.
     foreach ( $release_order as $release_role ) {
         $role = $release_role;
-        $release_step( static function () use ( $role, $release_titles, $release_notes, $release_codes, $release_fail ) {
+        $release_step( static function () use ( $role, $release_titles, $release_notes, $release_codes, $release_fail, $release_wpcode_save ) {
             $snippet = new WPCode_Snippet( array( 'title' => $release_titles[$role], 'code' => $release_codes[$role], 'code_type' => 'php', 'location' => 'everywhere', 'auto_insert' => 1, 'priority' => 10, 'active' => false, 'note' => $release_notes[$role] ) );
-            $id = $snippet->save(); if ( ! is_numeric( $id ) || (int) $id < 1 ) { $release_fail( 'Inactive snippet creation failed.' ); } return (int) $id;
+            $id = $release_wpcode_save( static fn() => $snippet->save() ); if ( ! is_numeric( $id ) || (int) $id < 1 ) { $release_fail( 'Inactive snippet creation failed.' ); } return (int) $id;
         }, static function ( $actual, $result ) use ( $role, &$release_owned, &$release_ids, $release_codes, $release_owned_ok, $release_old, &$release_cleaned, $release_expected, $release_equal, $release_fail ) {
             $record = $actual['owned'][$role]; $id = (int) ( $record['post']['ID'] ?? 0 );
             $code = $record['post']['post_content'] ?? null;
@@ -465,8 +485,8 @@ try {
         } );
         if ( $release_owned[$role]['post']['post_content'] !== $release_codes[$role] ) {
             $clocks = array( current_time( 'mysql' ), current_time( 'mysql', true ) );
-            $release_step( static function () use ( $role, &$release_ids, $release_codes, $release_fail ) {
-                $id = wp_update_post( wp_slash( array( 'ID' => $release_ids[$role], 'post_content' => $release_codes[$role], 'edit_date' => true ) ), true );
+            $release_step( static function () use ( $role, &$release_ids, $release_codes, $release_fail, $release_wpcode_save ) {
+                $id = $release_wpcode_save( static fn() => wp_update_post( wp_slash( array( 'ID' => $release_ids[$role], 'post_content' => $release_codes[$role], 'edit_date' => true ) ), true ) );
                 if ( is_wp_error( $id ) || $id !== $release_ids[$role] ) { $release_fail( 'Inactive code correction failed.' ); } return $id;
             }, static function ( $actual ) use ( $role, &$release_owned, $release_codes, $release_changed_record, $clocks, $release_old, &$release_cleaned, $release_expected, $release_equal ) {
                 $record = $actual['owned'][$role]; $release_changed_record( $release_owned[$role], $record, array( 'post_content' => $release_codes[$role] ), $clocks );
@@ -487,8 +507,8 @@ try {
     // and native guide remain throughout and on any failed/rolled-back release.
     foreach ( $release_order as $role ) {
         $clocks = array( current_time( 'mysql' ), current_time( 'mysql', true ) );
-        $release_step( static function () use ( $role, &$release_ids, $release_fail ) {
-            $id = wp_update_post( wp_slash( array( 'ID' => $release_ids[$role], 'post_status' => 'publish', 'edit_date' => true ) ), true );
+        $release_step( static function () use ( $role, &$release_ids, $release_fail, $release_wpcode_save ) {
+            $id = $release_wpcode_save( static fn() => wp_update_post( wp_slash( array( 'ID' => $release_ids[$role], 'post_status' => 'publish', 'edit_date' => true ) ), true ) );
             if ( is_wp_error( $id ) || $id !== $release_ids[$role] ) { $release_fail( 'Activation failed.' ); } return $id;
         }, static function ( $actual ) use ( $role, &$release_owned, $release_changed_record, $clocks, $release_owned_ok, $release_codes, $release_old, &$release_cleaned, $release_expected, $release_equal ) {
             $record = $actual['owned'][$role]; $release_changed_record( $release_owned[$role], $record, array( 'post_status' => 'publish' ), $clocks ); $release_owned_ok( $record, $role, 'publish', $release_codes[$role], false, true );

@@ -36,6 +36,24 @@ only the known `_uag_page_assets` key can be labelled. Exact localhost origin,
 manifest inventory, capture binding and pipeline success are required. These
 observations identify drift; they never excuse it or rebase installer guards.
 
+Copy2 confirmed that all 15 replaced rows were `_uag_page_assets`, including
+changed values. The candidate now uses Spectra's documented skip-post-types
+filter only around its own WPCode factory save, code correction and publication.
+It appends `wpcode` to existing exclusions and removes the exact callback in
+`finally`; no persistent filter or general hook removal is installed. The whole
+`__uagb_asset_version` option row is now protected along with every original
+metadata row. Neither cached values nor row IDs are normalized or restored.
+
+Before any write, `source-binding.php` requires the shipped Spectra 2.20.6 header,
+six exact file hashes, loaded class identities and the expected save hook. The
+official WordPress.org ZIP (SHA256
+`d6ec81341a6e8351db21497f213e40f08f2f8bf8300098cd04fc94800a980caf`)
+matches the reviewed GitHub commit's files byte for byte. The manifest records
+those bindings. A mismatch refuses the copy operation rather than guessing.
+The separate deferred asset callback is reviewed/model-tested; copied WP-Cron
+is disabled, so the browser rehearsal does not exercise cron. Frozen runtime,
+summaries and CSS remain unchanged. Complete corrected copy proof is pending.
+
 The release creates five WPCode snippets, removes the exact old reading-progress
 CSS block and appends the frozen Search contrast block in one guarded update to
 Additional CSS #29, and changes Astra's `scroll-to-top-enable` boolean to false.

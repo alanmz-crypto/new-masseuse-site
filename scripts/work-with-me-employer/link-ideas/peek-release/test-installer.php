@@ -1,8 +1,8 @@
 <?php
 /**
  * Offline release state-machine controls; run with PHP 8.5 + PDO SQLite.
- * A temporary package changes only the baseline hash profile for synthetic raw
- * WordPress rows. Installer logic, localhost guard, routes and payload bytes are
+ * A temporary package changes baseline hashes and Spectra file hashes for
+ * synthetic raw rows and plugin classes. Installer logic, guards and payloads are
  * unchanged; production payload integrity is checked separately before/after.
  * SQLite executes the actual prepared SQL with byte-sensitive comparisons.
  * WordPress saves, shared taxonomy counts, dates and derived cache are modeled.
@@ -15,6 +15,10 @@ $testdir = sys_get_temp_dir() . '/peek-release-installer-' . bin2hex( random_byt
 mkdir( $testdir, 0700 ); mkdir( "$testdir/web", 0700 ); mkdir( "$testdir/backups", 0700 );
 register_shutdown_function( static function () use ( $testdir ) { if ( is_dir( $testdir ) ) { remove_tree( $testdir ); } } );
 define( 'ABSPATH', "$testdir/web/" );
+define( 'WP_PLUGIN_DIR', ABSPATH . 'wp-content/plugins' );
+$source_case = $argv[2] ?? '';
+define( 'UAGB_VER', $source_case === 'runtime-version' ? '2.20.7' : '2.20.6' );
+define( 'UAGB_ASSET_VER', '1794294000' );
 putenv( "WWM_BACKUP_DIR=$testdir/backups" );
 $home = 'http://localhost:8090'; $theme = 'astra'; $admin = true; $environment_type = 'local';
 $clock = '2026-11-10 03:00:00'; $wp_version = '7.1.4'; $logs = array(); $message = '';
@@ -57,6 +61,69 @@ function get_object_taxonomies( $post_type ) { return $post_type === 'wpcode' ? 
 function wp_cache_delete( $key, $group ) { $GLOBALS['events'][] = array( 'cache_delete', $key, $group ); return true; }
 function wp_cache_set_posts_last_changed() { $GLOBALS['events'][] = array( 'posts_last_changed' ); }
 function clean_post_cache( $id ) { throw new Harness_Error( 'Unexpected general post cache/save hooks' ); }
+
+// Preserve callback identity and priority, including a callback already at the
+// last priority. The installer may remove only the exact closure it adds.
+$model_hooks = array();
+function add_filter( $tag, $callback, $priority = 10, $accepted_args = 1 ) {
+    foreach ( $GLOBALS['model_hooks'][$tag][$priority] ?? array() as $entry ) { if ( $entry[0] === $callback ) { return true; } }
+    $GLOBALS['model_hooks'][$tag][$priority][] = array( $callback, $accepted_args ); ksort( $GLOBALS['model_hooks'][$tag], SORT_NUMERIC ); return true;
+}
+function add_action( $tag, $callback, $priority = 10, $accepted_args = 1 ) { return add_filter( $tag, $callback, $priority, $accepted_args ); }
+function remove_filter( $tag, $callback, $priority = 10 ) {
+    foreach ( $GLOBALS['model_hooks'][$tag][$priority] ?? array() as $key => $entry ) {
+        if ( $entry[0] === $callback ) {
+            unset( $GLOBALS['model_hooks'][$tag][$priority][$key] );
+            $GLOBALS['model_hooks'][$tag][$priority] = array_values( $GLOBALS['model_hooks'][$tag][$priority] );
+            if ( ! $GLOBALS['model_hooks'][$tag][$priority] ) { unset( $GLOBALS['model_hooks'][$tag][$priority] ); }
+            if ( ! $GLOBALS['model_hooks'][$tag] ) { unset( $GLOBALS['model_hooks'][$tag] ); }
+            return true;
+        }
+    }
+    return false;
+}
+function remove_action( $tag, $callback, $priority = 10 ) { return remove_filter( $tag, $callback, $priority ); }
+function has_filter( $tag, $callback = false ) {
+    foreach ( $GLOBALS['model_hooks'][$tag] ?? array() as $priority => $entries ) {
+        foreach ( $entries as $entry ) { if ( $callback === false || $entry[0] === $callback ) { return $priority; } }
+    }
+    return false;
+}
+function has_action( $tag, $callback = false ) { return has_filter( $tag, $callback ); }
+function apply_filters( $tag, $value, ...$arguments ) {
+    foreach ( $GLOBALS['model_hooks'][$tag] ?? array() as $entries ) {
+        foreach ( $entries as [$callback, $accepted] ) { $value = $callback( ...array_slice( array_merge( array( $value ), $arguments ), 0, $accepted ) ); }
+    }
+    return $value;
+}
+function do_action( $tag, ...$arguments ) {
+    foreach ( $GLOBALS['model_hooks'][$tag] ?? array() as $entries ) { foreach ( $entries as [$callback, $accepted] ) { $callback( ...array_slice( $arguments, 0, $accepted ) ); } }
+}
+function model_spectra_invalidate( $id ) {
+    $post = row( 'posts', 'ID', $id );
+    $skip = apply_filters( 'uagb_delete_page_assets_skip_post_types', array( 'nav_menu_item' ) );
+    $before = row( 'options', 'option_name', '__uagb_asset_version' );
+    $meta_before = rows( 'postmeta', 'post_id', $id, 'meta_id' );
+    $skipped = in_array( $post['post_type'], $skip, true );
+    if ( ! $skipped ) {
+        fixture_sql( "DELETE FROM wp_postmeta WHERE post_id=? AND meta_key='_uag_page_assets'", array( $id ) );
+        fixture_update( 'wp_options', 'option_name', '__uagb_asset_version', array( 'option_value' => (string) ( (int) $before['option_value'] + 1 ) ) );
+    }
+    $GLOBALS['spectra_observations'][] = array( 'id' => $id, 'type' => $post['post_type'], 'skip' => $skip, 'skipped' => $skipped,
+        'option_before' => $before, 'option_after' => row( 'options', 'option_name', '__uagb_asset_version' ),
+        'meta_before' => $meta_before, 'meta_after' => rows( 'postmeta', 'post_id', $id, 'meta_id' ) );
+}
+function model_spectra_regenerate( $id ) {
+    // Published front-assets callback: a post without an existing assets row is
+    // a no-op. This is a model assertion, not execution of cron on the copy.
+    $asset = fixture_sql( "SELECT * FROM wp_postmeta WHERE post_id=? AND meta_key='_uag_page_assets'", array( $id ) )->fetch( PDO::FETCH_ASSOC );
+    if ( ! $asset ) { return; }
+    $data = unserialize( $asset['meta_value'], array( 'allowed_classes' => false ) );
+    if ( is_array( $data ) && ( $data['uag_version'] ?? null ) === UAGB_ASSET_VER ) {
+        $data['uag_version'] = '';
+        fixture_update( 'wp_postmeta', 'meta_id', $asset['meta_id'], array( 'meta_value' => serialize( $data ) ) );
+    }
+}
 
 function event( $name, $id = 0, $after = false ) {
     $key = $name . ( $after ? ':after' : ':before' );
@@ -168,6 +235,7 @@ class WPCode_Snippet {
         foreach ( array( 9, 10 ) as $term ) { fixture_insert( 'wp_term_relationships', array( 'object_id' => $id, 'term_taxonomy_id' => $term, 'term_order' => '0' ) ); }
         // Copy4 observed that WPCode taxonomy membership includes inactive drafts.
         recount( $id, 1 );
+        do_action( 'save_post', $id );
         $GLOBALS['created_observations'][] = array( 'id' => $id, 'active' => $active, 'content' => $row['post_content'], 'guid' => row( 'posts', 'ID', $id )['guid'], 'meta' => rows( 'postmeta', 'post_id', $id, 'meta_id' ) );
         event( 'create', $id, true ); list( $forced, $value ) = result_override( 'create', 'after' ); return $forced ? $value : $id;
     }
@@ -208,6 +276,7 @@ function wp_update_post( $values, $wp_error = false ) {
     if ( ( $values['post_status'] ?? null ) === 'publish' && $old['post_name'] === '' ) { $values['post_name'] = wp_unique_post_slug( sanitize_title( $old['post_title'] ), $id, 'publish', $old['post_type'], $old['post_parent'] ); }
     $values['post_modified'] = current_time( 'mysql' ); $values['post_modified_gmt'] = current_time( 'mysql', true );
     fixture_update( 'wp_posts', 'ID', $id, $values );
+    do_action( 'save_post', $id );
     if ( $name === 'activate' ) { $GLOBALS['activation_observations'][] = array( 'id' => $id, 'content' => $old['post_content'], 'meta' => rows( 'postmeta', 'post_id', $id, 'meta_id' ) ); }
     event( $name, $id, true ); list( $forced, $value ) = result_override( $name, 'after' ); return $forced ? $value : $id;
 }
@@ -243,6 +312,7 @@ function restore_state( $state ) {
         foreach ( $rows as $row ) { fixture_insert( "wp_$table", $row ); }
     }
     $GLOBALS['events'] = $GLOBALS['event_counts'] = $GLOBALS['failures'] = $GLOBALS['created_observations'] = $GLOBALS['activation_observations'] = $GLOBALS['save_observations'] = $GLOBALS['normalization_observations'] = $GLOBALS['count_observations'] = array(); $GLOBALS['clock'] = '2026-11-10 03:00:00'; $GLOBALS['encode_failure'] = null; $GLOBALS['result_overrides'] = array(); $GLOBALS['read_hook'] = null; $GLOBALS['fail_state_diagnostic_log'] = false; $GLOBALS['factory_preserves_code'] = false;
+    $GLOBALS['spectra_observations'] = $GLOBALS['other_save_observations'] = array();
 }
 function create_schema() {
     $columns = array_keys( fixture_post() );
@@ -277,13 +347,13 @@ function fill_fixture( $manifest, $source ) {
     foreach ( array( 1091, 1107, 1160, 1293 ) as $id ) {
         fixture_insert( 'wp_postmeta', array( 'post_id' => $id, 'meta_key' => 'unknown_plugin_setting', 'meta_value' => serialize( array( 'keep' => "raw quoted \'\\雪", 'url' => 'http://localhost:8090/' ) ) ) );
         fixture_insert( 'wp_postmeta', array( 'post_id' => $id, 'meta_key' => 'unknown_plugin_setting', 'meta_value' => null ) );
-        fixture_insert( 'wp_postmeta', array( 'post_id' => $id, 'meta_key' => '_uag_page_assets', 'meta_value' => 'a:0:{}' ) );
+        fixture_insert( 'wp_postmeta', array( 'post_id' => $id, 'meta_key' => '_uag_page_assets', 'meta_value' => serialize( array( 'uag_version' => UAGB_ASSET_VER, 'css' => 'Synthetic exact cache bytes' ) ) ) );
     }
     foreach ( $manifest['baseline']['terms'] as $row ) { fixture_insert( 'wp_terms', $row ); }
     foreach ( $manifest['baseline']['taxonomies'] as $row ) { fixture_insert( 'wp_term_taxonomy', $row ); }
     $options = array( 'home' => home_url(), 'siteurl' => home_url(), 'template' => 'astra', 'stylesheet' => 'astra', 'show_on_front' => 'page', 'page_on_front' => '296', 'page_for_posts' => '0', 'permalink_structure' => '/%postname%/',
         'astra-settings' => serialize( array( 'scroll-to-top-enable' => true, 'unknown' => array( "quote's" => "Preserve \\ and 雪", 'url' => home_url() . '/path/' ), 'boolean' => false, 'integer' => 1, 'numeric-string' => '1' ) ),
-        'unrelated_option' => 'SYNTHETIC_PRIVATE_UNRELATED_OPTION' );
+        '__uagb_asset_version' => UAGB_ASSET_VER, 'unrelated_option' => 'SYNTHETIC_PRIVATE_UNRELATED_OPTION' );
     foreach ( $options as $name => $value ) { fixture_insert( 'wp_options', array( 'option_name' => $name, 'option_value' => $value, 'autoload' => 'on' ) ); }
 }
 
@@ -316,15 +386,20 @@ function fixture_profile( $manifest, $source ) {
 function invoke( $arguments, $directory = null ) {
     $args = $arguments; $GLOBALS['logs'] = array(); $GLOBALS['message'] = ''; $GLOBALS['harness_error'] = null;
     $directory ??= $GLOBALS['package'];
+    $hooks_before = $GLOBALS['model_hooks'];
     try { require $directory . '/install-peek-release.php'; }
     catch ( Throwable $error ) {
         if ( $GLOBALS['harness_error'] !== null ) { throw new Harness_Error( $GLOBALS['harness_error'] ); }
         if ( ! $error instanceof Refusal_Error ) { throw $error; }
         throw $error;
     }
+    finally {
+        if ( $GLOBALS['model_hooks'] !== $hooks_before ) { throw new Harness_Error( 'Installer leaked or removed a hook callback on success or failure' ); }
+    }
     if ( $GLOBALS['harness_error'] !== null ) { throw new Harness_Error( $GLOBALS['harness_error'] ); }
     // Expose the exact included closure for pure diagnostic boundary tests only.
     if ( isset( $release_equal ) ) { $GLOBALS['diagnostic_equal'] = $release_equal; }
+    if ( isset( $release_wpcode_save ) ) { $GLOBALS['scoped_wpcode_save'] = $release_wpcode_save; }
     return $GLOBALS['message'];
 }
 function refusal( $arguments, $label, $directory = null ) {
@@ -350,6 +425,27 @@ function remove_tree( $path ) {
     if ( is_dir( $path ) && ! is_link( $path ) ) { foreach ( new DirectoryIterator( $path ) as $entry ) { if ( ! $entry->isDot() ) { remove_tree( $entry->getPathname() ); } } rmdir( $path ); }
     elseif ( file_exists( $path ) || is_link( $path ) ) { unlink( $path ); }
 }
+function fixture_spectra_files() {
+    $root = WP_PLUGIN_DIR . '/ultimate-addons-for-gutenberg'; mkdir( $root . '/classes', 0700, true );
+    $files = array( 'ultimate-addons-for-gutenberg.php' => "<?php\n/**\n * Plugin Name: Synthetic Spectra source fixture\n * Version: 2.20.6\n */\n" );
+    foreach ( array( 'helper' => 'UAGB_Helper', 'rest-api' => 'UAGB_Rest_API', 'loader' => 'UAGB_Loader', 'post-assets' => 'UAGB_Post_Assets', 'front-assets' => 'UAGB_Front_Assets' ) as $file => $class ) {
+        $body = $file === 'helper' ? 'public static function delete_page_assets($id) { model_spectra_invalidate($id); }' : '';
+        $files['classes/class-uagb-' . $file . '.php'] = "<?php\nclass $class { $body }\n";
+    }
+    $hashes = array();
+    foreach ( $files as $relative => $bytes ) {
+        file_put_contents( "$root/$relative", $bytes ); $hashes[$relative] = hash( 'sha256', $bytes );
+        if ( ( $GLOBALS['source_case'] === 'main-not-loaded' && $relative === 'ultimate-addons-for-gutenberg.php' ) || ( $GLOBALS['source_case'] === 'helper-not-loaded' && $relative === 'classes/class-uagb-helper.php' ) || ( $GLOBALS['source_case'] === 'loader-not-loaded' && $relative === 'classes/class-uagb-loader.php' ) ) { continue; }
+        if ( $GLOBALS['source_case'] === 'class-loaded-elsewhere' && $relative === 'classes/class-uagb-helper.php' ) {
+            file_put_contents( $GLOBALS['testdir'] . '/loaded-elsewhere.php', $bytes ); require_once $GLOBALS['testdir'] . '/loaded-elsewhere.php';
+        } else { require_once "$root/$relative"; }
+    }
+    add_action( 'save_post', array( 'UAGB_Helper', 'delete_page_assets' ), 10 );
+    add_action( 'save_post', static function ( $id ) { $GLOBALS['other_save_observations'][] = $id; }, 20 );
+    add_filter( 'uagb_delete_page_assets_skip_post_types', static function ( $types ) { $types[] = 'existing_custom_type'; return $types; }, 7 );
+    add_filter( 'uagb_delete_page_assets_skip_post_types', static function ( $types ) { $types[] = 'existing_last_type'; return $types; }, PHP_INT_MAX );
+    return $hashes;
+}
 $source = $argv[1] ?? __DIR__;
 $manifest_bytes = file_get_contents( "$source/manifest.json" );
 $manifest = json_decode( $manifest_bytes, true, 512, JSON_THROW_ON_ERROR );
@@ -360,11 +456,28 @@ foreach ( $payload_specs as $role => $spec ) {
 create_schema(); fill_fixture( $manifest, $source ); wpcode()->cache->cache_all_loaded_snippets(); $original = all_state(); restore_state( $original );
 $package = "$testdir/package"; copy_package( $source, $package );
 $fixture_manifest = $manifest; $fixture_manifest['baseline'] = fixture_profile( $manifest, $source );
+$fixture_manifest['spectra']['files'] = fixture_spectra_files();
+check( array_keys( $fixture_manifest['spectra']['files'] ) === array_keys( $manifest['spectra']['files'] ), 'synthetic source fixture preserves all six reviewed plugin paths' );
 file_put_contents( "$package/manifest.json", json_encode( $fixture_manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) . "\n" );
-$comparison = $fixture_manifest; $comparison['baseline'] = $manifest['baseline'];
-check( $comparison === $manifest, 'fixture changes only baseline profile; production routes, payloads, host rules and source identity remain intact' );
+$comparison = $fixture_manifest; $comparison['baseline'] = $manifest['baseline']; $comparison['spectra']['files'] = $manifest['spectra']['files'];
+check( $comparison === $manifest, 'fixture changes only row/source hashes; production routes, payloads, host rules, Spectra version and public source provenance remain intact' );
 check( hash_file( 'sha256', "$package/install-peek-release.php" ) === hash_file( 'sha256', "$source/install-peek-release.php" ), 'fixture runs identical production installer bytes' );
 foreach ( $payload_specs as $role => $spec ) { check( hash_file( 'sha256', "$package/{$spec['file']}" ) === $spec['file_sha256'], "fixture retains production $role payload bytes" ); }
+if ( $source_case !== '' ) {
+    if ( ! in_array( $source_case, array( 'runtime-version', 'main-not-loaded', 'helper-not-loaded', 'loader-not-loaded', 'class-loaded-elsewhere' ), true ) ) { throw new Harness_Error( 'Unknown isolated source-identity case' ); }
+    refusal( array( 'apply' ), 'isolated Spectra loaded-source identity: ' . $source_case );
+    check( glob( "$testdir/backups/*" ) === array(), 'source identity refusal precedes snapshot writes' );
+    echo 'PASS isolated Spectra source identity: ' . $source_case . "\n"; exit;
+}
+// Loaded PHP constants/classes cannot be replaced in-process. Fresh model
+// processes prove runtime and Reflection guards instead of mocking them away.
+foreach ( array( 'runtime-version', 'main-not-loaded', 'helper-not-loaded', 'loader-not-loaded', 'class-loaded-elsewhere' ) as $case ) {
+    $process = proc_open( array( PHP_BINARY, __FILE__, $source, $case ), array( 0 => array( 'pipe', 'r' ), 1 => array( 'pipe', 'w' ), 2 => array( 'pipe', 'w' ) ), $pipes );
+    if ( ! is_resource( $process ) ) { throw new Harness_Error( 'Could not start isolated source-identity model' ); }
+    fclose( $pipes[0] ); $output = stream_get_contents( $pipes[1] ); fclose( $pipes[1] ); $error_output = stream_get_contents( $pipes[2] ); fclose( $pipes[2] );
+    $status = proc_close( $process );
+    check( $status === 0 && $output === 'PASS isolated Spectra source identity: ' . $case . "\n" && $error_output === '', 'fresh PHP process refuses ' . $case . ' before all database, cache and snapshot writes; ' . $output . $error_output );
+}
 
 foreach ( array( 'https://thaisolitude.com', 'https://staging39.thaisolitude.com', 'http://127.0.0.1:8090', 'https://localhost:8090', 'http://localhost:8091', 'http://localhost:8090/other', 'http://localhost:8090.evil.test' ) as $bad ) {
     $home = $bad; refusal( array( 'apply' ), 'unsafe origin ' . $bad );
@@ -375,6 +488,64 @@ foreach ( array( array( 'unknown' ), array( 'apply', 'extra', 'extra' ), array( 
 $before_reads = $wpdb->reads; invoke( array( 'preflight' ) ); $preflight = marker( 'RELEASE-PREFLIGHT' );
 check( all_state() === $original && $wpdb->writes === 0 && $events === array() && $wpdb->reads > $before_reads, 'preflight uses real reads without writes' );
 check( $preflight['state'] === 'ready' && $preflight['home'] === $home && $preflight['manifest_sha256'] === hash_file( 'sha256', "$package/manifest.json" ), 'preflight binds exact origin, readiness and fixture manifest' );
+
+// Every source/profile refusal must happen before any save, cache or database
+// write. No fixture bypass is provided to the production source guard.
+$spectra_root = WP_PLUGIN_DIR . '/ultimate-addons-for-gutenberg';
+foreach ( $fixture_manifest['spectra']['files'] as $relative => $hash ) {
+    $file = "$spectra_root/$relative"; $bytes = file_get_contents( $file );
+    file_put_contents( $file, $bytes . "\n// changed installed source\n" );
+    refusal( array( 'apply' ), 'changed installed Spectra source ' . $relative );
+    check( str_contains( implode( "\n", $logs ), hash_file( 'sha256', $file ) ), 'source refusal retains the actual nonsecret file hash for ' . $relative );
+    file_put_contents( $file, $bytes );
+}
+$main_plugin = "$spectra_root/ultimate-addons-for-gutenberg.php"; $main_bytes = file_get_contents( $main_plugin );
+$wrong_header = str_replace( 'Version: 2.20.6', 'Version: 2.20.7', $main_bytes ); file_put_contents( $main_plugin, $wrong_header );
+$changed_manifest = $fixture_manifest; $changed_manifest['spectra']['files']['ultimate-addons-for-gutenberg.php'] = hash( 'sha256', $wrong_header );
+file_put_contents( "$package/manifest.json", json_encode( $changed_manifest ) );
+refusal( array( 'apply' ), 'installed plugin header version differs despite matching source hash' );
+file_put_contents( $main_plugin, $main_bytes );
+file_put_contents( "$package/manifest.json", json_encode( $fixture_manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) . "\n" );
+$helper_file = "$spectra_root/classes/class-uagb-helper.php"; $helper_bytes = file_get_contents( $helper_file );
+unlink( $helper_file ); refusal( array( 'apply' ), 'required Spectra helper source missing' );
+file_put_contents( "$testdir/outside-helper.php", $helper_bytes ); symlink( "$testdir/outside-helper.php", $helper_file );
+refusal( array( 'apply' ), 'Spectra helper source is an outside symlink even with identical bytes' );
+unlink( $helper_file ); file_put_contents( $helper_file, $helper_bytes );
+remove_action( 'save_post', array( 'UAGB_Helper', 'delete_page_assets' ), 10 );
+refusal( array( 'apply' ), 'reviewed Spectra save_post hook missing' );
+add_action( 'save_post', array( 'UAGB_Helper', 'delete_page_assets' ), 11 );
+refusal( array( 'apply' ), 'reviewed Spectra save_post hook at different priority' );
+remove_action( 'save_post', array( 'UAGB_Helper', 'delete_page_assets' ), 11 ); add_action( 'save_post', array( 'UAGB_Helper', 'delete_page_assets' ), 10 );
+
+$scope = $GLOBALS['scoped_wpcode_save']; $hooks_before = $model_hooks;
+$prior_skip = array( 'nav_menu_item', 'existing_custom_type', 'existing_last_type' );
+check( apply_filters( 'uagb_delete_page_assets_skip_post_types', array( 'nav_menu_item' ) ) === $prior_skip, 'existing Spectra skip callbacks and their order are retained outside save scope' );
+$value = $scope( static function () use ( $prior_skip ) {
+    check( apply_filters( 'uagb_delete_page_assets_skip_post_types', array( 'nav_menu_item' ) ) === array_merge( $prior_skip, array( 'wpcode' ) ), 'save scope adds only wpcode after existing exclusions' );
+    do_action( 'save_post', 1232 ); return 'save-result';
+} );
+check( $value === 'save-result' && all_state() === $original && $model_hooks === $hooks_before && $other_save_observations === array( 1232 ), 'scoped save returns its result, preserves raw metadata/global option and executes unrelated save hook' );
+$caught = null;
+try { $scope( static function () { do_action( 'save_post', 1232 ); throw new RuntimeException( 'Synthetic scoped save exception' ); } ); } catch ( RuntimeException $error ) { $caught = $error; }
+check( $caught?->getMessage() === 'Synthetic scoped save exception' && $model_hooks === $hooks_before && all_state() === $original, 'scoped save exception removes only its own callback and preserves database bytes' );
+$malformed_filter = static fn( $types ) => null;
+add_filter( 'uagb_delete_page_assets_skip_post_types', $malformed_filter, PHP_INT_MAX ); $malformed_hooks = $model_hooks; $caught = null;
+try { $scope( static function () { do_action( 'save_post', 1232 ); } ); } catch ( RuntimeException $error ) { $caught = $error; }
+check( $caught !== null && str_contains( $caught->getMessage(), 'non-array' ) && $model_hooks === $malformed_hooks && all_state() === $original, 'malformed existing exclusion output fails closed, cleans up only the scoped filter and changes no cache or metadata' );
+remove_filter( 'uagb_delete_page_assets_skip_post_types', $malformed_filter, PHP_INT_MAX );
+check( $model_hooks === $hooks_before, 'malformed-filter control retains all original hook identities' );
+$scope( static function () use ( $scope, $prior_skip ) {
+    $scope( static function () use ( $prior_skip ) { check( apply_filters( 'uagb_delete_page_assets_skip_post_types', array( 'nav_menu_item' ) ) === array_merge( $prior_skip, array( 'wpcode' ) ), 'nested scope preserves the exclusion list without duplicating wpcode' ); } );
+    check( in_array( 'wpcode', apply_filters( 'uagb_delete_page_assets_skip_post_types', array( 'nav_menu_item' ) ), true ), 'nested cleanup retains the enclosing scope callback' );
+} );
+check( $model_hooks === $hooks_before, 'nested cleanup preserves every preexisting callback identity' );
+do_action( 'save_post', 1232 );
+check( row( 'options', 'option_name', '__uagb_asset_version' )['option_value'] !== UAGB_ASSET_VER, 'positive control: an unscoped WPCode save actually invalidates the modeled global asset version' );
+restore_state( $original );
+$scope( static function () { do_action( 'save_post', 1160 ); } );
+check( row( 'options', 'option_name', '__uagb_asset_version' )['option_value'] !== UAGB_ASSET_VER && fixture_sql( "SELECT COUNT(*) FROM wp_postmeta WHERE post_id=1160 AND meta_key='_uag_page_assets'" )->fetchColumn() === '0', 'wpcode-only exclusion leaves page metadata deletion and global invalidation active during scope' );
+check( $other_save_observations === array( 1160 ) && $model_hooks === $hooks_before, 'unrelated page saves preserve all normal hook callbacks' );
+restore_state( $original );
 
 $mutations = array(
     'changed dependency code' => static fn() => fixture_update( 'wp_posts', 'ID', 1232, array( 'post_content' => 'edited dependency' ) ),
@@ -388,6 +559,7 @@ $mutations = array(
     'changed CSS byte' => static fn() => fixture_update( 'wp_posts', 'ID', 29, array( 'post_content' => row( 'posts', 'ID', 29 )['post_content'] . ' ' ) ),
     'changed Astra autoload' => static fn() => fixture_update( 'wp_options', 'option_name', 'astra-settings', array( 'autoload' => 'off' ) ),
     'changed Astra raw data' => static fn() => fixture_update( 'wp_options', 'option_name', 'astra-settings', array( 'option_value' => serialize( array( 'scroll-to-top-enable' => 1 ) ) ) ),
+    'missing required Spectra global option' => static fn() => fixture_sql( "DELETE FROM wp_options WHERE option_name='__uagb_asset_version'" ),
     'changed shared taxonomy count' => static fn() => fixture_update( 'wp_term_taxonomy', 'term_taxonomy_id', 9, array( 'count' => '18' ) ),
     'new taxonomy metadata' => static fn() => fixture_insert( 'wp_termmeta', array( 'term_id' => 9, 'meta_key' => 'external', 'meta_value' => 'keep' ) ),
 );
@@ -408,6 +580,19 @@ putenv( 'WWM_BACKUP_DIR=' . "$testdir/backups" );
 invoke( array( 'apply' ) ); $applied_marker = marker( 'RELEASE-SNAPSHOT' );
 $path = $applied_marker['snapshot']; $snapshot = json_decode( file_get_contents( $path ), true, 512, JSON_THROW_ON_ERROR );
 $applied = all_state(); $successful_event_counts = $event_counts; $successful_count_observations = $count_observations; $ids = $applied_marker['ids']; $snapshot_bytes = file_get_contents( $path );
+check( count( $spectra_observations ) === 5 + count( $save_observations ) && $other_save_observations === array_column( $spectra_observations, 'id' ), 'factory, correction and publication each run Spectra and every unrelated save hook' );
+foreach ( $spectra_observations as $observation ) {
+    check( $observation['type'] === 'wpcode' && $observation['skip'] === array_merge( $prior_skip, array( 'wpcode' ) ) && $observation['skipped'], 'only the temporary additive wpcode exclusion prevents each modeled save invalidation' );
+    check( $observation['option_before'] === $observation['option_after'] && $observation['meta_before'] === $observation['meta_after'], 'each save preserves exact Spectra global option row and metadata rows without normalization' );
+}
+check( stable( $snapshot['old']['options']['__uagb_asset_version'] ) === stable( row( 'options', 'option_name', '__uagb_asset_version' ) ) && $snapshot['new']['options']['__uagb_asset_version'] === $snapshot['old']['options']['__uagb_asset_version'], 'complete snapshot protects every byte and row field of the Spectra global version option' );
+foreach ( $ids as $id ) { model_spectra_regenerate( $id ); }
+check( all_state() === $applied, 'modeled delayed callback is a no-op for all five owned snippets without a Spectra assets row; no actual cron claim' );
+model_spectra_regenerate( 1160 );
+check( all_state() !== $applied && unserialize( fixture_sql( "SELECT meta_value FROM wp_postmeta WHERE post_id=1160 AND meta_key='_uag_page_assets'" )->fetchColumn(), array( 'allowed_classes' => false ) )['uag_version'] === '', 'positive control: modeled delayed callback invalidates an existing matching page assets row' );
+// Retain observations of the successful application for the original controls.
+fixture_sql( "UPDATE wp_postmeta SET meta_value=? WHERE post_id=1160 AND meta_key='_uag_page_assets'", array( serialize( array( 'uag_version' => UAGB_ASSET_VER, 'css' => 'Synthetic exact cache bytes' ) ) ) );
+check( all_state() === $applied, 'delayed-callback positive control resets only its synthetic fixture byte' );
 check( $applied_marker['state_sha256'] === digest( $snapshot['new'] ) && stable( $applied_marker['ids'] ) === stable( $snapshot['ids'] ), 'success marker binds exact state and ownership IDs' );
 check( ! isset( $snapshot['old']['records'][1160]['meta'] ) && ! str_contains( $snapshot_bytes, 'raw quoted' ) && ! str_contains( $snapshot_bytes, 'SYNTHETIC_PRIVATE_UNRELATED_OPTION' ), 'unknown source metadata is witnessed by hash and unrelated option values are absent from snapshot' );
 check( count( $ids ) === 5 && count( array_unique( $ids ) ) === 5 && isset( $ids['core'] ), 'release owns exactly five distinct records' );
@@ -477,6 +662,12 @@ $drifts = array(
     'original source unknown metadata' => static fn() => fixture_insert( 'wp_postmeta', array( 'post_id' => 1160, 'meta_key' => 'new external state', 'meta_value' => 'SYNTHETIC_PRIVATE_NEW_VALUE' ) ),
     'unrelated snippet code' => static fn() => fixture_update( 'wp_posts', 'ID', 1701, array( 'post_content' => 'External unrelated edit' ) ),
     'Astra autoload' => static fn() => fixture_update( 'wp_options', 'option_name', 'astra-settings', array( 'autoload' => 'off' ) ),
+    'Spectra global asset version' => static fn() => fixture_update( 'wp_options', 'option_name', '__uagb_asset_version', array( 'option_value' => '1794294001' ) ),
+    'Spectra global asset version autoload' => static fn() => fixture_update( 'wp_options', 'option_name', '__uagb_asset_version', array( 'autoload' => 'off' ) ),
+    'Spectra global asset version row identity' => static fn() => fixture_update( 'wp_options', 'option_name', '__uagb_asset_version', array( 'option_id' => '6000' ) ),
+    'missing Spectra global asset version' => static fn() => fixture_sql( "DELETE FROM wp_options WHERE option_name='__uagb_asset_version'" ),
+    'Spectra original page assets value' => static fn() => fixture_sql( "UPDATE wp_postmeta SET meta_value='a:0:{}' WHERE post_id=1160 AND meta_key='_uag_page_assets'" ),
+    'Spectra original page assets row identity' => static fn() => fixture_sql( "UPDATE wp_postmeta SET meta_id=6000 WHERE post_id=1160 AND meta_key='_uag_page_assets'" ),
     'Search CSS missing' => static fn() => fixture_update( 'wp_posts', 'ID', 29, array( 'post_content' => substr( row( 'posts', 'ID', 29 )['post_content'], 0, -strlen( "\n" . $GLOBALS['search_bytes'] ) ) ) ),
     'Search CSS changed' => static fn() => fixture_update( 'wp_posts', 'ID', 29, array( 'post_content' => row( 'posts', 'ID', 29 )['post_content'] . ' ' ) ),
     'shared count' => static fn() => fixture_update( 'wp_term_taxonomy', 'term_taxonomy_id', 10, array( 'count' => '23' ) ),
@@ -508,6 +699,8 @@ $link = "$testdir/backups/peek-release-before-20261110-030000-00000000.json"; sy
 
 restore_state( $applied ); invoke( array( 'rollback', $path ) ); $restored_marker = marker( 'RELEASE-SNAPSHOT' );
 check( all_state() === $original, 'rollback restores all original raw rows and shared counts exactly' );
+foreach ( $ids as $id ) { model_spectra_regenerate( $id ); }
+check( all_state() === $original, 'modeled queued callback remains a no-op after all owned snippets have been deleted by rollback' );
 $deletions = array_values( array_filter( $events, static fn( $entry ) => $entry[0] === 'delete:before' ) );
 $membership_count = 22;
 foreach ( $count_observations as $observation ) {
@@ -532,7 +725,7 @@ invoke( array( 'rollback', $second['snapshot'] ) ); check( all_state() === $orig
 
 // Corruption cannot become trusted merely by recomputing its local state hash.
 restore_state( $applied );
-foreach ( array( 'old-meta', 'old-css-date', 'new-meta', 'new-date', 'foreign-id', 'incomplete' ) as $mutation ) {
+foreach ( array( 'old-meta', 'old-css-date', 'new-meta', 'new-date', 'foreign-id', 'incomplete', 'missing-spectra-global-row' ) as $mutation ) {
     $forged = $snapshot;
     if ( $mutation === 'old-meta' ) { $forged['old']['records'][1232]['meta'][0]['meta_value'] = 'forged'; }
     if ( $mutation === 'old-css-date' ) { $forged['old']['records'][29]['post']['post_modified'] = '2099-01-01 00:00:00'; }
@@ -540,6 +733,7 @@ foreach ( array( 'old-meta', 'old-css-date', 'new-meta', 'new-date', 'foreign-id
     if ( $mutation === 'new-date' ) { $forged['new']['owned']['core']['post']['post_modified'] = '2099-01-01 00:00:00'; }
     if ( $mutation === 'foreign-id' ) { $forged['ids']['core'] = 1701; $forged['new']['owned']['core']['post']['ID'] = '1701'; }
     if ( $mutation === 'incomplete' ) { $forged['complete'] = false; }
+    if ( $mutation === 'missing-spectra-global-row' ) { unset( $forged['old']['options']['__uagb_asset_version'], $forged['new']['options']['__uagb_asset_version'] ); }
     $forged['old_sha256'] = digest( $forged['old'] ); $forged['new_sha256'] = digest( $forged['new'] );
     $bad_path = snapshot_write( $forged );
     refusal( array( 'rollback', $bad_path ), "snapshot semantic validation refuses $mutation with recomputed hashes" );
