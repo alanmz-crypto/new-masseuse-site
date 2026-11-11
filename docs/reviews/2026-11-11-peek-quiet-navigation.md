@@ -1,6 +1,6 @@
 # Peek reading labels and menu buttons
 
-**Deployed to staging39; public browsers passed and final snapshot verification is pending.** Ryan
+**Complete on staging39; public browsers, final snapshot verification and Ryan's Safari review passed.** Ryan
 requested four changes before live: remove the automatic section label beside
 the rail while reading; outline the index button; close the header hamburger
 menu on an outside tap; and show a tappable X on the open index. Names shown by
@@ -302,7 +302,7 @@ reported **20 differences, zero missing captures, zero identical**; this is
 not a pixel pass and live has the older navigation. The backup imported
 successfully; all 104 fingerprints were available and the only before/after
 differences were #1380 and its WPCode cache. Dedicated public-browser results
-follow; final actual-snapshot verification is still required.
+and final actual-snapshot verification follow.
 
 ## Public verification
 
@@ -312,9 +312,36 @@ Request `peek-quiet-nav-public-1`, commit
 All **20 browser suites completed: 19,628 passed, zero failed**. The retained
 index-clearance graph passed 18,460/0; focused Chromium 608/0 and Firefox 560/0,
 each with 18 cases, 18 loads and 36 captures. This run reached staging39 and
-was valid; no public retry was used. The complete raw artifact and captures
-are being reviewed before closing the phase, alongside final stored-state
-verification against the actual staging snapshot.
+was valid; no public retry was used. The full report and raw artifact were
+reviewed. The artifact matched GitHub's 69,662,612-byte size and SHA256
+`5256b0e5d92b014b515fc74437beabbaf50848567891b50459f5308976b7b75a`,
+with valid ZIP integrity and safe extraction paths. The job's checkout log
+independently confirmed the exact commit above.
+
+Independent audit checked all 20 unique leaves, 276 input traces, 108 surface
+measurements and 72 capture-state records, with no discrepancy, browser error
+or INVALID result. All 144 quiet/index JPEGs decoded. All 72 index captures
+and 44 quiet captures were byte-identical to the reviewed copy2 evidence; the
+28 changed quiet Chromium images were freshly reviewed, including native-size
+samples. Changed pixels were confined to the title-strip/header text band;
+this identifies their location, not their cause. No new visual blocker was
+found in the four requested changes. Root also inspected native public Thai
+reading, Privacy footer and dark Services open-index views. The minimum
+recorded glyph/border contrast was 7.1987:1. Still images do not prove outside
+tap behavior; assertions and input traces provide that evidence separately.
+
+Final read-only request `peek-quiet-nav-final-verify-1`, commit
+`8a6c584bdc4efba94d3978bb9bbdfcefa3f9b722`, passed at **05:35:29 UTC** in
+[Actions 42966700614](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42966700614).
+The full report was independently read. It verified the actual staging snapshot
+`peek-template-core-quiet-nav-before-20261111-043846-d52816fb.json`
+before and after all **19 HTTP200 exact served-code/data-scope checks**.
+The complete core state remained
+`74ea2dd67eaf86ea065abeba398d41df6fe0f5451e1e0b36d11e2b309d60e56f`;
+the four-page data state remained
+`3e9acc4ea6dfedf7fe99e7a70534603ba0d32a1827793755c8ee10f4e55c9cc9`.
+No mismatch or INVALID occurred. This closes the four-change staging phase;
+main and live remain unchanged.
 
 ## Separate visual follow-up before live
 

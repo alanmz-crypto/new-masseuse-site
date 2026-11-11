@@ -11,8 +11,11 @@ X and dismissing the header menu on outside taps are now deployed on staging39.
 See the [quiet-navigation record](2026-11-11-peek-quiet-navigation.md): source
 48/0, fresh-copy browsers 24,977/0 and exact recovery, then the actual backed-up
 apply with unchanged summaries and 19 exact rendered routes. Public browsers
-passed **19,628/0 across all 20 suites**; final snapshot verification is pending.
-Ryan accepted the new
+passed **19,628/0 across all 20 suites**; raw evidence and all 144 quiet/index
+captures were audited without a new blocker. Final actual-snapshot verification
+passed at **05:35:29 UTC** (run **42966700614**), confirming exact core/four-data
+state before and after all 19 rendered routes. The four-change staging phase
+is complete. Ryan accepted the new
 controls on iPhone Safari on November 11: “It's correct.” They explicitly
 deferred fluidity refinements until after the live push. This acceptance and
 the earlier ones remain closed; do not ask for a generic retest or add fluidity

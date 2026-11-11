@@ -1,6 +1,6 @@
 # Peek shared template
 
-**Current staging39, November 11: four navigation refinements deployed.**
+**Current staging39, November 11: four navigation refinements complete and accepted.**
 The automatic rail-side scrolling label is removed; interaction names remain.
 The index has a solid outlined button and a tappable X while open. Outside taps
 close the header menu; the index's existing outside dismissal remains.
@@ -9,8 +9,11 @@ Source gates passed **48/0**; the fresh staging39 copy passed **24,977/0 across
 24 browser suites**, with exact recovery after browser activity and all 108
 focused screenshots reviewed. Applied to #1380 at **04:38:46 UTC**; exact
 core/four-data state passed before and after all 19 rendered routes. Public
-browsers passed **19,628/0 across all 20 suites** at **05:32:28 UTC**; final
-post-browser snapshot verification is pending. Ryan accepted these new controls
+browsers passed **19,628/0 across all 20 suites** at **05:32:28 UTC**; raw traces
+and all 144 quiet/index captures were audited without a new blocker. Final
+read-only verification passed at **05:35:29 UTC** (run **42966700614**), with
+exact core/four-data state before and after all 19 rendered routes against the
+actual snapshot below. Ryan accepted these new controls
 on iPhone Safari on November 11:
 “It's correct.” They explicitly deferred fluidity refinements until after the
 live push. No repeat of this acceptance check is needed; this does not claim
