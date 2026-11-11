@@ -351,10 +351,15 @@ passed at **10:28:47 UTC**, run **43002377065**: actual snapshot
 `peek-template-core-title-resize-before-20261111-101808-92c3067f.json`, exact
 core/four-data state before and after all 19 route renders, unchanged Search CSS,
 and fresh-export restore proof. Complete source Gates on that request passed
-55/0 at 10:26:32 UTC. Public focused checks are running as **43004137038**;
-final actual-snapshot/stored-fingerprint verification and the complete new
-live-sourced copy cycle remain pending. The resize record contains the exact
-backup evidence, state hashes, artifact and informational comparison limits.
+55/0 at 10:26:32 UTC. Public focused checks **43004137038** passed **752/0**
+at **10:39:36 UTC**, with all four leaves and all 60 captures reviewed. All 24
+resize captures match the successful copy exactly. Final actual-snapshot
+verification **43005630245** passed at **10:41:20 UTC**, then stored inspection
+**43005811818** at **10:42:37 UTC** confirmed published core code `f152fad9…73566`
+and unchanged CSS29 `b024acc6…2c69b`. Staging verification is complete; the full
+new live-sourced first-install/browser/recovery cycle remains pending. The resize
+record contains exact source bindings, backup evidence, state hashes, artifacts
+and informational comparison limits.
 
 ## Disabled live-release proposal
 

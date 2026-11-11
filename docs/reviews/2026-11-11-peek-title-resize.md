@@ -204,6 +204,28 @@ Focused public checks `peek-title-resize-public-1` passed at **10:39:36 UTC**, r
 **43004137038**, source `f62e8aeacb4d55aac5fd1bd9f1bf07cfc65d727a`.
 All four phases passed, **752/0**: 48/0 focused resize assertions in each of
 Chromium, Firefox and WebKit, plus 608/0 quiet-navigation assertions in Chromium.
-There were 30 page loads and 60 captures. Raw evidence/capture review is finishing;
-exact actual-snapshot verification and the final stored CSS/core fingerprint
-comparison follow. Live remains unchanged and disabled.
+There were 30 page loads and 60 captures. Independent raw-evidence review
+recomputed all totals and replayed all four strict parsers; browser stderr was
+empty. All 60 unique JPEGs decoded. All 24 resize captures match the successful
+copy exactly, including WebKit; four Search captures also match. Other quiet
+capture differences are confined to strip text and small rail regions, without
+a new layout, clipping or control concern. Artifact **13847692934**, 3,847,412
+bytes, SHA256 `d140549cc62c8bc663f0d359cfe1b5af73b6adc392cb1c55ea2cf05d6ba3ae9a`,
+passed size/digest/ZIP integrity checks.
+
+Final actual-snapshot verification `peek-title-resize-verify-1` passed at
+**10:41:20 UTC**, Actions **43005630245**, source
+`03b0b5e243a1231bcc53af46067c8e1d8295a31c`. It used the actual staging snapshot
+above, verified the same exact core/four-page state before and after all 19
+HTTP200 exact-byte renders, and compared CSS before/after rendering. A final
+stored fingerprint comparison closes the interval back to the apply's CSS hash.
+Final stored inspection `peek-title-resize-stored-1` passed at **10:42:37 UTC**,
+Actions **43005811818**, source `e1a95f06b3f0f73af7a920d76f9cc20a3373071f`.
+The published core #1380 code SHA is exactly
+`f152fad975bb85ed4ad06a0ce5f0000cd656276b34efb38b748646a5fdc73566`;
+CSS29 still matches the apply's
+`b024acc687b49a37115940b52976f3bdcfc6cb236ae7bb4a81422f8c2d02c69b`.
+The full report was read. Staging verification is complete. The release payload
+and manifest are unchanged from the source that passed these checks; complete
+new live-copy first-install and post-browser recovery proof is next.
+Live remains unchanged and disabled.

@@ -1,6 +1,6 @@
 # Peek shared template
 
-**Current release preparation, November 11: Search contrast complete on staging39.**
+**Current release preparation, November 11: navigation and Search verified on staging39.**
 The [Search phase record](../../../docs/reviews/2026-11-11-search-contrast.md)
 records final source Gates **51/0**, a fresh staging39 copy with **300/0** browser
 checks and exact recovery, followed by backed-up deployment at **06:45:11 UTC**.
@@ -56,9 +56,11 @@ The minimal title-strip observer correction passed 55/0 source gates and a
 fresh actual staging-copy rehearsal: 25,343/0 across all 29 browser suites,
 rendered wording gates and exact recovery before/after browsers. Backed-up
 staging39 apply run 43002377065 passed at 10:28:47 UTC, with exact core/four-data
-state before/after all 19 routes and unchanged Search CSS. Public checks and
-final actual-snapshot/stored verification remain pending, followed by the full
-new live-copy release proof. See the resize phase record under docs/reviews.
+state before/after all 19 routes and unchanged Search CSS. Public checks passed
+752/0; all 60 captures were reviewed. Final actual-snapshot and stored-fingerprint
+verification passed at 10:42:37 UTC, with exact published core and unchanged CSS.
+Staging verification is complete; the full corrected live-copy release cycle is
+next. See the resize phase record under docs/reviews for exact bindings.
 Current guarded recovery restores frozen v10 using only actual staging snapshot
 `peek-template-core-title-resize-before-20261111-101808-92c3067f.json`, after
 fresh verified backup and exact state checks. The pre-write export is

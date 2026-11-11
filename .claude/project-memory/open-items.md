@@ -9,7 +9,7 @@ metadata:
 A phone cloud session (https://claude.ai/code, repo `alanmz-crypto/new-masseuse-site`) sees ONLY this repository: not his computer, not his global `~/.claude/CLAUDE.md`, not his local Claude memory, not convmem. Everything that must not be lost is therefore written here and in the notes this index points to.
 First message to send in a fresh phone session: **"Read .claude/project-memory/open-items.md and tell me what is due."**
 
-**Current release preparation, November 11: Search contrast complete on staging39.**
+**Current release preparation, November 11: navigation and Search verified on staging39.**
 The [Search phase record](../../docs/reviews/2026-11-11-search-contrast.md)
 records final source Gates **51/0**, a fresh staging39 copy with **300/0** browser
 checks and exact recovery, followed by backed-up deployment at **06:45:11 UTC**.
@@ -78,8 +78,13 @@ passed at **10:14:56 UTC**, run **43001945737**. Staging39 core #1380 was
 updated at **10:18:08 UTC**; apply run **43002377065** passed at **10:28:47 UTC**.
 The fresh export and actual snapshot were verified encrypted off-site in order;
 all 19 routes served exact core/style/data, with unchanged summaries and CSS.
-Public focused run **43004137038**, final actual-snapshot/stored verification,
-and complete new live-copy release proof remain pending. Live is unchanged.
+Public focused run **43004137038** passed **752/0** at **10:39:36 UTC**;
+all 60 captures were reviewed and all 24 resize captures match the successful
+copy exactly. Final actual-snapshot verification **43005630245** passed at
+**10:41:20 UTC**; stored inspection **43005811818** passed at **10:42:37 UTC**,
+confirming published core `f152fad9…73566` and unchanged CSS29 `b024acc6…2c69b`.
+Staging verification is complete. The full corrected live-copy first-install,
+browser and recovery cycle remains pending. Live is unchanged.
 Current guarded recovery starts with `core-title-resize` → frozen v10 using only
 `peek-template-core-title-resize-before-20261111-101808-92c3067f.json`, after
 fresh verified backup and exact ownership/state checks. Its pre-write export is
