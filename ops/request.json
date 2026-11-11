@@ -1,11 +1,8 @@
 {
-  "id": "ui-page-navigation-live-browser-20261104",
+  "id": "peek-visitor-release-live-dry-3",
   "op": "run",
   "target": "live",
-  "script": "page-navigation/check-page-navigation.mjs",
-  "args": [
-    "https://thaisolitude.com",
-    "inline"
-  ],
+  "script": "link-ideas/push-peek-release.sh",
+  "args": [],
   "tests": "auto"
 }

@@ -1,0 +1,1777 @@
+{
+  "schema_version": 1,
+  "purpose": "Auditable capture selection from the complete fifth Kiro-fixes rehearsal; this is throwaway-copy evidence, not a claim that staging was deployed.",
+  "request_id": "peek-kiro-fixes-rehearse-5",
+  "run_id": 42693471206,
+  "run_url": "https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42693471206",
+  "source_commit": "5159801ee4f0000d014940f1451a0411ea0c28b4",
+  "runtime": {
+    "path": "scripts/work-with-me-employer/link-ideas/peek-nav.php",
+    "full_php_bytes": 102655,
+    "full_php_sha256": "ce21afe60e2c1bdd6286ddc1f9a1e3d14d999bfa967dc4109e4ef5f78426b2fa",
+    "stored_code_bytes": 102649,
+    "stored_code_sha256": "dec11c9e50cacba8986068e98748e966333aebe3366701f1f0e94e5e790113a1"
+  },
+  "started_at_utc": "2026-11-09 20:29:51",
+  "finished_at_utc": "2026-11-09 20:47:38",
+  "artifact": {
+    "id": 13709935624,
+    "name": "site-ops-42693471206",
+    "zip_bytes": 21904549,
+    "zip_sha256": "32e421073187adfb3b884f7ef251683999eaf326f4f9f67e8db1f49086b31e12"
+  },
+  "result": {
+    "status": "PASS",
+    "passed_assertions": 14249,
+    "failed_assertions": 0,
+    "invalid_lines": 0,
+    "unique_numeric_suites": 14,
+    "all_wrappers_passed": true,
+    "all_child_exit_codes_zero": true,
+    "all_five_stderr_logs_empty": true,
+    "raw_pass_lines_reconcile_with_unique_suite_total": true,
+    "suites": {
+      "INFO Peek disclosures chromium": [
+        66,
+        0
+      ],
+      "INFO Peek disclosures firefox": [
+        41,
+        0
+      ],
+      "INFO Peek Kiro layout chromium": [
+        158,
+        0
+      ],
+      "INFO Peek Kiro layout firefox": [
+        134,
+        0
+      ],
+      "INFO Peek title rails chromium": [
+        1605,
+        0
+      ],
+      "INFO Peek title rails firefox": [
+        1598,
+        0
+      ],
+      "INFO Peek title strip chromium": [
+        1339,
+        0
+      ],
+      "INFO Peek title strip firefox": [
+        1336,
+        0
+      ],
+      "INFO Peek pages chromium": [
+        207,
+        0
+      ],
+      "INFO Peek pages firefox": [
+        207,
+        0
+      ],
+      "INFO Peek clearance chromium": [
+        3340,
+        0
+      ],
+      "INFO Peek native touch": [
+        387,
+        0
+      ],
+      "INFO Peek clearance firefox": [
+        3340,
+        0
+      ],
+      "INFO Peek retained Thai chromium": [
+        491,
+        0
+      ]
+    }
+  },
+  "safety_evidence": {
+    "copy_preflight_apply_idempotence_exact_rollback_reapply": "PASS",
+    "rendered_wording_php_published_inventory": "PASS",
+    "fingerprint_changes": [
+      "snippet #1380",
+      "wpcode_snippets cache"
+    ],
+    "throwaway_snapshots": [
+      "peek-template-core-kiro-fixes-before-20261109-203143-f1251730.json",
+      "peek-template-core-kiro-fixes-before-20261109-203146-40956192.json"
+    ],
+    "snapshot_scope": "Throwaway rehearsal copy only; these are not staging recovery snapshots."
+  },
+  "leaf_logs": [
+    {
+      "name": "disclosures-chromium.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "PASS": 0,
+      "FAIL": 0,
+      "INVALID": 0,
+      "numeric": {}
+    },
+    {
+      "name": "disclosures-chromium.stdout.log",
+      "bytes": 286389,
+      "sha256": "74ebfabe78fa8e7e58d84e8050720db2ba447e64045b52b962448d4f24597bca",
+      "PASS": 66,
+      "FAIL": 0,
+      "INVALID": 0,
+      "numeric": {
+        "INFO Peek disclosures chromium": [
+          66,
+          0
+        ]
+      }
+    },
+    {
+      "name": "disclosures-firefox.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "PASS": 0,
+      "FAIL": 0,
+      "INVALID": 0,
+      "numeric": {}
+    },
+    {
+      "name": "disclosures-firefox.stdout.log",
+      "bytes": 8711,
+      "sha256": "0ff4d7aa55ea6b1060ccd76264a457563a7884db0cfa21ce9ca46d9bf9a94dc0",
+      "PASS": 41,
+      "FAIL": 0,
+      "INVALID": 0,
+      "numeric": {
+        "INFO Peek disclosures firefox": [
+          41,
+          0
+        ]
+      }
+    },
+    {
+      "name": "layout-chromium.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "PASS": 0,
+      "FAIL": 0,
+      "INVALID": 0,
+      "numeric": {}
+    },
+    {
+      "name": "layout-chromium.stdout.log",
+      "bytes": 1049795,
+      "sha256": "a6b92b9d07dcb676b634cdb0e1fa49f840a331cdee26ff44808cb3a11526feef",
+      "PASS": 158,
+      "FAIL": 0,
+      "INVALID": 0,
+      "numeric": {
+        "INFO Peek Kiro layout chromium": [
+          158,
+          0
+        ]
+      }
+    },
+    {
+      "name": "layout-firefox.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "PASS": 0,
+      "FAIL": 0,
+      "INVALID": 0,
+      "numeric": {}
+    },
+    {
+      "name": "layout-firefox.stdout.log",
+      "bytes": 13994,
+      "sha256": "2791611468272d4d6a53cb82911a4420c2561109c6002cca7e330cfb50043ffc",
+      "PASS": 134,
+      "FAIL": 0,
+      "INVALID": 0,
+      "numeric": {
+        "INFO Peek Kiro layout firefox": [
+          134,
+          0
+        ]
+      }
+    },
+    {
+      "name": "retained-title-rails.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "PASS": 0,
+      "FAIL": 0,
+      "INVALID": 0,
+      "numeric": {}
+    },
+    {
+      "name": "retained-title-rails.stdout.log",
+      "bytes": 11475875,
+      "sha256": "7dc352bb7caa9953b463d3bf2201a84ad17096b20d2751c92733973f9cbd6c2b",
+      "PASS": 13850,
+      "FAIL": 0,
+      "INVALID": 0,
+      "numeric": {
+        "INFO Peek title rails chromium": [
+          1605,
+          0
+        ],
+        "INFO Peek title rails firefox": [
+          1598,
+          0
+        ],
+        "INFO Peek title strip chromium": [
+          1339,
+          0
+        ],
+        "INFO Peek title strip firefox": [
+          1336,
+          0
+        ],
+        "INFO Peek pages chromium": [
+          207,
+          0
+        ],
+        "INFO Peek pages firefox": [
+          207,
+          0
+        ],
+        "INFO Peek clearance chromium": [
+          3340,
+          0
+        ],
+        "INFO Peek native touch": [
+          387,
+          0
+        ],
+        "INFO Peek clearance firefox": [
+          3340,
+          0
+        ],
+        "INFO Peek retained Thai chromium": [
+          491,
+          0
+        ]
+      }
+    }
+  ],
+  "capture_counts": {
+    "artifact_total": 133,
+    "retained": 22,
+    "retained_matching_prior_run": 18,
+    "retained_changed_from_prior_run": 4,
+    "retained_freshly_viewed_this_run": 12
+  },
+  "prior_visual_comparison": {
+    "run_id": 42689973671,
+    "source_commit": "e97b4f27cfb206d52e9aec5dacf1e8ad44d9b150",
+    "note": "The selected prior captures were visually reviewed. Run 4 itself was incomplete and INVALID; matching captures do not turn that run into a passing gate."
+  },
+  "visual_assessment": {
+    "conclusion": "No new visible blocker in the changed selected captures or the freshly inspected key samples. Privacy Client disclosure remains open and aligned below the strip, with the rail outside its box. Thai research text and controls are readable; full Work With Me titles remain visible.",
+    "observed_limits": [
+      "Transient Privacy rail labels can temporarily cover a small amount of body text.",
+      "At 150% root font size, the site brand wraps awkwardly and fewer research bullets are visible.",
+      "Landscape reading cards can cover part of the title strip, while staying below the pinned header.",
+      "Summary fades at the bottom indicate further scrollable content."
+    ],
+    "scope": "Fresh current-run viewing is recorded per image. Other retained images are exact SHA256 matches of previously reviewed run-4 captures. Unretained images were inventoried and hashed, not individually reviewed by this audit."
+  },
+  "validation_limits": [
+    "Browser automation and CDP touch are not physical-device validation.",
+    "Root font-size changes are not true OS text scaling.",
+    "VoiceOver, TalkBack and other assistive technology were not validated.",
+    "No WebKit or real Safari validation is claimed.",
+    "Static captures do not independently establish gesture behavior; completed interaction logs provide that evidence."
+  ],
+  "captures": [
+    {
+      "name": "clearance-chair-massage-1280-right-top-1.jpg",
+      "bytes": 92140,
+      "sha256": "435c84ba657c14dddff2869b9b1c83e044b4d589f6ba0c2c5cf8113feca7f484",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "clearance-chair-massage-390-right-top-1.jpg",
+      "bytes": 50118,
+      "sha256": "a7594236bef16f24d1ab38bc227f99b357c322ddd861841186a8c2aa0ae6da0b",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "clearance-chair-massage-390-right-top-6.jpg",
+      "bytes": 56104,
+      "sha256": "86a4ba12ec83f8027034c042810fed6d399ce87df90e1f85ad04a6400bba56e5",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "clearance-chair-massage-768-right-top-1.jpg",
+      "bytes": 89492,
+      "sha256": "053db5cd1a2c3f2c6c620d033e543df0450a33f8169ea3173b68ceaec7907972",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "clearance-chair-massage-844x320-top-1.jpg",
+      "bytes": 23285,
+      "sha256": "d35d0ffbfe9a325585fa5303594d5a0c1daa7011d4bd1f43d5be13fe4db1cf26",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "clearance-chair-massage-844x390-double-text-1.jpg",
+      "bytes": 37838,
+      "sha256": "fcde2f1f98fa562f075388126dee67b16cd74027bab6ddc2cfc457475b82c2da",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "clearance-chair-massage-844x390-double-text-6.jpg",
+      "bytes": 39282,
+      "sha256": "9b3cf738d37b70d7a1424ffefeaea5ffe7232dc3936f545d1c386b06f7042dd3",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "clearance-chair-massage-844x390-top-1.jpg",
+      "bytes": 34071,
+      "sha256": "2fa075ddbdcc960a9c906bfc93cd69ee8b6b70df12d03bc61a2eafb0bd9a6535",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "clearance-deep-tissue-massage-390-right-top-1.jpg",
+      "bytes": 48780,
+      "sha256": "848bebb1fcfff0f56c4b28d28bdc13586a173913882f6ff05dbea3c4afa7c950",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "clearance-deep-tissue-massage-390-right-top-5.jpg",
+      "bytes": 53840,
+      "sha256": "c32337cc0f1c0342d8e4f589cec2667676f1679faa92a1f896abc522c582a50b",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "clearance-thai-massage-390-right-top-1.jpg",
+      "bytes": 49309,
+      "sha256": "ef1598a7fbbc1d6f51d4acca6fd8fc8928607a472564959788b4a0fac9794564",
+      "retained_in_repository": true,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "viewed_current_run",
+      "current_run_viewed_by": [
+        "/root/evidence_audit/visual_samples"
+      ],
+      "prior_reviewed_capture_run_id": 42689973671
+    },
+    {
+      "name": "clearance-thai-massage-390-right-top-5.jpg",
+      "bytes": 50907,
+      "sha256": "4130093af3e43afff89dff2258ed897e82a5142560a06097315f19751861737f",
+      "retained_in_repository": true,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "viewed_current_run",
+      "current_run_viewed_by": [
+        "/root/evidence_audit"
+      ],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "clearance-therapeutic-massage-1280-right-top-1.jpg",
+      "bytes": 94067,
+      "sha256": "419afbf8086e6271b3ec80c0b8810024b0aa65e59ec58ae2fd19c663162eac3b",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "clearance-therapeutic-massage-390-right-top-1.jpg",
+      "bytes": 49753,
+      "sha256": "6c5ca863557db2a620519dd0c0807277637c751305d990166387c5fad4e8a5fc",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "clearance-therapeutic-massage-390-right-top-6.jpg",
+      "bytes": 53862,
+      "sha256": "4cdcd2364859b27a6695022ed9e317375399c0de26369fe4ce0da15b4e4fd759",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "clearance-therapeutic-massage-768-right-top-1.jpg",
+      "bytes": 75694,
+      "sha256": "ae0b858540d86be60cb51c47686d6b32f054af7bb2fcad13f5ce790a1641f7b4",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "kiro-layout-about-left-FAQ-clearance.jpg",
+      "bytes": 36500,
+      "sha256": "b40a6acb754b26d625bde8a6952b4cf1656f9f16bf5f0d47af045b783dd25047",
+      "retained_in_repository": true,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "hash_identical_to_prior_reviewed_capture",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": 42689973671
+    },
+    {
+      "name": "kiro-layout-about-right-FAQ-clearance.jpg",
+      "bytes": 36775,
+      "sha256": "d3510125033474f6adc2a8906056fe4fea0a508339b663c836adb068467dafa8",
+      "retained_in_repository": true,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "hash_identical_to_prior_reviewed_capture",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": 42689973671
+    },
+    {
+      "name": "kiro-layout-home-introduction.jpg",
+      "bytes": 40143,
+      "sha256": "10d7f05d6c7cbed1924696013262aed5e9cbdeb4a4f8659a095443fe694a3f01",
+      "retained_in_repository": true,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "hash_identical_to_prior_reviewed_capture",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": 42689973671
+    },
+    {
+      "name": "kiro-layout-privacy-policy-left-FAQ-clearance.jpg",
+      "bytes": 51120,
+      "sha256": "6eccc5b7d2651a42b6f80ab0b9ea7623f360e5f233d2d813e111602afaf385bb",
+      "retained_in_repository": true,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "hash_identical_to_prior_reviewed_capture",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": 42689973671
+    },
+    {
+      "name": "kiro-layout-privacy-policy-right-FAQ-clearance.jpg",
+      "bytes": 51370,
+      "sha256": "c04af700ef48d5a338b5fedd3c5fe5363f8dc246c9cda2e4ed433e59a311cb02",
+      "retained_in_repository": true,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "viewed_current_run",
+      "current_run_viewed_by": [
+        "/root/evidence_audit/visual_samples"
+      ],
+      "prior_reviewed_capture_run_id": 42689973671
+    },
+    {
+      "name": "kiro-layout-services-1280-left.jpg",
+      "bytes": 79504,
+      "sha256": "d42ad066879e1dfe7b876120417865915bf5470f573cb0d9e75b2480c9d68a53",
+      "retained_in_repository": true,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "viewed_current_run",
+      "current_run_viewed_by": [
+        "/root/evidence_audit"
+      ],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "kiro-layout-services-1280-right.jpg",
+      "bytes": 78437,
+      "sha256": "663be0bf5d6eb49ba0a7119583a7fef9a453d1c7407ff66c8bc9bf272097d0a1",
+      "retained_in_repository": true,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "hash_identical_to_prior_reviewed_capture",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": 42689973671
+    },
+    {
+      "name": "kiro-layout-therapeutic-font-only-strip.jpg",
+      "bytes": 31435,
+      "sha256": "f1040594465c94ed3e6e5782eaaf7618aca43d9602ba2c1c9511d406d8108c98",
+      "retained_in_repository": true,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "hash_identical_to_prior_reviewed_capture",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": 42689973671
+    },
+    {
+      "name": "kiro-layout-therapeutic-left-landscape-scrolled.jpg",
+      "bytes": 45838,
+      "sha256": "5efced15c0ecab2dceabe22e5fc61df878cc2ea4f3cc91cc7b0d69e375a823ce",
+      "retained_in_repository": true,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "hash_identical_to_prior_reviewed_capture",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": 42689973671
+    },
+    {
+      "name": "kiro-layout-therapeutic-right-landscape-scrolled.jpg",
+      "bytes": 46213,
+      "sha256": "aee430c9160e71c101d2f3567076abd25dc48b24a2f6c61e3a50accae666df9e",
+      "retained_in_repository": true,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "viewed_current_run",
+      "current_run_viewed_by": [
+        "/root/evidence_audit/visual_samples"
+      ],
+      "prior_reviewed_capture_run_id": 42689973671
+    },
+    {
+      "name": "kiro-layout-therapeutic-right-landscape-top.jpg",
+      "bytes": 30876,
+      "sha256": "4cde30230262d8139b54836083163dfaa64d1711dc463b663b158fb9e4f8a139",
+      "retained_in_repository": true,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "viewed_current_run",
+      "current_run_viewed_by": [
+        "/root/evidence_audit/visual_samples",
+        "/root"
+      ],
+      "prior_reviewed_capture_run_id": 42689973671
+    },
+    {
+      "name": "kiro-layout-therapeutic-right-portrait-150percent.jpg",
+      "bytes": 34773,
+      "sha256": "07e19c6ec5634c76f51a2b808e245fe10fd20a02d05bc80718dbc0c8eb634b47",
+      "retained_in_repository": true,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "viewed_current_run",
+      "current_run_viewed_by": [
+        "/root/evidence_audit/visual_samples"
+      ],
+      "prior_reviewed_capture_run_id": 42689973671
+    },
+    {
+      "name": "kiro-layout-therapeutic-right-portrait-scrolled.jpg",
+      "bytes": 37893,
+      "sha256": "668d726cb80ca9b3ae3a6d35503cd4ab52605577d1cd41e5727e65dd3ecaf3ef",
+      "retained_in_repository": true,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "hash_identical_to_prior_reviewed_capture",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": 42689973671
+    },
+    {
+      "name": "kiro-layout-therapeutic-right-portrait-top.jpg",
+      "bytes": 43206,
+      "sha256": "9c32c4df3064521007016e814b2b39f00f36360b392f04144fdc9fbd74f9c578",
+      "retained_in_repository": true,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "hash_identical_to_prior_reviewed_capture",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": 42689973671
+    },
+    {
+      "name": "kiro-layout-therapeutic-right-tablet.jpg",
+      "bytes": 91927,
+      "sha256": "8c8d32f0a8999225580b1b8218ca9562864f84270f66e36f2f51b6dfb302536d",
+      "retained_in_repository": true,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "hash_identical_to_prior_reviewed_capture",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": 42689973671
+    },
+    {
+      "name": "kiro-layout-work-with-me-full-titles.jpg",
+      "bytes": 37480,
+      "sha256": "eb943830479978101b453896131c013a4b82a9109a66a11df5a019c75b0a52d4",
+      "retained_in_repository": true,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "viewed_current_run",
+      "current_run_viewed_by": [
+        "/root/evidence_audit/visual_samples"
+      ],
+      "prior_reviewed_capture_run_id": 42689973671
+    },
+    {
+      "name": "peek-disclosure-keyboard-no-preference-right.jpg",
+      "bytes": 110366,
+      "sha256": "becd5a0ebb3b2f8783b03d02606b2fcf37207b0bee0a3448b6d194993f56f982",
+      "retained_in_repository": true,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "viewed_current_run",
+      "current_run_viewed_by": [
+        "/root/evidence_audit"
+      ],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "peek-disclosure-mouse-no-preference-right.jpg",
+      "bytes": 45639,
+      "sha256": "6c05f4d94364bae601e986efc85d60c2ae6d17d358e04effb6f0da00a4106d05",
+      "retained_in_repository": true,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "viewed_current_run",
+      "current_run_viewed_by": [
+        "/root/evidence_audit"
+      ],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "peek-disclosure-touch-no-preference-right.jpg",
+      "bytes": 47036,
+      "sha256": "1f09d904d0d033dcf7c27a35c8b6b4d2c6fde7ac3d33045c86ec3395bfe0e2c1",
+      "retained_in_repository": true,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "viewed_current_run",
+      "current_run_viewed_by": [
+        "/root"
+      ],
+      "prior_reviewed_capture_run_id": 42689973671
+    },
+    {
+      "name": "title-about-1280.jpg",
+      "bytes": 82756,
+      "sha256": "204d15b22eb49f77ee1b6aa9db581a211da1a4b0f0c1dfc72d3437a49606635a",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-about-390.jpg",
+      "bytes": 40180,
+      "sha256": "f084c0144d77add88ac22ccff2c19bc01e62377d63ca2db1aec15c00ca492364",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-accessibility-1280.jpg",
+      "bytes": 119569,
+      "sha256": "ae1afca00fe770f7c07218c50a5edc970b4e2b0a26638a5b6052cf93ad137b6f",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-accessibility-390.jpg",
+      "bytes": 57254,
+      "sha256": "ca4985f4566f697d501ae101ed683cfc844d6cdb8c756ba8326901d782d936f1",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-chair-massage-1280.jpg",
+      "bytes": 71381,
+      "sha256": "2de342859d13df913f94fdb3b210cb1e3b8d19518131f8828f82b2efbc214823",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-chair-massage-390.jpg",
+      "bytes": 34369,
+      "sha256": "4095e1166b5195a91b9963eb4ce61febebf6b7b6f76c6662c2730334cd32afcc",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-contact-1280.jpg",
+      "bytes": 66966,
+      "sha256": "f68d6dac038a9d3a0cf7e6fe20941edb3f9cc44f61b8153d0a341dd0302cb644",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-contact-390.jpg",
+      "bytes": 30810,
+      "sha256": "ec5f87e297d8577eccb537cd4dd71e852bb12e4e11de265182ea27470ba50775",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-corporate-massage-portland-1280.jpg",
+      "bytes": 75796,
+      "sha256": "97ba432d520854866e2df4bf3820737357731c1b1f2d3e1b688552ff88224617",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-corporate-massage-portland-390.jpg",
+      "bytes": 39168,
+      "sha256": "2d4a0daef510e20484ea6c95de1dc1ded4ce574de5f042459dcd93c4d06440fb",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-deep-tissue-massage-1280.jpg",
+      "bytes": 74013,
+      "sha256": "9cdeeaf183c5be3e894a13f40cb1051b9cdc99cd331d5a8b134fce773464e243",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-deep-tissue-massage-390.jpg",
+      "bytes": 35071,
+      "sha256": "9a41da7a91a225a6fa0c4f2e9edc10e689068dacad351aa67aff4dbb645d9e0e",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-home-1280.jpg",
+      "bytes": 94761,
+      "sha256": "a2d26e42f3f6defc2b4c8dace403d006bc3b8fe180f748d56d459c52af6712bc",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-home-390.jpg",
+      "bytes": 53009,
+      "sha256": "b54237b64546366b850bedd85e5d64f5f480504e8d904abf40209551ae7b082a",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-in-page-link-ideas-1280.jpg",
+      "bytes": 71467,
+      "sha256": "037633918f27337252248a8f291d7c3e0bd199ffa88a39d66888a82f28f77714",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-in-page-link-ideas-390.jpg",
+      "bytes": 39505,
+      "sha256": "f2a7409f7bbdc2e76bd494f84de03d5be9a8857e25569fd06fe0e4bced23ef3d",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-index-nav-ideas-1280.jpg",
+      "bytes": 64724,
+      "sha256": "e80905dd73ce714315260ed7ecdae280cd1ad661efecbf85649bf37329229aa4",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-index-nav-ideas-390.jpg",
+      "bytes": 38940,
+      "sha256": "44f3b8c703fc7a2c1ed837effa8ed6a136bf54e83c053135dbaa7d46003ba6db",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-peek-title-missing-page-verification-20261109-1280.jpg",
+      "bytes": 58015,
+      "sha256": "bc91a6010a57f193615d0b0c7dcb4cb8a8165ec3be6d469b06cfb34e321cb0cf",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-peek-title-missing-page-verification-20261109-390.jpg",
+      "bytes": 33845,
+      "sha256": "1cb7218a15e68a3200633f0fac3fbb9da559567a872f69793bb748a27d18ff76",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-personal-automation-1280.jpg",
+      "bytes": 118823,
+      "sha256": "8be89cd90cbd7ffd0e960523f7c14bba371f151c2c3000c63ac20fd64e8e0200",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-personal-automation-390.jpg",
+      "bytes": 54569,
+      "sha256": "ab31131ca5a4698ace1e31d09644172ecc14bd0524b0141d1db1a54b13876f4c",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-personal-automation-privacy-1280.jpg",
+      "bytes": 146749,
+      "sha256": "b22bbbd9053badd59192089ee85fe5f8dc97d20f648cd5b34c13d142fc4f1f7d",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-personal-automation-privacy-390.jpg",
+      "bytes": 54593,
+      "sha256": "c02f82f6af29de10e0a88bf98977c53660c92b4af932ddae79f68c341f06baf6",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-personal-automation-terms-1280.jpg",
+      "bytes": 114939,
+      "sha256": "1de8b72e4d9c60cd8b2bdaba29e012f748c03066475098e2d0dafc18198a11a5",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-personal-automation-terms-390.jpg",
+      "bytes": 57138,
+      "sha256": "b79b0452d651285f9433844f85dae385f7e04baf7a04b4329f624babfa6353c8",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-privacy-policy-1280.jpg",
+      "bytes": 108221,
+      "sha256": "b0ca4996e69cde4eaa2c9d7d4ef27dafbd46a448a3a06a58f32703d74f7eeffe",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-privacy-policy-390.jpg",
+      "bytes": 49538,
+      "sha256": "72263e583bc7b697c7692d954f85fb8f68ceb3ac13154f94faada5434bf92e97",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-progress-nav-ideas-1280.jpg",
+      "bytes": 68236,
+      "sha256": "45dd0af529aa17ba2da2b71568201ec01c0fc81b284c7e7e8b8d8201bfd89775",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-progress-nav-ideas-390.jpg",
+      "bytes": 37839,
+      "sha256": "dca06c6b03519ba586c654863986cebeeedfad572f491fed799e3a8f0a21becc",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-about-1280.jpg",
+      "bytes": 88064,
+      "sha256": "4d3da525ef642744b0724f2d3d80a104b64d61223eb7c143ed484883aad2dd79",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-about-390.jpg",
+      "bytes": 42495,
+      "sha256": "4d6e11478fd478fa329c854649fbc919ba6ba9f786ceeab39c9ea39364ec67e8",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-accessibility-1280.jpg",
+      "bytes": 117996,
+      "sha256": "26ee9d78008f647c430af447235b4aa9c71eb0be54530a3f460b9bdc7c570424",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-accessibility-390.jpg",
+      "bytes": 54463,
+      "sha256": "7fa784927a7f88c710891915833db7bb24d2fc0fd0bb52f9a26dfe14682b526d",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-contact-1280.jpg",
+      "bytes": 68439,
+      "sha256": "ed3230827c8c2250db468cdca02315be95daa47b1ad0708875d1bc9856700bed",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-contact-390.jpg",
+      "bytes": 31752,
+      "sha256": "d99a7b75a66d1460cff132a812f848066ed7f57206073c6713e305c321705bd5",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-corporate-massage-portland-1280.jpg",
+      "bytes": 81920,
+      "sha256": "0958767c91bb691b16ce741d1c222113e1ee04fe22630d434710870881cd4c11",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-corporate-massage-portland-390.jpg",
+      "bytes": 39185,
+      "sha256": "4f5580b7bf681cab20c34fdc6d89d11f839020639db14b96378f4dec62d0ef95",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-home-1280.jpg",
+      "bytes": 97028,
+      "sha256": "3c096a403b84d0407d157ca91c0cf4b7fd2baf1c103c49a0a090a52193117e08",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-home-390.jpg",
+      "bytes": 49165,
+      "sha256": "27830189c265810311839cdfa784a1c903aa45988f62c50a75d892a7f460d687",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-in-page-link-ideas-1280.jpg",
+      "bytes": 69712,
+      "sha256": "49f5059f532e24557fd09586d382bb04f8e2da27802bddbca23245ed70c4780e",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-in-page-link-ideas-390.jpg",
+      "bytes": 31522,
+      "sha256": "1b96c3d8e86fcbb1302f2500bf65801910428b513d26c8fa61e803046d89d29d",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-local-faq-1280.jpg",
+      "bytes": 115043,
+      "sha256": "ddc5757b3176edca71e3f986dc1de78a62ff3bbcf6be45d29a8236538b673c35",
+      "retained_in_repository": false,
+      "capture_source": "local_fixture",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-local-faq-390.jpg",
+      "bytes": 48626,
+      "sha256": "6a7d491080b7390fcb523e7c731f0c034fc7aa6ef750b9f1067bb33fe24f8928",
+      "retained_in_repository": false,
+      "capture_source": "local_fixture",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-local-fixed-1280.jpg",
+      "bytes": 141264,
+      "sha256": "25e8fa517c622139706d7bfe38adcf275c189575dd3849aa29f17f64024f5019",
+      "retained_in_repository": false,
+      "capture_source": "local_fixture",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-local-fixed-390.jpg",
+      "bytes": 53569,
+      "sha256": "05b05d4c9539d8ac202f11a2963b2e0dc977bddf8e08afc5a727f6d5133b49f6",
+      "retained_in_repository": false,
+      "capture_source": "local_fixture",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-local-form-1280.jpg",
+      "bytes": 87853,
+      "sha256": "9efdcfeed78507a28925658da054c4081e237a7298c8badc0f39654c3a1071d8",
+      "retained_in_repository": false,
+      "capture_source": "local_fixture",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-local-form-390.jpg",
+      "bytes": 52202,
+      "sha256": "77047484e1dcce25813e83087d18656c4b3c9d39e388fc3c2455f0c2504881cf",
+      "retained_in_repository": false,
+      "capture_source": "local_fixture",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-local-headings-1280.jpg",
+      "bytes": 134062,
+      "sha256": "2e399e0fc2acc2d7e4e669a815e849e574a29c4f940b0f01153009869b06ee41",
+      "retained_in_repository": false,
+      "capture_source": "local_fixture",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-local-headings-390.jpg",
+      "bytes": 52029,
+      "sha256": "ed8ae2c7f1be7e8e2de9a3a491a057b8fe028b7ad485e74e0298620d3eadb59e",
+      "retained_in_repository": false,
+      "capture_source": "local_fixture",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-local-one-idless-1280.jpg",
+      "bytes": 80655,
+      "sha256": "c440f61fc7847d1fb8c0276e7304a7c5fb2ef9a3c9ed29bc25285369c6ccd29f",
+      "retained_in_repository": false,
+      "capture_source": "local_fixture",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-local-one-idless-390.jpg",
+      "bytes": 54442,
+      "sha256": "8943354c2479bcb0f6f0a90b2064938908432881f10e572fe12c9f6f26988c09",
+      "retained_in_repository": false,
+      "capture_source": "local_fixture",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-local-progress-1280.jpg",
+      "bytes": 75600,
+      "sha256": "0ed3ae39530c5a618bbf9a9583b93e6006f99204acbdee05ade06fe7708cfb3e",
+      "retained_in_repository": false,
+      "capture_source": "local_fixture",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-local-progress-390.jpg",
+      "bytes": 37323,
+      "sha256": "117e463340ba555c8c06bbbce14c141e9af5ef112a6c4c1f2caf0e7e94c7313f",
+      "retained_in_repository": false,
+      "capture_source": "local_fixture",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-local-row-details-1280.jpg",
+      "bytes": 144847,
+      "sha256": "ad5806ffb8a808b3850fb46ced8cccea36bc74ad603aaecce204bfcc9b2d3897",
+      "retained_in_repository": false,
+      "capture_source": "local_fixture",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-local-row-details-390.jpg",
+      "bytes": 52359,
+      "sha256": "7beed8e09ac427361c58df1613a71e0d9ab0528559126d0a4bd8f59987ade2c7",
+      "retained_in_repository": false,
+      "capture_source": "local_fixture",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-local-zero-1280.jpg",
+      "bytes": 31295,
+      "sha256": "7f568a9884b4a1ef1ef8d85ba48319fbb73ef37770fadc43514848e39bf25bf1",
+      "retained_in_repository": false,
+      "capture_source": "local_fixture",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-local-zero-390.jpg",
+      "bytes": 20347,
+      "sha256": "69a2025b43066e018c807f47a320c571b12cd3d2129c65221ce29648aaf1eb57",
+      "retained_in_repository": false,
+      "capture_source": "local_fixture",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-nav-ideas-1280.jpg",
+      "bytes": 72404,
+      "sha256": "3487e69ae70d53fb75286b308c97ad6b3199e5c5f77901571f6f366087d3fd8c",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-nav-ideas-390.jpg",
+      "bytes": 43383,
+      "sha256": "e3c39d3733caee51a1e2b7493efabc234c48054dec1954f0178b4f5e12b97f0f",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-peek-title-missing-page-verification-20261109-1280.jpg",
+      "bytes": 60734,
+      "sha256": "f076fdbf25e0a265e23b02c2d0ece806de4d15f3b1a891a337561a78be181118",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-peek-title-missing-page-verification-20261109-390.jpg",
+      "bytes": 32921,
+      "sha256": "5fc76e288cf32db4f0c66f3b759910ff6bbce4a2a38329a245d0c936f516d0e2",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-personal-automation-1280.jpg",
+      "bytes": 116798,
+      "sha256": "f814022f23397ec8921707175a80a310fefac55bd24b27ffb3dc2dbee557e477",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-personal-automation-390.jpg",
+      "bytes": 54566,
+      "sha256": "79ef0726d8396855b7a0a4fcb968befbf2dc6e44dabb3b36430372b416057663",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-personal-automation-privacy-1280.jpg",
+      "bytes": 142626,
+      "sha256": "1cb42631906600cc958790f7a3d4e30114b44beb715f965202fa50b324594b2c",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-personal-automation-privacy-390.jpg",
+      "bytes": 51288,
+      "sha256": "48814489a3ed0ba02ba2ebec5c0e0e6488500bb9236f76106b2b4aead8b30179",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-personal-automation-terms-1280.jpg",
+      "bytes": 112571,
+      "sha256": "d7316325db6d600fa370c7264c87352a47807cd1d0d01e937fbe4a3bd59a6d56",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-personal-automation-terms-390.jpg",
+      "bytes": 53211,
+      "sha256": "b16f7cbf8e412f6b3a4dca2def19e84dd4a330afbd3274c983a5c068861a2e43",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-privacy-policy-1280.jpg",
+      "bytes": 108027,
+      "sha256": "27952fa75f1ac9388be3f8d833772fff0fc01de9f6c1bf54d1e5ea8a9932db4c",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-privacy-policy-390-landed.jpg",
+      "bytes": 55838,
+      "sha256": "f26b33ce3cbe8e527f6dbb0708fac97b8d5481b9c568c23a6bce3e3431f9018c",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-privacy-policy-390.jpg",
+      "bytes": 50008,
+      "sha256": "ba7c231782ccab313498166c82e6cd1b5502ac483662b25518cdb6170a320d66",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-progress-nav-ideas-1280.jpg",
+      "bytes": 68904,
+      "sha256": "5eb729c79945562189fdedcb44f158d07506dbe29a87772dff8c39522a176f87",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-progress-nav-ideas-390.jpg",
+      "bytes": 32123,
+      "sha256": "1955c54e85ab631fb538eeda53b6b60c36cbac290e999d4f3a8b3770778d065b",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-s-massage-1280-form-left-form-landed.jpg",
+      "bytes": 91774,
+      "sha256": "c2a95de4625b0e760d5c5cb5db6242361e6d65b5b9aa50527d573ce471d91d40",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-s-massage-1280-form-right-form-landed.jpg",
+      "bytes": 103336,
+      "sha256": "1e2424a4060c5345115e56a9e766f14e90e1d64cbaa4b93182b3dcae99b7a710",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-s-massage-1280-landed.jpg",
+      "bytes": 91505,
+      "sha256": "5d442c1cc3ba73989886ce5b6e96fcdd3bde84ec2617023c4b9a8689e266dfd4",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-s-massage-1280.jpg",
+      "bytes": 78272,
+      "sha256": "26582a22d49fb2e1cd1330ab023b6b4bbf42e8321f107ee9ccaf02979d10c27b",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-s-massage-390-form-left-form-landed.jpg",
+      "bytes": 33904,
+      "sha256": "9fbd661f6dcda0ae7242e0b11a372e2007e9e0a22e431512b13856ac2e88e164",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-s-massage-390-form-right-form-landed.jpg",
+      "bytes": 33878,
+      "sha256": "c8de2eccaea450cb09abca90eb94f0bc1e46ac0a148cdf8f5d1a5cb8ac13855d",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-s-massage-390-landed.jpg",
+      "bytes": 33878,
+      "sha256": "c8de2eccaea450cb09abca90eb94f0bc1e46ac0a148cdf8f5d1a5cb8ac13855d",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-s-massage-390.jpg",
+      "bytes": 35468,
+      "sha256": "a2216e0bb3c50bb4829ad228353a96496e03e27d41820c3a6446feede2fa548e",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-s-massage-768-form-left-form-landed.jpg",
+      "bytes": 48070,
+      "sha256": "ee8ec7be0b3f7ed70a9aebc84cb4f30e142701726eeece095a38a2bf951e10c3",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-s-massage-768-form-right-form-landed.jpg",
+      "bytes": 47856,
+      "sha256": "f0e8ff1df4bf6887342a8b43eb586f8187abc2f246b6d0a9607c9a358ca834b2",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-s-massage-768-landed.jpg",
+      "bytes": 47839,
+      "sha256": "feb4ec2ebd629a42a29d174b098dab0c9ea31c463b1730d790dc37fbad1329c0",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-services-1280.jpg",
+      "bytes": 79814,
+      "sha256": "9286989125d4edb6808019a6513fb945302ec4a222f7af5bcdeda15f280b0e98",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-services-390.jpg",
+      "bytes": 37223,
+      "sha256": "88db3f2c55b5bb3630a030c28fb5d97040a346ea7f6f0079b4b0530de76aece9",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-work-with-me-1280.jpg",
+      "bytes": 98983,
+      "sha256": "851893f80d418f094bae5597a05cd2c14b0172add73791b0629bc4037e5c1aff",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-rail-work-with-me-390.jpg",
+      "bytes": 37139,
+      "sha256": "10cf68d7f0ccfe9daf6fb4a3334b023eb9469580fa6d72b99b40e73563868382",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-s-massage-1280.jpg",
+      "bytes": 83500,
+      "sha256": "dadb3c4394a881ca1338a1f401dda8d527f47d178736ae805da9c8062f47a1ef",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-s-massage-390.jpg",
+      "bytes": 31204,
+      "sha256": "ff455161f0f5f88ef1bb020f56ec12e70a722ff02a81aec6a695e0ade3156e26",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-services-1280.jpg",
+      "bytes": 74914,
+      "sha256": "9b18788a09db2c33434ae37051b3c69b03c094acd91ffd7f6075036e9cda8f7f",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-services-390.jpg",
+      "bytes": 37885,
+      "sha256": "0b262e075c5774c848ef5a5018c9374a4656f9ec9f87042f895ed89544f3cbe7",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-thai-massage-1280.jpg",
+      "bytes": 74893,
+      "sha256": "a3f2e02febd8c27e33e25f20857d96455a3a1b83b0bd11631a61cd4557daeef3",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-thai-massage-390.jpg",
+      "bytes": 39925,
+      "sha256": "add0b0895172da2037d9ec695cbfc098cbf6ed02e5da7aa4f9ccfef4939df86e",
+      "retained_in_repository": true,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "viewed_current_run",
+      "current_run_viewed_by": [
+        "/root/evidence_audit/visual_samples"
+      ],
+      "prior_reviewed_capture_run_id": 42689973671
+    },
+    {
+      "name": "title-therapeutic-massage-1280.jpg",
+      "bytes": 76579,
+      "sha256": "f573e190fb0d9631a5938204d7227f06084cc241f1ea7989dc59a545450e9caf",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-therapeutic-massage-390.jpg",
+      "bytes": 37031,
+      "sha256": "05782b3e924b06b848cd8420deec89ec7965bf495731de1c6e5e93e4da4aa5cd",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-work-with-me-1280.jpg",
+      "bytes": 92495,
+      "sha256": "65da50012337ecc84a5437797bcaa75aa1bc1efd3a2eb7dcbc466dc6902d997c",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    },
+    {
+      "name": "title-work-with-me-390.jpg",
+      "bytes": 36559,
+      "sha256": "75d2aeb9d391ec823f2a8dbcf37ee0e9409b26ec2425c9f393631fbf1b687756",
+      "retained_in_repository": false,
+      "capture_source": "fresh_staging39_copy_route",
+      "matches_run_42689973671_sha256": true,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "prior_reviewed_capture_run_id": null
+    }
+  ]
+}

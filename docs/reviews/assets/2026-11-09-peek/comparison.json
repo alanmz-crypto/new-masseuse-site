@@ -1,0 +1,56 @@
+{
+  "before_run": 42548017902,
+  "after_run": 42552270461,
+  "viewports": [
+    {
+      "width": 390,
+      "height": 844
+    },
+    {
+      "width": 1280,
+      "height": 844
+    }
+  ],
+  "images": [
+    {
+      "file": "thai-massage-390-reading.jpg",
+      "before_after_bytes_identical": true,
+      "sha256": "90144bc16d6851b08dd9b65981285a68222ef9bb88134a388c01e5e620a6003d"
+    },
+    {
+      "file": "thai-massage-390-index.jpg",
+      "before_after_bytes_identical": true,
+      "sha256": "1b71c8c3fca49b40d828f8dad06289c45c498bae30169a6aaba2e4b15f18ee04"
+    },
+    {
+      "file": "thai-massage-390-research.jpg",
+      "before_after_bytes_identical": true,
+      "sha256": "b922229bdc7cf3ef6b6b53ff1af3d2c6849131eb4c7279f5796020d8fb00a98d"
+    },
+    {
+      "file": "thai-massage-1280-reading.jpg",
+      "before_after_bytes_identical": true,
+      "sha256": "6ce917292980ab0fa72b40bcd48d37f8e10054e78450ccfa0b97e458371f1def"
+    },
+    {
+      "file": "thai-massage-1280-index.jpg",
+      "before_after_bytes_identical": true,
+      "sha256": "f39b9e90d0e0847e2e673a29f37c28d44ff01d22c873e569a8a240ae7f7a623c"
+    },
+    {
+      "file": "thai-massage-1280-research.jpg",
+      "before_after_bytes_identical": true,
+      "sha256": "c91032465ab9012eed353dffb9c248599cedbad7c36349dbe0f5e8970dbbece6"
+    }
+  ],
+  "rendered_sections_identical": [
+    "thai-massage at 390",
+    "thai-massage at 1280",
+    "therapeutic-massage at 390",
+    "deep-tissue-massage at 390",
+    "chair-massage at 390"
+  ],
+  "geometry_identical": true,
+  "page_errors": 0,
+  "limits": "Focused Chromium captures only; not proof of all states, browsers, physical devices or assistive technology."
+}

@@ -1,0 +1,1063 @@
+diff --git a/scripts/work-with-me-employer/link-ideas/peek-release/install-peek-release.php b/scripts/work-with-me-employer/link-ideas/peek-release/install-peek-release.php
+--- a/scripts/work-with-me-employer/link-ideas/peek-release/install-peek-release.php
++++ b/scripts/work-with-me-employer/link-ideas/peek-release/install-peek-release.php
+@@ -1,21 +1,23 @@
+ <?php
+ /**
+- * Provisional visitor release. FIRST INSTALL ON AN ISOLATED LIVE COPY ONLY.
++ * Visitor release: exact copied or explicitly selected raw-live profile only.
+  * wp eval-file install-peek-release.php preflight | apply [FILE] |
+- *     verify FILE [original] | rollback FILE
+- * No live/staging origin is enabled. No page content, SEO or dependency edit.
++ *     verify FILE [original] | recovery-check FILE [original] | rollback FILE
++ * No page content, SEO or dependency edit. Live requires TS_PEEK_RELEASE_PROFILE=raw-live-v1.
+  * Completed private snapshots are immutable, including rollback and repeats.
+  */
+ if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) ) { exit( 'Run with WP-CLI.' ); }
+ $release_home = untrailingslashit( home_url() );
+ $release_local_host = 'localhost:8090';
+-if ( $release_home !== 'http://' . $release_local_host ) { WP_CLI::error( 'Only exact http://localhost:8090 is enabled; nothing changed.' ); }
++$release_profile_request = (string) getenv( 'TS_PEEK_RELEASE_PROFILE' );
++$release_live = $release_home === 'http://thaisolitude.com' && $release_profile_request === 'raw-live-v1';
++if ( ! $release_live && ( $release_home !== 'http://' . $release_local_host || $release_profile_request !== '' ) ) { WP_CLI::error( 'Exact origin and explicit profile selection are required; nothing changed.' ); }
+ if ( get_stylesheet() !== 'astra' || ! current_user_can( 'manage_options' ) || ! current_user_can( 'unfiltered_html' ) || ! function_exists( 'wpcode' ) || ! class_exists( 'WPCode_Snippet' ) ) { WP_CLI::error( 'Requires Astra, WPCode and an administrator.' ); }
+ global $wpdb, $wp_version;
+ $args = isset( $args ) && is_array( $args ) ? $args : array();
+ $release_mode = $args[0] ?? 'preflight';
+-$release_original = $release_mode === 'verify' && ( $args[2] ?? null ) === 'original';
+-if ( ! in_array( $release_mode, array( 'preflight', 'apply', 'rollback', 'verify' ), true ) || count( $args ) > ( $release_original ? 3 : ( $release_mode === 'preflight' ? 1 : 2 ) ) || ( in_array( $release_mode, array( 'verify', 'rollback' ), true ) && count( $args ) < 2 ) ) { WP_CLI::error( 'Use preflight, apply [FILE], verify FILE [original], or rollback FILE.' ); }
++$release_original = in_array( $release_mode, array( 'verify', 'recovery-check' ), true ) && ( $args[2] ?? null ) === 'original';
++if ( ! in_array( $release_mode, array( 'preflight', 'apply', 'rollback', 'verify', 'recovery-check' ), true ) || count( $args ) > ( $release_original ? 3 : ( $release_mode === 'preflight' ? 1 : 2 ) ) || ( in_array( $release_mode, array( 'verify', 'rollback', 'recovery-check' ), true ) && count( $args ) < 2 ) ) { WP_CLI::error( 'Use preflight, apply [FILE], verify FILE [original], recovery-check FILE [original], or rollback FILE.' ); }
+ $release_fail = static function ( $message ) { throw new RuntimeException( $message ); };
+ $release_canonical = static function ( $value ) use ( &$release_canonical ) {
+     if ( is_array( $value ) ) {
+@@ -72,7 +74,20 @@
+     $release_manifest_bytes = file_get_contents( __DIR__ . '/manifest.json' );
+     $release_manifest = json_decode( $release_manifest_bytes, true, 512, JSON_THROW_ON_ERROR );
+     $release_manifest_hash = hash( 'sha256', $release_manifest_bytes );
+-    if ( ( $release_manifest['schema'] ?? null ) !== 1 || ( $release_manifest['bundle'] ?? null ) !== 'peek-visitor-release-v1' || ( $release_manifest['copy_mapping']['origin'] ?? null ) !== $release_home || ( $release_manifest['source']['core_version'] ?? null ) !== $wp_version ) { $release_fail( 'Manifest/site/core version differs.' ); }
++    if ( ( $release_manifest['schema'] ?? null ) !== 1 || ( $release_manifest['bundle'] ?? null ) !== 'peek-visitor-release-v1' || ( $release_manifest['copy_mapping']['origin'] ?? null ) !== 'http://localhost:8090' || ( $release_manifest['source']['core_version'] ?? null ) !== $wp_version ) { $release_fail( 'Manifest/site/core version differs.' ); }
++    $release_profile_hash = null;
++    if ( $release_live ) {
++        $release_profile_bytes = file_get_contents( __DIR__ . '/live-profile.json' );
++        $release_profile = json_decode( $release_profile_bytes, true, 512, JSON_THROW_ON_ERROR );
++        if ( ( $release_profile['schema'] ?? null ) !== 1 || ( $release_profile['bundle'] ?? null ) !== $release_manifest['bundle'] || ( $release_profile['origin'] ?? null ) !== $release_home ) { $release_fail( 'Raw-live profile identity differs.' ); }
++        $release_equal( $release_profile['source'] ?? null, $release_manifest['source'], 'Raw-live baseline provenance' );
++        $release_equal( array_keys( $release_profile['baseline'] ?? array() ), array_keys( $release_manifest['baseline'] ), 'Raw-live baseline fields' );
++        $release_manifest['baseline'] = $release_profile['baseline'];
++        $release_profile_hash = hash( 'sha256', $release_profile_bytes );
++    }
++    // Preserve the existing local rehearsal contract exactly. The additional
++    // profile binding belongs only to the explicit raw-live path.
++    $release_marker_fields = static fn( $fields ) => $release_profile_hash === null ? $fields : array_merge( $fields, array( 'profile_sha256' => $release_profile_hash ) );
+     require __DIR__ . '/source-binding.php';
+     $release_slugs = array( 'thai-massage', 'therapeutic-massage', 'deep-tissue-massage', 'chair-massage' );
+     $release_equal( $release_manifest['summary_slugs'], $release_slugs, 'Approved page roles' );
+@@ -271,7 +286,7 @@
+ };
+ $release_private_input = (string) getenv( 'WWM_BACKUP_DIR' );
+ $release_private = realpath( $release_private_input ); $release_webroot = realpath( ABSPATH );
+-$release_private_ok = str_starts_with( $release_private_input, '/' ) && $release_private && $release_webroot && is_dir( $release_private ) && is_writable( $release_private ) && $release_private !== $release_webroot && ! str_starts_with( $release_private . '/', rtrim( $release_webroot, '/' ) . '/' );
++$release_private_ok = ! is_link( $release_private_input ) && $release_private_input === $release_private && str_starts_with( $release_private_input, '/' ) && $release_private && $release_webroot && is_dir( $release_private ) && is_writable( $release_private ) && $release_private !== $release_webroot && ! str_starts_with( $release_private . '/', rtrim( $release_webroot, '/' ) . '/' );
+ $release_file_unchanged = static function ( $path, $bytes ) use ( $release_fail ) {
+     clearstatcache( true, $path );
+     if ( is_link( $path ) || ! is_file( $path ) || ( fileperms( $path ) & 0777 ) !== 0600 || file_get_contents( $path ) !== $bytes ) { $release_fail( 'Private snapshot/journal changed; no further writes or success marker.' ); }
+@@ -311,14 +326,14 @@
+     finally { wp_cache_delete( 'astra-settings', 'options' ); wp_cache_delete( 'alloptions', 'options' ); wp_cache_delete( 'notoptions', 'options' ); }
+     if ( $rows !== 1 ) { $release_fail( 'Astra compare-and-swap did not update exactly one row.' ); }
+ };
+-$release_marker = static function ( $path, $snapshot, $state, $current ) use ( $release_hash, $release_home, $release_manifest_hash, $release_json, $release_file_unchanged ) {
++$release_marker = static function ( $path, $snapshot, $state, $current ) use ( $release_hash, $release_home, $release_manifest_hash, $release_marker_fields, $release_json, $release_file_unchanged ) {
+     $release_file_unchanged( $path, $release_json( $snapshot ) );
+-    WP_CLI::log( 'RELEASE-SNAPSHOT ' . json_encode( array( 'schema' => 1, 'bundle' => 'peek-visitor-release-v1', 'home' => $release_home, 'state' => $state, 'snapshot' => $path, 'snapshot_sha256' => hash_file( 'sha256', $path ), 'manifest_sha256' => $release_manifest_hash, 'state_sha256' => $release_hash( $current ), 'ids' => $snapshot['ids'] ), JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR ) );
++    WP_CLI::log( 'RELEASE-SNAPSHOT ' . json_encode( $release_marker_fields( array( 'schema' => 1, 'bundle' => 'peek-visitor-release-v1', 'home' => $release_home, 'state' => $state, 'snapshot' => $path, 'snapshot_sha256' => hash_file( 'sha256', $path ), 'manifest_sha256' => $release_manifest_hash, 'state_sha256' => $release_hash( $current ), 'ids' => $snapshot['ids'] ) ), JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR ) );
+ };
+ 
+ // Each reverse prefix has an exact complete state. A stopped rollback may resume
+ // only at one of these prefixes. Unknown edits are never adopted or overwritten.
+-$release_reverse = static function ( $old, $start, $ids, $file_guard = null ) use ( $release_capture, $release_expected, $release_equal, $release_hash, $release_roles, $release_order, $release_css_set, $release_astra_set, $release_refresh, $release_fail ) {
++$release_reverse = static function ( $old, $start, $ids, $file_guard = null, $read_only = false ) use ( $release_capture, $release_expected, $release_equal, $release_hash, $release_roles, $release_order, $release_css_set, $release_astra_set, $release_refresh, $release_fail ) {
+     $owned = $start['owned'];
+     $cleaned = array( 'css' => $start['records'][29]['post']['post_content'] !== $old['records'][29]['post']['post_content'], 'astra' => $start['options']['astra-settings'] !== $old['options']['astra-settings'] );
+     $states = array( $start ); $actions = array();
+@@ -332,6 +347,7 @@
+     $current = $release_capture( $ids ); $position = null;
+     foreach ( $states as $i => $state ) { if ( $release_hash( $current ) === $release_hash( $state ) ) { $position = $i; break; } }
+     if ( $position === null ) { $release_fail( 'State is not an exact recognized rollback prefix; nothing overwritten.' ); }
++    if ( $read_only ) { if ( $file_guard ) { $file_guard(); } return $current; }
+     for ( $i = $position; $i < count( $actions ); $i++ ) {
+         $release_equal( $release_capture( $ids ), $states[$i], 'State before rollback step' );
+         if ( $file_guard ) { $file_guard(); }
+@@ -353,11 +369,15 @@
+     if ( isset( $args[1] ) ) {
+         $release_path = realpath( $args[1] );
+         if ( ! $release_private_ok || ! $release_path || $args[1] !== $release_path || is_link( $args[1] ) || dirname( $release_path ) !== $release_private || ! preg_match( '/^peek-release-before-\d{8}-\d{6}-[a-f0-9]{8}\.json$/D', basename( $release_path ) ) || ! is_file( $release_path ) || ( fileperms( $release_path ) & 0777 ) !== 0600 ) { $release_fail( 'Snapshot must be its exact private 0600 file in WWM_BACKUP_DIR.' ); }
+-        $release_snapshot = json_decode( file_get_contents( $release_path ), true, 512, JSON_THROW_ON_ERROR );
++        $release_snapshot_bytes = file_get_contents( $release_path );
++        $release_expected_snapshot_hash = (string) getenv( 'TS_PEEK_RELEASE_EXPECT_SNAPSHOT_SHA256' );
++        if ( $release_live && in_array( $release_mode, array( 'apply', 'rollback' ), true ) && $release_expected_snapshot_hash === '' ) { $release_fail( 'Live snapshot-dependent writes require the caller-preserved exact journal hash.' ); }
++        if ( $release_expected_snapshot_hash !== '' && ( ! preg_match( '/^[a-f0-9]{64}$/D', $release_expected_snapshot_hash ) || hash( 'sha256', $release_snapshot_bytes ) !== $release_expected_snapshot_hash ) ) { $release_fail( 'Snapshot differs from caller-preserved exact bytes.' ); }
++        $release_snapshot = json_decode( $release_snapshot_bytes, true, 512, JSON_THROW_ON_ERROR );
+         $s = $release_snapshot;
+-        if ( ( $s['schema'] ?? null ) !== 1 || ( $s['bundle'] ?? null ) !== 'peek-visitor-release-v1' || ( $s['home'] ?? null ) !== $release_home || ( $s['manifest_sha256'] ?? null ) !== $release_manifest_hash || ! is_bool( $s['complete'] ?? null ) || $release_hash( $s['old'] ?? null ) !== ( $s['old_sha256'] ?? null ) ) { $release_fail( 'Snapshot bundle/site/manifest/completion/original hash differs.' ); }
++        if ( ( $s['schema'] ?? null ) !== 1 || ( $s['bundle'] ?? null ) !== 'peek-visitor-release-v1' || ( $s['home'] ?? null ) !== $release_home || ( $s['manifest_sha256'] ?? null ) !== $release_manifest_hash || ( $s['profile_sha256'] ?? null ) !== $release_profile_hash || ! is_bool( $s['complete'] ?? null ) || $release_hash( $s['old'] ?? null ) !== ( $s['old_sha256'] ?? null ) ) { $release_fail( 'Snapshot bundle/site/manifest/completion/original hash differs.' ); }
+         $release_incomplete = ! $s['complete'];
+-        if ( $release_incomplete && $release_mode !== 'rollback' ) { $release_fail( 'Incomplete journals support exact recovery rollback only.' ); }
++        if ( $release_incomplete && ! in_array( $release_mode, array( 'rollback', 'recovery-check' ), true ) ) { $release_fail( 'Incomplete journals support exact recovery rollback only.' ); }
+         $target_key = $release_incomplete ? 'journal' : 'new';
+         if ( $release_hash( $s[$target_key] ?? null ) !== ( $s[$target_key . '_sha256'] ?? null ) ) { $release_fail( 'Snapshot recorded state hash differs.' ); }
+         $release_baseline( $s['old'] );
+@@ -385,6 +405,12 @@
+         if ( ( $cleaned['astra'] && ! $cleaned['css'] ) || ( ( $cleaned['css'] || $published ) && ( count( $s['ids'] ) !== 5 || $uncorrected ) ) || ( $published && ! $cleaned['astra'] ) || ( ! $release_incomplete && ( ! $cleaned['css'] || ! $cleaned['astra'] ) ) ) { $release_fail( 'Snapshot cleanup/activation phase differs.' ); }
+         $release_equal( $target, $release_expected( $s['old'], $target['owned'], $cleaned ), 'Snapshot permitted recorded transition' );
+         $release_current = $release_capture( $s['ids'] );
++        if ( $release_mode === 'recovery-check' ) {
++            $release_current = $release_reverse( $s['old'], $target, $s['ids'], static fn() => $release_file_unchanged( $release_path, $release_json( $s ) ), true );
++            if ( $release_original ) { $release_equal( $release_current, $s['old'], 'Recovery exact original state' ); }
++            WP_CLI::log( 'RELEASE-RECOVERY ' . json_encode( $release_marker_fields( array( 'schema' => 1, 'bundle' => 'peek-visitor-release-v1', 'home' => $release_home, 'state' => $release_original ? 'original' : 'recoverable', 'snapshot' => $release_path, 'snapshot_sha256' => hash_file( 'sha256', $release_path ), 'manifest_sha256' => $release_manifest_hash, 'state_sha256' => $release_hash( $release_current ), 'complete' => $s['complete'], 'ids' => $s['ids'] ) ), JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR ) );
++            WP_CLI::success( 'Recognized exact recovery state; no database, cache or snapshot writes.' ); return;
++        }
+         if ( $release_mode === 'verify' || $release_mode === 'apply' ) {
+             $release_state = $release_original ? 'original' : 'applied';
+             $release_equal( $release_current, $s[$release_original ? 'old' : 'new'], 'Exact ' . $release_state . ' state' );
+@@ -398,15 +424,19 @@
+     }
+     $release_current = $release_capture(); $release_baseline( $release_current );
+     if ( $release_mode === 'preflight' ) {
+-        WP_CLI::log( 'RELEASE-PREFLIGHT ' . json_encode( array( 'schema' => 1, 'bundle' => 'peek-visitor-release-v1', 'home' => $release_home, 'manifest_sha256' => $release_manifest_hash, 'state' => 'ready', 'protected_state_sha256' => $release_hash( $release_current ) ), JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR ) );
++        WP_CLI::log( 'RELEASE-PREFLIGHT ' . json_encode( $release_marker_fields( array( 'schema' => 1, 'bundle' => 'peek-visitor-release-v1', 'home' => $release_home, 'manifest_sha256' => $release_manifest_hash, 'state' => 'ready', 'protected_state_sha256' => $release_hash( $release_current ) ) ), JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR ) );
+         WP_CLI::success( 'Original visitor baseline ready; nothing changed.' ); return;
+     }
+     if ( ! $release_private_ok ) { $release_fail( 'Existing writable private WWM_BACKUP_DIR outside the webroot required.' ); }
+ } catch ( Throwable $release_error ) { WP_CLI::error( $release_error->getMessage() . ' No further writes.' ); }
+ 
+ $release_old = $release_current; $release_ids = array(); $release_owned = $release_old['owned']; $release_cleaned = array( 'css' => false, 'astra' => false );
+-$release_path = $release_private . '/peek-release-before-' . gmdate( 'Ymd-His' ) . '-' . bin2hex( random_bytes( 4 ) ) . '.json';
++$release_path_request = (string) getenv( 'TS_PEEK_RELEASE_NEW_JOURNAL' );
++if ( $release_live && $release_path_request === '' ) { WP_CLI::error( 'First live apply requires its preselected private recovery journal; nothing changed.' ); }
++$release_path = $release_path_request !== '' ? $release_path_request : $release_private . '/peek-release-before-' . gmdate( 'Ymd-His' ) . '-' . bin2hex( random_bytes( 4 ) ) . '.json';
++if ( dirname( $release_path ) !== $release_private || ! preg_match( '/^peek-release-before-\d{8}-\d{6}-[a-f0-9]{8}\.json$/D', basename( $release_path ) ) || file_exists( $release_path ) || is_link( $release_path ) ) { WP_CLI::error( 'New journal must be an unused exact canonical private path; nothing changed.' ); }
+ $release_snapshot = array( 'schema' => 1, 'bundle' => 'peek-visitor-release-v1', 'home' => $release_home, 'manifest_sha256' => $release_manifest_hash, 'created' => gmdate( 'c' ), 'complete' => false, 'ids' => array(), 'old' => $release_old, 'old_sha256' => $release_hash( $release_old ), 'journal' => $release_old, 'journal_sha256' => $release_hash( $release_old ) );
++$release_snapshot = $release_marker_fields( $release_snapshot );
+ try { $release_save( $release_path, $release_snapshot ); $release_equal( $release_capture(), $release_old, 'State after initial private snapshot' ); }
+ catch ( Throwable $release_error ) { WP_CLI::error( $release_error->getMessage() . ' Nothing changed.' ); }
+ 
+@@ -529,4 +559,4 @@
+     WP_CLI::error( $release_error->getMessage() . '; exact original state restored. Snapshot: ' . $release_path );
+ }
+ $release_marker( $release_path, $release_snapshot, 'applied', $release_last );
+-WP_CLI::success( 'Applied visitor release on isolated localhost only. Snapshot: ' . $release_path );
++WP_CLI::success( 'Applied exact profile-bound visitor release. Snapshot: ' . $release_path );
+diff --git a/scripts/work-with-me-employer/link-ideas/peek-release/live-profile.json b/scripts/work-with-me-employer/link-ideas/peek-release/live-profile.json
+new file mode 100644
+--- /dev/null
++++ b/scripts/work-with-me-employer/link-ideas/peek-release/live-profile.json
+@@ -0,0 +1,84 @@
++{
++  "schema": 1,
++  "bundle": "peek-visitor-release-v1",
++  "origin": "http://thaisolitude.com",
++  "source": {
++    "operation": "peek-live-navigation-baseline-1",
++    "run": 42741958557,
++    "commit": "9c6e090417c83164b457be16e5dcbd9ac4f6bb8b",
++    "baseline_sha256": "a6c6e923d484576d96060ab8d9f84110c5d785f9fec64c5ae7e5b0ef3f37f013",
++    "core_version": "7.1.4"
++  },
++  "captured_utc": "2026-11-10 02:19:48.000000",
++  "baseline": {
++    "post_sha256": {
++      "29": "265a218e6a1a29139a8428c1117a07767c7a8b858342670b0f3e58123cb2194d",
++      "1091": "62baa2451b5bf1b37cd080ed305b6a9e954f603259fd2ea70e8bdb46859eb83a",
++      "1107": "be399b44af8f2fdf5002d307a307e68afdafeaacc9a6ef71964dfb3d2d7ab3f5",
++      "1160": "2dcd0fc0a42794d77fabe40b749947ef5dcff6d2025eb72a1fb2339c085b3d72",
++      "1232": "0e5bfbd46aec6db729da5fd52eacf1c6a6bdff554be666f7dbbeb37018b29e12",
++      "1293": "12a1e17542e4dbecb08138dd0367db28bb0416bbaa9032809c772bf38b34f033",
++      "1338": "8f384e46e5d264b536a5f7f939282a155b60c8501601625fe0efd073ac0fe077"
++    },
++    "meta_sha256": {
++      "29": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
++      "1232": "37c7d425811500b1f603d8e4b60a9146daa867e450722398ba41e502c719dca5",
++      "1338": "28d86684f8bed385d944821416b54fd57223ffa3ca6d0eae03c11518939781e6"
++    },
++    "relationship_sha256": {
++      "29": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
++      "1232": "fbc013ff1a2dc9ccd671871aa0487989d0154fe76030b317f05c7a663a706643",
++      "1338": "c83606e24f0dcb0d960475eb5c85c855545558ba529bca21296932f75026cb1c"
++    },
++    "option_sha256": {
++      "home": "62e4dd31a7946e6c30cba055fefe766295c7b53ab276cc211f96e8b9b6682b4c",
++      "page_for_posts": "bcfcb7fe02d376113c505c1b0334c3b59219d9e48fd37173df930c43352e3503",
++      "page_on_front": "7bddbe1c8e8f1603d2301ef7ef55ead151434bf1919b9ea6fb1cab362f9287df",
++      "permalink_structure": "73bb888f203455a876b2b0359d76d1f20e02a9dbd37f74704a8dbae773d173a5",
++      "show_on_front": "25f4d693aad8d7f4e2bc722a9e7ca6fc830a2accd2665c2904595cc94c8723b2",
++      "siteurl": "d2b8bd6bc8bea23b6859629f7f6563fa528a20f945c0208537db349984ec7b0f",
++      "stylesheet": "bcdff630c742d3de466887cd664361dc0bfa822df68043d7092eddded325c0f5",
++      "template": "348148c6651303b692474fb82fb651d02889b79bc180bb3f9b8a23b696707dba",
++      "astra-settings": "241e0e567cbd6f9ca76871671ebb912566b17afc0b9039ddb7c30f85e75ee2f7"
++    },
++    "css": {
++      "id": 29,
++      "old_content_sha256": "1b9d4a6fcc783830a508edb3a00390d698998621391facf49ea05d77ce09fc7f",
++      "new_content_sha256": "b024acc687b49a37115940b52976f3bdcfc6cb236ae7bb4a81422f8c2d02c69b"
++    },
++    "taxonomies": [
++      {
++        "count": "17",
++        "description": "",
++        "parent": "0",
++        "taxonomy": "wpcode_type",
++        "term_id": "9",
++        "term_taxonomy_id": "9"
++      },
++      {
++        "count": "17",
++        "description": "",
++        "parent": "0",
++        "taxonomy": "wpcode_location",
++        "term_id": "10",
++        "term_taxonomy_id": "10"
++      }
++    ],
++    "terms": [
++      {
++        "name": "php",
++        "slug": "php",
++        "term_group": "0",
++        "term_id": "9"
++      },
++      {
++        "name": "everywhere",
++        "slug": "everywhere",
++        "term_group": "0",
++        "term_id": "10"
++      }
++    ],
++    "termmeta_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
++    "astra_new_row_sha256": "1274da92d38742e8af51c3872427c498eae6c6b3ead8ba265aca7573e6ae4d0e"
++  }
++}
+diff --git a/scripts/work-with-me-employer/link-ideas/peek-release/validate-marker.py b/scripts/work-with-me-employer/link-ideas/peek-release/validate-marker.py
+new file mode 100644
+--- /dev/null
++++ b/scripts/work-with-me-employer/link-ideas/peek-release/validate-marker.py
+@@ -0,0 +1,80 @@
++#!/usr/bin/env python3
++"""Bind one installer marker to the preserved actual journal; never print rows."""
++import hashlib
++import json
++from pathlib import Path
++import re
++import sys
++
++
++def require(ok):
++    if not ok:
++        raise ValueError('binding')
++
++
++def unique(pairs):
++    out = {}
++    for key, value in pairs:
++        require(key not in out)
++        out[key] = value
++    return out
++
++
++def read_json(data):
++    return json.loads(data, object_pairs_hook=unique)
++
++
++def sha(data):
++    return hashlib.sha256(data).hexdigest()
++
++
++def digest(value):
++    return sha(json.dumps(value, sort_keys=True, ensure_ascii=False, separators=(',', ':')).encode())
++
++
++def validate(package, log, kind, state, remote, saved=None):
++    package = Path(package)
++    require(kind in ('RELEASE-PREFLIGHT', 'RELEASE-SNAPSHOT', 'RELEASE-RECOVERY'))
++    lines = [line for line in Path(log).read_text().splitlines() if re.match(r'^'+kind+r'(?:\s|$)', line)]
++    require(len(lines) == 1 and lines[0].startswith(kind+' '))
++    marker = read_json(lines[0][len(kind)+1:])
++    require(type(marker['schema']) is int and marker['schema'] == 1 and marker['bundle'] == 'peek-visitor-release-v1')
++    require(marker['home'] == 'http://thaisolitude.com' and marker['state'] == state)
++    require(marker['manifest_sha256'] == sha((package/'manifest.json').read_bytes()))
++    require(marker['profile_sha256'] == sha((package/'live-profile.json').read_bytes()))
++    if kind == 'RELEASE-PREFLIGHT':
++        require(state == 'ready' and re.fullmatch('[a-f0-9]{64}', marker['protected_state_sha256']))
++        return
++    require(re.fullmatch(r'/home/[a-zA-Z0-9_-]+/private-backups/peek-release-before-\d{8}-\d{6}-[a-f0-9]{8}\.json', remote))
++    require(marker['snapshot'] == remote and saved is not None)
++    saved = Path(saved)
++    require(saved.is_file() and not saved.is_symlink() and saved.stat().st_mode & 0o777 == 0o600)
++    raw = saved.read_bytes(); snap = read_json(raw)
++    require(marker['snapshot_sha256'] == sha(raw))
++    for key in ('schema','bundle','home','manifest_sha256','profile_sha256','ids'):
++        require(marker[key] == snap[key])
++    roles = ('core','thai-massage','therapeutic-massage','deep-tissue-massage','chair-massage')
++    require(type(snap['complete']) is bool and (isinstance(snap['ids'], dict) or snap['ids'] == []))
++    role_ids = snap['ids'] if isinstance(snap['ids'], dict) else {}
++    require(set(role_ids).issubset(roles))
++    require(all(type(i) is int and i > 0 for i in role_ids.values()))
++    require(len(set(role_ids.values())) == len(snap['ids']))
++    require(digest(snap['old']) == snap['old_sha256'])
++    key = 'new' if snap['complete'] else 'journal'
++    require(digest(snap[key]) == snap[key+'_sha256'])
++    require(re.fullmatch('[a-f0-9]{64}', marker['state_sha256']))
++    if kind == 'RELEASE-SNAPSHOT':
++        require(snap['complete'] and set(role_ids) == set(roles) and state in ('applied','original'))
++    else:
++        require(type(marker['complete']) is bool and marker['complete'] == snap['complete'] and state in ('recoverable','original'))
++    if state in ('applied','original'):
++        require(marker['state_sha256'] == snap['new_sha256' if state == 'applied' else 'old_sha256'])
++
++
++if __name__ == '__main__':
++    try:
++        require(len(sys.argv) in (6,7))
++        validate(*sys.argv[1:])
++    except Exception:
++        raise SystemExit('Release marker/private journal binding failed; no values disclosed.')
++    print('Exact release marker/private journal binding verified.')
+diff --git a/scripts/work-with-me-employer/link-ideas/peek-release/verify-render.php b/scripts/work-with-me-employer/link-ideas/peek-release/verify-render.php
+new file mode 100644
+--- /dev/null
++++ b/scripts/work-with-me-employer/link-ideas/peek-release/verify-render.php
+@@ -0,0 +1,41 @@
++<?php
++// Read-only public response gate. Snapshot/state guards run before and after GETs.
++try {
++    if ( PHP_SAPI !== 'cli' || count( $argv ) !== 5 || ! in_array( $argv[3], array( 'applied', 'original' ), true ) ) { throw new RuntimeException(); }
++    $s = json_decode( file_get_contents( $argv[2] ), true, 512, JSON_THROW_ON_ERROR );
++    $which = $argv[3]; $route = $argv[4];
++    $m = json_decode( file_get_contents( __DIR__ . '/manifest.json' ), true, 512, JSON_THROW_ON_ERROR );
++    $routes = array_column( $m['pages'], 'path' );
++    if ( ! in_array( $route, array_merge( $routes, array( '/?s=massage', '/peek-release-not-a-real-page/' ) ), true ) || $s['bundle'] !== 'peek-visitor-release-v1' || $s['home'] !== 'http://thaisolitude.com' || $s['manifest_sha256'] !== hash_file( 'sha256', __DIR__ . '/manifest.json' ) || $s['profile_sha256'] !== hash_file( 'sha256', __DIR__ . '/live-profile.json' ) ) { throw new RuntimeException(); }
++    if ( $which === 'applied' && $s['complete'] !== true ) { throw new RuntimeException(); }
++    $state = $s[$which === 'applied' ? 'new' : 'old'];
++    $html = file_get_contents( $argv[1] ); $css = $state['records'][29]['post']['post_content'];
++    if ( preg_match_all( '~<body\b[^>]*\bclass=(["\x27])(.*?)\1[^>]*>~is', $html, $body ) !== 1 ) { throw new RuntimeException(); }
++    $classes = preg_split( '/\s+/', trim( html_entity_decode( $body[2][0], ENT_QUOTES | ENT_HTML5, 'UTF-8' ) ) );
++    $index = array_search( $route, $routes, true );
++    if ( $index !== false ) {
++        $expected_page = 'page-id-' . $m['pages'][$index]['id'];
++        $page_classes = array_values( preg_grep( '/^page-id-[0-9]+$/D', $classes ) );
++        if ( $page_classes !== array( $expected_page ) || in_array( 'search', $classes, true ) || in_array( 'error404', $classes, true ) ) { throw new RuntimeException(); }
++    } elseif ( $route === '/?s=massage' ) {
++        if ( ! in_array( 'search', $classes, true ) || in_array( 'error404', $classes, true ) || preg_grep( '/^page-id-[0-9]+$/D', $classes ) ) { throw new RuntimeException(); }
++    } elseif ( ! in_array( 'error404', $classes, true ) || in_array( 'search', $classes, true ) || preg_grep( '/^page-id-[0-9]+$/D', $classes ) ) { throw new RuntimeException(); }
++
++    if ( preg_match_all( '~<style\b[^>]*\bid=["\x27]wp-custom-css["\x27][^>]*>(.*?)</style\s*>~is', $html, $match ) !== 1 || trim( $match[1][0], " \t\n\r\f" ) !== trim( $css, " \t\n\r\f" ) || ! str_contains( $html, 'LMT-29905' ) ) { throw new RuntimeException(); }
++    $source = file_get_contents( __DIR__ . '/payload/core.php' );
++    foreach ( array( 'style' => 'ts-peek-nav-css', 'script' => 'ts-peek-nav-runtime' ) as $tag => $id ) {
++        $pattern = '#<' . $tag . ' id="' . $id . '">(.*?)</' . $tag . '>#s';
++        $count = preg_match_all( $pattern, $html, $actual );
++        if ( $which === 'original' ) { if ( $count !== 0 || str_contains( $html, $id ) ) { throw new RuntimeException(); } }
++        elseif ( preg_match( $pattern, $source, $expected ) !== 1 || $count !== 1 || $actual[1][0] !== $expected[1] ) { throw new RuntimeException(); }
++    }
++    $slug = trim( $route, '/' ); $summary = in_array( $slug, $m['summary_slugs'], true );
++    foreach ( array( 'id="ts-peek-nav-config"' => $which === 'applied' ? 1 : 0, 'id="ts-peek-nav-data"' => $which === 'applied' && $summary ? 1 : 0, 'ts-pill-nav' => 0 ) as $needle => $count ) { if ( substr_count( $html, $needle ) !== $count ) { throw new RuntimeException(); } }
++    if ( $summary && $which === 'applied' ) {
++        if ( preg_match_all( '~<script\b[^>]*id="ts-peek-nav-data"[^>]*>(.*?)</script>~s', $html, $data ) !== 1 ) { throw new RuntimeException(); }
++        $expected = json_decode( file_get_contents( __DIR__ . '/payload/data/' . $slug . '.json' ), true, 512, JSON_THROW_ON_ERROR );
++        if ( json_decode( $data[1][0], true, 512, JSON_THROW_ON_ERROR ) !== $expected ) { throw new RuntimeException(); }
++    }
++    if ( ( $summary || $slug === 'services' ) && substr_count( $html, 'class="ts-jump"' ) !== 1 ) { throw new RuntimeException(); }
++    echo "Exact public response verified: $which $route\n";
++} catch ( Throwable $e ) { fwrite( STDERR, "Rendered release/snapshot scope differs; no private values disclosed.\n" ); exit( 1 ); }
+diff --git a/scripts/work-with-me-employer/link-ideas/peek-release/test-installer.php b/scripts/work-with-me-employer/link-ideas/peek-release/test-installer.php
+--- a/scripts/work-with-me-employer/link-ideas/peek-release/test-installer.php
++++ b/scripts/work-with-me-employer/link-ideas/peek-release/test-installer.php
+@@ -463,6 +463,21 @@
+ check( $comparison === $manifest, 'fixture changes only row/source hashes; production routes, payloads, host rules, Spectra version and public source provenance remain intact' );
+ check( hash_file( 'sha256', "$package/install-peek-release.php" ) === hash_file( 'sha256', "$source/install-peek-release.php" ), 'fixture runs identical production installer bytes' );
+ foreach ( $payload_specs as $role => $spec ) { check( hash_file( 'sha256', "$package/{$spec['file']}" ) === $spec['file_sha256'], "fixture retains production $role payload bytes" ); }
++// Emit actual local installer markers at the real /backups path for the
++// unchanged Python rehearsal parser. Run only in an isolated offline container.
++if ( $source_case === 'local-marker-contract' ) {
++    $output = $argv[3] ?? '';
++    if ( ! str_starts_with( $output, '/tmp/' ) || file_exists( '/backups' ) || ! mkdir( '/backups', 0700 ) || ! mkdir( $output, 0700 ) ) { throw new Harness_Error( 'Local marker contract requires isolated /backups and new /tmp output' ); }
++    putenv( 'WWM_BACKUP_DIR=/backups' );
++    try {
++        copy( "$package/manifest.json", "$output/manifest.json" );
++        invoke( array( 'preflight' ) ); file_put_contents( "$output/preflight.log", implode( "\n", $logs ) . "\n" );
++        invoke( array( 'apply' ) ); $actual = marker( 'RELEASE-SNAPSHOT' ); file_put_contents( "$output/applied.log", implode( "\n", $logs ) . "\n" );
++        invoke( array( 'rollback', $actual['snapshot'] ) ); file_put_contents( "$output/original.log", implode( "\n", $logs ) . "\n" );
++        check( all_state() === $original, 'actual local marker round trip preserves every fixture byte' );
++    } finally { remove_tree( '/backups' ); }
++    echo "PASS emitted actual local markers without rewriting fields or paths.\n"; exit;
++}
+ if ( $source_case !== '' ) {
+     if ( ! in_array( $source_case, array( 'runtime-version', 'main-not-loaded', 'helper-not-loaded', 'loader-not-loaded', 'class-loaded-elsewhere' ), true ) ) { throw new Harness_Error( 'Unknown isolated source-identity case' ); }
+     refusal( array( 'apply' ), 'isolated Spectra loaded-source identity: ' . $source_case );
+@@ -1256,5 +1271,82 @@
+ restore_state( $original );
+ check( file_get_contents( "$source/manifest.json" ) === $manifest_bytes, 'production manifest was never modified by synthetic fixture' );
+ foreach ( $payload_specs as $role => $spec ) { check( hash_file( 'sha256', "$source/{$spec['file']}" ) === $spec['file_sha256'], "production $role payload unchanged after all controls" ); }
++// Disabled live-enable proposal controls: synthetic rows only, never network.
++$proposal_start = $pass;
++putenv( 'TS_PEEK_RELEASE_PROFILE=raw-live-v1' );
++refusal( array( 'preflight' ), 'raw-live profile cannot be selected on localhost' );
++putenv( 'TS_PEEK_RELEASE_PROFILE' );
++$home = 'http://thaisolitude.com'; refusal( array( 'preflight' ), 'live requires explicit raw-live profile' );
++putenv( 'TS_PEEK_RELEASE_PROFILE=raw-live-v1' );
++refusal( array( 'preflight' ), 'raw-live profile rejects copied synthetic row hashes' );
++$home = 'https://thaisolitude.com'; refusal( array( 'preflight' ), 'HTTPS stored origin is not the exact reviewed raw origin' );
++$home = 'http://thaisolitude.com';
++fixture_update( 'wp_options', 'option_name', 'home', array( 'option_value' => $home ) );
++fixture_update( 'wp_options', 'option_name', 'siteurl', array( 'option_value' => $home ) );
++$proposal_profile_bytes = file_get_contents( "$package/live-profile.json" );
++$proposal_profile = json_decode( $proposal_profile_bytes, true, 512, JSON_THROW_ON_ERROR );
++$proposal_profile['baseline'] = fixture_profile( $fixture_manifest, $source );
++file_put_contents( "$package/live-profile.json", json_encode( $proposal_profile, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) . "\n" );
++$proposal_original = all_state();
++invoke( array( 'preflight' ) ); $proposal_ready = marker( 'RELEASE-PREFLIGHT' );
++check( $proposal_ready['profile_sha256'] === hash_file( 'sha256', "$package/live-profile.json" ), 'live preflight binds exact separate raw profile bytes' );
++refusal( array( 'apply' ), 'first live apply without caller-selected journal' );
++$proposal_path = "$testdir/backups/peek-release-before-20261111-030000-1234abcd.json";
++foreach ( array( "$testdir/peek-release-before-20261111-030000-1234abcd.json", "$testdir/backups/not-owned.json" ) as $bad_path ) {
++    putenv( 'TS_PEEK_RELEASE_NEW_JOURNAL=' . $bad_path ); refusal( array( 'apply' ), 'unowned selected journal path' );
++}
++file_put_contents( $proposal_path, 'SYNTHETIC_PRIVATE_EXISTING' );
++putenv( 'TS_PEEK_RELEASE_NEW_JOURNAL=' . $proposal_path ); refusal( array( 'apply' ), 'selected journal never overwrites existing evidence' ); unlink( $proposal_path );
++invoke( array( 'apply' ) ); $proposal_marker = marker( 'RELEASE-SNAPSHOT' );
++check( $proposal_marker['snapshot'] === $proposal_path && $proposal_marker['profile_sha256'] === $proposal_ready['profile_sha256'], 'live apply uses exact preselected path and profile marker' );
++$proposal_applied = all_state(); $proposal_bytes = file_get_contents( $proposal_path );
++putenv( 'TS_PEEK_RELEASE_EXPECT_SNAPSHOT_SHA256=' . str_repeat( '0', 64 ) );
++refusal( array( 'rollback', $proposal_path ), 'caller-preserved journal hash mismatch stops rollback' );
++refusal( array( 'recovery-check', $proposal_path ), 'caller-preserved journal hash mismatch stops recovery verification' );
++putenv( 'TS_PEEK_RELEASE_EXPECT_SNAPSHOT_SHA256=' . hash( 'sha256', $proposal_bytes ) );
++invoke( array( 'verify', $proposal_path ) ); marker( 'RELEASE-SNAPSHOT' );
++putenv( 'TS_PEEK_RELEASE_EXPECT_SNAPSHOT_SHA256' );
++
++$proposal_writes = $wpdb->writes; $proposal_events = $events;
++invoke( array( 'recovery-check', $proposal_path ) ); $proposal_recovery = marker( 'RELEASE-RECOVERY' );
++check( $proposal_recovery['complete'] === true && digest( $proposal_recovery['ids'] ) === digest( $proposal_marker['ids'] ) && $proposal_recovery['snapshot_sha256'] === hash( 'sha256', $proposal_bytes ), 'recovery check binds complete actual snapshot and exact role IDs' );
++check( $wpdb->writes === $proposal_writes && $events === $proposal_events && all_state() === $proposal_applied && file_get_contents( $proposal_path ) === $proposal_bytes, 'recognized recovery check writes neither DB/cache nor private evidence' );
++refusal( array( 'recovery-check', $proposal_path, 'original' ), 'applied recovery is not original' );
++refusal( array( 'rollback', $proposal_path ), 'direct live rollback without caller-preserved hash' );
++putenv( 'TS_PEEK_RELEASE_EXPECT_SNAPSHOT_SHA256=' . hash( 'sha256', $proposal_bytes ) );
++$event_counts = array(); $failures = array( array( 'key' => 'delete:after', 'at' => 1 ) );
++try { invoke( array( 'rollback', $proposal_path ) ); } catch ( Refusal_Error $ignored ) {}
++$failures = array(); $proposal_partial = all_state(); $proposal_writes = $wpdb->writes; $proposal_events = $events;
++invoke( array( 'recovery-check', $proposal_path ) ); marker( 'RELEASE-RECOVERY' );
++check( $proposal_partial !== $proposal_applied && $proposal_partial !== $proposal_original && $wpdb->writes === $proposal_writes && $events === $proposal_events, 'read-only check accepts exact interrupted rollback prefix without requiring applied verify' );
++fixture_update( 'wp_posts', 'ID', 1160, array( 'post_content' => 'SYNTHETIC_PRIVATE_DRIFT' ) );
++refusal( array( 'recovery-check', $proposal_path ), 'unknown edit in interrupted recovery prefix' );
++restore_state( $proposal_partial ); invoke( array( 'rollback', $proposal_path ) );
++invoke( array( 'recovery-check', $proposal_path, 'original' ) ); $proposal_restored = marker( 'RELEASE-RECOVERY' );
++check( all_state() === $proposal_original && $proposal_restored['state'] === 'original', 'recognized partial rollback restores exact original live fixture rows' );
++putenv( 'TS_PEEK_RELEASE_EXPECT_SNAPSHOT_SHA256' );
++$proposal_corrupt = json_decode( $proposal_bytes, true ); $proposal_corrupt['profile_sha256'] = str_repeat( '0', 64 );
++refusal( array( 'recovery-check', snapshot_write( $proposal_corrupt ) ), 'snapshot cannot cross raw-profile identity' );
++putenv( 'TS_PEEK_RELEASE_EXPECT_SNAPSHOT_SHA256' );
++// Apply crash evidence is recoverable even though no completion marker exists.
++$proposal_failed_path = "$testdir/backups/peek-release-before-20261111-030001-1234abcd.json";
++putenv( 'TS_PEEK_RELEASE_NEW_JOURNAL=' . $proposal_failed_path );
++$event_counts = array(); $failures = array( array( 'key' => 'create:after', 'at' => 1 ), array( 'key' => 'delete:before', 'at' => 1 ) );
++try { invoke( array( 'apply' ) ); } catch ( Refusal_Error $ignored ) {}
++$failures = array(); $proposal_incomplete = json_decode( file_get_contents( $proposal_failed_path ), true );
++check( $proposal_incomplete['complete'] === false && count( $proposal_incomplete['ids'] ) === 1, 'failed apply preserves exact caller-selected incomplete recovery journal' );
++$proposal_writes = $wpdb->writes; $proposal_events = $events;
++invoke( array( 'recovery-check', $proposal_failed_path ) ); $proposal_partial_marker = marker( 'RELEASE-RECOVERY' );
++check( $proposal_partial_marker['complete'] === false && $wpdb->writes === $proposal_writes && $events === $proposal_events, 'incomplete recognized journal can be checked without preflight or completed verify' );
++putenv( 'TS_PEEK_RELEASE_EXPECT_SNAPSHOT_SHA256=' . hash_file( 'sha256', $proposal_failed_path ) );
++invoke( array( 'rollback', $proposal_failed_path ) ); invoke( array( 'recovery-check', $proposal_failed_path, 'original' ) ); marker( 'RELEASE-RECOVERY' );
++check( all_state() === $proposal_original, 'incomplete live fixture journal restores exact original rows' );
++fixture_update( 'wp_posts', 'ID', 1160, array( 'post_content' => 'SYNTHETIC_PRIVATE_DRIFT' ) );
++refusal( array( 'preflight' ), 'future raw-live preflight rejects baseline drift' );
++restore_state( $original ); $home = 'http://localhost:8090'; putenv( 'TS_PEEK_RELEASE_PROFILE' ); putenv( 'TS_PEEK_RELEASE_NEW_JOURNAL' ); putenv( 'TS_PEEK_RELEASE_EXPECT_SNAPSHOT_SHA256' );
++file_put_contents( "$package/live-profile.json", $proposal_profile_bytes );
++check( file_get_contents( "$source/live-profile.json" ) === $proposal_profile_bytes, 'real raw-live public hash profile never modified by synthetic fixture' );
++echo 'PASS disabled live proposal: ' . ( $pass - $proposal_start ) . " additional profile/recovery controls.\n";
++
+ remove_tree( $testdir );
+ echo 'PASS Peek visitor release installer: ' . $pass . ' checks, ' . $fault_cases . " injected write-boundary failures; isolated SQLite/WP API model only, real WordPress copy rehearsal still required.\n";
+diff --git a/scripts/work-with-me-employer/link-ideas/peek-release/test-push.py b/scripts/work-with-me-employer/link-ideas/peek-release/test-push.py
+new file mode 100644
+--- /dev/null
++++ b/scripts/work-with-me-employer/link-ideas/peek-release/test-push.py
+@@ -0,0 +1,177 @@
++"""Offline wrapper command doubles; no SSH, HTTP, WP or encrypted-store proof."""
++import hashlib
++import importlib.util
++import json
++import os
++from pathlib import Path
++import socket
++import subprocess
++import tempfile
++
++HERE = Path(__file__).resolve().parent
++PUSH = HERE.parent/'push-peek-release.sh'
++BACKUP = '/home/releasefixture/private-backups/live-before-peek-release-20261111-120000-123.sql'
++SNAP = '/home/releasefixture/private-backups/peek-release-before-20261111-120001-1234abcd.json'
++def sha(data): return hashlib.sha256(data).hexdigest()
++def canonical(obj): return json.dumps(obj, sort_keys=True, ensure_ascii=False, separators=(',', ':')).encode()
++SSH = r'''#!/usr/bin/env python3
++import hashlib,json,os,shlex,sys
++from pathlib import Path
++state=json.loads(Path(os.environ['RELEASE_FIXTURE']).read_text()); scenario=os.environ['RELEASE_CASE']
++def event(name):
++ with open(os.environ['RELEASE_EVENTS'],'a') as f:f.write(name+'\n')
++def transfer(kind,path):
++ body=state['files'][path].encode(); digest=hashlib.sha256(body).hexdigest(); n=len(body)
++ if scenario=='backup-hash' and kind=='RELEASE-BACKUP':digest='0'*64
++ if scenario=='journal-size' and kind=='RELEASE-JOURNAL':n+=1
++ print(kind,path,digest,n)
++def mark(kind,which):
++ d=dict(state['base'],state=which)
++ if kind=='RELEASE-PREFLIGHT':d['protected_state_sha256']='a'*64
++ else:
++  d.update(snapshot=state['snapshot'],snapshot_sha256=state['sha'],ids=state['ids'],state_sha256=state['new_sha'] if which=='applied' else state['old_sha'])
++  if kind=='RELEASE-RECOVERY':d['complete']=state['complete']
++ if scenario=='wrong-profile':d['profile_sha256']='b'*64
++ if scenario=='wrong-ids' and kind=='RELEASE-SNAPSHOT':d['ids']={'core':999}
++ if scenario=='wrong-marker-hash' and kind=='RELEASE-SNAPSHOT':d['snapshot_sha256']='b'*64
++ print(kind,json.dumps(d))
++ if scenario=='duplicate-marker' and kind=='RELEASE-SNAPSHOT':print(kind,json.dumps(d))
++cmd=sys.argv[-1]
++if cmd=='true':event('connect');sys.exit(0)
++if 'tar -xf -' in cmd:sys.stdin.buffer.read();event('upload');sys.exit(0)
++p=shlex.split(cmd)
++if p[0]=='cat':event('copy:'+Path(p[1]).suffix);sys.stdout.write(state['files'][p[1]]);sys.exit(0)
++if p[0]=='sha256sum':
++ event('hash:'+Path(p[1]).suffix);digest=hashlib.sha256(state['files'][p[1]].encode()).hexdigest()
++ if scenario=='remote-changed':digest='1'*64
++ print(digest+'  '+p[1]);sys.exit(0)
++assert p[:3]==['bash','-s','--'];sys.stdin.buffer.read();phase=p[3];event('remote:'+phase);assert p[4]=='live'
++if phase in ('prepare','prepare-rollback'):
++ if scenario=='export-fail':sys.exit(7)
++ if phase=='prepare':
++  mark('RELEASE-PREFLIGHT','ready');print('RELEASE-INTENT',state['snapshot'])
++  if scenario=='duplicate-intent':print('RELEASE-INTENT',state['snapshot'])
++ else:mark('RELEASE-RECOVERY','recoverable');transfer('RELEASE-JOURNAL',state['snapshot'])
++ transfer('RELEASE-BACKUP',state['backup'])
++ if scenario=='duplicate-backup':transfer('RELEASE-BACKUP',state['backup'])
++elif phase=='apply':
++ assert p[5]==state['snapshot']
++ if scenario=='apply-fail':sys.exit(8)
++ if scenario!='missing-marker':mark('RELEASE-SNAPSHOT','applied')
++elif phase=='preserve':
++ assert p[5]==state['snapshot']
++ if scenario=='missing-journal':sys.exit(9)
++ transfer('RELEASE-JOURNAL',state['snapshot'])
++ if scenario=='duplicate-journal':transfer('RELEASE-JOURNAL',state['snapshot'])
++elif phase in ('verify','verify-purged','rollback'):
++ assert p[5]==state['snapshot'] and p[6]==state['sha'];event('bound:'+p[6])
++ if scenario in ('purge-fail','render-fail','state-fail'):sys.exit(10)
++ print('RELEASE-FINAL-BEGIN')
++ if scenario=='duplicate-final':print('RELEASE-FINAL-BEGIN')
++ mark('RELEASE-RECOVERY' if phase=='rollback' else 'RELEASE-SNAPSHOT','original' if phase=='rollback' else 'applied')
++elif phase=='preflight':mark('RELEASE-PREFLIGHT','ready')
++else:raise SystemExit('unknown fixture phase')
++'''
++HOOK = r'''#!/usr/bin/env python3
++import os,sys
++from pathlib import Path
++assert len(sys.argv)==3 and Path(sys.argv[1],sys.argv[2]).is_file()
++suffix=Path(sys.argv[2]).suffix
++with open(os.environ['RELEASE_EVENTS'],'a') as f:f.write('offsite:'+suffix+'\n')
++if os.environ['RELEASE_CASE']==('offsite-db-fail' if suffix=='.sql' else 'offsite-journal-fail'):sys.exit(5)
++'''
++checks=0
++def check(ok,label):
++ global checks
++ checks+=1
++ if not ok:raise AssertionError(label)
++with tempfile.TemporaryDirectory(prefix='release-push-model-') as td:
++ root=Path(td);binary=root/'bin';binary.mkdir()
++ for name,body in [('ssh',SSH),('ssh-add','#!/bin/sh\nexit 0\n'),('offsite',HOOK)]:
++  (binary/name).write_text(body);(binary/name).chmod(0o700)
++ creds=root/'credentials';creds.write_text('Host: fixture.invalid\nPort: 22\nUser: fixture\n')
++ sock=socket.socket(socket.AF_UNIX);sock.bind(str(root/'agent.sock'))
++ env=dict(os.environ,PATH=str(binary)+os.pathsep+os.environ['PATH'],S26_CREDS=str(creds),SSH_AUTH_SOCK=str(root/'agent.sock'),TS_OFFSITE_HOOK=str(binary/'offsite'),S_TARGET='live',RELEASE_FIXTURE=str(root/'state.json'),RELEASE_EVENTS=str(root/'events'))
++ base={'schema':1,'bundle':'peek-visitor-release-v1','home':'http://thaisolitude.com','manifest_sha256':sha((HERE/'manifest.json').read_bytes()),'profile_sha256':sha((HERE/'live-profile.json').read_bytes())}
++ ids={role:2000+n for n,role in enumerate(('core','thai-massage','therapeutic-massage','deep-tissue-massage','chair-massage'))}
++ old={'private':'SYNTHETIC_PRIVATE_DO_NOT_LOG'};new={'private':'SYNTHETIC_PRIVATE_APPLIED'}
++ def run(case,args,partial=False,**overrides):
++  copydir=root/f'backups-{checks}'
++  (root/'events').write_text('')
++  snap=dict(base,complete=not partial,ids=[] if partial == 'empty' else ({'thai-massage':2001} if partial else ids),old=old,old_sha256=sha(canonical(old)))
++  snap.update({('journal' if partial else 'new'):new,('journal_sha256' if partial else 'new_sha256'):sha(canonical(new))})
++  raw=canonical(snap).decode()
++  state=dict(base=base,complete=not partial,ids=snap['ids'],old_sha=snap['old_sha256'],new_sha=sha(canonical(new)),snapshot=SNAP,backup=BACKUP,sha=sha(raw.encode()),files={SNAP:raw,BACKUP:'SYNTHETIC_PRIVATE_SQL\n'})
++  (root/'state.json').write_text(json.dumps(state))
++  if case in ('existing-different','existing-symlink'):
++   copydir.mkdir();dest=copydir/Path(BACKUP).name
++   if case=='existing-symlink':dest.symlink_to(root/'state.json')
++   else:dest.write_text('earlier evidence')
++  result=subprocess.run(['bash',str(PUSH),*args],env=dict(env,RELEASE_CASE=case,TS_SERVER_BACKUPS=str(copydir),**overrides),capture_output=True,text=True,timeout=15)
++  check('SYNTHETIC_PRIVATE' not in result.stdout+result.stderr,'private raw values leaked')
++  return result,(root/'events').read_text().splitlines(),copydir
++ r,seen,d=run('ok',['--apply'])
++ check(r.returncode==0,'apply fixture: '+r.stdout+r.stderr)
++ check(seen.index('offsite:.sql')<seen.index('remote:apply')<seen.index('remote:preserve')<seen.index('offsite:.json')<seen.index('remote:verify-purged'),'exact backup-before-write and journal-before-render order')
++ check(any(x.startswith('bound:') for x in seen),'final verify binds actual preserved snapshot hash')
++ check((d/Path(SNAP).name).stat().st_mode&0o777==0o600,'actual journal private permissions')
++ for case in ('export-fail','wrong-profile','backup-hash','remote-changed','offsite-db-fail','duplicate-backup','duplicate-intent','existing-different','existing-symlink'):
++  r,seen,_=run(case,['--apply']);check(r.returncode!=0 and 'remote:apply' not in seen,case+' must stop before writes')
++ r,seen,d=run('apply-fail',['--apply'],partial=True)
++ check(r.returncode!=0 and 'offsite:.json' in seen and (d/Path(SNAP).name).is_file(),'failed apply preserves actual partial recovery journal offsite')
++ check('remote:verify-purged' not in seen,'failed apply never claims rendered success')
++ for case in ('missing-marker','wrong-ids','wrong-marker-hash','duplicate-marker','missing-journal','journal-size','duplicate-journal','offsite-journal-fail'):
++  r,seen,_=run(case,['--apply']);check(r.returncode!=0 and 'remote:verify-purged' not in seen,case+' must stop before success/render')
++ for case in ('purge-fail','render-fail','state-fail','duplicate-final'):
++  r,seen,_=run(case,['--apply']);check(r.returncode!=0,case+' cannot produce success')
++ for partial in (False,True,'empty'):
++  r,seen,_=run('ok',['--rollback',SNAP],partial=partial)
++  check(r.returncode==0,'rollback fixture: '+r.stdout+r.stderr)
++  check('remote:preflight' not in seen and 'remote:verify' not in seen,'rollback never requires snapshot-free preflight/completed verify')
++  check(seen.index('offsite:.sql')<seen.index('remote:rollback') and seen.index('offsite:.json')<seen.index('remote:rollback'),'backup and actual complete/partial journal offsite precede rollback')
++ for case in ('export-fail','offsite-db-fail','offsite-journal-fail'):
++  r,seen,_=run(case,['--rollback',SNAP],partial=True);check(r.returncode!=0 and 'remote:rollback' not in seen,'rollback '+case+' stops writes')
++ r,seen,_=run('ok',[]);check(r.returncode==0 and not any(x.startswith('offsite:') for x in seen),'dry checks raw profile only')
++ r,seen,_=run('ok',['--apply'],S_TARGET='staging39');check(r.returncode!=0 and not seen,'non-live target rejected before contact')
++ r,seen,_=run('ok',['--apply'],TS_OFFSITE_HOOK='');check(r.returncode!=0 and not seen,'missing offsite hook stops before contact')
++ sock.close()
++# Direct parser controls cover corruption independently of shell doubles.
++spec=importlib.util.spec_from_file_location('release_marker',HERE/'validate-marker.py')
++parser=importlib.util.module_from_spec(spec);spec.loader.exec_module(parser)
++with tempfile.TemporaryDirectory(prefix='release-marker-model-') as td:
++ saved=Path(td)/'private.json';log=Path(td)/'marker.log'
++ journal=dict(base,complete=True,ids=ids,old=old,old_sha256=sha(canonical(old)),new=new,new_sha256=sha(canonical(new)))
++ raw=canonical(journal);saved.write_bytes(raw);saved.chmod(0o600)
++ good=dict(base,state='applied',snapshot=SNAP,snapshot_sha256=sha(raw),state_sha256=sha(canonical(new)),ids=ids)
++ def binding(data,ok=True,body=None):
++  log.write_text(body if body is not None else 'RELEASE-SNAPSHOT '+json.dumps(data)+'\n')
++  try:parser.validate(HERE,log,'RELEASE-SNAPSHOT','applied',SNAP,saved);result=True
++  except Exception:result=False
++  check(result==ok,'marker corruption boundary')
++ binding(good)
++ for key,value in [('schema',True),('home','https://thaisolitude.com'),('state','original'),('snapshot',SNAP.replace('1234abcd','ffffffff')),('snapshot_sha256','0'*64),('manifest_sha256','0'*64),('profile_sha256','0'*64),('state_sha256','0'*64),('ids',{'core':2000}),('ids',dict(ids,core=True))]:
++  binding(dict(good,**{key:value}),False)
++ binding(good,False,'RELEASE-SNAPSHOT '+json.dumps(good)+'\nRELEASE-SNAPSHOT malformed\n')
++ duplicate=json.dumps(good)[:-1]+',"home":"http://thaisolitude.com"}'
++ binding(good,False,'RELEASE-SNAPSHOT '+duplicate+'\n')
++ saved.chmod(0o644);binding(good,False);saved.chmod(0o600)
++ saved.write_bytes(raw+b' ');binding(good,False);saved.write_bytes(raw)
++ saved.unlink();saved.symlink_to(HERE/'manifest.json');binding(good,False)
++
++# Execute the actual remote case body with simple command doubles: this proves
++# shell failure semantics, not only failure propagation from mocked SSH.
++source=PUSH.read_text(); remote=source.split("<<'EOS'",1)[1].split('\nEOS',1)[0]
++body=remote[remote.index('case "$phase" in'):]
++for phase,fail in [('verify-purged','purge'),('verify-purged','render'),('verify-purged','verify-final'),('rollback','purge'),('rollback','render'),('rollback','verify-final')]:
++ with tempfile.TemporaryDirectory() as td:
++  events=Path(td)/'events'
++  prefix='''set -euo pipefail
++phase=$1; fail=$2; snap=/private/fixture.json; count=0
++run() { echo "run:$*" >> "$EVENTS"; count=$((count+1)); if [[ "$fail" = verify-final && ( "$count" -eq 2 && "$phase" = verify-purged || "$count" -eq 4 && "$phase" = rollback ) ]]; then return 7; fi; }
++purge() { echo purge >> "$EVENTS"; [ "$fail" != purge ]; }
++render() { echo render >> "$EVENTS"; [ "$fail" != render ]; }
++'''
++  r=subprocess.run(['bash','-s','--',phase,fail],input=prefix+body,text=True,capture_output=True,env=dict(os.environ,EVENTS=str(events)))
++  check(r.returncode!=0,phase+' actual remote case refuses '+fail)
++  if fail=='purge':check('render' not in events.read_text().splitlines(),'purge failure prevents rendered claim')
++print(f'PASS release wrapper: {checks} offline controls; no live/encrypted-store proof.')
+diff --git a/scripts/work-with-me-employer/link-ideas/peek-release/test-render.php b/scripts/work-with-me-employer/link-ideas/peek-release/test-render.php
+new file mode 100644
+--- /dev/null
++++ b/scripts/work-with-me-employer/link-ideas/peek-release/test-render.php
+@@ -0,0 +1,39 @@
++<?php
++// Synthetic response fixtures only. This is not a browser or live HTTP test.
++$dir = sys_get_temp_dir() . '/release-render-' . bin2hex( random_bytes( 6 ) ); mkdir( $dir, 0700 );
++$source = file_get_contents( __DIR__ . '/payload/core.php' ); $blocks = '';
++foreach ( array( 'style' => 'ts-peek-nav-css', 'script' => 'ts-peek-nav-runtime' ) as $tag => $id ) {
++    if ( preg_match( '#<' . $tag . ' id="' . $id . '">(.*?)</' . $tag . '>#s', $source, $match ) !== 1 ) { throw new RuntimeException( 'Fixture core extract failed' ); }
++    $blocks .= $match[0];
++}
++$css = array( 'old' => 'body{color:old}', 'new' => 'body{color:new}' );
++$snapshot = array( 'bundle' => 'peek-visitor-release-v1', 'home' => 'http://thaisolitude.com', 'manifest_sha256' => hash_file( 'sha256', __DIR__ . '/manifest.json' ), 'profile_sha256' => hash_file( 'sha256', __DIR__ . '/live-profile.json' ), 'complete' => true );
++foreach ( $css as $state => $value ) { $snapshot[$state] = array( 'records' => array( 29 => array( 'post' => array( 'post_content' => $value ) ) ) ); }
++$data = '<script type="application/json" id="ts-peek-nav-data">' . file_get_contents( __DIR__ . '/payload/data/thai-massage.json' ) . '</script>';
++$config = '<script type="application/json" id="ts-peek-nav-config">{"title":"Synthetic"}</script>';
++$license = '<p>LMT-29905</p>'; $jump = '<nav class="ts-jump"></nav>';
++$applied = '<body class="page page-id-1160"><style id="wp-custom-css">' . $css['new'] . '</style>' . $blocks . $config . $data . $license . $jump;
++$original = '<body class="page page-id-1160"><style id="wp-custom-css">' . $css['old'] . '</style>' . $license . $jump;
++$checks = 0;
++$test = static function ( $html, $snap, $state, $route, $ok ) use ( $dir, &$checks ) {
++    file_put_contents( "$dir/snapshot.json", json_encode( $snap ) ); file_put_contents( "$dir/page.html", $html );
++    $process = proc_open( array( PHP_BINARY, __DIR__ . '/verify-render.php', "$dir/page.html", "$dir/snapshot.json", $state, $route ), array( 0 => array( 'pipe', 'r' ), 1 => array( 'pipe', 'w' ), 2 => array( 'pipe', 'w' ) ), $pipes );
++    fclose( $pipes[0] ); $out = stream_get_contents( $pipes[1] ); fclose( $pipes[1] ); $err = stream_get_contents( $pipes[2] ); fclose( $pipes[2] ); $rc = proc_close( $process ); $checks++;
++    if ( ( $rc === 0 ) !== $ok || str_contains( $out . $err, 'SYNTHETIC_PRIVATE' ) ) { throw new RuntimeException( 'Rendered fixture failed at case ' . $checks ); }
++};
++try {
++    $test( $applied, $snapshot, 'applied', '/thai-massage/', true );
++    $test( $original, $snapshot, 'original', '/thai-massage/', true );
++    foreach ( array( '/about/' => 'page page-id-298', '/?s=massage' => 'search search-results', '/peek-release-not-a-real-page/' => 'error404' ) as $route => $body_class ) {
++        $good = str_replace( array( $data, 'page page-id-1160' ), array( '', $body_class ), $applied );
++        $test( $good, $snapshot, 'applied', $route, true );
++        $test( str_replace( $body_class, 'home page page-id-296', $good ), $snapshot, 'applied', $route, false );
++    }
++    $test( str_replace( 'page-id-1160', 'page-id-296', $applied ), $snapshot, 'applied', '/thai-massage/', false );
++    foreach ( array( str_replace( 'color:new', 'color:SYNTHETIC_PRIVATE', $applied ), str_replace( $license, '', $applied ), str_replace( $jump, '', $applied ), $applied . $config, $applied . $data, str_replace( 'ts-peek-nav-runtime', 'unexpected-runtime', $applied ), str_replace( '"approved"', '"SYNTHETIC_PRIVATE"', $applied ) ) as $bad ) { $test( $bad, $snapshot, 'applied', '/thai-massage/', false ); }
++    $test( $original . $blocks, $snapshot, 'original', '/thai-massage/', false );
++    $test( $applied, $snapshot, 'applied', '/unreviewed-route/', false );
++    foreach ( array( 'home' => 'https://other.invalid', 'manifest_sha256' => str_repeat( '0', 64 ), 'profile_sha256' => str_repeat( '0', 64 ), 'complete' => false ) as $key => $value ) { $bad = $snapshot; $bad[$key] = $value; $test( $applied, $bad, 'applied', '/thai-massage/', false ); }
++    $bad = $snapshot; $bad['complete'] = false; $test( $original, $bad, 'original', '/thai-massage/', true );
++    echo "PASS release rendered-response fixtures: $checks controls; no browser or live HTTP proof.\n";
++} finally { unlink( "$dir/snapshot.json" ); unlink( "$dir/page.html" ); rmdir( $dir ); }
+diff --git a/scripts/work-with-me-employer/link-ideas/peek-release/test-local-markers.py b/scripts/work-with-me-employer/link-ideas/peek-release/test-local-markers.py
+new file mode 100644
+--- /dev/null
++++ b/scripts/work-with-me-employer/link-ideas/peek-release/test-local-markers.py
+@@ -0,0 +1,15 @@
++#!/usr/bin/env python3
++"""Parse actual PHP model-emitted local markers; never rewrite marker fields."""
++import importlib.util
++from pathlib import Path
++import sys
++
++here=Path(__file__).resolve().parent
++spec=importlib.util.spec_from_file_location('release_evidence',here/'rehearsal-evidence.py')
++evidence=importlib.util.module_from_spec(spec);spec.loader.exec_module(evidence)
++root=Path(sys.argv[1]); manifest=str(root/'manifest.json')
++evidence.binding(root/'applied.log',manifest,'applied')
++evidence.binding(root/'original.log',manifest,'original')
++evidence.main(['warm',str(root/'preflight.log'),str(root/'preflight.log'),manifest])
++evidence.main(['original',str(root/'applied.log'),str(root/'original.log'),manifest])
++print('PASS actual PHP-emitted local preflight/apply/rollback markers satisfy the unchanged rehearsal parser.')
+diff --git a/scripts/work-with-me-employer/link-ideas/peek-release/LIVE-ENABLE-PROPOSAL.md b/scripts/work-with-me-employer/link-ideas/peek-release/LIVE-ENABLE-PROPOSAL.md
+new file mode 100644
+--- /dev/null
++++ b/scripts/work-with-me-employer/link-ideas/peek-release/LIVE-ENABLE-PROPOSAL.md
+@@ -0,0 +1,57 @@
++# Disabled enable-live proposal
++
++
++The companion patch is preparation only. It adds no operation request and does
++not authorize live writes. Before it is applied, the active installer remains
++localhost-only. The refreshed runtime still needs its staging deployment and
++complete fresh live-copy proof, including post-browser recovery. The patch must
++be rechecked against that exact successful source before release approval.
++
++Once separately reviewed and explicitly enabled, the additional installer
++profile is selected only by `TS_PEEK_RELEASE_PROFILE=raw-live-v1` on the exact
++stored origin `http://thaisolitude.com`. Public responses use HTTPS. Neither an
++HTTPS stored origin, staging origin nor a copied-site profile is substituted.
++`live-profile.json` contains only public provenance and raw-row hashes derived
++from the November 10 02:19:48 read-only live baseline. Serialized Astra bytes are
++changed at the single reviewed boolean token; the profile does not reserialize
++or remap live values. Any later mismatch stops the preflight; it is not rebased.
++The original copied manifest and Spectra source bindings are unchanged.
++
++The dedicated `../push-peek-release.sh` first-install wrapper requires a fresh
++exact database export and successful encrypted off-site readback before writes.
++It chooses an unused private journal path before apply and retrieves that exact
++file even if apply fails or supplies no completion marker. Existing local
++backup bytes are never replaced. Both successful installation and recovery bind
++the private file's exact SHA, actual role IDs, manifest and raw-profile hashes.
++The preserved SHA is passed back into the installer before snapshot-dependent
++writes, so replacement between backup and rollback is refused. Raw-live snapshot
++write modes require that hash even when invoked outside the wrapper.
++
++`recovery-check FILE [original]` is read-only and accepts only exact known reverse
++prefixes. It supports the initial empty journal, partial installation, interrupted
++rollback and completed installation. Rollback does not require snapshot-free
++preflight or completed-apply verification. Unknown edits refuse recovery rather
++than adopting IDs or reconstructing state. After mutation, a decisive purge,
++all 15 public routes plus Search/404, exact page identity, runtime/data/CSS response checks and
++another exact state check must succeed. These response checks supplement the
++full browser rehearsal; they do not replace browser or Safari evidence.
++
++Offline proposal checks (synthetic data, no live access):
++
++```sh
++php peek-release/test-installer.php peek-release
++python3 peek-release/test-push.py
++php peek-release/test-render.php
++```
++
++The installer test uses PDO SQLite and modeled WordPress APIs; wrapper tests use
++local SSH/offsite command doubles, including executing the actual remote phase
++case body for purge/render/final-state failures. These tests do not establish real
++SSH deployment, encrypted-store availability or live first-install behavior.
++
++The existing localhost marker and snapshot field sets remain unchanged. The
++`local-marker-contract` PHP model mode emits actual preflight/apply/rollback
++markers at `/backups` in a disposable offline container. Run
++`python3 peek-release/test-local-markers.py EMITTED_DIRECTORY` against its emitted
++logs and fixture manifest to exercise the unchanged rehearsal parser; no marker
++fields or paths are rewritten. Do not run the emitting mode on a website host.
+diff --git a/scripts/work-with-me-employer/link-ideas/push-peek-release.sh b/scripts/work-with-me-employer/link-ideas/push-peek-release.sh
+new file mode 100755
+--- /dev/null
++++ b/scripts/work-with-me-employer/link-ideas/push-peek-release.sh
+@@ -0,0 +1,248 @@
++#!/usr/bin/env bash
++# First visitor install, exact raw-live profile only. Every mutation requires its exact
++# fresh export encrypted off-site; actual journal is preserved even on failed apply.
++# shellcheck disable=SC2016
++set -euo pipefail
++here=$(cd "$(dirname "$0")/peek-release" && pwd)
++mode=dry; snap=""
++case "${1:-}" in
++  "") [ "$#" -eq 0 ] || exit 1 ;;
++  --apply) [ "$#" -eq 1 ] || exit 1; mode=apply ;;
++  --verify) [ "$#" -eq 2 ] || exit 1; mode=verify; snap=$2 ;;
++  --rollback) [ "$#" -eq 2 ] || exit 1; mode=rollback; snap=$2 ;;
++  *) echo "Usage: $0 [--apply | --verify FILE | --rollback FILE]" >&2; exit 1 ;;
++esac
++target="${S_TARGET:-live}"
++[ "$target" = live ] || { echo "S_TARGET must be live." >&2; exit 1; }
++if [[ "$mode" = rollback || "$mode" = verify ]] && [[ ! "$snap" =~ ^(\$HOME|/home/[a-zA-Z0-9_-]+)/private-backups/peek-release-before-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}\.json$ ]]; then
++  echo "Snapshot must be this visitor release's private before-snapshot." >&2; exit 1
++fi
++if [[ "$mode" != dry ]] && { [ -z "${TS_OFFSITE_HOOK:-}" ] || [ ! -x "$TS_OFFSITE_HOOK" ]; }; then
++  echo "Writes require the executable encrypted off-site hook." >&2; exit 1
++fi
++creds="${S26_CREDS:-$here/../../../../remote_execution.txt}"
++[ -f "$creds" ] || { echo "Missing credentials file: $creds" >&2; exit 1; }
++field() { sed -n "s/^$1:[[:space:]]*//p" "$creds" | head -1; }
++host=$(field Host); port=$(field Port); user=$(field User); user="${user%%@*}"
++[ -n "$host" ] && [ -n "$port" ] && [ -n "$user" ] || { echo "Credentials are incomplete." >&2; exit 1; }
++[ -n "${SSH_AUTH_SOCK:-}" ] && [ -S "$SSH_AUTH_SOCK" ] || { echo "No ssh-agent socket." >&2; exit 2; }
++ssh-add -l >/dev/null 2>&1 || { echo "The ssh-agent holds no keys." >&2; exit 2; }
++ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 "$user@$host")
++echo "Target site: $target   component: peek-release   mode: $mode"
++"${ssh_cmd[@]}" true 2>/dev/null || { echo "SSH login refused." >&2; exit 2; }
++tar -C "$here" -cf - install-peek-release.php source-binding.php payload manifest.json live-profile.json verify-render.php \
++  | "${ssh_cmd[@]}" 'mkdir -p "$HOME/wwm-package-peek-release" && tar -xf - -C "$HOME/wwm-package-peek-release"'
++
++read -r -d '' REMOTE <<'EOS' || true
++set -euo pipefail
++phase=$1; target=$2; snap=${3:-}; expected_sha=${4:-}
++[ "$target" = live ] || { echo "Remote refused: live only." >&2; exit 1; }
++want=thaisolitude.com
++command -v wp >/dev/null || { echo "wp-cli missing" >&2; exit 1; }
++wp_discovery() { command wp --skip-plugins --skip-themes --exec='ini_set("log_errors", "0"); ini_set("error_log", "/dev/null");' "$@"; }
++doc=""; cfgs=$(mktemp); trap 'rm -f "$cfgs"' EXIT
++find "$HOME/www" -maxdepth 4 -name wp-config.php 2>/dev/null > "$cfgs"
++while IFS= read -r cfg; do
++  d=$(dirname "$cfg")
++  candidate_prefix=$(wp_discovery --path="$d" config get table_prefix --type=variable 2>/dev/null) || continue
++  [[ "$candidate_prefix" =~ ^[A-Za-z0-9_]+$ ]] || continue
++  h=$(wp_discovery --path="$d" db query "SELECT option_value FROM ${candidate_prefix}options WHERE option_name='home';" --skip-column-names --batch --raw 2>/dev/null) || continue
++  case "$h" in "http://$want")
++    [ -z "$doc" ] || { echo "Multiple exact live installs; refusing." >&2; exit 1; }; doc=$d ;;
++  esac
++done < "$cfgs"
++[ -n "$doc" ] || { echo "No exact live install found." >&2; exit 1; }
++wp() { command wp --skip-plugins=sg-security "$@"; }
++echo "$target is ${doc#"$HOME"/}"
++# SiteGround's logical home resolves to /home/customer. Resolve that ancestor
++# alias once; the private directory and snapshot themselves must not be symlinks.
++# BEGIN RELEASE PRIVATE PATH FUNCTIONS (exercised with real filesystem aliases).
++canonical_private_dir() {
++  local supplied=$1
++  [ -d "$supplied" ] && [ ! -L "$supplied" ] || { echo "Private backup directory must be an existing non-symlink directory." >&2; return 1; }
++  ( cd -- "$supplied" && pwd -P )
++}
++canonical_snapshot() {
++  local supplied=$1 expected=$2 parent
++  [ -f "$supplied" ] && [ ! -L "$supplied" ] || { echo "Snapshot must be an existing non-symlink regular file." >&2; return 1; }
++  parent=$(canonical_private_dir "${supplied%/*}") || return 1
++  [ "$parent" = "$expected" ] || { echo "Snapshot resolves outside the configured private backup directory." >&2; return 1; }
++  printf '%s/%s\n' "$parent" "${supplied##*/}"
++}
++# END RELEASE PRIVATE PATH FUNCTIONS.
++[ ! -L "$HOME/private-backups" ] || { echo "Private backup directory must not be a symlink." >&2; exit 1; }
++mkdir -p "$HOME/private-backups"; chmod 700 "$HOME/private-backups"
++WWM_BACKUP_DIR=$(canonical_private_dir "$HOME/private-backups")
++[[ "$WWM_BACKUP_DIR" =~ ^/home/[a-zA-Z0-9_-]+/private-backups$ ]] || { echo "Unexpected physical private-backup path." >&2; exit 1; }
++export WWM_BACKUP_DIR
++package="$HOME/wwm-package-peek-release"
++run() { TS_PEEK_RELEASE_PROFILE=raw-live-v1 wp --path="$doc" --user=1 eval-file "$package/install-peek-release.php" "$@"; }
++journal_binding() {
++  [ -f "$snap" ] && [ ! -L "$snap" ] && [ "$(stat -c %a "$snap")" = 600 ] || { echo "Actual recovery journal is absent or unsafe; no success claimed." >&2; return 1; }
++  echo "RELEASE-JOURNAL $snap $(sha256sum "$snap" | cut -d' ' -f1) $(stat -c%s "$snap")"
++}
++purge() { wp --path="$doc" --user=1 sg purge >/dev/null 2>&1 || { echo "SiteGround purge failed; no rendered verification claimed." >&2; exit 1; }; echo "SiteGround cache purged"; }
++render() {
++  local which=$1 route code expected
++  tmp=$(mktemp -d); trap 'rm -rf "$tmp" "$cfgs"' EXIT
++  php -r '$m=json_decode(file_get_contents($argv[1]),true,512,JSON_THROW_ON_ERROR);foreach($m["pages"] as $p)echo $p["path"]."\n";echo "/?s=massage\n/peek-release-not-a-real-page/\n";' "$package/manifest.json" > "$tmp/routes"
++  while IFS= read -r route; do
++    expected=200; [ "$route" != /peek-release-not-a-real-page/ ] || expected=404
++    code=$(curl -sS -o "$tmp/page.html" -w '%{http_code}' --max-time 30 "https://$want$route")
++    echo "  $code $route"
++    [ "$code" = "$expected" ] || { echo "Rendered check failed: HTTP $code; HTTP202 is INVALID access, not verification." >&2; exit 1; }
++    php "$package/verify-render.php" "$tmp/page.html" "$snap" "$which" "$route"
++  done < "$tmp/routes"
++  rm -rf "$tmp"
++}
++snap=${snap/#\$HOME/$HOME}
++if [ -n "$snap" ]; then
++  [[ "$snap" =~ ^/home/[a-zA-Z0-9_-]+/private-backups/peek-release-before-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}\.json$ ]] || { echo "Unexpected snapshot path." >&2; exit 1; }
++  if [ "$phase" = apply ]; then
++    [ "${snap%/*}" = "$WWM_BACKUP_DIR" ] && [ ! -e "$snap" ] && [ ! -L "$snap" ] || { echo "Selected journal must be unused and canonical." >&2; exit 1; }
++  else
++    snap=$(canonical_snapshot "$snap" "$WWM_BACKUP_DIR")
++  fi
++fi
++if [[ "$phase" = rollback || "$phase" = verify || "$phase" = verify-purged ]]; then
++  [[ "$expected_sha" =~ ^[a-f0-9]{64}$ ]] || { echo "Exact preserved snapshot hash required." >&2; exit 1; }
++  [ "$(sha256sum "$snap" | cut -d' ' -f1)" = "$expected_sha" ] || { echo "Snapshot changed after preservation; no mutation." >&2; exit 1; }
++  export TS_PEEK_RELEASE_EXPECT_SNAPSHOT_SHA256="$expected_sha"
++fi
++case "$phase" in
++  preflight) run preflight ;;
++  prepare|prepare-rollback)
++    if [ "$phase" = prepare ]; then
++      run preflight
++      intent="$WWM_BACKUP_DIR/peek-release-before-$(date -u +%Y%m%d-%H%M%S)-$(php -r 'echo bin2hex(random_bytes(4));').json"
++      [ ! -e "$intent" ] && [ ! -L "$intent" ] || exit 1
++      echo "RELEASE-INTENT $intent"
++    else
++      run recovery-check "$snap"
++      journal_binding
++    fi
++    dump="$WWM_BACKUP_DIR/live-before-peek-release-$(date -u +%Y%m%d-%H%M%S)-$$.sql"
++    [ ! -e "$dump" ] && [ ! -L "$dump" ] || exit 1
++    ( umask 077; wp --path="$doc" db export "$dump" >/dev/null )
++    [ -s "$dump" ] || { echo "Empty export; stopping before mutation." >&2; exit 1; }
++    echo "RELEASE-BACKUP $dump $(sha256sum "$dump" | cut -d' ' -f1) $(stat -c%s "$dump")" ;;
++  apply)
++    # The caller retains the exact intended path independently of this output.
++    rc=0; TS_PEEK_RELEASE_NEW_JOURNAL="$snap" run apply || rc=$?
++    journal_binding || exit 1
++    exit "$rc" ;;
++  preserve) journal_binding ;;
++  verify|verify-purged)
++    run verify "$snap"
++    [ "$phase" != verify-purged ] || purge
++    render applied
++    # Only this final marker is retained by the caller's exact-marker parser.
++    echo RELEASE-FINAL-BEGIN
++    run verify "$snap" ;;
++  rollback)
++    # Completed-apply verify and snapshot-free preflight are intentionally absent:
++    # recognized incomplete journals and interrupted reverse prefixes are valid.
++    run recovery-check "$snap"
++    run rollback "$snap"
++    run recovery-check "$snap" original
++    purge; render original
++    echo RELEASE-FINAL-BEGIN
++    run recovery-check "$snap" original ;;
++  *) echo "Unknown remote phase." >&2; exit 1 ;;
++esac
++EOS
++remote() { local quoted; printf -v quoted '%q ' "$@"; "${ssh_cmd[@]}" "bash -s -- $quoted" <<<"$REMOTE"; }
++sync_exact() {
++  local path=$1 sha=$2 bytes=$3 name dest after transfer
++  [[ "$path" =~ ^/home/[a-zA-Z0-9_-]+/private-backups/(live-before-peek-release-[0-9]{8}-[0-9]{6}-[0-9]+\.sql|peek-release-before-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}\.json)$ ]] || { echo "Refusing unexpected backup path." >&2; return 1; }
++  [[ "$sha" =~ ^[a-f0-9]{64}$ && "$bytes" =~ ^[1-9][0-9]*$ ]] || { echo "Missing exact backup checksum or size." >&2; return 1; }
++  name=${path##*/}; dest="${TS_SERVER_BACKUPS:-$HOME/WordPress/thai-solitude-server-backups}"
++  [ ! -L "$dest" ] || { echo "Local private backup directory must not be a symlink." >&2; return 1; }
++  mkdir -p "$dest" && chmod 700 "$dest" || return 1
++  dest=$(cd "$dest" && pwd -P) || return 1
++  local checkout
++  checkout=$(git -C "$here" rev-parse --show-toplevel 2>/dev/null || true)
++  if [ -n "$checkout" ] && [[ "$dest/" = "$checkout/"* ]]; then
++    echo "Private backups must stay outside the checkout." >&2; return 1
++  fi
++  # A later verification must never overwrite a previously preserved backup.
++  if [ -e "$dest/$name" ] || [ -L "$dest/$name" ]; then
++    [ -f "$dest/$name" ] && [ ! -L "$dest/$name" ] && [ -O "$dest/$name" ] || { echo "Existing local backup is not a regular owned file." >&2; return 1; }
++    chmod 600 "$dest/$name" || return 1
++  else
++    transfer=$(mktemp "$dest/.release-transfer-XXXXXXXX") || return 1
++    if ! "${ssh_cmd[@]}" "cat '$path'" > "$transfer"; then rm -f "$transfer"; return 1; fi
++    if [ "$(stat -c%s "$transfer")" != "$bytes" ] || [ "$(sha256sum "$transfer" | cut -d' ' -f1)" != "$sha" ]; then
++      rm -f "$transfer"; echo "Exact backup transfer checksum/size differs." >&2; return 1
++    fi
++    chmod 600 "$transfer" && ln "$transfer" "$dest/$name" || { rm -f "$transfer"; echo "Could not preserve the backup without replacing an existing file." >&2; return 1; }
++    rm -f "$transfer"
++  fi
++  [ "$(stat -c%s "$dest/$name")" = "$bytes" ] && [ "$(sha256sum "$dest/$name" | cut -d' ' -f1)" = "$sha" ] || { echo "Exact backup copy checksum/size differs." >&2; return 1; }
++  after=$("${ssh_cmd[@]}" "sha256sum '$path'") || return 1
++  [ "${after%% *}" = "$sha" ] || { echo "Remote backup changed during copy." >&2; return 1; }
++  "$TS_OFFSITE_HOOK" "$dest" "$name" || { echo "Encrypted off-site readback did not verify the exact file." >&2; return 1; }
++  echo "Verified exact backup on server, local copy and encrypted off-site readback: $name ($bytes bytes, sha256 $sha)"
++}
++sync_marker() {
++  local kind=$1 output=$2 path sha bytes marker_count
++  local -a records
++  marker_count=$(grep -c "^$kind\([[:space:]]\|$\)" <<<"$output" || true)
++  [ "$marker_count" -eq 1 ] || { echo "Missing or duplicate $kind marker; refusing to guess." >&2; return 1; }
++  mapfile -t records < <(sed -n "s/^$kind \(\/home\/[a-zA-Z0-9_-]*\/private-backups\/[^ ]*\) \([a-f0-9]\{64\}\) \([0-9][0-9]*\)$/\1 \2 \3/p" <<<"$output")
++  [ "${#records[@]}" -eq 1 ] || { echo "No unique actual $kind binding; refusing to guess." >&2; return 1; }
++  read -r path sha bytes <<<"${records[0]}"
++  sync_exact "$path" "$sha" "$bytes" || return 1
++  actual_path=$path; actual_sha=$sha
++}
++tmp_local=$(mktemp -d); trap 'rm -rf "$tmp_local"' EXIT
++validate() {
++  local kind=$1 state=$2 output=$3
++  printf '%s\n' "$output" > "$tmp_local/marker.log"
++  local saved="${TS_SERVER_BACKUPS:-$HOME/WordPress/thai-solitude-server-backups}/${snap##*/}"
++  python3 "$here/validate-marker.py" "$here" "$tmp_local/marker.log" "$kind" "$state" "$snap" "$saved"
++}
++final_binding() {
++  local output=$1 kind=$2 state=$3 count final
++  count=$(grep -c '^RELEASE-FINAL-BEGIN$' <<<"$output" || true)
++  [ "$count" -eq 1 ] || { echo "Missing or duplicate final state boundary." >&2; return 1; }
++  final=${output##*RELEASE-FINAL-BEGIN$'\n'}
++  validate "$kind" "$state" "$final"
++}
++case "$mode" in
++  dry)
++    result=$(remote preflight "$target"); printf '%s\n' "$result"
++    validate RELEASE-PREFLIGHT ready "$result"
++    echo "Dry run only; no release writes." ;;
++  verify)
++    preserved=$(remote preserve "$target" "$snap"); sync_marker RELEASE-JOURNAL "$preserved"; snap=$actual_path
++    result=$(remote verify "$target" "$snap" "$actual_sha"); printf '%s\n' "$result"
++    final_binding "$result" RELEASE-SNAPSHOT applied ;;
++  apply)
++    prepared=$(remote prepare "$target"); printf '%s\n' "$prepared"
++    validate RELEASE-PREFLIGHT ready "$prepared"
++    count=$(grep -c '^RELEASE-INTENT\([[:space:]]\|$\)' <<<"$prepared" || true)
++    [ "$count" -eq 1 ] || { echo "Missing/duplicate journal intent." >&2; exit 1; }
++    snap=$(sed -n 's/^RELEASE-INTENT \(\/home\/[a-zA-Z0-9_-]*\/private-backups\/peek-release-before-[0-9]\{8\}-[0-9]\{6\}-[a-f0-9]\{8\}\.json\)$/\1/p' <<<"$prepared")
++    [ -n "$snap" ] || { echo "Malformed journal intent." >&2; exit 1; }
++    sync_marker RELEASE-BACKUP "$prepared"
++    apply_rc=0; applied=$(remote apply "$target" "$snap") || apply_rc=$?
++    printf '%s\n' "$applied"
++    # Always retrieve the preselected actual journal, even after an apply error
++    # or missing completion marker. Never guess the newest file in a directory.
++    preserve_rc=0; preserved=$(remote preserve "$target" "$snap") || preserve_rc=$?
++    if [ "$preserve_rc" -eq 0 ]; then sync_marker RELEASE-JOURNAL "$preserved" || preserve_rc=$?; fi
++    [ "$apply_rc" -eq 0 ] || { echo "Apply failed ($apply_rc); recovery journal preservation exit $preserve_rc. No success claimed." >&2; exit "$apply_rc"; }
++    [ "$preserve_rc" -eq 0 ] || exit "$preserve_rc"
++    [ "$actual_path" = "$snap" ] || { echo "Preserved journal differs from the selected intent." >&2; exit 1; }
++    validate RELEASE-SNAPSHOT applied "$applied"
++    result=$(remote verify-purged "$target" "$snap" "$actual_sha"); printf '%s\n' "$result"
++    final_binding "$result" RELEASE-SNAPSHOT applied ;;
++  rollback)
++    prepared=$(remote prepare-rollback "$target" "$snap"); printf '%s\n' "$prepared"
++    sync_marker RELEASE-BACKUP "$prepared"
++    sync_marker RELEASE-JOURNAL "$prepared"; snap=$actual_path
++    validate RELEASE-RECOVERY recoverable "$prepared"
++    result=$(remote rollback "$target" "$snap" "$actual_sha"); printf '%s\n' "$result"
++    final_binding "$result" RELEASE-RECOVERY original ;;
++esac
+diff --git a/scripts/check-all.sh b/scripts/check-all.sh
+--- a/scripts/check-all.sh
++++ b/scripts/check-all.sh
+@@ -90,6 +90,20 @@
+ if [ -n "$img" ] && command -v docker >/dev/null; then gate "Peek installer ownership, recovery and current-page JSON (offline)" peek_test; else skip "Peek installer and JSON tests" "docker or the pinned image is not available"; fi
+ peek_release_test() { docker run --rm --network none --entrypoint php -v "$here/work-with-me-employer/link-ideas:/pkg:ro" "$img" /pkg/peek-release/test-installer.php; }
+ if [ -n "$img" ] && command -v docker >/dev/null; then gate "Peek visitor first-install ownership and exact recovery (offline)" peek_release_test; else skip "Peek visitor first-install tests" "docker or the pinned image is not available"; fi
++# Proposed live path retains the real localhost marker contract. Only synthetic
++# rows/markers are used; /backups exists only inside this disposable container.
++peek_release_proposal_test() {
++  local temp rc=0
++  temp=$(mktemp -d) || return 1
++  docker run --rm --network none --user 0 --entrypoint sh -v "$here/work-with-me-employer/link-ideas:/pkg:ro" "$img" -c \
++    'php /pkg/peek-release/test-installer.php /pkg/peek-release local-marker-contract /tmp/emitted >/dev/null && tar -cf - -C /tmp/emitted .' > "$temp/markers.tar" || rc=$?
++  if [ "$rc" -eq 0 ]; then tar -xf "$temp/markers.tar" -C "$temp" && python3 -I -B "$here/work-with-me-employer/link-ideas/peek-release/test-local-markers.py" "$temp" || rc=$?; fi
++  if [ "$rc" -eq 0 ]; then docker run --rm --network none --entrypoint php -v "$here/work-with-me-employer/link-ideas:/pkg:ro" "$img" /pkg/peek-release/test-render.php || rc=$?; fi
++  rm -rf "$temp"
++  return "$rc"
++}
++if [ -n "$img" ] && command -v docker >/dev/null; then gate "Peek visitor live proposal local-marker compatibility and response identity (offline)" peek_release_proposal_test; else skip "Peek visitor proposal compatibility tests" "docker or the pinned image is not available"; fi
++gate "Peek visitor live proposal backup, partial recovery and exact marker binding (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/peek-release/test-push.py"
+ search_contrast_test() { docker run --rm --network none --entrypoint php -v "$here/work-with-me-employer/search-contrast:/pkg:ro" "$img" /pkg/test-installer.php; }
+ if [ -n "$img" ] && command -v docker >/dev/null; then gate "Search contrast exact CSS ownership and recovery (offline)" search_contrast_test; else skip "Search contrast installer tests" "docker or the pinned image is not available"; fi
+ gate "Search contrast deployment backups and exact snapshot guards (offline)" python3 -I -B "$here/work-with-me-employer/search-contrast/test-push.py"

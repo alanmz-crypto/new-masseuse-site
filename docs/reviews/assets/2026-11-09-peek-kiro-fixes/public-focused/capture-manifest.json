@@ -1,0 +1,3488 @@
+{
+  "schema_version": 1,
+  "purpose": "Actual public staging39 focused browser evidence after applying Kiro fixes. Operation verdict and screenshot judgment are recorded separately.",
+  "request_id": "peek-kiro-fixes-public-1",
+  "run_id": 42699275642,
+  "run_url": "https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42699275642",
+  "source_commit": "0c47495e67d06dd5a5caac1479476f5ff4d76d19",
+  "started_at_utc": "2026-11-09 21:06:26",
+  "finished_at_utc": "2026-11-09 21:19:05",
+  "artifact": {
+    "id": 13711243153,
+    "name": "site-ops-42699275642",
+    "bytes": 25811348,
+    "sha256": "386bd85f763d68309f9771d64581551a2daa091a88f399f761f5b1bf057752e2",
+    "zip_digest_verified_by": "/root/deployment_audit"
+  },
+  "runtime": {
+    "path": "scripts/work-with-me-employer/link-ideas/peek-nav.php",
+    "full_php_bytes": 102655,
+    "full_php_sha256": "ce21afe60e2c1bdd6286ddc1f9a1e3d14d999bfa967dc4109e4ef5f78426b2fa",
+    "stored_code_bytes": 102649,
+    "stored_code_sha256": "dec11c9e50cacba8986068e98748e966333aebe3366701f1f0e94e5e790113a1"
+  },
+  "operation_result": {
+    "status": "PASS",
+    "passed_assertions": 12237,
+    "failed_assertions": 0,
+    "invalid_lines": 0,
+    "unique_numeric_suites": 13,
+    "raw_artifact_streams_audited": 33,
+    "empty_stderr_streams": 16,
+    "distinct_wrapper_exit_records_all_zero": 16,
+    "all_leaf_literal_pass_counts_match_summaries": true,
+    "suites": {
+      "INFO Peek disclosures chromium": [
+        66,
+        0
+      ],
+      "INFO Peek disclosures firefox": [
+        41,
+        0
+      ],
+      "INFO Peek Kiro layout chromium": [
+        158,
+        0
+      ],
+      "INFO Peek Kiro layout firefox": [
+        134,
+        0
+      ],
+      "INFO Peek clearance chromium": [
+        3340,
+        0
+      ],
+      "INFO Peek clearance firefox": [
+        3340,
+        0
+      ],
+      "INFO Peek clearance chromium diagnostic subset": [
+        342,
+        0
+      ],
+      "INFO Peek native touch": [
+        387,
+        0
+      ],
+      "INFO Peek pages chromium": [
+        172,
+        0
+      ],
+      "INFO Peek title strip chromium": [
+        1110,
+        0
+      ],
+      "INFO Peek title strip firefox": [
+        1107,
+        0
+      ],
+      "INFO Peek title rails chromium": [
+        1022,
+        0
+      ],
+      "INFO Peek title rails firefox": [
+        1018,
+        0
+      ]
+    },
+    "note": "The 342-check diagnostic subset repeats selected clearance scenarios; its executed assertions are counted once, not claimed as independent coverage. Nested replayed summaries are not added twice.",
+    "full_stream_auditor": "/root/deployment_audit",
+    "independent_new_four_leaf_review": "399 passed, 0 failed; empty stderr; no FAIL, INVALID, ERROR or WARN"
+  },
+  "capture_counts": {
+    "unique_leaf_filenames": 123,
+    "leaf_capture_events": 129,
+    "repeated_filenames": 6,
+    "repeated_filenames_with_differing_hashes": 4,
+    "retained_files": 24,
+    "retained_freshly_viewed_this_run": 15,
+    "retained_exact_matches_to_previously_reviewed_rehearsal_only": 9,
+    "selected_matching_rehearsal_sha256": 23,
+    "selected_changed_from_rehearsal_sha256": 1
+  },
+  "capture_provenance_note": "Aggregate streams replay leaf captures and are excluded from event counts. Six filenames recur in full clearance and diagnostic runs; all occurrences and hashes are recorded, including four distinct alternate images. Retained bytes identify exactly which occurrence was saved. No overwrite is treated as proof that alternate captures are identical.",
+  "report": {
+    "file": "operation-report.md",
+    "bytes": 118289,
+    "sha256": "aaee51c2c0a7ef4802bdca723f3db45ca9fedaad12cc09d357a74a35ea3656bc",
+    "sanitization": "Embedded INLINE base64 replaced by image name, exact SHA256 and retained/artifact-only reference. Local waiter prefix removed."
+  },
+  "visual_review": {
+    "conclusion": "No new visible blocker in the changed selected image or freshly inspected critical public captures. Privacy native-touch and keyboard targets are open, focused and positioned below the strip. Both-side FAQ boxes clear the rail. Home identifies itself before the first section; Search and 404 show compact single-entry rails. Therapeutic landscape cards fit below the header on both sides; Work With Me titles appear complete.",
+    "scope": "15 selected files freshly viewed. Nine further selected files exactly match previously reviewed rehearsal captures. One additional nonretained alternate Thai research capture was viewed. Unselected captures are inventoried, not claimed individually reviewed.",
+    "limits": [
+      "Transient labels can cover small body-text fragments, including Privacy and About.",
+      "At 150% root text the site brand wraps awkwardly; less research text is visible.",
+      "Tablet closed Therapeutic row 2 retains an ellipsized title.",
+      "Landscape top summary intentionally covers part of the announcement strip while remaining below the pinned header.",
+      "The public audit records an existing Firefox Rail-practice Enter defect; this change does not fix it.",
+      "Root-font enlargement exposes an existing corporate-band link overflow; Peek remains inside the requested visual viewport."
+    ],
+    "not_established": [
+      "Physical-device behavior",
+      "True OS text scaling",
+      "Safari/WebKit behavior",
+      "VoiceOver/TalkBack or other assistive technology"
+    ],
+    "interaction_evidence": "Screenshots establish visible states. Gesture, focus and containment claims rely on the separately audited completed browser logs."
+  },
+  "prior_rehearsal": {
+    "run_id": 42693471206,
+    "source_commit": "5159801ee4f0000d014940f1451a0411ea0c28b4",
+    "manifest": "../rehearsal/capture-manifest.json"
+  },
+  "raw_streams": [
+    {
+      "path": "work/_temp/ops-out/00-check-public-mjs-https---staging39-thaisolitude-com----------staging39.log",
+      "bytes": 10916320,
+      "sha256": "0f79103460817b82c1719396eceaa4eeec6a1d5931ec9831064f7d9317849225",
+      "numeric_leaf": false
+    },
+    {
+      "path": "work/_temp/ops-out/peek-kiro-fixes-public/disclosures-chromium.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "numeric_leaf": false
+    },
+    {
+      "path": "work/_temp/ops-out/peek-kiro-fixes-public/disclosures-chromium.stdout.log",
+      "bytes": 286307,
+      "sha256": "ad96d2592197b930c4c4256a56f07f65ec537ccc97f5a851d024a8b8c3c8906a",
+      "numeric_leaf": true
+    },
+    {
+      "path": "work/_temp/ops-out/peek-kiro-fixes-public/disclosures-firefox.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "numeric_leaf": false
+    },
+    {
+      "path": "work/_temp/ops-out/peek-kiro-fixes-public/disclosures-firefox.stdout.log",
+      "bytes": 8740,
+      "sha256": "5e06c5f0a9bbb53bc16576c369e362ef2f77c8d90233e8293316a20f285107b9",
+      "numeric_leaf": true
+    },
+    {
+      "path": "work/_temp/ops-out/peek-kiro-fixes-public/layout-chromium.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "numeric_leaf": false
+    },
+    {
+      "path": "work/_temp/ops-out/peek-kiro-fixes-public/layout-chromium.stdout.log",
+      "bytes": 1049742,
+      "sha256": "32c5dbc1c2dceb88b46847c79226a9bbcc80528c6d4630fa9a4241dc0514b626",
+      "numeric_leaf": true
+    },
+    {
+      "path": "work/_temp/ops-out/peek-kiro-fixes-public/layout-firefox.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "numeric_leaf": false
+    },
+    {
+      "path": "work/_temp/ops-out/peek-kiro-fixes-public/layout-firefox.stdout.log",
+      "bytes": 13997,
+      "sha256": "9ea597a12bffad2f5125ebd2b9bf7ff26720232102833c519d1e55f6362930fb",
+      "numeric_leaf": true
+    },
+    {
+      "path": "work/_temp/ops-out/peek-kiro-fixes-public/retained-title-rails.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "numeric_leaf": false
+    },
+    {
+      "path": "work/_temp/ops-out/peek-kiro-fixes-public/retained-title-rails.stdout.log",
+      "bytes": 9591799,
+      "sha256": "eb4532fd61b130ee0606b176795e95909eabd636359b193da693dcbf72d3f26b",
+      "numeric_leaf": false
+    },
+    {
+      "path": "work/_temp/ops-out/peek-public/clearance-chromium.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "numeric_leaf": false
+    },
+    {
+      "path": "work/_temp/ops-out/peek-public/clearance-chromium.stdout.log",
+      "bytes": 1614315,
+      "sha256": "4285bdedf1210a57caab0d81fb51f9b6807c715ec6e6c496e28b313b64a3804f",
+      "numeric_leaf": true
+    },
+    {
+      "path": "work/_temp/ops-out/peek-public/clearance-firefox.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "numeric_leaf": false
+    },
+    {
+      "path": "work/_temp/ops-out/peek-public/clearance-firefox.stdout.log",
+      "bytes": 384535,
+      "sha256": "641daac82c1ceaf0230e875977101c0493910dfa812e99694ede84e21389b5b9",
+      "numeric_leaf": true
+    },
+    {
+      "path": "work/_temp/ops-out/peek-public/matched-captures-chromium.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "numeric_leaf": false
+    },
+    {
+      "path": "work/_temp/ops-out/peek-public/matched-captures-chromium.stdout.log",
+      "bytes": 1305011,
+      "sha256": "4d4646bb5c6b898f9ade5443be49ffafa0d1537acad2cc7490c1d541315544cf",
+      "numeric_leaf": true
+    },
+    {
+      "path": "work/_temp/ops-out/peek-public/native-touch-chromium.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "numeric_leaf": false
+    },
+    {
+      "path": "work/_temp/ops-out/peek-public/native-touch-chromium.stdout.log",
+      "bytes": 39771,
+      "sha256": "b38700a01e35bab01e2e8c6de3cb7c4baf655c390d7ffb3ae3493936044631cc",
+      "numeric_leaf": true
+    },
+    {
+      "path": "work/_temp/ops-out/peek-public/pages-chromium.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "numeric_leaf": false
+    },
+    {
+      "path": "work/_temp/ops-out/peek-public/pages-chromium.stdout.log",
+      "bytes": 38003,
+      "sha256": "a7c9f4c88ba748c9c47ed3242600180f22994bffa10a36031c31566e238178aa",
+      "numeric_leaf": true
+    },
+    {
+      "path": "work/_temp/ops-out/peek-title-public/retained-core.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "numeric_leaf": false
+    },
+    {
+      "path": "work/_temp/ops-out/peek-title-public/retained-core.stdout.log",
+      "bytes": 2503216,
+      "sha256": "0bdd150342a8b24c8d89480bdf0fabd718543e37e822126b1fbc31140264d183",
+      "numeric_leaf": false
+    },
+    {
+      "path": "work/_temp/ops-out/peek-title-public/title-chromium.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "numeric_leaf": false
+    },
+    {
+      "path": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+      "bytes": 3701847,
+      "sha256": "b0e3c52aee7e1de3200116bd31992d61d826b7edf91012380839f0bffebcd04c",
+      "numeric_leaf": true
+    },
+    {
+      "path": "work/_temp/ops-out/peek-title-public/title-firefox.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "numeric_leaf": false
+    },
+    {
+      "path": "work/_temp/ops-out/peek-title-public/title-firefox.stdout.log",
+      "bytes": 108182,
+      "sha256": "9fbfa7f5dd0a39cf5d47605525a8a291cd1ec5e267e4b25a3dbed65b9c2c46fe",
+      "numeric_leaf": true
+    },
+    {
+      "path": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "numeric_leaf": false
+    },
+    {
+      "path": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+      "bytes": 3599272,
+      "sha256": "ab6644969ded63f0bebdea4e9766cdd6fe9c97f452d7dd8dfc98fb6a76bdbff5",
+      "numeric_leaf": true
+    },
+    {
+      "path": "work/_temp/ops-out/peek-title-rail-public/rails-firefox.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "numeric_leaf": false
+    },
+    {
+      "path": "work/_temp/ops-out/peek-title-rail-public/rails-firefox.stdout.log",
+      "bytes": 115524,
+      "sha256": "79c3995b60ee1964a4f32bae9c4357b4fa96da2a12b3cfcb0dd0e7e722598de2",
+      "numeric_leaf": true
+    },
+    {
+      "path": "work/_temp/ops-out/peek-title-rail-public/retained-title-core.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "numeric_leaf": false
+    },
+    {
+      "path": "work/_temp/ops-out/peek-title-rail-public/retained-title-core.stdout.log",
+      "bytes": 6101984,
+      "sha256": "b854e42a2898e20a3af7535462b9af8f5e993612447b54d6cbbf7a6609e273e4",
+      "numeric_leaf": false
+    }
+  ],
+  "captures": [
+    {
+      "name": "clearance-chair-massage-1280-right-top-1.jpg",
+      "bytes": 92086,
+      "sha256": "62078df904a40aafd2e91a15ad5d6c3b4f60c8a70a4958818b9f43c86e4d0401",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-public/clearance-chromium.stdout.log",
+        "work/_temp/ops-out/peek-public/matched-captures-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-public/clearance-chromium.stdout.log",
+          "bytes": 92086,
+          "sha256": "62078df904a40aafd2e91a15ad5d6c3b4f60c8a70a4958818b9f43c86e4d0401",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        },
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-public/matched-captures-chromium.stdout.log",
+          "bytes": 92086,
+          "sha256": "62078df904a40aafd2e91a15ad5d6c3b4f60c8a70a4958818b9f43c86e4d0401",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "clearance-chair-massage-1280-right-top-6.jpg",
+      "bytes": 100995,
+      "sha256": "086169c0cf97a6be938b653862a64000e85a76b1d6627a692ce72bbd84f929a8",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-public/matched-captures-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-public/matched-captures-chromium.stdout.log",
+          "bytes": 100995,
+          "sha256": "086169c0cf97a6be938b653862a64000e85a76b1d6627a692ce72bbd84f929a8",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "clearance-chair-massage-390-right-top-1.jpg",
+      "bytes": 50069,
+      "sha256": "5c5e3827c39177eeb4756bf3baf6d7f0f68c69464b1f95d3d660d6b1c5f9d69c",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-public/matched-captures-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-public/clearance-chromium.stdout.log",
+          "bytes": 50019,
+          "sha256": "dcb006db6d0142588b319cdb1a70f3687f1a548e41be66e6f95906b81f41109a",
+          "matches_retained_or_decoded_image": false,
+          "review_status": "not_individually_reviewed"
+        },
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-public/matched-captures-chromium.stdout.log",
+          "bytes": 50069,
+          "sha256": "5c5e3827c39177eeb4756bf3baf6d7f0f68c69464b1f95d3d660d6b1c5f9d69c",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "clearance-chair-massage-390-right-top-6.jpg",
+      "bytes": 56104,
+      "sha256": "86a4ba12ec83f8027034c042810fed6d399ce87df90e1f85ad04a6400bba56e5",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-public/matched-captures-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-public/clearance-chromium.stdout.log",
+          "bytes": 56232,
+          "sha256": "d9ca9964dbadca2fdc075592a2ee70e514a7d06aa29ec8d4a2a77a78d9411f05",
+          "matches_retained_or_decoded_image": false,
+          "review_status": "not_individually_reviewed"
+        },
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-public/matched-captures-chromium.stdout.log",
+          "bytes": 56104,
+          "sha256": "86a4ba12ec83f8027034c042810fed6d399ce87df90e1f85ad04a6400bba56e5",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "clearance-chair-massage-768-right-top-1.jpg",
+      "bytes": 89506,
+      "sha256": "9dfa8f3955de1b0d5e8bc6d1ade819a3fd6900affcaaa79b29704f451911413a",
+      "dimensions": [
+        768,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-public/clearance-chromium.stdout.log",
+        "work/_temp/ops-out/peek-public/matched-captures-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-public/clearance-chromium.stdout.log",
+          "bytes": 89506,
+          "sha256": "9dfa8f3955de1b0d5e8bc6d1ade819a3fd6900affcaaa79b29704f451911413a",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        },
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-public/matched-captures-chromium.stdout.log",
+          "bytes": 89506,
+          "sha256": "9dfa8f3955de1b0d5e8bc6d1ade819a3fd6900affcaaa79b29704f451911413a",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "clearance-chair-massage-768-right-top-6.jpg",
+      "bytes": 91740,
+      "sha256": "e4bfdde5f3498f41ce440f4d43b5ac11ae797eff614d40fe31be8241e6f1f580",
+      "dimensions": [
+        768,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-public/matched-captures-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-public/matched-captures-chromium.stdout.log",
+          "bytes": 91740,
+          "sha256": "e4bfdde5f3498f41ce440f4d43b5ac11ae797eff614d40fe31be8241e6f1f580",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "clearance-chair-massage-844x320-top-1.jpg",
+      "bytes": 23285,
+      "sha256": "d35d0ffbfe9a325585fa5303594d5a0c1daa7011d4bd1f43d5be13fe4db1cf26",
+      "dimensions": [
+        844,
+        320
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-public/clearance-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-public/clearance-chromium.stdout.log",
+          "bytes": 23285,
+          "sha256": "d35d0ffbfe9a325585fa5303594d5a0c1daa7011d4bd1f43d5be13fe4db1cf26",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "clearance-chair-massage-844x390-double-text-1.jpg",
+      "bytes": 37796,
+      "sha256": "bf40ea02abec22aaa29c34290b3ca98c0a3fdc7b8db0617dcfc51e0bf105ec0c",
+      "dimensions": [
+        844,
+        390
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-public/clearance-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-public/clearance-chromium.stdout.log",
+          "bytes": 37796,
+          "sha256": "bf40ea02abec22aaa29c34290b3ca98c0a3fdc7b8db0617dcfc51e0bf105ec0c",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "clearance-chair-massage-844x390-double-text-6.jpg",
+      "bytes": 39282,
+      "sha256": "9b3cf738d37b70d7a1424ffefeaea5ffe7232dc3936f545d1c386b06f7042dd3",
+      "dimensions": [
+        844,
+        390
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-public/clearance-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-public/clearance-chromium.stdout.log",
+          "bytes": 39282,
+          "sha256": "9b3cf738d37b70d7a1424ffefeaea5ffe7232dc3936f545d1c386b06f7042dd3",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "clearance-chair-massage-844x390-top-1.jpg",
+      "bytes": 34071,
+      "sha256": "2fa075ddbdcc960a9c906bfc93cd69ee8b6b70df12d03bc61a2eafb0bd9a6535",
+      "dimensions": [
+        844,
+        390
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-public/clearance-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-public/clearance-chromium.stdout.log",
+          "bytes": 34071,
+          "sha256": "2fa075ddbdcc960a9c906bfc93cd69ee8b6b70df12d03bc61a2eafb0bd9a6535",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "clearance-deep-tissue-massage-390-right-top-1.jpg",
+      "bytes": 48780,
+      "sha256": "848bebb1fcfff0f56c4b28d28bdc13586a173913882f6ff05dbea3c4afa7c950",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-public/clearance-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-public/clearance-chromium.stdout.log",
+          "bytes": 48780,
+          "sha256": "848bebb1fcfff0f56c4b28d28bdc13586a173913882f6ff05dbea3c4afa7c950",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "clearance-deep-tissue-massage-390-right-top-5.jpg",
+      "bytes": 53840,
+      "sha256": "c32337cc0f1c0342d8e4f589cec2667676f1679faa92a1f896abc522c582a50b",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-public/clearance-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-public/clearance-chromium.stdout.log",
+          "bytes": 53840,
+          "sha256": "c32337cc0f1c0342d8e4f589cec2667676f1679faa92a1f896abc522c582a50b",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "clearance-thai-massage-1280-right-top-1.jpg",
+      "bytes": 92871,
+      "sha256": "43232ae74155be30a6218e749489daf4e9e5bccda55d064008b8984aaa2ce78d",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-public/matched-captures-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-public/matched-captures-chromium.stdout.log",
+          "bytes": 92871,
+          "sha256": "43232ae74155be30a6218e749489daf4e9e5bccda55d064008b8984aaa2ce78d",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "clearance-thai-massage-1280-right-top-5.jpg",
+      "bytes": 97143,
+      "sha256": "5c09cf9be272af786f20001f28f5c29c01f1878e3514fce239c5cf3891e7f834",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-public/matched-captures-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-public/matched-captures-chromium.stdout.log",
+          "bytes": 97143,
+          "sha256": "5c09cf9be272af786f20001f28f5c29c01f1878e3514fce239c5cf3891e7f834",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "clearance-thai-massage-390-right-top-1.jpg",
+      "bytes": 49309,
+      "sha256": "ef1598a7fbbc1d6f51d4acca6fd8fc8928607a472564959788b4a0fac9794564",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": true,
+      "review_status": "hash_identical_to_previously_reviewed_rehearsal_capture",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-public/matched-captures-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-public/clearance-chromium.stdout.log",
+          "bytes": 49371,
+          "sha256": "469aef833e9ca66d084c4389f73c013a6954d16b9b497b48e2021676a8421852",
+          "matches_retained_or_decoded_image": false,
+          "review_status": "not_individually_reviewed"
+        },
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-public/matched-captures-chromium.stdout.log",
+          "bytes": 49309,
+          "sha256": "ef1598a7fbbc1d6f51d4acca6fd8fc8928607a472564959788b4a0fac9794564",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "hash_identical_to_previously_reviewed_rehearsal_capture"
+        }
+      ]
+    },
+    {
+      "name": "clearance-thai-massage-390-right-top-5.jpg",
+      "bytes": 50907,
+      "sha256": "4130093af3e43afff89dff2258ed897e82a5142560a06097315f19751861737f",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": true,
+      "review_status": "hash_identical_to_previously_reviewed_rehearsal_capture",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-public/matched-captures-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-public/clearance-chromium.stdout.log",
+          "bytes": 51136,
+          "sha256": "0ec53459833e6d1eacf07269e8d193c8ccae390f9a1f086f3b2052843ba633f6",
+          "matches_retained_or_decoded_image": false,
+          "review_status": "viewed_current_run_alternate"
+        },
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-public/matched-captures-chromium.stdout.log",
+          "bytes": 50907,
+          "sha256": "4130093af3e43afff89dff2258ed897e82a5142560a06097315f19751861737f",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "hash_identical_to_previously_reviewed_rehearsal_capture"
+        }
+      ]
+    },
+    {
+      "name": "clearance-thai-massage-768-right-top-1.jpg",
+      "bytes": 83867,
+      "sha256": "29c18aef7b4003efe6f994a897d1ec9ba8cec03a12919b86e0e05f13a41d0cf3",
+      "dimensions": [
+        768,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-public/matched-captures-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-public/matched-captures-chromium.stdout.log",
+          "bytes": 83867,
+          "sha256": "29c18aef7b4003efe6f994a897d1ec9ba8cec03a12919b86e0e05f13a41d0cf3",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "clearance-thai-massage-768-right-top-5.jpg",
+      "bytes": 79801,
+      "sha256": "1cf183bc34b0a5f2186d4d7831b51d9a7d2c9941e73fe8f6177ba5dc2a610455",
+      "dimensions": [
+        768,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-public/matched-captures-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-public/matched-captures-chromium.stdout.log",
+          "bytes": 79801,
+          "sha256": "1cf183bc34b0a5f2186d4d7831b51d9a7d2c9941e73fe8f6177ba5dc2a610455",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "clearance-therapeutic-massage-1280-right-top-1.jpg",
+      "bytes": 94117,
+      "sha256": "81ec12a5f9e53e93c5f783f5086630cc99a179e9b2f8b5c516a3f8cf865718e7",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-public/clearance-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-public/clearance-chromium.stdout.log",
+          "bytes": 94117,
+          "sha256": "81ec12a5f9e53e93c5f783f5086630cc99a179e9b2f8b5c516a3f8cf865718e7",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "clearance-therapeutic-massage-390-right-top-1.jpg",
+      "bytes": 49753,
+      "sha256": "6c5ca863557db2a620519dd0c0807277637c751305d990166387c5fad4e8a5fc",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-public/clearance-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-public/clearance-chromium.stdout.log",
+          "bytes": 49753,
+          "sha256": "6c5ca863557db2a620519dd0c0807277637c751305d990166387c5fad4e8a5fc",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "clearance-therapeutic-massage-390-right-top-6.jpg",
+      "bytes": 53862,
+      "sha256": "4cdcd2364859b27a6695022ed9e317375399c0de26369fe4ce0da15b4e4fd759",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-public/clearance-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-public/clearance-chromium.stdout.log",
+          "bytes": 53862,
+          "sha256": "4cdcd2364859b27a6695022ed9e317375399c0de26369fe4ce0da15b4e4fd759",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "clearance-therapeutic-massage-768-right-top-1.jpg",
+      "bytes": 75727,
+      "sha256": "3dacbdacaa7ab9a657bc12120e0343dc0a3f4c3e679281d2543542fb695726ba",
+      "dimensions": [
+        768,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-public/clearance-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-public/clearance-chromium.stdout.log",
+          "bytes": 75727,
+          "sha256": "3dacbdacaa7ab9a657bc12120e0343dc0a3f4c3e679281d2543542fb695726ba",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "kiro-layout-about-left-FAQ-clearance.jpg",
+      "bytes": 36500,
+      "sha256": "b40a6acb754b26d625bde8a6952b4cf1656f9f16bf5f0d47af045b783dd25047",
+      "dimensions": [
+        390,
+        664
+      ],
+      "retained_in_repository": true,
+      "review_status": "viewed_current_run",
+      "current_run_viewed_by": [
+        "/root/evidence_audit/visual_samples"
+      ],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-kiro-fixes-public/layout-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-kiro-fixes-public/layout-chromium.stdout.log",
+          "bytes": 36500,
+          "sha256": "b40a6acb754b26d625bde8a6952b4cf1656f9f16bf5f0d47af045b783dd25047",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "viewed_current_run"
+        }
+      ]
+    },
+    {
+      "name": "kiro-layout-about-right-FAQ-clearance.jpg",
+      "bytes": 36775,
+      "sha256": "d3510125033474f6adc2a8906056fe4fea0a508339b663c836adb068467dafa8",
+      "dimensions": [
+        390,
+        664
+      ],
+      "retained_in_repository": true,
+      "review_status": "hash_identical_to_previously_reviewed_rehearsal_capture",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-kiro-fixes-public/layout-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-kiro-fixes-public/layout-chromium.stdout.log",
+          "bytes": 36775,
+          "sha256": "d3510125033474f6adc2a8906056fe4fea0a508339b663c836adb068467dafa8",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "hash_identical_to_previously_reviewed_rehearsal_capture"
+        }
+      ]
+    },
+    {
+      "name": "kiro-layout-home-introduction.jpg",
+      "bytes": 40143,
+      "sha256": "10d7f05d6c7cbed1924696013262aed5e9cbdeb4a4f8659a095443fe694a3f01",
+      "dimensions": [
+        390,
+        664
+      ],
+      "retained_in_repository": true,
+      "review_status": "viewed_current_run",
+      "current_run_viewed_by": [
+        "/root/evidence_audit"
+      ],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-kiro-fixes-public/layout-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-kiro-fixes-public/layout-chromium.stdout.log",
+          "bytes": 40143,
+          "sha256": "10d7f05d6c7cbed1924696013262aed5e9cbdeb4a4f8659a095443fe694a3f01",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "viewed_current_run"
+        }
+      ]
+    },
+    {
+      "name": "kiro-layout-privacy-policy-left-FAQ-clearance.jpg",
+      "bytes": 51120,
+      "sha256": "6eccc5b7d2651a42b6f80ab0b9ea7623f360e5f233d2d813e111602afaf385bb",
+      "dimensions": [
+        390,
+        664
+      ],
+      "retained_in_repository": true,
+      "review_status": "viewed_current_run",
+      "current_run_viewed_by": [
+        "/root/evidence_audit"
+      ],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-kiro-fixes-public/layout-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-kiro-fixes-public/layout-chromium.stdout.log",
+          "bytes": 51120,
+          "sha256": "6eccc5b7d2651a42b6f80ab0b9ea7623f360e5f233d2d813e111602afaf385bb",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "viewed_current_run"
+        }
+      ]
+    },
+    {
+      "name": "kiro-layout-privacy-policy-right-FAQ-clearance.jpg",
+      "bytes": 51370,
+      "sha256": "c04af700ef48d5a338b5fedd3c5fe5363f8dc246c9cda2e4ed433e59a311cb02",
+      "dimensions": [
+        390,
+        664
+      ],
+      "retained_in_repository": true,
+      "review_status": "viewed_current_run",
+      "current_run_viewed_by": [
+        "/root/evidence_audit"
+      ],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-kiro-fixes-public/layout-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-kiro-fixes-public/layout-chromium.stdout.log",
+          "bytes": 51370,
+          "sha256": "c04af700ef48d5a338b5fedd3c5fe5363f8dc246c9cda2e4ed433e59a311cb02",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "viewed_current_run"
+        }
+      ]
+    },
+    {
+      "name": "kiro-layout-services-1280-left.jpg",
+      "bytes": 79454,
+      "sha256": "1a2859645b0ddc9393d87869b11b54c327c208b3580b8cb2d92d96453ba1e16b",
+      "dimensions": [
+        1280,
+        800
+      ],
+      "retained_in_repository": true,
+      "review_status": "viewed_current_run",
+      "current_run_viewed_by": [
+        "/root/evidence_audit"
+      ],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-kiro-fixes-public/layout-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-kiro-fixes-public/layout-chromium.stdout.log",
+          "bytes": 79454,
+          "sha256": "1a2859645b0ddc9393d87869b11b54c327c208b3580b8cb2d92d96453ba1e16b",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "viewed_current_run"
+        }
+      ]
+    },
+    {
+      "name": "kiro-layout-services-1280-right.jpg",
+      "bytes": 78437,
+      "sha256": "663be0bf5d6eb49ba0a7119583a7fef9a453d1c7407ff66c8bc9bf272097d0a1",
+      "dimensions": [
+        1280,
+        800
+      ],
+      "retained_in_repository": true,
+      "review_status": "hash_identical_to_previously_reviewed_rehearsal_capture",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-kiro-fixes-public/layout-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-kiro-fixes-public/layout-chromium.stdout.log",
+          "bytes": 78437,
+          "sha256": "663be0bf5d6eb49ba0a7119583a7fef9a453d1c7407ff66c8bc9bf272097d0a1",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "hash_identical_to_previously_reviewed_rehearsal_capture"
+        }
+      ]
+    },
+    {
+      "name": "kiro-layout-therapeutic-font-only-strip.jpg",
+      "bytes": 31435,
+      "sha256": "f1040594465c94ed3e6e5782eaaf7618aca43d9602ba2c1c9511d406d8108c98",
+      "dimensions": [
+        390,
+        664
+      ],
+      "retained_in_repository": true,
+      "review_status": "hash_identical_to_previously_reviewed_rehearsal_capture",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-kiro-fixes-public/layout-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-kiro-fixes-public/layout-chromium.stdout.log",
+          "bytes": 31435,
+          "sha256": "f1040594465c94ed3e6e5782eaaf7618aca43d9602ba2c1c9511d406d8108c98",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "hash_identical_to_previously_reviewed_rehearsal_capture"
+        }
+      ]
+    },
+    {
+      "name": "kiro-layout-therapeutic-left-landscape-scrolled.jpg",
+      "bytes": 45838,
+      "sha256": "5efced15c0ecab2dceabe22e5fc61df878cc2ea4f3cc91cc7b0d69e375a823ce",
+      "dimensions": [
+        844,
+        342
+      ],
+      "retained_in_repository": true,
+      "review_status": "viewed_current_run",
+      "current_run_viewed_by": [
+        "/root/evidence_audit/visual_samples"
+      ],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-kiro-fixes-public/layout-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-kiro-fixes-public/layout-chromium.stdout.log",
+          "bytes": 45838,
+          "sha256": "5efced15c0ecab2dceabe22e5fc61df878cc2ea4f3cc91cc7b0d69e375a823ce",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "viewed_current_run"
+        }
+      ]
+    },
+    {
+      "name": "kiro-layout-therapeutic-right-landscape-scrolled.jpg",
+      "bytes": 46213,
+      "sha256": "aee430c9160e71c101d2f3567076abd25dc48b24a2f6c61e3a50accae666df9e",
+      "dimensions": [
+        844,
+        342
+      ],
+      "retained_in_repository": true,
+      "review_status": "viewed_current_run",
+      "current_run_viewed_by": [
+        "/root/evidence_audit/visual_samples",
+        "/root"
+      ],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-kiro-fixes-public/layout-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-kiro-fixes-public/layout-chromium.stdout.log",
+          "bytes": 46213,
+          "sha256": "aee430c9160e71c101d2f3567076abd25dc48b24a2f6c61e3a50accae666df9e",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "viewed_current_run"
+        }
+      ]
+    },
+    {
+      "name": "kiro-layout-therapeutic-right-landscape-top.jpg",
+      "bytes": 30876,
+      "sha256": "4cde30230262d8139b54836083163dfaa64d1711dc463b663b158fb9e4f8a139",
+      "dimensions": [
+        844,
+        342
+      ],
+      "retained_in_repository": true,
+      "review_status": "viewed_current_run",
+      "current_run_viewed_by": [
+        "/root/evidence_audit/visual_samples",
+        "/root"
+      ],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-kiro-fixes-public/layout-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-kiro-fixes-public/layout-chromium.stdout.log",
+          "bytes": 30876,
+          "sha256": "4cde30230262d8139b54836083163dfaa64d1711dc463b663b158fb9e4f8a139",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "viewed_current_run"
+        }
+      ]
+    },
+    {
+      "name": "kiro-layout-therapeutic-right-portrait-150percent.jpg",
+      "bytes": 34773,
+      "sha256": "07e19c6ec5634c76f51a2b808e245fe10fd20a02d05bc80718dbc0c8eb634b47",
+      "dimensions": [
+        390,
+        664
+      ],
+      "retained_in_repository": true,
+      "review_status": "viewed_current_run",
+      "current_run_viewed_by": [
+        "/root/evidence_audit/visual_samples"
+      ],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-kiro-fixes-public/layout-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-kiro-fixes-public/layout-chromium.stdout.log",
+          "bytes": 34773,
+          "sha256": "07e19c6ec5634c76f51a2b808e245fe10fd20a02d05bc80718dbc0c8eb634b47",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "viewed_current_run"
+        }
+      ]
+    },
+    {
+      "name": "kiro-layout-therapeutic-right-portrait-scrolled.jpg",
+      "bytes": 37893,
+      "sha256": "668d726cb80ca9b3ae3a6d35503cd4ab52605577d1cd41e5727e65dd3ecaf3ef",
+      "dimensions": [
+        390,
+        664
+      ],
+      "retained_in_repository": true,
+      "review_status": "hash_identical_to_previously_reviewed_rehearsal_capture",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-kiro-fixes-public/layout-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-kiro-fixes-public/layout-chromium.stdout.log",
+          "bytes": 37893,
+          "sha256": "668d726cb80ca9b3ae3a6d35503cd4ab52605577d1cd41e5727e65dd3ecaf3ef",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "hash_identical_to_previously_reviewed_rehearsal_capture"
+        }
+      ]
+    },
+    {
+      "name": "kiro-layout-therapeutic-right-portrait-top.jpg",
+      "bytes": 43206,
+      "sha256": "9c32c4df3064521007016e814b2b39f00f36360b392f04144fdc9fbd74f9c578",
+      "dimensions": [
+        390,
+        664
+      ],
+      "retained_in_repository": true,
+      "review_status": "hash_identical_to_previously_reviewed_rehearsal_capture",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-kiro-fixes-public/layout-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-kiro-fixes-public/layout-chromium.stdout.log",
+          "bytes": 43206,
+          "sha256": "9c32c4df3064521007016e814b2b39f00f36360b392f04144fdc9fbd74f9c578",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "hash_identical_to_previously_reviewed_rehearsal_capture"
+        }
+      ]
+    },
+    {
+      "name": "kiro-layout-therapeutic-right-tablet.jpg",
+      "bytes": 91927,
+      "sha256": "8c8d32f0a8999225580b1b8218ca9562864f84270f66e36f2f51b6dfb302536d",
+      "dimensions": [
+        768,
+        1024
+      ],
+      "retained_in_repository": true,
+      "review_status": "viewed_current_run",
+      "current_run_viewed_by": [
+        "/root/evidence_audit/visual_samples"
+      ],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-kiro-fixes-public/layout-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-kiro-fixes-public/layout-chromium.stdout.log",
+          "bytes": 91927,
+          "sha256": "8c8d32f0a8999225580b1b8218ca9562864f84270f66e36f2f51b6dfb302536d",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "viewed_current_run"
+        }
+      ]
+    },
+    {
+      "name": "kiro-layout-work-with-me-full-titles.jpg",
+      "bytes": 37480,
+      "sha256": "eb943830479978101b453896131c013a4b82a9109a66a11df5a019c75b0a52d4",
+      "dimensions": [
+        390,
+        664
+      ],
+      "retained_in_repository": true,
+      "review_status": "viewed_current_run",
+      "current_run_viewed_by": [
+        "/root/evidence_audit/visual_samples"
+      ],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-kiro-fixes-public/layout-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-kiro-fixes-public/layout-chromium.stdout.log",
+          "bytes": 37480,
+          "sha256": "eb943830479978101b453896131c013a4b82a9109a66a11df5a019c75b0a52d4",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "viewed_current_run"
+        }
+      ]
+    },
+    {
+      "name": "peek-disclosure-keyboard-no-preference-right.jpg",
+      "bytes": 110366,
+      "sha256": "becd5a0ebb3b2f8783b03d02606b2fcf37207b0bee0a3448b6d194993f56f982",
+      "dimensions": [
+        1280,
+        800
+      ],
+      "retained_in_repository": true,
+      "review_status": "viewed_current_run",
+      "current_run_viewed_by": [
+        "/root/evidence_audit"
+      ],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-kiro-fixes-public/disclosures-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-kiro-fixes-public/disclosures-chromium.stdout.log",
+          "bytes": 110366,
+          "sha256": "becd5a0ebb3b2f8783b03d02606b2fcf37207b0bee0a3448b6d194993f56f982",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "viewed_current_run"
+        }
+      ]
+    },
+    {
+      "name": "peek-disclosure-mouse-no-preference-right.jpg",
+      "bytes": 45639,
+      "sha256": "6c05f4d94364bae601e986efc85d60c2ae6d17d358e04effb6f0da00a4106d05",
+      "dimensions": [
+        390,
+        664
+      ],
+      "retained_in_repository": true,
+      "review_status": "hash_identical_to_previously_reviewed_rehearsal_capture",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-kiro-fixes-public/disclosures-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-kiro-fixes-public/disclosures-chromium.stdout.log",
+          "bytes": 45639,
+          "sha256": "6c05f4d94364bae601e986efc85d60c2ae6d17d358e04effb6f0da00a4106d05",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "hash_identical_to_previously_reviewed_rehearsal_capture"
+        }
+      ]
+    },
+    {
+      "name": "peek-disclosure-touch-no-preference-right.jpg",
+      "bytes": 47036,
+      "sha256": "1f09d904d0d033dcf7c27a35c8b6b4d2c6fde7ac3d33045c86ec3395bfe0e2c1",
+      "dimensions": [
+        390,
+        664
+      ],
+      "retained_in_repository": true,
+      "review_status": "viewed_current_run",
+      "current_run_viewed_by": [
+        "/root/evidence_audit",
+        "/root"
+      ],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-kiro-fixes-public/disclosures-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-kiro-fixes-public/disclosures-chromium.stdout.log",
+          "bytes": 47036,
+          "sha256": "1f09d904d0d033dcf7c27a35c8b6b4d2c6fde7ac3d33045c86ec3395bfe0e2c1",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "viewed_current_run"
+        }
+      ]
+    },
+    {
+      "name": "title-about-1280.jpg",
+      "bytes": 82914,
+      "sha256": "992caa144c982816c1f60ca2b6dc4e6eabbdde83eb4688f723691533f625d337",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 82914,
+          "sha256": "992caa144c982816c1f60ca2b6dc4e6eabbdde83eb4688f723691533f625d337",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-about-390.jpg",
+      "bytes": 40180,
+      "sha256": "f084c0144d77add88ac22ccff2c19bc01e62377d63ca2db1aec15c00ca492364",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 40180,
+          "sha256": "f084c0144d77add88ac22ccff2c19bc01e62377d63ca2db1aec15c00ca492364",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-accessibility-1280.jpg",
+      "bytes": 119616,
+      "sha256": "a17248fad6f17b3d42c631ac7ac193549d211593d6570e2be374cfc685f0193a",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 119616,
+          "sha256": "a17248fad6f17b3d42c631ac7ac193549d211593d6570e2be374cfc685f0193a",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-accessibility-390.jpg",
+      "bytes": 57254,
+      "sha256": "ca4985f4566f697d501ae101ed683cfc844d6cdb8c756ba8326901d782d936f1",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 57254,
+          "sha256": "ca4985f4566f697d501ae101ed683cfc844d6cdb8c756ba8326901d782d936f1",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-chair-massage-1280.jpg",
+      "bytes": 71381,
+      "sha256": "2de342859d13df913f94fdb3b210cb1e3b8d19518131f8828f82b2efbc214823",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 71381,
+          "sha256": "2de342859d13df913f94fdb3b210cb1e3b8d19518131f8828f82b2efbc214823",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-chair-massage-390.jpg",
+      "bytes": 34369,
+      "sha256": "4095e1166b5195a91b9963eb4ce61febebf6b7b6f76c6662c2730334cd32afcc",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 34369,
+          "sha256": "4095e1166b5195a91b9963eb4ce61febebf6b7b6f76c6662c2730334cd32afcc",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-contact-1280.jpg",
+      "bytes": 66966,
+      "sha256": "f68d6dac038a9d3a0cf7e6fe20941edb3f9cc44f61b8153d0a341dd0302cb644",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 66966,
+          "sha256": "f68d6dac038a9d3a0cf7e6fe20941edb3f9cc44f61b8153d0a341dd0302cb644",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-contact-390.jpg",
+      "bytes": 30810,
+      "sha256": "ec5f87e297d8577eccb537cd4dd71e852bb12e4e11de265182ea27470ba50775",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 30810,
+          "sha256": "ec5f87e297d8577eccb537cd4dd71e852bb12e4e11de265182ea27470ba50775",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-corporate-massage-portland-1280.jpg",
+      "bytes": 75796,
+      "sha256": "97ba432d520854866e2df4bf3820737357731c1b1f2d3e1b688552ff88224617",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 75796,
+          "sha256": "97ba432d520854866e2df4bf3820737357731c1b1f2d3e1b688552ff88224617",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-corporate-massage-portland-390.jpg",
+      "bytes": 39168,
+      "sha256": "2d4a0daef510e20484ea6c95de1dc1ded4ce574de5f042459dcd93c4d06440fb",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 39168,
+          "sha256": "2d4a0daef510e20484ea6c95de1dc1ded4ce574de5f042459dcd93c4d06440fb",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-deep-tissue-massage-1280.jpg",
+      "bytes": 74044,
+      "sha256": "66f0d6d3be9f98b3a088294a3c0309719e59daf0024b6ec53707ed11fe71cef6",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 74044,
+          "sha256": "66f0d6d3be9f98b3a088294a3c0309719e59daf0024b6ec53707ed11fe71cef6",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-deep-tissue-massage-390.jpg",
+      "bytes": 35071,
+      "sha256": "9a41da7a91a225a6fa0c4f2e9edc10e689068dacad351aa67aff4dbb645d9e0e",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 35071,
+          "sha256": "9a41da7a91a225a6fa0c4f2e9edc10e689068dacad351aa67aff4dbb645d9e0e",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-home-1280.jpg",
+      "bytes": 94988,
+      "sha256": "1781ea8f3967bf59612a32b968cde1c1ba385af8defbfc35a7abadf5b297279b",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 94988,
+          "sha256": "1781ea8f3967bf59612a32b968cde1c1ba385af8defbfc35a7abadf5b297279b",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-home-390.jpg",
+      "bytes": 53009,
+      "sha256": "b54237b64546366b850bedd85e5d64f5f480504e8d904abf40209551ae7b082a",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 53009,
+          "sha256": "b54237b64546366b850bedd85e5d64f5f480504e8d904abf40209551ae7b082a",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-in-page-link-ideas-1280.jpg",
+      "bytes": 71467,
+      "sha256": "037633918f27337252248a8f291d7c3e0bd199ffa88a39d66888a82f28f77714",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 71467,
+          "sha256": "037633918f27337252248a8f291d7c3e0bd199ffa88a39d66888a82f28f77714",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-in-page-link-ideas-390.jpg",
+      "bytes": 39505,
+      "sha256": "f2a7409f7bbdc2e76bd494f84de03d5be9a8857e25569fd06fe0e4bced23ef3d",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 39505,
+          "sha256": "f2a7409f7bbdc2e76bd494f84de03d5be9a8857e25569fd06fe0e4bced23ef3d",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-index-nav-ideas-1280.jpg",
+      "bytes": 64724,
+      "sha256": "e80905dd73ce714315260ed7ecdae280cd1ad661efecbf85649bf37329229aa4",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 64724,
+          "sha256": "e80905dd73ce714315260ed7ecdae280cd1ad661efecbf85649bf37329229aa4",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-index-nav-ideas-390.jpg",
+      "bytes": 38940,
+      "sha256": "44f3b8c703fc7a2c1ed837effa8ed6a136bf54e83c053135dbaa7d46003ba6db",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 38940,
+          "sha256": "44f3b8c703fc7a2c1ed837effa8ed6a136bf54e83c053135dbaa7d46003ba6db",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-peek-title-missing-page-verification-20261109-1280.jpg",
+      "bytes": 57921,
+      "sha256": "bf73c863d96bb23320f07cf2bed0803d3e0dc338f8917b548a5f36c07790fa6c",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 57921,
+          "sha256": "bf73c863d96bb23320f07cf2bed0803d3e0dc338f8917b548a5f36c07790fa6c",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-peek-title-missing-page-verification-20261109-390.jpg",
+      "bytes": 33845,
+      "sha256": "1cb7218a15e68a3200633f0fac3fbb9da559567a872f69793bb748a27d18ff76",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 33845,
+          "sha256": "1cb7218a15e68a3200633f0fac3fbb9da559567a872f69793bb748a27d18ff76",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-personal-automation-1280.jpg",
+      "bytes": 118823,
+      "sha256": "8be89cd90cbd7ffd0e960523f7c14bba371f151c2c3000c63ac20fd64e8e0200",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 118823,
+          "sha256": "8be89cd90cbd7ffd0e960523f7c14bba371f151c2c3000c63ac20fd64e8e0200",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-personal-automation-390.jpg",
+      "bytes": 54569,
+      "sha256": "ab31131ca5a4698ace1e31d09644172ecc14bd0524b0141d1db1a54b13876f4c",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 54569,
+          "sha256": "ab31131ca5a4698ace1e31d09644172ecc14bd0524b0141d1db1a54b13876f4c",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-personal-automation-privacy-1280.jpg",
+      "bytes": 146749,
+      "sha256": "b22bbbd9053badd59192089ee85fe5f8dc97d20f648cd5b34c13d142fc4f1f7d",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 146749,
+          "sha256": "b22bbbd9053badd59192089ee85fe5f8dc97d20f648cd5b34c13d142fc4f1f7d",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-personal-automation-privacy-390.jpg",
+      "bytes": 54593,
+      "sha256": "c02f82f6af29de10e0a88bf98977c53660c92b4af932ddae79f68c341f06baf6",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 54593,
+          "sha256": "c02f82f6af29de10e0a88bf98977c53660c92b4af932ddae79f68c341f06baf6",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-personal-automation-terms-1280.jpg",
+      "bytes": 114939,
+      "sha256": "1de8b72e4d9c60cd8b2bdaba29e012f748c03066475098e2d0dafc18198a11a5",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 114939,
+          "sha256": "1de8b72e4d9c60cd8b2bdaba29e012f748c03066475098e2d0dafc18198a11a5",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-personal-automation-terms-390.jpg",
+      "bytes": 57138,
+      "sha256": "b79b0452d651285f9433844f85dae385f7e04baf7a04b4329f624babfa6353c8",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 57138,
+          "sha256": "b79b0452d651285f9433844f85dae385f7e04baf7a04b4329f624babfa6353c8",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-privacy-policy-1280.jpg",
+      "bytes": 108345,
+      "sha256": "b9d5836c3422f418424089cdf09ae8c3f9c351b8edb7289760afef7333423483",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 108345,
+          "sha256": "b9d5836c3422f418424089cdf09ae8c3f9c351b8edb7289760afef7333423483",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-privacy-policy-390.jpg",
+      "bytes": 49538,
+      "sha256": "72263e583bc7b697c7692d954f85fb8f68ceb3ac13154f94faada5434bf92e97",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 49538,
+          "sha256": "72263e583bc7b697c7692d954f85fb8f68ceb3ac13154f94faada5434bf92e97",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-progress-nav-ideas-1280.jpg",
+      "bytes": 68236,
+      "sha256": "45dd0af529aa17ba2da2b71568201ec01c0fc81b284c7e7e8b8d8201bfd89775",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 68236,
+          "sha256": "45dd0af529aa17ba2da2b71568201ec01c0fc81b284c7e7e8b8d8201bfd89775",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-progress-nav-ideas-390.jpg",
+      "bytes": 37839,
+      "sha256": "dca06c6b03519ba586c654863986cebeeedfad572f491fed799e3a8f0a21becc",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 37839,
+          "sha256": "dca06c6b03519ba586c654863986cebeeedfad572f491fed799e3a8f0a21becc",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-about-1280.jpg",
+      "bytes": 88064,
+      "sha256": "4d3da525ef642744b0724f2d3d80a104b64d61223eb7c143ed484883aad2dd79",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 88064,
+          "sha256": "4d3da525ef642744b0724f2d3d80a104b64d61223eb7c143ed484883aad2dd79",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-about-390.jpg",
+      "bytes": 42608,
+      "sha256": "84117ccdaa21655a3f9d7132200c48b22f633cd5db1e5564495e496254af9f3f",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 42608,
+          "sha256": "84117ccdaa21655a3f9d7132200c48b22f633cd5db1e5564495e496254af9f3f",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-accessibility-1280.jpg",
+      "bytes": 118198,
+      "sha256": "5febf508c5e62d0d6ddff22c1e0599e11cb8e1766575400e91bae14f63d3c6f9",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 118198,
+          "sha256": "5febf508c5e62d0d6ddff22c1e0599e11cb8e1766575400e91bae14f63d3c6f9",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-accessibility-390.jpg",
+      "bytes": 54385,
+      "sha256": "ad1e04ea0a45f5ce7f4bee59da5745d3f8dbc945d97cbb600c543d23e5f0744d",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 54385,
+          "sha256": "ad1e04ea0a45f5ce7f4bee59da5745d3f8dbc945d97cbb600c543d23e5f0744d",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-contact-1280.jpg",
+      "bytes": 68439,
+      "sha256": "ed3230827c8c2250db468cdca02315be95daa47b1ad0708875d1bc9856700bed",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 68439,
+          "sha256": "ed3230827c8c2250db468cdca02315be95daa47b1ad0708875d1bc9856700bed",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-contact-390.jpg",
+      "bytes": 31752,
+      "sha256": "d99a7b75a66d1460cff132a812f848066ed7f57206073c6713e305c321705bd5",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 31752,
+          "sha256": "d99a7b75a66d1460cff132a812f848066ed7f57206073c6713e305c321705bd5",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-corporate-massage-portland-1280.jpg",
+      "bytes": 81905,
+      "sha256": "a24b16741e724f934f0396a4a005b45bbacadf04773304111b297859b773acf6",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 81905,
+          "sha256": "a24b16741e724f934f0396a4a005b45bbacadf04773304111b297859b773acf6",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-corporate-massage-portland-390.jpg",
+      "bytes": 39156,
+      "sha256": "2e7ad44438c911fe9dadf9656394e2e346f46f77e9aed72dc783c1180f225e2b",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 39156,
+          "sha256": "2e7ad44438c911fe9dadf9656394e2e346f46f77e9aed72dc783c1180f225e2b",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-home-1280.jpg",
+      "bytes": 96924,
+      "sha256": "6c13ac5eca092e078a20388f114e952b718ff614403192be1511714a6ee42066",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 96924,
+          "sha256": "6c13ac5eca092e078a20388f114e952b718ff614403192be1511714a6ee42066",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-home-390.jpg",
+      "bytes": 49137,
+      "sha256": "5d97ec16f700e1fbfbab381e6a8fc2dd5484b9a7a8df227137a41879b38ccc39",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 49137,
+          "sha256": "5d97ec16f700e1fbfbab381e6a8fc2dd5484b9a7a8df227137a41879b38ccc39",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-in-page-link-ideas-1280.jpg",
+      "bytes": 69785,
+      "sha256": "9364efaaa15522b4a4af0199a263611abf8595e596f8d70f48cbf881e9cf4322",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 69785,
+          "sha256": "9364efaaa15522b4a4af0199a263611abf8595e596f8d70f48cbf881e9cf4322",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-in-page-link-ideas-390.jpg",
+      "bytes": 31522,
+      "sha256": "1b96c3d8e86fcbb1302f2500bf65801910428b513d26c8fa61e803046d89d29d",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 31522,
+          "sha256": "1b96c3d8e86fcbb1302f2500bf65801910428b513d26c8fa61e803046d89d29d",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-nav-ideas-1280.jpg",
+      "bytes": 72404,
+      "sha256": "3487e69ae70d53fb75286b308c97ad6b3199e5c5f77901571f6f366087d3fd8c",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 72404,
+          "sha256": "3487e69ae70d53fb75286b308c97ad6b3199e5c5f77901571f6f366087d3fd8c",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-nav-ideas-390.jpg",
+      "bytes": 43383,
+      "sha256": "e3c39d3733caee51a1e2b7493efabc234c48054dec1954f0178b4f5e12b97f0f",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 43383,
+          "sha256": "e3c39d3733caee51a1e2b7493efabc234c48054dec1954f0178b4f5e12b97f0f",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-peek-title-missing-page-verification-20261109-1280.jpg",
+      "bytes": 60711,
+      "sha256": "739ef7d056f3b3f842ee0365c3c66a06d38eb034e1f437a1413419e038c4404f",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 60711,
+          "sha256": "739ef7d056f3b3f842ee0365c3c66a06d38eb034e1f437a1413419e038c4404f",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-peek-title-missing-page-verification-20261109-390.jpg",
+      "bytes": 32921,
+      "sha256": "5fc76e288cf32db4f0c66f3b759910ff6bbce4a2a38329a245d0c936f516d0e2",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": true,
+      "review_status": "viewed_current_run",
+      "current_run_viewed_by": [
+        "/root/evidence_audit"
+      ],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 32921,
+          "sha256": "5fc76e288cf32db4f0c66f3b759910ff6bbce4a2a38329a245d0c936f516d0e2",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "viewed_current_run"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-personal-automation-1280.jpg",
+      "bytes": 116628,
+      "sha256": "6a3d0f179bcf87ff21632c1fddd7054d20147e3ac62541a4ffea61e6a9672a2e",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 116628,
+          "sha256": "6a3d0f179bcf87ff21632c1fddd7054d20147e3ac62541a4ffea61e6a9672a2e",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-personal-automation-390.jpg",
+      "bytes": 54423,
+      "sha256": "22ed25274b355d617eb2dd35b9406866b09f3e2c20091c3e467b2606d20c616d",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 54423,
+          "sha256": "22ed25274b355d617eb2dd35b9406866b09f3e2c20091c3e467b2606d20c616d",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-personal-automation-privacy-1280.jpg",
+      "bytes": 142663,
+      "sha256": "91cffa5e13003fce3171a5ed8ddd26ebedc1150955ab771d54bf45495c19edd3",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 142663,
+          "sha256": "91cffa5e13003fce3171a5ed8ddd26ebedc1150955ab771d54bf45495c19edd3",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-personal-automation-privacy-390.jpg",
+      "bytes": 51161,
+      "sha256": "874b797ce627df6d699bfd125549c80c8182fbc77441db63be4e0803f5e7347e",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 51161,
+          "sha256": "874b797ce627df6d699bfd125549c80c8182fbc77441db63be4e0803f5e7347e",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-personal-automation-terms-1280.jpg",
+      "bytes": 112722,
+      "sha256": "4ca00b8ea9a06d303c0297b65a52ee152717f061ba4f1e379d4a6604ed03dac2",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 112722,
+          "sha256": "4ca00b8ea9a06d303c0297b65a52ee152717f061ba4f1e379d4a6604ed03dac2",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-personal-automation-terms-390.jpg",
+      "bytes": 53211,
+      "sha256": "b16f7cbf8e412f6b3a4dca2def19e84dd4a330afbd3274c983a5c068861a2e43",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 53211,
+          "sha256": "b16f7cbf8e412f6b3a4dca2def19e84dd4a330afbd3274c983a5c068861a2e43",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-privacy-policy-1280.jpg",
+      "bytes": 108020,
+      "sha256": "55e2f730c73c8c9fee33f5cd5a4112b051899f546ad640d7ad8d92912cc1ca24",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 108020,
+          "sha256": "55e2f730c73c8c9fee33f5cd5a4112b051899f546ad640d7ad8d92912cc1ca24",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-privacy-policy-390-landed.jpg",
+      "bytes": 55838,
+      "sha256": "f26b33ce3cbe8e527f6dbb0708fac97b8d5481b9c568c23a6bce3e3431f9018c",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 55838,
+          "sha256": "f26b33ce3cbe8e527f6dbb0708fac97b8d5481b9c568c23a6bce3e3431f9018c",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-privacy-policy-390.jpg",
+      "bytes": 50008,
+      "sha256": "ba7c231782ccab313498166c82e6cd1b5502ac483662b25518cdb6170a320d66",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 50008,
+          "sha256": "ba7c231782ccab313498166c82e6cd1b5502ac483662b25518cdb6170a320d66",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-progress-nav-ideas-1280.jpg",
+      "bytes": 68851,
+      "sha256": "19466f6fbc1a0d4a31258fff8298e1f59dd8579e0e091ab94203711836f16b9c",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 68851,
+          "sha256": "19466f6fbc1a0d4a31258fff8298e1f59dd8579e0e091ab94203711836f16b9c",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-progress-nav-ideas-390.jpg",
+      "bytes": 32123,
+      "sha256": "1955c54e85ab631fb538eeda53b6b60c36cbac290e999d4f3a8b3770778d065b",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 32123,
+          "sha256": "1955c54e85ab631fb538eeda53b6b60c36cbac290e999d4f3a8b3770778d065b",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-s-massage-1280-form-left-form-landed.jpg",
+      "bytes": 91890,
+      "sha256": "7360ffc966f20e59f4c5e9061756a84a797503108439a93d391394072efb0f9b",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 91890,
+          "sha256": "7360ffc966f20e59f4c5e9061756a84a797503108439a93d391394072efb0f9b",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-s-massage-1280-form-right-form-landed.jpg",
+      "bytes": 103336,
+      "sha256": "1e2424a4060c5345115e56a9e766f14e90e1d64cbaa4b93182b3dcae99b7a710",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 103336,
+          "sha256": "1e2424a4060c5345115e56a9e766f14e90e1d64cbaa4b93182b3dcae99b7a710",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-s-massage-1280-landed.jpg",
+      "bytes": 91505,
+      "sha256": "5d442c1cc3ba73989886ce5b6e96fcdd3bde84ec2617023c4b9a8689e266dfd4",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 91505,
+          "sha256": "5d442c1cc3ba73989886ce5b6e96fcdd3bde84ec2617023c4b9a8689e266dfd4",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-s-massage-1280.jpg",
+      "bytes": 78272,
+      "sha256": "26582a22d49fb2e1cd1330ab023b6b4bbf42e8321f107ee9ccaf02979d10c27b",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 78272,
+          "sha256": "26582a22d49fb2e1cd1330ab023b6b4bbf42e8321f107ee9ccaf02979d10c27b",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-s-massage-390-form-left-form-landed.jpg",
+      "bytes": 33881,
+      "sha256": "2d13ecf6c3fc967e895fd83ff2afe9d3802fae7236639fa9f7e68983dae2b3a3",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 33881,
+          "sha256": "2d13ecf6c3fc967e895fd83ff2afe9d3802fae7236639fa9f7e68983dae2b3a3",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-s-massage-390-form-right-form-landed.jpg",
+      "bytes": 33878,
+      "sha256": "c8de2eccaea450cb09abca90eb94f0bc1e46ac0a148cdf8f5d1a5cb8ac13855d",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 33878,
+          "sha256": "c8de2eccaea450cb09abca90eb94f0bc1e46ac0a148cdf8f5d1a5cb8ac13855d",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-s-massage-390-landed.jpg",
+      "bytes": 33878,
+      "sha256": "c8de2eccaea450cb09abca90eb94f0bc1e46ac0a148cdf8f5d1a5cb8ac13855d",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 33878,
+          "sha256": "c8de2eccaea450cb09abca90eb94f0bc1e46ac0a148cdf8f5d1a5cb8ac13855d",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-s-massage-390.jpg",
+      "bytes": 35468,
+      "sha256": "a2216e0bb3c50bb4829ad228353a96496e03e27d41820c3a6446feede2fa548e",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": true,
+      "review_status": "viewed_current_run",
+      "current_run_viewed_by": [
+        "/root/evidence_audit"
+      ],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 35468,
+          "sha256": "a2216e0bb3c50bb4829ad228353a96496e03e27d41820c3a6446feede2fa548e",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "viewed_current_run"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-s-massage-768-form-left-form-landed.jpg",
+      "bytes": 48114,
+      "sha256": "d8ce4e52501861f591f61ad47dff50a1530579283b0c271f58a1a2368880003b",
+      "dimensions": [
+        768,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 48114,
+          "sha256": "d8ce4e52501861f591f61ad47dff50a1530579283b0c271f58a1a2368880003b",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-s-massage-768-form-right-form-landed.jpg",
+      "bytes": 47856,
+      "sha256": "f0e8ff1df4bf6887342a8b43eb586f8187abc2f246b6d0a9607c9a358ca834b2",
+      "dimensions": [
+        768,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 47856,
+          "sha256": "f0e8ff1df4bf6887342a8b43eb586f8187abc2f246b6d0a9607c9a358ca834b2",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-s-massage-768-landed.jpg",
+      "bytes": 47834,
+      "sha256": "933a8d52db412ec124fcbf0d04caaff41f291c28cc454fabb497f20fa9be0187",
+      "dimensions": [
+        768,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 47834,
+          "sha256": "933a8d52db412ec124fcbf0d04caaff41f291c28cc454fabb497f20fa9be0187",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-services-1280.jpg",
+      "bytes": 79755,
+      "sha256": "3daa68f788e20c83ba942654240242650c2df51d29d6561401b1a04cca0cef2f",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 79755,
+          "sha256": "3daa68f788e20c83ba942654240242650c2df51d29d6561401b1a04cca0cef2f",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-services-390.jpg",
+      "bytes": 37223,
+      "sha256": "88db3f2c55b5bb3630a030c28fb5d97040a346ea7f6f0079b4b0530de76aece9",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 37223,
+          "sha256": "88db3f2c55b5bb3630a030c28fb5d97040a346ea7f6f0079b4b0530de76aece9",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-work-with-me-1280.jpg",
+      "bytes": 98940,
+      "sha256": "5b8ea13624714c038bb32125f8abd8fac72f3fc6918a30d9eb7cac2a33ee2412",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 98940,
+          "sha256": "5b8ea13624714c038bb32125f8abd8fac72f3fc6918a30d9eb7cac2a33ee2412",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-rail-work-with-me-390.jpg",
+      "bytes": 37101,
+      "sha256": "612a63896a41263c53bc6d00275263610663cacc56d3c17f19cf91d8badf3835",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-rail-public/rails-chromium.stdout.log",
+          "bytes": 37101,
+          "sha256": "612a63896a41263c53bc6d00275263610663cacc56d3c17f19cf91d8badf3835",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-s-massage-1280.jpg",
+      "bytes": 83502,
+      "sha256": "295e1069ff65499f6fc9dffae1e7d5a58e9d9a0567d0bc0e278d6b2926f225c1",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": false,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 83502,
+          "sha256": "295e1069ff65499f6fc9dffae1e7d5a58e9d9a0567d0bc0e278d6b2926f225c1",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-s-massage-390.jpg",
+      "bytes": 31204,
+      "sha256": "ff455161f0f5f88ef1bb020f56ec12e70a722ff02a81aec6a695e0ade3156e26",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 31204,
+          "sha256": "ff455161f0f5f88ef1bb020f56ec12e70a722ff02a81aec6a695e0ade3156e26",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-services-1280.jpg",
+      "bytes": 74914,
+      "sha256": "9b18788a09db2c33434ae37051b3c69b03c094acd91ffd7f6075036e9cda8f7f",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 74914,
+          "sha256": "9b18788a09db2c33434ae37051b3c69b03c094acd91ffd7f6075036e9cda8f7f",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-services-390.jpg",
+      "bytes": 37885,
+      "sha256": "0b262e075c5774c848ef5a5018c9374a4656f9ec9f87042f895ed89544f3cbe7",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 37885,
+          "sha256": "0b262e075c5774c848ef5a5018c9374a4656f9ec9f87042f895ed89544f3cbe7",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-thai-massage-1280.jpg",
+      "bytes": 74893,
+      "sha256": "a3f2e02febd8c27e33e25f20857d96455a3a1b83b0bd11631a61cd4557daeef3",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 74893,
+          "sha256": "a3f2e02febd8c27e33e25f20857d96455a3a1b83b0bd11631a61cd4557daeef3",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-thai-massage-390.jpg",
+      "bytes": 39925,
+      "sha256": "add0b0895172da2037d9ec695cbfc098cbf6ed02e5da7aa4f9ccfef4939df86e",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": true,
+      "review_status": "hash_identical_to_previously_reviewed_rehearsal_capture",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 39925,
+          "sha256": "add0b0895172da2037d9ec695cbfc098cbf6ed02e5da7aa4f9ccfef4939df86e",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "hash_identical_to_previously_reviewed_rehearsal_capture"
+        }
+      ]
+    },
+    {
+      "name": "title-therapeutic-massage-1280.jpg",
+      "bytes": 76579,
+      "sha256": "f573e190fb0d9631a5938204d7227f06084cc241f1ea7989dc59a545450e9caf",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 76579,
+          "sha256": "f573e190fb0d9631a5938204d7227f06084cc241f1ea7989dc59a545450e9caf",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-therapeutic-massage-390.jpg",
+      "bytes": 37031,
+      "sha256": "05782b3e924b06b848cd8420deec89ec7965bf495731de1c6e5e93e4da4aa5cd",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 37031,
+          "sha256": "05782b3e924b06b848cd8420deec89ec7965bf495731de1c6e5e93e4da4aa5cd",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-work-with-me-1280.jpg",
+      "bytes": 92495,
+      "sha256": "65da50012337ecc84a5437797bcaa75aa1bc1efd3a2eb7dcbc466dc6902d997c",
+      "dimensions": [
+        1280,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 92495,
+          "sha256": "65da50012337ecc84a5437797bcaa75aa1bc1efd3a2eb7dcbc466dc6902d997c",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    },
+    {
+      "name": "title-work-with-me-390.jpg",
+      "bytes": 36559,
+      "sha256": "75d2aeb9d391ec823f2a8dbcf37ee0e9409b26ec2425c9f393631fbf1b687756",
+      "dimensions": [
+        390,
+        844
+      ],
+      "retained_in_repository": false,
+      "review_status": "not_individually_reviewed",
+      "current_run_viewed_by": [],
+      "matches_final_rehearsal_sha256": true,
+      "matching_source_leaf_logs": [
+        "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log"
+      ],
+      "leaf_capture_occurrences": [
+        {
+          "source_leaf_log": "work/_temp/ops-out/peek-title-public/title-chromium.stdout.log",
+          "bytes": 36559,
+          "sha256": "75d2aeb9d391ec823f2a8dbcf37ee0e9409b26ec2425c9f393631fbf1b687756",
+          "matches_retained_or_decoded_image": true,
+          "review_status": "not_individually_reviewed"
+        }
+      ]
+    }
+  ]
+}

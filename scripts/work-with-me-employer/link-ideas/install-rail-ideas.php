@@ -1,0 +1,142 @@
+<?php
+/**
+ * Side rail ideas: ADD one practice page, /rail-nav-ideas/, on staging39 only.
+ * Ryan, 2026-11-08: "it's uncomfortable for people to reach to the top of their phone with their thumb so let's drop the scrub. So using the same scrub principle
+ * as before but on the side not top area, let's use the rail method. Create five possible ways to Scroll and preview and scroll and jump-to that are intuitive."
+ * Before that: "be able to select a new spot and not lose your place if you just want to search the spots topics but not jump to one yet and also jump when you choose".
+ * (Copied from install-progress-ideas.php, which created /progress-nav-ideas/.) Nothing else is touched (no snippet, CSS, menu or other page).
+ * Ryan, 2026-11-08 (cloud session): "https://staging39.thaisolitude.com use this staging ... Create a practice page and give me examples of the most modern GUI ideas I could use
+ * instead of the current links that I am using for in-page links ... 5 ideas ... It needs to be real code that really works so that we know we can use it on the final version."
+ * The original page holds one HTML block (frozen rail-ideas-v1.html). Later input updates use rail-input/install-rail-input.php in place.
+ *
+ * Allow-list: localhost:8090 (the rehearsal copy) and staging39. Never live: this is a practice page.
+ * Modes (first WP-CLI argument; run with --user=1):  <mode> [FILE]
+ *   preflight    read-only: ready = no page with the slug; applied = the page is there exactly as written; CHANGED = anything else (stop)
+ *   apply        write a before-snapshot, create the page, read it back; delete it again if the read-back differs
+ *   rollback     FILE = the before-snapshot: delete the page this installer created (only that page id, only if it is still exactly as written)
+ * apply and rollback need WWM_BACKUP_DIR (an existing, writable absolute directory outside the web root).
+ */
+
+if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) ) {
+	exit( 'Run with WP-CLI.' );
+}
+
+$home = untrailingslashit( home_url() );
+$host = (string) wp_parse_url( $home, PHP_URL_HOST ) . ( wp_parse_url( $home, PHP_URL_PORT ) ? ':' . wp_parse_url( $home, PHP_URL_PORT ) : '' );
+if ( ! in_array( $host, array( 'localhost:8090', 'staging39.thaisolitude.com' ), true ) ) {
+	WP_CLI::error( 'Refusing to run: ' . $home . ' is not an allowed target (localhost:8090 or staging39 only).' );
+}
+if ( ! current_user_can( 'unfiltered_html' ) ) {
+	WP_CLI::error( 'Run with --user=1 (an administrator) so WordPress does not strip the page\'s style and script.' );
+}
+$args = isset( $args ) && is_array( $args ) ? $args : array();
+$mode = $args ? (string) $args[0] : 'preflight';
+if ( ! in_array( $mode, array( 'preflight', 'apply', 'rollback' ), true ) ) {
+	WP_CLI::error( 'Unknown mode: ' . $mode );
+}
+
+$slug  = 'rail-nav-ideas';
+$title = 'Side rail ideas';
+$src   = __DIR__ . '/rail-ideas-v1.html';
+if ( ! is_file( $src ) ) {
+	WP_CLI::error( 'Frozen rail-ideas-v1.html is missing next to the installer.' );
+}
+$source_bytes = (string) file_get_contents( $src );
+if ( hash( 'sha256', $source_bytes ) !== '26f3472e8032cb89d99b923c23999fc6281537a32d0eed07a54f61347af8d38d' ) { WP_CLI::error( 'Frozen Rail v1 source changed; nothing written.' ); }
+$html    = rtrim( (string) file_get_contents( $src ) );
+$content = "<!-- wp:html -->\n" . $html . "\n<!-- /wp:html -->";
+$js = (string) substr( (string) strstr( $html, '<script>' ), 8 );
+$js = (string) substr( $js, 0, (int) strpos( $js, '</script>' ) );
+if ( '' === $js || false !== strpos( $js, '<' ) ) {
+	WP_CLI::error( 'Internal error: the script contains a less-than sign; WordPress\'s shortcode scanner then escapes its ampersands when it renders the page.' );
+}
+if ( 1 !== substr_count( $html, '<script>' ) || 1 !== substr_count( $html, '<style>' ) || false !== strpos( $html, '<!-- wp:' ) ) {
+	WP_CLI::error( 'Internal error: rail-ideas.html is not the reviewed single block.' );
+}
+// wording lock (AGENTS.md house list): the visible text must not use we/our/us, studio, or a claim verb
+$visible = html_entity_decode( wp_strip_all_tags( preg_replace( '#<(script|style)\b[^>]*>.*?</\1>#is', ' ', $html ) ), ENT_QUOTES, 'UTF-8' );
+if ( preg_match( '/\b(we|our|us|ours|studio)\b/i', $visible ) || preg_match( '/\bheal|cure|\btreat|diagnos|guarantee|detox|inflammation|relie[fv]/i', $visible ) ) {
+	WP_CLI::error( 'The visible text uses a word this site never uses.' );
+}
+
+$read = function () use ( $slug, $title, $content ) {
+	$pages = get_posts( array( 'post_type' => 'page', 'name' => $slug, 'post_status' => array_values( get_post_stati() ), 'numberposts' => 5, 'suppress_filters' => true ) );
+	if ( ! $pages ) {
+		return array( 'state' => 'ready', 'id' => 0, 'report' => 'no page with slug ' . $slug );
+	}
+	$p  = $pages[0];
+	$ok = 1 === count( $pages ) && 'publish' === $p->post_status && $title === $p->post_title && (string) $p->post_content === $content && '1' === (string) get_post_meta( $p->ID, '_ts_rail_ideas', true ) && 'disabled' === (string) get_post_meta( $p->ID, 'site-post-title', true );
+	return array( 'state' => $ok ? 'applied' : 'CHANGED', 'id' => (int) $p->ID, 'report' => count( $pages ) . ' page(s) with slug ' . $slug . ', #' . $p->ID . ' ' . $p->post_status . ( $ok ? ', exactly as written' : ', NOT as this installer writes it' ) );
+};
+$now = $read();
+
+if ( 'preflight' === $mode ) {
+	if ( 'CHANGED' === $now['state'] ) {
+		WP_CLI::error( 'CHANGED: ' . $now['report'] . '. Stop and inspect.' );
+	}
+	WP_CLI::success( $now['state'] . ': ' . $now['report'] . ' (content ' . strlen( $content ) . ' bytes, sha256 ' . substr( hash( 'sha256', $content ), 0, 12 ) . ').' );
+	return;
+}
+
+$dir = (string) getenv( 'WWM_BACKUP_DIR' );
+if ( '' === $dir || '/' !== $dir[0] || ! is_dir( $dir ) || ! is_writable( $dir ) ) {
+	WP_CLI::error( 'WWM_BACKUP_DIR must be an existing, writable absolute directory.' );
+}
+
+if ( 'apply' === $mode ) {
+	if ( 'applied' === $now['state'] ) {
+		WP_CLI::success( 'Already applied: ' . $now['report'] . '. Nothing written.' );
+		return;
+	}
+	if ( 'ready' !== $now['state'] ) {
+		WP_CLI::error( 'CHANGED: ' . $now['report'] . '. Nothing written.' );
+	}
+	$file = rtrim( $dir, '/' ) . '/rail-ideas-before-' . gmdate( 'Ymd-His' ) . '-' . substr( md5( uniqid( '', true ) ), 0, 8 ) . '.json';
+	$snap = array( 'home' => $home, 'slug' => $slug, 'created' => gmdate( 'c' ), 'content_sha256' => hash( 'sha256', $content ), 'page_id' => 0 );
+	$save = function () use ( $file, &$snap ) {
+		if ( false === file_put_contents( $file, wp_json_encode( $snap, JSON_PRETTY_PRINT ) ) ) {
+			WP_CLI::error( 'Could not write the snapshot ' . $file );
+		}
+		chmod( $file, 0600 );
+	};
+	$save();
+	$id = wp_insert_post( wp_slash( array(
+		'post_type' => 'page', 'post_status' => 'publish', 'post_title' => $title, 'post_name' => $slug, 'post_content' => $content,
+		'post_author' => get_current_user_id(), 'comment_status' => 'closed', 'ping_status' => 'closed',
+	) ), true );
+	if ( is_wp_error( $id ) || ! $id ) {
+		WP_CLI::error( 'Could not create the page; nothing else was written.' );
+	}
+	$snap['page_id'] = (int) $id;
+	$save();
+	update_post_meta( $id, '_ts_rail_ideas', '1' );
+	update_post_meta( $id, 'site-post-title', 'disabled' );   // Astra: the block carries its own heading
+	$after = $read();
+	if ( 'applied' !== $after['state'] || (int) $after['id'] !== (int) $id ) {
+		wp_delete_post( (int) $id, true );
+		WP_CLI::error( 'Read-back differed (' . $after['report'] . '); the page was deleted again.' );
+	}
+	WP_CLI::success( 'Added page #' . $id . ' (/' . $slug . '/). Before-snapshot: ' . $file );
+	return;
+}
+
+// rollback FILE
+$file = isset( $args[1] ) ? (string) $args[1] : '';
+$snap = $file && is_file( $file ) ? json_decode( (string) file_get_contents( $file ), true ) : null;
+if ( ! is_array( $snap ) || ( $snap['home'] ?? '' ) !== $home || ( $snap['slug'] ?? '' ) !== $slug || ! is_int( $snap['page_id'] ?? null ) || $snap['page_id'] < 1 || ( $snap['content_sha256'] ?? '' ) !== hash( 'sha256', $content ) ) {
+	WP_CLI::error( 'Snapshot is missing, incomplete (the apply may not have finished), or from another site.' );
+}
+// A later in-place update or hand edit must never be removed by this creation snapshot.
+if ( 'ready' === $now['state'] ) {
+	WP_CLI::success( 'Nothing to roll back: the original practice page is absent.' );
+	return;
+}
+if ( 'applied' !== $now['state'] || (int) $now['id'] !== $snap['page_id'] ) { WP_CLI::error( 'Page changed or belongs to another snapshot; nothing deleted.' ); }
+wp_delete_post( (int) $snap['page_id'], true );
+$check = $read();
+if ( 'ready' !== $check['state'] ) {
+	WP_CLI::error( 'Rollback did not return to the original state (' . $check['report'] . '); stop and inspect.' );
+}
+WP_CLI::success( 'Rollback done: page #' . $snap['page_id'] . ' (/' . $slug . '/) is deleted; nothing else was ever changed.' );
+
+// ref: ./rail-ideas-v1.html — frozen original block; ./rail-input/install-rail-input.php — later in-place update

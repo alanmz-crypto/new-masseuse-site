@@ -1,0 +1,99 @@
+{
+  "public_run": 42557406502,
+  "rehearsal_run": 42556394798,
+  "note": "Five full captures match exactly; four pixel differences are confined to the rail, outside card/content. Capture timing is a source-supported interpretation, not a separately proven cause.",
+  "captures": [
+    {
+      "file": "chromium-deep-tissue-massage-1280-first.jpg",
+      "public_sha256": "cb0620a9cac84bd3dd48bf8f58729f7a445f110e5223262c83520d0f8892112d",
+      "rehearsal_sha256": "cb0620a9cac84bd3dd48bf8f58729f7a445f110e5223262c83520d0f8892112d",
+      "byte_identical": true,
+      "pixel_difference_bounds": null,
+      "card_and_content_pixels_identical": true
+    },
+    {
+      "file": "chromium-deep-tissue-massage-1280-research-end.jpg",
+      "public_sha256": "23c9e11d8239eb1a8a4063f0416f3c9a801f7af17c3fd4a1772fc373b329054b",
+      "rehearsal_sha256": "0e55cb19084af4fd0830046e1c49904d86c765096ba67858aa64a7d548087938",
+      "byte_identical": false,
+      "pixel_difference_bounds": [
+        1248,
+        328,
+        1256,
+        336
+      ],
+      "card_and_content_pixels_identical": true
+    },
+    {
+      "file": "chromium-deep-tissue-massage-1280-research-start.jpg",
+      "public_sha256": "e25c8c90bb6d3f4a32c9b2f5f915de70bb9582433fcb18107fec68e11a5d5b19",
+      "rehearsal_sha256": "5ad4335d9f1f63012e47bd7231962aceccfa6c2a7f71401d3b93bb2fb287bd37",
+      "byte_identical": false,
+      "pixel_difference_bounds": [
+        1247,
+        479,
+        1265,
+        721
+      ],
+      "card_and_content_pixels_identical": true
+    },
+    {
+      "file": "chromium-deep-tissue-massage-390-first.jpg",
+      "public_sha256": "4c7edcf10b5752a40a6d648649db7bb8afcd9d362fc30454713ac95359ef30bc",
+      "rehearsal_sha256": "4c7edcf10b5752a40a6d648649db7bb8afcd9d362fc30454713ac95359ef30bc",
+      "byte_identical": true,
+      "pixel_difference_bounds": null,
+      "card_and_content_pixels_identical": true
+    },
+    {
+      "file": "chromium-deep-tissue-massage-390-research-end.jpg",
+      "public_sha256": "2163cbe5e191ec7a3fa4844958b221eb25de31be35681b49248204512a32bbbc",
+      "rehearsal_sha256": "2163cbe5e191ec7a3fa4844958b221eb25de31be35681b49248204512a32bbbc",
+      "byte_identical": true,
+      "pixel_difference_bounds": null,
+      "card_and_content_pixels_identical": true
+    },
+    {
+      "file": "chromium-deep-tissue-massage-390-research-start.jpg",
+      "public_sha256": "fdd91c4c6aed89c88ccc89cc25bba21dcf798ee39798af401fa311546b536f07",
+      "rehearsal_sha256": "fdd91c4c6aed89c88ccc89cc25bba21dcf798ee39798af401fa311546b536f07",
+      "byte_identical": true,
+      "pixel_difference_bounds": null,
+      "card_and_content_pixels_identical": true
+    },
+    {
+      "file": "chromium-deep-tissue-massage-768-first.jpg",
+      "public_sha256": "5c31c2248ee0c65e7feabc44af16865aa55bf08c88da6062ce2317d841ba9cef",
+      "rehearsal_sha256": "b9605ffd782206a7a91b672cd273d25288660f65ce55c49d16fa2d91ec34f42b",
+      "byte_identical": false,
+      "pixel_difference_bounds": [
+        735,
+        255,
+        753,
+        353
+      ],
+      "card_and_content_pixels_identical": true
+    },
+    {
+      "file": "chromium-deep-tissue-massage-768-research-end.jpg",
+      "public_sha256": "c52f5bb00429b7aee8f67eb24e9ebe1872025a692268a92277a334db3ed24960",
+      "rehearsal_sha256": "c52f5bb00429b7aee8f67eb24e9ebe1872025a692268a92277a334db3ed24960",
+      "byte_identical": true,
+      "pixel_difference_bounds": null,
+      "card_and_content_pixels_identical": true
+    },
+    {
+      "file": "chromium-deep-tissue-massage-768-research-start.jpg",
+      "public_sha256": "16ad8bf7493aed5e0e15f382c106883a4f12d5522e1d0691c2d3489e1fc7863b",
+      "rehearsal_sha256": "b44c628371d6f1a70b8ca2f48b978c71771e01dc6dd6691acc301334d51d7d24",
+      "byte_identical": false,
+      "pixel_difference_bounds": [
+        735,
+        527,
+        753,
+        721
+      ],
+      "card_and_content_pixels_identical": true
+    }
+  ]
+}

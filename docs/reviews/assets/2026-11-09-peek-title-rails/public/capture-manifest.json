@@ -1,0 +1,1876 @@
+{
+  "evidence": "Actual staging39 final public browser captures; all104uniqueimages assessed,47byte-identical to reviewed rehearsal3 and57changed/new images visuallyreviewed. Forty new-title-rail views plus one retained Therapeutic research view copied unchanged here; remaining63files and all110captureevents remain in fullartifact logs.",
+  "run": 42667176429,
+  "source_commit": "f4a03e677a07e6e488c8aa5b7546c5e306db94ef",
+  "finished_utc": "2026-11-09T17:49:09Z",
+  "result": "PASS",
+  "assertion_executions": 11829,
+  "failed": 0,
+  "unique_suites": 9,
+  "diagnostic_subset_repeated_executions": 342,
+  "capture_events": 110,
+  "distinct_capture_names": 104,
+  "retained_images": 41,
+  "artifact_id": 13697746939,
+  "artifact_bytes": 18285336,
+  "artifact_sha256": "77625abd4bfb032c0ccde404cf2326a63c31c19ed6d100fb13aa8a956ebe83e5",
+  "visual_review": "No new persistent layout blocker. Visual agent reviewed all57changed/new images. Root separately viewed Services390,Search768left,andTherapeutic390research. Existing transient labels and closed-row ellipses remain. Browser input is not physical-device or assistive-technology validation.",
+  "images": [
+    {
+      "file": "clearance-chair-massage-1280-right-top-1.jpg",
+      "bytes": 94470,
+      "sha256": "2df5eee4773fdfe817e90daca50970bb01b85b85a5b870adb1e935bc95d4a781",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "clearance-chair-massage-1280-right-top-1.jpg",
+        "status": "changed",
+        "size": [
+          [
+            1280,
+            844
+          ],
+          [
+            1280,
+            844
+          ]
+        ],
+        "bounds": [
+          1247,
+          255,
+          1265,
+          321
+        ]
+      }
+    },
+    {
+      "file": "clearance-chair-massage-1280-right-top-6.jpg",
+      "bytes": 103122,
+      "sha256": "0716340efa27199a19655f70c9f7874072320d7c96e6b1b1bbbd223b497d4a64",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "clearance-chair-massage-1280-right-top-6.jpg",
+        "status": "new"
+      }
+    },
+    {
+      "file": "clearance-chair-massage-390-right-top-1.jpg",
+      "bytes": 50341,
+      "sha256": "5c191589be28ba18a81c936acc481ad68c5bf3926a4daa51e301c7fa1df9b5d9",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "clearance-chair-massage-390-right-top-1.jpg",
+        "status": "changed",
+        "size": [
+          [
+            390,
+            844
+          ],
+          [
+            390,
+            844
+          ]
+        ],
+        "bounds": [
+          351,
+          255,
+          385,
+          321
+        ]
+      }
+    },
+    {
+      "file": "clearance-chair-massage-390-right-top-6.jpg",
+      "bytes": 56107,
+      "sha256": "d22575fbc238edf227bf2dfaf58550e31caf5102eeeeed235dd1335b21b26e67",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "clearance-chair-massage-390-right-top-6.jpg",
+        "status": "changed",
+        "size": [
+          [
+            390,
+            844
+          ],
+          [
+            390,
+            844
+          ]
+        ],
+        "bounds": [
+          351,
+          520,
+          385,
+          721
+        ]
+      }
+    },
+    {
+      "file": "clearance-chair-massage-768-right-top-1.jpg",
+      "bytes": 90660,
+      "sha256": "12866afc4c25e32d3db1f95b27bdad6d18399aaeea301a80be9f3c558c4b92d7",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "clearance-chair-massage-768-right-top-1.jpg",
+        "status": "changed",
+        "size": [
+          [
+            768,
+            844
+          ],
+          [
+            768,
+            844
+          ]
+        ],
+        "bounds": [
+          735,
+          255,
+          753,
+          321
+        ]
+      }
+    },
+    {
+      "file": "clearance-chair-massage-768-right-top-6.jpg",
+      "bytes": 92897,
+      "sha256": "969c39a5dd75d5c5f60c3e1c3f5b3ecc41c07c6bc5f9eccc159cb979516c6377",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "clearance-chair-massage-768-right-top-6.jpg",
+        "status": "new"
+      }
+    },
+    {
+      "file": "clearance-chair-massage-844x320-top-1.jpg",
+      "bytes": 24280,
+      "sha256": "f8df02ac6f078daefa8a13c5802d4b7915ef5645e13aa68ac3a771597ccf6ab3",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "clearance-chair-massage-844x320-top-1.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "clearance-chair-massage-844x390-double-text-1.jpg",
+      "bytes": 34591,
+      "sha256": "3525eef3ec8239263bcde07284f08e8610ef5840ae0711a17fc3b5837fd5a405",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "clearance-chair-massage-844x390-double-text-1.jpg",
+        "status": "changed",
+        "size": [
+          [
+            844,
+            390
+          ],
+          [
+            844,
+            390
+          ]
+        ],
+        "bounds": [
+          799,
+          133,
+          833,
+          321
+        ]
+      }
+    },
+    {
+      "file": "clearance-chair-massage-844x390-double-text-6.jpg",
+      "bytes": 33079,
+      "sha256": "ac9bda34d6e823b80484b135dac12939c08eeda86a9da45bcb4e527c07a7053f",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "clearance-chair-massage-844x390-double-text-6.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "clearance-chair-massage-844x390-top-1.jpg",
+      "bytes": 41037,
+      "sha256": "e310e31f4270fb86371a8acc41ba395d0dc69c1fe4562f1d2b9450bd1df1fbee",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "clearance-chair-massage-844x390-top-1.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "clearance-deep-tissue-massage-390-right-top-1.jpg",
+      "bytes": 48583,
+      "sha256": "aec6ac4d3ef5887c533344ef1cd69dbe8e2c3a60e6ba8382c0d31024582ea5ad",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "clearance-deep-tissue-massage-390-right-top-1.jpg",
+        "status": "changed",
+        "size": [
+          [
+            390,
+            844
+          ],
+          [
+            390,
+            844
+          ]
+        ],
+        "bounds": [
+          351,
+          255,
+          385,
+          337
+        ]
+      }
+    },
+    {
+      "file": "clearance-deep-tissue-massage-390-right-top-5.jpg",
+      "bytes": 53617,
+      "sha256": "d00f22922f1c46821cdc8039c0ec841856fd4121eedcb9abd37a8dce64162450",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "clearance-deep-tissue-massage-390-right-top-5.jpg",
+        "status": "changed",
+        "size": [
+          [
+            390,
+            844
+          ],
+          [
+            390,
+            844
+          ]
+        ],
+        "bounds": [
+          351,
+          479,
+          385,
+          721
+        ]
+      }
+    },
+    {
+      "file": "clearance-thai-massage-1280-right-top-1.jpg",
+      "bytes": 94962,
+      "sha256": "ba0ca4dab4f78019a11e02cd4b595d82a62dd136b6aa6f82e0fc3ee74898e21b",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "clearance-thai-massage-1280-right-top-1.jpg",
+        "status": "new"
+      }
+    },
+    {
+      "file": "clearance-thai-massage-1280-right-top-5.jpg",
+      "bytes": 99160,
+      "sha256": "5d3f7f4ecb11e627cd0ef21f602c726a1ce6cdcec173fca10693d7012a645ea2",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "clearance-thai-massage-1280-right-top-5.jpg",
+        "status": "new"
+      }
+    },
+    {
+      "file": "clearance-thai-massage-390-right-top-1.jpg",
+      "bytes": 49547,
+      "sha256": "83c7217fda3097cb4ef0568b0f99b0be76dd92d807fefa3cb64118bdc1363437",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "clearance-thai-massage-390-right-top-1.jpg",
+        "status": "changed",
+        "size": [
+          [
+            390,
+            844
+          ],
+          [
+            390,
+            844
+          ]
+        ],
+        "bounds": [
+          351,
+          255,
+          385,
+          337
+        ]
+      }
+    },
+    {
+      "file": "clearance-thai-massage-390-right-top-5.jpg",
+      "bytes": 51216,
+      "sha256": "19b40d2fd796c02c143074d5279e05a79664224bcaa3c1c65172cfca35fcb066",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "clearance-thai-massage-390-right-top-5.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "clearance-thai-massage-768-right-top-1.jpg",
+      "bytes": 85102,
+      "sha256": "0286a90abb7934fe40dffb0336a0ba6bf03633214e44b9040d5527a00020e6ce",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "clearance-thai-massage-768-right-top-1.jpg",
+        "status": "new"
+      }
+    },
+    {
+      "file": "clearance-thai-massage-768-right-top-5.jpg",
+      "bytes": 80938,
+      "sha256": "985031160efe1f8cf5b8d3801417ac34ee007900acf37ffea42724824a17b951",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "clearance-thai-massage-768-right-top-5.jpg",
+        "status": "new"
+      }
+    },
+    {
+      "file": "clearance-therapeutic-massage-1280-right-top-1.jpg",
+      "bytes": 96184,
+      "sha256": "d5ebdd484cd91901291e5d3ea14b612b0e0b9db8ab3c9bb801133796578e538a",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "clearance-therapeutic-massage-1280-right-top-1.jpg",
+        "status": "changed",
+        "size": [
+          [
+            1280,
+            844
+          ],
+          [
+            1280,
+            844
+          ]
+        ],
+        "bounds": [
+          1247,
+          255,
+          1265,
+          337
+        ]
+      }
+    },
+    {
+      "file": "clearance-therapeutic-massage-390-right-top-1.jpg",
+      "bytes": 49670,
+      "sha256": "15a6d198fe50284e10c6ff2cc303a028920ed404b53aeec3b126fb2bd5293ce5",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "clearance-therapeutic-massage-390-right-top-1.jpg",
+        "status": "changed",
+        "size": [
+          [
+            390,
+            844
+          ],
+          [
+            390,
+            844
+          ]
+        ],
+        "bounds": [
+          351,
+          255,
+          385,
+          321
+        ]
+      }
+    },
+    {
+      "file": "clearance-therapeutic-massage-390-right-top-6.jpg",
+      "bytes": 54341,
+      "sha256": "056379cd05195d40b1b6ec679865dd5a72cce2bf495c96db3d0df7dcc5f0635a",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "clearance-therapeutic-massage-390-right-top-6.jpg",
+        "status": "changed",
+        "size": [
+          [
+            390,
+            844
+          ],
+          [
+            390,
+            844
+          ]
+        ],
+        "bounds": [
+          351,
+          527,
+          385,
+          721
+        ]
+      }
+    },
+    {
+      "file": "clearance-therapeutic-massage-768-right-top-1.jpg",
+      "bytes": 76560,
+      "sha256": "3d639f7be66593c0b51f724f22e02c2dcf811ea1e39c787fca586f6af3e1f8c0",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "clearance-therapeutic-massage-768-right-top-1.jpg",
+        "status": "changed",
+        "size": [
+          [
+            768,
+            844
+          ],
+          [
+            768,
+            844
+          ]
+        ],
+        "bounds": [
+          735,
+          255,
+          753,
+          337
+        ]
+      }
+    },
+    {
+      "file": "title-about-1280.jpg",
+      "bytes": 85457,
+      "sha256": "54e18a263ed825a08b46353291d46bf9a353dab2014e2a252d1e270a8df59a5e",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-about-1280.jpg",
+        "status": "changed",
+        "size": [
+          [
+            1280,
+            844
+          ],
+          [
+            1280,
+            844
+          ]
+        ],
+        "bounds": [
+          335,
+          95,
+          1249,
+          161
+        ]
+      }
+    },
+    {
+      "file": "title-about-390.jpg",
+      "bytes": 41518,
+      "sha256": "adac52606ca724df91d28df697dd7d2dd8872ba8d87f7d31639ef5048d3dc2a2",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-about-390.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-accessibility-1280.jpg",
+      "bytes": 120973,
+      "sha256": "4f53bee22a4f07b3050c340179708be3fd4040c3e2c38ade1950213dbdcd2946",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-accessibility-1280.jpg",
+        "status": "changed",
+        "size": [
+          [
+            1280,
+            844
+          ],
+          [
+            1280,
+            844
+          ]
+        ],
+        "bounds": [
+          335,
+          111,
+          1249,
+          161
+        ]
+      }
+    },
+    {
+      "file": "title-accessibility-390.jpg",
+      "bytes": 58044,
+      "sha256": "08484c3f42c4c972b58365aec6a7115feab7ead5ff45f0a4029825cbd61ca71d",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-accessibility-390.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-chair-massage-1280.jpg",
+      "bytes": 73416,
+      "sha256": "8a266f22d42ea8e99cb6c07d74692201c33c655879e06eccd61c8ff6ddc3e947",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-chair-massage-1280.jpg",
+        "status": "changed",
+        "size": [
+          [
+            1280,
+            844
+          ],
+          [
+            1280,
+            844
+          ]
+        ],
+        "bounds": [
+          335,
+          111,
+          1249,
+          161
+        ]
+      }
+    },
+    {
+      "file": "title-chair-massage-390.jpg",
+      "bytes": 34691,
+      "sha256": "c65d9cbb540c126dd81a1ff46db8996bacb6cb32c4ff4bbecd718561bbe63e2e",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-chair-massage-390.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-contact-1280.jpg",
+      "bytes": 68685,
+      "sha256": "963bcb06cc33528b9533373a4256b650f63a4188b009b784a6437a53c20d40fa",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-contact-1280.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-contact-390.jpg",
+      "bytes": 31614,
+      "sha256": "d28dfe9f293313ff09223de18e28db81201eb8a933582b34835665d7160e4731",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-contact-390.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-corporate-massage-portland-1280.jpg",
+      "bytes": 77804,
+      "sha256": "87fe8c4fcc0ab46ceb85907bc8e34bb92477dd5cddb374b13dbbcdf98bf3ec8c",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-corporate-massage-portland-1280.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-corporate-massage-portland-390.jpg",
+      "bytes": 39394,
+      "sha256": "88230347694cc4d20c02d70734873433ee3d361eada16a147524b5d6107a9cde",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-corporate-massage-portland-390.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-deep-tissue-massage-1280.jpg",
+      "bytes": 75918,
+      "sha256": "2b1bc3d7a252749bd5248b906885c2cea8dbbf30790cabda0462863165266f75",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-deep-tissue-massage-1280.jpg",
+        "status": "changed",
+        "size": [
+          [
+            1280,
+            844
+          ],
+          [
+            1280,
+            844
+          ]
+        ],
+        "bounds": [
+          335,
+          111,
+          1249,
+          161
+        ]
+      }
+    },
+    {
+      "file": "title-deep-tissue-massage-390.jpg",
+      "bytes": 35150,
+      "sha256": "5f2217f865d0dc371cb56bcfa99c1659d30cd08b5f44cd11dae879f2fb3d34c2",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-deep-tissue-massage-390.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-home-1280.jpg",
+      "bytes": 96888,
+      "sha256": "12d5acab77a0a0497e2824aad5765b3e98f1f1dec344f1701beecf0e54960c8d",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-home-1280.jpg",
+        "status": "changed",
+        "size": [
+          [
+            1280,
+            844
+          ],
+          [
+            1280,
+            844
+          ]
+        ],
+        "bounds": [
+          31,
+          111,
+          1249,
+          844
+        ]
+      }
+    },
+    {
+      "file": "title-home-390.jpg",
+      "bytes": 54047,
+      "sha256": "c3ba041335903c5dd4263a4802134382e42bcf681940234404e9714ec036d086",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-home-390.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-in-page-link-ideas-1280.jpg",
+      "bytes": 73381,
+      "sha256": "c2823eb1b8540092b26eb9e84829f03881e7710e93dbd75c0ea234738b452b51",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-in-page-link-ideas-1280.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-in-page-link-ideas-390.jpg",
+      "bytes": 39712,
+      "sha256": "1fc4f4fb713e11a458dc3ed666129dd4a4ee577de6f05593a1cb69cc66170093",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-in-page-link-ideas-390.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-index-nav-ideas-1280.jpg",
+      "bytes": 66810,
+      "sha256": "26556457fae5ac5c98e1ef152bbef5f5a2bd2bc7a9d5ef8e98fc3ee171f1b8c4",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-index-nav-ideas-1280.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-index-nav-ideas-390.jpg",
+      "bytes": 39323,
+      "sha256": "8fc6e4006ea187652952c70cd54e92c51666ae0baba6cb99d19875e8990242ca",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-index-nav-ideas-390.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-peek-title-missing-page-verification-20261109-1280.jpg",
+      "bytes": 59728,
+      "sha256": "362947e4aaccc269fa74f47a71188c10e4b7f0fac01afb57d0691f95628ae973",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-peek-title-missing-page-verification-20261109-1280.jpg",
+        "status": "changed",
+        "size": [
+          [
+            1280,
+            844
+          ],
+          [
+            1280,
+            844
+          ]
+        ],
+        "bounds": [
+          392,
+          735,
+          897,
+          769
+        ]
+      }
+    },
+    {
+      "file": "title-peek-title-missing-page-verification-20261109-390.jpg",
+      "bytes": 35642,
+      "sha256": "3db806b3283278a1b08f123c4d73e23a0bfb44116c4204402d0e6cab69919987",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-peek-title-missing-page-verification-20261109-390.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-personal-automation-1280.jpg",
+      "bytes": 119089,
+      "sha256": "83cd0adc343a16ab097aa9640ca1d156296dd0f3cb5831551498ee3d8f3a96a1",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-personal-automation-1280.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-personal-automation-390.jpg",
+      "bytes": 54509,
+      "sha256": "dbf748334444462abb352849be078751896ac4c146990d68d4710dcdb720aa16",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-personal-automation-390.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-personal-automation-privacy-1280.jpg",
+      "bytes": 149118,
+      "sha256": "6cc718114b7d967f26ae9e88fdaf426290dc36a11686fa54013b1d1bd1e8c881",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-personal-automation-privacy-1280.jpg",
+        "status": "changed",
+        "size": [
+          [
+            1280,
+            844
+          ],
+          [
+            1280,
+            844
+          ]
+        ],
+        "bounds": [
+          40,
+          248,
+          1240,
+          256
+        ]
+      }
+    },
+    {
+      "file": "title-personal-automation-privacy-390.jpg",
+      "bytes": 54550,
+      "sha256": "c0480b9f77114f97d44827d8b853a98aedf4314586f650e1c0a6c96ba3d1a0c5",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-personal-automation-privacy-390.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-personal-automation-terms-1280.jpg",
+      "bytes": 116313,
+      "sha256": "12721602983f59269819e99dac60cfd07209c1db1bcff1387247ef8facc95272",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-personal-automation-terms-1280.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-personal-automation-terms-390.jpg",
+      "bytes": 56658,
+      "sha256": "3a6e29344738756212f20bec92d5b7c747feb095b7314310c35a2e6169234d56",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-personal-automation-terms-390.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-privacy-policy-1280.jpg",
+      "bytes": 108754,
+      "sha256": "dc926e4bcef70144300d97193fe6d9b7e847fc85fee76802deb4c0618b9f4d20",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-privacy-policy-1280.jpg",
+        "status": "changed",
+        "size": [
+          [
+            1280,
+            844
+          ],
+          [
+            1280,
+            844
+          ]
+        ],
+        "bounds": [
+          335,
+          95,
+          1249,
+          161
+        ]
+      }
+    },
+    {
+      "file": "title-privacy-policy-390.jpg",
+      "bytes": 49765,
+      "sha256": "4b8d8669e6836e483746c7dd7d98dad1f337745b01d644a2101c8a02b0f956ec",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-privacy-policy-390.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-progress-nav-ideas-1280.jpg",
+      "bytes": 69736,
+      "sha256": "79efe6ab4d40b92b7df23716dfd79fb38d6111ff8dca8630b99f54038c810b0d",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-progress-nav-ideas-1280.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-progress-nav-ideas-390.jpg",
+      "bytes": 37689,
+      "sha256": "48d02e0c00c5a377b9a78dd8ae99e962ff00d099adecab1e7fa64e80916671ca",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-progress-nav-ideas-390.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-rail-about-1280.jpg",
+      "bytes": 90731,
+      "sha256": "5e98386877cebfdcbce940346d19eba56930d9289addadbb1779353d85e4ccc1",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-about-1280.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-rail-about-390.jpg",
+      "bytes": 43925,
+      "sha256": "e8ccfe1011e1efcbd377df614626db6b06d23a8ad474a3ea1e5485524256aeda",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-about-390.jpg",
+        "status": "changed",
+        "size": [
+          [
+            390,
+            844
+          ],
+          [
+            390,
+            844
+          ]
+        ],
+        "bounds": [
+          351,
+          255,
+          385,
+          385
+        ]
+      }
+    },
+    {
+      "file": "title-rail-accessibility-1280.jpg",
+      "bytes": 119500,
+      "sha256": "96c34781074af3ca83883efec7cb9993d95009e7db310a316c68961198cd0540",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-accessibility-1280.jpg",
+        "status": "changed",
+        "size": [
+          [
+            1280,
+            844
+          ],
+          [
+            1280,
+            844
+          ]
+        ],
+        "bounds": [
+          15,
+          111,
+          1249,
+          497
+        ]
+      }
+    },
+    {
+      "file": "title-rail-accessibility-390.jpg",
+      "bytes": 55220,
+      "sha256": "592a057d45ca052a50e433a7f39f8c298d4a5ed55e446d13db6c28e22da82ce6",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-accessibility-390.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-rail-contact-1280.jpg",
+      "bytes": 70107,
+      "sha256": "265823068e16eb1d9dc312850c5ea2fb3f1fea6f813fe00538204ce8f14d9bfe",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-contact-1280.jpg",
+        "status": "changed",
+        "size": [
+          [
+            1280,
+            844
+          ],
+          [
+            1280,
+            844
+          ]
+        ],
+        "bounds": [
+          15,
+          255,
+          33,
+          465
+        ]
+      }
+    },
+    {
+      "file": "title-rail-contact-390.jpg",
+      "bytes": 32617,
+      "sha256": "8453d6bdf8304456c8ae7400c3e661b0fcaac243baaf33de59adb3075efbb07d",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-contact-390.jpg",
+        "status": "changed",
+        "size": [
+          [
+            390,
+            844
+          ],
+          [
+            390,
+            844
+          ]
+        ],
+        "bounds": [
+          351,
+          255,
+          385,
+          433
+        ]
+      }
+    },
+    {
+      "file": "title-rail-corporate-massage-portland-1280.jpg",
+      "bytes": 83986,
+      "sha256": "e73e3d4b1f53a872db308452ef2e91ca19211a8edc9947a6e8bca31d041569c7",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-corporate-massage-portland-1280.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-rail-corporate-massage-portland-390.jpg",
+      "bytes": 39175,
+      "sha256": "20469316aa268d6b0cba721eab83c7e74eb0438f7ebf82a3cb6f673b69f34c71",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-corporate-massage-portland-390.jpg",
+        "status": "changed",
+        "size": [
+          [
+            390,
+            844
+          ],
+          [
+            390,
+            844
+          ]
+        ],
+        "bounds": [
+          351,
+          255,
+          385,
+          337
+        ]
+      }
+    },
+    {
+      "file": "title-rail-home-1280.jpg",
+      "bytes": 99225,
+      "sha256": "a243e0bc3a49d331b07650f0bbeed25ea248b2b73543be66173493bac520902c",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-home-1280.jpg",
+        "status": "changed",
+        "size": [
+          [
+            1280,
+            844
+          ],
+          [
+            1280,
+            844
+          ]
+        ],
+        "bounds": [
+          15,
+          255,
+          33,
+          369
+        ]
+      }
+    },
+    {
+      "file": "title-rail-home-390.jpg",
+      "bytes": 50179,
+      "sha256": "24cb47786e9607bc82f5a7738a3acf0b87ef71037a7fff99a494122d77c74d77",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-home-390.jpg",
+        "status": "changed",
+        "size": [
+          [
+            390,
+            844
+          ],
+          [
+            390,
+            844
+          ]
+        ],
+        "bounds": [
+          351,
+          255,
+          385,
+          353
+        ]
+      }
+    },
+    {
+      "file": "title-rail-in-page-link-ideas-1280.jpg",
+      "bytes": 71943,
+      "sha256": "37381123cbee378b78fcb00281a4799b6ffcac1f0d93289cf220fd71327f3277",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-in-page-link-ideas-1280.jpg",
+        "status": "changed",
+        "size": [
+          [
+            1280,
+            844
+          ],
+          [
+            1280,
+            844
+          ]
+        ],
+        "bounds": [
+          15,
+          255,
+          33,
+          337
+        ]
+      }
+    },
+    {
+      "file": "title-rail-in-page-link-ideas-390.jpg",
+      "bytes": 31819,
+      "sha256": "23f1bb3daa92dfdaa84b0d41f2708b96f71494f7d9651b370c5a49e1b280e96c",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-in-page-link-ideas-390.jpg",
+        "status": "changed",
+        "size": [
+          [
+            390,
+            844
+          ],
+          [
+            390,
+            844
+          ]
+        ],
+        "bounds": [
+          351,
+          255,
+          385,
+          337
+        ]
+      }
+    },
+    {
+      "file": "title-rail-nav-ideas-1280.jpg",
+      "bytes": 75038,
+      "sha256": "99940872478ea8aae401fa12a9cff4ab13ea3f15036e6e70bd8452f04980baf8",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-nav-ideas-1280.jpg",
+        "status": "changed",
+        "size": [
+          [
+            1280,
+            844
+          ],
+          [
+            1280,
+            844
+          ]
+        ],
+        "bounds": [
+          24,
+          95,
+          1248,
+          616
+        ]
+      }
+    },
+    {
+      "file": "title-rail-nav-ideas-390.jpg",
+      "bytes": 43850,
+      "sha256": "5198e4db3c6b93dd997f793d9eb49882fc2c0cd0f838a8ba50e979d6195cedab",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-nav-ideas-390.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-rail-peek-title-missing-page-verification-20261109-1280.jpg",
+      "bytes": 67817,
+      "sha256": "8a2e665eb81fb7d68e781ba1509ad94ed75e4c784a31310a1a942e0a13afdddd",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-peek-title-missing-page-verification-20261109-1280.jpg",
+        "status": "changed",
+        "size": [
+          [
+            1280,
+            844
+          ],
+          [
+            1280,
+            844
+          ]
+        ],
+        "bounds": [
+          15,
+          95,
+          744,
+          721
+        ]
+      }
+    },
+    {
+      "file": "title-rail-peek-title-missing-page-verification-20261109-390.jpg",
+      "bytes": 40320,
+      "sha256": "bb6079c1dea384ea7eb3e7ea3ea83c3aa7227280d02df4638b731fb5f9dbcb90",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-peek-title-missing-page-verification-20261109-390.jpg",
+        "status": "changed",
+        "size": [
+          [
+            390,
+            844
+          ],
+          [
+            390,
+            844
+          ]
+        ],
+        "bounds": [
+          351,
+          256,
+          385,
+          721
+        ]
+      }
+    },
+    {
+      "file": "title-rail-personal-automation-1280.jpg",
+      "bytes": 117252,
+      "sha256": "755d48e61087d7cddd2e5a3f37ce2fdda73d4fada13845188109a6d6b8888df8",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-personal-automation-1280.jpg",
+        "status": "changed",
+        "size": [
+          [
+            1280,
+            844
+          ],
+          [
+            1280,
+            844
+          ]
+        ],
+        "bounds": [
+          15,
+          255,
+          33,
+          465
+        ]
+      }
+    },
+    {
+      "file": "title-rail-personal-automation-390.jpg",
+      "bytes": 54548,
+      "sha256": "0af6c44b20d466e8e27c7b14996034b3634c0992fb0df34c438d2f30c2be13f5",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-personal-automation-390.jpg",
+        "status": "changed",
+        "size": [
+          [
+            390,
+            844
+          ],
+          [
+            390,
+            844
+          ]
+        ],
+        "bounds": [
+          351,
+          255,
+          385,
+          481
+        ]
+      }
+    },
+    {
+      "file": "title-rail-personal-automation-privacy-1280.jpg",
+      "bytes": 145387,
+      "sha256": "d7b89e4358e80a81f341c41cc0fb15e5805effbd0a64a6223975ba08c9129966",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-personal-automation-privacy-1280.jpg",
+        "status": "changed",
+        "size": [
+          [
+            1280,
+            844
+          ],
+          [
+            1280,
+            844
+          ]
+        ],
+        "bounds": [
+          15,
+          255,
+          33,
+          424
+        ]
+      }
+    },
+    {
+      "file": "title-rail-personal-automation-privacy-390.jpg",
+      "bytes": 51122,
+      "sha256": "03949a5ce75d8ec1c8e70c74ccc4425f2baa01e045dd3af78205d864c65b3af6",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-personal-automation-privacy-390.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-rail-personal-automation-terms-1280.jpg",
+      "bytes": 113733,
+      "sha256": "9414c788b138533a1ecdaf9639d8dae0155fc02e629c42ae4cdd8da40f8f67e0",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-personal-automation-terms-1280.jpg",
+        "status": "changed",
+        "size": [
+          [
+            1280,
+            844
+          ],
+          [
+            1280,
+            844
+          ]
+        ],
+        "bounds": [
+          15,
+          223,
+          1200,
+          353
+        ]
+      }
+    },
+    {
+      "file": "title-rail-personal-automation-terms-390.jpg",
+      "bytes": 52757,
+      "sha256": "018dd0fa40fbd378adccd92bd762c64c4d3ef3ccce4d8ae9f859c85c3cbda664",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-personal-automation-terms-390.jpg",
+        "status": "changed",
+        "size": [
+          [
+            390,
+            844
+          ],
+          [
+            390,
+            844
+          ]
+        ],
+        "bounds": [
+          351,
+          255,
+          385,
+          353
+        ]
+      }
+    },
+    {
+      "file": "title-rail-privacy-policy-1280.jpg",
+      "bytes": 108671,
+      "sha256": "10c9fab2f77e57a127c2a55bb5a484defacb9a8140d0de16dddb61dbddcaf2b6",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-privacy-policy-1280.jpg",
+        "status": "changed",
+        "size": [
+          [
+            1280,
+            844
+          ],
+          [
+            1280,
+            844
+          ]
+        ],
+        "bounds": [
+          15,
+          255,
+          33,
+          305
+        ]
+      }
+    },
+    {
+      "file": "title-rail-privacy-policy-390-landed.jpg",
+      "bytes": 55448,
+      "sha256": "f7352e4a4433f115ff54b7e79c13156fbe3f51bcd8cc0f5df280b9be8e29a8c6",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-privacy-policy-390-landed.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-rail-privacy-policy-390.jpg",
+      "bytes": 50270,
+      "sha256": "26023fde4d77d2acd1145b4bdc1f27c55eee7298ad217044e9526c0a1d3ae2ca",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-privacy-policy-390.jpg",
+        "status": "changed",
+        "size": [
+          [
+            390,
+            844
+          ],
+          [
+            390,
+            844
+          ]
+        ],
+        "bounds": [
+          351,
+          255,
+          385,
+          625
+        ]
+      }
+    },
+    {
+      "file": "title-rail-progress-nav-ideas-1280.jpg",
+      "bytes": 70566,
+      "sha256": "d7f3ada0a2d0528139c90a91e4c0ba9e370a13b38ef3ca8592536b644f5d1b60",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-progress-nav-ideas-1280.jpg",
+        "status": "changed",
+        "size": [
+          [
+            1280,
+            844
+          ],
+          [
+            1280,
+            844
+          ]
+        ],
+        "bounds": [
+          15,
+          255,
+          33,
+          321
+        ]
+      }
+    },
+    {
+      "file": "title-rail-progress-nav-ideas-390.jpg",
+      "bytes": 32110,
+      "sha256": "90be234b3d1c5ad65c6a72a0a26df7cf400fdf5ecb0dbdd47d32cc059ecc4075",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-progress-nav-ideas-390.jpg",
+        "status": "changed",
+        "size": [
+          [
+            390,
+            844
+          ],
+          [
+            390,
+            844
+          ]
+        ],
+        "bounds": [
+          351,
+          255,
+          385,
+          321
+        ]
+      }
+    },
+    {
+      "file": "title-rail-s-massage-1280-form-left-form-landed.jpg",
+      "bytes": 92688,
+      "sha256": "90acf2a0b0852cc901a0325f80c27265ab1f80b77f96b1ee46476f42816b11aa",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-s-massage-1280-form-left-form-landed.jpg",
+        "status": "changed",
+        "size": [
+          [
+            1280,
+            844
+          ],
+          [
+            1280,
+            844
+          ]
+        ],
+        "bounds": [
+          47,
+          127,
+          401,
+          193
+        ]
+      }
+    },
+    {
+      "file": "title-rail-s-massage-1280-form-right-form-landed.jpg",
+      "bytes": 104580,
+      "sha256": "6ab6a4182c0e1bd2050e853e955d7b561e2e26840bc744d17b9d48643a627b87",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-s-massage-1280-form-right-form-landed.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-rail-s-massage-1280-landed.jpg",
+      "bytes": 92348,
+      "sha256": "7bcde019325da6fd1f56e9273dac2de36504e1c4f9f3c67971642feadaad492a",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-s-massage-1280-landed.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-rail-s-massage-1280.jpg",
+      "bytes": 82028,
+      "sha256": "4b995845de724d08abaa22cfe42538996ea823532d1c8bad2cb28179bf08bb02",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-s-massage-1280.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-rail-s-massage-390-form-left-form-landed.jpg",
+      "bytes": 35089,
+      "sha256": "f1d6c2d4946f4c9dae47eedd5d21ee3d8bf72916f5ec8db7b514b105300084b0",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-s-massage-390-form-left-form-landed.jpg",
+        "status": "changed",
+        "size": [
+          [
+            390,
+            844
+          ],
+          [
+            390,
+            844
+          ]
+        ],
+        "bounds": [
+          47,
+          127,
+          385,
+          177
+        ]
+      }
+    },
+    {
+      "file": "title-rail-s-massage-390-form-right-form-landed.jpg",
+      "bytes": 35327,
+      "sha256": "6687b1524bc262f78f0b1075c2f1a8b10635a84f04db33938a00ecba2289e0ef",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-s-massage-390-form-right-form-landed.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-rail-s-massage-390-landed.jpg",
+      "bytes": 35551,
+      "sha256": "df03221bb08bdbebd1b96b49579c1c54a7864478e79006c7302775d7d6be9f4b",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-s-massage-390-landed.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-rail-s-massage-390.jpg",
+      "bytes": 35706,
+      "sha256": "a8e8a80e444dac9ccdcb0900f2647e9dd5cae92119464434d885a3b53be9ed0b",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-s-massage-390.jpg",
+        "status": "changed",
+        "size": [
+          [
+            390,
+            844
+          ],
+          [
+            390,
+            844
+          ]
+        ],
+        "bounds": [
+          351,
+          255,
+          385,
+          721
+        ]
+      }
+    },
+    {
+      "file": "title-rail-s-massage-768-form-left-form-landed.jpg",
+      "bytes": 49826,
+      "sha256": "f9f1e7425f3aaa0013baf44a31bdcec047d436d74d22241576ca7d38332ed9ba",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-s-massage-768-form-left-form-landed.jpg",
+        "status": "changed",
+        "size": [
+          [
+            768,
+            844
+          ],
+          [
+            768,
+            844
+          ]
+        ],
+        "bounds": [
+          271,
+          95,
+          528,
+          113
+        ]
+      }
+    },
+    {
+      "file": "title-rail-s-massage-768-form-right-form-landed.jpg",
+      "bytes": 49796,
+      "sha256": "db04b7c733c639894cccbdae2414a29f69de6aae6ac1f2d07740d2a2b1ccd3f0",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-s-massage-768-form-right-form-landed.jpg",
+        "status": "changed",
+        "size": [
+          [
+            768,
+            844
+          ],
+          [
+            768,
+            844
+          ]
+        ],
+        "bounds": [
+          255,
+          95,
+          753,
+          289
+        ]
+      }
+    },
+    {
+      "file": "title-rail-s-massage-768-landed.jpg",
+      "bytes": 49914,
+      "sha256": "0695a90d9a5db14f7481ab3d3b907996ee61213bb41921b36d24e780eecbc2ad",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-s-massage-768-landed.jpg",
+        "status": "changed",
+        "size": [
+          [
+            768,
+            844
+          ],
+          [
+            768,
+            844
+          ]
+        ],
+        "bounds": [
+          15,
+          271,
+          33,
+          721
+        ]
+      }
+    },
+    {
+      "file": "title-rail-services-1280.jpg",
+      "bytes": 82178,
+      "sha256": "37264d286aeac3492a0559fdbf28f706cbf34bee8d67ebcd4b836865151cf349",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-services-1280.jpg",
+        "status": "changed",
+        "size": [
+          [
+            1280,
+            844
+          ],
+          [
+            1280,
+            844
+          ]
+        ],
+        "bounds": [
+          15,
+          255,
+          33,
+          305
+        ]
+      }
+    },
+    {
+      "file": "title-rail-services-390.jpg",
+      "bytes": 37912,
+      "sha256": "024f908236aaaf2434d117a37f57083a030efd12fe894305c79483e5aa5beecd",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-services-390.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-rail-work-with-me-1280.jpg",
+      "bytes": 101749,
+      "sha256": "702f0de81da18b7d1c19f4a4c2bd3a25c0daa16d12fbbd29ea7d4e7226427597",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-work-with-me-1280.jpg",
+        "status": "changed",
+        "size": [
+          [
+            1280,
+            844
+          ],
+          [
+            1280,
+            844
+          ]
+        ],
+        "bounds": [
+          15,
+          255,
+          33,
+          328
+        ]
+      }
+    },
+    {
+      "file": "title-rail-work-with-me-390.jpg",
+      "bytes": 38255,
+      "sha256": "3ec3ec9d36415e901ccf23087d0620d28ae14be76ad6bff27046151416974233",
+      "retained_here": true,
+      "comparison_to_rehearsal3": {
+        "name": "title-rail-work-with-me-390.jpg",
+        "status": "changed",
+        "size": [
+          [
+            390,
+            844
+          ],
+          [
+            390,
+            844
+          ]
+        ],
+        "bounds": [
+          351,
+          255,
+          385,
+          321
+        ]
+      }
+    },
+    {
+      "file": "title-s-massage-1280.jpg",
+      "bytes": 86345,
+      "sha256": "cfb4d29af0560863236e2b081a1a6eb93ac02b2f3154b0772b5546e42665cf41",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-s-massage-1280.jpg",
+        "status": "changed",
+        "size": [
+          [
+            1280,
+            844
+          ],
+          [
+            1280,
+            844
+          ]
+        ],
+        "bounds": [
+          56,
+          431,
+          1121,
+          769
+        ]
+      }
+    },
+    {
+      "file": "title-s-massage-390.jpg",
+      "bytes": 32312,
+      "sha256": "06550efe385c48e3faa1af4314592b09a39284004de401b23d4cf176799b6724",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-s-massage-390.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-services-1280.jpg",
+      "bytes": 77115,
+      "sha256": "6b8b560377feddb0b4148ff806fcc36a33bbf963f2fc7b9a88a3338815101e79",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-services-1280.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-services-390.jpg",
+      "bytes": 38634,
+      "sha256": "f249cd997214d3d2c1f089c9e0eed804c69c7a81ffd5d6a4b3d9567ac2b2292c",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-services-390.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-thai-massage-1280.jpg",
+      "bytes": 76913,
+      "sha256": "55355be144292d1429ee1dd72c0e752207a69b9a787ff8b9188b2461a5b84ba2",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-thai-massage-1280.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-thai-massage-390.jpg",
+      "bytes": 40320,
+      "sha256": "74d80125b67ff7f84e68b9e137e6e48de5cf9b5d543abd7db0eabf2157cff976",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-thai-massage-390.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-therapeutic-massage-1280.jpg",
+      "bytes": 78475,
+      "sha256": "e4546662d0af22b6e9a822e21ce750768c84b7fa02bc8435ae5f632bb774f1e7",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-therapeutic-massage-1280.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-therapeutic-massage-390.jpg",
+      "bytes": 37086,
+      "sha256": "456004e438090e8a78198b1d782e474ae4054134865b46f16d0e3b9ec2ff7c1e",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-therapeutic-massage-390.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-work-with-me-1280.jpg",
+      "bytes": 96108,
+      "sha256": "84833a0ca71f3b867fe06861ab33880f7a59f78ab096fe9e8f2443144ddb0bba",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-work-with-me-1280.jpg",
+        "status": "identical"
+      }
+    },
+    {
+      "file": "title-work-with-me-390.jpg",
+      "bytes": 37755,
+      "sha256": "2388c54b5b7f59cd149d1c472f45ea1ca76128d511f3ebeaf7c37497f5b720d1",
+      "retained_here": false,
+      "comparison_to_rehearsal3": {
+        "name": "title-work-with-me-390.jpg",
+        "status": "identical"
+      }
+    }
+  ]
+}

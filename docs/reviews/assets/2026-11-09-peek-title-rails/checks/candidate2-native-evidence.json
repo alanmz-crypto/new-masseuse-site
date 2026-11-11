@@ -1,0 +1,58 @@
+{
+  "scope": "Independent structural/local native Chromium touch replay. No physical-device, Firefox-native-touch or full-site claim. No runtime edits by this agent.",
+  "runtime_whole_file_sha256": "382c7805cae8495e4a88c0bf81b9250c4bd44e92225a4632f7255f62e14e482c",
+  "final_assertions": {
+    "independent_adversarial": {
+      "pass": 31,
+      "fail": 0
+    },
+    "focused_native": {
+      "pass": 48,
+      "fail": 0
+    }
+  },
+  "focused_breakdown": {
+    "single_idless_DejaVu_both_sides": 16,
+    "zero_and_fixed_fallback": 4,
+    "four_service_baseline_comparison": 28
+  },
+  "earlier_attempts": [
+    {
+      "path": "candidate2-native-focused-attempt1-recovered.json",
+      "status": "Partial recovered evidence; first temp log overwritten before retention request. Paragraph selector and side-close probe setup errors."
+    },
+    {
+      "path": "candidate2-native-focused-attempt2.jsonl",
+      "pass": 47,
+      "fail": 1,
+      "status": "Focus probe expected first SECTION itself, while runtime intentionally focuses its original H2. Landing geometry and address passed. Corrected to existing heading-or-target focus contract in final probe."
+    }
+  ],
+  "files": [
+    {
+      "file": "candidate2-native-adversarial-compact.jsonl",
+      "bytes": 20931,
+      "sha256": "0d2f881160e954792c4fd6328a92fafefc7449f13ce6dd0372ee6567f7c0eae8"
+    },
+    {
+      "file": "candidate2-native-focused-attempt1-recovered.json",
+      "bytes": 1726,
+      "sha256": "00d045bb570b21c5b5db01030db47bdd39ac5eb6e436ef9546db499ace58f754"
+    },
+    {
+      "file": "candidate2-native-focused-attempt2.jsonl",
+      "bytes": 13255,
+      "sha256": "b5ab592744b38070ff89bdf54030acbb2d5b34cec2e230d2aca8d258e308a822"
+    },
+    {
+      "file": "candidate2-native-focused-final.jsonl",
+      "bytes": 13296,
+      "sha256": "2438f83d75b8318f0e68afcc9ddf0d26627571e66321889c37f8643ad96df370"
+    },
+    {
+      "file": "candidate2-native-focused-probe.cjs",
+      "bytes": 8904,
+      "sha256": "44ac3ebdaccf20afeae31be44ac062923a802c8ed9fc24a7aa47e0e403aa9a67"
+    }
+  ]
+}

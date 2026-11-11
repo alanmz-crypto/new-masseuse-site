@@ -1,0 +1,125 @@
+<?php
+/**
+ * Repair keyboard/focus input on the existing staging39 Rail practice page.
+ * Exact v1 -> current page-content transition; never creates or deletes a page.
+ * preflight | apply | rollback FILE | verify FILE [original]. The push wrapper backs up every write.
+ * Preserve the complete post, metadata, taxonomy and dates except post_content.
+ */
+if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) ) { exit( 'Run with WP-CLI.' ); }
+$home = untrailingslashit( home_url() );
+$local_host = 'localhost:8090';
+if ( ! in_array( $home, array( 'http://' . $local_host, 'http://staging39.thaisolitude.com', 'https://staging39.thaisolitude.com' ), true ) ) { WP_CLI::error( 'Only exact localhost:8090 and staging39 origins are allowed; nothing changed.' ); }
+if ( 'astra' !== get_stylesheet() || ! current_user_can( 'manage_options' ) || ! current_user_can( 'unfiltered_html' ) ) { WP_CLI::error( 'Requires Astra and an administrator (--user=1).' ); }
+$args = isset( $args ) && is_array( $args ) ? $args : array(); $mode = $args[0] ?? 'preflight';
+$file_mode = in_array( $mode, array( 'rollback', 'verify' ), true );
+$verify_original = 'verify' === $mode && count( $args ) === 3 && $args[2] === 'original';
+if ( ! in_array( $mode, array( 'preflight', 'apply', 'rollback', 'verify' ), true ) || ( $file_mode ? ( count( $args ) !== 2 && ! $verify_original ) : count( $args ) > 1 ) ) { WP_CLI::error( 'Use preflight, apply, rollback FILE, or verify FILE [original].' ); }
+$old_html = file_get_contents( __DIR__ . '/../rail-ideas-v1.html' );
+$new_html = file_get_contents( __DIR__ . '/../rail-ideas.html' );
+if ( false === $old_html || hash( 'sha256', $old_html ) !== '26f3472e8032cb89d99b923c23999fc6281537a32d0eed07a54f61347af8d38d' || false === $new_html || $old_html === $new_html ) { WP_CLI::error( 'Frozen v1 is missing/changed or the new page does not differ; nothing changed.' ); }
+$wrap = static fn( $html ) => "<!-- wp:html -->\n" . rtrim( $html ) . "\n<!-- /wp:html -->";
+$old_content = $wrap( $old_html ); $new_content = $wrap( $new_html );
+if ( hash( 'sha256', $old_content ) !== '0203ac81f0eca37b7d2f217d154beda0f0485faae55072fd75276829c4c77748' ) { WP_CLI::error( 'Frozen stored v1 bytes differ.' ); }
+foreach ( array( $old_html, $new_html ) as $html ) {
+	if ( substr_count( $html, '<script>' ) !== 1 || substr_count( $html, '</script>' ) !== 1 || substr_count( $html, '<style>' ) !== 1 || false !== strpos( $html, '<!-- wp:' ) ) { WP_CLI::error( 'The page must remain the reviewed single HTML block.' ); }
+	$js = explode( '</script>', explode( '<script>', $html )[1] )[0];
+	if ( '' === trim( $js ) || false !== strpos( $js, '<' ) ) { WP_CLI::error( 'Page JavaScript contains a shortcode-scanner less-than sign.' ); }
+}
+// This is an input-only change: all markup, styles and visible wording stay exact.
+$without_script = static fn( $html ) => preg_replace( '#<script>.*?</script>#s', '<script></script>', $html );
+if ( $without_script( $old_html ) !== $without_script( $new_html ) ) { WP_CLI::error( 'Markup, styles or visible wording changed outside the reviewed input script.' ); }
+$manifest = array( 'old_content_sha256' => hash( 'sha256', $old_content ), 'new_content_sha256' => hash( 'sha256', $new_content ) );
+$taxonomies = get_object_taxonomies( 'page' ); sort( $taxonomies );
+$capture = static function () use ( $old_content, $new_content, $taxonomies ) {
+	// Refresh this page's read caches without running broad clean/save hooks.
+	wp_cache_delete( 1348, 'posts' ); wp_cache_delete( 1348, 'post_meta' );
+	$found = array();
+	foreach ( get_posts( array( 'post_type' => 'page', 'post_status' => array_values( get_post_stati() ), 'numberposts' => -1, 'suppress_filters' => true, 'cache_results' => false ) ) as $post ) {
+		if ( (int) $post->ID === 1348 || $post->post_name === 'rail-nav-ideas' || $post->post_title === 'Side rail ideas' || $post->post_content === $old_content || $post->post_content === $new_content || '1' === (string) get_post_meta( $post->ID, '_ts_rail_ideas', true ) ) { $found[] = (int) $post->ID; }
+	}
+	if ( $found !== array( 1348 ) ) { throw new \RuntimeException( 'Missing, replaced or duplicate Rail practice page; expected only reviewed page #1348.' ); }
+	$post = get_post( 1348, ARRAY_A, 'raw' ); $meta = get_post_meta( 1348 ); ksort( $meta ); $terms = array();
+	if ( ! is_array( $post ) ) { throw new \RuntimeException( 'Rail practice page is unreadable.' ); }
+	foreach ( $taxonomies as $taxonomy ) { $values = wp_get_object_terms( 1348, $taxonomy, array( 'fields' => 'slugs', 'cache_results' => false ) ); if ( is_wp_error( $values ) ) { throw new \RuntimeException( 'Page taxonomy is unreadable.' ); } sort( $values ); $terms[ $taxonomy ] = $values; }
+	return array( 'id' => 1348, 'post' => $post, 'meta' => $meta, 'terms' => $terms );
+};
+$matches = static function ( $record, $content ) {
+	return is_array( $record ) && ( $record['id'] ?? null ) === 1348 && (int) ( $record['post']['ID'] ?? 0 ) === 1348 && ( $record['post']['post_type'] ?? '' ) === 'page' && ( $record['post']['post_status'] ?? '' ) === 'publish' && ( $record['post']['post_name'] ?? '' ) === 'rail-nav-ideas' && ( $record['post']['post_title'] ?? '' ) === 'Side rail ideas' && ( $record['post']['post_modified_gmt'] ?? '' ) === '2026-11-08 02:42:14' && ( $record['post']['post_content'] ?? '' ) === $content && ( $record['meta']['_ts_rail_ideas'] ?? null ) === array( '1' ) && ( $record['meta']['site-post-title'] ?? null ) === array( 'disabled' ) && is_array( $record['terms'] ?? null );
+};
+try { $current = $capture(); } catch ( \Throwable $e ) { WP_CLI::error( $e->getMessage() . ' Nothing changed.' ); }
+$state = $matches( $current, $old_content ) ? 'ready' : ( $matches( $current, $new_content ) ? 'applied' : 'CHANGED' );
+WP_CLI::log( 'home=' . $home . ' rail-input=' . $state . ' page=1348 bytes=' . strlen( $current['post']['post_content'] ) . ' content_sha256=' . hash( 'sha256', $current['post']['post_content'] ) . ' full_state_sha256=' . hash( 'sha256', wp_json_encode( $current ) ) );
+if ( 'CHANGED' === $state ) { WP_CLI::error( 'Page ownership, identity, content or recorded date changed; nothing changed.' ); }
+if ( 'preflight' === $mode ) { WP_CLI::success( 'Preflight ' . $state . '; title/ownership verified; full post/meta/terms captured read-only.' ); return; }
+if ( 'apply' === $mode && 'applied' === $state ) { WP_CLI::success( 'Already applied; nothing changed.' ); return; }
+$backup_dir = getenv( 'WWM_BACKUP_DIR' ); $private = $backup_dir ? realpath( $backup_dir ) : false; $webroot = realpath( ABSPATH );
+if ( ! $private || '/' !== $backup_dir[0] || ! is_dir( $private ) || ! is_writable( $private ) || ! $webroot || $private === $webroot || 0 === strpos( $private . '/', rtrim( $webroot, '/' ) . '/' ) ) { WP_CLI::error( 'WWM_BACKUP_DIR must be an existing writable directory outside the web root.' ); }
+$save = static function ( $file, $snapshot ) {
+	$json = wp_json_encode( $snapshot ); $mask = umask( 0077 ); $ok = false !== $json && false !== file_put_contents( $file, $json, LOCK_EX ); umask( $mask );
+	if ( ! $ok || ! chmod( $file, 0600 ) || file_get_contents( $file ) !== $json ) { throw new \RuntimeException( 'Private snapshot save/read-back failed.' ); }
+};
+// Report field paths, types and hashes only. Never put stored values in public ops logs.
+$difference = static function ( $expected, $actual ) {
+	$changes = array(); $limit = 30;
+	$describe = static fn( $value, $exists ) => $exists ? gettype( $value ) . ' sha256=' . hash( 'sha256', serialize( $value ) ) : 'absent';
+	$visit = static function ( $a, $b, $path, $has_a = true, $has_b = true ) use ( &$visit, &$changes, $limit, $describe ) {
+		if ( count( $changes ) >= $limit || ( $has_a && $has_b && $a === $b ) ) { return; }
+		if ( $has_a && $has_b && is_array( $a ) && is_array( $b ) ) {
+			$keys = array_unique( array_merge( array_keys( $a ), array_keys( $b ) ) );
+			foreach ( $keys as $key ) { $visit( $a[ $key ] ?? null, $b[ $key ] ?? null, $path . '[' . wp_json_encode( $key ) . ']', array_key_exists( $key, $a ), array_key_exists( $key, $b ) ); }
+			if ( count( $changes ) < $limit && array_keys( $a ) !== array_keys( $b ) ) { $changes[] = $path . ' key-order/set expected ' . $describe( array_keys( $a ), true ) . ' actual ' . $describe( array_keys( $b ), true ); }
+			return;
+		}
+		$changes[] = $path . ' expected ' . $describe( $a, $has_a ) . ' actual ' . $describe( $b, $has_b );
+	};
+	$visit( $expected, $actual, 'state' );
+	return implode( '; ', $changes ) . ( count( $changes ) >= $limit ? '; diagnostic limit reached' : '' );
+};
+$write = static function ( $before, $after ) use ( $capture, $difference ) {
+	global $wpdb;
+	$allowed = $before; $allowed['post']['post_content'] = $after['post']['post_content'];
+	if ( $allowed !== $after ) { throw new \RuntimeException( 'Transition is not content-only: ' . $difference( $allowed, $after ) ); }
+	$observed = $capture();
+	if ( $observed !== $before ) { throw new \RuntimeException( 'Complete page state changed before the content-only write: ' . $difference( $before, $observed ) ); }
+	// Script-only change: save hooks were observed deleting UAG assets and changing
+	// SEO metadata. A byte-exact content CAS preserves all other WordPress storage.
+	$sql = $wpdb->prepare( "UPDATE {$wpdb->posts} SET post_content = %s WHERE ID = %d AND BINARY post_content = BINARY %s", $after['post']['post_content'], 1348, $before['post']['post_content'] );
+	try { $result = $wpdb->query( $sql ); }
+	finally { wp_cache_delete( 1348, 'posts' ); wp_cache_delete( 1348, 'post_meta' ); wp_cache_set_posts_last_changed(); }
+	if ( 1 !== $result ) { throw new \RuntimeException( 'Content compare-and-swap did not update exactly one row; checking the original state.' ); }
+	$observed = $capture();
+	if ( $observed !== $after ) { throw new \RuntimeException( 'Content save/full-state read-back failed: ' . $difference( $after, $observed ) ); }
+};
+$transition = static function ( $before, $after ) use ( $capture, $write, $difference ) {
+	try { $write( $before, $after ); }
+	catch ( \Throwable $e ) {
+		try { $now = $capture(); if ( $now === $after ) { $write( $after, $before ); } elseif ( $now !== $before ) { throw new \RuntimeException( 'Unknown concurrent page state; refusing recovery overwrite. Differences from intended state: ' . $difference( $after, $now ) ); } $restored = $capture(); if ( $restored !== $before ) { throw new \RuntimeException( 'Original page read-back differs: ' . $difference( $before, $restored ) ); } }
+		catch ( \Throwable $r ) { throw new \RuntimeException( $e->getMessage() . '; recovery failed: ' . $r->getMessage() ); }
+		throw new \RuntimeException( $e->getMessage() . '; complete original page preserved/restored and verified.' );
+	}
+};
+if ( $file_mode ) {
+	$file = $args[1]; $path = is_string( $file ) && $file ? realpath( $file ) : false;
+	if ( ! $path || ! is_file( $path ) || 0 !== strpos( $path, $private . '/' ) ) { WP_CLI::error( 'Rollback/verify requires this update\'s snapshot inside WWM_BACKUP_DIR.' ); }
+	$snapshot = json_decode( file_get_contents( $path ), true ); $old = $snapshot['old'] ?? null; $new = $snapshot['new'] ?? null;
+	$valid = is_array( $snapshot ) && ( $snapshot['bundle'] ?? '' ) === 'rail-input-v1' && ( $snapshot['home'] ?? '' ) === $home && true === ( $snapshot['complete'] ?? false ) && ( $snapshot['payloads'] ?? null ) === $manifest && $matches( $old, $old_content ) && $matches( $new, $new_content ) && hash( 'sha256', wp_json_encode( $old ) ) === ( $snapshot['old_sha256'] ?? '' ) && hash( 'sha256', wp_json_encode( $new ) ) === ( $snapshot['new_sha256'] ?? '' );
+	if ( $valid ) { $allowed = $old; $allowed['post']['post_content'] = $new_content; $valid = $allowed === $new; }
+	if ( ! $valid ) { WP_CLI::error( 'Snapshot invalid, damaged or from another site/page/payload; nothing changed.' ); }
+	if ( 'verify' === $mode ) {
+		$verify_expected = $verify_original ? $old : $new; $verify_label = $verify_original ? 'original' : 'applied';
+		if ( $current !== $verify_expected ) { WP_CLI::error( $verify_label . ' full-state verification failed; nothing changed. ' . $difference( $verify_expected, $current ) ); }
+		WP_CLI::success( 'Exact ' . $verify_label . ' Rail state verified read-only; full_state_sha256=' . hash( 'sha256', wp_json_encode( $current ) ) . '. Snapshot: ' . $path ); return;
+	}
+	if ( $current === $old ) { WP_CLI::success( 'Exact original page already restored; nothing changed.' ); return; }
+	if ( $current !== $new ) { WP_CLI::error( 'Complete page state changed since apply; nothing changed. ' . $difference( $new, $current ) ); }
+	try { $transition( $new, $old ); } catch ( \Throwable $e ) { WP_CLI::error( $e->getMessage() . ' Snapshot: ' . $path ); }
+	WP_CLI::success( 'Exact Rail input rollback complete; original page/post/meta/terms/dates restored. Snapshot: ' . $path ); return;
+}
+$next = $current; $next['post']['post_content'] = $new_content;
+$file = $private . '/rail-input-before-' . gmdate( 'Ymd-His' ) . '-' . bin2hex( random_bytes( 4 ) ) . '.json';
+$snapshot = array( 'bundle' => 'rail-input-v1', 'home' => $home, 'created' => gmdate( 'c' ), 'complete' => false, 'payloads' => $manifest, 'old' => $current, 'old_sha256' => hash( 'sha256', wp_json_encode( $current ) ), 'new' => $next, 'new_sha256' => hash( 'sha256', wp_json_encode( $next ) ) );
+try { $save( $file, $snapshot ); } catch ( \Throwable $e ) { WP_CLI::error( $e->getMessage() . ' Nothing changed.' ); }
+try { $transition( $current, $next ); } catch ( \Throwable $e ) { WP_CLI::error( $e->getMessage() . ' Snapshot: ' . $file ); }
+try { $snapshot['complete'] = true; $save( $file, $snapshot ); }
+catch ( \Throwable $e ) { try { $transition( $next, $current ); } catch ( \Throwable $r ) { WP_CLI::error( $e->getMessage() . '; snapshot recovery failed: ' . $r->getMessage() . '. Snapshot: ' . $file ); } WP_CLI::error( $e->getMessage() . '; complete original page restored and verified.' ); }
+WP_CLI::success( 'Rail input updated in place on page #1348; only post_content changed. Before-snapshot: ' . $file );

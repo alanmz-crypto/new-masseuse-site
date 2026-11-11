@@ -1,8 +1,8 @@
 {
-  "id": "live-page-navigation-20261104-1",
+  "id": "live-peek-visitor-release-20261111-1",
   "op": "run",
   "target": "live",
-  "script": "page-navigation/push-page-navigation.sh",
+  "script": "link-ideas/push-peek-release.sh",
   "args": [
     "--apply"
   ],

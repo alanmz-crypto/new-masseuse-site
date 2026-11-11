@@ -1,5 +1,6 @@
 # Project memory (snapshot for cloud sessions)
 
+- [In-page link ideas practice page](link-ideas-practice-page.md) — 2026-11-08 staging39 only: link ideas, pills trial (set aside), progress designs (/progress-nav-ideas/), five side-rail designs at /rail-nav-ideas/; Ryan chose Peek + top strip, on the staging39 Thai page (103/0); Astra hash-scroll, inline-script `<` and touch-action lessons.
 - [Site review Bundle E](site-review-bundle-e.md) — LIVE via Ryan’s #66/run; origin26, actual backup/ownership/browser proof and qualified historical comparisons; exact live rollback.
 - [Site review Bundle D](site-review-bundle-d.md) — LIVE via Ryan’s #65/run; 53 origin/128 public assertions PASS, exact snapshot and qualified INVALID/restore results.
 

@@ -1,0 +1,152 @@
+# Local structural form-clearance evidence
+# Runtime code bytes: 97130
+# Runtime code SHA256: c7ed404ebe3e19d24e7a91b91bb996505efb80027fd183245d1c7137f188991e
+# Checker SHA256: 1ab59c17d1a0b0ae31e5ffd80eb86f7da0039926cdc95f758394af22d94676cb
+# Command: node check-peek-title-rails.mjs http://localhost:8090 --fixtures-only --firefox
+# Scope: selected local-form assertion lines plus complete local suite summary; INLINE images omitted.
+# No actual-site requests, WordPress changes, or physical-device claims.
+# Final candidate3, all local fixtures. Passed geometry is asserted; detailed baseline failures retain their rectangles and hit samples.
+PASS title-rail firefox/local-form/390: one title-only rail follows the source labels with zero page data
+PASS title-rail firefox/local-form/390: controls preserve existing hrefs and use buttons for ID-less targets
+PASS title-rail firefox/local-form/390: exactly one rail keyboard stop and no new horizontal overflow
+PASS title-rail firefox/local-form/390/pointer-first: opens the selected title with section count and no summary or reading-time copy
+PASS title-rail firefox/local-form/390/pointer-first: preview clears the actual visible title/header and viewport edges
+PASS title-rail firefox/local-form/390/pointer-first: ordinary portrait title and jump hint are visible
+PASS title-rail firefox/local-form/390: native pointer preview leaves page and address still
+PASS title-rail firefox/local-form/390: End roves to the last original section
+PASS title-rail firefox/local-form/390/keyboard-last: opens the selected title with section count and no summary or reading-time copy
+PASS title-rail firefox/local-form/390/keyboard-last: preview clears the actual visible title/header and viewport edges
+PASS title-rail firefox/local-form/390/keyboard-last: ordinary portrait title and jump hint are visible
+PASS title-rail firefox/local-form/390: keyboard preview leaves page and address still
+PASS title-rail firefox/local-form/390: explicit activation focuses its original destination and preserves ID-less addresses
+PASS title-rail firefox/local-form/390: jump lands below the strip or at the measured scroll limit
+PASS title-rail firefox/local-form/390: quick icon tap keeps the names open without scrolling or changing the address
+PASS title-rail firefox/local-form/390: index names contain only original ordered titles
+PASS title-rail firefox/local-form/390: selecting an index name opens its preview without a page jump
+PASS title-rail firefox/local-form/390: side control changes the rail side without moving the page
+PASS title-rail firefox/local-form/390/opposite-side: opens the selected title with section count and no summary or reading-time copy
+PASS title-rail firefox/local-form/390/opposite-side: preview clears the actual visible title/header and viewport edges
+PASS title-rail firefox/local-form/390/opposite-side: ordinary portrait title and jump hint are visible
+PASS title-rail firefox/local-form/390: keyboard icon opens the index without page navigation
+PASS title-rail firefox/local-form/390: Escape closes the index and keeps keyboard focus on its button
+PASS title-rail firefox/local-form/390: sliding from the icon across names never scrolls the page
+PASS title-rail firefox/local-form/390: releasing on a name keeps that preview without jumping
+PASS title-rail firefox/local-form/390: print hides title rails and restores existing jump rows
+PASS title-rail firefox/local-form/390/right/top: complete rail and icon hit areas clear original form controls
+PASS title-rail firefox/local-form/390/right/top: visible form corners and centers hit their own controls
+PASS title-rail firefox/local-form/390/right/landed: complete rail and icon hit areas clear original form controls
+PASS title-rail firefox/local-form/390/right/landed: visible form corners and centers hit their own controls
+PASS title-rail firefox/local-form/390/right/landed: native click focuses the search field without opening Peek
+PASS title-rail firefox/local-form/390/right/control0-icon: complete rail and icon hit areas clear original form controls
+PASS title-rail firefox/local-form/390/right/control0-icon: visible form corners and centers hit their own controls
+PASS title-rail firefox/local-form/390/right/control0-rail: complete rail and icon hit areas clear original form controls
+PASS title-rail firefox/local-form/390/right/control0-rail: visible form corners and centers hit their own controls
+PASS title-rail firefox/local-form/390/right/control1-icon: complete rail and icon hit areas clear original form controls
+PASS title-rail firefox/local-form/390/right/control1-icon: visible form corners and centers hit their own controls
+PASS title-rail firefox/local-form/390/right/control1-rail: complete rail and icon hit areas clear original form controls
+PASS title-rail firefox/local-form/390/right/control1-rail: visible form corners and centers hit their own controls
+PASS title-rail firefox/local-form/390/right: form clearance adds no horizontal overflow
+PASS title-rail firefox/local-form/390/left/top: complete rail and icon hit areas clear original form controls
+PASS title-rail firefox/local-form/390/left/top: visible form corners and centers hit their own controls
+PASS title-rail firefox/local-form/390/left/landed: complete rail and icon hit areas clear original form controls
+PASS title-rail firefox/local-form/390/left/landed: visible form corners and centers hit their own controls
+PASS title-rail firefox/local-form/390/left/landed: native click focuses the search field without opening Peek
+PASS title-rail firefox/local-form/390/left/control0-icon: complete rail and icon hit areas clear original form controls
+PASS title-rail firefox/local-form/390/left/control0-icon: visible form corners and centers hit their own controls
+PASS title-rail firefox/local-form/390/left/control0-rail: complete rail and icon hit areas clear original form controls
+PASS title-rail firefox/local-form/390/left/control0-rail: visible form corners and centers hit their own controls
+PASS title-rail firefox/local-form/390/left/control1-icon: complete rail and icon hit areas clear original form controls
+PASS title-rail firefox/local-form/390/left/control1-icon: visible form corners and centers hit their own controls
+PASS title-rail firefox/local-form/390/left/control1-rail: complete rail and icon hit areas clear original form controls
+PASS title-rail firefox/local-form/390/left/control1-rail: visible form corners and centers hit their own controls
+PASS title-rail firefox/local-form/390/left: form clearance adds no horizontal overflow
+PASS title-rail firefox/local-form/390: control clearance preserves full-width hero and content column
+PASS title-rail firefox/local-form/768: one title-only rail follows the source labels with zero page data
+PASS title-rail firefox/local-form/768: controls preserve existing hrefs and use buttons for ID-less targets
+PASS title-rail firefox/local-form/768: exactly one rail keyboard stop and no new horizontal overflow
+PASS title-rail firefox/local-form/768/pointer-first: opens the selected title with section count and no summary or reading-time copy
+PASS title-rail firefox/local-form/768/pointer-first: preview clears the actual visible title/header and viewport edges
+PASS title-rail firefox/local-form/768/pointer-first: ordinary portrait title and jump hint are visible
+PASS title-rail firefox/local-form/768: native pointer preview leaves page and address still
+PASS title-rail firefox/local-form/768: End roves to the last original section
+PASS title-rail firefox/local-form/768/keyboard-last: opens the selected title with section count and no summary or reading-time copy
+PASS title-rail firefox/local-form/768/keyboard-last: preview clears the actual visible title/header and viewport edges
+PASS title-rail firefox/local-form/768/keyboard-last: ordinary portrait title and jump hint are visible
+PASS title-rail firefox/local-form/768: keyboard preview leaves page and address still
+PASS title-rail firefox/local-form/768: explicit activation focuses its original destination and preserves ID-less addresses
+PASS title-rail firefox/local-form/768: jump lands below the strip or at the measured scroll limit
+PASS title-rail firefox/local-form/768: print hides title rails and restores existing jump rows
+PASS title-rail firefox/local-form/768/right/top: complete rail and icon hit areas clear original form controls
+PASS title-rail firefox/local-form/768/right/top: visible form corners and centers hit their own controls
+PASS title-rail firefox/local-form/768/right/landed: complete rail and icon hit areas clear original form controls
+PASS title-rail firefox/local-form/768/right/landed: visible form corners and centers hit their own controls
+PASS title-rail firefox/local-form/768/right/landed: native click focuses the search field without opening Peek
+PASS title-rail firefox/local-form/768/right/control0-icon: complete rail and icon hit areas clear original form controls
+PASS title-rail firefox/local-form/768/right/control0-icon: visible form corners and centers hit their own controls
+PASS title-rail firefox/local-form/768/right/control0-rail: complete rail and icon hit areas clear original form controls
+PASS title-rail firefox/local-form/768/right/control0-rail: visible form corners and centers hit their own controls
+PASS title-rail firefox/local-form/768/right/control1-icon: complete rail and icon hit areas clear original form controls
+PASS title-rail firefox/local-form/768/right/control1-icon: visible form corners and centers hit their own controls
+PASS title-rail firefox/local-form/768/right/control1-rail: complete rail and icon hit areas clear original form controls
+PASS title-rail firefox/local-form/768/right/control1-rail: visible form corners and centers hit their own controls
+PASS title-rail firefox/local-form/768/right: form clearance adds no horizontal overflow
+PASS title-rail firefox/local-form/768/left/top: complete rail and icon hit areas clear original form controls
+PASS title-rail firefox/local-form/768/left/top: visible form corners and centers hit their own controls
+PASS title-rail firefox/local-form/768/left/landed: complete rail and icon hit areas clear original form controls
+PASS title-rail firefox/local-form/768/left/landed: visible form corners and centers hit their own controls
+PASS title-rail firefox/local-form/768/left/landed: native click focuses the search field without opening Peek
+PASS title-rail firefox/local-form/768/left/control0-icon: complete rail and icon hit areas clear original form controls
+PASS title-rail firefox/local-form/768/left/control0-icon: visible form corners and centers hit their own controls
+PASS title-rail firefox/local-form/768/left/control0-rail: complete rail and icon hit areas clear original form controls
+PASS title-rail firefox/local-form/768/left/control0-rail: visible form corners and centers hit their own controls
+PASS title-rail firefox/local-form/768/left/control1-icon: complete rail and icon hit areas clear original form controls
+PASS title-rail firefox/local-form/768/left/control1-icon: visible form corners and centers hit their own controls
+PASS title-rail firefox/local-form/768/left/control1-rail: complete rail and icon hit areas clear original form controls
+PASS title-rail firefox/local-form/768/left/control1-rail: visible form corners and centers hit their own controls
+PASS title-rail firefox/local-form/768/left: form clearance adds no horizontal overflow
+PASS title-rail firefox/local-form/768: control clearance preserves full-width hero and content column
+PASS title-rail firefox/local-form/1280: one title-only rail follows the source labels with zero page data
+PASS title-rail firefox/local-form/1280: controls preserve existing hrefs and use buttons for ID-less targets
+PASS title-rail firefox/local-form/1280: exactly one rail keyboard stop and no new horizontal overflow
+PASS title-rail firefox/local-form/1280/pointer-first: opens the selected title with section count and no summary or reading-time copy
+PASS title-rail firefox/local-form/1280/pointer-first: preview clears the actual visible title/header and viewport edges
+PASS title-rail firefox/local-form/1280/pointer-first: ordinary portrait title and jump hint are visible
+PASS title-rail firefox/local-form/1280: native pointer preview leaves page and address still
+PASS title-rail firefox/local-form/1280: End roves to the last original section
+PASS title-rail firefox/local-form/1280/keyboard-last: opens the selected title with section count and no summary or reading-time copy
+PASS title-rail firefox/local-form/1280/keyboard-last: preview clears the actual visible title/header and viewport edges
+PASS title-rail firefox/local-form/1280/keyboard-last: ordinary portrait title and jump hint are visible
+PASS title-rail firefox/local-form/1280: keyboard preview leaves page and address still
+PASS title-rail firefox/local-form/1280: explicit activation focuses its original destination and preserves ID-less addresses
+PASS title-rail firefox/local-form/1280: jump lands below the strip or at the measured scroll limit
+PASS title-rail firefox/local-form/1280: print hides title rails and restores existing jump rows
+PASS title-rail firefox/local-form/1280/right/top: complete rail and icon hit areas clear original form controls
+PASS title-rail firefox/local-form/1280/right/top: visible form corners and centers hit their own controls
+PASS title-rail firefox/local-form/1280/right/landed: complete rail and icon hit areas clear original form controls
+PASS title-rail firefox/local-form/1280/right/landed: visible form corners and centers hit their own controls
+PASS title-rail firefox/local-form/1280/right/landed: native click focuses the search field without opening Peek
+PASS title-rail firefox/local-form/1280/right/control0-icon: complete rail and icon hit areas clear original form controls
+PASS title-rail firefox/local-form/1280/right/control0-icon: visible form corners and centers hit their own controls
+PASS title-rail firefox/local-form/1280/right/control0-rail: complete rail and icon hit areas clear original form controls
+PASS title-rail firefox/local-form/1280/right/control0-rail: visible form corners and centers hit their own controls
+PASS title-rail firefox/local-form/1280/right/control1-icon: complete rail and icon hit areas clear original form controls
+PASS title-rail firefox/local-form/1280/right/control1-icon: visible form corners and centers hit their own controls
+PASS title-rail firefox/local-form/1280/right/control1-rail: complete rail and icon hit areas clear original form controls
+PASS title-rail firefox/local-form/1280/right/control1-rail: visible form corners and centers hit their own controls
+PASS title-rail firefox/local-form/1280/right: form clearance adds no horizontal overflow
+PASS title-rail firefox/local-form/1280/left/top: complete rail and icon hit areas clear original form controls
+PASS title-rail firefox/local-form/1280/left/top: visible form corners and centers hit their own controls
+PASS title-rail firefox/local-form/1280/left/landed: complete rail and icon hit areas clear original form controls
+PASS title-rail firefox/local-form/1280/left/landed: visible form corners and centers hit their own controls
+PASS title-rail firefox/local-form/1280/left/landed: native click focuses the search field without opening Peek
+PASS title-rail firefox/local-form/1280/left/control0-icon: complete rail and icon hit areas clear original form controls
+PASS title-rail firefox/local-form/1280/left/control0-icon: visible form corners and centers hit their own controls
+PASS title-rail firefox/local-form/1280/left/control0-rail: complete rail and icon hit areas clear original form controls
+PASS title-rail firefox/local-form/1280/left/control0-rail: visible form corners and centers hit their own controls
+PASS title-rail firefox/local-form/1280/left/control1-icon: complete rail and icon hit areas clear original form controls
+PASS title-rail firefox/local-form/1280/left/control1-icon: visible form corners and centers hit their own controls
+PASS title-rail firefox/local-form/1280/left/control1-rail: complete rail and icon hit areas clear original form controls
+PASS title-rail firefox/local-form/1280/left/control1-rail: visible form corners and centers hit their own controls
+PASS title-rail firefox/local-form/1280/left: form clearance adds no horizontal overflow
+PASS title-rail firefox/local-form/1280: control clearance preserves full-width hero and content column
+INFO Peek title rails firefox: 581 passed, 0 failed; 0 actual routes, 0 captures, 34s, local fixtures only; native browser input is not physical-device or assistive-technology validation.

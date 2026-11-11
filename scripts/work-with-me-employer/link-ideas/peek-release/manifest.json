@@ -1,0 +1,266 @@
+{
+  "schema": 1,
+  "bundle": "peek-visitor-release-v1",
+  "candidate_status": "provisional; title-strip observer timing correction; staging and complete release recovery verification pending; accepted design and summaries unchanged",
+  "source": {
+    "operation": "peek-live-navigation-baseline-1",
+    "run": 42741958557,
+    "commit": "9c6e090417c83164b457be16e5dcbd9ac4f6bb8b",
+    "baseline_sha256": "a6c6e923d484576d96060ab8d9f84110c5d785f9fec64c5ae7e5b0ef3f37f013",
+    "core_version": "7.1.4"
+  },
+  "spectra": {
+    "version": "2.20.6",
+    "official_package_url": "https://downloads.wordpress.org/plugin/ultimate-addons-for-gutenberg.2.20.6.zip",
+    "official_package_sha256": "d6ec81341a6e8351db21497f213e40f08f2f8bf8300098cd04fc94800a980caf",
+    "source_commit": "d1852cd27c9ac93e8fd7606261c2a023c5c253da",
+    "files": {
+      "ultimate-addons-for-gutenberg.php": "84960e2aab455bcaf90ca1fa12e1d7916fb783f933666cb838ce96b06c4e2265",
+      "classes/class-uagb-helper.php": "ddb31e3c3a200537fac002fba6ab964149f9b459a71b38a9723af84e17da70fd",
+      "classes/class-uagb-rest-api.php": "f9308c31294d9493533fcde3b326e29f2ccd8c6980a824e4f213472c6efc12d3",
+      "classes/class-uagb-loader.php": "7b6b14efe37e012bc920ce6abed8a5c25c19f508b36390b64b3104d8e61fda98",
+      "classes/class-uagb-post-assets.php": "565651321cef5b64a29e91df9bf8e267ebc34c4112294f2671ade008e637d6be",
+      "classes/class-uagb-front-assets.php": "329d3330bf4c46e537a864f417e6903f7e1607f928c03cd6244ee69f700d195a"
+    }
+  },
+  "copy_mapping": {
+    "origin": "http://localhost:8090",
+    "from": [
+      "https://thaisolitude.com",
+      "http://thaisolitude.com"
+    ],
+    "escaped_slashes": true,
+    "serialized": "Pinned WP-CLI SearchReplacer, precise mode; only rows containing the exact from bytes; recursively replace values and nested serialization; keys unchanged; GUID excluded.",
+    "guid": "unchanged",
+    "astra_steps": [
+      {
+        "from": "https://thaisolitude.com",
+        "before_sha256": "115676de2d911aa580f316e9280753e3db018381edb5af529b2b1756a21d4fb2",
+        "after_sha256": "af988f1e134be210439ec541aef6924c0a6292aa480c09ef9a7d6365a588012c"
+      },
+      {
+        "from": "http://thaisolitude.com",
+        "before_sha256": "af988f1e134be210439ec541aef6924c0a6292aa480c09ef9a7d6365a588012c",
+        "after_sha256": "af988f1e134be210439ec541aef6924c0a6292aa480c09ef9a7d6365a588012c"
+      },
+      {
+        "from": "https:\\/\\/thaisolitude.com",
+        "before_sha256": "af988f1e134be210439ec541aef6924c0a6292aa480c09ef9a7d6365a588012c",
+        "after_sha256": "af988f1e134be210439ec541aef6924c0a6292aa480c09ef9a7d6365a588012c"
+      },
+      {
+        "from": "http:\\/\\/thaisolitude.com",
+        "before_sha256": "af988f1e134be210439ec541aef6924c0a6292aa480c09ef9a7d6365a588012c",
+        "after_sha256": "af988f1e134be210439ec541aef6924c0a6292aa480c09ef9a7d6365a588012c"
+      }
+    ]
+  },
+  "pages": [
+    {
+      "id": 296,
+      "path": "/",
+      "title": "Home"
+    },
+    {
+      "id": 298,
+      "path": "/about/",
+      "title": "About"
+    },
+    {
+      "id": 299,
+      "path": "/services/",
+      "title": "Services"
+    },
+    {
+      "id": 301,
+      "path": "/contact/",
+      "title": "Contact"
+    },
+    {
+      "id": 1091,
+      "path": "/deep-tissue-massage/",
+      "title": "Deep Tissue Massage"
+    },
+    {
+      "id": 1107,
+      "path": "/therapeutic-massage/",
+      "title": "Therapeutic Massage"
+    },
+    {
+      "id": 1160,
+      "path": "/thai-massage/",
+      "title": "Thai Massage"
+    },
+    {
+      "id": 1165,
+      "path": "/work-with-me/",
+      "title": "Work With Me"
+    },
+    {
+      "id": 1227,
+      "path": "/privacy-policy/",
+      "title": "Privacy Policy"
+    },
+    {
+      "id": 1230,
+      "path": "/accessibility/",
+      "title": "Accessibility"
+    },
+    {
+      "id": 1254,
+      "path": "/personal-automation/",
+      "title": "Ryan Personal Automation"
+    },
+    {
+      "id": 1255,
+      "path": "/personal-automation/privacy/",
+      "title": "Ryan Personal Automation — Privacy"
+    },
+    {
+      "id": 1257,
+      "path": "/personal-automation/terms/",
+      "title": "Ryan Personal Automation — Terms of Service"
+    },
+    {
+      "id": 1266,
+      "path": "/corporate-massage-portland/",
+      "title": "Corporate & Group Massage in Portland"
+    },
+    {
+      "id": 1293,
+      "path": "/chair-massage/",
+      "title": "Chair Massage"
+    }
+  ],
+  "summary_slugs": [
+    "thai-massage",
+    "therapeutic-massage",
+    "deep-tissue-massage",
+    "chair-massage"
+  ],
+  "payloads": {
+    "core": {
+      "file": "payload/core.php",
+      "file_sha256": "708b91f4e52025b6813245a38e7c048fff09dd6ae90f644e0b2b5d1f415f7b19",
+      "code_sha256": "f152fad975bb85ed4ad06a0ce5f0000cd656276b34efb38b748646a5fdc73566"
+    },
+    "data": {
+      "thai-massage": {
+        "file": "payload/data/thai-massage.json",
+        "file_sha256": "cec77507252fe2a1b272803712712b958a43444c1099b1635f6040ddff53d8fa",
+        "code_sha256": "fd67d8f8548706bd8597af87e85380581a18f846a1bf71de4401db80b5f0a7e0"
+      },
+      "therapeutic-massage": {
+        "file": "payload/data/therapeutic-massage.json",
+        "file_sha256": "cc5ab81fbd924099b45bd3c8dbd3e89e7d2aaa932c6040d7d5b0624fbe334f44",
+        "code_sha256": "3b12f5e09f6937f41f04122cbed3c6ef6244c9359115ce36ed31d2d6b7336ffd"
+      },
+      "deep-tissue-massage": {
+        "file": "payload/data/deep-tissue-massage.json",
+        "file_sha256": "b95313b5ece550e43f9def17be36bbe04ac70fd8734dab7eb5ab21636e54d9eb",
+        "code_sha256": "c88e05ae019076e9a173dc239ffa2b091007864087067ef0444efca2acc00101"
+      },
+      "chair-massage": {
+        "file": "payload/data/chair-massage.json",
+        "file_sha256": "eadd40dad7c50bd40abac9d82daf8a55b17d8440e1fb41384512631fcf781812",
+        "code_sha256": "b99558619488cf1506c8b0e8ca2c59066068eaa0727233c90b51f599798a121c"
+      }
+    },
+    "reading_progress": {
+      "file": "payload/reading-progress.css",
+      "file_sha256": "f7cbdd8c307ca1fb270b3109d1b705847dba835926b2f7cca2f4df88a3dc0072"
+    },
+    "search_contrast": {
+      "file": "payload/search-contrast.css",
+      "file_sha256": "3225b279ae3d20adf696ac9ad6a16dc2be7c7c15c8fbe64ba59e5a74dc14e9e0"
+    }
+  },
+  "baseline": {
+    "post_sha256": {
+      "29": "265a218e6a1a29139a8428c1117a07767c7a8b858342670b0f3e58123cb2194d",
+      "1091": "363dd1cc048dfa0e3397626d130279c54e1284a77d4c4ae8256972306e3521ef",
+      "1107": "2340dc4fc84dad2b4443980fc297b051cfee88f9abd2067aa5b17f297d126e44",
+      "1160": "265371615fb76427e29d639350998c9c4ad6ea411e0f7f935af842f50970fbab",
+      "1232": "0e5bfbd46aec6db729da5fd52eacf1c6a6bdff554be666f7dbbeb37018b29e12",
+      "1293": "12a1e17542e4dbecb08138dd0367db28bb0416bbaa9032809c772bf38b34f033",
+      "1338": "8f384e46e5d264b536a5f7f939282a155b60c8501601625fe0efd073ac0fe077"
+    },
+    "meta_sha256": {
+      "29": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "1232": "37c7d425811500b1f603d8e4b60a9146daa867e450722398ba41e502c719dca5",
+      "1338": "28d86684f8bed385d944821416b54fd57223ffa3ca6d0eae03c11518939781e6"
+    },
+    "relationship_sha256": {
+      "29": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "1232": "fbc013ff1a2dc9ccd671871aa0487989d0154fe76030b317f05c7a663a706643",
+      "1338": "c83606e24f0dcb0d960475eb5c85c855545558ba529bca21296932f75026cb1c"
+    },
+    "option_sha256": {
+      "home": "caffb575ff303a2f36b7f226067e801c2e9ab91b7cfd8e45548c9e297cc11279",
+      "page_for_posts": "bcfcb7fe02d376113c505c1b0334c3b59219d9e48fd37173df930c43352e3503",
+      "page_on_front": "7bddbe1c8e8f1603d2301ef7ef55ead151434bf1919b9ea6fb1cab362f9287df",
+      "permalink_structure": "73bb888f203455a876b2b0359d76d1f20e02a9dbd37f74704a8dbae773d173a5",
+      "show_on_front": "25f4d693aad8d7f4e2bc722a9e7ca6fc830a2accd2665c2904595cc94c8723b2",
+      "siteurl": "44db7291c57644d85c31f2240c0a8ba052e02ac14262f8163656fa38064fa1ca",
+      "stylesheet": "bcdff630c742d3de466887cd664361dc0bfa822df68043d7092eddded325c0f5",
+      "template": "348148c6651303b692474fb82fb651d02889b79bc180bb3f9b8a23b696707dba",
+      "astra-settings": "de0a0829500fadc8deb8c31a35c32613732a4d08d73b2d6617216843c84d399f"
+    },
+    "css": {
+      "id": 29,
+      "old_content_sha256": "1b9d4a6fcc783830a508edb3a00390d698998621391facf49ea05d77ce09fc7f",
+      "new_content_sha256": "b024acc687b49a37115940b52976f3bdcfc6cb236ae7bb4a81422f8c2d02c69b"
+    },
+    "taxonomies": [
+      {
+        "count": "17",
+        "description": "",
+        "parent": "0",
+        "taxonomy": "wpcode_type",
+        "term_id": "9",
+        "term_taxonomy_id": "9"
+      },
+      {
+        "count": "17",
+        "description": "",
+        "parent": "0",
+        "taxonomy": "wpcode_location",
+        "term_id": "10",
+        "term_taxonomy_id": "10"
+      }
+    ],
+    "terms": [
+      {
+        "name": "php",
+        "slug": "php",
+        "term_group": "0",
+        "term_id": "9"
+      },
+      {
+        "name": "everywhere",
+        "slug": "everywhere",
+        "term_group": "0",
+        "term_id": "10"
+      }
+    ],
+    "termmeta_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "astra_new_row_sha256": "f9ab836df626ea52364486cf74e4cde576276eed53880395d4816f13b5cfd92c"
+  },
+  "page_slugs": {
+    "296": "home",
+    "298": "about",
+    "299": "services",
+    "301": "contact",
+    "1091": "deep-tissue-massage",
+    "1107": "therapeutic-massage",
+    "1160": "thai-massage",
+    "1165": "work-with-me",
+    "1227": "privacy-policy",
+    "1230": "accessibility",
+    "1254": "personal-automation",
+    "1255": "privacy",
+    "1257": "terms",
+    "1266": "corporate-massage-portland",
+    "1293": "chair-massage"
+  }
+}

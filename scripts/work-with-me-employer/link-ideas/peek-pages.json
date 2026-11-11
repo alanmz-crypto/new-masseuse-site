@@ -1,0 +1,79 @@
+{
+  "schema": 1,
+  "regression": "thai-massage",
+  "titleStrip": {
+    "scope": "all-visitor-html",
+    "staging": "enabled",
+    "excludedContexts": [
+      "admin",
+      "feed"
+    ]
+  },
+  "titleRail": {
+    "scope": "visitor-pages-without-existing-rail",
+    "staging": "enabled",
+    "excludedContexts": [
+      "admin",
+      "feed"
+    ],
+    "existingRailPages": [
+      "/rail-nav-ideas/",
+      "/index-nav-ideas/"
+    ],
+    "conditionalExistingRails": [
+      {
+        "path": "/progress-nav-ideas/",
+        "mode": "E",
+        "behavior": "hide-title-rail-while-demo-active"
+      }
+    ]
+  },
+  "pages": [
+    {
+      "slug": "thai-massage",
+      "staging": "enabled",
+      "expectedLabels": [
+        "What it is",
+        "Common reasons",
+        "What to expect",
+        "Questions",
+        "What Research Says"
+      ]
+    },
+    {
+      "slug": "therapeutic-massage",
+      "staging": "enabled",
+      "expectedLabels": [
+        "What it is",
+        "Common reasons",
+        "Who can benefit",
+        "Questions",
+        "What to expect",
+        "What Research Says"
+      ]
+    },
+    {
+      "slug": "deep-tissue-massage",
+      "staging": "enabled",
+      "expectedLabels": [
+        "What it is",
+        "Common reasons",
+        "What to expect",
+        "Questions",
+        "What Research Says"
+      ]
+    },
+    {
+      "slug": "chair-massage",
+      "staging": "enabled",
+      "expectedLabels": [
+        "What it is",
+        "Common reasons",
+        "Who can benefit",
+        "Questions",
+        "What to expect",
+        "What Research Says"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,233 @@
+# Peek title-strip resize correction
+
+**Preparing on the feature branch; no website change yet.** The approved
+live-sourced temporary-copy rehearsal `peek-visitor-release-quiet-search-copy-3`
+(Actions `42987385913`, source `ce634995807e2b024819e3fc0f995fa49dc7440d`)
+failed on two WebKit page errors during Therapeutic's 150%-root-text checks.
+The release remains on hold. Live and staging39 are unchanged by this work.
+
+## Observed failure
+
+Both right- and left-side cases reported
+`ResizeObserver loop completed with undelivered notifications.` The underlying
+WebKit layout leaf completed all 19 loads across eight routes: 150 passed,
+two failed. Reading space, control visibility and research qualification
+reachability passed. The right-side screenshot remains legible; no separate
+left-side enlarged-text capture was retained. This is CSS root-text enlargement
+in Linux WebKit, not physical Safari or OS text scaling.
+
+The 15 retained core suites passed 14,319/0 and WebKit disclosures passed 70/0.
+Only 17/28 release leaves ran. Nine neighbour/index/quiet leaves and both Search
+leaves were skipped; no post-browser recovery proof exists. All 145 unique
+JPEGs decoded successfully. All 16 Chromium layout captures are byte-identical
+to the accepted staging quiet-navigation captures. The enlarged native branding
+wrap is pre-existing, outside this narrow correction.
+
+The same copy verified actual Spectra source binding, first installation,
+repeat, exact rollback, unchanged metadata through all restored-page visits,
+and reapplication. Cleanup verified deletion of the copy and all owned
+resources. Full native bindings are in the release-readiness record.
+
+## Proposed correction
+
+Source inspection finds that the title-strip observer watches its own border
+box, then synchronously changes the inner title window's height during the
+notification. The proposed fix coalesces that observer's layout work into the
+next animation frame. It retains the same measurements, title labels, visual
+layout and gestures. This approach was explained before implementation.
+Local WebKit reproduced the same error in all six original-runtime trials
+(three per side). The queued callback passed all six corresponding trials:
+zero page errors, no size changes during observer delivery, and identical final
+geometry. The trace identifies the strip growing inside the original callback
+after root-font enlargement. This is exact-runtime structural-fixture evidence,
+not an actual WordPress-page or Safari result. Errors remain decisive in checks.
+
+The unchanged focused checker was also run against both offline structural
+fixtures: frozen v10 produced **44 passed / 4 failed**, with only the observer
+errors failing; corrected source produced **48/0**. Both runs supplied all four
+page/side cases and eight captures, accepted by the strict evidence parser.
+All eight old/new screenshot pairs are byte-identical. Independent review
+replayed that parsing and comparison. The checker covers Therapeutic and Work
+With Me, both sides, three enlarge/restore cycles, shorter/restored viewport,
+native menu open/close, exact route and side identity, and all page errors.
+
+The only runtime change is the observer callback. Frozen v10 remains
+110,787 bytes, SHA256
+`4dfe97943898790b9c000f6dfcc129b4806183a23bc7cb7a55f1cc7db7172952`.
+Corrected source is 111,148 bytes, SHA256
+`708b91f4e52025b6813245a38e7c048fff09dd6ae90f644e0b2b5d1f415f7b19`;
+stored-code SHA256 is
+`f152fad975bb85ed4ad06a0ce5f0000cd656276b34efb38b748646a5fdc73566`.
+
+Freeze the accepted quiet-navigation runtime as shared v10 and keep its
+historical v9-to-v10 installer immutable. Use a separate `core-title-resize`
+transition for the correction, preserving all four approved data snippets and
+Additional CSS. Required sequence: source gates, guarded staging39-copy
+rehearsal, fresh verified off-site backup, staging39 apply with its actual
+snapshot, bounded public checks, then exact stored/rendered verification.
+The provisional first-install payload must track the corrected source before
+source Gates, preserving the existing exact source/payload check. Its status
+remains unverified until staging and the complete temporary-copy release cycle
+pass. Run that full release cycle after staging verification. No live enablement
+or main merge is authorized here.
+
+Ryan's accepted Safari checks remain complete. Do not request a generic
+repeat or add deferred fluidity refinements to this correction.
+
+## Source verification
+
+The prepared staging lane passed **1,967 shared-installer model checks**,
+**255 deployment controls**, **108 rehearsal controls**, and **56 browser
+orchestration controls**. The existing decisive cleanup helper now also covers
+this new lane: both fixed release and resize profiles passed all **51 cleanup
+controls**. It requires exclusive directory ownership, successful removal and
+verified absence of the owned relay, containers, volumes, networks and temporary
+directory, including early setup failures. Cleanup failure cannot become a pass.
+Historical cleanup paths remain unchanged. No copied SQL, private snapshots or
+source files are retained as evidence.
+
+Historical quiet deployment/rehearsal controls passed 190/107, and input-focus
+deployment controls passed 157. Required Bash syntax, ShellCheck and diff checks
+passed. The new wrapper preserves Additional CSS29 against its pre-write hash
+through apply, purge and rendered verification; it never writes CSS. Summary
+JSON payloads remain byte-identical. The release candidate's separate models
+passed 1,843 checks including 138 injected write-boundary failures, plus 163
+rehearsal-evidence controls. These are local source/model results, not website
+verification. Full Actions Gates and the staging39-copy rehearsal follow.
+
+Complete Actions source Gates passed **55/0** at **09:23:32 UTC**, run
+**42993487769**, checkout `037fec5a6b95ecfcda02db98e8b2125326da9155`.
+The entire job log was read. Rendered-page checks were intentionally not part of
+that offline job; they remain required in the actual-copy operation.
+
+The fresh staging39-sourced rehearsal with uploads was dispatched as
+`peek-title-resize-copy-1`, Actions **42994882056**, source
+`95f823413b04fa8f683d77e0a0f82087aac3fa7b`. It exercises the focused resize
+matrix in three engines, retained WebKit layout/disclosures and the full
+quiet-navigation rehearsal, followed by exact post-browser recovery and decisive
+cleanup. It passed at **10:11:22 UTC**. Neither staging39 nor live was changed.
+
+## Actual staging-copy proof
+
+All **29 unique browser leaves passed, 25,343/0**, across all five phases.
+The focused resize checks passed 48/0 in each engine. WebKit disclosures passed
+70/0 and layout 152/0, including both previously failing Therapeutic 150% cases.
+The retained quiet-navigation matrix passed 24,977/0. Independent review
+recomputed the totals from the raw, nonduplicated leaf evidence and replayed the
+strict parsers. Home rendered gates passed 35/0 and regulated client-page gates
+322/0. No new PHP errors appeared; the existing WP-CLI deprecation was unchanged.
+
+Actual copy-only snapshots were:
+
+- First apply: `peek-template-core-title-resize-before-20261111-092637-26167859.json`.
+- Reapply used before/after browsers: `peek-template-core-title-resize-before-20261111-092643-db47cb69.json`.
+- Final reapply: `peek-template-core-title-resize-before-20261111-101116-42804e9e.json`.
+
+First/repeat applied core state was
+`84a867a04169bdd4b6bafe87f0d01ab8e592a91ffb2e1abf9f6cb4fd43806607`;
+the reapply state remained
+`7d30fcfca2f9bc69112943191c246e02023b26f99af6bed9b8156a256527a8a1`
+before and after browsers. Both rollback cycles restored original core state
+`74ea2dd67eaf86ea065abeba398d41df6fe0f5451e1e0b36d11e2b309d60e56f`.
+Final reapply verified
+`bec04e2f63bfe211b766e7a3f262ae1ddfffb89cfac3416d3cf0dd2b7b1605d0`.
+Every complete four-page state remained
+`3e9acc4ea6dfedf7fe99e7a70534603ba0d32a1827793755c8ee10f4e55c9cc9`.
+All seven fingerprints preserved CSS29
+`b024acc687b49a37115940b52976f3bdcfc6cb236ae7bb4a81422f8c2d02c69b`.
+A=C=E byte for byte; B=B2, with only the existing WPCode snippet cache exception
+across separate reapplications. Core #1380 alone changed code.
+
+Artifact **13846236915**, 120,755,379 bytes, SHA256
+`5aa2129d96ae0c925774c221bbda55501b02507af35589188f643059eb006b8c`,
+passed size/digest/ZIP integrity and path checks. Its 102 evidence files contain
+no SQL, private snapshots, configuration or source files. All 445 unique JPEGs
+decoded without conflicting copies. All 16 retained Chromium layout captures
+match the accepted quiet staging captures exactly. The WebKit enlarged research
+card retains its text geometry; its old/new pixel differences are inside the
+rail. Broader captures include the separately accepted Search contrast change
+and rendering differences, so this is not an all-images-identical claim.
+Root and independent review found no new visual blocker.
+
+Cleanup verified removal and absence of the owned relay, containers, volumes,
+networks and temporary directory. These deleted copy-only snapshots are evidence,
+not recovery files for staging or live. Root-font enlargement is not OS text
+scaling, and Linux WebKit is not physical iPhone Safari.
+
+Read-only staging preflight `peek-title-resize-dry-1` passed at **10:14:56 UTC**,
+Actions **43001945737**, source `33c6d263bedec8de83709ceff746a8210f182e9c`.
+It confirmed exact frozen-v10 readiness.
+
+## Staging apply
+
+`peek-title-resize-apply-1`, Actions **43002377065**, source
+`4904b120d89b4b930d930076dcca4630e3bd7594`, passed at **10:28:47 UTC**.
+The existing core #1380 was updated at **10:18:08 UTC**. No snippet swap or
+fallback-only interval occurred. Source files are unchanged from the source
+that passed the rehearsal. Complete source Gates also passed **55/0** at
+**10:26:32 UTC**, run **43002376871**, on this exact request commit; the full
+job log was read.
+
+Fresh export: `staging39-before-peek-title-resize-20261111-101757-98626.sql`,
+4,548,876 plaintext bytes. Server/copy SHA equality and encrypted off-site
+read-back were verified before apply. Actual staging recovery snapshot:
+`/home/customer/private-backups/peek-template-core-title-resize-before-20261111-101808-92c3067f.json`.
+It was verified off-site before purge/render. Retained logs print SHA prefixes
+`807ee9946e96…` for the export and `f2be6217ba78…` for the snapshot; they do not
+contain the complete file hashes. No raw backups were downloaded for review.
+
+Exact applied core state before and after all 19 HTTP200 page renders:
+`e54fda8e0dbeba0f95e325b7fac470001befa3b04d7412ac4ae58ac4682c8a70`.
+Four-page state remained `3e9acc4ea6dfedf7fe99e7a70534603ba0d32a1827793755c8ee10f4e55c9cc9`;
+CSS29 remained `b024acc687b49a37115940b52976f3bdcfc6cb236ae7bb4a81422f8c2d02c69b`.
+Every route served exact core/style bytes with the correct page-data scope.
+The fresh export imported successfully into the restore-proof database; across
+104 fingerprints only core #1380 and the expected WPCode cache differed.
+This is export-import proof, not a rollback performed on staging39.
+
+The automatic wording/rendered gates, structured data and PHP-log checks passed.
+All 20 generic screenshots still differ from live, which has the old navigation;
+that informational comparison is not a visual pass. Independent backup/native
+audit found no blocker. Artifact **13847830563**, 29,539,996 bytes, SHA256
+`9d7f11e26f27d487e53943edf9060eb5cad71854c8c7d5fb643be5bb29453e1f`,
+was verified and contains 40 public screenshots and three logs, without private
+backup or snapshot data.
+
+Independent comparison of the 20 actual deployed-page captures against the
+accepted quiet staging apply found identical dimensions for every image and
+18/20 pixel-identical images. Services mobile differs only where the existing
+first-time navigation hint is visible; Thai mobile differs by nine pixels at
+the boxed index's rounded edge. No new layout regression was found. This matrix
+does not include Search; its separate approved CSS proof remains separate.
+
+Focused public checks `peek-title-resize-public-1` passed at **10:39:36 UTC**, run
+**43004137038**, source `f62e8aeacb4d55aac5fd1bd9f1bf07cfc65d727a`.
+All four phases passed, **752/0**: 48/0 focused resize assertions in each of
+Chromium, Firefox and WebKit, plus 608/0 quiet-navigation assertions in Chromium.
+There were 30 page loads and 60 captures. Independent raw-evidence review
+recomputed all totals and replayed all four strict parsers; browser stderr was
+empty. All 60 unique JPEGs decoded. All 24 resize captures match the successful
+copy exactly, including WebKit; four Search captures also match. Other quiet
+capture differences are confined to strip text and small rail regions, without
+a new layout, clipping or control concern. Artifact **13847692934**, 3,847,412
+bytes, SHA256 `d140549cc62c8bc663f0d359cfe1b5af73b6adc392cb1c55ea2cf05d6ba3ae9a`,
+passed size/digest/ZIP integrity checks.
+
+Final actual-snapshot verification `peek-title-resize-verify-1` passed at
+**10:41:20 UTC**, Actions **43005630245**, source
+`03b0b5e243a1231bcc53af46067c8e1d8295a31c`. It used the actual staging snapshot
+above, verified the same exact core/four-page state before and after all 19
+HTTP200 exact-byte renders, and compared CSS before/after rendering. A final
+stored fingerprint comparison closes the interval back to the apply's CSS hash.
+Final stored inspection `peek-title-resize-stored-1` passed at **10:42:37 UTC**,
+Actions **43005811818**, source `e1a95f06b3f0f73af7a920d76f9cc20a3373071f`.
+The published core #1380 code SHA is exactly
+`f152fad975bb85ed4ad06a0ce5f0000cd656276b34efb38b748646a5fdc73566`;
+CSS29 still matches the apply's
+`b024acc687b49a37115940b52976f3bdcfc6cb236ae7bb4a81422f8c2d02c69b`.
+The full report was read. Staging verification is complete. The release payload
+and manifest are unchanged from the source that passed these checks. The complete
+new live-copy first-install and post-browser recovery cycle subsequently passed
+at 11:33:22 UTC, run 43006077712: all 28 browser suites, 24,737/0, exact recovery
+and verified cleanup. See the [release review](2026-11-11-peek-live-release.md).
+Live remains unchanged and disabled.

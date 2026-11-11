@@ -1,0 +1,193 @@
+{
+  "evidence": "Actual copied-site title-rail captures. Automated rehearsal passed, but manual Search-button overlap blocks deployment.",
+  "run": 42658841171,
+  "source_commit": "362e92fa87da1e1aa93ba0de39e32b12d8da52c0",
+  "finished_utc": "2026-11-09T17:06:32Z",
+  "rehearsal_result": "PASS",
+  "deployment_visual_gate": "BLOCKED",
+  "blocker": "Left 44px index icon overlaps Search button after landing at 768/1280px.",
+  "source_capture_directory": "/tmp/peek-title-rails-rehearse-2-captures",
+  "actual_routes_checked": 21,
+  "source_total_captures": 106,
+  "source_actual_captures": 92,
+  "source_fixture_captures": 14,
+  "actual_title_rail_captures_retained": 34,
+  "other_captures_not_retained_here": 72,
+  "source_artifact": {
+    "path": "/tmp/peek-title-rails-rehearse-2.zip",
+    "bytes": 12346738,
+    "sha256": "d8e993b21b5f57a59cd8a0fc3104abf0cdcf647230b258170a2aaa29790a5493"
+  },
+  "images": [
+    {
+      "file": "title-rail-about-1280.jpg",
+      "bytes": 90731,
+      "sha256": "5e98386877cebfdcbce940346d19eba56930d9289addadbb1779353d85e4ccc1"
+    },
+    {
+      "file": "title-rail-about-390.jpg",
+      "bytes": 43843,
+      "sha256": "413e2fbabf88abf7aa365d68b2646e11eba1b08ccbfc9be7003785221955a79f"
+    },
+    {
+      "file": "title-rail-accessibility-1280.jpg",
+      "bytes": 119673,
+      "sha256": "a36323efb16994bbf1a15209442f58551cf9821c677f6d6f94b41a41df76926a"
+    },
+    {
+      "file": "title-rail-accessibility-390.jpg",
+      "bytes": 55220,
+      "sha256": "592a057d45ca052a50e433a7f39f8c298d4a5ed55e446d13db6c28e22da82ce6"
+    },
+    {
+      "file": "title-rail-contact-1280.jpg",
+      "bytes": 70189,
+      "sha256": "e0511ce2aa9b81bdf227635760135bf5a1239ef1cd0ad07c3b39c5b982ae6d28"
+    },
+    {
+      "file": "title-rail-contact-390.jpg",
+      "bytes": 32617,
+      "sha256": "8453d6bdf8304456c8ae7400c3e661b0fcaac243baaf33de59adb3075efbb07d"
+    },
+    {
+      "file": "title-rail-corporate-massage-portland-1280.jpg",
+      "bytes": 84043,
+      "sha256": "5b6cdbe8e6184d166e5964e0720378205cf4954513244b70d40cb2e907699a30"
+    },
+    {
+      "file": "title-rail-corporate-massage-portland-390.jpg",
+      "bytes": 39290,
+      "sha256": "5dd36fd9a74ebed6c08e9ea59d9db32009eff6b3d4b4025b533f78ea631e9aa9"
+    },
+    {
+      "file": "title-rail-home-1280.jpg",
+      "bytes": 99225,
+      "sha256": "a243e0bc3a49d331b07650f0bbeed25ea248b2b73543be66173493bac520902c"
+    },
+    {
+      "file": "title-rail-home-390.jpg",
+      "bytes": 50162,
+      "sha256": "fba062d530e79c30df70e1580131bd830564be8131262f9c10ecfb9eee7c4c30"
+    },
+    {
+      "file": "title-rail-in-page-link-ideas-1280.jpg",
+      "bytes": 72021,
+      "sha256": "3c7e74d22dc2f48dbab92bf33ec2aa966883bd5f3395727c9650b394992732ab"
+    },
+    {
+      "file": "title-rail-in-page-link-ideas-390.jpg",
+      "bytes": 31758,
+      "sha256": "aca52a7b5d920312b1bdcc3cf9cecf241199ed398f51d570294a49e3cec54b60"
+    },
+    {
+      "file": "title-rail-peek-title-missing-page-verification-20261109-1280.jpg",
+      "bytes": 67887,
+      "sha256": "c088b785797c228e198dfbdc4776386efe3af6d7236c4247a3a4bbc2ce2f5eef"
+    },
+    {
+      "file": "title-rail-peek-title-missing-page-verification-20261109-390.jpg",
+      "bytes": 40326,
+      "sha256": "55ab6958657f12ae2da8feea5c43a77d205b3529c79085ef6dfd45365898e85b"
+    },
+    {
+      "file": "title-rail-personal-automation-1280.jpg",
+      "bytes": 116998,
+      "sha256": "3440781aaf4df125e0214f7fddd5ce72fb3dd3a9677a0576218ec25d63c963c2"
+    },
+    {
+      "file": "title-rail-personal-automation-390.jpg",
+      "bytes": 54451,
+      "sha256": "38d64e864c1641203c6d8608a96a3f52ae099df9c25b164421cde77daeea030f"
+    },
+    {
+      "file": "title-rail-personal-automation-privacy-1280.jpg",
+      "bytes": 145121,
+      "sha256": "74ac8ac1d3fc767e84e6c55d6452e6a98860feb061dea8517644bc91ef10d601"
+    },
+    {
+      "file": "title-rail-personal-automation-privacy-390.jpg",
+      "bytes": 51168,
+      "sha256": "07a067cefdbb983eeccff7e7b53be66c7ee980228b25f821177e849e870e4574"
+    },
+    {
+      "file": "title-rail-personal-automation-terms-1280.jpg",
+      "bytes": 113571,
+      "sha256": "ac8e9a6c8bc0eeb150633868143c046d3c18b3db25677069aceaa02e4f6bbcfa"
+    },
+    {
+      "file": "title-rail-personal-automation-terms-390.jpg",
+      "bytes": 52679,
+      "sha256": "8218c75f2bb4157bc2e0fecff1b4a5a538d8706defa175446a13d013e3c94a0d"
+    },
+    {
+      "file": "title-rail-privacy-policy-1280.jpg",
+      "bytes": 108583,
+      "sha256": "eda0d97c281f8a64733a5c9841dff8b279436a28b659de31a6a7c7b06911b184"
+    },
+    {
+      "file": "title-rail-privacy-policy-390-landed.jpg",
+      "bytes": 55448,
+      "sha256": "f7352e4a4433f115ff54b7e79c13156fbe3f51bcd8cc0f5df280b9be8e29a8c6"
+    },
+    {
+      "file": "title-rail-privacy-policy-390.jpg",
+      "bytes": 50372,
+      "sha256": "ead08c6a2a96a06dc80618e999a3b8acc7f241c61c35f67a83bc2da109af6689"
+    },
+    {
+      "file": "title-rail-progress-nav-ideas-1280.jpg",
+      "bytes": 70570,
+      "sha256": "067a9db31cb0cc7cc64a488bca81076e67eac745e320386a6cc8c5930989741b"
+    },
+    {
+      "file": "title-rail-progress-nav-ideas-390.jpg",
+      "bytes": 32110,
+      "sha256": "90be234b3d1c5ad65c6a72a0a26df7cf400fdf5ecb0dbdd47d32cc059ecc4075"
+    },
+    {
+      "file": "title-rail-s-massage-1280-landed.jpg",
+      "bytes": 105610,
+      "sha256": "6690d61594fb9b1f85d3789fe3eee0d5d123b9451a76b1d042daf0bcedac2f13"
+    },
+    {
+      "file": "title-rail-s-massage-1280.jpg",
+      "bytes": 91066,
+      "sha256": "8f222bcc78d609b8bb1623ab4c335e8221b0dfb01d335543c29a041dfe275452"
+    },
+    {
+      "file": "title-rail-s-massage-390-landed.jpg",
+      "bytes": 35551,
+      "sha256": "df03221bb08bdbebd1b96b49579c1c54a7864478e79006c7302775d7d6be9f4b"
+    },
+    {
+      "file": "title-rail-s-massage-390.jpg",
+      "bytes": 35341,
+      "sha256": "7ea462a9633bee1640ecf1b5fe5f1ca13b89ef75b867d8ad5856a48add499f27"
+    },
+    {
+      "file": "title-rail-s-massage-768-landed.jpg",
+      "bytes": 49723,
+      "sha256": "8da7be66c9abc30d65ff65bd6c73d458024d925de7a286b4548b4fb909a5ab04"
+    },
+    {
+      "file": "title-rail-services-1280.jpg",
+      "bytes": 82179,
+      "sha256": "9ef4517534997ac878408f65d900659a00f493dc8b0e5e9b8e94d746337c3de4"
+    },
+    {
+      "file": "title-rail-services-390.jpg",
+      "bytes": 37912,
+      "sha256": "024f908236aaaf2434d117a37f57083a030efd12fe894305c79483e5aa5beecd"
+    },
+    {
+      "file": "title-rail-work-with-me-1280.jpg",
+      "bytes": 101749,
+      "sha256": "702f0de81da18b7d1c19f4a4c2bd3a25c0daa16d12fbbd29ea7d4e7226427597"
+    },
+    {
+      "file": "title-rail-work-with-me-390.jpg",
+      "bytes": 38255,
+      "sha256": "3ec3ec9d36415e901ccf23087d0620d28ae14be76ad6bff27046151416974233"
+    }
+  ]
+}

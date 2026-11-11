@@ -26,6 +26,22 @@ creds="${S26_CREDS:-$root/remote_execution.txt}"
 src="${1:-}"; inst="${2:-}"; uploads=0
 [ "${3:-}" = --with-uploads ] && uploads=1
 invalid() { echo "REHEARSAL INVALID: $*" >&2; exit 2; }
+release_rehearsal=0
+read_only_discovery=0; copy_isolation=0
+# This new in-place core lane is authorized only from the actual staging39 copy.
+# It cannot select the separate live-sourced first-install release rehearsal.
+if [ "$inst" = link-ideas/core-neighbours/install-peek-core-neighbours.php ] || [ "$inst" = link-ideas/core-index-clearance/install-peek-core-index-clearance.php ] || [ "$inst" = link-ideas/core-quiet-nav/install-peek-core-quiet-nav.php ] || [ "$inst" = link-ideas/core-title-resize/install-peek-core-title-resize.php ]; then
+  [ "$src" = staging39 ] && [ "$uploads" = 1 ] || invalid "this core update requires a fresh staging39-sourced copy with uploads"
+  read_only_discovery=1; copy_isolation=1
+fi
+if [ "$inst" = link-ideas/peek-release/install-peek-release.php ]; then
+  release_rehearsal=1; read_only_discovery=1; copy_isolation=1
+  [ "$src" = live ] && [ "$uploads" = 1 ] || invalid "visitor release requires a fresh live-sourced copy with uploads"
+fi
+if [ "$inst" = search-contrast/install-search-contrast.php ]; then
+  [ "$src" = staging39 ] && [ "$uploads" = 1 ] || invalid "Search contrast requires a fresh staging39-sourced copy with uploads"
+  read_only_discovery=1; copy_isolation=1
+fi
 case "$src" in
   live) want="thaisolitude.com" ;;
   staging[0-9]|staging[0-9][0-9]) want="$src.thaisolitude.com" ;;
@@ -49,30 +65,227 @@ db_img=$(img mariadb); wp_img=$(img 'wordpress:php'); cli_img=$(img 'wordpress:c
 [ -n "$db_img" ] && [ -n "$wp_img" ] && [ -n "$cli_img" ] || invalid "could not read the pinned images from docker-compose.yml"
 
 work="${RUNNER_TEMP:-$HOME/.cache}/ts-rehearsal-$$"   # never /tmp on Ryan's computer (its tmpfs runs out of inodes)
+# The release and new title-resize copies require decisive deletion proof.
+# Historical staging lanes retain their established cleanup behavior.
+owned_cleanup_component=""
+if [ "$release_rehearsal" = 1 ]; then
+  owned_cleanup_component=peek-release
+elif [ "${inst:-}" = link-ideas/core-title-resize/install-peek-core-title-resize.php ]; then
+  owned_cleanup_component=core-title-resize
+fi
+# Resolve the parent before creating anything; never adopt an existing run folder.
+release_work_parent=""; release_work_owned=0
+if [ -n "$owned_cleanup_component" ]; then
+  release_work_parent=$(cd -- "${RUNNER_TEMP:-$HOME/.cache}" && pwd -P) || invalid "release temporary parent is unavailable"
+  work="$release_work_parent/ts-rehearsal-$$"
+fi
 pub="$work/public_html"; bk="$work/backups"; out="$work/out"
-mkdir -p "$pub" "$bk" "$out"; chmod 777 "$bk"
+if [ -z "$owned_cleanup_component" ]; then
+  mkdir -p "$pub" "$bk" "$out"; chmod 777 "$bk"
+fi
 project="ts-rehearsal-$$"
+release_relay_pid=""
 dc() { docker compose --progress quiet -p "$project" -f "$work/compose.yml" "$@"; }
 cleanup() { # files the containers wrote belong to their user, so remove those from inside a container, then the emptied folders
+  if [ -n "${release_relay_pid:-}" ]; then
+    kill "$release_relay_pid" 2>/dev/null || true
+    wait "$release_relay_pid" 2>/dev/null || true
+    release_relay_pid=""
+  fi
   dc down -v --remove-orphans >/dev/null 2>&1
   case "$work" in */ts-rehearsal-[0-9]*) ;; *) echo "cleanup: refusing to remove '$work' (not this run's work folder)" >&2; return ;; esac
   rm -rf "$work" 2>/dev/null || { docker run --rm --user 0 --entrypoint sh -v "$work:/w" "$cli_img" -c 'rm -rf /w/public_html /w/backups /w/out /w/db.sql.gz /w/compose.yml /w/fp.sql' >/dev/null 2>&1; rm -rf "$work" 2>/dev/null; }
 }
 trap cleanup EXIT
 
+release_cleanup_resources() {
+  local failed=0 directory_safe=1 current_parent resource ids relay_parent n
+  local cleanup_component="${owned_cleanup_component:-}" cleanup_log
+  case "$cleanup_component" in
+    peek-release) [ "${release_rehearsal:-0}" = 1 ] || return 1 ;;
+    core-title-resize) [ "${release_rehearsal:-0}" = 0 ] && [ "${inst:-}" = link-ideas/core-title-resize/install-peek-core-title-resize.php ] || return 1 ;;
+    *) echo "FAIL cleanup: no exact owned-copy profile; no cleanup mutation attempted" >&2; return 1 ;;
+  esac
+  cleanup_log="${RUNNER_TEMP:-$HOME/.cache}/ops-out/$cleanup_component-native/cleanup.log"
+  # Only fixed statuses/counts enter this retained log. Docker output, copied
+  # source/configuration, SQL and private recovery snapshots are never retained.
+  if ! mkdir -p -- "${cleanup_log%/*}" || ! touch -- "$cleanup_log" || ! chmod 600 -- "$cleanup_log"; then
+    echo "FAIL release cleanup: cannot retain cleanup evidence" >&2
+    failed=1; cleanup_log=/dev/null
+  fi
+  release_cleanup_note() {
+    printf '%s\n' "$*" >> "$cleanup_log" && printf '%s\n' "$*"
+  }
+  current_parent=$(cd -- "${release_work_parent:-/nonexistent}" 2>/dev/null && pwd -P) || current_parent=""
+  if [ "${release_work_owned:-0}" != 1 ] ||
+     [ "$project" != "ts-rehearsal-$$" ] || [ -z "$release_work_parent" ] ||
+     [ "$current_parent" != "$release_work_parent" ] ||
+     [ "$work" != "$release_work_parent/ts-rehearsal-$$" ] || [ -L "$work" ]; then
+    release_cleanup_note "FAIL release cleanup: exact owned project and directory identity not established; no cleanup mutation attempted" || true
+    return 1
+  fi
+
+  if [ -n "${release_relay_pid:-}" ]; then
+    if ! [[ "$release_relay_pid" =~ ^[1-9][0-9]*$ ]]; then
+      release_cleanup_note "FAIL release cleanup: invalid relay identity; no signal sent" || true
+      failed=1; directory_safe=0
+    elif kill -0 "$release_relay_pid" 2>/dev/null; then
+      relay_parent=$(ps -o ppid= -p "$release_relay_pid" 2>/dev/null) || relay_parent=""
+      relay_parent=${relay_parent//[[:space:]]/}
+      if [ "$relay_parent" != "$$" ]; then
+        release_cleanup_note "FAIL release cleanup: relay is not this process's child; no signal sent" || true
+        failed=1; directory_safe=0
+      else
+        kill -TERM "$release_relay_pid" 2>/dev/null || true
+        for n in {1..30}; do kill -0 "$release_relay_pid" 2>/dev/null || break; sleep 0.1; done
+        if kill -0 "$release_relay_pid" 2>/dev/null; then
+          kill -KILL "$release_relay_pid" 2>/dev/null || true
+          for n in {1..20}; do kill -0 "$release_relay_pid" 2>/dev/null || break; sleep 0.1; done
+        fi
+        if kill -0 "$release_relay_pid" 2>/dev/null; then
+          release_cleanup_note "FAIL release cleanup: owned relay still exists after bounded stop" || true
+          failed=1; directory_safe=0
+        else
+          wait "$release_relay_pid" 2>/dev/null || true
+          release_relay_pid=""
+        fi
+      fi
+    else
+      wait "$release_relay_pid" 2>/dev/null || true
+      release_relay_pid=""
+    fi
+  fi
+  if [ -z "${release_relay_pid:-}" ]; then
+    release_cleanup_note "INFO release cleanup: owned relay absent" || failed=1
+  fi
+
+  if [ -f "$work/compose.yml" ] && [ ! -L "$work/compose.yml" ]; then
+    if dc down -v --remove-orphans >/dev/null 2>&1; then
+      release_cleanup_note "INFO release cleanup: Compose teardown completed" || failed=1
+    else
+      release_cleanup_note "FAIL release cleanup: Compose teardown failed" || true
+      failed=1; directory_safe=0
+    fi
+  elif [ -e "$work/compose.yml" ] || [ -L "$work/compose.yml" ]; then
+    release_cleanup_note "FAIL release cleanup: unsafe Compose file; no Compose command attempted" || true
+    failed=1; directory_safe=0
+  else
+    release_cleanup_note "INFO release cleanup: no Compose file was created" || failed=1
+  fi
+
+  # Successful empty results are required even on an early setup failure.
+  # Exact Compose project labels scope every query; never use global prune.
+  for resource in container volume network; do
+    case "$resource" in
+      container) ids=$(docker ps --all --quiet --filter "label=com.docker.compose.project=$project" 2>/dev/null); n=$? ;;
+      volume) ids=$(docker volume ls --quiet --filter "label=com.docker.compose.project=$project" 2>/dev/null); n=$? ;;
+      network) ids=$(docker network ls --quiet --filter "label=com.docker.compose.project=$project" 2>/dev/null); n=$? ;;
+    esac
+    if [ "$n" -ne 0 ] || [ -n "$ids" ]; then
+      release_cleanup_note "FAIL release cleanup: owned $resource absence unproved" || true
+      failed=1; directory_safe=0
+    else
+      release_cleanup_note "INFO release cleanup: owned $resource resources absent" || failed=1
+    fi
+  done
+
+  if [ "$directory_safe" = 1 ]; then
+    if ! rm -rf -- "$work" 2>/dev/null; then
+      # The copy may contain files written by a container UID. This fallback
+      # mounts only the exact owned folder and cannot reach any network.
+      if [ -d "$work" ] && [ ! -L "$work" ]; then
+        docker run --rm --network none --user 0 --entrypoint sh \
+          --label "com.docker.compose.project=$project" --label com.docker.compose.service=release-cleanup \
+          -v "$work:/w" "$cli_img" -c 'find /w -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +' >/dev/null 2>&1 || failed=1
+        rm -rf -- "$work" 2>/dev/null || failed=1
+      else
+        failed=1
+      fi
+    fi
+    if [ -e "$work" ] || [ -L "$work" ]; then
+      release_cleanup_note "FAIL release cleanup: owned temporary directory still exists" || true
+      failed=1
+    else
+      release_cleanup_note "INFO release cleanup: owned temporary directory absent" || failed=1
+    fi
+    # The fallback also carries the project label; its --rm completion must
+    # leave no owned container, volume or network behind.
+    for resource in container volume network; do
+      case "$resource" in
+        container) ids=$(docker ps --all --quiet --filter "label=com.docker.compose.project=$project" 2>/dev/null); n=$? ;;
+        volume) ids=$(docker volume ls --quiet --filter "label=com.docker.compose.project=$project" 2>/dev/null); n=$? ;;
+        network) ids=$(docker network ls --quiet --filter "label=com.docker.compose.project=$project" 2>/dev/null); n=$? ;;
+      esac
+      if [ "$n" -ne 0 ] || [ -n "$ids" ]; then
+        release_cleanup_note "FAIL release cleanup: final owned $resource absence unproved" || true
+        failed=1
+      fi
+    done
+  else
+    release_cleanup_note "FAIL release cleanup: copy directory retained inside runner because resource teardown is unproved" || true
+  fi
+  if [ "$failed" -eq 0 ]; then
+    release_cleanup_note "INFO release cleanup: PASSED; owned relay, containers, volumes, networks and temporary directory absent" || return 1
+    return 0
+  fi
+  release_cleanup_note "FAIL release cleanup: deletion not fully verified" || true
+  return 1
+}
+release_cleanup_exit() {
+  local result=${1:-$?}
+  trap - EXIT
+  release_cleanup_resources || { [ "$result" -ne 0 ] || result=1; }
+  exit "$result"
+}
+if [ -n "$owned_cleanup_component" ]; then
+  trap release_cleanup_exit EXIT
+  [ ! -e "$work" ] && [ ! -L "$work" ] || invalid "release temporary directory already exists; refusing to adopt it"
+  mkdir -m 700 -- "$work" || invalid "could not create the exclusive release temporary directory"
+  release_work_owned=1
+  mkdir -p -- "$pub" "$bk" "$out" && chmod 777 "$bk" || invalid "could not prepare the release temporary directories"
+fi
+
 read -r -d '' REMOTE <<'EOS' || true
 set -euo pipefail
-want=$1; part=$2; uploads=${3:-0}
+want=$1; part=$2; uploads=${3:-0}; read_only_discovery=${4:-0}
+# Reviewed raw source reads do not bootstrap WordPress or any MU plugins.
+# config/core are before_wp_load and db query/export are before wp_load.
+if [ "$read_only_discovery" = 1 ]; then
+  wp() { command wp --skip-plugins --skip-themes --exec='ini_set("log_errors", "0"); ini_set("error_log", "/dev/null");' "$@"; }
+fi
 doc=""
 cfgs=$(mktemp); trap 'rm -f "$cfgs"' EXIT   # a file, not < <(...): the SiteGround shell has no /dev/fd for process substitution
 find "$HOME/www" -maxdepth 4 -name wp-config.php 2>/dev/null > "$cfgs"
 while IFS= read -r cfg; do
-  d=$(dirname "$cfg"); h=$(wp --path="$d" --skip-plugins --skip-themes option get home 2>/dev/null || true); hh=${h#http://}; hh=${hh#https://}; hh=${hh%/}
-  if [ "$hh" = "$want" ]; then [ -z "$doc" ] || { echo "More than one install reports $want; refusing to guess." >&2; exit 1; }; doc=$d; fi
+  d=$(dirname "$cfg")
+  if [ "$read_only_discovery" = 1 ]; then
+    candidate_prefix=$(wp --path="$d" config get table_prefix --type=variable 2>/dev/null) || continue
+    [[ "$candidate_prefix" =~ ^[A-Za-z0-9_]+$ ]] || continue
+    h=$(wp --path="$d" db query "SELECT option_value FROM ${candidate_prefix}options WHERE option_name='home';" --skip-column-names --batch --raw 2>/dev/null) || continue
+  else
+    h=$(wp --path="$d" --skip-plugins --skip-themes option get home 2>/dev/null || true)
+  fi
+  if [ "$read_only_discovery" = 1 ]; then
+    # Only exact origins qualify; stripping prefixes would also accept malformed
+    # or scheme-less values such as http://https://staging39.thaisolitude.com.
+    case "$h" in "http://$want"|"https://$want"|"http://$want/"|"https://$want/") ;; *) continue ;; esac
+  else
+    hh=${h#http://}; hh=${hh#https://}; hh=${hh%/}
+    [ "$hh" = "$want" ] || continue
+  fi
+  [ -z "$doc" ] || { echo "More than one install reports $want; refusing to guess." >&2; exit 1; }; doc=$d
 done < "$cfgs"
 [ -n "$doc" ] || { echo "No WordPress install under ~/www reports home host $want." >&2; exit 1; }
 case "$part" in
-  info) printf 'folder=%s\nprefix=%s\nversion=%s\nhome=%s\n' "${doc#"$HOME"/}" "$(wp --path="$doc" --skip-plugins --skip-themes db prefix)" "$(wp --path="$doc" --skip-plugins --skip-themes core version)" "$(wp --path="$doc" --skip-plugins --skip-themes option get home)" ;;
+  info)
+    if [ "$read_only_discovery" = 1 ]; then
+      source_prefix=$(wp --path="$doc" config get table_prefix --type=variable)
+      [[ "$source_prefix" =~ ^[A-Za-z0-9_]+$ ]] || exit 1
+      source_home=$(wp --path="$doc" db query "SELECT option_value FROM ${source_prefix}options WHERE option_name='home';" --skip-column-names --batch --raw)
+      printf 'folder=%s\nprefix=%s\nversion=%s\nhome=%s\n' "${doc#"$HOME"/}" "$source_prefix" "$(wp --path="$doc" core version)" "$source_home"
+    else
+      printf 'folder=%s\nprefix=%s\nversion=%s\nhome=%s\n' "${doc#"$HOME"/}" "$(wp --path="$doc" --skip-plugins --skip-themes db prefix)" "$(wp --path="$doc" --skip-plugins --skip-themes core version)" "$(wp --path="$doc" --skip-plugins --skip-themes option get home)"
+    fi ;;
   db) wp --path="$doc" --skip-plugins --skip-themes db export - | gzip -c ;;
   files)
     ex=(--exclude=./wp-config.php --exclude=./.htaccess --exclude=./php_errorlog --exclude='*.log' --exclude='*.sql' --exclude='*.sql.gz' --exclude='*.zip' --exclude='*.tar.gz'
@@ -81,7 +294,7 @@ case "$part" in
     tar -C "$doc" -cf - "${ex[@]}" . ;;
 esac
 EOS
-remote() { ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 "$user@$host" bash -s -- "$want" "$@" <<<"$REMOTE"; }
+remote() { ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 "$user@$host" bash -s -- "$want" "$1" "${2:-0}" "$read_only_discovery" <<<"$REMOTE"; }
 if [ -n "$seam" ]; then
   remote() { case "$1" in info) cat "$seam/info.txt" ;; db) cat "$seam/db.sql.gz" ;; files) cat "$seam/files.tar" ;; esac; }
   echo "TEST MODE: the source is read from $seam, not from SiteGround"
@@ -131,6 +344,17 @@ services:
     volumes: ["$pub:/var/www/html", "$wwm:/wwm:ro", "$bk:/backups"]
     environment: { WWM_BACKUP_DIR: /backups }
 YML
+if [ "${copy_isolation:-$release_rehearsal}" = 1 ]; then
+  # Copied plugin settings may contain external integrations. Isolate every copy
+  # service before first boot. Internal networks do not reliably publish ports;
+  # an owned host relay below provides the loopback browser endpoint instead.
+  sed -i '/^    ports: \["127.0.0.1:8090:80"\]$/d' "$work/compose.yml"
+  cat >> "$work/compose.yml" <<'YML'
+networks:
+  default:
+    internal: true
+YML
+fi
 
 echo "[2] starting the pinned practice images and importing ..."
 dc up -d db >/dev/null 2>&1 || invalid "could not start the database container"
@@ -163,6 +387,28 @@ wpdb option update sg_security_disable_activity_log 1 >/dev/null
 wpc eval 'if ( function_exists( "wpcode" ) ) { wpcode()->cache->cache_all_loaded_snippets(); }' >/dev/null 2>&1 || true
 [ "$(wpdb option get home 2>/dev/null)" = "http://localhost:8090" ] || invalid "the copy's home is not http://localhost:8090 after the rewrite"
 dc up -d wordpress >/dev/null 2>&1 || invalid "could not start the web container"
+if [ "${copy_isolation:-$release_rehearsal}" = 1 ]; then
+  release_container=$(dc ps -q wordpress) || invalid "isolated WordPress container lookup failed"
+  [[ "$release_container" =~ ^[a-f0-9]{64}$ ]] || invalid "isolated WordPress container identity is not unique"
+  release_network=$(docker inspect --format '{{range .NetworkSettings.Networks}}{{.NetworkID}}{{end}}' "$release_container") || invalid "isolated WordPress network lookup failed"
+  [[ "$release_network" =~ ^[a-f0-9]{64}$ ]] || invalid "isolated WordPress network identity is not unique"
+  release_internal=$(docker network inspect --format '{{.Internal}}' "$release_network") || invalid "isolated WordPress network inspection failed"
+  [ "$release_internal" = true ] || invalid "copied WordPress network is not internal"
+  release_backend=$(docker inspect --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' "$release_container") || invalid "isolated WordPress address lookup failed"
+  python3 -I -B "$here/rehearsal-loopback.py" "$release_backend" > "$out/release-loopback.log" 2>&1 &
+  release_relay_pid=$!
+  release_relay_ready=0
+  for _ in $(seq 1 30); do
+    kill -0 "$release_relay_pid" 2>/dev/null || break
+    if grep -qxF "READY rehearsal loopback 127.0.0.1:8090 -> $release_backend:80" "$out/release-loopback.log"; then release_relay_ready=1; break; fi
+    sleep 1
+  done
+  if [ "$release_relay_ready" != 1 ]; then
+    cat "$out/release-loopback.log"
+    invalid "isolated copy loopback relay did not bind"
+  fi
+  echo "  isolated PHP network verified; owned loopback relay ready"
+fi
 up=0; for _ in $(seq 1 60); do [ "$(curl -s -o /dev/null -m 10 -w '%{http_code}' http://localhost:8090/)" = 200 ] && { up=1; break; }; sleep 2; done
 [ "$up" = 1 ] || invalid "the copy's home page never answered 200"
 if [ -n "$seam" ] && [ -n "${TS_REHEARSAL_TEST_PREP:-}" ]; then   # TESTING ONLY: PHP run on the copy before the baseline (e.g. take a change out so it can be rehearsed)
@@ -177,7 +423,7 @@ fi
 
 sql() { dc exec -T db mariadb -uroot -prehearsal --default-character-set=utf8mb4 -N -B wp "$@"; }   # the client in the wpcli image insists on TLS; query the db container directly
 fp() { # fingerprint lines into $out/$1.txt (the prove-restore.sh query set)
-  local q="$work/fp.sql" t
+  local q="$work/fp.sql" t fp_status
   {
     echo "SET NAMES utf8mb4;"
     for t in $(sql -e 'SHOW TABLES'); do echo "SELECT 'rows', '$t', COUNT(*) FROM \`$t\`;"; done
@@ -188,47 +434,444 @@ fp() { # fingerprint lines into $out/$1.txt (the prove-restore.sh query set)
     echo "SELECT 'option', option_name, SHA2(option_value,256) FROM \`${prefix}options\` WHERE option_name IN ('astra-settings','widget_block','nav_menu_locations','blogname','blogdescription','siteurl','home','active_plugins','template','stylesheet','permalink_structure','surerank_settings','wpcode_snippets','ihaf_insert_header','ihaf_insert_footer','wp_page_for_privacy_policy','sidebars_widgets') ORDER BY option_name;"
   } > "$q"
   sql < "$q" | grep -v '^$' > "$out/$1.txt"
+  fp_status=("${PIPESTATUS[@]}")
+  [ "${fp_status[0]}" -eq 0 ] && [ "${fp_status[1]}" -eq 0 ] || invalid "fingerprint $1 query/output failed; partial rows prove nothing"
   grep -v '^rows' "$out/$1.txt" > "$out/$1.content"
   [ "$(wc -l < "$out/$1.content")" -ge 10 ] || invalid "fingerprint $1 returned almost nothing"
 }
 pages=(/ /about/ /services/ /thai-massage/ /therapeutic-massage/ /deep-tissue-massage/ /work-with-me/ /contact/ /privacy-policy/ /accessibility/)
 log="$pub/wp-content/rehearsal-debug.log"
-load_pages() { local p c bad=0; for p in "${pages[@]}"; do c=$(curl -s -o /dev/null -m 30 -w '%{http_code}' "http://localhost:8090$p"); printf '  %s %s\n' "$c" "$p"; [ "$c" = 200 ] || bad=1; done; return $bad; }
+load_pages() { local p c curl_rc bad=0; for p in "${pages[@]}"; do c=$(curl -s -o /dev/null -m 30 -w '%{http_code}' "http://localhost:8090$p"); curl_rc=$?; printf '  %s %s\n' "$c" "$p"; [ "$c" = 200 ] && [ "$curl_rc" -eq 0 ] || bad=1; done; return $bad; }
 errs() { [ -f "$log" ] && sed -E 's/^\[[^]]*\] //' "$log" | grep -E 'PHP (Fatal|Parse|Warning|Notice|Deprecated)' | sort -u || true; }
 
 fails=0
 check() { if [ "$2" -eq 0 ]; then echo "  -> PASS  $1"; else echo "  -> FAIL  $1"; fails=$((fails + 1)); fi; }
-inst_run() { local name=$1; shift; echo; echo "[$name] wp eval-file $inst $*"; wpc --user=1 eval-file "/wwm/$inst" "$@" 2>&1 | grep -v 'phar:///usr/local/bin/wp/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php' | tee "$out/$name.log" | sed 's/^/    /'; return "${PIPESTATUS[0]}"; }   # that one line is WP-CLI's own PHP 8.5 deprecation, not the installer's
+inst_run() { # The filtered line is WP-CLI's PHP 8.5 deprecation, not the installer's.
+  local name=$1 status; shift
+  echo; echo "[$name] wp eval-file $inst $*"
+  if [ "$release_rehearsal" = 1 ] || core_guarded_lane || search_contrast_lane; then
+    # WP-CLI writes its PHP 8.5 deprecation in fragments on stderr. Merging
+    # streams can prefix the actual stdout success line with "Deprecated: ".
+    # Keep the parser's stdout exact and retain every stderr byte separately.
+    local stderr_fd stderr_pid stderr_rc stderr_display_rc
+    exec {stderr_fd}> >(tee "$out/$name.stderr.log" >/dev/null) || return 1
+    stderr_pid=$!
+    wpc --user=1 eval-file "/wwm/$inst" "$@" 2>&"$stderr_fd" | tee "$out/$name.log" | sed 's/^/    /'
+    status=("${PIPESTATUS[@]}")
+    exec {stderr_fd}>&-
+    wait "$stderr_pid"; stderr_rc=$?
+    sed 's/^/    stderr: /' "$out/$name.stderr.log"; stderr_display_rc=$?
+    [ "${status[0]}" -eq 0 ] && [ "${status[1]}" -eq 0 ] && [ "${status[2]}" -eq 0 ] && [ "$stderr_rc" -eq 0 ] && [ "$stderr_display_rc" -eq 0 ]
+    return $?
+  fi
+  wpc --user=1 eval-file "/wwm/$inst" "$@" 2>&1 | grep -v 'phar:///usr/local/bin/wp/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php' | tee "$out/$name.log" | sed 's/^/    /'
+  status=("${PIPESTATUS[@]}")
+  if [ "$release_rehearsal" = 1 ] || core_guarded_lane; then
+    [ "${status[0]}" -eq 0 ] && [ "${status[1]}" -eq 0 ] && [ "${status[2]}" -eq 0 ] && [ "${status[3]}" -eq 0 ]
+  else
+    return "${status[0]}"
+  fi
+}
+core_focus_snapshot_from_log() {
+  local path component=core-input-focus
+  case "${inst:-}" in
+    link-ideas/core-neighbours/install-peek-core-neighbours.php) component=core-neighbours ;;
+    link-ideas/core-index-clearance/install-peek-core-index-clearance.php) component=core-index-clearance ;;
+    link-ideas/core-quiet-nav/install-peek-core-quiet-nav.php) component=core-quiet-nav ;;
+    link-ideas/core-title-resize/install-peek-core-title-resize.php) component=core-title-resize ;;
+  esac
+  path=$(sed -nE 's@^Success: .*Before-snapshot: (/backups/peek-template-'"$component"'-before-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}\.json)$@\1@p' "$1")
+  [[ "$path" =~ ^/backups/peek-template-${component}-before-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}\.json$ ]] || return 1
+  printf '%s\n' "$path"
+}
+core_focus_lane() {
+  case "${inst:-}" in
+    link-ideas/core-input-focus/install-peek-core-input-focus.php|link-ideas/core-neighbours/install-peek-core-neighbours.php|link-ideas/core-index-clearance/install-peek-core-index-clearance.php|link-ideas/core-quiet-nav/install-peek-core-quiet-nav.php|link-ideas/core-title-resize/install-peek-core-title-resize.php) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+core_focus_verify() {
+  local label=$1 snapshot=$2; shift 2
+  echo; echo "[$label] exact shared-core snapshot verification $snapshot $*"
+  wpc --user=1 eval-file /wwm/link-ideas/install-peek-nav.php verify "$snapshot" "$@" 2>&1 | tee "$out/$label.log" | sed 's/^/    /'
+  local status=("${PIPESTATUS[@]}")
+  [ "${status[0]}" -eq 0 ] && [ "${status[1]}" -eq 0 ] && [ "${status[2]}" -eq 0 ]
+}
+core_guarded_lane() {
+  case "${inst:-}" in
+    link-ideas/core-neighbours/install-peek-core-neighbours.php|link-ideas/core-index-clearance/install-peek-core-index-clearance.php|link-ideas/core-quiet-nav/install-peek-core-quiet-nav.php|link-ideas/core-title-resize/install-peek-core-title-resize.php) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+core_neighbours_require_clean() {
+  ! core_guarded_lane || [ "$fails" -eq 0 ] || {
+    echo "REHEARSAL FAILED: guarded shared core $*; no subsequent mutation or browser work attempted."; exit 1;
+  }
+}
+core_neighbours_cleanup() {
+  local result=$? file component=core-neighbours
+  [ "${inst:-}" != link-ideas/core-index-clearance/install-peek-core-index-clearance.php ] || component=core-index-clearance
+  [ "${inst:-}" != link-ideas/core-quiet-nav/install-peek-core-quiet-nav.php ] || component=core-quiet-nav
+  [ "${inst:-}" != link-ideas/core-title-resize/install-peek-core-title-resize.php ] || component=core-title-resize
+  local evidence="${RUNNER_TEMP:-$HOME/.cache}/ops-out/$component-native"
+  if mkdir -p "$evidence"; then
+    # Public gate logs, hashes and route inventory only; never private snapshots,
+    # SQL exports, copied source files or database credentials.
+    for file in "$out"/*.log "$out"/*.content "$out"/errors-*.txt "$out"/title-strip-pages.json; do
+      [ -f "$file" ] || continue
+      cp "$file" "$evidence/" || { echo "FAIL $component rehearsal: could not retain ${file##*/}" >&2; if [ "$component" != core-title-resize ] || [ "$result" -eq 0 ]; then result=1; fi; }
+    done
+  else
+    echo "FAIL $component rehearsal: cannot retain complete native evidence" >&2
+    if [ "$component" != core-title-resize ] || [ "$result" -eq 0 ]; then result=1; fi
+  fi
+  if [ "$component" = core-title-resize ]; then release_cleanup_exit "$result"; fi
+  cleanup
+  exit "$result"
+}
+search_contrast_lane() { [ "${inst:-}" = search-contrast/install-search-contrast.php ]; }
+search_contrast_marker() {
+  local marker
+  marker=$(grep '^SEARCH-SNAPSHOT ' "$1") || return 1
+  [[ "$marker" =~ ^SEARCH-SNAPSHOT\ /backups/search-contrast-before-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}\.json\ [a-f0-9]{64}\ [1-9][0-9]*$ ]] || return 1
+  printf '%s\n' "$marker"
+}
+search_contrast_snapshot() {
+  local marker path
+  marker=$(search_contrast_marker "$1") || return 1
+  path=$(sed -nE 's@^Success: Applied exact search-contrast CSS\. Before-snapshot: (/backups/search-contrast-before-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}\.json)$@\1@p' "$1") || return 1
+  [[ "$path" =~ ^/backups/search-contrast-before-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}\.json$ ]] || return 1
+  [[ "$marker" = "SEARCH-SNAPSHOT $path "* ]] || return 1
+  printf '%s\n' "$path"
+}
+search_contrast_verified() {
+  local label=$1 reference=$2 snapshot=$3 expected=$4 marker original_marker
+  if [ "$expected" = original ]; then
+    inst_run "$label" verify "$snapshot" original || return 1
+  else
+    inst_run "$label" verify "$snapshot" || return 1
+  fi
+  marker=$(search_contrast_marker "$out/$label.log") || return 1
+  original_marker=$(search_contrast_marker "$out/$reference.log") || return 1
+  [ "$marker" = "$original_marker" ]
+}
+search_contrast_cleanup() {
+  local result=$? file evidence="${RUNNER_TEMP:-$HOME/.cache}/ops-out/search-contrast-native"
+  if mkdir -p "$evidence"; then
+    # Full native logs and hash-only fingerprints; never CSS/private snapshots,
+    # copied WordPress source, database exports or configuration credentials.
+    for file in "$out"/*.log "$out"/*.content "$out"/errors-*.txt; do
+      [ -f "$file" ] || continue
+      cp "$file" "$evidence/" || { echo "FAIL Search rehearsal: could not retain ${file##*/}" >&2; result=1; }
+    done
+  else
+    echo "FAIL Search rehearsal: cannot retain complete native evidence" >&2; result=1
+  fi
+  cleanup
+  exit "$result"
+}
+search_contrast_step() {
+  local label=$1; shift
+  "$@"; local status=$?
+  check "$label" "$status"
+  [ "$status" -eq 0 ]
+}
+search_contrast_css_only() {
+  local before=$1 after=$2
+  [ "$(grep -c -P '^css\t29\t[a-f0-9]{64}$' "$before")" = 1 ] &&
+    [ "$(grep -c -P '^css\t29\t[a-f0-9]{64}$' "$after")" = 1 ] || return 1
+  cmp -s <(grep -v -P '^css\t29\t' "$before") <(grep -v -P '^css\t29\t' "$after")
+}
+search_contrast_rehearse() {
+  local first active final extra browser_rc new
+  echo; echo "[3] Search contrast: exact CSS transition on the isolated copy"
+  search_contrast_step "baseline pages answer 200" load_pages || return 1
+  extra="$wwm/search-contrast/check-search-contrast.mjs"
+  search_contrast_step "Search baseline inspection exists" test -f "$extra" || return 1
+  timeout 180 node "$extra" http://localhost:8090 --inspect > "$out/search-baseline-inspection.log" 2>&1; local inspect_rc=$?
+  cat "$out/search-baseline-inspection.log" || return 1
+  check "complete original Search/empty inspection (observations only, not a contrast pass)" "$inspect_rc"; [ "$inspect_rc" -eq 0 ] || return 1
+  errs > "$out/errors-before.txt" || return 1
+  fp A
+  search_contrast_step "Search preflight" inst_run preflight preflight || return 1
+  search_contrast_step "Search apply" inst_run apply apply || return 1
+  first=$(search_contrast_snapshot "$out/apply.log") || { check "first Search apply returned one exact snapshot binding" 1; return 1; }
+  search_contrast_step "exact first Search snapshot and CSS" search_contrast_verified verify-first-apply apply "$first" applied || return 1
+  fp B
+  if cmp -s "$out/A.content" "$out/B.content"; then invalid "Search apply moved no fingerprint; an already-applied change proves no rollback"; fi
+  search_contrast_step "Search apply changes only Additional CSS 29" search_contrast_css_only "$out/A.content" "$out/B.content" || return 1
+  search_contrast_step "Search repeat apply" inst_run apply-again apply || return 1
+  search_contrast_step "repeat Search retains exact snapshot and CSS" search_contrast_verified verify-repeat-apply apply "$first" applied || return 1
+  fp B2
+  search_contrast_step "Search repeat preserves every fingerprint" cmp -s "$out/B.content" "$out/B2.content" || return 1
+  search_contrast_step "first Search rollback" inst_run rollback rollback "$first" || return 1
+  search_contrast_step "first Search rollback restores exact original CSS" search_contrast_verified verify-first-original apply "$first" original || return 1
+  fp C
+  search_contrast_step "first Search rollback exactly restores A" cmp -s "$out/A.content" "$out/C.content" || return 1
+  search_contrast_step "Search reapply" inst_run re-apply apply || return 1
+  active=$(search_contrast_snapshot "$out/re-apply.log") || { check "Search reapply returned one exact snapshot binding" 1; return 1; }
+  search_contrast_step "Search reapply returns its own snapshot" test "$active" != "$first" || return 1
+  search_contrast_step "exact Search reapplied CSS" search_contrast_verified verify-reapply re-apply "$active" applied || return 1
+  fp D
+  search_contrast_step "Search reapply exactly matches B without cache or ID exclusions" cmp -s "$out/B.content" "$out/D.content" || return 1
 
-echo; echo "[3] baseline: fingerprint A and the 10 pages"
+  echo; echo "[4] Search contrast: rendered copy gates and browser checks"
+  search_contrast_step "applied pages answer 200" load_pages || return 1
+  errs > "$out/errors-after.txt" || return 1
+  new=$(comm -13 "$out/errors-before.txt" "$out/errors-after.txt") || return 1
+  if [ -n "$new" ]; then printf '%s\n' "$new"; check "Search creates no new PHP errors, warnings, notices or deprecations" 1; return 1; fi
+  check "Search creates no new PHP errors, warnings, notices or deprecations" 0
+  python3 -I -B "$wwm/home/verify-home.py" http://localhost:8090 > "$out/home-gates.log" 2>&1; local home_rc=$?
+  tail -n 6 "$out/home-gates.log"
+  check "Home copy and links" "$home_rc"; [ "$home_rc" -eq 0 ] || return 1
+  python3 -I -B "$wwm/client-pages/verify-client-pages.py" http://localhost:8090 > "$out/client-gates.log" 2>&1; local client_rc=$?
+  grep '^FAIL' "$out/client-gates.log" || true
+  tail -n 2 "$out/client-gates.log"
+  check "client-page regulated copy, structure and links" "$client_rc"; [ "$client_rc" -eq 0 ] || return 1
+  search_contrast_step "exact Search CSS and snapshot before browser" search_contrast_verified verify-before-browser re-apply "$active" applied || return 1
+  extra="$wwm/search-contrast/check-rehearsal.mjs"
+  search_contrast_step "required Search browser gate exists" test -f "$extra" || return 1
+  timeout 600 node "$extra" http://localhost:8090 > "$out/package-browser.log" 2>&1; browser_rc=$?
+  cat "$out/package-browser.log" || return 1
+  check "complete Search browser gate" "$browser_rc"; [ "$browser_rc" -eq 0 ] || return 1
+
+  echo; echo "[5] Search contrast: exact recovery after browser activity"
+  search_contrast_step "exact Search CSS and snapshot after browser" search_contrast_verified verify-after-browser re-apply "$active" applied || return 1
+  search_contrast_step "Search rollback after browser" inst_run rollback-after-browser rollback "$active" || return 1
+  search_contrast_step "post-browser Search rollback restores original CSS" search_contrast_verified verify-original-after-browser re-apply "$active" original || return 1
+  fp E
+  search_contrast_step "post-browser Search rollback exactly restores A" cmp -s "$out/A.content" "$out/E.content" || return 1
+  search_contrast_step "Search reapply after browser recovery" inst_run reapply-after-browser apply || return 1
+  final=$(search_contrast_snapshot "$out/reapply-after-browser.log") || { check "final Search reapply returned one exact snapshot binding" 1; return 1; }
+  search_contrast_step "final Search snapshot differs from the first apply" test "$final" != "$first" || return 1
+  search_contrast_step "final Search snapshot differs from the browser candidate" test "$final" != "$active" || return 1
+  search_contrast_step "final Search CSS and snapshot match exactly" search_contrast_verified verify-final-reapply reapply-after-browser "$final" applied || return 1
+  fp F
+  search_contrast_step "final Search reapply exactly matches B without exclusions" cmp -s "$out/B.content" "$out/F.content" || return 1
+  echo "Search fingerprint differences A -> B (hash-only record identity):"
+  diff "$out/A.content" "$out/B.content" | grep '^>' | cut -f1-2 | sed 's/^> /  changed: /'
+  echo "REHEARSAL PASSED: Search contrast on a staging39 copy; exact snapshot-bound CSS, all fingerprints, rendered gates and post-browser rollback/reapply."
+}
+release_manifest="$wwm/link-ideas/peek-release/manifest.json"
+release_evidence() { python3 -I -B "$wwm/link-ideas/peek-release/rehearsal-evidence.py" "$@"; }
+release_snapshot() { release_evidence snapshot "$1" "$release_manifest" "${2:-applied}"; }
+release_inventory() {
+  export TS_PEEK_TITLE_INVENTORY="$out/title-strip-pages.json"
+  wpc eval --skip-themes '$rows = array(); foreach (get_posts(array("post_type" => "page", "post_status" => "publish", "numberposts" => -1, "orderby" => "ID", "order" => "ASC", "suppress_filters" => true)) as $p) { $path = wp_parse_url(get_permalink($p), PHP_URL_PATH); if (!is_string($path) || substr($path, 0, 1) !== "/") { WP_CLI::error("Invalid published-page permalink"); } $rows[] = array("id" => $p->ID, "path" => $path, "title" => html_entity_decode(wp_strip_all_tags(get_the_title($p)), ENT_QUOTES | ENT_HTML5, "UTF-8")); } echo wp_json_encode(array("pages" => $rows));' > "$TS_PEEK_TITLE_INVENTORY" || return 1
+  release_evidence inventory "$TS_PEEK_TITLE_INVENTORY" "$release_manifest" > "$out/release-paths.txt" || return 1
+  mapfile -t pages < "$out/release-paths.txt"
+  [ "${#pages[@]}" -eq 15 ]
+}
+release_render_meta() {
+  local phase=$1 path=$2 position=$3 tag destination statuses
+  local observer="$wwm/link-ideas/peek-release/observe-render-meta.py"
+  [[ "$phase" =~ ^original-(before|after-rollback|after-browser)$ ]] &&
+    [[ "$position" =~ ^(before|after)$ ]] || return 1
+  tag=$(printf '%s' "$path" | sha256sum) || return 1
+  tag=${tag%% *}
+  destination="$out/$phase-render-meta-$tag-$position.log"
+  # Query only the owned copied DB container. Raw HEX fields travel directly
+  # through the pipe, never through WordPress bootstrap or retained files.
+  python3 -I -B "$observer" sql "$prefix" "$release_manifest" |
+    sql |
+    python3 -I -B "$observer" capture "$release_manifest" "$phase" "$path" "$position" > "$destination"
+  statuses=("${PIPESTATUS[@]}")
+  [ "${statuses[0]}" -eq 0 ] && [ "${statuses[1]}" -eq 0 ] && [ "${statuses[2]}" -eq 0 ] || {
+    echo "FAIL release metadata: database observation incomplete; no render follows"
+    return 1
+  }
+  python3 -I -B "$observer" validate "$destination" "$release_manifest" "$phase" "$path" "$position"
+}
+release_original_render() {
+  local label=$1 reference=${2:-} path code curl_rc
+  local destination="$out/$label-navigation.jsonl" html="$out/release-original-page.html"
+  : > "$destination" || return 1
+  for path in "${pages[@]}"; do
+    release_render_meta "$label" "$path" before || return 1
+    code=$(curl -sS -o "$html" -m 30 -w '%{http_code}' "http://localhost:8090$path"); curl_rc=$?
+    release_render_meta "$label" "$path" after || return 1
+    [ "$curl_rc" -eq 0 ] && [ "$code" = 200 ] || { echo "FAIL release original page $path: HTTP$code curl_exit=$curl_rc"; return 1; }
+    release_evidence original-html "$html" "$path" >> "$destination" || return 1
+  done
+  rm -f "$html"
+  [ "$(wc -l < "$destination")" -eq 15 ] || return 1
+  if [ -n "$reference" ] && ! cmp -s "$reference" "$destination"; then
+    echo "FAIL release rendered rollback differs from original jump destinations, native guide, CSS or scroll-to-top"
+    diff "$reference" "$destination" || true
+    return 1
+  fi
+  echo "PASS release $label: all15 original pages render without Peek; navigation sources and targets verified"
+}
+release_cleanup() {
+  local result=$? file
+  local evidence="${RUNNER_TEMP:-$HOME/.cache}/ops-out/peek-release-native"
+  if mkdir -p "$evidence"; then
+    # Keep complete gate logs and content fingerprints, never private recovery
+    # snapshots, SQL exports, source files or database credentials.
+    for file in "$out"/*.log "$out"/*.content "$out"/errors-*.txt "$out"/*-navigation.jsonl "$out"/title-strip-pages.json "$out"/release-paths.txt; do
+      [ -f "$file" ] || continue
+      cp "$file" "$evidence/" || { [ "$result" -ne 0 ] || result=1; }
+    done
+  else
+    echo "FAIL release rehearsal: cannot retain complete native evidence" >&2
+    [ "$result" -ne 0 ] || result=1
+  fi
+  release_cleanup_exit "$result"
+}
+
+if [ "$release_rehearsal" = 1 ]; then
+  trap release_cleanup EXIT
+  echo; echo "[2c] exact visitor inventory and normal asset warm-up on the untouched copy"
+  release_inventory || invalid "published inventory differs from the reviewed visitor release"
+  load_pages || invalid "visitor pages did not answer HTTP200 before the baseline"
+  inst_run warm-before preflight || invalid "visitor-release first warm preflight failed"
+  load_pages || invalid "visitor pages did not answer HTTP200 on the second warm read"
+  inst_run warm-after preflight || invalid "visitor-release second warm preflight failed"
+  release_evidence warm "$out/warm-before.log" "$out/warm-after.log" "$release_manifest" || invalid "normal warm GETs changed protected release state"
+  release_original_render original-before || invalid "original rendered navigation evidence is incomplete"
+fi
+
+if [ "$inst" = link-ideas/rail-input/install-rail-input.php ]; then
+  echo; echo "[2c] observe unchanged Rail page before the baseline"
+  rail_observer=/wwm/link-ideas/rail-input/observe-state.php
+  [ -f "$wwm/link-ideas/rail-input/observe-state.php" ] || invalid "Rail baseline observer is missing"
+  rail_observation_logs="${RUNNER_TEMP:-$HOME/.cache}/ops-out/rail-baseline"
+  mkdir -p "$rail_observation_logs" || invalid "cannot retain Rail baseline observations"
+  rail_observe_run() {
+    local label=$1; shift
+    "$@" 2>&1 | tee "$out/$label.log" "$rail_observation_logs/$label.log"
+    local rail_status=("${PIPESTATUS[@]}")
+    [ "${rail_status[0]}" -eq 0 ] && [ "${rail_status[1]}" -eq 0 ]
+  }
+  rail_observation_path() {
+    sed -nE 's@.*Observation: (/backups/rail-input-observe-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}\.json)$@\1@p' "$1"
+  }
+  rail_local_get() {
+    local status rc
+    status=$(curl -sS -o /dev/null --max-time 30 -w '%{http_code}' http://localhost:8090/rail-nav-ideas/); rc=$?
+    printf 'Rail unchanged-page GET: HTTP%s; curl_exit=%s\n' "$status" "$rc"
+    [ "$rc" -eq 0 ] && [ "$status" = 200 ]
+  }
+  # The PHP container cannot address the runner's localhost port. Both GETs
+  # happen here, with no redirect, against the untouched copy before fp A.
+  rail_observe_run rail-cold-record wpc --user=1 eval-file "$rail_observer" record || invalid "could not record cold Rail state"
+  rail_cold=$(rail_observation_path "$out/rail-cold-record.log")
+  [[ "$rail_cold" =~ ^/backups/rail-input-observe-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}\.json$ ]] || invalid "cold Rail observation path missing or ambiguous"
+  rail_observe_run rail-cold-get rail_local_get || invalid "unchanged Rail page did not answer HTTP200"
+  rail_observe_run rail-cold-compare wpc --user=1 eval-file "$rail_observer" compare "$rail_cold" cold-assets || invalid "cold Rail GET changed more than the measured asset metadata"
+  rail_observe_run rail-warm-record wpc --user=1 eval-file "$rail_observer" record || invalid "could not record warm Rail state"
+  rail_warm=$(rail_observation_path "$out/rail-warm-record.log")
+  [[ "$rail_warm" =~ ^/backups/rail-input-observe-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}\.json$ ]] || invalid "warm Rail observation path missing or ambiguous"
+  rail_observe_run rail-warm-get rail_local_get || invalid "warm Rail page did not answer HTTP200"
+  rail_observe_run rail-warm-compare wpc --user=1 eval-file "$rail_observer" compare "$rail_warm" || invalid "warm Rail GET changed complete page state"
+fi
+
+if core_guarded_lane; then
+  trap core_neighbours_cleanup EXIT
+fi
+if search_contrast_lane; then
+  trap search_contrast_cleanup EXIT
+  search_contrast_rehearse
+  exit $?
+fi
+
+echo; echo "[3] baseline: fingerprint A and the ${#pages[@]} pages"
 fp A; load_pages; check "pages answer 200 before the change" $?
 errs > "$out/errors-before.txt"
 
-inst_run preflight preflight; check "preflight" $?
+inst_run preflight preflight; preflight_rc=$?; check "preflight" "$preflight_rc"
+if [ "$release_rehearsal" = 1 ] && [ "$preflight_rc" -ne 0 ]; then
+  echo "REHEARSAL FAILED: visitor-release preflight failed; apply not started."; exit 1
+fi
+if [ "$release_rehearsal" = 1 ]; then
+  release_evidence warm "$out/warm-after.log" "$out/preflight.log" "$release_manifest"; check "release state remains exact after baseline page reads" $?
+  [ "$fails" -eq 0 ] || { echo "REHEARSAL FAILED: release baseline gates failed; apply not started."; exit 1; }
+fi
+core_neighbours_require_clean "baseline/preflight gates failed"
 inst_run apply apply; rc=$?; check "apply" $rc
 [ "$rc" -eq 0 ] || { echo; echo "REHEARSAL FAILED: apply did not succeed, so nothing after it was tried."; exit 1; }
 fp B
+if core_guarded_lane; then
+  core_focus_first_snapshot=$(core_focus_snapshot_from_log "$out/apply.log") || invalid "guarded core first apply has no unique actual snapshot"
+  core_focus_verify verify-first-apply "$core_focus_first_snapshot"; check "exact first guarded core apply snapshot" $?
+  core_neighbours_require_clean "first apply snapshot verification failed"
+fi
 if cmp -s "$out/A.content" "$out/B.content"; then
   echo; echo "REHEARSAL INVALID: apply moved no fingerprint. The change is probably already on $src (preflight said so above), or it touches"
   echo "something the fingerprint does not cover; either way a rollback test would prove nothing."; exit 2
 fi
-inst_run apply-again apply; check "apply a second time" $?
+if [ "$release_rehearsal" = 1 ]; then
+  release_first_snapshot=$(release_snapshot "$out/apply.log") || invalid "first release apply has no unique verified snapshot binding"
+  inst_run apply-again apply "$release_first_snapshot"; release_repeat_rc=$?
+  check "strict release repeat using the actual first snapshot" "$release_repeat_rc"
+  [ "$release_repeat_rc" -eq 0 ] || { echo "REHEARSAL FAILED: strict release repeat failed."; exit 1; }
+  release_evidence same "$out/apply.log" "$out/apply-again.log" "$release_manifest"; release_binding_rc=$?
+  check "release repeat preserves the exact complete snapshot binding" "$release_binding_rc"
+  [ "$release_binding_rc" -eq 0 ] || { echo "REHEARSAL FAILED: release repeat binding differs."; exit 1; }
+else
+  inst_run apply-again apply; check "apply a second time" $?
+fi
 fp B2; cmp -s "$out/B.content" "$out/B2.content"; check "applying twice changes nothing more (idempotent)" $?
-snap=$(find "$bk" -maxdepth 1 -name '*.json' -printf '%T@ %f\n' | sort -rn | head -1 | cut -d' ' -f2-)
+core_neighbours_require_clean "repeat apply or B/B2 idempotence failed"
+if core_guarded_lane; then
+  core_focus_verify verify-repeat-apply "$core_focus_first_snapshot"; check "repeat apply retains exact first guarded core snapshot" $?
+  core_neighbours_require_clean "repeat snapshot verification failed"
+fi
+snap_pattern='*.json'
+[ "$inst" != link-ideas/rail-input/install-rail-input.php ] || snap_pattern='rail-input-before-*.json'
+if [ "$release_rehearsal" = 1 ]; then
+  snap=${release_first_snapshot##*/}
+elif core_focus_lane; then
+  core_focus_first_snapshot=$(core_focus_snapshot_from_log "$out/apply.log") || core_focus_first_snapshot=""
+  snap=${core_focus_first_snapshot##*/}
+else
+  snap=$(find "$bk" -maxdepth 1 -name "$snap_pattern" -printf '%T@ %f\n' | sort -rn | head -1 | cut -d' ' -f2-)
+fi
 if [ -z "$snap" ]; then echo "  no before-snapshot was written to WWM_BACKUP_DIR"; check "apply wrote a before-snapshot" 1; else
   inst_run rollback rollback "/backups/$snap"; check "rollback with $snap" $?
+  core_neighbours_require_clean "first rollback failed"
+  if core_guarded_lane; then
+    core_focus_verify verify-first-original "$core_focus_first_snapshot" original; check "first rollback restores exact guarded core original snapshot" $?
+    core_neighbours_require_clean "first original snapshot verification failed"
+  fi
+  if [ "$release_rehearsal" = 1 ]; then
+    release_evidence original "$out/apply.log" "$out/rollback.log" "$release_manifest" || invalid "release rollback has no exact original-state binding"
+    release_original_render original-after-rollback "$out/original-before-navigation.jsonl"; release_render_rc=$?
+    check "first release rollback restores original rendered navigation on all15 pages" "$release_render_rc"
+    [ "$release_render_rc" -eq 0 ] || { echo "REHEARSAL FAILED: first release rollback has stale or changed rendered navigation."; exit 1; }
+    inst_run verify-original verify "$release_first_snapshot" original; release_original_rc=$?
+    check "exact original release records after rollback" "$release_original_rc"
+    [ "$release_original_rc" -eq 0 ] || { echo "REHEARSAL FAILED: original release state was not restored."; exit 1; }
+    release_evidence original "$out/apply.log" "$out/verify-original.log" "$release_manifest" || invalid "release original-state verification binding differs"
+  fi
   # WPCode's own snippet-list cache option stores each snippet's "modified" time, so an in-place edit of a snippet followed by a rollback always changes it (2026-10-25, Work With Me availability update);
   # the snippet's content hash (the 'snippet' lines) still compares exactly, so only that cache option is set aside here.
   nocache() { grep -v -P '^option\twpcode_snippets\t' "$1"; }
   fp C; cmp -s <(nocache "$out/A.content") <(nocache "$out/C.content"); check "after rollback every fingerprint equals the baseline (A; WPCode's snippet-list cache option, which holds a modified time, set aside)" $?
   cmp -s <(nocache "$out/A.content") <(nocache "$out/C.content") || diff <(nocache "$out/A.content") <(nocache "$out/C.content") | grep '^[<>]' | cut -f1-2 | sed 's/^/    still different: /' | head -20
+  core_neighbours_require_clean "first rollback fingerprint differs from A"
   inst_run re-apply apply; check "apply again after the rollback" $?
+  core_neighbours_require_clean "second apply failed"
   # A change that CREATES posts (a page, a snippet) gets new database ids when it is applied again after a rollback (2026-10-24, Corporate & Group Massage): compare with the id numbers of snippet and SEO rows set aside (and WPCode's own snippet-list cache option, whose content lists those ids); the snippets' and pages' content hashes still compare.
   idn() { sed -E '/^option\twpcode_snippets\t/d; s/^snippet\t[0-9]+\t/snippet\t#\t/; s/^seo\t[0-9]+:/seo\t#:/' "$1"; }
-  fp D; cmp -s <(idn "$out/B.content") <(idn "$out/D.content"); check "re-applied state equals the first applied state (B; ids of re-created snippets and SEO rows set aside)" $?
+  fp D
+  if [ "$release_rehearsal" = 1 ]; then
+    release_active_snapshot=$(release_snapshot "$out/re-apply.log") || invalid "release reapply has no unique verified snapshot binding"
+    release_evidence compare "$out/apply.log" "$out/B.content" "$out/re-apply.log" "$out/D.content" "$release_manifest"
+    check "release reapply matches with only its five owned IDs normalized" $?
+  elif core_focus_lane; then
+    cmp -s <(nocache "$out/B.content") <(nocache "$out/D.content"); check "shared-core reapply exactly matches B (no ID normalization)" $?
+    # Each core apply intentionally sets new modified dates. The active state is
+    # bound to re-apply's actual returned snapshot, never the first apply or latest file.
+    core_focus_active_snapshot=$(core_focus_snapshot_from_log "$out/re-apply.log") || core_focus_active_snapshot=""
+  else
+    cmp -s <(idn "$out/B.content") <(idn "$out/D.content"); check "re-applied state equals the first applied state (B; ids of re-created snippets and SEO rows set aside)" $?
+  fi
 fi
 
-echo; echo "[4] the 10 pages after the change, and PHP errors"
+core_neighbours_require_clean "second apply fingerprint differs from B"
+
+echo; echo "[4] the ${#pages[@]} pages after the change, and PHP errors"
 load_pages; check "pages answer 200 with the change applied" $?
 errs > "$out/errors-after.txt"
 new=$(comm -13 "$out/errors-before.txt" "$out/errors-after.txt")
@@ -251,14 +894,182 @@ tail -n 2 "$out/client-gates.log"
 
 # Optional package-owned browser gate. It runs only on the isolated applied
 # copy, before cleanup, and must pass before any staging write is authorized.
+if [ "$release_rehearsal" = 1 ]; then
+  [ "$fails" -eq 0 ] && [ -n "${release_active_snapshot:-}" ] || { echo "REHEARSAL FAILED: earlier visitor-release gates failed; browser not started."; exit 1; }
+  release_inventory || invalid "published release inventory changed before browser verification"
+  inst_run verify-before-browser verify "$release_active_snapshot"; release_before_rc=$?
+  check "exact release records before browser" "$release_before_rc"
+  [ "$release_before_rc" -eq 0 ] || { echo "REHEARSAL FAILED: release snapshot no longer matches; browser not started."; exit 1; }
+  release_evidence same "$out/re-apply.log" "$out/verify-before-browser.log" "$release_manifest" || invalid "release before-browser binding differs from actual reapply"
+fi
+if core_focus_lane; then
+  [ "$fails" -eq 0 ] || { echo "REHEARSAL FAILED: earlier required shared-core gates failed; browser not started."; exit 1; }
+  if [ -z "${core_focus_active_snapshot:-}" ]; then
+    check "shared-core re-apply returned one actual complete snapshot" 1
+    echo "REHEARSAL FAILED: shared-core active snapshot is missing or ambiguous; browser not started."; exit 1
+  fi
+  core_focus_verify verify-before-browser "$core_focus_active_snapshot"; core_focus_before_rc=$?
+  check "exact shared core and four page states before browser" "$core_focus_before_rc"
+  [ "$core_focus_before_rc" -eq 0 ] || { echo "REHEARSAL FAILED: shared-core full-state verification failed; browser not started."; exit 1; }
+fi
 extra="$wwm/$(dirname "$inst")/check-rehearsal.mjs"
 if [ -f "$extra" ]; then
   echo; echo "[4c] package browser checks on the applied throwaway copy"
-  timeout 600 node "$extra" http://localhost:8090 > "$out/package-browser.log" 2>&1
+  browser_seconds=600
+  # This shared-core upgrade checks four actual pages in two engines plus native
+  # touch, then retains the timing-sensitive Thai gesture suite in isolation.
+  browser_evidence=""
+  case "$inst" in
+    link-ideas/peek-release/install-peek-release.php) browser_seconds=3900; browser_evidence=peek-release-browser.log ;;
+    link-ideas/core-upgrade/install-peek-core-upgrade.php) browser_seconds=900; browser_evidence=peek-core-upgrade-browser.log ;;
+    link-ideas/core-summary-touch/install-peek-core-summary-touch.php) browser_seconds=900; browser_evidence=peek-core-summary-touch-browser.log ;;
+    link-ideas/core-title-strip/install-peek-core-title-strip.php|link-ideas/core-title-rail/install-peek-core-title-rail.php|link-ideas/core-kiro-fixes/install-peek-core-kiro-fixes.php|link-ideas/core-input-focus/install-peek-core-input-focus.php|link-ideas/core-neighbours/install-peek-core-neighbours.php|link-ideas/core-index-clearance/install-peek-core-index-clearance.php|link-ideas/core-quiet-nav/install-peek-core-quiet-nav.php|link-ideas/core-title-resize/install-peek-core-title-resize.php|link-ideas/rail-input/install-rail-input.php)
+      browser_seconds=900; browser_evidence=peek-core-title-strip-browser.log
+      if [ "$inst" = link-ideas/core-title-rail/install-peek-core-title-rail.php ]; then
+        browser_seconds=1500; browser_evidence=peek-core-title-rail-browser.log
+      elif [ "$inst" = link-ideas/core-kiro-fixes/install-peek-core-kiro-fixes.php ]; then
+        browser_seconds=1800; browser_evidence=peek-core-kiro-fixes-browser.log
+      elif [ "$inst" = link-ideas/core-input-focus/install-peek-core-input-focus.php ]; then
+        browser_seconds=2100; browser_evidence=peek-core-input-focus-browser.log
+      elif [ "$inst" = link-ideas/core-neighbours/install-peek-core-neighbours.php ]; then
+        browser_seconds=2700; browser_evidence=peek-core-neighbours-browser.log
+      elif [ "$inst" = link-ideas/core-index-clearance/install-peek-core-index-clearance.php ]; then
+        browser_seconds=3000; browser_evidence=peek-core-index-clearance-browser.log
+      elif [ "$inst" = link-ideas/core-quiet-nav/install-peek-core-quiet-nav.php ]; then
+        browser_seconds=3300; browser_evidence=peek-core-quiet-nav-browser.log
+      elif [ "$inst" = link-ideas/core-title-resize/install-peek-core-title-resize.php ]; then
+        browser_seconds=3600; browser_evidence=peek-core-title-resize-browser.log
+      elif [ "$inst" = link-ideas/rail-input/install-rail-input.php ]; then
+        browser_seconds=900; browser_evidence=rail-input-browser.log
+      fi
+      # Enumerate this fresh copy, including unlisted/practice pages. The title
+      # matrix must not silently test only a fixed menu or sitemap subset.
+      export TS_PEEK_TITLE_INVENTORY="$out/title-strip-pages.json"
+      wpc eval --skip-themes '$rows = array(); foreach (get_posts(array("post_type" => "page", "post_status" => "publish", "numberposts" => -1, "orderby" => "ID", "order" => "ASC", "suppress_filters" => true)) as $p) { $path = wp_parse_url(get_permalink($p), PHP_URL_PATH); if (!is_string($path) || substr($path, 0, 1) !== "/") { WP_CLI::error("Invalid published-page permalink"); } $rows[] = array("id" => $p->ID, "path" => $path, "title" => html_entity_decode(wp_strip_all_tags(get_the_title($p)), ENT_QUOTES | ENT_HTML5, "UTF-8")); } echo wp_json_encode(array("pages" => $rows));' > "$TS_PEEK_TITLE_INVENTORY"
+      inventory_rc=$?
+      check "all published-page browser inventory" "$inventory_rc"
+      [ "$inventory_rc" -eq 0 ] || invalid "could not enumerate all published pages for title-strip checks"
+      ;;
+  esac
+  echo "  browser budget: ${browser_seconds}s (all package checks retained)"
+  timeout "$browser_seconds" node "$extra" http://localhost:8090 > "$out/package-browser.log" 2>&1
   package_browser_rc=$?
   check "package browser checks" "$package_browser_rc"
+  if [ -n "$browser_evidence" ]; then
+    evidence="${RUNNER_TEMP:-$HOME/.cache}/ops-out"
+    mkdir -p "$evidence" && cp "$out/package-browser.log" "$evidence/$browser_evidence"
+    check "complete core-upgrade browser log retained for review" $?
+  fi
   [ "$package_browser_rc" -eq 0 ] || tail -n 30 "$out/package-browser.log"
   grep -E '^(FAIL|INVALID|Bundle [CDEF]:|CONTRAST|LAYOUT|MIN_CONTRAST|HEADING|HEIGHT|INFO|INLINE)' "$out/package-browser.log" || true
+fi
+
+if [ "$inst" = link-ideas/rail-input/install-rail-input.php ]; then
+  echo; echo "[4d] exact Rail recovery after rendered browser activity"
+  if [ "${package_browser_rc:-missing}" != 0 ] || [ -z "${snap:-}" ]; then
+    check "post-browser Rail recovery prerequisites (complete browser pass and original snapshot)" 1
+  else
+    inst_run rollback-after-browser rollback "/backups/$snap"; rendered_rollback_rc=$?
+    check "Rail full-state rollback after browser activity" "$rendered_rollback_rc"
+    if [ "$rendered_rollback_rc" -eq 0 ]; then
+      fp E
+      cmp -s <(nocache "$out/A.content") <(nocache "$out/E.content"); rendered_baseline_rc=$?
+      check "post-browser rollback matches baseline A (only existing WPCode cache exclusion)" "$rendered_baseline_rc"
+      if [ "$rendered_baseline_rc" -eq 0 ]; then
+        inst_run reapply-after-browser apply; rendered_reapply_rc=$?
+        check "Rail reapply after post-browser recovery" "$rendered_reapply_rc"
+        if [ "$rendered_reapply_rc" -eq 0 ]; then
+          fp F
+          cmp -s <(nocache "$out/B.content") <(nocache "$out/F.content")
+          check "post-browser reapply exactly matches tested B (no ID normalization)" $?
+        fi
+      fi
+    fi
+  fi
+fi
+
+if core_focus_lane; then
+  echo; echo "[4e] exact shared-core recovery after rendered browser activity"
+  if [ "$fails" -ne 0 ] || [ "${package_browser_rc:-missing}" != 0 ] || [ -z "${core_focus_active_snapshot:-}" ]; then
+    check "post-browser shared-core recovery prerequisites (complete browser pass and actual re-apply snapshot)" 1
+  else
+    core_focus_verify verify-after-browser "$core_focus_active_snapshot"; core_focus_after_rc=$?
+    check "exact shared core and four page states after browser" "$core_focus_after_rc"
+    if [ "$core_focus_after_rc" -eq 0 ]; then
+      inst_run rollback-after-browser rollback "$core_focus_active_snapshot"; core_focus_rollback_rc=$?
+      check "shared-core full-state rollback after browser" "$core_focus_rollback_rc"
+      if [ "$core_focus_rollback_rc" -eq 0 ]; then
+        core_focus_verify verify-original-after-browser "$core_focus_active_snapshot" original; core_focus_original_rc=$?
+        check "shared-core exact original core and four page states restored" "$core_focus_original_rc"
+        if [ "$core_focus_original_rc" -eq 0 ]; then
+          fp E
+          cmp -s <(nocache "$out/A.content") <(nocache "$out/E.content"); core_focus_baseline_rc=$?
+          check "shared-core post-browser rollback matches A (no ID normalization)" "$core_focus_baseline_rc"
+          if [ "$core_focus_baseline_rc" -eq 0 ]; then
+            inst_run reapply-after-browser apply; core_focus_reapply_rc=$?
+            check "shared-core reapply after post-browser recovery" "$core_focus_reapply_rc"
+            if [ "$core_focus_reapply_rc" -eq 0 ]; then
+              core_focus_final_snapshot=$(core_focus_snapshot_from_log "$out/reapply-after-browser.log"); core_focus_snapshot_rc=$?
+              check "shared-core final reapply returned one actual complete snapshot" "$core_focus_snapshot_rc"
+              if [ "$core_focus_snapshot_rc" -eq 0 ]; then
+                core_focus_verify verify-final-reapply "$core_focus_final_snapshot"; core_focus_final_rc=$?
+                check "shared-core final applied core and four page states match their new snapshot" "$core_focus_final_rc"
+                if [ "$core_focus_final_rc" -eq 0 ]; then
+                  fp F
+                  cmp -s <(nocache "$out/B.content") <(nocache "$out/F.content")
+                  check "shared-core post-browser reapply exactly matches B (no ID normalization)" $?
+                fi
+              fi
+            fi
+          fi
+        fi
+      fi
+    fi
+  fi
+fi
+
+if [ "$release_rehearsal" = 1 ]; then
+  echo; echo "[4f] exact visitor-release recovery after rendered browser activity"
+  if [ "$fails" -ne 0 ] || [ "${package_browser_rc:-missing}" != 0 ]; then
+    check "visitor-release post-browser recovery requires complete passing browser evidence" 1
+  else
+    inst_run verify-after-browser verify "$release_active_snapshot"; release_after_rc=$?
+    check "exact release records after browser" "$release_after_rc"
+    if [ "$release_after_rc" -eq 0 ]; then
+      release_evidence same "$out/re-apply.log" "$out/verify-after-browser.log" "$release_manifest"; release_binding_rc=$?
+      check "browser did not change the complete release state or immutable snapshot binding" "$release_binding_rc"
+      if [ "$release_binding_rc" -eq 0 ]; then
+        inst_run rollback-after-browser rollback "$release_active_snapshot"; release_rollback_rc=$?
+        check "exact release rollback after browser" "$release_rollback_rc"
+        if [ "$release_rollback_rc" -eq 0 ]; then
+          release_evidence original "$out/re-apply.log" "$out/rollback-after-browser.log" "$release_manifest"; check "post-browser rollback binds the actual active snapshot" $?
+          release_original_render original-after-browser "$out/original-before-navigation.jsonl"; check "post-browser release rollback restores all15 original rendered navigation signatures" $?
+          inst_run verify-original-after-browser verify "$release_active_snapshot" original; release_original_rc=$?
+          check "exact original release state after browser rollback" "$release_original_rc"
+          if [ "$release_original_rc" -eq 0 ]; then
+            release_evidence original "$out/re-apply.log" "$out/verify-original-after-browser.log" "$release_manifest"; check "post-browser original-state verification binds the actual snapshot" $?
+            fp E
+            cmp -s <(nocache "$out/A.content") <(nocache "$out/E.content"); check "post-browser release rollback restores A without ID normalization" $?
+            if [ "$fails" -eq 0 ]; then
+              inst_run reapply-after-browser apply; release_final_rc=$?
+              check "release reapply after post-browser recovery" "$release_final_rc"
+              if [ "$release_final_rc" -eq 0 ]; then
+                release_final_snapshot=$(release_snapshot "$out/reapply-after-browser.log") || invalid "final release apply did not return a verified snapshot"
+                inst_run verify-final-reapply verify "$release_final_snapshot"; release_verify_rc=$?
+                check "exact final release records and their actual snapshot" "$release_verify_rc"
+                if [ "$release_verify_rc" -eq 0 ]; then
+                  release_evidence same "$out/reapply-after-browser.log" "$out/verify-final-reapply.log" "$release_manifest"; check "final release verification preserves its new immutable binding" $?
+                  fp F
+                  release_evidence compare "$out/apply.log" "$out/B.content" "$out/reapply-after-browser.log" "$out/F.content" "$release_manifest"; check "final release matches B with only its five owned IDs normalized" $?
+                  release_evidence compare "$out/re-apply.log" "$out/D.content" "$out/reapply-after-browser.log" "$out/F.content" "$release_manifest"; check "final release also has a distinct snapshot and five IDs from the second apply" $?
+                fi
+              fi
+            fi
+          fi
+        fi
+      fi
+    fi
+  fi
 fi
 
 echo; echo "[5] what the change touches (fingerprint A -> B; this is what staging will see move):"

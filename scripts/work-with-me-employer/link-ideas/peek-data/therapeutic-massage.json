@@ -1,0 +1,127 @@
+{
+  "schema": 1,
+  "slug": "therapeutic-massage",
+  "approval": {
+    "status": "approved",
+    "source": "Ryan approved these exact three-page box contents in chat on 2026-11-09 after the inline wording review; docs/reviews/2026-11-09-peek-summary-drafts.md; rendered staging39 capture peek-design-s39-20261109-1, run 42548017902, completed 2026-11-09 01:55:57 UTC."
+  },
+  "items": [
+    [
+      "Focused work, relaxation",
+      "ts-what-it-is"
+    ],
+    [
+      "etc.",
+      "ts-what-it-is"
+    ],
+    [
+      "Everyday tension, stiffness",
+      "ts-common-reasons"
+    ],
+    [
+      "Neck, shoulder discomfort",
+      "ts-common-reasons"
+    ],
+    [
+      "etc.",
+      "ts-common-reasons"
+    ],
+    [
+      "Health concerns considered",
+      "ts-who-can-benefit"
+    ],
+    [
+      "Within massage's scope",
+      "ts-who-can-benefit"
+    ],
+    [
+      "Doctor first when needed",
+      "ts-who-can-benefit"
+    ],
+    [
+      "No complaint needed",
+      "ts-guide-questions"
+    ],
+    [
+      "Results vary",
+      "ts-guide-questions"
+    ],
+    [
+      "No fixed schedule",
+      "ts-guide-questions"
+    ],
+    [
+      "Corporate/group bookings only",
+      "ts-guide-questions"
+    ],
+    [
+      "No individual home visits",
+      "ts-guide-questions"
+    ],
+    [
+      "etc.",
+      "ts-guide-questions"
+    ],
+    [
+      "Goals, feedback guide work",
+      "ts-what-to-expect"
+    ],
+    [
+      "Surface to deeper work",
+      "ts-what-to-expect"
+    ],
+    [
+      "Discuss future sessions",
+      "ts-what-to-expect"
+    ],
+    [
+      "etc.",
+      "ts-what-to-expect"
+    ],
+    [
+      "Mixed evidence, often short follow-up",
+      "ts-guide-research"
+    ],
+    [
+      "Reviews reported less pain; certainty was limited",
+      "ts-guide-research"
+    ],
+    [
+      "Neck versus placebo: probably little difference, low certainty",
+      "ts-guide-research"
+    ],
+    [
+      "Sports flexibility and soreness gains were small",
+      "ts-guide-research"
+    ],
+    [
+      "Sports performance gains remain unclear",
+      "ts-guide-research"
+    ],
+    [
+      "Some relaxation measures improved after rest too",
+      "ts-guide-research"
+    ],
+    [
+      "Cortisol changes were mostly indistinguishable from zero",
+      "ts-guide-research"
+    ],
+    [
+      "Rare serious massage harms reported",
+      "ts-guide-research"
+    ],
+    [
+      "etc.",
+      "ts-guide-research"
+    ]
+  ],
+  "coverage": {
+    "ts-what-it-is": "partial",
+    "ts-common-reasons": "partial",
+    "ts-who-can-benefit": "most",
+    "ts-guide-questions": "partial",
+    "ts-what-to-expect": "partial",
+    "ts-guide-research": "partial"
+  },
+  "research_anchor": "ts-guide-research"
+}

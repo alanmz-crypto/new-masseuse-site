@@ -1,0 +1,568 @@
+# Peek title strip on every page
+
+**Historical v4 deployment record.** The later [title-only rails update](2026-11-09-peek-title-rails.md)
+is now deployed on staging39. Its own actual snapshot must restore v4 before
+using this record's older recovery route. The results below describe this earlier update.
+
+**Deployed staging39; public browser check blocked by HTTP202.** The guarded
+apply and exact stored-code inspection passed. The complete fresh-copy browser
+suite passed before deployment; the final public run tested nothing because
+SiteGround served its bot challenge. See the deployment and recovery record below.
+
+Ryan requested: “Put a title strip on every page.
+All.” They then reported a small scrolling target and sluggish scrolling after
+rapidly changing summary boxes, clarifying that the larger usable scrolling area
+should apply to all scrollable boxes. Both requests are included here. Existing
+approved wording and the four-page summary-menu rollout remain separate.
+
+## Access and baseline
+
+The requested branch `claude/wizardly-bell-xu0rta` was clean and pulled at
+`610a898f63e5ac6dfb14d602fdc77f68c8c9f5a1`, already current. GitHub repository
+read/write access is confirmed. The current managed environment reports enforced
+unrestricted networking. A fresh staging request at **08:15:03 UTC** received
+SiteGround HTTP202 with `sg-captcha: challenge`; direct access is not treated as
+working and is not repeatedly retried. The established Actions route supplies
+origin inspection, rendered evidence, rehearsals and guarded deployment.
+
+The baseline is the [completed short-summary correction](2026-11-09-peek-short-summary-touch.md):
+shared core #1380 code SHA256
+`a20e7a69141843d08dbc0104f1eb7c4ae81ff99b0c7c6594ed1690d23fc0f4ac`,
+71,826 code bytes, with four approved data records #1381–1384. Its last public
+browser and stored inspections passed; those are baseline evidence, not testing
+of this new change.
+
+## Design announced before implementation
+
+The current strip is gated by page data, a jump row, at least two destinations
+and PointerEvent support. Those requirements belong to the interactive rail;
+they prevent a read-only strip from appearing on other pages.
+
+The announced simplification is one shared strip constructor, section tracking,
+header measurement and title painting, with independent rail eligibility:
+
+- Reuse the existing jump row's labels and actual destination order wherever a
+  row exists. It remains the sole navigation map for those pages.
+- Where no row exists, read the page's visible main headings. This does not add
+  a second navigation map or alter stored page content.
+- With no sections, show the page title as one fixed label. Short pages are
+  included. A safe WordPress title fallback avoids treating a personal-name H1
+  or SEO document title as an invented section label.
+- Use a separate title-ready state for header and focus clearance. Rail-ready
+  state continues to control rail padding and replacement of existing controls.
+  Title-only pages keep their jump links and existing navigation.
+- Include published unlisted and practice pages in the inventory and verification,
+  rather than silently limiting “all” to the menu or sitemap. Review their actual
+  structures for competing demo navigation. Normal search/404 HTML also receives
+  the read-only fallback; WordPress admin/feed responses are not visitor pages.
+
+There is no new summary wording approval or automatic full-rail rollout in this
+change. Approved summaries and whole-paragraph fallbacks remain intact.
+
+## Fresh complete inventory and design assessment
+
+[Read-only inventory](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42585875924)
+completed **08:27:49 UTC, PASS**, source
+`27eb2c3a5cb49c3ab1d62203c81844e2b3e9cf9f`. All **19 published pages** returned
+HTTP200 at origin and rendered successfully in Chromium, with **38 actual mobile
+and desktop captures**, no failed routes and no browser challenge. Root read the
+complete operation report and verified the extracted 2,847,057-byte archive SHA256
+`f7d24f95a4f044f79fddacf1569b09a7325e2e3abc0ca3c2e185f323b7ceee9c`.
+
+The reviewed `title-strip-pages.json` records all 19 exact IDs, paths and decoded
+WordPress titles with provenance. It is test/deployment coverage, not a runtime
+navigation map. It includes the twelve established site pages, the three pages
+under `/personal-automation/` (including nested `/privacy/` and `/terms/` children),
+and all four practice pages. No page is silently excluded by menu or sitemap scope.
+
+All [38 baseline captures](assets/2026-11-09-peek-title-strip-all-pages/before/)
+were independently reviewed. Root also viewed Home, Contact, Work With Me,
+Privacy, Personal Automation and the rail practice page directly. Actual DOM and
+source confirm these consequential differences:
+
+- Services has seven mixed-level destinations; Contact includes a non-heading
+  contact-details card, and Privacy has accordion targets. Their existing rows
+  preserve intended labels and targets better than heading-only discovery.
+- Work and Corporate have their own main-heading structures and mobile bottom
+  CTA docks. Work's visible H1 is the person's name; its page identity is
+  “Work With Me.” Some headings contain line breaks that need whitespace when
+  reused in the strip, rather than concatenated words.
+- Theme-title pages place their H1 outside `.entry-content`; their actual strip
+  placement and sticky clearance need rendered review.
+- The practice pages have separate demo controls. Their old sticky bars use
+  `top:0`, and Progress/Rail jumps omit the new shared header/strip clearance.
+  Before building compatibility changes, Ryan was told those controls would sit
+  below the shared strip and their existing jumps would retain visible headings.
+  Initial-view captures alone do not verify this scrolled behavior.
+
+## Larger scrolling area and rapid-switch report
+
+Ryan specifically named Therapeutic's research summary, then clarified the
+problem may affect all boxes. The reported device/browser is not yet identified.
+The source caps ordinary summaries at `9.8em` (about 123 px on the mobile fixture)
+and shrinks the summary before folding distant closed rows. An independent
+native Chromium probe on local structural fixtures of rapid Therapeutic row taps
+followed by an immediate swipe, including 4× CPU slowdown, started scrolling;
+measured show work was
+13–18 ms, with no intentional loading timer. This does **not** disprove the
+reported device delay or establish a reproduced latency defect.
+
+The announced correction gives every scrollable summary more height and folds
+distant closed boxes before reducing the summary on tight screens. Neighboring
+boxes, the section title and jump control remain available. Enlarging the cap
+alone is insufficient: it can trigger the old fitter's smaller 6.6em state and
+make the target worse. Validation must include all four pages and immediate
+tap→swipe sequences without the old test's 180 ms settling delay, preserving
+short-box containment, native long-summary scrolling, focus and reading position.
+
+## Candidate checks before the fresh-copy rehearsal
+
+These results are local structural fixtures, not staging or physical-device
+results: title-only fixtures **125/0**, retained generic rail **207/0**, native
+Chromium touch **386/0** (including all four pages, both sides, immediate
+switch→swipe sequences), and Chromium clearance **3,340/0**. The long-summary
+phone fixture grows from **123.3 to 226.5 px**. Local Firefox was unavailable
+during this first run; it was installed later, as recorded below. These local
+results still required fresh-copy Chromium/Firefox verification.
+
+A direct-current-runtime probe covered all twenty practice-demo modes and
+expanded Now/Next navigation with normal motion. Demo source/CSS was checked
+against the actual captured HTML, but the local header is a fixture. The shared
+core offsets those existing sticky controls and adjusts only Progress/Rail
+section jumps marked by their existing `go()` paths. Preview/index gestures do
+not trigger that adjustment. Full site typography and layout remain for the
+fresh-copy gate. Wrapper orchestration separately passed **28 stub cases**;
+these validate verdict handling, not rendered pages.
+
+The complete local offline run returned **26 PASS, 3 SKIP, 0 FAIL, 0 INVALID**.
+The skips were missing shellcheck/ruff and URL-dependent rendered checks; Actions
+must provide the former and the fresh-copy gate the latter. Pinned PHP traversed
+**127 files, zero errors**; installer/recovery checks were **382/0**, and safe
+current-page emission checks **22/0**. An initial temporary Docker-adapter
+permission failure was corrected and is not counted as verification.
+
+## Pre-deployment recovery plan
+
+The predecessor payload was frozen in `peek-nav-shared-v3.php`, file SHA256
+`6535607a90787db678fad058ab5c6a1e105ac790b3020ab49a6fd4a8634abab4`.
+The previous `core-summary-touch` transition remains pinned to that exact v3,
+preserving the meaning of actual snapshot
+`peek-template-core-summary-touch-before-20261109-075957-5ef2bd29.json`.
+
+The planned `core-title-strip` transition updated exact v3 in #1380 in place,
+binding the four unchanged data records and complete snippet state. Its actual
+snapshot is now recorded in the deployment section below. Recovery reverses this
+transition to v3 first, then any separately intended older transitions with their
+own snapshots. No older snapshot can reverse the new payload. The plan required
+no fallback-only interval and changes only in WordPress storage; main/live remain
+untouched.
+
+Before deployment: read-only complete inventory and rendered design review,
+offline gates, fresh staging39-copy rehearsal with uploads, rendered regulated
+wording checks, exact rollback/reapply, all-page strip checks and retained Peek
+gesture/touch checks. Afterward: read every apply/backup/restore section, actual
+public browser verification, exact stored hashes and final screenshots. INVALID
+results establish no verification. Safari, physical devices and actual assistive
+technology remain separate validation work.
+
+## Candidate Actions gate
+
+Candidate commit `377eb19c9bab523b31bd36d05a6502c4602b27e4` passed
+[Actions Gates](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42589914194)
+at **09:00:04 UTC**: **29 PASS, 1 SKIP, 0 FAIL, 0 INVALID**. The only skip is
+rendered-page verification because this offline gate has no URL. Root read the
+complete job log. This includes shellcheck and ruff unavailable in the local run.
+The actual-copy rehearsal was requested separately at source
+`3403c6ccff9fe065d9847e011608b4ff606af5fa`.
+
+
+## First actual-copy rehearsal: failed; no staging write
+
+[Rehearsal1](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42589939262)
+finished **09:03:04 UTC, FAIL**. Root read the complete 219-line operation report
+and verified the retained artifact:4,719,086 bytes, SHA256
+`44a6aaeacd12e626f6a7305fe02f38429faf635c3a280859c9fc0cca31d167ce`.
+The copy used staging39's actual DB and 268 MB files/uploads. Preflight, apply,
+idempotence, exact rollback/reapply, page responses, PHP and rendered wording
+all passed. Only #1380 and WPCode's cache changed in the copy. Its `/backups/`
+snapshots are disposable rehearsal artifacts, not staging recovery snapshots.
+
+The title matrices rendered all 19 published routes plus search/404. Chromium
+returned **1092/12**, Firefox **1083/18**, with 42 actual captures. Retained
+rail/summary/Thai suites were deliberately **not run** after these failures.
+The failures expose ordinary theme link jumps landing beneath the new pinned
+header/strip, an About menu assertion needing diagnostic separation, a search
+grid assumption, and a legacy Firefox rail-demo preview issue requiring baseline
+evidence. No overall browser pass or new summary verification is claimed.
+
+All42 initial-view captures were independently reviewed, with root also viewing
+Work, About and the search grid. Strips are readable, leave the existing rows
+available, and preserve full-width panels and mobile CTA docks. Those top views
+cannot establish open-menu, scrolled-demo or open-summary behavior.
+
+Before further implementation, Ryan was told that title-only pages would reuse
+Peek's existing in-page link handling to clear the pinned stack. Root separately
+judged parallel search-result cards unsuitable as sequential sections; the
+announced simplification keeps a strip with the search-page title there. Normal
+pages retain section tracking. Staging remains unchanged while these corrections
+and diagnostic checks are prepared.
+
+
+## Read-only baseline diagnosis after the failed rehearsal
+
+[Behavior inspection](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42591357575)
+finished **09:11:48 UTC**, source `ce6258090e9fd4bd1fdeb1cdd4c1ba0e26b2c971`.
+The operation succeeded as an observation, not a candidate pass/fail gate. Root
+read every report section/record. Artifact 143,269 bytes has verified SHA256
+`5623d395cce586203c344cf4316d2df1b0be07d732763f59c2146703a4dccb32`.
+No candidate code was injected; no website storage was changed.
+
+On existing pinned Thai, both Chromium and Firefox report scrollY 600→936→600
+when the 336px menu opens and closes. The content's viewport position remains
+exactly unchanged, and the open menu spans 85–421px inside 844px. The correct gate
+therefore checks visible reading position, menu reachability and unchanged
+address, plus restoration on close. It must not disable browser scroll anchoring
+just to freeze a numeric coordinate.
+
+The old rail practice demo's Firefox Enter emits click detail 1, which its legacy
+handler rejects; all three widths reproduce the same failure on unchanged
+staging. Chromium Enter and both engines' pointer preview/Go work. Candidate
+checks retain an explicit known-baseline observation only for that exact Firefox
+state, while requiring pointer preview/Go and unchanged page/address. This does
+not claim a Firefox keyboard pass or change the deployed Peek keyboard paths.
+The public Astra 4.14.1 script was retained exactly: 26,933 bytes, SHA256
+`fe3e5e84d82d3f30b11185995b22935293b7b7234298ddf480b5249a326b9bd7`.
+
+Local Firefox was subsequently installed for meaningful fixture comparisons.
+New PHP title-mode emission checks pass 24/0; earlier statements that it was
+unavailable describe the first local run, not the current environment.
+
+
+## Corrected candidate before the second rehearsal
+
+The reviewed runtime is 86,567 code bytes, SHA256
+`4162d3b40cfa54807f0a7b3851233aaca7482686ccab7a0a2e343f8afa665af5`.
+Title-only content links retain their exact encoded fragment and reveal native
+closed details/FAQ content, then align below the shared stack. Ordinary links
+scroll once. Animated FAQ and initial-fragment correction has the existing
+four-second limit, observes only that FAQ group's item sizes where necessary,
+and cancels on pointer/touch/wheel/key/mouse/history input. Input before page
+load also suppresses a later arrival correction. Repeated FAQ activation was
+reproduced locally and corrected; the four rail paths remain unchanged.
+
+Focused local Chromium/Firefox probes pass for encoded links, closed details,
+animated and repeated FAQ activation, initial fragments and cancellation, with
+zero JavaScript errors. Updated title fixtures are 181/0 per engine; demo gates
+are 39/0 with explicit baseline Firefox keyboard observations; the exact menu
+gate is 8/0 across both engines using saved markup and captured Astra source.
+These remain local fixtures, with external styles/fonts omitted in the menu
+probe. Installer checks 382/0 and PHP emission 24/0 pass. The fresh-copy gate also
+covers the actual Corporate booking-options hero anchor, alongside Work.
+
+## Second candidate Actions gate and actual-copy rehearsal
+
+Source `27666b83e66f17a0a3e8d6d935b35fce4d83c762` passed
+[Actions Gates](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42592835449)
+at **09:22:29 UTC**: **29 PASS, 1 SKIP, 0 FAIL, 0 INVALID**. The complete
+193-line job log was read; its only skip is URL-dependent rendered verification.
+The runtime remains the 86,567-byte candidate identified above.
+
+[Rehearsal 2](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42592835511)
+used that exact source and finished **09:29:02 UTC, FAIL**. The complete report
+was read. Root verified the 6,344,796-byte retained artifact, SHA256
+`0553bfe500f2d765814c7064b03902102b08038d0a13a986b065b5c0411c4b09`.
+The untouched staging39 copy included its actual database and 268 MB of files
+and uploads. Preflight, apply, idempotence, exact rollback/reapply, page responses,
+PHP and rendered regulated-copy gates passed. Only #1380 and WPCode's cache
+changed in the throwaway copy. Rehearsal `/backups/` snapshots are not staging
+recovery snapshots; **no staging write occurred**.
+
+| Browser suite | Chromium | Firefox |
+|---|---:|---:|
+| Title strip, all 19 published pages plus search/404 | 1223 passed, 0 failed | 1220 passed, 0 failed |
+| Generic page/rail fixtures | 207 passed, 0 failed | 207 passed, 0 failed |
+| Clearance and summary reachability | 3340 passed, 0 failed | 3340 passed, 0 failed |
+
+Native Chromium touch stopped after **53 passed, 1 failed**. Its short-summary
+resize check at 844×320 observed the page move 30px and the card close. The next
+read then encountered a missing summary (`scrollHeight` on null), making the
+unfinished touch stream and retained wrapper **INVALID**. The outer rehearsal
+correctly preserved **FAIL**; those missing results do not erase the observed
+failure. The detailed Thai regression did not run. The matched quick suite is
+a public-only diagnostic subset, not part of any rehearsal wrapper.
+
+All **58 captures** (42 title views and 16 clearance views) were retained.
+Independent review covered the two changed search views and all 16 newly
+available clearance/summary views, following review of all 42 first-candidate
+views against the baseline. Root additionally viewed selected Therapeutic,
+Chair at 844×320, search, Thai, Deep Tissue and Work captures. The actual
+Therapeutic research summary is **226.53px
+high / 227px client height** at 390×844, with its title, neighboring rows and
+jump hint accessible. This confirms the larger rendered area, not successful
+completion of the interrupted touch gate or resolution on the reporting device.
+
+The input-target diagnosis was then reproduced in a **local replay of the
+reported geometry**, using captured inline page HTML with the measured boundary
+imposed; this is not another actual-copy gate. The old start point
+`(636, 181.3125)` lies below the card's bottom `179.84375` (card top `93`).
+`elementFromPoint` hits `DIV.ts-corp-band__inner`, outside both summary and card.
+That swipe reproduces the 30px page movement and card closure. The replay log
+is `/tmp/peek-resize-clip-probe.jsonl`.
+
+The authorized correction is confined to the checker: choose the summary's
+visible intersection with the clipped card/viewport, require at least 32px of
+usable height, and hit-test the start, midpoint and end. It must still require
+the same summary DOM, native inner-scroll progress, unchanged page/hash and
+unchanged outer-card position. This evidence does not justify a runtime change
+or waive the failed native gate. A corrected, fully reviewed fresh-copy run is
+still required before deployment.
+Local report/log paths: `/tmp/peek-titles-candidate-2-gates.log`,
+`/tmp/peek-titles-rehearse-2-text.md`, and
+`/tmp/peek-titles-rehearse-2-artifact/peek-core-title-strip-browser.log`.
+
+
+## Visible-surface checker correction
+
+Root and an independent reviewer checked the measurement-only change. It
+intersects the summary with the card's client clipping area and viewport, and
+hit-tests the start, midpoint and end without moving either scroller. The
+rapid-switch minimum remains a genuinely visible 180×200px; the short-landscape
+minimum increases from a raw 20px to a visible 32px. Native inner progress,
+page/address, preview, side, same summary node and outer-scroll assertions remain.
+A lost-preview guard preserves the original failure before reporting that the
+same-node resize round trip cannot continue. No runtime code changed.
+
+The [local geometry replay](assets/2026-11-09-peek-title-strip-all-pages/checks/resize-visible-path-replay.jsonl)
+compares the old outside-card start with the corrected visible path. The latter
+has 48.06px usable height; all three points hit summary list items. Inner scroll
+moves 0→23px while the finger is down, with pageY0, outer0, unchanged address,
+side, index and summary node, and the preview retained. Those states remain
+after release. This is a controlled replay, not an actual-copy pass.
+
+The corrected native Chromium fixture suite passed **386/0 in 148s**. Syntax
+and whitespace checks passed. The runtime remains exactly the second candidate;
+this test correction still requires a fresh actual-copy rehearsal.
+
+## Third candidate: offline pass, rehearsal failure, read-only preflight pass
+
+Source `03748a861bb4249ca3adce282346fb0be51e1cd9` passed
+[Actions Gates](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42595399884)
+at **09:42:47 UTC**: **29 PASS, 1 SKIP, 0 FAIL, 0 INVALID**. The complete
+193-line job log was read (`/tmp/peek-titles-candidate-3-gates.log`). The only
+skip is URL-dependent rendered verification. This includes the checker-only
+visible-surface correction; the 86,567-byte runtime is unchanged.
+
+Fresh-copy request `peek-titles-rehearse-20261109-3`,
+[run 42595399779](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42595399779),
+finished **09:54:42 UTC, FAIL**, at the same `03748a861…` source. The complete
+237-line report was read (`/tmp/peek-titles-rehearse-3-text.md`). Root verified
+the retained 6,367,191-byte artifact, SHA256
+`082841f0050b6ce9141971311588907c94e8f4426e38bcaaf0940aedde5953d1`.
+Preflight, apply/idempotence, exact rollback/reapply, page responses, PHP and
+rendered regulated-copy gates passed again. Only #1380 and WPCode's cache
+changed in the throwaway copy; no staging WordPress state was written.
+
+The title matrices passed **1223/0 Chromium** and **1220/0 Firefox** across all
+19 published pages plus search/404. Generic page checks passed **207/0** in
+each engine, and clearance passed **3340/0** in each. Corrected native touch
+completed **378/0 in 163s**, including the formerly misdirected resize stroke.
+The eight-count difference from the local 386-check run is conditional
+folded-row checks not needed in these actual layouts, not removed assertions.
+
+The retained Thai regression then returned **484 passed, 1 failed**. Its
+synthetic seven-section, enlarged-text landscape case failed the combined
+requirement that section seven's open box show its name and `Tap to go there`.
+The report's boolean result does not identify which element fails visibility;
+the cause was still under investigation at this stage. The retained wrapper
+additionally reported **INVALID: no final suite
+summary**. The outer rehearsal preserved **FAIL**. No waiver or runtime change
+is established by this result, and no aggregate browser pass is claimed.
+
+The separate read-only preflight,
+[run 42595445291](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42595445291)
+at source `4517794fca7c409619eb901f5bcd55f15893269b`, finished
+**09:55:20 UTC, PASS**. Its complete report was read
+(`/tmp/peek-titles-dry-1-report.md`): all 19 published paths match the reviewed
+inventory and the exact current core guard reports `core-title-strip ready`.
+It uploaded the package outside the web root and wrote no WordPress state.
+This preflight did not override the failed rehearsal. At that stage all staging
+writes remained blocked pending successful fresh-copy and visual gates; no
+deployment snapshot was created.
+
+
+## Enlarged-text fallback diagnosis
+
+Two independent local probes reproduced the exact injected seven-section/26px
+landscape case. The full three-line title is initially visible; the whole
+paragraph fallback now remains present at fit5 instead of being hidden. The
+252px outer card has a 56px scroll range. Its jump hint initially extends below
+the card. Native End exposes the entire hint; Home exposes every title line and
+the close control. A hit-tested title swipe also exposes the hint, with the page,
+address, selection and inner summary unchanged. A native hint tap reaches
+`#ts-extra-2`. [Probe evidence](assets/2026-11-09-peek-title-strip-all-pages/checks/seven-section-outer-scroll-probe.jsonl)
+includes both structural and captured-inline versions; external assets were
+blocked, so these are not fresh-copy results.
+
+Root viewed the initial and End screenshots. The tradeoff is acceptable only
+as the existing constrained outer-card fallback: full title and hint occupy
+different scroll positions while whole paragraphs remain available. The four
+registered-page clearance matrix does not prove this injected case. The focused
+checker change therefore preserves simultaneous visibility for ordinary cases,
+and permits this exact final-fit case only after native keys and touch prove
+reachability, containment, stable preview/focus/text and actual hint activation.
+The failed third rehearsal remains failed; no runtime change is justified by
+these probes. A successful full fresh-copy rehearsal is still required.
+
+The exact retained checker's three landscape blocks pass **18/0** locally,
+including the subsequent fan gesture and native hint activation. Independent
+review confirmed the exception is limited to the combined seven-section/26px
+last-section case and checks close/hint hit targets, all title lines, native
+keys/swipe, stable page/preview/inner text, and destination clearance. Focused
+Firefox keyboard and pointer parity also passed. The runtime is unchanged;
+this evidence does not replace the next complete actual-copy rehearsal.
+
+
+The subsequent complete Thai run on the structural mock returned **485/1**.
+Its only failure tried to focus the unchanged hardcoded `row[data-k="3"]` while
+that mock's fit1–fit3 layout had folded it (`display:none`). Neighboring rows0/2
+remained visible; native keyboard activation of visible row2 moved focus to its
+open preview successfully. This is a measured fixture-geometry difference, not
+an assumed font cause, and is not recorded as a passing full mock suite. The
+third actual-copy run passed that unchanged keyboard assertion. No assertion or
+runtime was altered for this mock-only mismatch; the complete fourth actual-copy
+run remains required. Logs: `/tmp/peek-thai-final-full-local.log`,
+`/tmp/peek-thai-local-keyboard-diagnosis.log`, and
+`/tmp/peek-thai-local-visible-keyboard.log`.
+
+## Fourth rehearsal: complete pass before staging apply
+
+Source `28b440122d13bb7496dea185ba7a1ad0a586aab3` passed
+[Actions Gates](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42598380439)
+at **10:06:55 UTC**: **29 PASS, 1 SKIP, 0 FAIL, 0 INVALID**. The full job log
+was read; only URL-dependent rendered verification was skipped.
+
+[Rehearsal 4](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42598380371)
+used that source and finished **10:20:13 UTC, PASS**. The complete 206-line
+report was read, and the full browser log is retained. Root verified the
+6,346,283-byte artifact, SHA256
+`6f2ed2470df1e8d6f714137cbf98f8eb7f3f4080fd92a141b13ec1c3cace5af3`.
+Exact rollback/reapply, idempotence, PHP, rendered regulated wording and the
+complete 19-page inventory passed. Only #1380/WPCode cache changed in the copy.
+
+| Browser suite | Chromium | Firefox |
+|---|---:|---:|
+| Title strip, 19 published pages plus search/404 | 1223 passed, 0 failed | 1220 passed, 0 failed |
+| Generic page/rail checks | 207 passed, 0 failed | 207 passed, 0 failed |
+| Clearance and summary reachability | 3340 passed, 0 failed | 3340 passed, 0 failed |
+| Native touch | 378 passed, 0 failed | Not a Firefox suite |
+| Retained Thai gestures/stress cases | 486 passed, 0 failed | Not a Firefox suite |
+
+The full wrapper completed in **710s**. The exact seven-section stress case
+now proves native End/Home, a hit-tested swipe, complete title/close/hint
+reachability, unchanged page/summary state, and actual hint activation. The
+unchanged following keyboard-focus assertion also passes on the actual copy.
+These checker corrections leave the 86,567-byte runtime unchanged; the earlier
+failed runs remain recorded as failures. The `--quick` 342-check subset belongs
+to post-deployment public verification only; it was never a rehearsal step.
+
+All 58 images are retained under
+[rehearsal captures](assets/2026-11-09-peek-title-strip-all-pages/rehearsal/).
+All 58 were compared against earlier evidence: 40 are byte-identical to the
+second copy, 12 have only rail/focus-outline differences, and the six changed
+title views were inspected. Changed desktop title views were also checked
+against the fully reviewed first-copy set. Root directly viewed Therapeutic,
+Contact and Home. No visual blocker remains; the enlarged research summaries
+preserve their qualifications, and the exact actual-copy stress evidence
+satisfies the conditional outer-scroll fallback requirement. The 09:55:20 read-only
+preflight applied to this unchanged payload. No staging write occurred during
+these rehearsals; the guarded deployment and its actual snapshot are recorded below.
+Evidence: `/tmp/peek-titles-candidate-4-gates.log`,
+`/tmp/peek-titles-rehearse-4-text.md`, and
+`/tmp/peek-titles-rehearse-4-artifact/peek-core-title-strip-browser.log`.
+
+## Staging deployment and final verification
+
+[Apply run 42600617720](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42600617720),
+source `ec309c3857f37cbdaaff86383d9febaf4c049f9b`, wrote #1380 at
+**10:24:52 UTC** and finished **10:28:23 UTC, PASS**. The complete 303-line
+report was read. The deployed code is **86,567 bytes**, SHA256
+`4162d3b40cfa54807f0a7b3851233aaca7482686ccab7a0a2e343f8afa665af5`,
+unchanged from the successful fourth rehearsal. The change was in place, with
+no fallback-only interval and no changes to the four approved data records.
+
+Before writing, the fresh export
+`staging39-before-peek-nav-20261109-102438.sql` (**4,467,396 bytes**, plaintext
+SHA256 prefix `bac6b3bc6290`) was encrypted, stored off-site and read back
+identically. The actual recovery snapshot is
+`peek-template-core-title-strip-before-20261109-102452-90630a29.json`
+(plaintext SHA256 prefix `b5f18a58eb7a`); its **184,796-byte encrypted copy**
+also passed off-site readback verification.
+
+All **19 published origin routes returned HTTP200**, each with one core CSS,
+runtime and title configuration. Only the four approved service pages emitted
+page-data JSON. The original five service jump rows remained present. Rendered
+wording, posture, page responses and PHP checks passed; structured data was
+**27/27 identical, zero parse failures**. The broad comparison against live had
+**0/20 identical images, 20 differences, zero missing/problem captures** and
+returned exit 1: this is not an aggregate pixel pass. Restore import returned
+**0**; both copies had **104 fingerprints**, differing only in #1380 and the
+WPCode cache. The expected changed-state comparison returned exit 3.
+
+The apply artifact's **20 actual public staging screenshots** were independently
+reviewed at 390px and 1280px across Home, About, Accessibility, Contact, Deep
+Tissue, Privacy, Services, Thai, Therapeutic and Work With Me. They show readable
+title strips with no visible header/content collisions and rendered page content,
+images and footers. Services retains a taller opening with its three-line jump
+row; Work With Me's active mobile title wraps to two lines. No summary is open in
+these captures. This is basic post-deployment rendering evidence for those ten
+routes, not evidence of summary gestures, scrolling, title tracking or all 19
+routes. The later focused run remains INVALID.
+
+The original **29,508,415-byte** artifact **13665154310** has SHA256
+`852266139f931da7f35ada793bea5fc161052886e2f5ea9503f3a627d98dc381`.
+Three verbatim top-region crops, also directly viewed by root, are retained:
+[Home desktop](assets/2026-11-09-peek-title-strip-all-pages/post-deploy-basic/home-desktop-top.png),
+[Therapeutic mobile](assets/2026-11-09-peek-title-strip-all-pages/post-deploy-basic/therapeutic-mobile-top.png)
+and [Contact mobile](assets/2026-11-09-peek-title-strip-all-pages/post-deploy-basic/contact-mobile-top.png).
+These crops stop at 900px and do not represent full-page or interaction coverage.
+
+[Public browser run 42601203134](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42601203134),
+source `ec67609474bc676ac7f88546081e2cdb17ff89bc`, finished
+**10:30:14 UTC, INVALID**. SiteGround's HTTP202 challenge blocked the inventory
+and initial Thai requests: **zero assertions, zero actual routes, zero captures**.
+The matched quick subset was skipped. The complete 75-line report was read;
+no immediate retry was queued against the unchanged denial. Final public browser
+verification remains pending access, and no final focused-suite captures exist.
+The apply's separate 20 staging comparison captures are described above.
+
+[Stored inspection 42601221631](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42601221631),
+source `079fd6c3a5e4ee720d4c8a833bb9ebb0ea39641f`, finished
+**10:30:40 UTC, PASS**. Its complete report confirms published #1380 has the
+exact byte count and SHA256 above. All four data snippet identities, byte counts
+and code hashes remain unchanged. This confirms deployment, not a public-browser
+pass. Full copied-site tests, origin scope checks and tested backup/restore remain
+separate evidence. Main and live were untouched.
+
+## Recovery and remaining work
+
+Any recovery requires a fresh verified off-site backup, current ownership/full-state
+checks and the matching reviewed package. Reverse this update first with explicit
+`core-title-strip --rollback $HOME/private-backups/peek-template-core-title-strip-before-20261109-102452-90630a29.json`
+arguments to restore frozen v3. Only then can the actual `core-summary-touch`
+snapshot restore v2, `core-upgrade` restore v1 and the original `core` snapshot
+restore legacy. An older snapshot cannot reverse the deployed title-strip payload.
+
+The [title-rail follow-up](2026-11-09-peek-title-rails.md) has now frozen this
+deployed payload as shared v4 and pinned `core-title-strip` to that exact file.
+Its separate transition starts from v4, preserving this actual snapshot's recovery
+meaning. If a later title-rail candidate is applied, reverse its own transition
+to v4 before using the recovery above.
+
+The reported initial scrolling delay was not reproduced as loading latency.
+Safari, physical devices and actual assistive technology still need validation;
+Services and short-page rail eligibility remain separate decisions. Their
+read-only title strips are enabled. The earlier failed rehearsals and local
+**485/1** fixture result above remain recorded, not relabeled as passes.
+
+Reports: `/tmp/peek-titles-apply-1-text.md`,
+`/tmp/peek-titles-public-1-text.md`, `/tmp/peek-titles-stored-1-report.md`.

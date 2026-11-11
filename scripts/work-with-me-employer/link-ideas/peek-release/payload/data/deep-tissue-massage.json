@@ -1,0 +1,114 @@
+{
+  "schema": 1,
+  "slug": "deep-tissue-massage",
+  "approval": {
+    "status": "approved",
+    "source": "Ryan approved these exact three-page box contents in chat on 2026-11-09 after the inline wording review; docs/reviews/2026-11-09-peek-summary-drafts.md; rendered staging39 capture peek-design-s39-20261109-1, run 42548017902, completed 2026-11-09 01:55:57 UTC."
+  },
+  "items": [
+    [
+      "Slow, deliberate pressure",
+      "ts-what-it-is"
+    ],
+    [
+      "Deep pressure optional",
+      "ts-what-it-is"
+    ],
+    [
+      "etc.",
+      "ts-what-it-is"
+    ],
+    [
+      "Persistent muscle tightness",
+      "ts-common-reasons"
+    ],
+    [
+      "Work, exercise, routines",
+      "ts-common-reasons"
+    ],
+    [
+      "Share health history",
+      "ts-what-to-expect"
+    ],
+    [
+      "Warning signs: see doctor",
+      "ts-what-to-expect"
+    ],
+    [
+      "Focus agreed first",
+      "ts-what-to-expect"
+    ],
+    [
+      "Technique follows feedback",
+      "ts-what-to-expect"
+    ],
+    [
+      "Discuss future sessions",
+      "ts-what-to-expect"
+    ],
+    [
+      "Therapeutic massage compared",
+      "ts-guide-questions"
+    ],
+    [
+      "Corporate/group bookings only",
+      "ts-guide-questions"
+    ],
+    [
+      "No individual home visits",
+      "ts-guide-questions"
+    ],
+    [
+      "etc.",
+      "ts-guide-questions"
+    ],
+    [
+      "Definitions differ between studies",
+      "ts-guide-research"
+    ],
+    [
+      "Trials reported short-term pain gains",
+      "ts-guide-research"
+    ],
+    [
+      "Neck trial: pain advantage only short term",
+      "ts-guide-research"
+    ],
+    [
+      "Same trial: self-rated recovery advantage through one year",
+      "ts-guide-research"
+    ],
+    [
+      "Neck-massage review: probably little difference from placebo, low certainty",
+      "ts-guide-research"
+    ],
+    [
+      "Sports performance findings were mixed",
+      "ts-guide-research"
+    ],
+    [
+      "Rest also improved relaxation",
+      "ts-guide-research"
+    ],
+    [
+      "Rare serious harms reported",
+      "ts-guide-research"
+    ],
+    [
+      "Case reports cannot show frequency",
+      "ts-guide-research"
+    ],
+    [
+      "etc.",
+      "ts-guide-research"
+    ]
+  ],
+  "coverage": {
+    "ts-what-it-is": "partial",
+    "ts-common-reasons": "most",
+    "ts-what-to-expect": "most",
+    "ts-guide-questions": "partial",
+    "ts-guide-research": "partial"
+  },
+  "research_anchor": "ts-guide-research"
+}

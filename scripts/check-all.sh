@@ -32,7 +32,7 @@ skip() { echo "SKIP  $1 ($2)"; }
 img=$(sed -n 's/^[[:space:]]*image:[[:space:]]*\(wordpress:cli[^[:space:]]*\).*/\1/p' "$root/docker-compose.yml" | head -1)
 php_lint() {
   docker run --rm --network none --entrypoint sh -v "$here:/s:ro" "$img" -c \
-    'n=0; bad=0; for f in $(find /s -name "*.php" | sort); do n=$((n+1)); php -l "$f" >/dev/null 2>/tmp/e || { cat /tmp/e; bad=$((bad+1)); }; done; echo "$n files, $bad failing"; [ "$bad" -eq 0 ]'
+    'n=0; bad=0; for f in $(find /s -name "*.php" | sort); do n=$((n+1)); php -l "$f" >/dev/null 2>/tmp/e || { cat /tmp/e; bad=$((bad+1)); }; done; echo "$n files, $bad failing"; [ "$n" -gt 0 ] && [ "$bad" -eq 0 ]'
 }
 if [ -n "$img" ] && command -v docker >/dev/null; then gate "php -l (pinned image)" php_lint; else skip "php -l" "docker or the pinned wordpress:cli image is not available"; fi
 
@@ -80,6 +80,62 @@ gate "posture check self-test (mock site and deliberate breaks)" python3 -I -B "
 
 # ---- wording tiers (banned-word list with the research exemption, 2026-10-19): self-test, offline -------------------------------------------
 gate "wording tiers self-test (deliberate breaks, mutation-checked)" python3 -I -B "$here/work-with-me-employer/client-pages/tests/wording-tiers-selftest.py"
+gate "Peek summary schema, planned anchors and regulated wording" python3 -I -B "$here/work-with-me-employer/link-ideas/lint-gists.py"
+gate "Peek summary lint refusal tests" python3 -I -B "$here/work-with-me-employer/link-ideas/tests/gists-selftest.py"
+peek_test() {
+  docker run --rm --network none --entrypoint php -v "$here/work-with-me-employer/link-ideas:/pkg:ro" "$img" /pkg/test-installer.php &&
+  docker run --rm --network none --entrypoint php -v "$here/work-with-me-employer/link-ideas:/pkg:ro" "$img" /pkg/tests/core-data-test.php &&
+  docker run --rm --network none --entrypoint php -v "$here/work-with-me-employer/link-ideas:/pkg:ro" "$img" /pkg/rail-input/test-installer.php
+}
+if [ -n "$img" ] && command -v docker >/dev/null; then gate "Peek installer ownership, recovery and current-page JSON (offline)" peek_test; else skip "Peek installer and JSON tests" "docker or the pinned image is not available"; fi
+peek_release_test() { docker run --rm --network none --entrypoint php -v "$here/work-with-me-employer/link-ideas:/pkg:ro" "$img" /pkg/peek-release/test-installer.php; }
+if [ -n "$img" ] && command -v docker >/dev/null; then gate "Peek visitor first-install ownership and exact recovery (offline)" peek_release_test; else skip "Peek visitor first-install tests" "docker or the pinned image is not available"; fi
+# Proposed live path retains the real localhost marker contract. Only synthetic
+# rows/markers are used; /backups exists only inside this disposable container.
+peek_release_proposal_test() {
+  local temp rc=0
+  temp=$(mktemp -d) || return 1
+  docker run --rm --network none --user 0 --entrypoint sh -v "$here/work-with-me-employer/link-ideas:/pkg:ro" "$img" -c \
+    'php /pkg/peek-release/test-installer.php /pkg/peek-release local-marker-contract /tmp/emitted >/dev/null && tar -cf - -C /tmp/emitted .' > "$temp/markers.tar" || rc=$?
+  if [ "$rc" -eq 0 ]; then tar -xf "$temp/markers.tar" -C "$temp" && python3 -I -B "$here/work-with-me-employer/link-ideas/peek-release/test-local-markers.py" "$temp" || rc=$?; fi
+  if [ "$rc" -eq 0 ]; then docker run --rm --network none --entrypoint php -v "$here/work-with-me-employer/link-ideas:/pkg:ro" "$img" /pkg/peek-release/test-render.php || rc=$?; fi
+  rm -rf "$temp"
+  return "$rc"
+}
+if [ -n "$img" ] && command -v docker >/dev/null; then gate "Peek visitor live proposal local-marker compatibility and response identity (offline)" peek_release_proposal_test; else skip "Peek visitor proposal compatibility tests" "docker or the pinned image is not available"; fi
+gate "Peek visitor live proposal backup, partial recovery and exact marker binding (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/peek-release/test-push.py"
+search_contrast_test() { docker run --rm --network none --entrypoint php -v "$here/work-with-me-employer/search-contrast:/pkg:ro" "$img" /pkg/test-installer.php; }
+if [ -n "$img" ] && command -v docker >/dev/null; then gate "Search contrast exact CSS ownership and recovery (offline)" search_contrast_test; else skip "Search contrast installer tests" "docker or the pinned image is not available"; fi
+gate "Search contrast deployment backups and exact snapshot guards (offline)" python3 -I -B "$here/work-with-me-employer/search-contrast/test-push.py"
+gate "Search contrast rehearsal, browser and post-browser recovery guards (offline)" python3 -I -B "$here/work-with-me-employer/search-contrast/test-rehearsal.py"
+gate "Rail deployment backups, cache stability and snapshot verification (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/rail-input/test-push.py"
+gate "Peek input-focus deployment snapshot, rendering order and historical dispatch (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/core-input-focus/test-push.py"
+gate "Peek input-focus rehearsal snapshot binding and post-browser recovery (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/core-input-focus/test-rehearsal.py"
+gate "Peek neighbour deployment snapshot, rendering order and own-lane guards (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/core-neighbours/test-push.py"
+gate "Peek neighbour rehearsal snapshots, failure stops and post-browser recovery (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/core-neighbours/test-rehearsal.py"
+gate "Peek index clearance deployment snapshots, exact rendering and own-lane guards (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/core-index-clearance/test-push.py"
+gate "Peek index clearance rehearsal snapshots, failure stops and post-browser recovery (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/core-index-clearance/test-rehearsal.py"
+gate "Peek quiet navigation deployment snapshots, exact rendering and own-lane guards (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/core-quiet-nav/test-push.py"
+gate "Peek quiet navigation rehearsal snapshots, failure stops and post-browser recovery (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/core-quiet-nav/test-rehearsal.py"
+gate "Peek title resize deployment snapshots, CSS preservation and own-lane guards (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/core-title-resize/test-push.py"
+gate "Peek title resize rehearsal snapshots, failure stops and post-browser recovery (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/core-title-resize/test-rehearsal.py"
+gate "Peek title resize owned-copy cleanup and evidence (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/core-title-resize/test-cleanup.py"
+gate "Peek visitor-release snapshot, rollback rendering and evidence guards (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/peek-release/test-rehearsal.py"
+gate "Peek isolated-copy loopback transport (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/peek-release/test-loopback.py"
+peek_js_syntax() {
+  local file
+  while IFS= read -r file; do node --check "$file" || return 1; done < <(find "$here/work-with-me-employer/link-ideas" "$here/work-with-me-employer/search-contrast" -name '*.mjs' -not -path '*/node_modules/*' | sort)
+}
+if command -v node >/dev/null; then
+  gate "Peek browser checker and wrapper syntax (offline)" peek_js_syntax
+  gate "Peek wrapper evidence, invalid and failure guards (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/tests/wrapper-selftest.py"
+  gate "Peek input wrapper evidence, complete logs and stop guards (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/tests/input-wrappers-selftest.py"
+  gate "Peek neighbour browser evidence, complete logs and engine gates (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/core-neighbours/test-gates.py"
+  gate "Peek index clearance browser evidence, complete logs and engine gates (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/core-index-clearance/test-gates.py"
+  gate "Peek quiet navigation browser evidence, complete logs and engine gates (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/core-quiet-nav/test-gates.py"
+  gate "Peek title resize focused and retained browser evidence (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/core-title-resize/test-gates.py"
+  gate "Rail anonymous HAR capture and artifact guards (offline)" node "$here/work-with-me-employer/link-ideas/rail-input/test-har-capture.mjs"
+else skip "Peek browser checker syntax and wrapper guards" "node is not installed"; fi
 # the generated Thai content must be what the builder produces (a hand edit or a stale build is caught here)
 gate "Thai evidence content matches its builder" python3 -I -B "$here/work-with-me-employer/thai/build-thai-evidence.py" --check
 gate "Therapeutic evidence content matches its builder" python3 -I -B "$here/work-with-me-employer/therapeutic/build-therapeutic-evidence.py" --check

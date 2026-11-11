@@ -1,0 +1,57 @@
+{
+  "provenance": "First partial probe log was overwritten when starting the corrected replay before retention was requested. These two failed assertions are recovered from the captured tool output, not represented as a complete raw run.",
+  "runtimeChanged": false,
+  "diagnosis": [
+    "Range selected injected hidden .ts-pk-tip p; corrected paragraph selection excludes .ts-pk.",
+    "The side control deliberately calls hideCard before setSide; corrected expectation requires unpinned then reopens by native rail tap for the next jump."
+  ],
+  "failures": [
+    {
+      "name": "right DejaVu bottom index/name opens without moving page",
+      "before": {
+        "y": 198,
+        "x": 0,
+        "max": 198,
+        "hash": "",
+        "history": 2,
+        "left": false,
+        "pinned": false,
+        "paragraphLines": 0
+      },
+      "after": {
+        "y": 198,
+        "x": 0,
+        "max": 198,
+        "hash": "",
+        "history": 2,
+        "left": false,
+        "pinned": true,
+        "paragraphLines": 0
+      }
+    },
+    {
+      "name": "right native side tap preserves near-bottom reading position",
+      "before": {
+        "y": 198,
+        "x": 0,
+        "max": 198,
+        "hash": "",
+        "history": 2,
+        "left": false,
+        "pinned": true,
+        "paragraphLines": 0
+      },
+      "after": {
+        "y": 198,
+        "x": 0,
+        "max": 198,
+        "hash": "",
+        "history": 2,
+        "left": true,
+        "pinned": false,
+        "paragraphLines": 0
+      }
+    }
+  ],
+  "termination": "Following hint tap attempted while the card was closed, producing INVALID hit path; error formatter itself referenced undefined sel. Both setup issues corrected in replay."
+}
