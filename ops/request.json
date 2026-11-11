@@ -1,10 +1,11 @@
 {
-  "id": "search-contrast-public-1",
+  "id": "search-contrast-verify-1",
   "op": "run",
   "target": "staging39",
-  "script": "search-contrast/check-public.mjs",
+  "script": "search-contrast/push-search-contrast.sh",
   "args": [
-    "https://staging39.thaisolitude.com"
+    "--verify",
+    "/home/customer/private-backups/search-contrast-before-20261111-064511-fcba9b49.json"
   ],
   "tests": "auto"
 }
