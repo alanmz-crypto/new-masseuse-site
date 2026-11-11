@@ -25,8 +25,9 @@ without checking that the release package is still intended.
 [index-clearance record](2026-11-10-peek-index-clearance.md) supersedes the
 clearance status above: source Gates 45/0, fresh-copy browsers 23,249/0 with
 exact post-browser recovery, then in-place deployment and exact actual-snapshot
-verification across all 19 routes. The automatic public check was INVALID
-HTTP202; its one later attempt is pending. A narrow iPhone Safari index-position
+verification across all 19 routes. After the automatic check was INVALID
+HTTP202, the single later public-browser run passed **18,460/0 across 18 suites**.
+A narrow iPhone Safari index-position
 check remains. The first-install release payload is still older and the
 live-data-copy permission boundary below remains unchanged.
 

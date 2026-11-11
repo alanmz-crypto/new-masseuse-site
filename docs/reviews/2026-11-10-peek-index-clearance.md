@@ -1,6 +1,6 @@
 # Peek index clearance on short screens
 
-**Deployed to staging39; public verification pending.** Ryan authorized resolving the small-screen
+**Verified on staging39; implementation phase complete.** Ryan authorized resolving the small-screen
 index-icon overlap on staging39. The accepted summary-neighbour layout is the
 starting point. Work remains on `claude/wizardly-bell-xu0rta`; main and live are
 outside this task.
@@ -75,7 +75,7 @@ encrypted off-site DB backup, in-place apply and off-site actual-snapshot
 verification. Public browser checks and exact rendered/state verification
 follow the write. INVALID evidence proves nothing.
 
-## Validation in progress
+## Validation and evidence
 
 Actions [Gates 42922709343](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42922709343)
 passed at 23:26:49 UTC for `91604ad6b`: all 45 offline gates, including actual
@@ -250,12 +250,35 @@ core/four data state before and after 19 HTTP200 renders with exact served
 core/style/data scope. The complete report was read.
 The one later public-browser attempt was requested as
 `peek-index-clearance-s39-public-1`, commit `4998bd688`, after this verification.
+It finished **01:28:49 UTC, PASS**, in
+[Actions 42935468998](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42935468998):
+**18,460/0 across all 18 unique leaves** (retained 15,658; focused Chromium
+1,428 and Firefox 1,374). Each focused engine completed 18 cases and 36 captures.
+The earlier automatic HTTP202 post-check remains invalid; this successful run
+is separate public-browser evidence, not a retroactive pass for that check.
+
+The complete 54,503,503-byte public artifact was checked against SHA256
+`1fb3b44d6b8a1d1e438197f55c3782d7e43af88c85fb818d040baba4528cc1e9`.
+Independent raw-log review reconciled every leaf and recomputed all 426 focused
+geometry records, including 56 fixed-bar cases, without mismatch. Browser
+stderr was empty and no FAIL/INVALID occurred. All 72 focused public screenshots
+are byte-identical to their already reviewed copy2 images. No repeated public
+attempt is needed. Final actual-snapshot verification was requested as
+`peek-index-clearance-s39-verify-2`, commit `8c246dfcb`, after browser activity.
+It finished **01:30:30 UTC, PASS**, in
+[Actions 42939387258](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42939387258).
+The complete report confirms the same applied core/four-page state before and
+after all 19 HTTP200 exact renders. No state drift followed the public browsers.
+The only remaining acceptance step for this change is the narrow iPhone Safari
+index-position/gesture check with the address bar expanded and collapsed.
 
 Current recovery must start with `push-peek-index-clearance.sh --rollback`
 and this actual staging snapshot, after fresh verified backup and exact
 ownership/current-state checks. That restores frozen v8. Only then may the
 historical neighbours snapshot/route restore v7. Never use a copy-only journal
 or the old neighbours snapshot directly against the currently applied core.
+Before a future shared-core upgrade, preserve this deployed payload and the
+meaning of this exact index-clearance recovery route, as with the older freezes.
 
 Local full `check-all.sh`: 37 passed, five failed from Docker daemon bind paths
 being unavailable, three skipped (shellcheck and ruff absent; no rendered URL).
@@ -279,7 +302,7 @@ not evidence of a deployed update. Final Thai replay passed **242/0**, both
 sides, including focus return, first-time hint and cancellation checks, with
 two offline page loads and four captures. No further site requests were made.
 
-Candidate file: 109772 bytes, SHA256
+Deployed file: 109772 bytes, SHA256
 `5c9a447583f22458b619dd5e1a2e75dcc8049739d99bdfafb1d0fedac3f2bd2e`;
 stored code: 109766 bytes, SHA256
 `955458c81bf136a2789d8f8d495a3e4e8660771014f65db601441a0af6b1b937`.
@@ -299,8 +322,8 @@ neighbours deployment. After this separate index change, only the affected
 index position and gesture check remains for iPhone Safari; no new broad
 acceptance or assistive-technology certification is inferred.
 
-Actual operation IDs, results, new backup/snapshot and deployed hashes will be
-recorded here after those operations complete. Live release preparation remains
+Actual operation IDs, results, backup/snapshot and deployed hashes are recorded
+above. Live release preparation remains
 separate and paused; no live-copy or deployment authorization is inferred.
 
 Separate visual observation from copy1: Search's dark-mode heading/breadcrumb

@@ -9,11 +9,13 @@ See the [index-clearance record](../../../docs/reviews/2026-11-10-peek-index-cle
 Source Gates passed **45/0**; a fresh staging39 copy passed **23,249/0 across
 21 browser leaves**, including Chromium/Firefox/WebKit and exact recovery after
 browser activity. All 108 focused screenshots were reviewed.
-Applied to #1380 at **00:53:57 UTC**; actual-snapshot verification passed at
-**00:57:48 UTC**, with exact core/four data state before/after 19 HTTP200 renders.
-The automatic public post-check was **INVALID HTTP202**, with nothing tested;
-one later public-browser attempt is pending. Do not describe it as verified or
-retry the hosting challenge in a loop. Main and live remain unchanged.
+Applied to #1380 at **00:53:57 UTC**; final actual-snapshot verification passed
+at **01:30:30 UTC after public browsers**, with exact core/four data state
+before/after 19 HTTP200 renders.
+The automatic public post-check was **INVALID HTTP202**, with nothing tested.
+The single later public-browser run passed **18,460/0 across 18 suites** at
+**01:28:49 UTC**; all 72 focused images match the reviewed copy byte-for-byte.
+The earlier invalid check remains distinct. Main and live remain unchanged.
 
 Current recovery starts with `core-index-clearance` → frozen v8, using only
 `peek-template-core-index-clearance-before-20261111-005357-31ca0040.json`,
@@ -38,8 +40,9 @@ exact core/four data state before and after all 19 published HTTP200 renders.
 Ryan accepted the current layout on iPhone Safari on November 10: “Looks good
 on Safari. No problems I see.” Release-package work remains; its frozen
 first-install payload has not been updated to this core. The phase
-record also tracks a separate short-viewport left-index/announcement overlap;
-its positioning code is unchanged, and its rendered origin remains unproved.
+record also tracks the short-viewport index overlap later addressed above.
+At that previous phase, its positioning code was unchanged and its rendered
+origin was unproved.
 
 At that previous baseline, recovery started with `core-neighbours` → frozen v7, using
 `peek-template-core-neighbours-before-20261110-143200-81725f33.json`,
