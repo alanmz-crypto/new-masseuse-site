@@ -9,6 +9,11 @@ metadata:
 A phone cloud session (https://claude.ai/code, repo `alanmz-crypto/new-masseuse-site`) sees ONLY this repository: not his computer, not his global `~/.claude/CLAUDE.md`, not his local Claude memory, not convmem. Everything that must not be lost is therefore written here and in the notes this index points to.
 First message to send in a fresh phone session: **"Read .claude/project-memory/open-items.md and tell me what is due."**
 
+**Live preflight currently blocked.** The first read-only dry run (43054648677)
+refused Spectra's installed/loaded source binding before release writes. The
+wrapper now retains its failure diagnostic without weakening the guard. Diagnose
+that mismatch before preparing a LIVE request; live is unchanged.
+
 **Release go received November 11.** After the completed review and explicit
 question about enabling the tooling, live dry run and release PR, Ryan replied
 “Continue” and asked to defer diminishing-return refinements. This authorizes

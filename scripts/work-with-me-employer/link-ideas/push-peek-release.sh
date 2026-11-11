@@ -211,7 +211,9 @@ final_binding() {
 }
 case "$mode" in
   dry)
-    result=$(remote preflight "$target"); printf '%s\n' "$result"
+    preflight_rc=0; result=$(remote preflight "$target") || preflight_rc=$?
+    printf '%s\n' "$result"
+    [ "$preflight_rc" -eq 0 ] || exit "$preflight_rc"
     validate RELEASE-PREFLIGHT ready "$result"
     echo "Dry run only; no release writes." ;;
   verify)

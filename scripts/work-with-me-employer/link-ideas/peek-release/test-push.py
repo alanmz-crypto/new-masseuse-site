@@ -69,7 +69,10 @@ elif phase in ('verify','verify-purged','rollback'):
  print('RELEASE-FINAL-BEGIN')
  if scenario=='duplicate-final':print('RELEASE-FINAL-BEGIN')
  mark('RELEASE-RECOVERY' if phase=='rollback' else 'RELEASE-SNAPSHOT','original' if phase=='rollback' else 'applied')
-elif phase=='preflight':mark('RELEASE-PREFLIGHT','ready')
+elif phase=='preflight':
+ if scenario=='preflight-fail':
+  print('RELEASE-SPECTRA-SOURCE {"files":{"fixture":"missing-or-noncanonical"}}');sys.exit(11)
+ mark('RELEASE-PREFLIGHT','ready')
 else:raise SystemExit('unknown fixture phase')
 '''
 HOOK = r'''#!/usr/bin/env python3
@@ -132,6 +135,9 @@ with tempfile.TemporaryDirectory(prefix='release-push-model-') as td:
  for case in ('export-fail','offsite-db-fail','offsite-journal-fail'):
   r,seen,_=run(case,['--rollback',SNAP],partial=True);check(r.returncode!=0 and 'remote:rollback' not in seen,'rollback '+case+' stops writes')
  r,seen,_=run('ok',[]);check(r.returncode==0 and not any(x.startswith('offsite:') for x in seen),'dry checks raw profile only')
+ r,seen,_=run('preflight-fail',[])
+ check(r.returncode==11 and 'RELEASE-SPECTRA-SOURCE ' in r.stdout,'failed preflight retains diagnostics and exact failure exit')
+ check('Dry run only' not in r.stdout and seen==['connect','upload','remote:preflight'],'failed preflight never continues or claims success')
  r,seen,_=run('ok',['--apply'],S_TARGET='staging39');check(r.returncode!=0 and not seen,'non-live target rejected before contact')
  r,seen,_=run('ok',['--apply'],TS_OFFSITE_HOOK='');check(r.returncode!=0 and not seen,'missing offsite hook stops before contact')
  sock.close()

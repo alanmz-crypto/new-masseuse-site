@@ -1,5 +1,13 @@
 # Peek visitor-navigation release readiness
 
+**Live preflight stopped safely, November 11 at 16:04:50 UTC.** Read-only request
+`peek-visitor-release-live-dry-1`, Actions **43054648677**, source
+`07ddb2bd2b69a9d4a0c24138d905534c1ee4d611`, refused the installed/loaded Spectra
+source binding before any release write. Its stdout diagnostic was swallowed by
+shell failure handling. The dry wrapper now prints that diagnostic while
+preserving the failing exit and stopping; no source guard or hash is changed.
+A focused failure-output test covers this. Diagnosis precedes a LIVE request.
+
 **Release go received November 11; guarded live dry run is next.** Ryan replied
 “Continue” to the explicit enablement/dry-run/PR question and asked to defer
 minutiae. The exact independently reviewed patch `96c2d71d…720a` is now applied.
