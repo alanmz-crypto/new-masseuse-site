@@ -1,5 +1,5 @@
 {
-  "id": "peek-live30-recovery-copy-1",
+  "id": "peek-live30-recovery-copy-2",
   "op": "run",
   "target": "live",
   "script": "link-ideas/peek-release/prove-live30-recovery.sh",
