@@ -4,20 +4,22 @@
 # shellcheck disable=SC2016
 set -euo pipefail
 here=$(cd "$(dirname "$0")/peek-release" && pwd)
-mode=dry; snap=""
+mode=dry; snap=""; inspect_sha=""
 case "${1:-}" in
   "") [ "$#" -eq 0 ] || exit 1 ;;
   --apply) [ "$#" -eq 1 ] || exit 1; mode=apply ;;
   --verify) [ "$#" -eq 2 ] || exit 1; mode=verify; snap=$2 ;;
+  --inspect-state) [ "$#" -eq 3 ] || exit 1; mode=inspect; snap=$2; inspect_sha=$3
+    [[ "$inspect_sha" =~ ^[a-f0-9]{64}$ ]] || exit 1 ;;
   --rollback) [ "$#" -eq 2 ] || exit 1; mode=rollback; snap=$2 ;;
-  *) echo "Usage: $0 [--apply | --verify FILE | --rollback FILE]" >&2; exit 1 ;;
+  *) echo "Usage: $0 [--apply | --verify FILE | --inspect-state FILE SHA256 | --rollback FILE]" >&2; exit 1 ;;
 esac
 target="${S_TARGET:-live}"
 [ "$target" = live ] || { echo "S_TARGET must be live." >&2; exit 1; }
-if [[ "$mode" = rollback || "$mode" = verify ]] && [[ ! "$snap" =~ ^(\$HOME|/home/[a-zA-Z0-9_-]+)/private-backups/peek-release-before-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}\.json$ ]]; then
+if [[ "$mode" = rollback || "$mode" = verify || "$mode" = inspect ]] && [[ ! "$snap" =~ ^(\$HOME|/home/[a-zA-Z0-9_-]+)/private-backups/peek-release-before-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}\.json$ ]]; then
   echo "Snapshot must be this visitor release's private before-snapshot." >&2; exit 1
 fi
-if [[ "$mode" != dry ]] && { [ -z "${TS_OFFSITE_HOOK:-}" ] || [ ! -x "$TS_OFFSITE_HOOK" ]; }; then
+if [[ "$mode" != dry && "$mode" != inspect ]] && { [ -z "${TS_OFFSITE_HOOK:-}" ] || [ ! -x "$TS_OFFSITE_HOOK" ]; }; then
   echo "Writes require the executable encrypted off-site hook." >&2; exit 1
 fi
 creds="${S26_CREDS:-$here/../../../../remote_execution.txt}"
@@ -107,13 +109,14 @@ if [ -n "$snap" ]; then
     snap=$(canonical_snapshot "$snap" "$WWM_BACKUP_DIR")
   fi
 fi
-if [[ "$phase" = rollback || "$phase" = verify || "$phase" = verify-purged ]]; then
+if [[ "$phase" = rollback || "$phase" = verify || "$phase" = verify-purged || "$phase" = inspect-state ]]; then
   [[ "$expected_sha" =~ ^[a-f0-9]{64}$ ]] || { echo "Exact preserved snapshot hash required." >&2; exit 1; }
   [ "$(sha256sum "$snap" | cut -d' ' -f1)" = "$expected_sha" ] || { echo "Snapshot changed after preservation; no mutation." >&2; exit 1; }
   export TS_PEEK_RELEASE_EXPECT_SNAPSHOT_SHA256="$expected_sha"
 fi
 case "$phase" in
   preflight) run preflight ;;
+  inspect-state) run verify "$snap" ;;
   prepare|prepare-rollback)
     if [ "$phase" = prepare ]; then
       run preflight
@@ -213,6 +216,10 @@ final_binding() {
   validate "$kind" "$state" "$final"
 }
 case "$mode" in
+  inspect)
+    # Stream diagnostics and preserve failure. No backup, purge, rendering,
+    # installer mutation or local recovery-journal transfer in this mode.
+    remote inspect-state "$target" "$snap" "$inspect_sha" ;;
   dry)
     preflight_rc=0; result=$(remote preflight "$target") || preflight_rc=$?
     printf '%s\n' "$result"

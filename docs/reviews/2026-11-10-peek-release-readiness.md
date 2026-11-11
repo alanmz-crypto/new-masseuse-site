@@ -1,5 +1,40 @@
 # Peek visitor-navigation release readiness
 
+**LIVE #30: applied, then verification FAIL (November 11, 16:26:48 UTC).** Ryan
+merged PR #80 at 16:24:35 UTC and manually started request
+`live-peek-visitor-release-20261111-1`, Actions **43058202011**, main
+`4e89eb25f5f5a68afdbb82aba45e3b385ec8a0b6`. The report and complete job log were
+read. Preflight and all plugin bindings passed. The install completed, with
+Thai 1339 / Therapeutic 1340 / Deep Tissue 1341 / Chair 1342 / core 1343.
+The first subsequent exact verification failed before purge or wrapper-render
+requests. Do not rerun apply or claim deployment verified.
+
+Actual private recovery files under `/home/customer/private-backups/`:
+
+| File | Plaintext bytes | SHA256 |
+|---|---:|---|
+| `live-before-peek-release-20261111-162615-74851.sql` | 3,919,398 | `4f27b4644dca8a85a671e8cbad1326515e49c356314c3e81327eeba46dd032a0` |
+| `peek-release-before-20261111-162615-e00022b6.json` | 1,682,009 | `4038da0f9f77780ce355029bc87e53bff0479294711c821d253f51151e10751b` |
+
+Both exact files were verified on server/local transfer/encrypted off-site
+readback. SQL preceded mutation; the actual journal was preserved before
+verification. Applied state was
+`c1bb9082d44a3cf1aa151678101b2509417d9e1f338e60365e7c8066c02ce874`;
+first subsequent state was
+`b34e86f75140a0e89b725e8dc9e56dd2fcc75e509155b768348bb3670daf4427`.
+The expected manifest/profile remain `5255d85c…8269b5` / `49ed3154…6c3cac`.
+The mismatch's changed-row diagnostic was swallowed by command-substitution
+failure handling; no cause is established from the aggregate hash alone.
+
+A state-only wrapper mode is prepared on `codex/peek-live-verification-diagnostics`:
+`--inspect-state FILE SHA256`. It invokes existing exact `verify` against the
+caller-bound actual snapshot, streams diagnostics including failures, and does
+not apply, roll back, purge, render or transfer a private journal. Installer,
+runtime and all source/state guards are unchanged. Focused wrapper tests pass
+**114 controls**, including successful/failed state-only behavior and malformed
+hash refusal. A read-only Actions diagnostic is next; no additional live write
+or weakened rollback is implied.
+
 **Release PR prepared: [#80](https://github.com/alanmz-crypto/new-masseuse-site/pull/80).**
 The manual request is committed; nothing has run on live. GitHub records final
 Gates and merge status. Once green, Ryan merges and starts Site ops (LIVE) on

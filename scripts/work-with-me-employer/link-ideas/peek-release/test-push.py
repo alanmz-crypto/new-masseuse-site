@@ -63,6 +63,11 @@ elif phase=='preserve':
  if scenario=='missing-journal':sys.exit(9)
  transfer('RELEASE-JOURNAL',state['snapshot'])
  if scenario=='duplicate-journal':transfer('RELEASE-JOURNAL',state['snapshot'])
+elif phase=='inspect-state':
+ assert p[5]==state['snapshot'] and p[6]==state['sha']
+ if scenario=='state-fail':
+  print('RELEASE-STATE-DIAGNOSTIC {"fixture":"changed-row-hash"}');sys.exit(10)
+ mark('RELEASE-SNAPSHOT','applied')
 elif phase in ('verify','verify-purged','rollback'):
  assert p[5]==state['snapshot'] and p[6]==state['sha'];event('bound:'+p[6])
  if scenario in ('purge-fail','render-fail','state-fail'):sys.exit(10)
@@ -135,6 +140,14 @@ with tempfile.TemporaryDirectory(prefix='release-push-model-') as td:
  for case in ('export-fail','offsite-db-fail','offsite-journal-fail'):
   r,seen,_=run(case,['--rollback',SNAP],partial=True);check(r.returncode!=0 and 'remote:rollback' not in seen,'rollback '+case+' stops writes')
  r,seen,_=run('ok',[]);check(r.returncode==0 and not any(x.startswith('offsite:') for x in seen),'dry checks raw profile only')
+ inspect_raw=canonical(dict(base,complete=True,ids=ids,old=old,old_sha256=sha(canonical(old)),new=new,new_sha256=sha(canonical(new))))
+ for scenario in ('ok','state-fail'):
+  r,seen,d=run(scenario,['--inspect-state',SNAP,sha(inspect_raw)],TS_OFFSITE_HOOK='')
+  check(r.returncode==(0 if scenario=='ok' else 10),'state inspection preserves exact success/failure exit')
+  check(seen==['connect','upload','remote:inspect-state'] and not d.exists(),'state inspection performs no backup, purge, rendered request or journal transfer')
+  check(('RELEASE-SNAPSHOT ' if scenario=='ok' else 'RELEASE-STATE-DIAGNOSTIC ') in r.stdout,'state inspection streams its exact diagnostic')
+ r,seen,_=run('ok',['--inspect-state',SNAP,'invalid'],TS_OFFSITE_HOOK='')
+ check(r.returncode!=0 and not seen,'state inspection refuses malformed expected SHA before contact')
  r,seen,_=run('preflight-fail',[])
  check(r.returncode==11 and 'RELEASE-SPECTRA-SOURCE ' in r.stdout,'failed preflight retains diagnostics and exact failure exit')
  check('Dry run only' not in r.stdout and seen==['connect','upload','remote:preflight'],'failed preflight never continues or claims success')

@@ -9,6 +9,18 @@ metadata:
 A phone cloud session (https://claude.ai/code, repo `alanmz-crypto/new-masseuse-site`) sees ONLY this repository: not his computer, not his global `~/.claude/CLAUDE.md`, not his local Claude memory, not convmem. Everything that must not be lost is therefore written here and in the notes this index points to.
 First message to send in a fresh phone session: **"Read .claude/project-memory/open-items.md and tell me what is due."**
 
+**LIVE #30 failed after installation; do not rerun the apply.** Ryan merged
+PR #80 and started `live-peek-visitor-release-20261111-1`, run **43058202011**,
+main `4e89eb25f5f5a68afdbb82aba45e3b385ec8a0b6`. The five snippets were applied
+and the actual SQL/snapshot verified encrypted off-site, but first exact-state
+verification failed at **16:26:48 UTC**, before purge/render. Live therefore has
+the release installed but deployment verification is incomplete. The actual
+snapshot is `peek-release-before-20261111-162615-e00022b6.json`, SHA256
+`4038da0f9f77780ce355029bc87e53bff0479294711c821d253f51151e10751b`.
+Read-only state diagnosis is next; no rollback or guard relaxation is authorized
+by the failed result. See the release-readiness record for all actual bindings.
+The statements below about no live run describe the preceding preparation.
+
 **Peek release PR prepared: [PR #80](https://github.com/alanmz-crypto/new-masseuse-site/pull/80).**
 Merge only after its final Gates is green, then manually start Site ops (LIVE)
 on main with `live-peek-visitor-release-20261111-1`. The PR contains the exact
