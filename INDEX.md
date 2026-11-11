@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-11 04:32 UTC  **PASS**  `peek-quiet-nav-rehearse-2`  [reports/2026-11-11/043200-peek-quiet-nav-rehearse-2.md](reports/2026-11-11/043200-peek-quiet-nav-rehearse-2.md)  (run 42955015715)
 - 2026-11-11 03:36 UTC  **FAIL**  `peek-quiet-nav-rehearse-1`  [reports/2026-11-11/033624-peek-quiet-nav-rehearse-1.md](reports/2026-11-11/033624-peek-quiet-nav-rehearse-1.md)  (run 42949099092)
 - 2026-11-11 01:30 UTC  **PASS**  `peek-index-clearance-s39-verify-2`  [reports/2026-11-11/013032-peek-index-clearance-s39-verify-2.md](reports/2026-11-11/013032-peek-index-clearance-s39-verify-2.md)  (run 42939387258)
 - 2026-11-11 01:28 UTC  **PASS**  `peek-index-clearance-s39-public-1`  [reports/2026-11-11/012853-peek-index-clearance-s39-public-1.md](reports/2026-11-11/012853-peek-index-clearance-s39-public-1.md)  (run 42935468998)
