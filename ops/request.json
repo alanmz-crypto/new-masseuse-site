@@ -1,8 +1,10 @@
 {
-  "id": "peek-title-resize-dry-1",
+  "id": "peek-title-resize-apply-1",
   "op": "run",
   "target": "staging39",
   "script": "link-ideas/push-peek-title-resize.sh",
-  "args": [],
+  "args": [
+    "--apply"
+  ],
   "tests": "auto"
 }
