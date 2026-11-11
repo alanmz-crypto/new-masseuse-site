@@ -1,6 +1,6 @@
 # Peek index clearance on short screens
 
-**In progress; not deployed.** Ryan authorized resolving the small-screen
+**Deployed to staging39; public verification pending.** Ryan authorized resolving the small-screen
 index-icon overlap on staging39. The accepted summary-neighbour layout is the
 starting point. Work remains on `claude/wizardly-bell-xu0rta`; main and live are
 outside this task.
@@ -203,6 +203,52 @@ Root reviewed the actual copy2 WebKit
 and [Work With Me narrow view](assets/2026-11-10-peek-index-clearance/copy2/peek-index-clearance-webkit-work-with-me-right-short-portrait.jpg):
 the complete index clears the announcement/title strip where space permits,
 and the deferred narrow rail leaves both contact buttons unobstructed.
+Independent reviewers also visually inspected all 36 captures per engine and
+reconciled each raw assertion/case/capture stream. No index-clearance blocker
+was found; the separate Search contrast observation remains recorded below.
+Native review confirmed all 87 fingerprint rows: A=C=E byte-for-byte, including
+cache; B=B2; only #1380/cache changed on apply. All 28 native gates, Home 35/0
+and regulated client wording/structure 322/0 passed.
+
+Staging preflight `peek-index-clearance-s39-preflight-1`,
+[Actions 42934508577](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42934508577),
+commit `a68aa344a`, finished **00:51:13 UTC, PASS**. It found the exact ready
+v8 baseline and wrote nothing. The guarded apply was then requested as
+`peek-index-clearance-s39-apply-1` at `51cc60dde`.
+
+## Staging deployment, November 11
+
+Apply [Actions 42934834303](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42934834303)
+finished **00:55:26 UTC, PASS**. #1380 was updated in place at **00:53:57 UTC**;
+no fallback-only interval occurred. All 19 published routes returned HTTP200
+with the exact candidate core/style and correct data scope. Full core/four-data
+verification matched before and after these renders.
+
+- Actual staging snapshot:
+  `peek-template-core-index-clearance-before-20261111-005357-31ca0040.json`.
+- Fresh SQL export:
+  `staging39-before-peek-index-clearance-20261111-005342-74246.sql`.
+- Both were copied with matching checksums, encrypted off-site and read back
+  identically; the SQL was verified before the write, snapshot before rendering.
+- Complete applied core state:
+  `de8e43f75a8a42c537608c8590e160ba6f061fc27d32c4c83631ae0451b3c7e6`.
+- Four-page state remains
+  `3e9acc4ea6dfedf7fe99e7a70534603ba0d32a1827793755c8ee10f4e55c9cc9`.
+
+The automatic post-change public check was **INVALID HTTP202**, with zero tests:
+SiteGround returned its bot challenge. This does not invalidate the separate
+server-side exact-render/state checks, but is not public-browser evidence.
+Do not retry in a loop. The export restore test imported successfully and
+compared all 104 fingerprints; only #1380 and `wpcode_snippets` differ, exactly
+the intended update. Its informational exit3 records those expected differences.
+The complete apply report was read. Standalone actual-snapshot verification and
+one later public-browser attempt remain before closing this phase.
+
+Current recovery must start with `push-peek-index-clearance.sh --rollback`
+and this actual staging snapshot, after fresh verified backup and exact
+ownership/current-state checks. That restores frozen v8. Only then may the
+historical neighbours snapshot/route restore v7. Never use a copy-only journal
+or the old neighbours snapshot directly against the currently applied core.
 
 Local full `check-all.sh`: 37 passed, five failed from Docker daemon bind paths
 being unavailable, three skipped (shellcheck and ruff absent; no rendered URL).
