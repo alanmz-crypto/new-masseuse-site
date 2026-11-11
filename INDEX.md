@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-11 22:21 UTC  **FAIL**  `peek-live-finished-inspect-20261111-1`  [reports/2026-11-11/222127-peek-live-finished-inspect-20261111-1.md](reports/2026-11-11/222127-peek-live-finished-inspect-20261111-1.md)  (run 43111020439)
 - 2026-11-11 19:34 UTC  **PASS**  `live-peek-finish-20261111-1`  [reports/2026-11-11/193436-live-peek-finish-20261111-1.md](reports/2026-11-11/193436-live-peek-finish-20261111-1.md)  (run 43086291426)
 - 2026-11-11 19:05 UTC  **INVALID**  `live-peek-finish-20261111-1`  [reports/2026-11-11/190524-live-peek-finish-20261111-1.md](reports/2026-11-11/190524-live-peek-finish-20261111-1.md)  (run 43083839402)
 - 2026-11-11 18:20 UTC  **PASS**  `peek-live30-incident-inspect-1`  [reports/2026-11-11/182002-peek-live30-incident-inspect-1.md](reports/2026-11-11/182002-peek-live30-incident-inspect-1.md)  (run 43076682138)
