@@ -167,6 +167,42 @@ Root reviewed both corrected narrow-screen captures. These are offline candidate
 renders of fresh captured staging HTML/assets, not deployed-site evidence.
 The expanded evidence harness passed **133 cases**, including rejection of the
 obsolete eight-route matrix; no browser/network/installer was used by the harness.
+The exact focused checker then passed **348/0** for the two captured pages and
+both sides: 4/18 cases, four offline loads and eight captures. It preserved all
+assertions and used no additional website requests. This remains partial local
+evidence, not the full fresh-copy gate.
+
+Source candidate `c66784bca` passed all **45 offline Gates** in
+[Actions 42929745059](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42929745059)
+at 2026-11-11 00:18:10 UTC. The complete job log was independently read;
+rendered checks were correctly skipped without a URL. Request
+`peek-index-clearance-rehearse-2` at `a8801366d` starts the complete nine-route
+rehearsal from another staging39 copy with uploads. No staging write has occurred.
+
+Copy2 [Actions 42929855631](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42929855631)
+finished **PASS at 00:47:24 UTC, November 11**. All 21 unique browser leaves
+passed **23,249/0**: retained 19,073; focused Chromium 1,428, Firefox 1,374,
+WebKit 1,374. Each focused engine completed all 18 cases and 36 captures.
+The complete 70,623,793-byte artifact was verified against SHA256
+`1b3e657289e8d413989d68009d37db2b1933ce96c2f35fa541d76bb2ad15d11b`.
+Independent raw-log review recomputed 636 geometry records, including 84 fixed
+contact-bar cases, with no mismatches; all 108 focused JPEGs decoded correctly.
+No browser failures or INVALID evidence occurred.
+
+The copy verified the applied state after browser activity, rolled back to the
+exact original core/four data state, then reapplied and verified its own fresh
+snapshot. Copy-only snapshots end `001742-6c882f4b`, `001746-70bbceb1` and
+`004721-44333767`; these are not staging recovery paths. The restored original
+core state was `c9046dbb963ed0d18297b4b1a4cfda0b94db4969767ee2ddf6f75498c66ca289`;
+four-page data stayed `3e9acc4ea6dfedf7fe99e7a70534603ba0d32a1827793755c8ee10f4e55c9cc9`.
+Only #1380 and the expected WPCode cache changed. Existing WP-CLI color-library
+deprecation notices are not new website PHP errors.
+
+Root reviewed the actual copy2 WebKit
+[Thai short-portrait view](assets/2026-11-10-peek-index-clearance/copy2/peek-index-clearance-webkit-thai-massage-left-short-portrait.jpg)
+and [Work With Me narrow view](assets/2026-11-10-peek-index-clearance/copy2/peek-index-clearance-webkit-work-with-me-right-short-portrait.jpg):
+the complete index clears the announcement/title strip where space permits,
+and the deferred narrow rail leaves both contact buttons unobstructed.
 
 Local full `check-all.sh`: 37 passed, five failed from Docker daemon bind paths
 being unavailable, three skipped (shellcheck and ruff absent; no rendered URL).
@@ -213,3 +249,7 @@ acceptance or assistive-technology certification is inferred.
 Actual operation IDs, results, new backup/snapshot and deployed hashes will be
 recorded here after those operations complete. Live release preparation remains
 separate and paused; no live-copy or deployment authorization is inferred.
+
+Separate visual observation from copy1: Search's dark-mode heading/breadcrumb
+appear pale on a white hero panel. No baseline comparison established attribution,
+and no theme or Search-content change was made in this index-clearance phase.
