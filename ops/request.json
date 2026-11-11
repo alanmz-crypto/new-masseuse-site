@@ -1,10 +1,10 @@
 {
-  "id": "search-contrast-apply-2",
+  "id": "search-contrast-public-1",
   "op": "run",
   "target": "staging39",
-  "script": "search-contrast/push-search-contrast.sh",
+  "script": "search-contrast/check-public.mjs",
   "args": [
-    "--apply"
+    "https://staging39.thaisolitude.com"
   ],
   "tests": "auto"
 }
