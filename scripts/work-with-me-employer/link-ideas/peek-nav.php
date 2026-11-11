@@ -282,19 +282,27 @@ add_action( 'wp_footer', function () {
     return document.title;
   }
   function dismissMobileMenu(head) {
-    if (!head) return;
-    document.addEventListener('click', function (event) {
-      var mobile = head.querySelector('#ast-mobile-header[data-type="dropdown"]');
+    function current() {
+      var mobile = head && head.querySelector('#ast-mobile-header[data-type="dropdown"]');
       var toggle = mobile && mobile.querySelector('.menu-toggle.main-header-menu-toggle');
       var panel = mobile && mobile.querySelector('.ast-mobile-header-content');
-      function open() { return toggle && panel && toggle.isConnected && panel.isConnected && toggle.getBoundingClientRect().height > 0 && panel.getBoundingClientRect().height > 0 && toggle.getAttribute('aria-expanded') === 'true'; }
-      if (event.button > 0 || !open() || toggle.contains(event.target) || panel.contains(event.target)) return;
-      // The final click already owns its target. Close now, before an in-page
-      // jump measures the flow header. Only this exact native toggle bypasses
-      // Peek's one-click guard; the original preview-owned tap stays consumed.
-      closingHeaderToggle = toggle;
-      try { toggle.click(); } finally { closingHeaderToggle = null; }
+      return toggle && panel && toggle.getAttribute('aria-expanded') === 'true' && toggle.isConnected && panel.isConnected && toggle.getBoundingClientRect().height > 0 && panel.getBoundingClientRect().height > 0 ? { toggle: toggle, panel: panel } : null;
+    }
+    function close(active) {
+      active = active || current(); if (!active) return;
+      // Only this exact native toggle bypasses Peek's one-click guard; the
+      // original preview-owned tap stays consumed.
+      closingHeaderToggle = active.toggle;
+      try { active.toggle.click(); } finally { closingHeaderToggle = null; }
+    }
+    if (head) document.addEventListener('click', function (event) {
+      var active = current();
+      if (event.button > 0 || !active || active.toggle.contains(event.target) || active.panel.contains(event.target)) return;
+      // The final click already owns its target. Close before ordinary page
+      // links measure the flow header; Peek's earlier activations also call close.
+      close(active);
     }, true);
+    return close;
   }
   // All modes share the same strip, pinned-header measurement and reading line.
   function titleStrip(content, sections, resolve, row, titleOnly) {
@@ -303,7 +311,7 @@ add_action( 'wp_footer', function () {
     strip.innerHTML = '<div class="in"><span class="before">' + esc(pageIdentity()) + '</span><div class="tr"></div></div>';
     if (row) row.parentNode.insertBefore(strip, row.nextSibling); else content.insertBefore(strip, content.firstChild);
     var topIn = strip.querySelector('.in'), topTr = strip.querySelector('.tr'), items = [], head = document.getElementById('masthead');
-    dismissMobileMenu(head);
+    var closeMenu = dismissMobileMenu(head);
     root.classList.add('ts-pk-title-ready');
     if (content !== document.body) content.classList.add('ts-pk-title-content');
     function measureHead() {
@@ -367,7 +375,7 @@ add_action( 'wp_footer', function () {
       if (document.fonts && document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', function () { layout(); changed(); });
     }
     setSections(sections);
-    return { strip: strip, head: head, line: line, bounds: bounds, read: read, paint: paint, layout: layout, watch: watch, setSections: setSections };
+    return { strip: strip, head: head, line: line, bounds: bounds, read: read, paint: paint, layout: layout, watch: watch, setSections: setSections, closeMenu: closeMenu };
   }
   function practiceNavigation(content, title) {
     var labs = [].slice.call(content.querySelectorAll('.tsx-lab,.tsp-lab,.tsr-lab'));
@@ -464,6 +472,7 @@ add_action( 'wp_footer', function () {
     function go(target, href) {
       if (!target || !content.contains(target)) return;
       stopPending(); mayArrive = false;
+      title.closeMenu();   // a preview may activate on pointerup or keydown, before click
       var animated = reveal(target); align(target, calm.matches ? 'auto' : 'smooth');
       var focus = /^H[1-6]$/.test(target.tagName) ? target : target.querySelector('h1,h2,h3,h4,h5,h6,.ts-faq-disclosure') || target;
       if (!focus.hasAttribute('tabindex') && !focus.matches('a[href],button,input,select,textarea,summary')) {
@@ -776,6 +785,7 @@ add_action( 'wp_footer', function () {
     function jumpTo(i) {   // Ryan, 2026-11-08: no "Back to ..." button
       var h = el(i); if (!h || !h.isConnected) return;
       if (plainNavigation) { plainNavigation.go(h, S[i].href); return; }
+      title.closeMenu();   // close before the pointerup/keydown jump measures its destination
       openDetails(h);
       // a closed FAQ panel as the target opens, as the old row's own script did (after the swallowed click of the tap, so it is not swallowed itself)
       var fq = h.classList.contains('uagb-faq-item') ? h : h.closest('.uagb-faq-item');

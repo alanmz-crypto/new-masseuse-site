@@ -49,6 +49,11 @@ has its target, so this does not collapse the header during pointerdown. Only
 that exact owned, untrusted toggle event bypasses Peek's one-click guard; a tap
 reserved for dismissing a preview remains consumed.
 
+Peek's committed jumps also call that same close function before measuring
+their destination. This covers preview activation on pointerup or keydown,
+which happens before the ordinary click listener. Opening a preview or scrolling
+its summary does not close the menu through this path.
+
 Offline rendered checks caught an error in the first candidate's deferred
 close: with normal smooth scrolling, Corporate's original `#booking-options`
 link landed at −192.97px instead of 143.03px, exactly the 336px menu height
@@ -94,7 +99,7 @@ allowed. Physical Safari and assistive technology are separate from emulation.
 
 ## Evidence
 
-Corrected runtime: 110300 file bytes, SHA256
+First corrected runtime (copy1 candidate): 110300 file bytes, SHA256
 `35ec4879dbe5f9df78f07b57003384eefc4f5592bd8484b9b2676e84e5aacfff`;
 110294 stored bytes, SHA256
 `aa2000ebf026dfb2c1ec4a91ba0f73caa7c7e10ab5cc3eb1a640da72a3752b79`.
@@ -131,7 +136,41 @@ candidate, so it is not evidence for the corrected runtime's behavior. The new
 offline gate harness passed 143 cases. Complete final-tree Actions gates remain
 required; these local results are not a full source-gate pass.
 
-No copy rehearsal, staging write, public-browser result or new actual snapshot
-exists yet for this phase. The prior index fix and summary-neighbour layout
+Source commit `d3a7bd6fe194e74c35775328d101b7bd0d7da987` passed all **48 offline
+gates**, with zero failures and only the expected no-URL rendered skip, in
+[Actions 42948265339](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42948265339)
+at **02:52:11 UTC**. The full job log was independently read. An exact retained
+Thai prefix also passed **96/0** in phone/tablet, light/dark offline replay;
+its partial scope is not a complete browser gate.
+
+Fresh staging39-with-uploads copy1, request `peek-quiet-nav-rehearse-1`, source
+`64080478bd82c816c834893af093a37313609573`, is running in
+[Actions 42949099092](https://github.com/alanmz-crypto/new-masseuse-site/actions/runs/42949099092).
+It uses the first corrected runtime above, not the next candidate below.
+
+While copy1 ran, a further actual-Thai replay exposed a reachable mixed-input
+case: keyboard-open the Common reasons preview and header, then touch the visible
+preview title or hint. The pointerup jump started before final-click dismissal;
+normal motion landed 336px too high. Reduced motion passed. The four-case
+diagnostic reported 14 passes/two failures and no script errors. This is a real
+activation-order issue, distinct from the earlier test setup observations.
+
+The next candidate closes the header through the shared native-toggle helper
+before both summary and title-only jumps measure their destinations. File:
+110812 bytes, SHA256
+`391a1c6fa553c1cf5b2ec5c6a0363d344e969f26f80d9d071d7c6fbcca56b88c`;
+stored: 110806 bytes, SHA256
+`18ca789e5c9f134b1b7cf8d44a783fabd8cfec084162db9e35e4d2340d4bdf91`.
+Independent source review found no further issue. It requires its own source
+gates and fresh full copy rehearsal; copy1 cannot authorize this new payload.
+Corrected offline replay passed **28/0**: all four real Thai title/hint and
+normal/reduced-motion combinations retain the correct heading focus and hash,
+land 12px below the strip, and consume the compatibility click; Corporate's
+original anchor passes both motion settings. The expanded focused Thai subset
+passed **92/0**, including every prior check and the added actual-preview cases.
+Its two cases/four captures still correctly remain INVALID as a full gate.
+
+No staging write, public-browser result or new actual snapshot exists yet for
+this phase. The prior index fix and summary-neighbour layout
 remain accepted by Ryan. Live release preparation stays paused at its older
 first-install payload and the previously recorded live-copy permission boundary.

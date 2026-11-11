@@ -223,7 +223,10 @@ async function menuChecks(p, context, label, slug, navigationRequests) {
   await tap(p, '#masthead .ts-theme-toggle:visible');
   ok(`${label}/menu/theme action also works after dismissal and restores the chosen theme`, (await menuState(p)).theme === before.theme && (await menuState(p)).expanded === 'false');
   if (['thai-massage', 'privacy-policy'].includes(slug)) for (const motion of ['reduce', 'no-preference']) await outsideAnchor(p, label, navigationRequests, motion);
-  if (slug === 'thai-massage') await coexistence(p, label);
+  if (slug === 'thai-massage') {
+    await coexistence(p, label);
+    for (const motion of ['reduce', 'no-preference']) await coexistenceJump(p, label, navigationRequests, motion);
+  }
 }
 async function outsideAnchor(p, label, navigationRequests, motion) {
   await clean(p); await p.emulateMedia({ reducedMotion: motion }); await p.setViewportSize({ width: 390, height: 500 }); await p.evaluate(() => scrollTo({ top: 0, behavior: 'instant' })); await settle(p); await tap(p, '#masthead .menu-toggle:visible');
@@ -264,6 +267,41 @@ async function coexistence(p, label) {
   } finally { await p.evaluate(() => { document.querySelector('#quiet-coexistence-probe')?.remove(); delete window.__quietCoexistenceClicks; }); }
   await clean(p);
 }
+async function coexistenceJump(p, label, navigationRequests, motion) {
+  const part = motion === 'reduce' ? 'title' : 'hint', prefix = `${label}/menu/preview-jump-${motion}-${part}`;
+  await clean(p); await p.emulateMedia({ reducedMotion: motion }); await p.setViewportSize({ width: 390, height: 844 });
+  await p.evaluate(() => scrollTo({ top: 0, behavior: 'instant' })); await settle(p);
+  await p.locator('.ts-pk-rail li:nth-child(2) > :first-child').focus(); await p.keyboard.press('Enter'); await settle(p);
+  await p.locator('#masthead .menu-toggle:visible').focus(); await p.keyboard.press('Enter');
+  const before = await openMenuReady(p, prefix), card = await state(p), loads = navigationRequests();
+  ok(`${prefix}/original second preview remains pinned with the header menu open`, card.card.on && card.card.pinned && card.card.index === 1, card);
+  if (!card.card.on || !card.card.pinned || card.card.index !== 1) throw new Error(`${prefix}: expected original second preview before native activation`);
+  const selector = part === 'title' ? '.ts-pk-card .open > b' : '.ts-pk-card .open .hint > span';
+  // Observe the actual jump's address write without changing its default
+  // behavior. Restore the exact own-property state in the finally block.
+  await p.evaluate(() => {
+    const target = window.__quietTargets[1]; if (!target?.id) throw new Error('Original second preview destination needs an ID');
+    const probe = window.__quietJumpProbe = { target, own: Object.getOwnPropertyDescriptor(history, 'replaceState'), original: history.replaceState, writes: [] };
+    history.replaceState = function (...args) { probe.writes.push(String(args[2])); return Reflect.apply(probe.original, this, args); };
+  });
+  try {
+    await clearTrace(p); await tap(p, selector); await p.waitForTimeout(1500); await settle(p);
+    const landing = await p.evaluate(() => {
+      const probe = window.__quietJumpProbe, r = probe.target.getBoundingClientRect(), strip = document.querySelector('#ts-peek-title-strip').getBoundingClientRect(), head = document.querySelector('#masthead').getBoundingClientRect();
+      return { top: r.top, boundary: Math.max(0, strip.bottom, head.bottom), height: innerHeight, hash: location.hash, expectedHash: '#' + encodeURIComponent(probe.target.id), focused: document.activeElement === probe.target, focus: document.activeElement?.outerHTML.slice(0, 180), writes: probe.writes.slice() };
+    });
+    const after = await menuState(p), result = await state(p), events = await trace(p, `${prefix}/native-activation`);
+    ok(`${prefix}/one native preview activation closes both and writes the destination once`, events.filter(e => e.type === 'pointerup' && e.trusted && e.preview).length === 1 && after.expanded === 'false' && !result.card.on && landing.hash === landing.expectedHash && landing.writes.length === 1 && new URL(landing.writes[0], before.url).hash === landing.expectedHash && after.history === before.history && navigationRequests() === loads, { before, after, result, landing, events });
+    ok(`${prefix}/original heading keeps focus below the collapsed header and strip`, landing.focused && landing.top >= landing.boundary - 1 && landing.top <= landing.boundary + 40 && landing.top < landing.height, landing);
+  } finally {
+    await p.evaluate(url => {
+      const probe = window.__quietJumpProbe;
+      if (probe) { if (probe.own) Object.defineProperty(history, 'replaceState', probe.own); else delete history.replaceState; delete window.__quietJumpProbe; }
+      history.replaceState(null, '', url);
+    }, before.url);
+    await p.emulateMedia({ reducedMotion: 'reduce' }); await clean(p);
+  }
+}
 
 try {
   browser = await playwright[engine].launch(engine === 'chromium' && process.env.TS_BROWSER_EXECUTABLE ? { executablePath: process.env.TS_BROWSER_EXECUTABLE } : {});
@@ -275,7 +313,7 @@ try {
         window.__quietEvents = []; window.__quietLabelSeen = false;
         const name = node => node ? node.tagName + (node.id ? '#' + node.id : '') + (typeof node.className === 'string' && node.className ? '.' + node.className.trim().replace(/\s+/g, '.') : '') : null;
         for (const type of ['pointerdown', 'pointerup', 'touchstart', 'touchend', 'mousedown', 'mouseup', 'click', 'keydown']) document.addEventListener(type, e => {
-          const entry = { type, key: e.key, pointer: e.pointerType, trusted: e.isTrusted, target: name(e.target), interactive: !!e.target.closest?.('a,button,input,textarea,select,summary,[role="button"],label'), prevented: e.defaultPrevented, x: e.clientX, y: e.clientY, scrollY };
+          const entry = { type, key: e.key, pointer: e.pointerType, trusted: e.isTrusted, target: name(e.target), interactive: !!e.target.closest?.('a,button,input,textarea,select,summary,[role="button"],label'), preview: !!e.target.closest?.('.ts-pk-card .open'), prevented: e.defaultPrevented, x: e.clientX, y: e.clientY, scrollY };
           window.__quietEvents.push(entry); if (window.__quietEvents.length > 150) window.__quietEvents.shift();
           setTimeout(() => { entry.prevented = e.defaultPrevented; }, 0);
         }, true);
