@@ -1,11 +1,6 @@
 {
-  "id": "peek-title-resize-verify-1",
-  "op": "run",
+  "id": "peek-title-resize-stored-1",
+  "op": "inspect",
   "target": "staging39",
-  "script": "link-ideas/push-peek-title-resize.sh",
-  "args": [
-    "--verify",
-    "/home/customer/private-backups/peek-template-core-title-resize-before-20261111-101808-92c3067f.json"
-  ],
-  "tests": "auto"
+  "query": "fingerprint"
 }
