@@ -52,7 +52,13 @@ matches the reviewed GitHub commit's files byte for byte. The manifest records
 those bindings. A mismatch refuses the copy operation rather than guessing.
 The separate deferred asset callback is reviewed/model-tested; copied WP-Cron
 is disabled, so the browser rehearsal does not exercise cron. Frozen runtime,
-summaries and CSS remain unchanged. Complete corrected copy proof is pending.
+summaries and CSS remain unchanged. Copy3 (`42987385913`) verified those source
+bindings and passed installation, repeat, exact rollback, restored-page visits
+with unchanged metadata, and reapplication. It remains **FAIL**: retained core
+browsers passed 14,319/0 and WebKit disclosures 70/0, but WebKit enlarged-text
+Therapeutic layout reported two ResizeObserver errors (150/2). Only 17/28 leaf
+suites ran; post-browser recovery was skipped. Verified cleanup deleted the copy.
+Investigate these errors before another full release proof; live is unchanged.
 
 The release creates five WPCode snippets, removes the exact old reading-progress
 CSS block and appends the frozen Search contrast block in one guarded update to

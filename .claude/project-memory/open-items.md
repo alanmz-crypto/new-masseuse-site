@@ -51,7 +51,14 @@ checks. Diagnostic copy2 (run **42983523811**, FAIL at **08:02:36 UTC**) identif
 exactly one regenerated `_uag_page_assets` row per page: values changed as well
 as IDs. Both copies were deleted with verified cleanup. A narrow, source-bound
 Spectra filter around the installer's own WPCode save calls is implemented and reviewed;
-all exact-state guards remain. No complete reapply/browser cycle has passed. Live was unchanged. The readiness record contains
+all exact-state guards remain. Corrected source Gates passed **51/0**. Copy3
+(run **42987385913**, FAIL at **08:49:35 UTC**) verified the actual source binding,
+install/repeat/exact rollback, unchanged metadata through restored-page visits,
+and reapplication. Retained core browsers passed **14,319/0**; WebKit disclosures
+passed **70/0**, but enlarged-text Therapeutic layout reported two ResizeObserver
+errors (**150/2**). The run stopped at **17/28 suites**; post-browser recovery is
+unproved. Cleanup verified deletion. The errors are under investigation, not
+excused. Live and staging39 were unchanged. The readiness record contains
 the actual copy-only snapshot and artifact bindings; the deleted journal is not
 a staging/live recovery file.
 

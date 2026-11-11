@@ -23,7 +23,7 @@ work to the pre-live scope. The check did not authorize a live operation.
 A separate dark Search contrast issue is now corrected and verified on staging39;
 it is recorded separately from the four navigation changes.
 
-**November 11 release source refreshed; no fresh first-install proof yet.** The
+**November 11 release source refreshed; complete release cycle still unproved.** The
 local first-install candidate now freezes the accepted quiet-navigation core,
 including immediate summary neighbours, index clearance and all four controls.
 Its four approved summary payloads are unchanged. The same reviewed 536-byte
@@ -270,6 +270,52 @@ deferred-callback class with synthetic metadata: no writes for five asset-free
 owned IDs or five deleted IDs; a matching-page positive control wrote once.
 This is isolated class execution, not real cron or WordPress execution. Full
 Actions Gates and the corrected copy remain next.
+
+Corrected source Gates passed **51/0** at **08:28:08 UTC**, run **42986476601**,
+checkout `8da6c988b0af039edd872c70bc9b83e96ef138f2`; the full job log was read.
+The approved corrected rehearsal was dispatched as
+`peek-visitor-release-quiet-search-copy-3`, Actions **42987385913**, source
+`ce634995807e2b024819e3fc0f995fa49dc7440d`. It finished **FAIL at 08:49:35 UTC**.
+The actual copied Spectra version, all six source hashes, loaded classes and
+save hook matched the reviewed profile. Installation, repeat, exact rollback,
+all 15 restored-page visits, subsequent exact verification and reapplication
+passed. All 60 metadata observations retained the same 680-row fingerprint,
+`a517909b3430762c5f5624a8debb380d72ceb8341fedf618661cb203bdc8237c`.
+This verifies the correction through the first recovery/render cycle; it is
+not complete post-browser recovery proof.
+
+Copy3's first private snapshot was
+`/backups/peek-release-before-20261111-083140-f34b5e89.json`, SHA256
+`2f156b0ab3d293ceff2e51e53b9f5f5861e88b33bb3329be0ca57eefa99ca4a8`;
+owned data IDs were 1339–1342 and core 1343. Original protected state was
+`286072de65cf8584b9f011ee8f325b3f35e9f61dc176d15471761616632b4d74`,
+applied state `9de088fbafdff51a5b8404446e3388a6e3b01132fef3d69814cd5295f106fb6f`.
+The reapplication snapshot was
+`/backups/peek-release-before-20261111-083156-7b4da73d.json`, SHA256
+`8dc7172af75798ef4136609fc0f6bb24599f0ba52969d6f183a3f9d7db42829e`,
+with IDs 1344–1348 and protected state
+`490818984527d82ffb285a327100e6a2406a0a773d0900cdd8204af7628c4648`.
+These were deleted with the temporary copy and are not staging/live recovery files.
+
+All 15 retained core browser suites passed **14,319/0**. WebKit disclosures
+passed **70/0**, but WebKit layout was **150/2**: both Therapeutic portrait
+150%-root-text cases reported `ResizeObserver loop completed with undelivered
+notifications.` The complete run is **FAIL/incomplete: 17/28 leaf suites,
+2/13 phases**, with 14,539 passing assertions and two failures. The remaining
+phases and post-browser rollback/reapply were not run. The enlarged-text errors
+are under investigation; do not filter them out or infer a physical Safari defect.
+Cleanup independently verified absence of the owned relay, containers, volumes,
+networks and temporary directory. Live and staging39 were unchanged.
+
+Retained artifact **13841547127** is **52,121,603 bytes**, SHA256
+`bf5e262f33f89046164088c085d2c8a739f2c43eb7cfa890ca40f56e473c8df1`;
+download size, digest and ZIP CRC were verified. Independent native audit
+confirmed every source/marker binding, byte-identical A/C and B/B2 fingerprints,
+the scoped B/D comparison, all 40,800 metadata descriptors and identical original
+navigation signatures. All 127 artifact files were checked: no SQL, private
+snapshots, copied PHP tree, environment files or nested archives were retained.
+The complete operation log and raw leaf evidence are retained; browser and
+visual audit continues within the failed run's actual coverage.
 
 ## Recommended scope
 
