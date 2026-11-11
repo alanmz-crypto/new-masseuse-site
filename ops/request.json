@@ -1,10 +1,11 @@
 {
-  "id": "peek-title-resize-public-1",
+  "id": "peek-title-resize-verify-1",
   "op": "run",
   "target": "staging39",
-  "script": "link-ideas/core-title-resize/check-public.mjs",
+  "script": "link-ideas/push-peek-title-resize.sh",
   "args": [
-    "https://staging39.thaisolitude.com"
+    "--verify",
+    "/home/customer/private-backups/peek-template-core-title-resize-before-20261111-101808-92c3067f.json"
   ],
   "tests": "auto"
 }
