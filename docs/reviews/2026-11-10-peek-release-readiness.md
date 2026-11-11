@@ -101,6 +101,31 @@ No retry or workaround was attempted. At that rejection, HEAD and
 live-sourced copy5. No live-sourced copy6 run, snapshot, browser result or website
 change exists. Later requests concern staging39 only.
 
+Concrete next rehearsal request, **prepared here only, not dispatched**:
+
+```json
+{
+  "id": "peek-visitor-release-quiet-search-copy-1",
+  "op": "rehearse",
+  "target": "live",
+  "installer": "link-ideas/peek-release/install-peek-release.php",
+  "args": ["--with-uploads"]
+}
+```
+
+This selects the refreshed localhost-only bundle above, after Search staging
+verification passes. Permission would cover reading live's database and site
+files/uploads into the repository's disposable GitHub Actions runner, then
+installation, repeat, rollback/reapply, browser tests and cleanup inside that
+copy. It does not authorize live writes or a main merge. The whole database can
+contain private account/form/plugin data; `wp-config.php`, ordinary logs and
+backup archives are excluded from the file copy. Copied WordPress containers
+use an isolated network. SQL, source files and private recovery snapshots are
+excluded from retained evidence; logs, fingerprints and public-page screenshots
+are kept for 30 days, while the operations report persists. Full diagnostic
+stderr is retained, so this is not a claim of automatic secret scrubbing.
+No permission for this live-data transfer is recorded yet.
+
 ## Recommended scope
 
 - The currently verified shared Peek core, with the title strip and rails on

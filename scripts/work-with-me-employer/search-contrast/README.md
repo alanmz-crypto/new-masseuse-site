@@ -46,6 +46,15 @@ writing. The actual apply snapshot is copied and verified off-site even when the
 apply reports failure, before any purge/render. Rollback re-verifies both its
 fresh export and actual recovery snapshot off-site before mutation.
 
+Preflight checks the same private-directory prerequisite as apply. On a path
+refusal it reports only the relevant filesystem predicates, canonical paths and
+UID/mode values. SiteGround's logical home alias is resolved by the wrapper to
+the physical private directory before invoking the installer. Recovery resolves
+only the supplied snapshot's parent and requires that exact configured directory;
+the private-directory leaf and snapshot file must not be symlinks. The installer
+still requires canonical paths, containment outside the web root and exact
+snapshot ownership. A failed earlier apply's export is never reused for a retry.
+
 Cache purge is required. Search and Home must return HTTP200 and contain the
 exact snapshot CSS (only surrounding `<style>` framing whitespace is ignored),
 with stored-state verification before and after those renders. HTTP202 or a

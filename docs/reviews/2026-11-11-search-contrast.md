@@ -127,3 +127,100 @@ copy. Its first-install rehearsal remains separate from
 the completed in-place staging upgrade. The earlier automatic rejection of a
 temporary live-data copy is not bypassed by this preparation; no new live-copy
 request or live enablement has been dispatched.
+
+## Current source and copy gates
+
+Source commit `295d752f0a04455d594fc74b7a716bfa7971a0ee` is pushed only on the
+feature branch. Local `check-all.sh` completed with 42 passing groups, six
+Docker-bind-mount failures (source paths unavailable to the managed daemon),
+and missing ShellCheck/ruff; it is not a full gate pass. Targeted pinned PHP
+models used streamed files instead. Complete Actions Gates **42971422219**
+passed **51/0** at **06:23:07 UTC**. The full job log was read, including PHP,
+both ShellCheck gates, ruff, all new Search guards and existing wording/builders.
+Rendered checks are separate and were not claimed by this offline run.
+
+Rehearsal request `search-contrast-rehearse-1`, commit
+`9a15043534a70fb39621493232c2f25eddf3a282`, runs in Actions **42971730830** on
+a disposable staging39 copy with uploads. No server apply is requested.
+Automatic approval initially rejected this staging copy, interpreting it as
+unapproved external transfer. No command/commit occurred on that rejection.
+After verifying the exact staging guard and citing Ryan's explicit instruction
+to use Actions and rehearse a throwaway staging39 copy, approval accepted the
+same scoped request. This does not override the separate live-copy rejection.
+
+The fresh staging39 rehearsal completed **PASS at 06:24:29 UTC**. Root read the
+operation report. The isolated copy used WordPress 7.1.4, a 685,148-byte compressed
+database and 268 MB of source files. Initial populated/empty inspection completed
+all four baseline views. Apply changed only **Additional CSS #29**. Repeat
+preserved every fingerprint; rollback exactly restored A; reapply exactly
+matched B. Home and client-page regulated-copy gates passed. No new PHP errors,
+warnings, notices or deprecations occurred (the retained WP-CLI Colors warning
+was already present before the change).
+
+Applied-copy Chromium and Firefox each passed **150/0**, all 12 cases and
+12 captures per engine, in 92 seconds combined. Actual CSS and the same private
+snapshot were verified before and after the browsers. Post-browser rollback
+again restored every A fingerprint, and final reapply restored every B
+fingerprint, with no cache or ID exclusions. Each new apply used its own snapshot:
+`search-contrast-before-20261111-062234-4fdc7818.json`,
+`search-contrast-before-20261111-062240-1f960dd4.json`, and
+`search-contrast-before-20261111-062424-ce54e992.json`. These paths belong only
+to the destroyed copy and must never be used as staging recovery commands.
+
+The retained rehearsal artifact is **10,955,265 bytes**, SHA256
+`213b6f585b908431745e0b6b0f8aec79ebed8b2ab3276c9167d12e57a78e5280`;
+download size/hash, ZIP CRC and safe extraction paths were verified. Root
+visually reviewed the actual applied-copy populated and empty dark phone pages.
+Independent audit validated complete raw streams: 150/0 per engine, all required
+cases/captures, empty browser stderr and no INVALID evidence. All 28 JPEGs decode
+(24 applied and four baseline). All **87 fingerprints** satisfy A=C=E and
+B=B2=D=F exactly; only CSS #29 changes. Core #1380 and all four data records are
+unchanged. The actual rendered minimum regular-text contrast is **8.04:1** and
+field/placeholder contrast **7.26:1**. Full retained Home **35/0** and client-page
+**322/0** logs pass. The 15 separate native stderr files contain only the known
+WP-CLI Colors deprecation; original/applied PHP-error sets match.
+
+Read-only staging preflight `search-contrast-dry-1`, commit
+`85381d9547ce89d7feb36c5b882cb6e79f3d8a2b`, passed in Actions **42972323425**
+at **06:25:49 UTC**. It confirmed the exact original CSS hash and ready state;
+the complete report was read. No WordPress apply occurred in this request.
+
+## First staging apply stopped before mutation
+
+`search-contrast-apply-1`, commit `47b96327b1a5d54ed8b3ec01c761b09681aaf9b1`,
+Actions **42972709329**, finished **FAIL at 06:29:20 UTC**. The whole report was
+read. Original CSS was still exact and ready. Fresh export
+`staging39-before-search-contrast-20261111-062911-2323.sql`, **4,548,317 bytes**,
+SHA256 `8581a3d5cc7eb0eacc5bcb3fb48fe008c2ec66f4305510e5b7edabb2a2b2e472`,
+was copied with matching size/hash and verified encrypted off-site before apply.
+The installer then refused its backup-directory prerequisite, before creating
+any snapshot or writing CSS. The wrapper stopped on the missing snapshot marker;
+no rendered or deployment pass is claimed. The pre-write state line confirms
+the original CSS hash remained ready. This export is retained; a future apply
+must take its own fresh verified export.
+
+The original dry-run returned before checking this directory prerequisite.
+The next source change moves that check into preflight and reports its exact
+safe path predicates for a read-only diagnosis. A server path alias is only a
+hypothesis until observed; no path guard is loosened or blind retry requested.
+
+Diagnostic source `8ed0776ba` passed **95 PHP model checks**. Read-only request
+`search-contrast-path-preflight-1`, commit
+`3889be43cfa49ac366d6a437e84175c5d9ae0190`, Actions **42973176898**, failed its
+strict preflight as intended at **06:33:05 UTC**, without a write. The full
+report establishes the cause: the supplied account-home path resolves to
+`/home/customer/private-backups`. Its final component is not a symlink; it is
+a writable directory with mode **0700**, owned by UID/GID **3732**, matching
+PHP's effective UID. The real web root is
+`/home/customer/www/staging39.thaisolitude.com/public_html`. The only failed
+predicate is the literal-versus-canonical path comparison. The wrapper will
+pass the physical directory path; the installer's strict guard remains intact.
+
+The wrapper now resolves that home ancestor with `pwd -P` and passes the
+physical private directory to the unchanged installer guard. Recovery accepts
+only the existing strict filename/path grammar, rejects directory/file leaf
+symlinks, resolves only the parent and requires it to equal that physical
+directory. Exports also use the physical directory. Real filesystem alias tests
+and the existing backup/refusal tests passed **48/0**; the installer model passed
+**98/0**, including dry-run refusal and canonicalized-path acceptance. Payload
+and manifest bytes are unchanged. New source, dry-run and copy gates follow.

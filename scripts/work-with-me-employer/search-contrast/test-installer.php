@@ -133,6 +133,13 @@ $path_message = WP_CLI::$messages[0] ?? '';
 $path_report = str_starts_with( $path_message, 'SEARCH-PATH ' ) ? json_decode( substr( $path_message, 12 ), true ) : null;
 assert_case( is_array( $path_report ) && array_keys( $path_report ) === array( 'input', 'realpath', 'webroot_realpath', 'input_is_link', 'is_dir', 'is_writable', 'owner_uid', 'group_gid', 'mode', 'process_euid' ) && $path_report['input'] === $tmp . '/backup-link' && $path_report['realpath'] === $tmp . '/backup' && $path_report['input_is_link'] === true && $path_report['is_writable'] === true, 'failed dry run reports only safe exact path predicates' );
 refused( array( 'apply' ), 'symlink backup directory' );
+reset_model(); symlink( $tmp, $tmp . '/logical-home' );
+putenv( 'WWM_BACKUP_DIR=' . $tmp . '/logical-home/backup' );
+refused( array( 'preflight' ), 'noncanonical home ancestor is refused until wrapper resolves it' );
+$path_report = json_decode( substr( WP_CLI::$messages[0] ?? '', 12 ), true );
+assert_case( is_array( $path_report ) && $path_report['input_is_link'] === false && $path_report['is_dir'] === true && $path_report['is_writable'] === true && $path_report['realpath'] === $tmp . '/backup', 'ancestor-alias diagnostic distinguishes a real private directory from a leaf symlink' );
+putenv( 'WWM_BACKUP_DIR=' . realpath( $tmp . '/logical-home/backup' ) );
+[$ok] = invoke( array( 'preflight' ) ); assert_case( $ok && $writes === 0, 'wrapper-canonicalized ancestor alias passes unchanged installer guard read-only' );
 
 foreach ( array( $base . 'drift', $new . 'later edit', str_replace( 'background-color', 'color', $new ), $new . "\n" . $block ) as $drift ) {
     reset_model(); $mock_post->post_content = $drift; refused( array( 'preflight' ), 'preflight changed CSS' ); refused( array( 'rollback', $snap ), 'CHANGED rollback' );

@@ -54,8 +54,27 @@ done < "$cfgs"
 [ -n "$doc" ] || { echo "No exact staging39 install found." >&2; exit 1; }
 wp() { command wp --skip-plugins=sg-security "$@"; }
 echo "$target is ${doc#"$HOME"/}"
+# SiteGround's logical home resolves to /home/customer. Resolve that ancestor
+# alias once; the private directory and snapshot themselves must not be symlinks.
+# BEGIN SEARCH PRIVATE PATH FUNCTIONS (exercised with real filesystem aliases).
+canonical_private_dir() {
+  local supplied=$1
+  [ -d "$supplied" ] && [ ! -L "$supplied" ] || { echo "Private backup directory must be an existing non-symlink directory." >&2; return 1; }
+  ( cd -- "$supplied" && pwd -P )
+}
+canonical_snapshot() {
+  local supplied=$1 expected=$2 parent
+  [ -f "$supplied" ] && [ ! -L "$supplied" ] || { echo "Snapshot must be an existing non-symlink regular file." >&2; return 1; }
+  parent=$(canonical_private_dir "${supplied%/*}") || return 1
+  [ "$parent" = "$expected" ] || { echo "Snapshot resolves outside the configured private backup directory." >&2; return 1; }
+  printf '%s/%s\n' "$parent" "${supplied##*/}"
+}
+# END SEARCH PRIVATE PATH FUNCTIONS.
+[ ! -L "$HOME/private-backups" ] || { echo "Private backup directory must not be a symlink." >&2; exit 1; }
 mkdir -p "$HOME/private-backups"; chmod 700 "$HOME/private-backups"
-export WWM_BACKUP_DIR="$HOME/private-backups"
+WWM_BACKUP_DIR=$(canonical_private_dir "$HOME/private-backups")
+[[ "$WWM_BACKUP_DIR" =~ ^/home/[a-zA-Z0-9_-]+/private-backups$ ]] || { echo "Unexpected physical private-backup path." >&2; exit 1; }
+export WWM_BACKUP_DIR
 package="$HOME/wwm-package-search-contrast"
 run() { wp --path="$doc" --user=1 eval-file "$package/install-search-contrast.php" "$@"; }
 ready() {
@@ -85,11 +104,15 @@ render() {
   rm -rf "$tmp"
 }
 snap=${snap/#\$HOME/$HOME}
+if [ -n "$snap" ]; then
+  [[ "$snap" =~ ^/home/[a-zA-Z0-9_-]+/private-backups/search-contrast-before-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}\.json$ ]] || { echo "Unexpected snapshot path." >&2; exit 1; }
+  snap=$(canonical_snapshot "$snap" "$WWM_BACKUP_DIR")
+fi
 case "$phase" in
   preflight) run preflight ;;
   prepare|prepare-rollback)
     if [ "$phase" = prepare ]; then ready; else rollback_ready; fi
-    dump="$HOME/private-backups/${target}-before-search-contrast-$(date +%Y%m%d-%H%M%S)-$$.sql"
+    dump="$WWM_BACKUP_DIR/${target}-before-search-contrast-$(date +%Y%m%d-%H%M%S)-$$.sql"
     ( umask 077; wp --path="$doc" db export "$dump" >/dev/null )
     [ -s "$dump" ] || { echo "Empty export; stopping before mutation." >&2; exit 1; }
     echo "SEARCH-BACKUP $dump $(sha256sum "$dump" | cut -d' ' -f1) $(stat -c%s "$dump")" ;;

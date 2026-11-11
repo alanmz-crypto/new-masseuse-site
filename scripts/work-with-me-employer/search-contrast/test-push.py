@@ -181,4 +181,58 @@ with tempfile.TemporaryDirectory(prefix='search-push-test-') as td:
         check(result.returncode != 0 and not seen, 'bad target/arguments must fail before SSH')
     agent_socket.close()
 
+    # Execute the actual remote wrapper's path functions against real directory
+    # aliases. Only the inherited home ancestor may resolve differently; private
+    # directory/file leaf symlinks and foreign canonical parents stay refused.
+    source = PUSH.read_text()
+    start = '# BEGIN SEARCH PRIVATE PATH FUNCTIONS (exercised with real filesystem aliases).\n'
+    end = '# END SEARCH PRIVATE PATH FUNCTIONS.'
+    check(source.count(start) == 1 and source.count(end) == 1,
+          'exact remote path-function test seam remains unique')
+    functions = source.split(start, 1)[1].split(end, 1)[0]
+    physical_home = root / 'physical-home'
+    physical = physical_home / 'private-backups'
+    physical.mkdir(parents=True)
+    alias_home = root / 'logical-home'
+    alias_home.symlink_to(physical_home, target_is_directory=True)
+    logical = alias_home / 'private-backups'
+    actual_snapshot = physical / Path(SNAP).name
+    actual_snapshot.write_text(PAYLOADS[SNAP])
+    logical_snapshot = logical / Path(SNAP).name
+
+    def path_check(function: str, *arguments: Path) -> subprocess.CompletedProcess[str]:
+        return subprocess.run(['bash', '-c', 'set -euo pipefail\n' + functions +
+                               '\n"$@"', 'search-path-test', function, *map(str, arguments)],
+                              text=True, capture_output=True, timeout=10, check=False)
+
+    for directory in (physical, logical):
+        result = path_check('canonical_private_dir', directory)
+        check(result.returncode == 0 and result.stdout.strip() == str(physical),
+              'canonical private directory accepts physical path and home-ancestor alias')
+    for snapshot_path in (actual_snapshot, logical_snapshot):
+        result = path_check('canonical_snapshot', snapshot_path, physical)
+        check(result.returncode == 0 and result.stdout.strip() == str(actual_snapshot),
+              'verify/rollback snapshot normalizes only its same canonical parent')
+    directory_link = root / 'private-link'
+    directory_link.symlink_to(physical, target_is_directory=True)
+    check(path_check('canonical_private_dir', directory_link).returncode != 0,
+          'private directory leaf symlink is refused')
+    check(path_check('canonical_snapshot', directory_link / Path(SNAP).name, physical).returncode != 0,
+          'snapshot behind a private-directory leaf symlink is refused')
+    snapshot_link = physical / 'search-contrast-before-20261111-120002-ffffffff.json'
+    snapshot_link.symlink_to(actual_snapshot)
+    check(path_check('canonical_snapshot', snapshot_link, physical).returncode != 0,
+          'snapshot leaf symlink is refused before canonicalization')
+    foreign = root / 'foreign-private'
+    foreign.mkdir()
+    foreign_snapshot = foreign / Path(SNAP).name
+    foreign_snapshot.write_text(PAYLOADS[SNAP])
+    check(path_check('canonical_snapshot', foreign_snapshot, physical).returncode != 0,
+          'foreign private parent is refused even with the exact filename')
+    check(path_check('canonical_snapshot', physical / 'missing.json', physical).returncode != 0,
+          'missing snapshot cannot be normalized into a claimed file')
+    check('WWM_BACKUP_DIR=$(canonical_private_dir "$HOME/private-backups")' in source and
+          'snap=$(canonical_snapshot "$snap" "$WWM_BACKUP_DIR")' in source,
+          'deployed wrapper uses tested canonical parent binding')
+
 print(f'Search push: {checks} passed / 0 failed (offline command doubles).')
