@@ -1,11 +1,9 @@
 {
-  "id": "peek-search-render-inspect-2",
-  "op": "run",
+  "id": "search-contrast-rehearse-1",
+  "op": "rehearse",
   "target": "staging39",
-  "script": "search-contrast/check-search-contrast.mjs",
+  "installer": "search-contrast/install-search-contrast.php",
   "args": [
-    "https://staging39.thaisolitude.com",
-    "--inspect"
-  ],
-  "tests": "auto"
+    "--with-uploads"
+  ]
 }
