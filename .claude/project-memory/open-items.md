@@ -61,6 +61,12 @@ unproved. Cleanup verified deletion. The errors are under investigation, not
 excused. Live and staging39 were unchanged. The readiness record contains
 the actual copy-only snapshot and artifact bindings; the deleted journal is not
 a staging/live recovery file.
+A minimal title-strip ResizeObserver timing correction is now being prepared:
+local WebKit reproduced the original error in 6/6 trials and passed the queued
+callback in 6/6 with identical final geometry. Accepted quiet-navigation bytes
+are frozen as shared v10; the new `core-title-resize` lane preserves summaries
+and Search CSS. Staging deployment and complete new release proof remain pending.
+No generic Safari retest or fluidity expansion is required.
 
 **Current staging39, November 11: four navigation refinements complete and accepted.**
 The automatic rail-side scrolling label is removed; interaction names remain.

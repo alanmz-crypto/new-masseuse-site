@@ -103,6 +103,9 @@ gate "Peek index clearance deployment snapshots, exact rendering and own-lane gu
 gate "Peek index clearance rehearsal snapshots, failure stops and post-browser recovery (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/core-index-clearance/test-rehearsal.py"
 gate "Peek quiet navigation deployment snapshots, exact rendering and own-lane guards (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/core-quiet-nav/test-push.py"
 gate "Peek quiet navigation rehearsal snapshots, failure stops and post-browser recovery (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/core-quiet-nav/test-rehearsal.py"
+gate "Peek title resize deployment snapshots, CSS preservation and own-lane guards (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/core-title-resize/test-push.py"
+gate "Peek title resize rehearsal snapshots, failure stops and post-browser recovery (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/core-title-resize/test-rehearsal.py"
+gate "Peek title resize owned-copy cleanup and evidence (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/core-title-resize/test-cleanup.py"
 gate "Peek visitor-release snapshot, rollback rendering and evidence guards (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/peek-release/test-rehearsal.py"
 gate "Peek isolated-copy loopback transport (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/peek-release/test-loopback.py"
 peek_js_syntax() {
@@ -116,6 +119,7 @@ if command -v node >/dev/null; then
   gate "Peek neighbour browser evidence, complete logs and engine gates (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/core-neighbours/test-gates.py"
   gate "Peek index clearance browser evidence, complete logs and engine gates (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/core-index-clearance/test-gates.py"
   gate "Peek quiet navigation browser evidence, complete logs and engine gates (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/core-quiet-nav/test-gates.py"
+  gate "Peek title resize focused and retained browser evidence (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/core-title-resize/test-gates.py"
   gate "Rail anonymous HAR capture and artifact guards (offline)" node "$here/work-with-me-employer/link-ideas/rail-input/test-har-capture.mjs"
 else skip "Peek browser checker syntax and wrapper guards" "node is not installed"; fi
 # the generated Thai content must be what the builder produces (a hand edit or a stale build is caught here)

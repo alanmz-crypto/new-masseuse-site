@@ -30,7 +30,7 @@ release_rehearsal=0
 read_only_discovery=0; copy_isolation=0
 # This new in-place core lane is authorized only from the actual staging39 copy.
 # It cannot select the separate live-sourced first-install release rehearsal.
-if [ "$inst" = link-ideas/core-neighbours/install-peek-core-neighbours.php ] || [ "$inst" = link-ideas/core-index-clearance/install-peek-core-index-clearance.php ] || [ "$inst" = link-ideas/core-quiet-nav/install-peek-core-quiet-nav.php ]; then
+if [ "$inst" = link-ideas/core-neighbours/install-peek-core-neighbours.php ] || [ "$inst" = link-ideas/core-index-clearance/install-peek-core-index-clearance.php ] || [ "$inst" = link-ideas/core-quiet-nav/install-peek-core-quiet-nav.php ] || [ "$inst" = link-ideas/core-title-resize/install-peek-core-title-resize.php ]; then
   [ "$src" = staging39 ] && [ "$uploads" = 1 ] || invalid "this core update requires a fresh staging39-sourced copy with uploads"
   read_only_discovery=1; copy_isolation=1
 fi
@@ -65,15 +65,22 @@ db_img=$(img mariadb); wp_img=$(img 'wordpress:php'); cli_img=$(img 'wordpress:c
 [ -n "$db_img" ] && [ -n "$wp_img" ] && [ -n "$cli_img" ] || invalid "could not read the pinned images from docker-compose.yml"
 
 work="${RUNNER_TEMP:-$HOME/.cache}/ts-rehearsal-$$"   # never /tmp on Ryan's computer (its tmpfs runs out of inodes)
-# Only the release copy requires exclusive ownership and decisive deletion proof.
+# The release and new title-resize copies require decisive deletion proof.
+# Historical staging lanes retain their established cleanup behavior.
+owned_cleanup_component=""
+if [ "$release_rehearsal" = 1 ]; then
+  owned_cleanup_component=peek-release
+elif [ "${inst:-}" = link-ideas/core-title-resize/install-peek-core-title-resize.php ]; then
+  owned_cleanup_component=core-title-resize
+fi
 # Resolve the parent before creating anything; never adopt an existing run folder.
 release_work_parent=""; release_work_owned=0
-if [ "$release_rehearsal" = 1 ]; then
+if [ -n "$owned_cleanup_component" ]; then
   release_work_parent=$(cd -- "${RUNNER_TEMP:-$HOME/.cache}" && pwd -P) || invalid "release temporary parent is unavailable"
   work="$release_work_parent/ts-rehearsal-$$"
 fi
 pub="$work/public_html"; bk="$work/backups"; out="$work/out"
-if [ "$release_rehearsal" != 1 ]; then
+if [ -z "$owned_cleanup_component" ]; then
   mkdir -p "$pub" "$bk" "$out"; chmod 777 "$bk"
 fi
 project="ts-rehearsal-$$"
@@ -93,7 +100,13 @@ trap cleanup EXIT
 
 release_cleanup_resources() {
   local failed=0 directory_safe=1 current_parent resource ids relay_parent n
-  local cleanup_log="${RUNNER_TEMP:-$HOME/.cache}/ops-out/peek-release-native/cleanup.log"
+  local cleanup_component="${owned_cleanup_component:-}" cleanup_log
+  case "$cleanup_component" in
+    peek-release) [ "${release_rehearsal:-0}" = 1 ] || return 1 ;;
+    core-title-resize) [ "${release_rehearsal:-0}" = 0 ] && [ "${inst:-}" = link-ideas/core-title-resize/install-peek-core-title-resize.php ] || return 1 ;;
+    *) echo "FAIL cleanup: no exact owned-copy profile; no cleanup mutation attempted" >&2; return 1 ;;
+  esac
+  cleanup_log="${RUNNER_TEMP:-$HOME/.cache}/ops-out/$cleanup_component-native/cleanup.log"
   # Only fixed statuses/counts enter this retained log. Docker output, copied
   # source/configuration, SQL and private recovery snapshots are never retained.
   if ! mkdir -p -- "${cleanup_log%/*}" || ! touch -- "$cleanup_log" || ! chmod 600 -- "$cleanup_log"; then
@@ -104,7 +117,7 @@ release_cleanup_resources() {
     printf '%s\n' "$*" >> "$cleanup_log" && printf '%s\n' "$*"
   }
   current_parent=$(cd -- "${release_work_parent:-/nonexistent}" 2>/dev/null && pwd -P) || current_parent=""
-  if [ "${release_rehearsal:-0}" != 1 ] || [ "${release_work_owned:-0}" != 1 ] ||
+  if [ "${release_work_owned:-0}" != 1 ] ||
      [ "$project" != "ts-rehearsal-$$" ] || [ -z "$release_work_parent" ] ||
      [ "$current_parent" != "$release_work_parent" ] ||
      [ "$work" != "$release_work_parent/ts-rehearsal-$$" ] || [ -L "$work" ]; then
@@ -224,7 +237,7 @@ release_cleanup_exit() {
   release_cleanup_resources || { [ "$result" -ne 0 ] || result=1; }
   exit "$result"
 }
-if [ "$release_rehearsal" = 1 ]; then
+if [ -n "$owned_cleanup_component" ]; then
   trap release_cleanup_exit EXIT
   [ ! -e "$work" ] && [ ! -L "$work" ] || invalid "release temporary directory already exists; refusing to adopt it"
   mkdir -m 700 -- "$work" || invalid "could not create the exclusive release temporary directory"
@@ -465,6 +478,7 @@ core_focus_snapshot_from_log() {
     link-ideas/core-neighbours/install-peek-core-neighbours.php) component=core-neighbours ;;
     link-ideas/core-index-clearance/install-peek-core-index-clearance.php) component=core-index-clearance ;;
     link-ideas/core-quiet-nav/install-peek-core-quiet-nav.php) component=core-quiet-nav ;;
+    link-ideas/core-title-resize/install-peek-core-title-resize.php) component=core-title-resize ;;
   esac
   path=$(sed -nE 's@^Success: .*Before-snapshot: (/backups/peek-template-'"$component"'-before-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}\.json)$@\1@p' "$1")
   [[ "$path" =~ ^/backups/peek-template-${component}-before-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}\.json$ ]] || return 1
@@ -472,7 +486,7 @@ core_focus_snapshot_from_log() {
 }
 core_focus_lane() {
   case "${inst:-}" in
-    link-ideas/core-input-focus/install-peek-core-input-focus.php|link-ideas/core-neighbours/install-peek-core-neighbours.php|link-ideas/core-index-clearance/install-peek-core-index-clearance.php|link-ideas/core-quiet-nav/install-peek-core-quiet-nav.php) return 0 ;;
+    link-ideas/core-input-focus/install-peek-core-input-focus.php|link-ideas/core-neighbours/install-peek-core-neighbours.php|link-ideas/core-index-clearance/install-peek-core-index-clearance.php|link-ideas/core-quiet-nav/install-peek-core-quiet-nav.php|link-ideas/core-title-resize/install-peek-core-title-resize.php) return 0 ;;
     *) return 1 ;;
   esac
 }
@@ -485,7 +499,7 @@ core_focus_verify() {
 }
 core_guarded_lane() {
   case "${inst:-}" in
-    link-ideas/core-neighbours/install-peek-core-neighbours.php|link-ideas/core-index-clearance/install-peek-core-index-clearance.php|link-ideas/core-quiet-nav/install-peek-core-quiet-nav.php) return 0 ;;
+    link-ideas/core-neighbours/install-peek-core-neighbours.php|link-ideas/core-index-clearance/install-peek-core-index-clearance.php|link-ideas/core-quiet-nav/install-peek-core-quiet-nav.php|link-ideas/core-title-resize/install-peek-core-title-resize.php) return 0 ;;
     *) return 1 ;;
   esac
 }
@@ -498,18 +512,20 @@ core_neighbours_cleanup() {
   local result=$? file component=core-neighbours
   [ "${inst:-}" != link-ideas/core-index-clearance/install-peek-core-index-clearance.php ] || component=core-index-clearance
   [ "${inst:-}" != link-ideas/core-quiet-nav/install-peek-core-quiet-nav.php ] || component=core-quiet-nav
+  [ "${inst:-}" != link-ideas/core-title-resize/install-peek-core-title-resize.php ] || component=core-title-resize
   local evidence="${RUNNER_TEMP:-$HOME/.cache}/ops-out/$component-native"
   if mkdir -p "$evidence"; then
     # Public gate logs, hashes and route inventory only; never private snapshots,
     # SQL exports, copied source files or database credentials.
     for file in "$out"/*.log "$out"/*.content "$out"/errors-*.txt "$out"/title-strip-pages.json; do
       [ -f "$file" ] || continue
-      cp "$file" "$evidence/" || { echo "FAIL $component rehearsal: could not retain ${file##*/}" >&2; result=1; }
+      cp "$file" "$evidence/" || { echo "FAIL $component rehearsal: could not retain ${file##*/}" >&2; if [ "$component" != core-title-resize ] || [ "$result" -eq 0 ]; then result=1; fi; }
     done
   else
     echo "FAIL $component rehearsal: cannot retain complete native evidence" >&2
-    result=1
+    if [ "$component" != core-title-resize ] || [ "$result" -eq 0 ]; then result=1; fi
   fi
+  if [ "$component" = core-title-resize ]; then release_cleanup_exit "$result"; fi
   cleanup
   exit "$result"
 }
@@ -907,7 +923,7 @@ if [ -f "$extra" ]; then
     link-ideas/peek-release/install-peek-release.php) browser_seconds=3900; browser_evidence=peek-release-browser.log ;;
     link-ideas/core-upgrade/install-peek-core-upgrade.php) browser_seconds=900; browser_evidence=peek-core-upgrade-browser.log ;;
     link-ideas/core-summary-touch/install-peek-core-summary-touch.php) browser_seconds=900; browser_evidence=peek-core-summary-touch-browser.log ;;
-    link-ideas/core-title-strip/install-peek-core-title-strip.php|link-ideas/core-title-rail/install-peek-core-title-rail.php|link-ideas/core-kiro-fixes/install-peek-core-kiro-fixes.php|link-ideas/core-input-focus/install-peek-core-input-focus.php|link-ideas/core-neighbours/install-peek-core-neighbours.php|link-ideas/core-index-clearance/install-peek-core-index-clearance.php|link-ideas/core-quiet-nav/install-peek-core-quiet-nav.php|link-ideas/rail-input/install-rail-input.php)
+    link-ideas/core-title-strip/install-peek-core-title-strip.php|link-ideas/core-title-rail/install-peek-core-title-rail.php|link-ideas/core-kiro-fixes/install-peek-core-kiro-fixes.php|link-ideas/core-input-focus/install-peek-core-input-focus.php|link-ideas/core-neighbours/install-peek-core-neighbours.php|link-ideas/core-index-clearance/install-peek-core-index-clearance.php|link-ideas/core-quiet-nav/install-peek-core-quiet-nav.php|link-ideas/core-title-resize/install-peek-core-title-resize.php|link-ideas/rail-input/install-rail-input.php)
       browser_seconds=900; browser_evidence=peek-core-title-strip-browser.log
       if [ "$inst" = link-ideas/core-title-rail/install-peek-core-title-rail.php ]; then
         browser_seconds=1500; browser_evidence=peek-core-title-rail-browser.log
@@ -921,6 +937,8 @@ if [ -f "$extra" ]; then
         browser_seconds=3000; browser_evidence=peek-core-index-clearance-browser.log
       elif [ "$inst" = link-ideas/core-quiet-nav/install-peek-core-quiet-nav.php ]; then
         browser_seconds=3300; browser_evidence=peek-core-quiet-nav-browser.log
+      elif [ "$inst" = link-ideas/core-title-resize/install-peek-core-title-resize.php ]; then
+        browser_seconds=3600; browser_evidence=peek-core-title-resize-browser.log
       elif [ "$inst" = link-ideas/rail-input/install-rail-input.php ]; then
         browser_seconds=900; browser_evidence=rail-input-browser.log
       fi

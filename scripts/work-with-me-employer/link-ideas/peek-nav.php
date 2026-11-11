@@ -365,7 +365,13 @@ add_action( 'wp_footer', function () {
         window.visualViewport.addEventListener('scroll', function () { measureViewport(); changed(); });
       }
       if ('ResizeObserver' in window) {
-        var sizes = new ResizeObserver(function () { layout(); changed(); });
+        // layout() can resize the observed strip when root text grows. Apply
+        // that correction in the next frame, outside observer delivery, while
+        // coalescing a header and strip notification into the same update.
+        var sizeFrame = 0;
+        var sizes = new ResizeObserver(function () {
+          if (!sizeFrame) sizeFrame = requestAnimationFrame(function () { sizeFrame = 0; layout(); changed(); });
+        });
         if (head) sizes.observe(head);
         // Rem-based padding changes with text enlargement even while the
         // measured title window still has its previous pixel height.

@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "bundle": "peek-visitor-release-v1",
-  "candidate_status": "provisional; approved quiet-navigation runtime; fresh first-install and recovery rehearsal still required; Safari acceptance complete",
+  "candidate_status": "provisional; title-strip observer timing correction; staging and complete release recovery verification pending; accepted design and summaries unchanged",
   "source": {
     "operation": "peek-live-navigation-baseline-1",
     "run": 42741958557,
@@ -141,8 +141,8 @@
   "payloads": {
     "core": {
       "file": "payload/core.php",
-      "file_sha256": "4dfe97943898790b9c000f6dfcc129b4806183a23bc7cb7a55f1cc7db7172952",
-      "code_sha256": "58266413fe0e24e1dc44ef32c98f428d4537a9b63bf8f5299eb8d708a4d032e5"
+      "file_sha256": "708b91f4e52025b6813245a38e7c048fff09dd6ae90f644e0b2b5d1f415f7b19",
+      "code_sha256": "f152fad975bb85ed4ad06a0ce5f0000cd656276b34efb38b748646a5fdc73566"
     },
     "data": {
       "thai-massage": {

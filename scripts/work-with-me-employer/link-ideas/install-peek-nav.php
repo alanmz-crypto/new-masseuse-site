@@ -1,9 +1,9 @@
 <?php
 /**
- * Peek template: exact legacy -> shared v1 -> shared v2 -> shared v3 -> shared v4 -> shared v5 -> shared v6 -> shared v7 -> shared v8 -> shared v9 -> current, or page data.
- * wp eval-file install-peek-nav.php preflight|apply [core|core-upgrade|core-summary-touch|core-title-strip|core-title-rail|core-kiro-fixes|core-input-focus|core-neighbours|core-index-clearance|core-quiet-nav|page SLUG]
+ * Peek template: exact legacy -> shared v1 -> shared v2 -> shared v3 -> shared v4 -> shared v5 -> shared v6 -> shared v7 -> shared v8 -> shared v9 -> shared v10 -> current, or page data.
+ * wp eval-file install-peek-nav.php preflight|apply [core|core-upgrade|core-summary-touch|core-title-strip|core-title-rail|core-kiro-fixes|core-input-focus|core-neighbours|core-index-clearance|core-quiet-nav|core-title-resize|page SLUG]
  * wp eval-file install-peek-nav.php rollback FILE (component comes from snapshot).
- * wp eval-file install-peek-nav.php verify FILE [original] (core-input-focus/core-neighbours/core-index-clearance/core-quiet-nav only, read-only).
+ * wp eval-file install-peek-nav.php verify FILE [original] (core-input-focus/core-neighbours/core-index-clearance/core-quiet-nav/core-title-resize only, read-only).
  * Default core keeps the generic Actions rehearsal interface. WordPress storage only.
  * Exact localhost:8090 / staging39 origins; push takes verified offsite backups.
  */
@@ -16,7 +16,7 @@ if ( ! in_array( $home, array( 'http://localhost:8090', 'http://staging39.thaiso
 if ( 'astra' !== get_stylesheet() || ! current_user_can( 'manage_options' ) || ! current_user_can( 'unfiltered_html' ) || ! function_exists( 'wpcode' ) || ! class_exists( 'WPCode_Snippet' ) ) { WP_CLI::error( 'Requires Astra, WPCode and an administrator (--user=1).' ); }
 $args = isset( $args ) && is_array( $args ) ? $args : array();
 $mode = $args[0] ?? 'preflight';
-if ( ! in_array( $mode, array( 'preflight', 'apply', 'rollback', 'verify' ), true ) ) { WP_CLI::error( 'Use preflight|apply [core|core-upgrade|core-summary-touch|core-title-strip|core-title-rail|core-kiro-fixes|core-input-focus|core-neighbours|core-index-clearance|core-quiet-nav|page SLUG], rollback FILE, or verify FILE [original] for core-input-focus/core-neighbours/core-index-clearance/core-quiet-nav.' ); }
+if ( ! in_array( $mode, array( 'preflight', 'apply', 'rollback', 'verify' ), true ) ) { WP_CLI::error( 'Use preflight|apply [core|core-upgrade|core-summary-touch|core-title-strip|core-title-rail|core-kiro-fixes|core-input-focus|core-neighbours|core-index-clearance|core-quiet-nav|core-title-resize|page SLUG], rollback FILE, or verify FILE [original] for core-input-focus/core-neighbours/core-index-clearance/core-quiet-nav/core-title-resize.' ); }
 $snapshot_mode = in_array( $mode, array( 'rollback', 'verify' ), true );
 $verify_original = 'verify' === $mode && count( $args ) === 3 && 'original' === $args[2];
 $backup_dir = (string) getenv( 'WWM_BACKUP_DIR' );
@@ -28,7 +28,7 @@ if ( $snapshot_mode ) {
     if ( ( count( $args ) !== 2 && ! $verify_original ) || ! $private_ok || ! $path || ! is_file( $path ) || 0 !== strpos( $path, $private . '/' ) ) { WP_CLI::error( 'Rollback/verify requires a snapshot inside the private WWM_BACKUP_DIR and exact arguments.' ); }
     $snapshot = json_decode( file_get_contents( $path ), true );
     if ( ! is_array( $snapshot ) || ( $snapshot['home'] ?? '' ) !== $home ) { WP_CLI::error( 'Snapshot invalid or from another site; nothing changed.' ); }
-    if ( 'verify' === $mode && ( ! in_array( $snapshot['component'] ?? '', array( 'core-input-focus', 'core-neighbours', 'core-index-clearance', 'core-quiet-nav' ), true ) || ( $snapshot['bundle'] ?? '' ) !== 'peek-' . $snapshot['component'] . '-v1' || ( $snapshot['slug'] ?? null ) !== '' ) ) { WP_CLI::error( 'Read-only verification requires a matching core-input-focus/core-neighbours/core-index-clearance/core-quiet-nav snapshot; nothing changed.' ); }
+    if ( 'verify' === $mode && ( ! in_array( $snapshot['component'] ?? '', array( 'core-input-focus', 'core-neighbours', 'core-index-clearance', 'core-quiet-nav', 'core-title-resize' ), true ) || ( $snapshot['bundle'] ?? '' ) !== 'peek-' . $snapshot['component'] . '-v1' || ( $snapshot['slug'] ?? null ) !== '' ) ) { WP_CLI::error( 'Read-only verification requires a matching core-input-focus/core-neighbours/core-index-clearance/core-quiet-nav/core-title-resize snapshot; nothing changed.' ); }
     $legacy_rollback = ! isset( $snapshot['bundle'] ) && isset( $snapshot['code_sha256'], $snapshot['snippet_id'] );
     $component = $legacy_rollback ? 'core' : ( $snapshot['component'] ?? '' );
     $slug = $snapshot['slug'] ?? '';
@@ -36,9 +36,9 @@ if ( $snapshot_mode ) {
     $component = $args[1] ?? 'core'; $slug = $args[2] ?? '';
     if ( count( $args ) > ( 'page' === $component ? 3 : 2 ) ) { WP_CLI::error( 'Unexpected installer arguments; nothing changed.' ); }
 }
-if ( ! in_array( $component, array( 'core', 'core-upgrade', 'core-summary-touch', 'core-title-strip', 'core-title-rail', 'core-kiro-fixes', 'core-input-focus', 'core-neighbours', 'core-index-clearance', 'core-quiet-nav', 'page' ), true ) || ( 'page' !== $component && '' !== $slug ) || ( 'page' === $component && ( ! is_string( $slug ) || ! preg_match( '/^[a-z0-9]+(?:-[a-z0-9]+)*$/D', $slug ) ) ) ) { WP_CLI::error( 'Use core, core-upgrade, core-summary-touch, core-title-strip, core-title-rail, core-kiro-fixes, core-input-focus, core-neighbours, core-index-clearance, core-quiet-nav or page SLUG; nothing changed.' ); }
+if ( ! in_array( $component, array( 'core', 'core-upgrade', 'core-summary-touch', 'core-title-strip', 'core-title-rail', 'core-kiro-fixes', 'core-input-focus', 'core-neighbours', 'core-index-clearance', 'core-quiet-nav', 'core-title-resize', 'page' ), true ) || ( 'page' !== $component && '' !== $slug ) || ( 'page' === $component && ( ! is_string( $slug ) || ! preg_match( '/^[a-z0-9]+(?:-[a-z0-9]+)*$/D', $slug ) ) ) ) { WP_CLI::error( 'Use core, core-upgrade, core-summary-touch, core-title-strip, core-title-rail, core-kiro-fixes, core-input-focus, core-neighbours, core-index-clearance, core-quiet-nav, core-title-resize or page SLUG; nothing changed.' ); }
 $is_core = 'page' !== $component;
-$is_upgrade = in_array( $component, array( 'core-upgrade', 'core-summary-touch', 'core-title-strip', 'core-title-rail', 'core-kiro-fixes', 'core-input-focus', 'core-neighbours', 'core-index-clearance', 'core-quiet-nav' ), true );
+$is_upgrade = in_array( $component, array( 'core-upgrade', 'core-summary-touch', 'core-title-strip', 'core-title-rail', 'core-kiro-fixes', 'core-input-focus', 'core-neighbours', 'core-index-clearance', 'core-quiet-nav', 'core-title-resize' ), true );
 $legacy_title = 'TSPeekNav practice (Thai, staging39)';
 $legacy_note = 'Created by link-ideas/install-peek-nav.php (2026-11-08); exact owned-snippet rollback only.';
 $legacy_file = file_get_contents( __DIR__ . '/peek-nav-legacy.php' );
@@ -80,7 +80,11 @@ $shared_v9_file = file_get_contents( __DIR__ . '/peek-nav-shared-v9.php' );
 if ( false === $shared_v9_file || hash( 'sha256', $shared_v9_file ) !== '5c9a447583f22458b619dd5e1a2e75dcc8049739d99bdfafb1d0fedac3f2bd2e' ) { WP_CLI::error( 'Frozen shared v9 payload differs; nothing changed.' ); }
 $shared_v9_code = substr( $shared_v9_file, 6 );
 if ( hash( 'sha256', $shared_v9_code ) !== '955458c81bf136a2789d8f8d495a3e4e8660771014f65db601441a0af6b1b937' ) { WP_CLI::error( 'Frozen shared v9 code hash differs; nothing changed.' ); }
-$before_code = 'core-quiet-nav' === $component ? $shared_v9_code : ( 'core-index-clearance' === $component ? $shared_v8_code : ( 'core-neighbours' === $component ? $shared_v7_code : ( 'core-input-focus' === $component ? $shared_v6_code : ( 'core-kiro-fixes' === $component ? $shared_v5_code : ( 'core-title-rail' === $component ? $shared_v4_code : ( 'core-title-strip' === $component ? $shared_v3_code : ( 'core-summary-touch' === $component ? $shared_v2_code : ( 'core-upgrade' === $component ? $shared_v1_code : $legacy_code ) ) ) ) ) ) ) );
+$shared_v10_file = file_get_contents( __DIR__ . '/peek-nav-shared-v10.php' );
+if ( false === $shared_v10_file || hash( 'sha256', $shared_v10_file ) !== '4dfe97943898790b9c000f6dfcc129b4806183a23bc7cb7a55f1cc7db7172952' ) { WP_CLI::error( 'Frozen shared v10 payload differs; nothing changed.' ); }
+$shared_v10_code = substr( $shared_v10_file, 6 );
+if ( hash( 'sha256', $shared_v10_code ) !== '58266413fe0e24e1dc44ef32c98f428d4537a9b63bf8f5299eb8d708a4d032e5' ) { WP_CLI::error( 'Frozen shared v10 code hash differs; nothing changed.' ); }
+$before_code = 'core-title-resize' === $component ? $shared_v10_code : ( 'core-quiet-nav' === $component ? $shared_v9_code : ( 'core-index-clearance' === $component ? $shared_v8_code : ( 'core-neighbours' === $component ? $shared_v7_code : ( 'core-input-focus' === $component ? $shared_v6_code : ( 'core-kiro-fixes' === $component ? $shared_v5_code : ( 'core-title-rail' === $component ? $shared_v4_code : ( 'core-title-strip' === $component ? $shared_v3_code : ( 'core-summary-touch' === $component ? $shared_v2_code : ( 'core-upgrade' === $component ? $shared_v1_code : $legacy_code ) ) ) ) ) ) ) ) );
 $data_code = static function ( $page_slug, $must_be_approved = false ) {
     $file = __DIR__ . '/peek-data/' . $page_slug . '.json';
     $data = is_file( $file ) ? json_decode( file_get_contents( $file ), true ) : null;
@@ -94,7 +98,7 @@ $data_code = static function ( $page_slug, $must_be_approved = false ) {
 };
 try {
     if ( $is_core ) {
-        $file = 'core' === $component ? $shared_v1_file : ( 'core-upgrade' === $component ? $shared_v2_file : ( 'core-summary-touch' === $component ? $shared_v3_file : ( 'core-title-strip' === $component ? $shared_v4_file : ( 'core-title-rail' === $component ? $shared_v5_file : ( 'core-kiro-fixes' === $component ? $shared_v6_file : ( 'core-input-focus' === $component ? $shared_v7_file : ( 'core-neighbours' === $component ? $shared_v8_file : ( 'core-index-clearance' === $component ? $shared_v9_file : file_get_contents( __DIR__ . '/peek-nav.php' ) ) ) ) ) ) ) ) );
+        $file = 'core' === $component ? $shared_v1_file : ( 'core-upgrade' === $component ? $shared_v2_file : ( 'core-summary-touch' === $component ? $shared_v3_file : ( 'core-title-strip' === $component ? $shared_v4_file : ( 'core-title-rail' === $component ? $shared_v5_file : ( 'core-kiro-fixes' === $component ? $shared_v6_file : ( 'core-input-focus' === $component ? $shared_v7_file : ( 'core-neighbours' === $component ? $shared_v8_file : ( 'core-index-clearance' === $component ? $shared_v9_file : ( 'core-quiet-nav' === $component ? $shared_v10_file : file_get_contents( __DIR__ . '/peek-nav.php' ) ) ) ) ) ) ) ) ) );
         if ( false === $file || 0 !== strpos( $file, "<?php\n" ) || substr_count( $file, 'id="ts-peek-nav-runtime"' ) !== 1 || substr_count( $file, 'id="ts-peek-nav-css"' ) !== 1 || false === strpos( $file, 'ts_pk_pages' ) ) { throw new \RuntimeException( 'Shared core payload is missing or malformed.' ); }
         $code = substr( $file, 6 ); $title = $legacy_title; $note = $legacy_note;
         if ( $is_upgrade && $code === $before_code ) { throw new \RuntimeException( 'Core upgrade must have a distinct reviewed payload.' ); }
@@ -190,7 +194,7 @@ if ( $legacy_rollback ) {
     WP_CLI::success( 'Exact owned legacy snippet removed; plain jump row remains.' ); return;
 }
 $manifest = $is_upgrade ? array( 'code_sha256' => hash( 'sha256', $code ), 'before_sha256' => hash( 'sha256', $before_code ) ) : array( 'code_sha256' => hash( 'sha256', $code ), 'legacy_sha256' => 'core' === $component ? hash( 'sha256', $legacy_code ) : null );
-$bundle = 'core-quiet-nav' === $component ? 'peek-core-quiet-nav-v1' : ( 'core-index-clearance' === $component ? 'peek-core-index-clearance-v1' : ( 'core-neighbours' === $component ? 'peek-core-neighbours-v1' : ( 'core-input-focus' === $component ? 'peek-core-input-focus-v1' : ( 'core-kiro-fixes' === $component ? 'peek-core-kiro-fixes-v1' : ( 'core-title-rail' === $component ? 'peek-core-title-rail-v1' : ( 'core-title-strip' === $component ? 'peek-core-title-strip-v1' : ( 'core-summary-touch' === $component ? 'peek-core-summary-touch-v1' : ( 'core-upgrade' === $component ? 'peek-core-upgrade-v1' : 'peek-template-v1' ) ) ) ) ) ) ) );
+$bundle = 'core-title-resize' === $component ? 'peek-core-title-resize-v1' : ( 'core-quiet-nav' === $component ? 'peek-core-quiet-nav-v1' : ( 'core-index-clearance' === $component ? 'peek-core-index-clearance-v1' : ( 'core-neighbours' === $component ? 'peek-core-neighbours-v1' : ( 'core-input-focus' === $component ? 'peek-core-input-focus-v1' : ( 'core-kiro-fixes' === $component ? 'peek-core-kiro-fixes-v1' : ( 'core-title-rail' === $component ? 'peek-core-title-rail-v1' : ( 'core-title-strip' === $component ? 'peek-core-title-strip-v1' : ( 'core-summary-touch' === $component ? 'peek-core-summary-touch-v1' : ( 'core-upgrade' === $component ? 'peek-core-upgrade-v1' : 'peek-template-v1' ) ) ) ) ) ) ) ) );
 if ( $snapshot_mode ) {
     $old = $snapshot['old'] ?? null; $new = $snapshot['new'] ?? null;
     $valid = ( $snapshot['bundle'] ?? '' ) === $bundle && true === ( $snapshot['complete'] ?? false ) && ( $snapshot['payloads'] ?? null ) === $manifest && hash( 'sha256', wp_json_encode( $old ) ) === ( $snapshot['old_sha256'] ?? '' ) && hash( 'sha256', wp_json_encode( $new ) ) === ( $snapshot['new_sha256'] ?? '' ) && $matches( $new, $code );

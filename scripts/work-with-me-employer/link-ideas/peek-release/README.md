@@ -1,7 +1,8 @@
 # Provisional visitor release: isolated live copy only
 
-This package freezes the shared Peek runtime and four approved summary payloads
-already verified in WordPress on staging39. It is a first-install candidate for a
+This package contains the accepted shared Peek runtime plus a provisional
+title-strip observer timing correction, and four unchanged approved summaries.
+The observer correction still requires staging39 verification. It is a first-install candidate for a
 fresh copy of live, not authorization or tooling to change live. The installer
 accepts only `http://localhost:8090`; staging and live origins are refused.
 Ryan accepted the current controls on iPhone Safari on November 11: “It's
@@ -70,11 +71,14 @@ navigation pages are absent from the reviewed 15-page visitor inventory.
 
 ## Source and copied baseline
 
-The November 11 refresh freezes the exact accepted quiet-navigation runtime:
-110787 file bytes, SHA256
-`4dfe97943898790b9c000f6dfcc129b4806183a23bc7cb7a55f1cc7db7172952`;
-110781 stored-code bytes, SHA256
-`58266413fe0e24e1dc44ef32c98f428d4537a9b63bf8f5299eb8d708a4d032e5`.
+The November 11 provisional candidate includes the title-strip observer fix:
+111148 file bytes, SHA256
+`708b91f4e52025b6813245a38e7c048fff09dd6ae90f644e0b2b5d1f415f7b19`;
+111142 stored-code bytes, SHA256
+`f152fad975bb85ed4ad06a0ce5f0000cd656276b34efb38b748646a5fdc73566`.
+The accepted preceding runtime remains immutable as `peek-nav-shared-v10.php`.
+The corrected source passed local causal tests and independent review; it has
+not yet passed actual staging or the complete release cycle.
 The four approved data payloads are unchanged. This includes immediate summary
 neighbours, small-screen index clearance and the four quiet-navigation changes.
 The prior payload and its historical evidence remain in git; they cannot verify

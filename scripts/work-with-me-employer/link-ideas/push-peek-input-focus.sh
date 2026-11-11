@@ -31,7 +31,7 @@ ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o 
 echo "Target site: $target   component: core-input-focus   mode: $mode"
 echo "[1] Uploading the reviewed package outside every web root ..."
 "${ssh_cmd[@]}" true 2>/dev/null || { echo "SSH login refused." >&2; exit 2; }
-tar -C "$here" -cf - install-peek-nav.php peek-nav.php peek-nav-legacy.php peek-nav-shared-v1.php peek-nav-shared-v2.php peek-nav-shared-v3.php peek-nav-shared-v4.php peek-nav-shared-v5.php peek-nav-shared-v6.php peek-nav-shared-v7.php peek-nav-shared-v8.php peek-nav-shared-v9.php peek-data title-strip-pages.json \
+tar -C "$here" -cf - install-peek-nav.php peek-nav.php peek-nav-legacy.php peek-nav-shared-v1.php peek-nav-shared-v2.php peek-nav-shared-v3.php peek-nav-shared-v4.php peek-nav-shared-v5.php peek-nav-shared-v6.php peek-nav-shared-v7.php peek-nav-shared-v8.php peek-nav-shared-v9.php peek-nav-shared-v10.php peek-data title-strip-pages.json \
   | "${ssh_cmd[@]}" 'mkdir -p "$HOME/wwm-package-peek-input-focus" && tar -xf - -C "$HOME/wwm-package-peek-input-focus"'
 
 read -r -d '' REMOTE <<'EOS' || true

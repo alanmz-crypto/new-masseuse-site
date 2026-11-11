@@ -26,6 +26,10 @@ it is recorded separately from the four navigation changes.
 **November 11 release source refreshed; complete release cycle still unproved.** The
 local first-install candidate now freezes the accepted quiet-navigation core,
 including immediate summary neighbours, index clearance and all four controls.
+The provisional source now also includes the narrow title-strip observer timing
+correction described in the [resize record](2026-11-11-peek-title-resize.md).
+Its staging and complete release verification remain pending; the accepted
+quiet-navigation bytes are frozen as shared v10 for exact recovery.
 Its four approved summary payloads are unchanged. The same reviewed 536-byte
 Search contrast fix is frozen as a separate required CSS payload. It is deployed
 and verified on staging39; live is unchanged. See the
@@ -40,18 +44,21 @@ original CSS record.
 
 | Current candidate | Bytes | SHA256 |
 |---|---:|---|
-| Core PHP file | 110,787 | `4dfe97943898790b9c000f6dfcc129b4806183a23bc7cb7a55f1cc7db7172952` |
-| Core stored code | 110,781 | `58266413fe0e24e1dc44ef32c98f428d4537a9b63bf8f5299eb8d708a4d032e5` |
+| Core PHP file | 111,148 | `708b91f4e52025b6813245a38e7c048fff09dd6ae90f644e0b2b5d1f415f7b19` |
+| Core stored code | 111,142 | `f152fad975bb85ed4ad06a0ce5f0000cd656276b34efb38b748646a5fdc73566` |
 | Search CSS payload | 536 | `3225b279ae3d20adf696ac9ad6a16dc2be7c7c15c8fbe64ba59e5a74dc14e9e0` |
 | Desired combined Additional CSS | 69,380 | `b024acc687b49a37115940b52976f3bdcfc6cb236ae7bb4a81422f8c2d02c69b` |
 
 After the Spectra correction below, current installer SHA256 is
 `a972ad0c135c7b2da42fe2d1c27efee5396988676393b70bc44fd050e04e4cdf`;
 manifest SHA256 is
-`81eb8f2650ff1763ef0d78adcc2468652a815306e568d2da2d3991b7330e6881`;
+`5255d85c0d64cfe4bd4eed740f4273f993940e013a715f071cfe3eef9b8269b5`;
 source-binding helper SHA256 is
 `5b75b761b0146163d54c26e0b7a99265850d7168cbd48438061e2cb45297c02b`.
-Earlier attempts used installer `64e95f63…` and manifest `296318ac…`.
+Earlier attempts used installer `64e95f63…` and manifest `296318ac…`;
+copy3 used the corrected installer and manifest `81eb8f26…` with the accepted
+quiet-navigation runtime. That manifest is superseded only in the provisional
+source candidate; no actual snapshot or historical result is rebased.
 Independent source review found no defect in the refreshed CSS transition and
 rollback. Before the cache correction, pinned-PHP tests passed **1,694 checks with 138 injected write-boundary
 failures**; the release evidence suite passed **162 offline controls**, including
@@ -314,8 +321,20 @@ confirmed every source/marker binding, byte-identical A/C and B/B2 fingerprints,
 the scoped B/D comparison, all 40,800 metadata descriptors and identical original
 navigation signatures. All 127 artifact files were checked: no SQL, private
 snapshots, copied PHP tree, environment files or nested archives were retained.
-The complete operation log and raw leaf evidence are retained; browser and
-visual audit continues within the failed run's actual coverage.
+Independent browser audit confirmed the exact leaf totals and complete WebKit
+evidence; all 145 unique JPEGs decoded. All 16 Chromium layout captures match the
+accepted staging public captures byte for byte. The WebKit research box remained
+legible, but the two page errors remain release blockers.
+
+The observer correction subsequently reproduced the error in six original-runtime
+WebKit structural-fixture trials and eliminated it in six corresponding trials,
+with identical final geometry. It changes only the title-strip observer callback
+to coalesce layout work into the next frame. It does not filter errors. Source
+and focused-checker review found no blocker. Refreshed release models passed
+1,843 checks with all 138 injected failures; 163 evidence controls passed.
+These are offline results. The current candidate above awaits its own full
+source Gates, actual staging39-copy/deployment verification and complete
+live-sourced copy cycle. Live enablement remains disabled.
 
 ## Recommended scope
 

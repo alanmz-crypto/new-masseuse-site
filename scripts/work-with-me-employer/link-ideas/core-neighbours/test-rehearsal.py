@@ -14,7 +14,7 @@ import subprocess
 import tempfile
 
 PROFILE = globals().get('CORE_REHEARSAL_PROFILE', 'neighbours')
-assert PROFILE in ('neighbours', 'index-clearance', 'quiet-nav')
+assert PROFILE in ('neighbours', 'index-clearance', 'quiet-nav', 'title-resize')
 COMPONENT = 'core-' + PROFILE
 INSTALLER = 'link-ideas/' + COMPONENT + '/install-peek-' + COMPONENT + '.php'
 ROOT = Path(__file__).resolve().parents[4]
@@ -37,6 +37,7 @@ out=$CORE_FIXTURE/out; wwm=$CORE_FIXTURE/wwm; bk=$CORE_FIXTURE/backups
 trace=$CORE_FIXTURE/trace; state=$CORE_FIXTURE/state
 inst=link-ideas/core-neighbours/install-peek-core-neighbours.php
 cleanup() { :; }
+release_cleanup_exit() { [ "$#" -eq 1 ] || exit 89; cleanup; exit "$1"; }
 src=staging39; fails=0; release_rehearsal=0; pages=(/ /about/)
 emit() {
   printf '%s\n' "$1" >> "$trace"
@@ -253,7 +254,7 @@ wpc() {
         passed+=1
 # Artifact cleanup exports only complete public evidence, never private recovery
 # snapshot contents, copied source or SQL. Failed copying cannot report success.
-for original, copy_fail in [(0,False),(7,False),(0,True)]:
+for original, copy_fail in [(0,False),(7,False),(0,True)]+([(7,True)] if PROFILE=='title-resize' else []):
     with tempfile.TemporaryDirectory(prefix='neighbours-native-retain-') as temp:
         base=Path(temp); (base/'out').mkdir()
         allowed=['apply.log','apply.stderr.log','A.content','errors-before.txt','title-strip-pages.json']
@@ -262,10 +263,14 @@ for original, copy_fail in [(0,False),(7,False),(0,True)]:
         prefix=r'''set -uo pipefail
 RUNNER_TEMP=$1; out=$1/out; broken=$2
 cleanup() { printf cleaned > "$RUNNER_TEMP/cleaned"; }
+release_cleanup_exit() { [ "$#" -eq 1 ] || exit 89; printf "%s" "$1" > "$RUNNER_TEMP/decisive-cleanup"; cleanup; exit "$1"; }
 cp() { [ "$broken" != yes ] || return 73; command cp "$@"; }
 '''
         result=subprocess.run(['bash','-s','--',temp,'yes' if copy_fail else 'no'],input=prefix+'\ninst='+INSTALLER+'\n'+HELPERS+'\ntrap core_neighbours_cleanup EXIT\nexit '+str(original)+'\n',capture_output=True,text=True)
-        assert result.returncode==(1 if copy_fail else original),(original,copy_fail,result.stdout,result.stderr)
+        wanted=1 if copy_fail and (PROFILE!='title-resize' or original==0) else original
+        assert result.returncode==wanted,(original,copy_fail,result.stdout,result.stderr)
+        if PROFILE=='title-resize':assert (base/'decisive-cleanup').read_text()==str(wanted)
+        else:assert not (base/'decisive-cleanup').exists()
         assert (base/'cleaned').read_text()=='cleaned'
         names=sorted(path.name for path in (base/('ops-out/'+COMPONENT+'-native')).iterdir())
         assert names==([] if copy_fail else sorted(allowed)),names
