@@ -89,6 +89,18 @@ expect("Chair Massage: 'we' is refused in its source titles", bool(wt.check(page
 expect("Chair Massage: no exemption if the heading is missing", bool(wt.check(page4("", "Anxiety scores were lower.", "").replace(H4, "Something else"))["before"]))
 both4 = '<main><h2>%s</h2><p>ok</p><h2>%s</h2><p>chronic</p></main>' % (H3, H4)
 expect("Deep Tissue + Chair Massage headings together disable the exemption", bool(wt.check(both4)["before"]) and not wt.check(both4)["found"])
+# ---- the Winding Willow heading (2026-11-13, the new unlisted page /winding-willow/) works the same way
+H5 = "What the Research Says About Massage Alongside Other Care"
+def page5(before="", research="", cites=""):
+    return page(before, research, cites).replace(H, H5)
+expect("the Winding Willow heading is one of the approved headings", H5 in wt.RESEARCH_HEADINGS)
+expect("Winding Willow: 'chronic' is accepted inside its research section", not wt.check(page5("", "In 60 adults with chronic low back pain.", ""))["research"] and wt.check(page5("", "In 60 adults with chronic low back pain.", ""))["found"])
+expect("Winding Willow: 'chronic' is refused before its research section", bool(wt.check(page5("Massage for chronic problems.", "", ""))["before"]))
+expect("Winding Willow: claim verbs are refused inside its research section", bool(wt.check(page5("", "Adding other treatments to massage.", ""))["research"]))
+expect("Winding Willow: 'we' is refused in its source titles", bool(wt.check(page5("", "", "Smith J. We came. J Test, 2015."))["cites"]))
+expect("Winding Willow: no exemption if the heading is missing", bool(wt.check(page5("", "In 60 adults with chronic pain.", "").replace(H5, "Something else"))["before"]))
+both5 = '<main><h2>%s</h2><p>ok</p><h2>%s</h2><p>chronic</p></main>' % (H4, H5)
+expect("Chair Massage + Winding Willow headings together disable the exemption", bool(wt.check(both5)["before"]) and not wt.check(both5)["found"])
 expect("the old list is unchanged for the Services and Therapeutic pages (BAD still has all 25 evidence/voice/heal patterns)", len(wt.BAD) == 1 + len(wt.EVIDENCE) + len(wt.VOICE) and len(wt.EVIDENCE) == 25)
 
 print("\nRESULT: " + ("all cases right" if not fails else "%d case(s) WRONG" % fails))
