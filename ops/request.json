@@ -1,10 +1,7 @@
 {
-  "id": "peek-live-finished-inspect-20261111-2",
-  "op": "run",
-  "target": "live",
-  "script": "link-ideas/push-peek-release.sh",
-  "args": [
-    "--inspect-live30"
-  ],
-  "tests": "auto"
+  "id": "ww-page-rehearse-39-1",
+  "op": "rehearse",
+  "target": "staging39",
+  "installer": "winding-willow/install-winding-willow-page.php",
+  "args": []
 }
