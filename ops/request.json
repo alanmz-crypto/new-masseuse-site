@@ -1,7 +1,8 @@
 {
-  "id": "ww-rehearse-live-1",
-  "op": "rehearse",
+  "id": "ww-live-dry-1",
+  "op": "run",
   "target": "live",
-  "installer": "winding-willow/install-winding-willow.php",
-  "args": []
+  "script": "winding-willow/push-winding-willow.sh",
+  "args": [],
+  "tests": "none"
 }
