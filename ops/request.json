@@ -1,8 +1,8 @@
 {
-  "id": "ww-capture-s39-1",
+  "id": "ww-dry-s39-1",
   "op": "run",
   "target": "staging39",
-  "script": "winding-willow/capture-winding-willow.sh",
+  "script": "winding-willow/push-winding-willow.sh",
   "args": [],
   "tests": "none"
 }
