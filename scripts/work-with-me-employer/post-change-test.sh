@@ -19,7 +19,7 @@ creds="${S26_CREDS:-$here/../../remote_execution.txt}"
 target="${1:-}"; mins="${2:-120}"
 case "$target" in
   live) host_t="thaisolitude.com"; ref_t="staging36"; host_r="staging36.thaisolitude.com" ;;
-  staging24|staging25|staging26|staging27|staging30|staging31|staging32|staging33|staging34|staging36|staging37|staging38|staging39) host_t="$target.thaisolitude.com"; ref_t="live"; host_r="thaisolitude.com" ;;
+  staging24|staging25|staging26|staging27|staging30|staging31|staging32|staging33|staging34|staging36|staging37|staging38|staging39|staging40) host_t="$target.thaisolitude.com"; ref_t="live"; host_r="thaisolitude.com" ;;
   *) echo "Usage: $0 <live|staging24|staging25|staging26|staging27|staging30|staging31|staging32|staging33|staging34|staging36|staging37|staging38|staging39> [minutes]" >&2; exit 1 ;;
 esac
 case "$mins" in ''|*[!0-9]*) echo "minutes must be a number" >&2; exit 1 ;; esac

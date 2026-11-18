@@ -18,7 +18,7 @@ dest="${TS_SERVER_BACKUPS:-$HOME/WordPress/thai-solitude-server-backups}"
 target="${1:-}"
 case "$target" in
   live) want="thaisolitude.com" ;;
-  staging24|staging25|staging26|staging27|staging30|staging31|staging32|staging33|staging34|staging36|staging37|staging38|staging39) want="$target.thaisolitude.com" ;;
+  staging24|staging25|staging26|staging27|staging30|staging31|staging32|staging33|staging34|staging36|staging37|staging38|staging39|staging40) want="$target.thaisolitude.com" ;;
   *) echo "Usage: $0 <live|staging24|staging25|staging26|staging27|staging30|staging31|staging32|staging33|staging34|staging36|staging37|staging38|staging39> [export.sql]" >&2; exit 1 ;;
 esac
 sql="${2:-$(find "$dest" -maxdepth 1 -name "${target}-before-*.sql" -printf '%T@ %p\n' 2>/dev/null | sort -rn | head -1 | cut -d' ' -f2-)}"
