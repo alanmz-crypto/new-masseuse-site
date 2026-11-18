@@ -1,10 +1,8 @@
 {
-  "id": "peek-live-finished-inspect-20261111-2",
+  "id": "ww-capture-s39-1",
   "op": "run",
-  "target": "live",
-  "script": "link-ideas/push-peek-release.sh",
-  "args": [
-    "--inspect-live30"
-  ],
-  "tests": "auto"
+  "target": "staging39",
+  "script": "winding-willow/capture-winding-willow.sh",
+  "args": [],
+  "tests": "none"
 }
