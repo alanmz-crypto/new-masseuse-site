@@ -1,8 +1,7 @@
 {
-  "id": "ww-dry-s39-1",
-  "op": "run",
-  "target": "staging39",
-  "script": "winding-willow/push-winding-willow.sh",
-  "args": [],
-  "tests": "none"
+  "id": "ww-rehearse-live-1",
+  "op": "rehearse",
+  "target": "live",
+  "installer": "winding-willow/install-winding-willow.php",
+  "args": []
 }
