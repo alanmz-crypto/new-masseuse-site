@@ -7,7 +7,8 @@
 winding-willow-page-staging39.html = staging39 page #1385 byte for byte (capture ww-capture-s39-1, 2026-11-18; sha256 below). Never edit it.
 CHANGES = Ryan, 2026-11-18, "#1 approved" (after "keep the message pleasant"): four passages that made a combination sound better than the studies
 show (the evidence audit's "omit combined benefit"; Siriyong 2026, PMID 42142427: acupuncture added nothing to Thai massage). Each old text must
-occur exactly once; nothing else in the page changes.
+occur exactly once (or the stated number of times); nothing else in the page changes.
+Then two booking-button labels (see the comment in CHANGES).
 """
 import hashlib, json, os, sys
 
@@ -23,6 +24,10 @@ CHANGES = [
      "In the larger back-pain trial,"),
     ("What I can promise is a choice of skilled practitioners in one welcoming place.",
      "So adding another service is a matter of choice, not a way to get more from a massage. Winding Willow offers several practitioners in one welcoming place, each booked separately."),
+    # Ryan, 2026-11-18: "only links that obviously lead to Winding Willow should link to Winding Willow" and "Book at Winding Willow should only work on
+    # their site": the three booking buttons keep their Winding Willow address and now say so (the first label occurs twice: the top and Find Winding Willow).
+    ('">Book massage with Sa</a>', '">Book with Sa at Winding Willow</a>', 2),
+    ('">See Sa\u2019s calendar</a>', '">See Sa\u2019s calendar at Winding Willow</a>'),
 ]
 
 
@@ -31,9 +36,10 @@ def build():
     if hashlib.sha256(raw).hexdigest() != SRC_SHA256:
         sys.exit("winding-willow-page-staging39.html is not the frozen capture (sha256 differs)")
     text = raw.decode("utf-8")
-    for old, new in CHANGES:
-        if text.count(old) != 1:
-            sys.exit("expected exactly one occurrence of: " + old[:70])
+    for change in CHANGES:
+        old, new, times = (change + (1,))[:3]
+        if text.count(old) != times:
+            sys.exit("expected exactly %d occurrence(s) of: %s" % (times, old[:70]))
         text = text.replace(old, new)
     out = text.encode("utf-8")
     spec = json.load(open(SPEC, encoding="utf-8"))
