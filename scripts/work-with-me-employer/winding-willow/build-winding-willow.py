@@ -28,6 +28,13 @@ CHANGES = [
     # their site": the three booking buttons keep their Winding Willow address and now say so (the first label occurs twice: the top and Find Winding Willow).
     ('">Book massage with Sa</a>', '">Book with Sa at Winding Willow</a>', 2),
     ('">See Sa\u2019s calendar</a>', '">See Sa\u2019s calendar at Winding Willow</a>'),
+    # Ryan, 2026-11-18: "rename everything that leads to Winding Willow with Winding Willow in the link, somehow."
+    ('">Meet the acupuncturists</a>', '">Meet Winding Willow\u2019s acupuncturists</a>'),
+    ('">See the services</a>', '">See Winding Willow\u2019s services</a>'),
+    ('">Meet the massage therapists</a>', '">Meet Winding Willow\u2019s massage therapists</a>'),
+    ('">All practitioners</a>', '">All Winding Willow practitioners</a>'),
+    ('Winding Willow\u2019s <a href="https://www.windingwillowacupuncture.com/book-now">Book Now page</a>',
+     '<a href="https://www.windingwillowacupuncture.com/book-now">Winding Willow\u2019s Book Now page</a>'),
 ]
 
 
