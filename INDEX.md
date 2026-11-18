@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-18 08:03 UTC  **PASS**  `ww-rehearse-live-4`  [reports/2026-11-18/080306-ww-rehearse-live-4.md](reports/2026-11-18/080306-ww-rehearse-live-4.md)  (run 44263466854)
 - 2026-11-18 07:57 UTC  **PASS**  `ww-rehearse-live-3`  [reports/2026-11-18/075717-ww-rehearse-live-3.md](reports/2026-11-18/075717-ww-rehearse-live-3.md)  (run 44262673857)
 - 2026-11-18 07:24 UTC  **PASS**  `ww-rehearse-live-2`  [reports/2026-11-18/072408-ww-rehearse-live-2.md](reports/2026-11-18/072408-ww-rehearse-live-2.md)  (run 44258332333)
 - 2026-11-18 06:28 UTC  **PASS**  `ww-live-dry-1`  [reports/2026-11-18/062856-ww-live-dry-1.md](reports/2026-11-18/062856-ww-live-dry-1.md)  (run 44251568552)
