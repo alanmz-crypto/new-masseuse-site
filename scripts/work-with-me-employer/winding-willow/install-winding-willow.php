@@ -7,7 +7,8 @@
  * idempotent re-apply."
  *
  * EVERYTHING HERE IS ADDED. What it writes (WordPress's own storage; no files, no MU-plugin):
- *   the page (posts table): slug winding-willow, the exact content bytes of winding-willow-page.html (sha256 in winding-willow.json), published, comments closed;
+ *   the page (posts table): slug winding-willow, the exact content bytes of winding-willow-page.html (sha256 in winding-willow.json), published, comments closed.
+ *     That file = the staging39 capture + Ryan's 4 approved wording changes (2026-11-18; build-winding-willow.py), so staging39 itself now preflights as CHANGED;
  *   its meta site-post-title = disabled (the theme's own title off, like the other pages) and SureRank's title + description (through SureRank's own saver).
  * It does NOT add a menu item, a link from any other page, CSS or a snippet: on staging39 the page has none of these (capture ww-capture-s39-1), and where it is
  * linked from is Ryan's decision. Spectra rebuilds the page's own block CSS by itself on the first view (it did the same for the corporate page).
