@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Winding Willow page: ADD /winding-willow/ ("Massage at Winding Willow"), exactly as reviewed on staging39, on staging40 (S_TARGET=staging40, the default).
-# S_TARGET=staging39 is accepted for the dry run only (proves the package equals the reference copy). Live is NOT a target here: the enable-live
-# change (docs/inter-model/2026-11-18-winding-willow-enable-live.patch) adds it on Ryan's go; Ryan merges that pull request and starts the live run himself.
+# Winding Willow page: ADD /winding-willow/ ("Massage at Winding Willow"), exactly as reviewed on staging39, on staging40 or live (S_TARGET=staging40|live; default staging40).
+# S_TARGET=staging39 is accepted for the dry run only (proves the package equals the reference copy). Live was enabled on Ryan's go
+# (docs/inter-model/2026-11-18-winding-willow-enable-live.patch); Ryan merges that pull request and starts the live run himself.
 # Ryan, 2026-11-17: "Follow the pattern of corporate/install-corporate-massage.php + push-corporate-massage.sh: allow-list, dry run by default,
 # --apply with DB export + off-site copy, --rollback, idempotent re-apply."
 #
@@ -36,9 +36,9 @@ case "${1:-}" in
 esac
 target="${S_TARGET:-staging40}"
 case "$target" in
-  staging40) ;;
+  staging40|live) ;;
   staging39) [ "$mode" = dry ] || [ "$mode" = check ] || { echo "staging39 is the reference copy: dry run and --check only." >&2; exit 1; } ;;
-  *) echo "S_TARGET must be staging40 (or staging39 for a dry run / --check)." >&2; exit 1 ;;
+  *) echo "S_TARGET must be staging40 or live (or staging39 for a dry run / --check)." >&2; exit 1 ;;
 esac
 echo "Target site: $target   mode: $mode"
 ssh_cmd=(ssh -p "$port" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 "$user@$host")
@@ -52,7 +52,7 @@ read -r -d '' REMOTE <<'EOS' || true
 set -euo pipefail
 wp() { command wp --skip-plugins=sg-security "$@"; }   # SiteGround Security 1.6.9 + PHP 8.5 makes EVERY wp exit 0 on live (shutdown-handler bug); see AGENTS.md and check-wp-exit-codes.sh.
 phase=$1; target=$2; snap=${3:-}
-case "$target" in staging40|staging39) want="$target.thaisolitude.com" ;; *) echo "Remote refused: target must be staging40 (or staging39 read-only), got '$target'." >&2; exit 1 ;; esac
+case "$target" in staging40|staging39) want="$target.thaisolitude.com" ;; live) want="thaisolitude.com" ;; *) echo "Remote refused: target must be staging40 or live (or staging39 read-only), got '$target'." >&2; exit 1 ;; esac
 command -v wp >/dev/null || { echo "wp-cli not found on the server" >&2; exit 1; }
 doc=""
 cfgs=$(mktemp); trap 'rm -f "$cfgs"' EXIT

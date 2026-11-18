@@ -12,8 +12,8 @@
  * It does NOT add a menu item, a link from any other page, CSS or a snippet: on staging39 the page has none of these (capture ww-capture-s39-1), and where it is
  * linked from is Ryan's decision. Spectra rebuilds the page's own block CSS by itself on the first view (it did the same for the corporate page).
  *
- * Allow-list: localhost:8090 and staging40 (the fresh copy of live). staging39 (the reference copy) for the READ-ONLY preflight only, to prove the package
- * equals what is there. Live is NOT allowed: the enable-live change (docs/inter-model/2026-11-18-winding-willow-enable-live.patch) adds it on Ryan's go.
+ * Allow-list: localhost:8090, staging40 (the fresh copy of live) and live. staging39 (the reference copy) for the READ-ONLY preflight only. Live was added on
+ * Ryan's go (docs/inter-model/2026-11-18-winding-willow-enable-live.patch) after the rehearsal on a copy of live and the staging40 apply; he starts the live run himself.
  *
  * Modes (first WP-CLI argument; run with --user=1):  <mode> [FILE]
  *   preflight    read-only: ready = no page with this slug or title exists; applied = the page is there exactly as written; CHANGED = anything else (stop)
@@ -33,7 +33,7 @@ if ( ! in_array( $mode, array( 'preflight', 'apply', 'rollback' ), true ) ) {
 }
 $home = untrailingslashit( home_url() );
 $host = (string) wp_parse_url( $home, PHP_URL_HOST ) . ( wp_parse_url( $home, PHP_URL_PORT ) ? ':' . wp_parse_url( $home, PHP_URL_PORT ) : '' );
-$writable  = array( 'localhost:8090', 'staging40.thaisolitude.com' );
+$writable  = array( 'localhost:8090', 'staging40.thaisolitude.com', 'thaisolitude.com' );
 $read_only = array( 'staging39.thaisolitude.com' );
 if ( ! in_array( $host, $writable, true ) && ! ( 'preflight' === $mode && in_array( $host, $read_only, true ) ) ) {
 	WP_CLI::error( 'Refusing to run ' . $mode . ': ' . $home . ' is not an allowed target (write: ' . implode( ', ', $writable ) . '; preflight only: ' . implode( ', ', $read_only ) . ').' );
