@@ -1,7 +1,7 @@
 {
-  "id": "seo-i-thai",
+  "id": "seo-i-thai-seo",
   "op": "inspect",
   "target": "staging40",
-  "query": "page",
+  "query": "seo",
   "arg": "thai-massage"
 }
