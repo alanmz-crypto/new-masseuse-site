@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-20 11:41 UTC  **PASS**  `seo-i-seo-296`  [reports/2026-11-20/114142-seo-i-seo-296.md](reports/2026-11-20/114142-seo-i-seo-296.md)  (run 44729623853)
 - 2026-11-20 11:40 UTC  **INVALID**  `seo-i-seo-deep-tissue-massage`  [reports/2026-11-20/114054-seo-i-seo-deep-tissue-massage.md](reports/2026-11-20/114054-seo-i-seo-deep-tissue-massage.md)  (run 44729477747)
 - 2026-11-20 11:39 UTC  **PASS**  `seo-i-seo-thai-massage`  [reports/2026-11-20/113957-seo-i-seo-thai-massage.md](reports/2026-11-20/113957-seo-i-seo-thai-massage.md)  (run 44729379278)
 - 2026-11-20 11:39 UTC  **PASS**  `seo-i-snippets-2`  [reports/2026-11-20/113914-seo-i-snippets-2.md](reports/2026-11-20/113914-seo-i-snippets-2.md)  (run 44729284168)
