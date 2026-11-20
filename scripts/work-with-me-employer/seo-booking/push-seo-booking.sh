@@ -91,11 +91,11 @@ case "$phase" in
       need "$pg" 'windingwillowacupuncture.com' 1   # only the sameAs in the structured data (every page carries it); no link to their site
       need "$pg" 'href="https://www.windingwillowacupuncture.com' 0
     done
-    need thai-massage 'content="Fully clothed Thai massage in Portland with Butsaba Dusrai, LMT: compression, rocking and assisted stretching. Book with her at Winding Willow on SE Clinton."' 1
-    need deep-tissue-massage 'content="Deep tissue massage in Portland with Butsaba Dusrai, LMT: slow, deliberate pressure on tight muscles. Book with her at Winding Willow on SE Clinton St."' 1
-    need therapeutic-massage 'content="Therapeutic massage in Portland with Butsaba Dusrai, LMT: focused work where you ask for it, with pressure and pace adjusted as you go."' 1
+    need thai-massage 'content="Fully clothed Thai massage in Portland with Butsaba Dusrai, LMT: compression, rocking and assisted stretching. Book with her at Winding Willow on SE Clinton."' 3   # description, og:description, twitter:description
+    need deep-tissue-massage 'content="Deep tissue massage in Portland with Butsaba Dusrai, LMT: slow, deliberate pressure on tight muscles. Book with her at Winding Willow on SE Clinton St."' 3   # description, og:description, twitter:description
+    need therapeutic-massage 'content="Therapeutic massage in Portland with Butsaba Dusrai, LMT: focused work where you ask for it, with pressure and pace adjusted as you go."' 3   # description, og:description, twitter:description
     fetch home /
-    need home 'content="Thai, therapeutic and deep tissue massage in Portland with Butsaba Dusrai, LMT. Book at Winding Willow, or ask about corporate and group massage."' 1
+    need home 'content="Thai, therapeutic and deep tissue massage in Portland with Butsaba Dusrai, LMT. Book at Winding Willow, or ask about corporate and group massage."' 3   # description, og:description, twitter:description
     need home '"sameAs":["https://www.windingwillowacupuncture.com/butsaba-dusrai-lmt"]' 1
     need home '/winding-willow/' 3
     echo "public check: the sentence is on the three service pages once each, the three new descriptions and the sameAs are served, Therapeutic keeps its description, and no new link to /winding-willow/ or to their site was added" ;;
