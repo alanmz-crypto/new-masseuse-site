@@ -96,7 +96,7 @@ case "$phase" in
     need ww 'What the Research Says About Massage Alongside Other Care' 1
     atleast ww 'href="https://www.windingwillowacupuncture.com/butsaba-dusrai-lmt"' 2
     for pmid in 21299184 28690703 36645811 23427384 40954653 42142427 31987237; do atleast ww "https://pubmed.ncbi.nlm.nih.gov/$pmid/" 1; done
-    need ww 'staging39' 0
+    need ww 'staging39.thaisolitude.com' 0   # a link to the reference copy; the site-wide CSS has a harmless '/* staging39: ...' comment (live too)
     [ "$target" != live ] || need ww 'noindex' 0   # staging keeps its own no-crawl setting; on live the page must be indexable
     for pg in services contact about; do fetch "$pg" "/$pg/"; need "$pg" '/winding-willow/' 0; need "$pg" 'windingwillowacupuncture.com' 0; done   # Ryan 2026-11-18: only the winding-willow page links to Winding Willow; no other page links to it or to their site
     echo "public check: the page answers 200 with its H1, title, description, licence line, research heading, booking links and 7 PubMed sources; Services, Contact and About link neither to it nor to Winding Willow" ;;
