@@ -13,7 +13,8 @@
  *      UPGRADE: where the page is exactly the version first put on staging40 (previous_content_sha256), only its content is replaced (the rest already matches).
  *   2. ONE menu item "Winding Willow" (class ts-ww-nav, meta _ts_ww_nav) in the Primary Menu, right after Corporate Massage (the ts-corp-nav item; after Services
  *      where there is none). The items after it move one position later (menu_order +1); Corporate Massage keeps its reviewed position. Ryan 2026-11-20.
- *   3. the CSS block ts-ww (appended to the Additional CSS): the item shows in the phone and tablet menu only; the desktop header and footer keep their six items.
+ *   3. the CSS block ts-ww (appended to the Additional CSS): the item shows in the phone/tablet menu and in the PC header from 1256 px (item spacing 0.5em from
+ *      1350 px, as ts-corp already has at 1120-1349 px); hidden in the header below 1256 px and in the footer, so those look as before.
  * Nothing else is edited. Spectra rebuilds the page's own block CSS by itself on the first view.
  *
  * Allow-list: localhost:8090 and staging40 (the fresh copy of live). staging39 (the reference copy) for the READ-ONLY preflight only, to prove the package

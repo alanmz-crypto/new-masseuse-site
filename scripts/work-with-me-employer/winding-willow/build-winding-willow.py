@@ -48,10 +48,13 @@ PREVIOUS_SHA256 = "b598caf788208ff146fff70d5a08500025dda1cf397ae95936ab0b4e7d680
 # Ryan, 2026-11-20: the menu link is called "Winding Willow" ("the hamburger menu"); placed after Corporate Massage so that item keeps its reviewed position.
 NAV = {"nav_label": "Winding Willow", "nav_class": "ts-ww-nav", "nav_after_class": "ts-corp-nav"}
 NAV_CSS = (
-    "/* ts-ww:start \u2014 the \"Winding Willow\" menu item (class ts-ww-nav; Ryan 2026-11-20, the hamburger menu): it shows in the phone and tablet menu\n"
-    "   (921 px and narrower). With seven items the desktop header and footer menus wrap onto two lines at 924-1920 px (measured on staging40), so there\n"
-    "   they keep the six items they show now. */\n"
-    "#ast-hf-menu-1 > .ts-ww-nav,\n#astra-footer-menu > .ts-ww-nav {\n  display: none;\n}\n"
+    "/* ts-ww:start \u2014 the \"Winding Willow\" menu item (class ts-ww-nav). Ryan 2026-11-20: first the hamburger menu, then \"yes, tighten\" so it shows on a PC too.\n"
+    "   Measured on staging40: seven items fit the header on one line from 1256 px when the space between items is 0.5em, which the ts-corp block already uses\n"
+    "   at 1120-1349 px; this block uses it from 1350 px as well. Below 1256 px (and in the footer, where seven never fit) the item is hidden, so those menus\n"
+    "   look exactly as before. The phone and tablet menu (921 px and narrower) always shows it. */\n"
+    "@media (max-width: 1255px) {\n  #ast-hf-menu-1 > .ts-ww-nav {\n    display: none;\n  }\n}\n"
+    "@media (min-width: 1350px) {\n  #ast-hf-menu-1 > .menu-item > .menu-link {\n    padding-left: 0.5em;\n    padding-right: 0.5em;\n  }\n}\n"
+    "#astra-footer-menu > .ts-ww-nav {\n  display: none;\n}\n"
     "/* ts-ww:end */")
 
 
