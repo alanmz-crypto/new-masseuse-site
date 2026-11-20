@@ -1,8 +1,7 @@
 {
-  "id": "ww-names-live-dry-1",
-  "op": "run",
-  "target": "live",
-  "script": "winding-willow/push-winding-willow.sh",
-  "args": [],
-  "tests": "auto"
+  "id": "seo-i-thai",
+  "op": "inspect",
+  "target": "staging40",
+  "query": "page",
+  "arg": "thai-massage"
 }
