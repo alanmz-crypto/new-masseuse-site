@@ -1,11 +1,10 @@
 {
-  "id": "live-peek-finish-20261111-1",
+  "id": "live-winding-willow-1",
   "op": "run",
   "target": "live",
-  "script": "link-ideas/push-peek-release.sh",
+  "script": "winding-willow/push-winding-willow.sh",
   "args": [
-    "--apply",
-    "--finish-live30"
+    "--apply"
   ],
   "tests": "auto"
 }
