@@ -1,7 +1,7 @@
 {
-  "id": "seo-i-page-therapeutic-massage",
+  "id": "seo-i-page-deep-tissue-massage",
   "op": "inspect",
   "target": "staging40",
   "query": "page",
-  "arg": "therapeutic-massage"
+  "arg": "deep-tissue-massage"
 }
