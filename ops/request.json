@@ -1,7 +1,8 @@
 {
-  "id": "seo-rehearse-live-1",
-  "op": "rehearse",
-  "target": "live",
-  "installer": "seo-booking/install-seo-booking.php",
-  "args": []
+  "id": "seo-dry-s40-1",
+  "op": "run",
+  "target": "staging40",
+  "script": "seo-booking/push-seo-booking.sh",
+  "args": [],
+  "tests": "auto"
 }
