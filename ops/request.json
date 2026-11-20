@@ -1,10 +1,10 @@
 {
-  "id": "seo-apply-s40-1",
+  "id": "seo-check-s40-1",
   "op": "run",
   "target": "staging40",
   "script": "seo-booking/push-seo-booking.sh",
   "args": [
-    "--apply"
+    "--check"
   ],
   "tests": "auto"
 }
