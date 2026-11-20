@@ -8,13 +8,15 @@ winding-willow-page-staging39.html = staging39 page #1385 byte for byte (capture
 CHANGES = Ryan, 2026-11-18, "#1 approved" (after "keep the message pleasant"): four passages that made a combination sound better than the studies
 show (the evidence audit's "omit combined benefit"; Siriyong 2026, PMID 42142427: acupuncture added nothing to Thai massage). Each old text must
 occur exactly once (or the stated number of times); nothing else in the page changes.
-Then two booking-button labels (see the comment in CHANGES).
+Then the link labels (2026-11-18) and the opening sentence (2026-11-20); see the comments in CHANGES. The spec also gets the menu item and its CSS.
 """
 import hashlib, json, os, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SRC, OUT, SPEC = (os.path.join(HERE, n) for n in ("winding-willow-page-staging39.html", "winding-willow-page.html", "winding-willow.json"))
 SRC_SHA256 = "e21a940bb248e37a80ecd5959fef179496f810af97f06bd81ea691fc7bb21b60"
+INTRO = ("Alongside my own practice, Thai Solitude, I now also see massage clients at Winding Willow Acupuncture &amp; Wellness in Southeast Portland. "
+         "Winding Willow is a separate, independent business that employs me, and you book those visits directly with them.")
 CHANGES = [
     ("then gives the results that were weaker, mixed or negative, and ends on what is encouraging: I included the studies",
      "then gives the results that were weaker, mixed or negative. I included the studies"),
@@ -35,7 +37,23 @@ CHANGES = [
     ('">All practitioners</a>', '">All Winding Willow practitioners</a>'),
     ('Winding Willow\u2019s <a href="https://www.windingwillowacupuncture.com/book-now">Book Now page</a>',
      '<a href="https://www.windingwillowacupuncture.com/book-now">Winding Willow\u2019s Book Now page</a>'),
+    # Ryan, 2026-11-20: "at the very top of the page people need to know why Winding Willow suddenly popped up as an option" (Winding Willow "is an outside,
+    # fully independent business that employs Butsaba"), then "Do your thing." to this opening sentence and the two softened lines that would contradict it.
+    ('<!-- wp:paragraph -->\n<p>Winding Willow is a neighborhood collective of independent practitioners in Southeast Portland.',
+     '<!-- wp:paragraph -->\n<p>' + INTRO + '</p>\n<!-- /wp:paragraph -->\n\n<!-- wp:paragraph -->\n<p>Winding Willow is a neighborhood clinic in Southeast Portland with several practitioners.'),
+    ('Each practitioner works independently and books their own appointments.', 'Each practitioner books their own appointments.'),
 ]
+# The page as it was first put on staging40 (2026-11-20, page #1344): the installer updates that exact version in place (and its rollback restores it).
+PREVIOUS_SHA256 = "b598caf788208ff146fff70d5a08500025dda1cf397ae95936ab0b4e7d680cc9"
+# Ryan, 2026-11-20: the menu link is called "Winding Willow" ("the hamburger menu"); placed after Corporate Massage so that item keeps its reviewed position.
+NAV = {"nav_label": "Winding Willow", "nav_class": "ts-ww-nav", "nav_after_class": "ts-corp-nav"}
+NAV_CSS = (
+    "/* ts-ww:start \u2014 the \"Winding Willow\" menu item (class ts-ww-nav; Ryan 2026-11-20, the hamburger menu): it shows in the phone and tablet menu\n"
+    "   (921 px and narrower). With seven items the desktop header and footer menus wrap onto two lines at 924-1920 px (measured on staging40), so there\n"
+    "   they keep the six items they show now. */\n"
+    "#ast-hf-menu-1 > .ts-ww-nav,\n#astra-footer-menu > .ts-ww-nav {\n  display: none;\n}\n"
+    "/* ts-ww:end */")
+
 
 
 def build():
@@ -51,7 +69,8 @@ def build():
     out = text.encode("utf-8")
     spec = json.load(open(SPEC, encoding="utf-8"))
     spec.update(content_file="winding-willow-page.html", content_sha256=hashlib.sha256(out).hexdigest(), content_length=len(out),
-                source=spec["source"].split(" | ")[0] + " | plus Ryan's 4 approved wording changes of 2026-11-18 (build-winding-willow.py)")
+                source=spec["source"].split(" | ")[0] + " | plus Ryan's approved wording of 2026-11-18 and 2026-11-20 (build-winding-willow.py)",
+                previous_content_sha256=PREVIOUS_SHA256, nav_css=NAV_CSS, **NAV)
     return out, (json.dumps(spec, ensure_ascii=False, indent=1) + "\n").encode("utf-8")
 
 
