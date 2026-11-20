@@ -26,7 +26,7 @@ BAD = [CLAIMS[0]] + EVIDENCE + VOICE
 
 # One approved heading per page that carries a research section (Thai 2026-10-19, Therapeutic 2026-10-19, Deep Tissue 2026-10-24, Chair Massage 2026-10-30). The heading must occur EXACTLY ONCE among all of them on the page; to extend this to another service page add its heading here and a case to
 # tests/wording-tiers-selftest.py.
-RESEARCH_HEADINGS = ["What the Research Says About Thai Massage", "What the Research Says About Therapeutic Massage", "What the Research Says About Deep Tissue Massage", "What the Research Says About Chair Massage"]
+RESEARCH_HEADINGS = ["What the Research Says About Thai Massage", "What the Research Says About Therapeutic Massage", "What the Research Says About Deep Tissue Massage", "What the Research Says About Chair Massage", "What the Research Says About Massage Alongside Other Care"]   # Winding Willow page: Ryan, 2026-11-18 "#1 approved"
 RESEARCH_HEADING = RESEARCH_HEADINGS[0]   # kept for the self-test's generic cases
 CITE = re.compile(r'<cite class="ts-source">.*?</cite>', re.S)
 
