@@ -1,7 +1,7 @@
 {
-  "id": "ww-menu-rehearse-live-1",
+  "id": "ww-menu-rehearse-s40-1",
   "op": "rehearse",
-  "target": "live",
+  "target": "staging40",
   "installer": "winding-willow/install-winding-willow.php",
   "args": []
 }
