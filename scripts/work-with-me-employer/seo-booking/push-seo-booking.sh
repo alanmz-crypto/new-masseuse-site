@@ -88,7 +88,8 @@ case "$phase" in
       need "$pg" "$S" 1
       need "$pg" "href=\"https://$want/winding-willow/\" class=\"menu-link\">Winding Willow</a>" 3   # still only the menu link to the page (Ryan 2026-11-20)
       need "$pg" '/winding-willow/' 3
-      need "$pg" 'windingwillowacupuncture.com' 0
+      need "$pg" 'windingwillowacupuncture.com' 1   # only the sameAs in the structured data (every page carries it); no link to their site
+      need "$pg" 'href="https://www.windingwillowacupuncture.com' 0
     done
     need thai-massage 'content="Fully clothed Thai massage in Portland with Butsaba Dusrai, LMT: compression, rocking and assisted stretching. Book with her at Winding Willow on SE Clinton."' 1
     need deep-tissue-massage 'content="Deep tissue massage in Portland with Butsaba Dusrai, LMT: slow, deliberate pressure on tight muscles. Book with her at Winding Willow on SE Clinton St."' 1
