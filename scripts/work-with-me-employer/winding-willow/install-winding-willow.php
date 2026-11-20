@@ -17,8 +17,8 @@
  *      which leaves room for the seven items on one line from 1120 px; keeps the item out of the footer menu (seven never fit there).
  * Nothing else is edited. Spectra rebuilds the page's own block CSS by itself on the first view.
  *
- * Allow-list: localhost:8090 and staging40 (the fresh copy of live). staging39 (the reference copy) for the READ-ONLY preflight only, to prove the package
- * equals what is there. Live is NOT allowed: the enable-live change (docs/inter-model/2026-11-18-winding-willow-enable-live.patch) adds it on Ryan's go.
+ * Allow-list: localhost:8090, staging40 (the fresh copy of live) and live. staging39 (the reference copy) for the READ-ONLY preflight only. Live was added on
+ * Ryan's go (docs/inter-model/2026-11-18-winding-willow-enable-live.patch) after the rehearsals on copies of live and staging40 and the staging40 apply; he starts the live run himself.
  *
  * Modes (first WP-CLI argument; run with --user=1):  <mode> [FILE]
  *   preflight    read-only: ready = none of the three parts exists; upgrade = the page is the first staging40 version and the menu item + CSS are absent;
@@ -40,7 +40,7 @@ if ( ! in_array( $mode, array( 'preflight', 'apply', 'rollback' ), true ) ) {
 }
 $home = untrailingslashit( home_url() );
 $host = (string) wp_parse_url( $home, PHP_URL_HOST ) . ( wp_parse_url( $home, PHP_URL_PORT ) ? ':' . wp_parse_url( $home, PHP_URL_PORT ) : '' );
-$writable  = array( 'localhost:8090', 'staging40.thaisolitude.com' );
+$writable  = array( 'localhost:8090', 'staging40.thaisolitude.com', 'thaisolitude.com' );
 $read_only = array( 'staging39.thaisolitude.com' );
 if ( ! in_array( $host, $writable, true ) && ! ( 'preflight' === $mode && in_array( $host, $read_only, true ) ) ) {
 	WP_CLI::error( 'Refusing to run ' . $mode . ': ' . $home . ' is not an allowed target (write: ' . implode( ', ', $writable ) . '; preflight only: ' . implode( ', ', $read_only ) . ').' );
