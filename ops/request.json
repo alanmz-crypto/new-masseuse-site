@@ -1,6 +1,7 @@
 {
-  "id": "seo-i-snippets",
+  "id": "seo-i-lb",
   "op": "inspect",
   "target": "staging40",
-  "query": "snippets"
+  "query": "snippet",
+  "arg": "1023"
 }
