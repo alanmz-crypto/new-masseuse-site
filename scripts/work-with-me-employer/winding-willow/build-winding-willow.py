@@ -48,10 +48,11 @@ PREVIOUS_SHA256 = "b598caf788208ff146fff70d5a08500025dda1cf397ae95936ab0b4e7d680
 # Ryan, 2026-11-20: the menu link is called "Winding Willow" ("the hamburger menu"); placed after Corporate Massage so that item keeps its reviewed position.
 NAV = {"nav_label": "Winding Willow", "nav_class": "ts-ww-nav", "nav_after_class": "ts-corp-nav"}
 NAV_CSS = (
-    "/* ts-ww:start \u2014 the \"Winding Willow\" menu item (class ts-ww-nav; Ryan 2026-11-20, the hamburger menu): it shows in the phone and tablet menu\n"
-    "   (921 px and narrower). With seven items the desktop header and footer menus wrap onto two lines at 924-1920 px (measured on staging40), so there\n"
-    "   they keep the six items they show now. */\n"
-    "#ast-hf-menu-1 > .ts-ww-nav,\n#astra-footer-menu > .ts-ww-nav {\n  display: none;\n}\n"
+    "/* ts-ww:start \u2014 header menu. Ryan 2026-11-20: the menu item \"Winding Willow\" (class ts-ww-nav), and the header's \"Get in Touch\" button removed\n"
+    "   (\"(d) no button at all. The menu already has Contact.\"). Measured on staging40: without the button the seven items fit the PC header on one line\n"
+    "   from 1120 px at the spacing they have now (below that the header wraps as it already did). The footer menu cannot fit seven, so it keeps its six. */\n"
+    "#masthead .ast-header-button-1 {\n  display: none !important;\n}\n"
+    "#astra-footer-menu > .ts-ww-nav {\n  display: none;\n}\n"
     "/* ts-ww:end */")
 
 

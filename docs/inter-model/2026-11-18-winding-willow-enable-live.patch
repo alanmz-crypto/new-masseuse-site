@@ -1,7 +1,7 @@
 --- a/scripts/work-with-me-employer/winding-willow/install-winding-willow.php
 +++ b/scripts/work-with-me-employer/winding-willow/install-winding-willow.php
-@@ -16,8 +16,8 @@
-  *   3. the CSS block ts-ww (appended to the Additional CSS): the item shows in the phone and tablet menu only; the desktop header and footer keep their six items.
+@@ -17,8 +17,8 @@
+  *      which leaves room for the seven items on one line from 1120 px; keeps the item out of the footer menu (seven never fit there).
   * Nothing else is edited. Spectra rebuilds the page's own block CSS by itself on the first view.
   *
 - * Allow-list: localhost:8090 and staging40 (the fresh copy of live). staging39 (the reference copy) for the READ-ONLY preflight only, to prove the package
@@ -11,7 +11,7 @@
   *
   * Modes (first WP-CLI argument; run with --user=1):  <mode> [FILE]
   *   preflight    read-only: ready = none of the three parts exists; upgrade = the page is the first staging40 version and the menu item + CSS are absent;
-@@ -39,7 +39,7 @@
+@@ -40,7 +40,7 @@
  }
  $home = untrailingslashit( home_url() );
  $host = (string) wp_parse_url( $home, PHP_URL_HOST ) . ( wp_parse_url( $home, PHP_URL_PORT ) ? ':' . wp_parse_url( $home, PHP_URL_PORT ) : '' );

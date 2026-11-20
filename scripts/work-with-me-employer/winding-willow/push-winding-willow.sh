@@ -100,7 +100,7 @@ case "$phase" in
     [ "$target" != live ] || need ww 'noindex' 0   # staging keeps its own no-crawl setting; on live the page must be indexable
     need ww 'Winding Willow is a separate, independent business that employs me' 1   # Ryan 2026-11-20: the top of the page says why Winding Willow is there
     need ww 'collective of independent practitioners' 0
-    atleast ww '#ast-hf-menu-1 > .ts-ww-nav' 1   # the ts-ww CSS block (menu item in the phone/tablet menu only)
+    atleast ww '#masthead .ast-header-button-1' 1   # the ts-ww CSS block (no Get in Touch button; menu item out of the footer)
     # Ryan 2026-11-20: the menu item "Winding Willow" is the ONE link to the page (header, phone menu, footer = 3 copies); only the winding-willow page links to their site.
     for pg in services contact about; do fetch "$pg" "/$pg/"; need "$pg" "href=\"https://$want/winding-willow/\" class=\"menu-link\">Winding Willow</a>" 3; need "$pg" '/winding-willow/' 3; need "$pg" 'windingwillowacupuncture.com' 0; done
     echo "public check: the page answers 200 with its opening sentence, H1, title, description, licence line, research heading, booking links and 7 PubMed sources; Services, Contact and About carry only the menu link to it and no link to Winding Willow" ;;
