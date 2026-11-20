@@ -42,9 +42,14 @@ CHANGES = [
     ('<!-- wp:paragraph -->\n<p>Winding Willow is a neighborhood collective of independent practitioners in Southeast Portland.',
      '<!-- wp:paragraph -->\n<p>' + INTRO + '</p>\n<!-- /wp:paragraph -->\n\n<!-- wp:paragraph -->\n<p>Winding Willow is a neighborhood clinic in Southeast Portland with several practitioners.'),
     ('Each practitioner works independently and books their own appointments.', 'Each practitioner books their own appointments.'),
+    # Ryan, 2026-11-20: "just keep names up to date" (Winding Willow's team pages, checked by .github/workflows/watch-winding-willow.yml). Added 2026-11-20:
+    # Dani Dennenberg, MEd, MAcOM, LAc (acupuncture; Chinese herbal medicine).
+    ('Dr. Jennifer Moody \u00b7 Erin Cranford \u00b7 Lindsey Pope<', 'Dr. Jennifer Moody \u00b7 Erin Cranford \u00b7 Lindsey Pope \u00b7 Dani Dennenberg<'),
+    ('Herbalism: Dr. Moody, Erin Cranford \u00b7', 'Herbalism: Dr. Moody, Erin Cranford, Dani Dennenberg \u00b7'),
 ]
-# The page as it was first put on staging40 (2026-11-20, page #1344): the installer updates that exact version in place (and its rollback restores it).
-PREVIOUS_SHA256 = "b598caf788208ff146fff70d5a08500025dda1cf397ae95936ab0b4e7d680cc9"
+# The page as it is on live and staging40 since 2026-11-20 (live run live-winding-willow-1, page #1344): the installer updates that exact version in place
+# (state "update": content only) and its rollback restores it. Set this to the outgoing content_sha256 each time the names change.
+PREVIOUS_SHA256 = "c541d49414355e45186987ac8d08d787a47a68395e2c8a268d803adfa29f7683"
 # Ryan, 2026-11-20: the menu link is called "Winding Willow" ("the hamburger menu"); placed after Corporate Massage so that item keeps its reviewed position.
 NAV = {"nav_label": "Winding Willow", "nav_class": "ts-ww-nav", "nav_after_class": "ts-corp-nav"}
 NAV_CSS = (
