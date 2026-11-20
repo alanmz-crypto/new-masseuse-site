@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-20 02:03 UTC  **FAIL**  `ww-apply-s40-1`  [reports/2026-11-20/020335-ww-apply-s40-1.md](reports/2026-11-20/020335-ww-apply-s40-1.md)  (run 44657955253)
 - 2026-11-20 02:02 UTC  **PASS**  `ww-dry-s40-2`  [reports/2026-11-20/020228-ww-dry-s40-2.md](reports/2026-11-20/020228-ww-dry-s40-2.md)  (run 44657855116)
 - 2026-11-20 01:29 UTC  **FAIL**  `ww-dry-s40-1`  [reports/2026-11-20/012938-ww-dry-s40-1.md](reports/2026-11-20/012938-ww-dry-s40-1.md)  (run 44653939921)
 - 2026-11-18 08:03 UTC  **PASS**  `ww-rehearse-live-4`  [reports/2026-11-18/080306-ww-rehearse-live-4.md](reports/2026-11-18/080306-ww-rehearse-live-4.md)  (run 44263466854)
