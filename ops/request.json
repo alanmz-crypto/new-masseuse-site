@@ -1,7 +1,7 @@
 {
-  "id": "seo-i-page-deep-tissue-massage",
-  "op": "inspect",
+  "id": "seo-rehearse-s40-1",
+  "op": "rehearse",
   "target": "staging40",
-  "query": "page",
-  "arg": "deep-tissue-massage"
+  "installer": "seo-booking/install-seo-booking.php",
+  "args": []
 }
