@@ -6,20 +6,25 @@
  * corporate/install-corporate-massage.php + push-corporate-massage.sh: allow-list, dry run by default, --apply with DB export + off-site copy, --rollback,
  * idempotent re-apply."
  *
- * EVERYTHING HERE IS ADDED. What it writes (WordPress's own storage; no files, no MU-plugin):
- *   the page (posts table): slug winding-willow, the exact content bytes of winding-willow-page.html (sha256 in winding-willow.json), published, comments closed.
- *     That file = the staging39 capture + Ryan's 4 approved wording changes (2026-11-18; build-winding-willow.py), so staging39 itself now preflights as CHANGED;
- *   its meta site-post-title = disabled (the theme's own title off, like the other pages) and SureRank's title + description (through SureRank's own saver).
- * It does NOT add a menu item, a link from any other page, CSS or a snippet: on staging39 the page has none of these (capture ww-capture-s39-1), and where it is
- * linked from is Ryan's decision. Spectra rebuilds the page's own block CSS by itself on the first view (it did the same for the corporate page).
+ * What it writes (WordPress's own storage; no files, no MU-plugin):
+ *   1. the page (posts table): slug winding-willow, the exact content bytes of winding-willow-page.html (sha256 in winding-willow.json), published, comments closed;
+ *      its meta site-post-title = disabled and SureRank's title + description (through SureRank's own saver). That file = the staging39 capture + Ryan's approved
+ *      wording (2026-11-18 and 2026-11-20; build-winding-willow.py), so staging39 itself preflights as CHANGED.
+ *      UPGRADE: where the page is exactly the version first put on staging40 (previous_content_sha256), only its content is replaced (the rest already matches).
+ *   2. ONE menu item "Winding Willow" (class ts-ww-nav, meta _ts_ww_nav) in the Primary Menu, right after Corporate Massage (the ts-corp-nav item; after Services
+ *      where there is none). The items after it move one position later (menu_order +1); Corporate Massage keeps its reviewed position. Ryan 2026-11-20.
+ *   3. the CSS block ts-ww (appended to the Additional CSS): the item shows in the phone and tablet menu only; the desktop header and footer keep their six items.
+ * Nothing else is edited. Spectra rebuilds the page's own block CSS by itself on the first view.
  *
  * Allow-list: localhost:8090 and staging40 (the fresh copy of live). staging39 (the reference copy) for the READ-ONLY preflight only, to prove the package
  * equals what is there. Live is NOT allowed: the enable-live change (docs/inter-model/2026-11-18-winding-willow-enable-live.patch) adds it on Ryan's go.
  *
  * Modes (first WP-CLI argument; run with --user=1):  <mode> [FILE]
- *   preflight    read-only: ready = no page with this slug or title exists; applied = the page is there exactly as written; CHANGED = anything else (stop)
- *   apply        snapshot, create the page and its two meta fields, read everything back; delete what it made if any read-back differs
- *   rollback     FILE = the before-snapshot apply wrote: delete exactly that page again (only when it is still exactly as applied)
+ *   preflight    read-only: ready = none of the three parts exists; upgrade = the page is the first staging40 version and the menu item + CSS are absent;
+ *                applied = all three exactly as written; CHANGED = anything else (stop)
+ *   apply        snapshot, write the parts, read everything back; put everything back (reverse order) if any read-back differs
+ *   rollback     FILE = the before-snapshot apply wrote: take the menu item and the CSS block out, put the menu order back, and delete the page (from ready) or
+ *                put its previous content back (from upgrade); only when everything is still exactly as applied
  * apply and rollback need WWM_BACKUP_DIR (an existing, writable absolute directory outside the web root).
  */
 
@@ -51,7 +56,7 @@ if ( ! class_exists( '\SureRank\Inc\API\Post' ) || ! method_exists( '\SureRank\I
 
 // ---- the reviewed package -----------------------------------------------------------------------------------------------------------------------------
 $spec = json_decode( (string) @file_get_contents( __DIR__ . '/winding-willow.json' ), true );
-foreach ( array( 'slug', 'title', 'content_file', 'content_sha256', 'seo_title', 'seo_desc', 'research_heading', 'block_ids' ) as $k ) {
+foreach ( array( 'slug', 'title', 'content_file', 'content_sha256', 'previous_content_sha256', 'seo_title', 'seo_desc', 'research_heading', 'block_ids', 'nav_label', 'nav_class', 'nav_after_class', 'nav_css' ) as $k ) {
 	if ( ! is_array( $spec ) || empty( $spec[ $k ] ) ) {
 		WP_CLI::error( 'winding-willow.json is missing or incomplete: ' . $k );
 	}
@@ -60,7 +65,11 @@ $content = (string) @file_get_contents( __DIR__ . '/' . basename( (string) $spec
 if ( hash( 'sha256', $content ) !== $spec['content_sha256'] ) {
 	WP_CLI::error( 'winding-willow-page.html is not the reviewed content (sha256 differs).' );
 }
-$slug = (string) $spec['slug'];
+$slug  = (string) $spec['slug'];
+$block = (string) $spec['nav_css'];
+if ( 0 !== strpos( $block, '/* ts-ww:start' ) || '/* ts-ww:end */' !== substr( $block, -15 ) ) {
+	WP_CLI::error( 'The ts-ww CSS block in winding-willow.json is malformed.' );
+}
 
 // ---- house wording (the three tiers of client-pages/wording_tiers.py): voice + claim words never; the evidence words only from the research heading on;
 // verbatim titles in <cite class="ts-source"> are exempt from the claim and evidence words. The SEO fields get the whole list.
@@ -102,34 +111,116 @@ if ( mb_strlen( $spec['seo_title'] ) > 60 || mb_strlen( $spec['seo_desc'] ) > 16
 }
 
 // ---- the site as it is ---------------------------------------------------------------------------------------------------------------------------------
-$read = function () use ( $slug, $spec, $content ) {
+$css_post = wp_get_custom_css_post( 'astra' );
+if ( ! $css_post || strlen( (string) $css_post->post_content ) < 1000 || false === strpos( (string) $css_post->post_content, 'ts-footer-links' ) ) {
+	WP_CLI::error( 'The Additional CSS is missing or is not the known site CSS; nothing was changed.' );
+}
+$find_menu = function () {
+	$locs = get_nav_menu_locations();
+	return isset( $locs['primary'] ) ? (int) $locs['primary'] : 0;
+};
+$read = function () use ( $slug, $spec, $content, $block, $find_menu ) {
 	global $wpdb;
+	$r = array();
+	// 1. the page
 	$by_slug  = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE post_name = %s AND post_type NOT IN ('revision','nav_menu_item','attachment')", $slug ) );
 	$by_title = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE post_title = %s AND post_type = 'page' AND post_status <> 'trash'", $spec['title'] ) );
 	$ids      = array_values( array_unique( array_map( 'intval', array_merge( $by_slug, $by_title ) ) ) );
-	$r        = array( 'ids' => $ids, 'page_id' => 0 );
+	$r['ids'] = $ids;
+	$r['page_id'] = 0;
+	$r['page_content'] = '';
 	if ( 0 === count( $ids ) ) {
-		$r['state'] = 'ready';
+		$r['page'] = 'absent';
 	} else {
-		$p   = 1 === count( $ids ) ? get_post( $ids[0] ) : null;
-		$gen = $p ? get_post_meta( $p->ID, 'surerank_settings_general', true ) : null;
-		$ok  = $p && 'page' === $p->post_type && 'publish' === $p->post_status && $p->post_name === $slug && $p->post_title === $spec['title'] && (string) $p->post_content === $content
+		$p    = 1 === count( $ids ) ? get_post( $ids[0] ) : null;
+		$gen  = $p ? get_post_meta( $p->ID, 'surerank_settings_general', true ) : null;
+		$rest = $p && 'page' === $p->post_type && 'publish' === $p->post_status && $p->post_name === $slug && $p->post_title === $spec['title']
 			&& 0 === (int) $p->post_parent && 'disabled' === get_post_meta( $p->ID, 'site-post-title', true )
 			&& is_array( $gen ) && ( $gen['page_title'] ?? '' ) === $spec['seo_title'] && ( $gen['page_description'] ?? '' ) === $spec['seo_desc'];
-		$r['state']   = $ok ? 'applied' : 'CHANGED';
-		$r['page_id'] = $ok ? (int) $p->ID : 0;
+		$cur  = $p ? (string) $p->post_content : '';
+		if ( $rest && $cur === $content ) {
+			$r['page'] = 'exact';
+		} elseif ( $rest && hash( 'sha256', $cur ) === $spec['previous_content_sha256'] ) {
+			$r['page'] = 'previous';
+		} else {
+			$r['page'] = 'CHANGED';
+		}
+		if ( 'CHANGED' !== $r['page'] ) {
+			$r['page_id']      = (int) $p->ID;
+			$r['page_content'] = $cur;
+		}
 	}
-	$r['report'] = 'state=' . $r['state'] . ' matching_posts=' . ( $ids ? implode( ',', $ids ) : 'none' );
+	// 2. the menu item
+	$menu_id = $find_menu();
+	$items   = $menu_id ? wp_get_nav_menu_items( $menu_id, array( 'post_status' => 'any' ) ) : array();
+	$items   = is_array( $items ) ? $items : array();
+	$svc     = get_page_by_path( 'services' );
+	$marked  = array();
+	$by_name = 0;
+	$svc_item = null;
+	$after_items = array();
+	foreach ( $items as $it ) {
+		if ( '1' === (string) get_post_meta( $it->ID, '_ts_ww_nav', true ) ) {
+			$marked[] = $it;
+		}
+		if ( strtolower( trim( wp_strip_all_tags( $it->title ) ) ) === strtolower( $spec['nav_label'] ) ) {
+			$by_name++;
+		}
+		if ( $svc && 'page' === $it->object && (int) $it->object_id === (int) $svc->ID && 0 === (int) $it->menu_item_parent ) {
+			$svc_item = $it;
+		}
+		if ( in_array( $spec['nav_after_class'], (array) $it->classes, true ) && 0 === (int) $it->menu_item_parent ) {
+			$after_items[] = $it;
+		}
+	}
+	$anchor = 1 === count( $after_items ) ? $after_items[0] : ( 0 === count( $after_items ) ? $svc_item : null );
+	$r['menu_id'] = $menu_id;
+	$r['items']   = $items;
+	$r['anchor']  = $anchor;
+	$r['marked']  = $marked;
+	if ( ! $menu_id || ! $anchor ) {
+		$r['menu'] = 'CHANGED';
+	} elseif ( 0 === count( $marked ) && 0 === $by_name ) {
+		$r['menu'] = 'absent';
+	} elseif ( 1 === count( $marked ) && 1 === $by_name && $r['page_id'] && 'page' === $marked[0]->object && (int) $marked[0]->object_id === $r['page_id']
+		&& 'publish' === $marked[0]->post_status && 0 === (int) $marked[0]->menu_item_parent && (int) $marked[0]->menu_order === (int) $anchor->menu_order + 1
+		&& $marked[0]->title === $spec['nav_label'] && in_array( $spec['nav_class'], (array) $marked[0]->classes, true ) ) {
+		$r['menu'] = 'exact';
+	} else {
+		$r['menu'] = 'CHANGED';
+	}
+	// 3. the CSS block
+	$cp = wp_get_custom_css_post( 'astra' );
+	$cs = $cp ? (string) $cp->post_content : '';
+	$r['css'] = $cs;
+	$n = substr_count( $cs, 'ts-ww:start' );
+	if ( 0 === $n ) {
+		$r['css_state'] = 'absent';
+	} elseif ( 1 === $n && 1 === substr_count( $cs, $block ) && 1 === substr_count( $cs, 'ts-ww:end' ) ) {
+		$r['css_state'] = 'exact';
+	} else {
+		$r['css_state'] = 'CHANGED';
+	}
+	if ( 'absent' === $r['page'] && 'absent' === $r['menu'] && 'absent' === $r['css_state'] ) {
+		$r['state'] = 'ready';
+	} elseif ( 'previous' === $r['page'] && 'absent' === $r['menu'] && 'absent' === $r['css_state'] ) {
+		$r['state'] = 'upgrade';
+	} elseif ( 'exact' === $r['page'] && 'exact' === $r['menu'] && 'exact' === $r['css_state'] ) {
+		$r['state'] = 'applied';
+	} else {
+		$r['state'] = 'CHANGED';
+	}
+	$r['report'] = sprintf( 'state=%s page=%s menu_item=%s css_block=%s matching_posts=%s', $r['state'], $r['page'], $r['menu'], $r['css_state'], $ids ? implode( ',', $ids ) : 'none' );
 	return $r;
 };
 $now    = $read();
 $state  = $now['state'];
 $report = 'host=' . $home . ' ' . $now['report'];
 
-$ids_free = function () use ( $spec ) {
+$ids_free = function ( $own = 0 ) use ( $spec ) {   // $own = the page itself (upgrade), whose blocks carry these ids already
 	global $wpdb;
 	foreach ( $spec['block_ids'] as $id ) {
-		$used = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type NOT IN ('revision') AND post_status <> 'trash' AND post_content LIKE %s", '%' . $wpdb->esc_like( '"block_id":"' . $id . '"' ) . '%' ) );
+		$used = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type NOT IN ('revision') AND post_status <> 'trash' AND ID <> %d AND post_content LIKE %s", (int) $own, '%' . $wpdb->esc_like( '"block_id":"' . $id . '"' ) . '%' ) );
 		if ( $used > 0 ) {
 			return $id;
 		}
@@ -138,11 +229,11 @@ $ids_free = function () use ( $spec ) {
 };
 
 if ( 'preflight' === $mode ) {
-	if ( 'ready' === $state && '' !== ( $clash = $ids_free() ) ) {
+	if ( in_array( $state, array( 'ready', 'upgrade' ), true ) && '' !== ( $clash = $ids_free( $now['page_id'] ) ) ) {
 		WP_CLI::error( 'Block id ' . $clash . ' is already used by another post (a duplicate id collides in Spectra\'s CSS); stop. ' . $report );
 	}
 	if ( 'CHANGED' === $state ) {
-		WP_CLI::error( 'A page with this slug or title exists but is not exactly the reviewed page; stop and compare. ' . $report );
+		WP_CLI::error( 'The page, the menu item or the ts-ww CSS block is not in a reviewed state (or the menu has no Services / Corporate Massage item to place it after); stop and compare. ' . $report );
 	}
 	WP_CLI::success( 'Preflight passed; nothing changed. ' . $report . ' (package sha256 ' . $spec['content_sha256'] . ')' );
 	return;
@@ -161,50 +252,147 @@ if ( 'apply' === $mode ) {
 		WP_CLI::success( 'Nothing to do: already applied. ' . $report );
 		return;
 	}
-	if ( '' !== ( $clash = $ids_free() ) ) {
+	if ( '' !== ( $clash = $ids_free( $now['page_id'] ) ) ) {
 		WP_CLI::error( 'Block id ' . $clash . ' is already used by another post; nothing was changed.' );
 	}
+	$from       = $state;   // ready | upgrade
+	$old_css    = (string) $now['css'];
+	$menu_id    = (int) $now['menu_id'];
+	$pos        = (int) $now['anchor']->menu_order;
+	$old_orders = array();
+	foreach ( $now['items'] as $it ) {
+		$old_orders[ (string) $it->ID ] = (int) $it->menu_order;
+	}
 	$file = rtrim( $backup_dir, '/' ) . '/winding-willow-before-' . gmdate( 'Ymd-His' ) . '.json';
-	$snap = array( 'created' => gmdate( 'c' ), 'home' => $home, 'slug' => $slug, 'content_sha256' => $spec['content_sha256'], 'page_id' => null );
-	if ( false === file_put_contents( $file, wp_json_encode( $snap ) ) ) {
+	$snap = array(
+		'created' => gmdate( 'c' ), 'home' => $home, 'slug' => $slug, 'content_sha256' => $spec['content_sha256'], 'from' => $from,
+		'page_id' => 'upgrade' === $from ? (int) $now['page_id'] : null, 'old_content' => 'upgrade' === $from ? (string) $now['page_content'] : null,
+		'css_sha256' => hash( 'sha256', $old_css ), 'css' => $old_css, 'menu_id' => $menu_id, 'menu_orders' => $old_orders, 'menu_item_id' => null,
+	);
+	if ( false === file_put_contents( $file, wp_json_encode( $snap ) ) || filesize( $file ) < 1000 ) {
 		WP_CLI::error( 'Could not write the before-snapshot; nothing was changed.' );
 	}
 	chmod( $file, 0600 );
-	$page_id = wp_insert_post( wp_slash( array(
-		'post_type' => 'page', 'post_status' => 'publish', 'post_title' => $spec['title'], 'post_name' => $slug, 'post_content' => $content,
-		'post_author' => get_current_user_id(), 'comment_status' => 'closed', 'ping_status' => 'closed',
-	) ), true );
-	if ( is_wp_error( $page_id ) || ! $page_id ) {
-		WP_CLI::error( 'Could not create the page; nothing was changed.' );
+	$save_snap = function () use ( &$snap, $file ) {
+		file_put_contents( $file, wp_json_encode( $snap ) );
+	};
+	$set_content = function ( $post_id, $c ) {
+		return wp_update_post( wp_slash( array( 'ID' => (int) $post_id, 'post_content' => $c ) ), true );
+	};
+	// Undo, newest first; each step is safe when its part was never written.
+	$undo = function () use ( &$snap, $old_css, $old_orders, $from, $set_content ) {
+		if ( ! empty( $snap['menu_item_id'] ) ) {
+			wp_delete_post( (int) $snap['menu_item_id'], true );
+		}
+		foreach ( $old_orders as $item_id => $order ) {
+			if ( (int) get_post_field( 'menu_order', (int) $item_id ) !== (int) $order ) {
+				wp_update_post( array( 'ID' => (int) $item_id, 'menu_order' => (int) $order ) );
+			}
+		}
+		$cp = wp_get_custom_css_post( 'astra' );
+		if ( ! $cp || (string) $cp->post_content !== $old_css ) {
+			wp_update_custom_css_post( $old_css, array( 'stylesheet' => 'astra' ) );
+		}
+		if ( 'upgrade' === $from && ! empty( $snap['page_id'] ) ) {
+			if ( (string) get_post_field( 'post_content', (int) $snap['page_id'] ) !== (string) $snap['old_content'] ) {
+				$set_content( (int) $snap['page_id'], (string) $snap['old_content'] );
+			}
+		} elseif ( ! empty( $snap['page_id'] ) ) {
+			wp_delete_post( (int) $snap['page_id'], true );
+		}
+	};
+	$fail = function ( $why ) use ( $undo, $read ) {
+		$undo();
+		$check = $read();
+		WP_CLI::error( $why . ' Everything written was put back (state now: ' . $check['report'] . ').' );
+	};
+
+	// 1. the page
+	if ( 'upgrade' === $from ) {
+		$page_id = (int) $now['page_id'];
+		$res     = $set_content( $page_id, $content );
+		if ( is_wp_error( $res ) || ! $res || (string) get_post_field( 'post_content', $page_id ) !== $content ) {
+			$fail( 'The page content did not save exactly as written.' );
+		}
+	} else {
+		$page_id = wp_insert_post( wp_slash( array(
+			'post_type' => 'page', 'post_status' => 'publish', 'post_title' => $spec['title'], 'post_name' => $slug, 'post_content' => $content,
+			'post_author' => get_current_user_id(), 'comment_status' => 'closed', 'ping_status' => 'closed',
+		) ), true );
+		if ( is_wp_error( $page_id ) || ! $page_id ) {
+			$fail( 'Could not create the page.' );
+		}
+		$snap['page_id'] = (int) $page_id;
+		$save_snap();
+		update_post_meta( $page_id, 'site-post-title', 'disabled' );
+		\SureRank\Inc\API\Post::update_post_meta_common( $page_id, array( 'page_title' => $spec['seo_title'], 'page_description' => $spec['seo_desc'] ) );
 	}
-	$snap['page_id'] = (int) $page_id;
-	file_put_contents( $file, wp_json_encode( $snap ) );
-	update_post_meta( $page_id, 'site-post-title', 'disabled' );
-	\SureRank\Inc\API\Post::update_post_meta_common( $page_id, array( 'page_title' => $spec['seo_title'], 'page_description' => $spec['seo_desc'] ) );
+	// 2. the CSS block
+	$new_css = rtrim( $old_css ) . "\n\n" . $block . "\n";
+	$res     = wp_update_custom_css_post( $new_css, array( 'stylesheet' => 'astra' ) );
+	$cp      = wp_get_custom_css_post( 'astra' );
+	if ( is_wp_error( $res ) || ! $cp || (string) $cp->post_content !== $new_css ) {
+		$fail( 'The Additional CSS did not save exactly as written.' );
+	}
+	// 3. the menu item (move the later items one place along, then add this one after the anchor)
+	foreach ( $now['items'] as $it ) {
+		if ( (int) $it->menu_order > $pos ) {
+			wp_update_post( array( 'ID' => (int) $it->ID, 'menu_order' => (int) $it->menu_order + 1 ) );
+		}
+	}
+	$item_id = wp_update_nav_menu_item( $menu_id, 0, array(
+		'menu-item-title' => $spec['nav_label'], 'menu-item-object' => 'page', 'menu-item-object-id' => (int) $page_id, 'menu-item-type' => 'post_type',
+		'menu-item-status' => 'publish', 'menu-item-position' => $pos + 1, 'menu-item-parent-id' => 0, 'menu-item-classes' => $spec['nav_class'],
+	) );
+	if ( is_wp_error( $item_id ) || ! $item_id ) {
+		$fail( 'Could not add the menu item.' );
+	}
+	$snap['menu_item_id'] = (int) $item_id;
+	$save_snap();
+	update_post_meta( (int) $item_id, '_ts_ww_nav', '1' );
+	wp_update_post( array( 'ID' => (int) $item_id, 'menu_order' => $pos + 1 ) );
+
 	$after = $read();
 	if ( 'applied' !== $after['state'] || (int) $after['page_id'] !== (int) $page_id ) {
-		wp_delete_post( (int) $page_id, true );
-		$check = $read();
-		WP_CLI::error( 'Read-back differed from what was written (' . $after['report'] . '); the new page was deleted again (state now: ' . $check['state'] . ').' );
+		$fail( 'Read-back differed from what was written (' . $after['report'] . ').' );
 	}
-	WP_CLI::success( 'Added page #' . $page_id . ' (/' . $slug . '/, ' . strlen( $content ) . ' bytes, sha256 ' . $spec['content_sha256'] . ') with its SureRank title and description. Before-snapshot: ' . $file );
+	WP_CLI::success( ( 'upgrade' === $from ? 'Updated page #' : 'Added page #' ) . $page_id . ' (/' . $slug . '/, ' . strlen( $content ) . ' bytes, sha256 ' . $spec['content_sha256'] . ')'
+		. ( 'upgrade' === $from ? '' : ' with its SureRank title and description' ) . ', menu item #' . $item_id . ' "' . $spec['nav_label'] . '" and the ts-ww CSS block. Before-snapshot: ' . $file );
 	return;
 }
 
 // ---- rollback FILE -------------------------------------------------------------------------------------------------------------------------------------
 $file = isset( $args[1] ) ? (string) $args[1] : '';
 $snap = $file && is_file( $file ) ? json_decode( (string) file_get_contents( $file ), true ) : null;
-if ( ! is_array( $snap ) || ( $snap['home'] ?? '' ) !== $home || empty( $snap['page_id'] ) || ( $snap['slug'] ?? '' ) !== $slug ) {
-	WP_CLI::error( 'Snapshot is missing, incomplete (the apply may not have finished), damaged, or from another site.' );
+if ( ! is_array( $snap ) || ( $snap['home'] ?? '' ) !== $home || empty( $snap['page_id'] ) || ( $snap['slug'] ?? '' ) !== $slug || empty( $snap['menu_item_id'] )
+	|| ! in_array( $snap['from'] ?? '', array( 'ready', 'upgrade' ), true ) || empty( $snap['css'] ) || hash( 'sha256', (string) $snap['css'] ) !== ( $snap['css_sha256'] ?? '' )
+	|| ( 'upgrade' === $snap['from'] && hash( 'sha256', (string) ( $snap['old_content'] ?? '' ) ) !== $spec['previous_content_sha256'] ) ) {
+	WP_CLI::error( 'Snapshot is missing, incomplete (the apply may not have finished), damaged, from another site, or from the older page-only installer (use that version to roll it back).' );
 }
-if ( 'applied' !== $state || (int) $now['page_id'] !== (int) $snap['page_id'] ) {
-	WP_CLI::error( 'Nothing rolled back: the page this installer wrote is not there exactly as written (it may have been edited in the editor; remove it by hand after a look). ' . $report );
+if ( 'applied' !== $state || (int) $now['page_id'] !== (int) $snap['page_id'] || (int) $now['marked'][0]->ID !== (int) $snap['menu_item_id'] ) {
+	WP_CLI::error( 'Nothing rolled back: what this installer wrote is not there exactly as written (it may have been edited; look before removing anything by hand). ' . $report );
 }
-wp_delete_post( (int) $snap['page_id'], true );
+// CSS: exactly the old CSS, or only the block out if the CSS was edited since.
+$old_css      = (string) $snap['css'];
+$restored_css = ( (string) $now['css'] === rtrim( $old_css ) . "\n\n" . $block . "\n" ) ? $old_css : str_replace( "\n\n" . $block . "\n", '', (string) $now['css'] );
+wp_delete_post( (int) $snap['menu_item_id'], true );
+foreach ( (array) $snap['menu_orders'] as $item_id => $order ) {
+	if ( get_post( (int) $item_id ) && (int) get_post_field( 'menu_order', (int) $item_id ) !== (int) $order ) {
+		wp_update_post( array( 'ID' => (int) $item_id, 'menu_order' => (int) $order ) );
+	}
+}
+wp_update_custom_css_post( $restored_css, array( 'stylesheet' => 'astra' ) );
+if ( 'upgrade' === $snap['from'] ) {
+	wp_update_post( wp_slash( array( 'ID' => (int) $snap['page_id'], 'post_content' => (string) $snap['old_content'] ) ) );
+} else {
+	wp_delete_post( (int) $snap['page_id'], true );
+}
 $check = $read();
-if ( 'ready' !== $check['state'] ) {
-	WP_CLI::error( 'Rollback did not return to the original state (now: ' . $check['report'] . '); stop and inspect.' );
+if ( $snap['from'] !== $check['state'] ) {
+	WP_CLI::error( 'Rollback did not return to the state before the apply (' . $snap['from'] . '; now: ' . $check['report'] . '); stop and inspect.' );
 }
-WP_CLI::success( 'Rollback done: page #' . (int) $snap['page_id'] . ' and its meta are deleted; no page with this slug or title remains.' );
+$same_css = hash( 'sha256', (string) $check['css'] ) === $snap['css_sha256'];
+WP_CLI::success( 'Rollback done: the menu item is deleted and the menu order is back, the ts-ww CSS block is out (Additional CSS ' . ( $same_css ? 'byte-identical to the snapshot' : 'differs: edited after the apply, and those edits were kept' ) . '), and '
+	. ( 'upgrade' === $snap['from'] ? 'page #' . (int) $snap['page_id'] . ' has its previous content back' : 'page #' . (int) $snap['page_id'] . ' and its meta are deleted' ) . '.' );
 
-// ref: ./winding-willow.json, ./winding-willow-page.html — the package (captured by ./capture-winding-willow.sh); ../corporate/install-corporate-massage.php — the pattern; ../client-pages/wording_tiers.py — the word tiers mirrored here
+// ref: ./winding-willow.json, ./winding-willow-page.html — the package (captured by ./capture-winding-willow.sh); ../corporate/install-corporate-massage.php — the pattern (menu item, CSS block, undo); ../client-pages/wording_tiers.py — the word tiers mirrored here

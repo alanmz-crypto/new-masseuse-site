@@ -1,5 +1,5 @@
 {
-  "id": "ww-apply-s40-2",
+  "id": "ww-menu-apply-s40-1",
   "op": "run",
   "target": "staging40",
   "script": "winding-willow/push-winding-willow.sh",

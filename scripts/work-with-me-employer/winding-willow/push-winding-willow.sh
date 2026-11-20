@@ -10,7 +10,7 @@
 #                                               -> copy the new before-snapshot off the server. Stops before applying if the copy cannot be verified.
 #   ./push-winding-willow.sh --rollback FILE    delete the page again, from a winding-willow-before-*.json snapshot on the server
 #   ./push-winding-willow.sh --check            read-only: the public checks of the --apply run, on a site that already has the page
-# What it changes is described at the top of install-winding-willow.php (one new page and its two meta fields; nothing existing is edited).
+# What it changes is described at the top of install-winding-willow.php (the page, one menu item after Corporate Massage, the ts-ww CSS block).
 # After a push, test the site: scripts/work-with-me-employer/post-change-test.sh <target> and prove-restore.sh <target> (GitHub runs both after a write).
 # Access: credentials file + ssh-agent. The SSH account also holds live, so every write is conditional on `wp option get home` being exactly the
 # chosen site (checked here to pick the folder, and again inside the installer's own allow-list).
@@ -98,8 +98,12 @@ case "$phase" in
     for pmid in 21299184 28690703 36645811 23427384 40954653 42142427 31987237; do atleast ww "https://pubmed.ncbi.nlm.nih.gov/$pmid/" 1; done
     need ww 'staging39.thaisolitude.com' 0   # a link to the reference copy; the site-wide CSS has a harmless '/* staging39: ...' comment (live too)
     [ "$target" != live ] || need ww 'noindex' 0   # staging keeps its own no-crawl setting; on live the page must be indexable
-    for pg in services contact about; do fetch "$pg" "/$pg/"; need "$pg" '/winding-willow/' 0; need "$pg" 'windingwillowacupuncture.com' 0; done   # Ryan 2026-11-18: only the winding-willow page links to Winding Willow; no other page links to it or to their site
-    echo "public check: the page answers 200 with its H1, title, description, licence line, research heading, booking links and 7 PubMed sources; Services, Contact and About link neither to it nor to Winding Willow" ;;
+    need ww 'Winding Willow is a separate, independent business that employs me' 1   # Ryan 2026-11-20: the top of the page says why Winding Willow is there
+    need ww 'collective of independent practitioners' 0
+    atleast ww '#ast-hf-menu-1 > .ts-ww-nav' 1   # the ts-ww CSS block (menu item in the phone/tablet menu only)
+    # Ryan 2026-11-20: the menu item "Winding Willow" is the ONE link to the page (header, phone menu, footer = 3 copies); only the winding-willow page links to their site.
+    for pg in services contact about; do fetch "$pg" "/$pg/"; need "$pg" "href=\"https://$want/winding-willow/\" class=\"menu-link\">Winding Willow</a>" 3; need "$pg" '/winding-willow/' 3; need "$pg" 'windingwillowacupuncture.com' 0; done
+    echo "public check: the page answers 200 with its opening sentence, H1, title, description, licence line, research heading, booking links and 7 PubMed sources; Services, Contact and About carry only the menu link to it and no link to Winding Willow" ;;
   rollback) snap=${snap/#\$HOME/$HOME}; run rollback "$snap"; purge ;;
   *) echo "unknown phase" >&2; exit 1 ;;
 esac

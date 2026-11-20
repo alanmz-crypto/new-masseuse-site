@@ -1,10 +1,10 @@
 {
- "source": "staging39 page #1385, captured read-only 2026-11-18 05:58 UTC (request ww-capture-s39-1, run 44247871249); post_modified 2026-11-13 09:54:27 UTC | plus Ryan's 4 approved wording changes of 2026-11-18 (build-winding-willow.py)",
+ "source": "staging39 page #1385, captured read-only 2026-11-18 05:58 UTC (request ww-capture-s39-1, run 44247871249); post_modified 2026-11-13 09:54:27 UTC | plus Ryan's approved wording of 2026-11-18 and 2026-11-20 (build-winding-willow.py)",
  "slug": "winding-willow",
  "title": "Massage at Winding Willow",
  "content_file": "winding-willow-page.html",
- "content_sha256": "b598caf788208ff146fff70d5a08500025dda1cf397ae95936ab0b4e7d680cc9",
- "content_length": 30451,
+ "content_sha256": "c541d49414355e45186987ac8d08d787a47a68395e2c8a268d803adfa29f7683",
+ "content_length": 30729,
  "site_post_title": "disabled",
  "seo_title": "Massage at Winding Willow | Butsaba Dusrai, Oregon LMT",
  "seo_desc": "Thai, deep tissue and Swedish massage with Butsaba “Sa” Dusrai, LMT, at Winding Willow Acupuncture & Wellness, 1540 SE Clinton St, Portland.",
@@ -31,5 +31,10 @@
   "ac574653",
   "43a0182f",
   "f168f0e2"
- ]
+ ],
+ "previous_content_sha256": "b598caf788208ff146fff70d5a08500025dda1cf397ae95936ab0b4e7d680cc9",
+ "nav_css": "/* ts-ww:start — the \"Winding Willow\" menu item (class ts-ww-nav; Ryan 2026-11-20, the hamburger menu): it shows in the phone and tablet menu\n   (921 px and narrower). With seven items the desktop header and footer menus wrap onto two lines at 924-1920 px (measured on staging40), so there\n   they keep the six items they show now. */\n#ast-hf-menu-1 > .ts-ww-nav,\n#astra-footer-menu > .ts-ww-nav {\n  display: none;\n}\n/* ts-ww:end */",
+ "nav_label": "Winding Willow",
+ "nav_class": "ts-ww-nav",
+ "nav_after_class": "ts-corp-nav"
 }
