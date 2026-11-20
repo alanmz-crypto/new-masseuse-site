@@ -1,7 +1,7 @@
 {
-  "id": "ww-pc-rehearse-s40-1",
+  "id": "ww-nobtn-rehearse-live-1",
   "op": "rehearse",
-  "target": "staging40",
+  "target": "live",
   "installer": "winding-willow/install-winding-willow.php",
   "args": []
 }
