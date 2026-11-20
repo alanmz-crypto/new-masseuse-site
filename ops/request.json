@@ -1,6 +1,7 @@
 {
-  "id": "seo-i-snippets-2",
+  "id": "seo-i-seo-thai-massage",
   "op": "inspect",
   "target": "staging40",
-  "query": "snippets"
+  "query": "seo",
+  "arg": "thai-massage"
 }
