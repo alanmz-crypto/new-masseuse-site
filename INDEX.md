@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-20 03:21 UTC  **PASS**  `ww-nobtn-apply-s40-1`  [reports/2026-11-20/032152-ww-nobtn-apply-s40-1.md](reports/2026-11-20/032152-ww-nobtn-apply-s40-1.md)  (run 44666204702)
 - 2026-11-20 03:12 UTC  **PASS**  `ww-nobtn-rehearse-s40-1`  [reports/2026-11-20/031251-ww-nobtn-rehearse-s40-1.md](reports/2026-11-20/031251-ww-nobtn-rehearse-s40-1.md)  (run 44665820080)
 - 2026-11-20 03:11 UTC  **PASS**  `ww-nobtn-rehearse-live-1`  [reports/2026-11-20/031114-ww-nobtn-rehearse-live-1.md](reports/2026-11-20/031114-ww-nobtn-rehearse-live-1.md)  (run 44665814146)
 - 2026-11-20 03:07 UTC  **PASS**  `ww-pc-rehearse-s40-1`  [reports/2026-11-20/030754-ww-pc-rehearse-s40-1.md](reports/2026-11-20/030754-ww-pc-rehearse-s40-1.md)  (run 44665429609)
