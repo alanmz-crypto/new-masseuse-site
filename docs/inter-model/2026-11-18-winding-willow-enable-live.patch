@@ -1,7 +1,7 @@
 --- a/scripts/work-with-me-employer/winding-willow/install-winding-willow.php
 +++ b/scripts/work-with-me-employer/winding-willow/install-winding-willow.php
 @@ -17,8 +17,8 @@
-  *      1350 px, as ts-corp already has at 1120-1349 px); hidden in the header below 1256 px and in the footer, so those look as before.
+  *      which leaves room for the seven items on one line from 1120 px; keeps the item out of the footer menu (seven never fit there).
   * Nothing else is edited. Spectra rebuilds the page's own block CSS by itself on the first view.
   *
 - * Allow-list: localhost:8090 and staging40 (the fresh copy of live). staging39 (the reference copy) for the READ-ONLY preflight only, to prove the package
