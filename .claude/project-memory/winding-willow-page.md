@@ -1,9 +1,11 @@
 ---
 name: winding-willow-page
-description: 2026-11-18 Winding Willow page (/winding-willow/, staging39 #1385) captured exactly into git with installer + push script; rehearsed on a copy of live; staging40 + live pending; copy flags and Ryan's decisions; how SSH access was restored
+description: Winding Willow page /winding-willow/ LIVE and VERIFIED 2026-11-20 04:54 UTC (page #1344, menu item #1346, CSS ts-ww hides the Get in Touch button); tooling, proofs, live rollback stamp 20261120-045404; Ryan's decisions
 metadata:
   type: project
 ---
+
+**LIVE (2026-11-20 04:54 UTC, Ryan ran `live-winding-willow-1`):** page #1344 sha256 `c541d494...7683` (opens: "Alongside my own practice, Thai Solitude, ..."), menu item #1346 "Winding Willow" after Corporate Massage, CSS block `ts-ww` (header "Get in Touch" button hidden on Ryan's "(d) no button at all"; item kept out of the footer). Verified by hand: PC 1280 px seven items one line, phone menu, page top. Live rollback snapshot `$HOME/private-backups/winding-willow-before-20261120-045404.json` (command in open-items D). post-change-test still owed (bot challenge). The notes below are the history.
 
 **What:** "Massage at Winding Willow" (H1 "Massage with Sa at Winding Willow Acupuncture & Wellness"), Sa's page about her massage at Winding Willow Acupuncture & Wellness, 1540 SE Clinton St. Built on localhost/staging39 around 2026-11-12/13; by 2026-11-17 it existed ONLY on staging39 (page #1385, modified 2026-11-13 09:54:27 UTC; not in localhost's DB, not in git).
 
