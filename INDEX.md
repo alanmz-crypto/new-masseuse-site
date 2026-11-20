@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-20 11:54 UTC  **FAIL**  `seo-apply-s40-1`  [reports/2026-11-20/115458-seo-apply-s40-1.md](reports/2026-11-20/115458-seo-apply-s40-1.md)  (run 44731346687)
 - 2026-11-20 11:53 UTC  **PASS**  `seo-dry-s40-1`  [reports/2026-11-20/115344-seo-dry-s40-1.md](reports/2026-11-20/115344-seo-dry-s40-1.md)  (run 44731232261)
 - 2026-11-20 11:53 UTC  **PASS**  `seo-rehearse-live-1`  [reports/2026-11-20/115301-seo-rehearse-live-1.md](reports/2026-11-20/115301-seo-rehearse-live-1.md)  (run 44730996274)
 - 2026-11-20 11:51 UTC  **PASS**  `seo-rehearse-s40-1`  [reports/2026-11-20/115118-seo-rehearse-s40-1.md](reports/2026-11-20/115118-seo-rehearse-s40-1.md)  (run 44730741131)
