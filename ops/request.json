@@ -1,8 +1,10 @@
 {
-  "id": "ww-names-live-dry-1",
+  "id": "seo-pct-s40-2",
   "op": "run",
-  "target": "live",
-  "script": "winding-willow/push-winding-willow.sh",
-  "args": [],
+  "target": "staging40",
+  "script": "post-change-test.sh",
+  "args": [
+    "staging40"
+  ],
   "tests": "auto"
 }
