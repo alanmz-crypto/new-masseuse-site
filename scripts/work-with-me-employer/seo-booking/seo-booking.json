@@ -1,0 +1,53 @@
+{
+ "pairs": [
+  {
+   "slug": "thai-massage",
+   "label": "Thai Massage: FAQ \"How Do I Book a Session?\"",
+   "old": "\"question\":\"How Do I Book a Session?\",\"answer\":\"Corporate and group massage bookings begin November 14, 2026. The Corporate &amp; Group Massage page explains how to request a quote. Individual appointments are planned for summer 2027.\"",
+   "new": "\"question\":\"How Do I Book a Session?\",\"answer\":\"Corporate and group massage bookings begin November 14, 2026. The Corporate &amp; Group Massage page explains how to request a quote. Individual appointments are planned for summer 2027. Until then, you can book an individual Thai, deep tissue or Swedish massage with me at Winding Willow Acupuncture &amp; Wellness, 1540 SE Clinton St, Portland.\""
+  },
+  {
+   "slug": "therapeutic-massage",
+   "label": "Therapeutic Massage: FAQ \"How Do I Book a Session?\"",
+   "old": "\"question\":\"How Do I Book a Session?\",\"answer\":\"Corporate and group massage bookings begin November 14, 2026. The Corporate &amp; Group Massage page explains how to request a quote. Individual appointments are planned for summer 2027.\"",
+   "new": "\"question\":\"How Do I Book a Session?\",\"answer\":\"Corporate and group massage bookings begin November 14, 2026. The Corporate &amp; Group Massage page explains how to request a quote. Individual appointments are planned for summer 2027. Until then, you can book an individual Thai, deep tissue or Swedish massage with me at Winding Willow Acupuncture &amp; Wellness, 1540 SE Clinton St, Portland.\""
+  },
+  {
+   "slug": "deep-tissue-massage",
+   "label": "Deep Tissue Massage: FAQ \"How Do I Book a Session?\"",
+   "old": "\"question\":\"How Do I Book a Session?\",\"answer\":\"Corporate and group massage bookings begin November 14, 2026. The Corporate &amp; Group Massage page explains how to request a quote. Individual appointments are planned for summer 2027.\"",
+   "new": "\"question\":\"How Do I Book a Session?\",\"answer\":\"Corporate and group massage bookings begin November 14, 2026. The Corporate &amp; Group Massage page explains how to request a quote. Individual appointments are planned for summer 2027. Until then, you can book an individual Thai, deep tissue or Swedish massage with me at Winding Willow Acupuncture &amp; Wellness, 1540 SE Clinton St, Portland.\""
+  }
+ ],
+ "meta": [
+  {
+   "slug": "thai-massage",
+   "label": "Thai Massage",
+   "title": "Thai Massage in Portland | Butsaba Dusrai, Oregon LMT",
+   "old": "Fully clothed Thai massage in Portland with Butsaba Dusrai, LMT: rhythmic compression, gentle rocking and assisted stretching at your pace.",
+   "new": "Fully clothed Thai massage in Portland with Butsaba Dusrai, LMT: compression, rocking and assisted stretching. Book with her at Winding Willow on SE Clinton."
+  },
+  {
+   "slug": "deep-tissue-massage",
+   "label": "Deep Tissue Massage",
+   "title": "Deep Tissue Massage in Portland | Butsaba Dusrai, LMT",
+   "old": "Deep tissue massage in Portland with Butsaba Dusrai, LMT: slow, deliberate pressure on tight muscles, lightened whenever you ask.",
+   "new": "Deep tissue massage in Portland with Butsaba Dusrai, LMT: slow, deliberate pressure on tight muscles. Book with her at Winding Willow on SE Clinton St."
+  },
+  {
+   "slug": "front",
+   "label": "Home",
+   "title": null,
+   "old": "Personalized Thai, therapeutic and deep tissue massage in Portland. Ease tension and unwind. Ask about corporate and group massage with Butsaba Dusrai, LMT.",
+   "new": "Thai, therapeutic and deep tissue massage in Portland with Butsaba Dusrai, LMT. Book at Winding Willow, or ask about corporate and group massage."
+  }
+ ],
+ "snippet": {
+  "id": 1023,
+  "title": "LocalBusinessInfo",
+  "old": "add_action( 'wp_head', function () {\n    $home = untrailingslashit( set_url_scheme( home_url( '/' ), 'https' ) );\n    if ( 'localhost' === wp_parse_url( $home, PHP_URL_HOST ) ) {\n        $home = untrailingslashit( home_url( '/' ) ); // isolated HTTP rehearsal\n    }\n    $data = array(\n        '@context' => 'https://schema.org',\n        '@type' => 'LocalBusiness',\n        '@id' => $home . '/#localbusiness',\n        'name' => 'Thai Solitude',\n        'telephone' => '+1-312-539-4328',\n        'email' => 'butsabad@gmail.com',\n        'image' => $home . '/wp-content/uploads/2026/09/cropped-cropped-butsaba_avatar-1.webp',\n        'logo' => $home . '/wp-content/uploads/2026/09/cropped-cropped-butsaba_avatar-1.webp',\n        'description' => 'Thai, therapeutic, deep tissue and chair massage in Portland with Butsaba Dusrai, LMT, plus corporate and group events. Every session starts with your goals.',\n        'areaServed' => array( '@type' => 'City', 'name' => 'Portland' ),\n        'founder' => array( '@id' => $home . '/#person' ),\n        'address' => array(\n            '@type' => 'PostalAddress',\n            'addressLocality' => 'Portland',\n            'addressRegion' => 'OR',\n            'addressCountry' => 'US',\n        ),\n        'url' => $home,\n    );\n    echo '<script type=\"application/ld+json\">' . wp_json_encode( $data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) . '</script>';\n} );\n",
+  "new": "add_action( 'wp_head', function () {\n    $home = untrailingslashit( set_url_scheme( home_url( '/' ), 'https' ) );\n    if ( 'localhost' === wp_parse_url( $home, PHP_URL_HOST ) ) {\n        $home = untrailingslashit( home_url( '/' ) ); // isolated HTTP rehearsal\n    }\n    $data = array(\n        '@context' => 'https://schema.org',\n        '@type' => 'LocalBusiness',\n        '@id' => $home . '/#localbusiness',\n        'name' => 'Thai Solitude',\n        'telephone' => '+1-312-539-4328',\n        'email' => 'butsabad@gmail.com',\n        'image' => $home . '/wp-content/uploads/2026/09/cropped-cropped-butsaba_avatar-1.webp',\n        'logo' => $home . '/wp-content/uploads/2026/09/cropped-cropped-butsaba_avatar-1.webp',\n        'description' => 'Thai, therapeutic, deep tissue and chair massage in Portland with Butsaba Dusrai, LMT, plus corporate and group events. Every session starts with your goals.',\n        'areaServed' => array( '@type' => 'City', 'name' => 'Portland' ),\n        'founder' => array( '@id' => $home . '/#person', 'sameAs' => array( 'https://www.windingwillowacupuncture.com/butsaba-dusrai-lmt' ) ),\n        'address' => array(\n            '@type' => 'PostalAddress',\n            'addressLocality' => 'Portland',\n            'addressRegion' => 'OR',\n            'addressCountry' => 'US',\n        ),\n        'url' => $home,\n    );\n    echo '<script type=\"application/ld+json\">' . wp_json_encode( $data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) . '</script>';\n} );\n",
+  "old_sha256": "ddb3d9639f0a58c1038082f62943650f086282974cc9197882983d8b99d0d72b",
+  "new_sha256": "2482d0b435c0ac45010566bef95b10a0d599a7d520a6f7c889f8a230a2236cb5"
+ }
+}

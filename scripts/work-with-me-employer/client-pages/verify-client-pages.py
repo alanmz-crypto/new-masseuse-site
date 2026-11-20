@@ -78,6 +78,11 @@ if BUNDLE_D:
 NEW_WHERE, NEW_BOOK = NEW_WHERE_T.format(d=BOOK_DATE), NEW_BOOK_T.format(d=BOOK_DATE)
 
 
+# seo-booking (Ryan, 2026-11-20): one sentence appended to the "How Do I Book a Session?" answer on Thai, Therapeutic and Deep Tissue (checked once per page below, all three or none).
+SEO_BOOK_SEEN = []
+SEO_BOOK_ADD = "Until then, you can book an individual Thai, deep tissue or Swedish massage with me at Winding Willow Acupuncture & Wellness, 1540 SE Clinton St, Portland."
+
+
 def either(t, old, new):
     return t.count(new) == 1 and old not in t if BUNDLE_D else t.count(old) + t.count(new) == 1
 
@@ -147,6 +152,8 @@ else:
         check("Therapeutic Massage: %r once" % sentence[:56], tt.count(sentence) == 1)
     check("Therapeutic Massage: the 'Where Do Sessions Take Place?' answer is the old or the corrected text, once", either(tt, OLD_WHERE, NEW_WHERE))
     check("Therapeutic Massage: the 'How Do I Book a Session?' answer is the old or the corrected text, once", either(tt, OLD_BOOK, NEW_BOOK))
+    check("Therapeutic Massage: the Winding Willow booking sentence is absent, or once right after the booking answer", tt.count(SEO_BOOK_ADD) == 0 or tt.count(NEW_BOOK + " " + SEO_BOOK_ADD) == 1 == tt.count(SEO_BOOK_ADD))
+    SEO_BOOK_SEEN.append(tt.count(SEO_BOOK_ADD))
     check("Therapeutic Massage: no links inside FAQ answers (axe nested-interactive)", not re.search(r'uagb-faq-content[^>]*>(?:(?!</div>).)*<a ', mh_th, re.S))
     check("Therapeutic Massage: the reworded neck and shoulder sentence once, the old one gone", tt.count("Research on massage for neck and shoulder pain is mixed.") == 1 and "Research suggests massage may be helpful for some people with neck or shoulder pain" not in tt)
     check("Therapeutic Massage: an encouraging sentence before the 'mixed' one (pace and pressure) and one after it (the review's dose subgroup), once each", tt.count("and I adapt the pace and pressure to what suits you.") == 1
@@ -210,6 +217,8 @@ if res["found"]:
         check("Thai Massage: %r once" % sentence, tt.count(sentence) == 1)
     check("Thai Massage: the 'Where Do Sessions Take Place?' answer is the old or the corrected text, once", either(tt, OLD_WHERE, NEW_WHERE))
     check("Thai Massage: the 'How Do I Book a Session?' answer is the old or the corrected text, once", either(tt, OLD_BOOK, NEW_BOOK))
+    check("Thai Massage: the Winding Willow booking sentence is absent, or once right after the booking answer", tt.count(SEO_BOOK_ADD) == 0 or tt.count(NEW_BOOK + " " + SEO_BOOK_ADD) == 1 == tt.count(SEO_BOOK_ADD))
+    SEO_BOOK_SEEN.append(tt.count(SEO_BOOK_ADD))
     check("Thai Massage: no links inside FAQ answers (axe nested-interactive)", not re.search(r'uagb-faq-content[^>]*>(?:(?!</div>).)*<a ', tmh, re.S))
     summ = [wt.text(x) for x in re.findall(r"<summary>(.*?)</summary>", tmh, re.S)]
     check("Thai Massage: the five research panels in order", summ == ["Reviews, and What They Say About Limits", "Back Pain", "Neck, Shoulders, Arms and Feet", "Stress, Energy and Recovery", "Sources"], summ)
@@ -256,6 +265,10 @@ bad_head = wt.hits(head_all, wt.VOICE + wt.CLAIMS + wt.EVIDENCE)
 check("Thai Massage title, meta/og/twitter descriptions carry no restricted wording", not bad_head, bad_head)
 if thai_title == THAI_TITLE_OLD and thai_desc == THAI_DESC_OLD:
     THAI_TITLE, THAI_DESC = THAI_TITLE_OLD, THAI_DESC_OLD
+# seo-booking (Ryan, 2026-11-20; seo-booking/install-seo-booking.php): the description says where to book; a site not changed yet keeps THAI_DESC.
+THAI_DESC_SEO = "Fully clothed Thai massage in Portland with Butsaba Dusrai, LMT: compression, rocking and assisted stretching. Book with her at Winding Willow on SE Clinton."
+if thai_title == THAI_TITLE and thai_desc == THAI_DESC_SEO:
+    THAI_DESC = THAI_DESC_SEO
 if thai_title == THAI_TITLE or thai_desc == THAI_DESC:
     check("Thai Massage title is the approved one", thai_title == THAI_TITLE, thai_title)
     check("Thai Massage meta description is the approved one", thai_desc == THAI_DESC, thai_desc)
@@ -292,6 +305,8 @@ else:
         check("Deep Tissue Massage: %r once" % sentence[:56], dt.count(sentence) == 1)
     check("Deep Tissue Massage: the 'Where Do Sessions Take Place?' answer is the old or the corrected text, once", either(dt, OLD_WHERE, NEW_WHERE))
     check("Deep Tissue Massage: the 'How Do I Book a Session?' answer is the old or the corrected text, once", either(dt, OLD_BOOK, NEW_BOOK))
+    check("Deep Tissue Massage: the Winding Willow booking sentence is absent, or once right after the booking answer", dt.count(SEO_BOOK_ADD) == 0 or dt.count(NEW_BOOK + " " + SEO_BOOK_ADD) == 1 == dt.count(SEO_BOOK_ADD))
+    SEO_BOOK_SEEN.append(dt.count(SEO_BOOK_ADD))
     safety = "New numbness, weakness, unexplained swelling or radiating pain means you should see a doctor before massage."
     check("Deep Tissue Massage: safety sentence once after Bundle D, otherwise twice (page text and FAQ answer)", dt.count(safety) == (1 if BUNDLE_D else 2))
     if BUNDLE_D:
@@ -338,6 +353,7 @@ SERVICE_META = [
      "Deep tissue massage in Portland with Butsaba Dusrai, LMT: slow, deliberate pressure on tight muscles, lightened whenever you ask.",
      "Deep tissue massage in Mt. Tabor, Portland with Butsaba Dusrai, LMT: slow, deliberate pressure on tight muscles, lightened whenever you ask."),
 ]
+SEO_BOOKING_DESC = {"Deep Tissue Massage": "Deep tissue massage in Portland with Butsaba Dusrai, LMT: slow, deliberate pressure on tight muscles. Book with her at Winding Willow on SE Clinton St."}
 for label, path, old_title, bundle_b_title, want_desc, old_desc in SERVICE_META:
     want_title = bundle_b_title if BUNDLE_B else old_title
     pg, pcode = get(path)
@@ -350,6 +366,8 @@ for label, path, old_title, bundle_b_title, want_desc, old_desc in SERVICE_META:
     check("%s title, meta/og/twitter descriptions carry no restricted wording" % label, not bad_h, bad_h)
     if not BUNDLE_B and got_desc == old_desc:
         want_desc = old_desc
+    if got_desc == SEO_BOOKING_DESC.get(label):   # seo-booking (Ryan, 2026-11-20): the description says where to book
+        want_desc = got_desc
     if BUNDLE_B or got_title in (old_title, bundle_b_title) or got_desc == want_desc:
         check("%s title is the approved one" % label, got_title == want_title, got_title)
         check("%s meta description is the approved one" % label, got_desc == want_desc, got_desc)
@@ -621,6 +639,8 @@ if BUNDLE_C:
     check("Bundle C Accessibility: new panels' checks and November 1 date", access_text.count(chair_checks) == 1 and access_text.count("Last updated: November 1, 2026.") == 1)
     check("Bundle C Accessibility: screen-reader, specialist-audit and existing limitations remain", all(t in access_text for t in ("No screen reader was used in this testing.", "This was not a full audit by an accessibility specialist", "two links inside the expandable sections may not be announced clearly by screen readers.", "The map on the Contact page is provided by Google")))
 
+if SEO_BOOK_SEEN:
+    check("seo-booking: the Winding Willow booking sentence is on all three service pages or on none", len(set(SEO_BOOK_SEEN)) == 1, SEO_BOOK_SEEN)
 print("\nRESULT: " + ("all checks passed" if not fails else f"{fails} check(s) FAILED"))
 sys.exit(1 if fails else 0)
 

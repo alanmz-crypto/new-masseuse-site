@@ -154,6 +154,7 @@ gate "Availability update content matches its builder" python3 -I -B "$here/work
 gate "Booking date content matches its builder" python3 -I -B "$here/work-with-me-employer/booking-date/build-booking-date.py" --check
 gate "Chair Massage content matches its builder (and passes its wording gate)" python3 -I -B "$here/work-with-me-employer/chair-massage/build-chair-massage.py" --check
 gate "Winding Willow page matches its builder (frozen staging39 capture + 4 approved changes)" python3 -I -B "$here/work-with-me-employer/winding-willow/build-winding-willow.py" --check
+gate "SEO booking path content matches its builder (FAQ sentence, 3 descriptions, LocalBusiness sameAs)" python3 -I -B "$here/work-with-me-employer/seo-booking/build-seo-booking.py" --check
 gate "Review Bundle A exact fragments and new wording match their builder" python3 -I -B "$here/work-with-me-employer/review-a/build-bundle-a.py" --check
 gate "Review Bundle B source values and approved wording match their builder" python3 -I -B "$here/work-with-me-employer/review-b/build-bundle-b.py" --check
 gate "Review Bundle C frozen fragments and runtime sources match their builder" python3 -I -B "$here/work-with-me-employer/review-c/build-bundle-c.py" --check

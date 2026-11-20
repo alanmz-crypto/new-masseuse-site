@@ -180,6 +180,10 @@ new_desc = OLD_DESC if title == OLD_TITLE else NEW_DESC   # the description must
 def meta_of(attr, name):
     mm = re.search(r'<meta[^>]+%s="%s"[^>]*content="([^"]*)"' % (attr, re.escape(name)), page)
     return html.unescape(mm.group(1)) if mm else None
+# seo-booking (Ryan, 2026-11-20: "make changes so the SEO gets better scores"; seo-booking/install-seo-booking.php): a changed site says where to book; a site not changed yet keeps NEW_DESC.
+SEO_DESC = "Thai, therapeutic and deep tissue massage in Portland with Butsaba Dusrai, LMT. Book at Winding Willow, or ask about corporate and group massage."
+if title == NEW_TITLE and meta_of("name", "description") == SEO_DESC:
+    new_desc = SEO_DESC
 check("meta description is the new wording", meta_of("name", "description") == new_desc, meta_of("name", "description"))
 check("og:description and twitter:description follow it", meta_of("property", "og:description") == new_desc and meta_of("name", "twitter:description") == new_desc)
 check("meta description fits one search snippet (<= 160 characters)", len(new_desc) <= 160, len(new_desc))
