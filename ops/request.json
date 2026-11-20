@@ -1,5 +1,5 @@
 {
-  "id": "ww-live-dry-2",
+  "id": "ww-names-live-dry-1",
   "op": "run",
   "target": "live",
   "script": "winding-willow/push-winding-willow.sh",

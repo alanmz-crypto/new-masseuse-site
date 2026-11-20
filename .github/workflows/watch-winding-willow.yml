@@ -1,0 +1,76 @@
+# Daily read-only watch of Winding Willow's own website, so new practitioners, pages or services there are not overlooked on our
+# /winding-willow/ page (Ryan 2026-11-20: "make sure we're not overlooking new additions to Winding Willow").
+# Touches neither thaisolitude.com nor any server of ours and uses no secret. About a dozen page loads on their site per run.
+# The last snapshot is kept as this workflow's artifact; when something changed since then, it opens an issue labelled
+# winding-willow-watch (or comments on the open one), so GitHub notifies Ryan. Close the issue once our page is updated or nothing is needed.
+# On a pull request that touches the watcher it only runs once as a test (no issue, no saved snapshot).
+name: Winding Willow watch
+
+on:
+  schedule:
+    - cron: '17 15 * * *'   # daily 15:17 UTC (07:17 Pacific)
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'scripts/work-with-me-employer/winding-willow/watch-winding-willow.mjs'
+      - '.github/workflows/watch-winding-willow.yml'
+
+permissions:
+  contents: read
+  actions: read     # download the previous run's snapshot
+  issues: write     # open or comment on the watch issue
+
+concurrency:
+  group: winding-willow-watch
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Browser
+        run: scripts/ci/install-test-tools.sh --browsers
+      - name: Previous snapshot
+        if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p prev
+          id=$(gh run list --workflow watch-winding-willow.yml --event schedule --status success -L 1 --json databaseId -q '.[0].databaseId' || true)
+          [ -z "$id" ] && id=$(gh run list --workflow watch-winding-willow.yml --event workflow_dispatch --status success -L 1 --json databaseId -q '.[0].databaseId' || true)
+          [ -n "$id" ] && gh run download "$id" -n ww-watch-snapshot -D prev || echo "no previous snapshot: this run is the baseline"
+      - name: Watch
+        id: watch
+        run: |
+          set +e
+          node scripts/work-with-me-employer/winding-willow/watch-winding-willow.mjs out prev/snapshot.json
+          rc=$?
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
+          cat out/report.md >> "$GITHUB_STEP_SUMMARY"
+          # INVALID (a page did not load): keep the previous snapshot as the baseline for tomorrow.
+          if [ "$rc" = 2 ] && [ -f prev/snapshot.json ]; then cp prev/snapshot.json out/snapshot.json; fi
+          [ "$rc" -le 2 ]
+      - name: Keep the snapshot
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ww-watch-snapshot
+          path: out/snapshot.json
+          retention-days: 90
+      - name: Tell Ryan
+        if: github.event_name != 'pull_request' && steps.watch.outputs.rc == '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create winding-willow-watch --color C5DEF5 --description "Winding Willow's site changed" 2>/dev/null || true
+          body="$(cat out/report.md)
+
+          Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          n=$(gh issue list --label winding-willow-watch --state open -L 1 --json number -q '.[0].number')
+          if [ -n "$n" ]; then gh issue comment "$n" --body "$body"
+          else gh issue create --label winding-willow-watch --title "Winding Willow's site changed ($(date -u +%F))" --body "$body"; fi
+
+# ref: ../../scripts/work-with-me-employer/winding-willow/watch-winding-willow.mjs — the watch itself
+# ref: ../../scripts/ci/install-test-tools.sh — Playwright + Chromium

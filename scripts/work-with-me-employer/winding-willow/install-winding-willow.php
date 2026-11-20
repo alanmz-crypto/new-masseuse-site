@@ -10,7 +10,9 @@
  *   1. the page (posts table): slug winding-willow, the exact content bytes of winding-willow-page.html (sha256 in winding-willow.json), published, comments closed;
  *      its meta site-post-title = disabled and SureRank's title + description (through SureRank's own saver). That file = the staging39 capture + Ryan's approved
  *      wording (2026-11-18 and 2026-11-20; build-winding-willow.py), so staging39 itself preflights as CHANGED.
- *      UPGRADE: where the page is exactly the version first put on staging40 (previous_content_sha256), only its content is replaced (the rest already matches).
+ *      UPGRADE: where the page is exactly the previous version (previous_content_sha256) and the menu item + CSS are absent, its content is replaced and they are added.
+ *      UPDATE: where the page is exactly the previous version and the menu item + CSS are already exactly as written (the site carries the previous package), ONLY
+ *      the page content is replaced (Ryan 2026-11-20: "just keep names up to date", for Winding Willow's practitioner names); its rollback puts that content back.
  *   2. ONE menu item "Winding Willow" (class ts-ww-nav, meta _ts_ww_nav) in the Primary Menu, right after Corporate Massage (the ts-corp-nav item; after Services
  *      where there is none). The items after it move one position later (menu_order +1); Corporate Massage keeps its reviewed position. Ryan 2026-11-20.
  *   3. the CSS block ts-ww (appended to the Additional CSS): hides the header's "Get in Touch" button (Ryan 2026-11-20: Contact is already in the menu),
@@ -21,7 +23,8 @@
  * Ryan's go (docs/inter-model/2026-11-18-winding-willow-enable-live.patch) after the rehearsals on copies of live and staging40 and the staging40 apply; he starts the live run himself.
  *
  * Modes (first WP-CLI argument; run with --user=1):  <mode> [FILE]
- *   preflight    read-only: ready = none of the three parts exists; upgrade = the page is the first staging40 version and the menu item + CSS are absent;
+ *   preflight    read-only: ready = none of the three parts exists; upgrade = the page is the previous version and the menu item + CSS are absent;
+ *                update = the page is the previous version and the menu item + CSS are exactly as written;
  *                applied = all three exactly as written; CHANGED = anything else (stop)
  *   apply        snapshot, write the parts, read everything back; put everything back (reverse order) if any read-back differs
  *   rollback     FILE = the before-snapshot apply wrote: take the menu item and the CSS block out, put the menu order back, and delete the page (from ready) or
@@ -206,6 +209,8 @@ $read = function () use ( $slug, $spec, $content, $block, $find_menu ) {
 		$r['state'] = 'ready';
 	} elseif ( 'previous' === $r['page'] && 'absent' === $r['menu'] && 'absent' === $r['css_state'] ) {
 		$r['state'] = 'upgrade';
+	} elseif ( 'previous' === $r['page'] && 'exact' === $r['menu'] && 'exact' === $r['css_state'] ) {
+		$r['state'] = 'update';
 	} elseif ( 'exact' === $r['page'] && 'exact' === $r['menu'] && 'exact' === $r['css_state'] ) {
 		$r['state'] = 'applied';
 	} else {
@@ -230,7 +235,7 @@ $ids_free = function ( $own = 0 ) use ( $spec ) {   // $own = the page itself (u
 };
 
 if ( 'preflight' === $mode ) {
-	if ( in_array( $state, array( 'ready', 'upgrade' ), true ) && '' !== ( $clash = $ids_free( $now['page_id'] ) ) ) {
+	if ( in_array( $state, array( 'ready', 'upgrade', 'update' ), true ) && '' !== ( $clash = $ids_free( $now['page_id'] ) ) ) {
 		WP_CLI::error( 'Block id ' . $clash . ' is already used by another post (a duplicate id collides in Spectra\'s CSS); stop. ' . $report );
 	}
 	if ( 'CHANGED' === $state ) {
@@ -255,6 +260,28 @@ if ( 'apply' === $mode ) {
 	}
 	if ( '' !== ( $clash = $ids_free( $now['page_id'] ) ) ) {
 		WP_CLI::error( 'Block id ' . $clash . ' is already used by another post; nothing was changed.' );
+	}
+	if ( 'update' === $state ) {   // content only: the menu item and the CSS block stay exactly as they are
+		$page_id = (int) $now['page_id'];
+		$file    = rtrim( $backup_dir, '/' ) . '/winding-willow-before-' . gmdate( 'Ymd-His' ) . '.json';
+		$snap    = array(
+			'created' => gmdate( 'c' ), 'home' => $home, 'slug' => $slug, 'content_sha256' => $spec['content_sha256'], 'from' => 'update',
+			'page_id' => $page_id, 'old_content' => (string) $now['page_content'], 'menu_item_id' => (int) $now['marked'][0]->ID,
+		);
+		if ( false === file_put_contents( $file, wp_json_encode( $snap ) ) || filesize( $file ) < 1000 ) {
+			WP_CLI::error( 'Could not write the before-snapshot; nothing was changed.' );
+		}
+		chmod( $file, 0600 );
+		$res = wp_update_post( wp_slash( array( 'ID' => $page_id, 'post_content' => $content ) ), true );
+		$after = $read();
+		if ( is_wp_error( $res ) || ! $res || 'applied' !== $after['state'] || (int) $after['page_id'] !== $page_id ) {
+			wp_update_post( wp_slash( array( 'ID' => $page_id, 'post_content' => (string) $snap['old_content'] ) ) );
+			$check = $read();
+			WP_CLI::error( 'The page content did not save exactly as written; the previous content was put back (state now: ' . $check['report'] . ').' );
+		}
+		WP_CLI::success( 'Updated the content of page #' . $page_id . ' (/' . $slug . '/, ' . strlen( $content ) . ' bytes, sha256 ' . $spec['content_sha256'] . '); menu item #'
+			. (int) $snap['menu_item_id'] . ' and the ts-ww CSS block unchanged. Before-snapshot: ' . $file );
+		return;
 	}
 	$from       = $state;   // ready | upgrade
 	$old_css    = (string) $now['css'];
@@ -365,6 +392,22 @@ if ( 'apply' === $mode ) {
 // ---- rollback FILE -------------------------------------------------------------------------------------------------------------------------------------
 $file = isset( $args[1] ) ? (string) $args[1] : '';
 $snap = $file && is_file( $file ) ? json_decode( (string) file_get_contents( $file ), true ) : null;
+if ( is_array( $snap ) && 'update' === ( $snap['from'] ?? '' ) ) {   // a content-only update: put the previous content back, nothing else
+	if ( ( $snap['home'] ?? '' ) !== $home || ( $snap['slug'] ?? '' ) !== $slug || empty( $snap['page_id'] )
+		|| hash( 'sha256', (string) ( $snap['old_content'] ?? '' ) ) !== $spec['previous_content_sha256'] ) {
+		WP_CLI::error( 'Snapshot is damaged, from another site, or from another version of this package.' );
+	}
+	if ( 'applied' !== $state || (int) $now['page_id'] !== (int) $snap['page_id'] ) {
+		WP_CLI::error( 'Nothing rolled back: the page is not exactly as the update wrote it (it may have been edited; look first). ' . $report );
+	}
+	wp_update_post( wp_slash( array( 'ID' => (int) $snap['page_id'], 'post_content' => (string) $snap['old_content'] ) ) );
+	$check = $read();
+	if ( 'update' !== $check['state'] ) {
+		WP_CLI::error( 'Rollback did not return to the state before the update (now: ' . $check['report'] . '); stop and inspect.' );
+	}
+	WP_CLI::success( 'Rollback done: page #' . (int) $snap['page_id'] . ' has its previous content back; the menu item and the ts-ww CSS block were not touched.' );
+	return;
+}
 if ( ! is_array( $snap ) || ( $snap['home'] ?? '' ) !== $home || empty( $snap['page_id'] ) || ( $snap['slug'] ?? '' ) !== $slug || empty( $snap['menu_item_id'] )
 	|| ! in_array( $snap['from'] ?? '', array( 'ready', 'upgrade' ), true ) || empty( $snap['css'] ) || hash( 'sha256', (string) $snap['css'] ) !== ( $snap['css_sha256'] ?? '' )
 	|| ( 'upgrade' === $snap['from'] && hash( 'sha256', (string) ( $snap['old_content'] ?? '' ) ) !== $spec['previous_content_sha256'] ) ) {
