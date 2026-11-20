@@ -1,10 +1,7 @@
 {
-  "id": "ww-menu-apply-s40-1",
-  "op": "run",
+  "id": "ww-pc-rehearse-s40-1",
+  "op": "rehearse",
   "target": "staging40",
-  "script": "winding-willow/push-winding-willow.sh",
-  "args": [
-    "--apply"
-  ],
-  "tests": "auto"
+  "installer": "winding-willow/install-winding-willow.php",
+  "args": []
 }
