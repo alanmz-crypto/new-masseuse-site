@@ -1,5 +1,5 @@
 {
-  "id": "seo-check-s40-1",
+  "id": "seo-check-s40-2",
   "op": "run",
   "target": "staging40",
   "script": "seo-booking/push-seo-booking.sh",
