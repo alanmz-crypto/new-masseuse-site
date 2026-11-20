@@ -1,10 +1,11 @@
 {
-  "id": "ww-menu-apply-s40-1",
+  "id": "ww-menu-rollback-s40-1",
   "op": "run",
   "target": "staging40",
   "script": "winding-willow/push-winding-willow.sh",
   "args": [
-    "--apply"
+    "--rollback",
+    "$HOME/private-backups/winding-willow-before-20261120-023925.json"
   ],
-  "tests": "auto"
+  "tests": "none"
 }
