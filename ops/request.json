@@ -1,8 +1,10 @@
 {
-  "id": "seo-pct-s40-1",
+  "id": "seo-pct-s40-2",
   "op": "run",
   "target": "staging40",
   "script": "post-change-test.sh",
-  "args": [],
+  "args": [
+    "staging40"
+  ],
   "tests": "auto"
 }
