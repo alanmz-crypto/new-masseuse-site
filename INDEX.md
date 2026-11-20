@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-20 03:05 UTC  **PASS**  `ww-menu-rollback-s40-1`  [reports/2026-11-20/030510-ww-menu-rollback-s40-1.md](reports/2026-11-20/030510-ww-menu-rollback-s40-1.md)  (run 44665195718)
 - 2026-11-20 02:48 UTC  **PASS**  `ww-menu-apply-s40-1`  [reports/2026-11-20/024844-ww-menu-apply-s40-1.md](reports/2026-11-20/024844-ww-menu-apply-s40-1.md)  (run 44662248895)
 - 2026-11-20 02:38 UTC  **PASS**  `ww-menu-rehearse-s40-1`  [reports/2026-11-20/023806-ww-menu-rehearse-s40-1.md](reports/2026-11-20/023806-ww-menu-rehearse-s40-1.md)  (run 44661838361)
 - 2026-11-20 02:36 UTC  **PASS**  `ww-menu-rehearse-live-1`  [reports/2026-11-20/023633-ww-menu-rehearse-live-1.md](reports/2026-11-20/023633-ww-menu-rehearse-live-1.md)  (run 44661832913)
