@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build privacy-policy.html (version 2 of the Privacy Policy page) from the text below. Standard library only.
+"""Build privacy-policy.html from the text below. Standard library only.
 
     python3 -I -B scripts/work-with-me-employer/privacy/build-privacy-page.py          write privacy-policy.html next to this file
     python3 -I -B scripts/work-with-me-employer/privacy/build-privacy-page.py --check  exit 1 if privacy-policy.html is not what this script produces
@@ -22,12 +22,17 @@ FACTS (Ryan, 2026-10-17: "include what we can from this list while being complet
   providers for scheduling/email/storage, promotional messages and unsubscribing, appointment history, any mailing address. Add them back only when Butsaba confirms them
   (original template and notes: docs/inter-model/Thai Solitude - Privacy Policy - Longer Draft (review later).md).
 """
-import json
+import importlib.util
 import os
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, 'privacy-policy.html')
+
+_spec = importlib.util.spec_from_file_location('thai_evidence_builder', os.path.join(HERE, '..', 'thai', 'build-thai-evidence.py'))
+_tb = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_tb)
+attrs, paragraph, child = _tb.attrs, _tb.para, _tb.faq_child
 
 # Fixed block ids (8 hex characters, unique on the site) so the output is reproducible.
 FAQ_ID, ONLINE_ID, CLIENT_ID = 'a7c3e5f1', '5d2b9e48', 'b86f1a37'
@@ -70,22 +75,6 @@ QUESTIONS = ('To ask what information I have about you, to request a correction,
              '<a href="mailto:butsabad@gmail.com">butsabad@gmail.com</a>. '
              'Some records may need to be kept under legal or licensing requirements, so not every record can be deleted on request.')
 UPDATED = 'Last updated: October 17, 2026.'
-
-
-def attrs(d):
-    """Serialise block attributes exactly like WordPress's serialize_block_attributes()."""
-    s = json.dumps(d, ensure_ascii=False, separators=(',', ':'))
-    for a, b in (('--', '\\u002d\\u002d'), ('<', '\\u003c'), ('>', '\\u003e'), ('&', '\\u0026'), ('\\"', '\\u0022')):
-        s = s.replace(a, b)
-    return s
-
-
-def paragraph(text):
-    return '<!-- wp:paragraph -->\n<p>%s</p>\n<!-- /wp:paragraph -->' % text
-
-
-def child(block_id, question, answer):
-    return '<!-- wp:uagb/faq-child %s /-->' % attrs({'block_id': block_id, 'question': question, 'answer': answer, 'icon': 'chevron-up', 'iconActive': 'chevron-down'})
 
 
 def build():
