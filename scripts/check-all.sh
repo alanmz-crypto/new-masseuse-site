@@ -151,6 +151,7 @@ gate "Home corporate card content and CSS match their builder" python3 -I -B "$h
 gate "Sandwich update content matches its builders" python3 -I -B "$here/work-with-me-employer/evidence-update/build-sandwich-update.py" --check
 gate "Corporate massage content matches its builder" python3 -I -B "$here/work-with-me-employer/corporate/build-corporate-massage.py" --check
 gate "Availability update content matches its builder" python3 -I -B "$here/work-with-me-employer/availability/build-availability-update.py" --check
+gate "Privacy policy text matches its builder" python3 -I -B "$here/work-with-me-employer/privacy/build-privacy-page.py" --check
 gate "Booking date content matches its builder" python3 -I -B "$here/work-with-me-employer/booking-date/build-booking-date.py" --check
 gate "Chair Massage content matches its builder (and passes its wording gate)" python3 -I -B "$here/work-with-me-employer/chair-massage/build-chair-massage.py" --check
 gate "Winding Willow page matches its builder (frozen staging39 capture + 4 approved changes)" python3 -I -B "$here/work-with-me-employer/winding-willow/build-winding-willow.py" --check
