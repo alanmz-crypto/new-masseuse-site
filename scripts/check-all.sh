@@ -12,7 +12,7 @@
 #          structured-data installer: its snippet output and exact-bytes guard, tested offline against stubbed WordPress functions
 #          headers installer: the old and new security-headers snippet run in a header-capturing harness (logged in/out, https/http)
 #          posture check self-test: a mock site, then the same site broken one way at a time; every break must be caught
-#          wording tiers self-test (the banned-word list and its research-section exemption) and the Thai, Therapeutic and Deep Tissue evidence builders' --check
+#          wording tiers self-test (the banned-word list and its research-section exemption) and the --check gate for each generated page or content fragment listed below
 #          with a URL: verify-home.py and verify-client-pages.py, and (for thaisolitude.com hosts) posture-check.py
 # Not a gate: verify-rendered.py (the older whole-site check; run it by hand: python3 work-with-me-employer/verify-rendered.py URL).
 # shellcheck disable=SC2329  # the gate functions below are called indirectly through `gate`
