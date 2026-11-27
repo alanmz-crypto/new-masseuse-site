@@ -1,0 +1,202 @@
+.ts-pk{--pk-ink:var(--ts-ink,#1C2531);--pk-muted:var(--ts-muted,#4A5563);--pk-rule:var(--ts-rule,#D5D6CF);--pk-panel:var(--ts-panel,#FAF9F6);--pk-ground:var(--ts-ground,#F5F4EF);--pk-stone:var(--ts-stone,#ECEBE4);--pk-on:var(--ts-green,var(--ast-global-color-0,#377A00));--pk-on-text:#fff;--pk-accent:var(--ts-accent,#C8963E);--pk-preview:var(--ts-accent-deep,#805900);--pk-ease:cubic-bezier(.2,.8,.2,1);--pk-shadow:0 16px 44px -16px rgba(0,0,0,.45)}
+html[data-ts-theme="dark"] .ts-pk{--pk-on:#8CCB5B;--pk-on-text:#0E141C;--pk-preview:#E4B35D}
+.ts-pk,.ts-pk *,.ts-pk *::before{box-sizing:border-box}
+/* top strip: display only */
+.ts-pk-top{position:sticky;top:var(--pk-head,0px);z-index:90;margin:0 -12px 1.25rem;padding:.45rem 12px .55rem;background:var(--pk-ground);border-bottom:1px solid var(--pk-rule);pointer-events:none;-webkit-user-select:none;user-select:none}
+body.admin-bar .ts-pk-top{top:calc(var(--wp-admin--admin-bar--height,32px) + var(--pk-head,0px))}
+@media (max-width:600px){body.admin-bar .ts-pk-top{top:var(--pk-head,0px)}}
+/* the strip: only topic titles, sliding by as you read: the current one in the middle, part of the neighbours on each side (Ryan, 2026-11-08) */
+.ts-pk-top .in{position:relative;height:1.55rem;margin:0;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 16%,#000 84%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 16%,#000 84%,transparent 100%)}
+.ts-pk-top .tr{position:absolute;left:0;top:0;display:flex;align-items:center;gap:1.75rem;height:100%;white-space:nowrap;will-change:transform}
+.ts-pk-top .tr span{font-size:.86rem;line-height:1.3;font-weight:600;color:var(--pk-muted);opacity:.85;transition:opacity .25s,color .25s}
+.ts-pk-top .tr span.is-now{color:var(--pk-ink);font-weight:800;opacity:1}
+.ts-pk-top .before{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);display:flex;align-items:center;justify-content:center;text-align:center;font-size:.86rem;line-height:1.3;font-weight:800;color:var(--pk-ink);visibility:hidden}
+.ts-pk-top.is-before .before{visibility:visible}
+.ts-pk-top.is-before .tr{visibility:hidden}
+/* Title-only pages keep their existing navigation. Long source headings wrap
+   inside the readable centre; the four established rails keep their geometry. */
+.ts-pk-top.is-title-only{margin-left:0;margin-right:0}
+.ts-pk-top.is-title-only .tr span{flex:0 0 auto;white-space:normal;text-align:center;overflow-wrap:anywhere}
+.ts-pk-top.is-title-only.is-single .in{-webkit-mask-image:none;mask-image:none}
+/* The existing practice controls retain their own gestures beneath the shared
+   strip. Only these owned demos need an additional sticky-bar clearance. */
+html.ts-pk-title-ready .ts-pk-title-content :is(.tsx-pills,.tsx-seg,.tsp-bar,.tsr-top){top:var(--pk-title-end,0px)}
+html.ts-pk-title-ready .ts-pk-title-content :is(.tsx-lab,.tsp-lab,.tsr-lab) :is(.tsx-sec,.tsp-sec,.tsr-sec),html.ts-pk-title-ready .ts-pk-title-content :is(.tsx-lab,.tsp-lab,.tsr-lab) :is(.tsx-sec,.tsp-sec,.tsr-sec) [id]{scroll-margin-top:calc(var(--pk-title-end,0px) + var(--pk-demo-bar,0px) + 12px)}
+/* rail: right edge, thumb zone */
+.ts-pk-nav{position:fixed;right:calc(100% - var(--pk-vx,0px) - var(--pk-vw,100vw) + max(2px,env(safe-area-inset-right)));top:max(calc(var(--pk-vy,0px) + var(--pk-vh,100vh) * .3),calc(var(--pk-head,0px) + var(--pk-strip,0px) + 64px));bottom:calc(100% - var(--pk-vy,0px) - var(--pk-vh,100vh) + max(calc(var(--pk-vh,100vh) * .14),76px));z-index:91;width:44px}   /* % follows the visible viewport on iOS; the index icon stays clear of the header and strip */
+/* A rail that cannot fit below the visible page chrome waits for reading space.
+   Keep its DOM and the separate preview intact; no content is shifted. */
+.ts-pk-nav{--pk-safe-bottom:env(safe-area-inset-bottom,0px)}
+.ts-pk-nav.is-waiting{visibility:hidden;pointer-events:none}
+html .ts-pk .ts-pk-nav.is-compact .ts-pk-rail{gap:2px;padding:4px 0}
+.ts-pk-rail{position:absolute;inset:0;display:flex;flex-direction:column;gap:5px;margin:0;padding:8px 0;list-style:none;touch-action:none;-webkit-user-select:none;user-select:none;border-radius:22px;transition:background-color .2s,box-shadow .2s}
+.ts-pk-nav.is-active .ts-pk-rail{background:var(--pk-panel);background:color-mix(in srgb,var(--pk-panel) 92%,transparent);box-shadow:0 6px 24px -12px rgba(0,0,0,.45)}
+.ts-pk-rail li{position:relative;flex:var(--len,1) 1 0;min-height:22px;margin:0;padding:0}
+.ts-pk-rail a{position:absolute;inset:0;display:block;text-decoration:none;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;-webkit-user-drag:none;user-select:none}
+.ts-pk-rail button{position:absolute;inset:0;display:block;width:100%;height:100%;min-height:0;margin:0;padding:0;border:0;border-radius:0;background:none!important;color:inherit;box-shadow:none!important;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:none}
+.ts-pk-rail button:focus-visible{outline:3px solid var(--pk-accent);outline-offset:-2px;border-radius:12px}
+.ts-pk-rail button::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:6px;margin-left:-3px;border-radius:9px;background:var(--pk-rule);box-shadow:0 0 0 2px var(--pk-ground);transition:width .15s,margin .15s,background-color .15s}
+.ts-pk-rail button i{position:absolute;left:50%;top:0;bottom:0;width:6px;margin-left:-3px;border-radius:9px;background:var(--pk-on);transform-origin:top;transform:scaleY(var(--p,0));transition:width .15s,margin .15s}
+.ts-pk-rail li.is-hover button::before,.ts-pk-rail li.is-hover button i{width:12px;margin-left:-6px}
+.ts-pk-rail li.is-hover button::before{background:var(--pk-accent)}
+.ts-pk-rail a:focus-visible{outline:3px solid var(--pk-accent);outline-offset:-2px;border-radius:12px}
+.ts-pk-rail a::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:6px;margin-left:-3px;border-radius:9px;background:var(--pk-rule);box-shadow:0 0 0 2px var(--pk-ground);transition:width .15s,margin .15s,background-color .15s}
+.ts-pk-rail a i{position:absolute;left:50%;top:0;bottom:0;width:6px;margin-left:-3px;border-radius:9px;background:var(--pk-on);transform-origin:top;transform:scaleY(var(--p,0));transition:width .15s,margin .15s}
+.ts-pk-rail li.is-hover a::before,.ts-pk-rail li.is-hover a i{width:12px;margin-left:-6px}
+.ts-pk-rail li.is-hover a::before{background:var(--pk-accent)}
+.ts-pk-you{position:absolute;right:28px;width:10px;height:10px;margin-top:-5px;border-radius:50%;background:var(--pk-ink);box-shadow:0 0 0 3px var(--pk-ground);pointer-events:none;transition:top .2s}
+/* peek card */
+.ts-pk-card{position:fixed;right:calc(100% - var(--pk-vx,0px) - var(--pk-vw,100vw) + 58px);z-index:92;width:min(300px,calc(var(--pk-vw,100vw) - 78px));max-height:calc(100vh - 90px);max-height:calc(100dvh - 90px);overflow:hidden;padding:.85rem 1rem;border:1px solid var(--pk-rule);border-radius:18px;background:var(--pk-panel);color:var(--pk-ink);box-shadow:var(--pk-shadow);pointer-events:none;opacity:0;transform:translateX(10px) scale(.98);transition:opacity .15s,transform .2s var(--pk-ease);font-size:1rem;line-height:1.4}
+.ts-pk-card.is-on{opacity:1;transform:none}
+.ts-pk-card.is-pinned{pointer-events:auto;cursor:pointer;touch-action:none;-webkit-tap-highlight-color:transparent}   /* a box with no scroll range must not pan the page behind it */
+.ts-pk-card.is-pinned.can-scroll{touch-action:pan-y}   /* the constrained outer-card fallback keeps its own native scrolling */
+.ts-pk-card small{display:block;font-size:.72rem;color:var(--pk-muted);text-transform:uppercase;letter-spacing:.08em}
+.ts-pk-card b{display:block;font-size:1.05rem;margin:.15rem 2rem .1rem 0}
+/* Summary previews keep only the immediate previous/next topic (Ryan,
+   2026-11-10); title-only cards retain their existing section stack. */
+html .ts-pk .ts-pk-card.ts-pk-stack{padding:.4rem}
+.ts-pk-card .open{position:relative;margin:.3rem 0;padding:.75rem .9rem;border:1.5px solid var(--pk-preview);border-radius:14px;background:var(--pk-panel)}
+.ts-pk-card .open:first-child{margin-top:0}.ts-pk-card .open:last-child{margin-bottom:0}
+html .ts-pk .ts-pk-card .row{display:flex;align-items:center;gap:.55rem;width:100%;min-height:34px;margin:0;padding:.3rem .6rem;border:0;border-radius:10px;background:var(--pk-stone);color:var(--pk-ink);box-shadow:none;font:inherit;font-size:.82rem;font-weight:600;line-height:1.25;text-align:left;cursor:pointer;touch-action:none;-webkit-tap-highlight-color:transparent}
+html .ts-pk .ts-pk-card .row:hover,html .ts-pk .ts-pk-card .row:focus{background:var(--pk-stone);color:var(--pk-ink);box-shadow:none}
+html .ts-pk .ts-pk-card .row:focus-visible{outline:3px solid var(--pk-accent);outline-offset:1px}
+html .ts-pk .ts-pk-card .row+.row{margin-top:.25rem}
+html .ts-pk .ts-pk-card .row b{display:grid;place-items:center;flex:0 0 auto;width:1.45rem;height:1.45rem;margin:0;border-radius:50%;background:var(--pk-panel);font-size:.72rem;font-weight:800}
+html .ts-pk .ts-pk-card .row span{min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.ts-pk-card .d{display:block;font-size:.86rem;line-height:1.4;color:var(--pk-ink);opacity:.9}
+/* Approved gist lists or whole opening paragraphs scroll inside the open box;
+   touching or scrolling the summary never jumps. */
+.ts-pk-card .sum{display:block;margin:.5rem 0 0;padding:0 .35rem 0 0;max-height:18em;overflow-y:auto;overflow-wrap:anywhere;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:none;font-size:.86rem;line-height:1.45;color:var(--pk-ink);cursor:auto}
+.ts-pk-card .sum.can-scroll{touch-action:pan-y}
+html .ts-pk .ts-pk-card .sum p{margin:0 0 .55em;padding:0;font:inherit;line-height:inherit;color:inherit}
+html .ts-pk .ts-pk-card .sum p:last-child{margin-bottom:0}
+.ts-pk-card .sum.has-more{-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 1.8em),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 1.8em),transparent)}   /* more below: the last line fades (Kiro) */
+html .ts-pk .ts-pk-card .sum.is-gist{margin-top:.45rem;font-size:.92rem;font-weight:600;line-height:1.3;color:var(--pk-ink)}   /* a glance, never a read: one idea per line */
+html .ts-pk .ts-pk-card .sum.is-gist ul{margin:0;padding:0;list-style:none}
+html .ts-pk .ts-pk-card .sum.is-gist li{position:relative;margin:0 0 .28em;padding:0 0 0 .9em}
+html .ts-pk .ts-pk-card .sum.is-gist li::before{content:'';position:absolute;left:.1em;top:.5em;width:.36em;height:.36em;border-radius:50%;background:var(--pk-on)}
+.ts-pk-card .sum:focus-visible{outline:3px solid var(--pk-accent);outline-offset:2px;border-radius:6px}
+.ts-pk-card .hint{display:block;margin-top:.6rem;padding-top:.55rem;border-top:1px solid var(--pk-rule);font-size:.82rem;font-weight:700;color:var(--pk-on)}
+html[data-ts-theme="dark"] .ts-pk-card .hint{color:var(--pk-on)}
+.ts-pk-card .x{position:absolute;right:.35rem;top:.35rem;display:none;width:40px;height:40px;margin:0;padding:0;border:0;border-radius:50%;background:transparent;color:var(--pk-muted);font:inherit;font-size:1.3rem;line-height:1;cursor:pointer;touch-action:none}
+.ts-pk-card .x:hover,.ts-pk-card .x:focus{background:var(--pk-stone);color:var(--pk-ink)}
+.ts-pk-card.is-pinned .x{display:block}
+.ts-pk-card:focus-visible{outline:3px solid var(--pk-accent);outline-offset:2px}
+/* the heading glows briefly after a jump */
+.ts-pk-flash{border-radius:8px;background:rgba(200,150,62,.28);background:color-mix(in srgb,var(--pk-accent) 28%,transparent);transition:background-color .6s}
+.ts-pk-unflash{transition:background-color .6s}
+/* keep the text clear of the rail on phones and tablets; the bottom "On this page" button is replaced by the rail */
+/* Ryan, 2026-11-09: the clearance goes on the text blocks, not on the column. Padding the column moved its middle, and full-width theme blocks (placed from
+   that middle) shifted by half of it: off the left edge with the rail on the right (text cut at the screen edge), past the right edge with it on the left */
+@media screen{html.ts-pk-ready.ts-pk-pad:not(.ts-pk-left) .ts-pk-title-content :is(p,li,h1,h2,h3,h4,h5,h6,blockquote,figcaption,dt,dd,td,th,:where(.ts-pk-title-rail) form):not(:is(p,li,blockquote,dd,td,th,:where(.ts-pk-title-rail) form,.uagb-faq-item,.ts-pk,.ts-jump,nav,[role="navigation"],[role="tablist"],.tsx-picker,.tsp-picker,.tsr-picker,.tsi-picker) *){padding-right:var(--pk-clear)}}
+@media screen{html.ts-pk-ready.ts-pk-pad:not(.ts-pk-left) .ts-pk-title-content .ts-pk-top{padding-right:calc(12px + var(--pk-clear))}   /* the strip's titles stay clear of the rail while it is still in the page */}
+html.ts-pk-ready .entry-content .ts-jump{display:none!important}   /* Ryan, 2026-11-08: "You can remove the in-page links beneath header." The strip, rail and index replace the row; without JavaScript (no ts-pk-ready) it still shows and works */
+html.ts-pk-ready #ts-section-guide-trigger,html.ts-pk-ready #ts-section-guide-popover{display:none!important}   /* only once the rail is there */
+html.ts-pk-title-ready .ts-pk-title-content :is(a[href],button,input,select,textarea,summary,[tabindex]){scroll-margin-top:calc(var(--pk-head,0px) + var(--pk-strip,0px) + 12px)}   /* Tab never leaves focus under the pinned header and strip (Kiro, WCAG 2.4.11); on the content only: scroll-padding on the page made focusing the pinned header's own menu button scroll the page to the top */
+html.ts-pk-title-ready .ts-pk-title-content [id]{scroll-margin-top:calc(var(--pk-head,0px) + var(--pk-strip,0px) + 12px)}   /* plain in-page links land below the pinned header and the strip */
+@media (prefers-reduced-motion:reduce){.ts-pk *,.ts-pk-top,.ts-pk-nav,.ts-pk-card{transition:none!important}.ts-pk-card,.ts-pk-card.is-on{transform:none}}
+/* theme content rules (.entry-content ol, li, a, p) must not reach these parts, which sit inside the content for keyboard order */
+html .ts-pk ol,html .ts-pk li{margin:0;padding:0;list-style:none;text-indent:0}
+html .ts-pk .ts-pk-rail{padding:8px 0}
+html .ts-pk a{text-decoration:none!important;border:0!important;box-shadow:none!important;background:none!important}   /* staging39: a more specific theme rule underlined these links */
+/* left-hand option: everything mirrored to the left edge */
+html.ts-pk-left .ts-pk-nav{right:auto;left:calc(var(--pk-vx,0px) + max(2px,env(safe-area-inset-left)))}
+html.ts-pk-left .ts-pk-you{right:auto;left:28px}
+html.ts-pk-left .ts-pk-card{right:auto;left:calc(58px + var(--pk-vx,0px));transform:translateX(-10px) scale(.98)}
+html.ts-pk-left .ts-pk-card.is-on{transform:none}
+html.ts-pk-left .ts-pk-tip{right:auto;left:calc(58px + var(--pk-vx,0px))}
+@media screen{html.ts-pk-ready.ts-pk-pad.ts-pk-left .ts-pk-title-content :is(p,li,h1,h2,h3,h4,h5,h6,blockquote,figcaption,dt,dd,td,th,:where(.ts-pk-title-rail) form):not(:is(p,li,blockquote,dd,td,th,:where(.ts-pk-title-rail) form,.uagb-faq-item,.ts-pk,.ts-jump,nav,[role="navigation"],[role="tablist"],.tsx-picker,.tsp-picker,.tsr-picker,.tsi-picker) *){padding-left:var(--pk-clear)}}
+@media screen{html.ts-pk-ready.ts-pk-pad.ts-pk-left .ts-pk-title-content .ts-pk-top{padding-left:calc(12px + var(--pk-clear))}   /* the other side keeps the theme's own spacing */}
+/* the side button in the preview */
+.ts-pk-card .hint{display:flex;align-items:center;justify-content:space-between;gap:.5rem}
+.ts-pk-card .side{display:none;flex:0 0 auto;min-height:36px;margin:0;padding:0 .7rem;border:1px solid var(--pk-rule);border-radius:999px;background:transparent;color:var(--pk-muted);font:inherit;font-size:.75rem;font-weight:700;cursor:pointer;touch-action:none}
+.ts-pk-card .side:hover,.ts-pk-card .side:focus{background:var(--pk-stone);color:var(--pk-ink)}
+.ts-pk-card.is-pinned .side{display:inline-flex;align-items:center}
+/* first-time hint beside the rail (shown once per visitor) */
+.ts-pk-tip{position:fixed;right:calc(100% - var(--pk-vx,0px) - var(--pk-vw,100vw) + 58px);z-index:94;width:min(270px,calc(var(--pk-vw,100vw) - 78px));padding:.85rem 1rem;border-radius:16px;background:var(--pk-ink);color:var(--pk-panel);box-shadow:var(--pk-shadow);font-size:.88rem;line-height:1.4;opacity:0;transform:translateY(6px);transition:opacity .25s,transform .25s var(--pk-ease)}
+.ts-pk-tip.is-on{opacity:1;transform:none}
+.ts-pk-tip[hidden]{display:none}
+.ts-pk-tip p{margin:0 0 .65rem;color:inherit}
+.ts-pk-tip .row{display:flex;gap:.5rem;flex-wrap:wrap}
+.ts-pk-tip button{min-height:40px;margin:0;padding:0 .85rem;border:0;border-radius:999px;font:inherit;font-size:.82rem;font-weight:700;cursor:pointer;touch-action:manipulation}
+.ts-pk-tip .ok,.ts-pk-tip .ok:hover,.ts-pk-tip .ok:focus{background:var(--pk-on);color:var(--pk-on-text)}
+.ts-pk-tip .flip,.ts-pk-tip .flip:hover,.ts-pk-tip .flip:focus{background:transparent;color:var(--pk-panel);box-shadow:inset 0 0 0 1px rgba(255,255,255,.45)}
+.ts-pk-tip button:focus-visible,.ts-pk-card .side:focus-visible{outline:3px solid var(--pk-accent);outline-offset:2px}
+.ts-pk-nav.is-hinting .ts-pk-rail{animation:ts-pk-wiggle 1.1s var(--pk-ease) 2}
+@keyframes ts-pk-wiggle{0%,100%{transform:none}30%{transform:translateX(-7px)}60%{transform:translateX(3px)}}
+html.ts-pk-left .ts-pk-nav.is-hinting .ts-pk-rail{animation-name:ts-pk-wiggle-l}
+@keyframes ts-pk-wiggle-l{0%,100%{transform:none}30%{transform:translateX(7px)}60%{transform:translateX(-3px)}}
+@media (prefers-reduced-motion:reduce){.ts-pk-nav.is-hinting .ts-pk-rail{animation:none}.ts-pk-tip{transition:none;transform:none}}
+/* A visible button above the rail; its X closes the open section index. */
+html .ts-pk .ts-pk-ix{position:absolute;right:0;bottom:100%;width:44px;height:44px;margin:0 0 8px;padding:0;border:1px solid currentColor;border-radius:8px;background:var(--pk-panel);color:var(--pk-muted);box-shadow:none;cursor:pointer;touch-action:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;transition:color .2s}
+html .ts-pk .ts-pk-ix:hover,html .ts-pk .ts-pk-ix:focus{background:var(--pk-panel);color:var(--pk-ink);box-shadow:none}   /* Keep the control legible over illustrations and the contrasting footer. */
+html .ts-pk .ts-pk-ix:focus-visible{outline:3px solid var(--pk-accent);outline-offset:2px}
+html .ts-pk .ts-pk-nav.is-index .ts-pk-ix{color:var(--pk-on)}
+.ts-pk-ix svg{display:block;width:22px;height:22px;margin:auto;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;pointer-events:none}
+.ts-pk-ix-close,.ts-pk-nav.is-index .ts-pk-ix-list{display:none}
+.ts-pk-nav.is-index .ts-pk-ix-close{display:block}
+html.ts-pk-left .ts-pk .ts-pk-ix{right:auto;left:0}
+.ts-pk-fan{position:absolute;inset:0;pointer-events:none}
+html .ts-pk .ts-pk-fan li{position:absolute;right:52px;top:0;display:flex;align-items:center;gap:.55rem;max-width:min(48vw,220px);min-height:34px;box-sizing:border-box;margin:calc(var(--pk-fan-h,34px) / -2) 0 0;padding:.3rem .6rem;border:1px solid var(--pk-rule);border-radius:10px;background:var(--pk-stone);color:var(--pk-ink);font-size:.82rem;font-weight:600;line-height:1.25;white-space:nowrap;opacity:0;box-shadow:0 8px 20px -14px rgba(0,0,0,.5);transform:translateX(26px) scale(.55);transform-origin:right center;transition:opacity .2s,transform .3s var(--pk-ease);transition-delay:var(--d-close,0ms)}   /* the same form as the closed boxes in the stack (.ts-pk-card .row) */
+html .ts-pk .ts-pk-fan .ts-pk-topic{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:inherit;min-width:0;width:100%;cursor:inherit;color:inherit;font:inherit}
+html .ts-pk .ts-pk-fan .ts-pk-topic:disabled{pointer-events:none;opacity:1}
+html .ts-pk .ts-pk-fan li:focus-within{outline:3px solid var(--pk-accent);outline-offset:2px}
+html .ts-pk .ts-pk-fan li span{min-width:0;overflow:hidden;text-overflow:ellipsis}
+html .ts-pk .ts-pk-fan li b{display:grid;place-items:center;flex:0 0 auto;width:1.45rem;height:1.45rem;margin:0;border-radius:50%;background:var(--pk-panel);color:var(--pk-ink);font-size:.72rem;font-weight:800}
+html .ts-pk .ts-pk-fan li.is-done b{color:var(--pk-on)}
+html .ts-pk .ts-pk-fan li.is-now{border:1.5px solid var(--pk-on)}   /* green marks reading position; the preview uses its own amber edge */
+html .ts-pk .ts-pk-nav.is-tight .ts-pk-fan li{height:var(--pk-fan-h,34px);min-height:0;padding:0 .5rem;font-size:.75rem;gap:.4rem}   /* rail pieces closer than a name is tall (Kiro, sixth review) */
+html .ts-pk .ts-pk-nav.is-tight .ts-pk-fan li b{width:min(1.2rem,calc(var(--pk-fan-h,34px) - 6px));height:min(1.2rem,calc(var(--pk-fan-h,34px) - 6px));font-size:.66rem}
+html .ts-pk .ts-pk-nav.is-index .ts-pk-fan li{opacity:1;transform:none;transition-delay:var(--d-open,0ms)}
+html .ts-pk .ts-pk-nav.is-kept .ts-pk-fan li{pointer-events:auto;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}   /* kept open: tap a name to go there */
+html .ts-pk .ts-pk-nav.is-kept .ts-pk-ix{box-shadow:inset 0 0 0 2px var(--pk-on)}
+html.ts-pk-left .ts-pk .ts-pk-fan li{right:auto;left:52px;transform:translateX(-26px) scale(.55);transform-origin:left center}
+html.ts-pk-left .ts-pk .ts-pk-nav.is-index .ts-pk-fan li{transform:none}
+html .ts-pk .ts-pk-fan li.is-over{background:var(--pk-on);color:var(--pk-on-text);border-color:var(--pk-on)}   /* the finger is on it: lift and it stays */
+@media (prefers-reduced-motion:reduce){html .ts-pk .ts-pk-fan li,html .ts-pk .ts-pk-ix{transition-duration:.01ms!important;transition-delay:0ms!important}}
+/* the site header stays on top (Ryan, 2026-11-08: "make the header persistent too"); not on short landscape screens, where header, strip and rail would not fit */
+@media screen and (min-height:501px){
+html.ts-pk-title-ready #masthead{position:sticky;top:0;z-index:96}
+html.ts-pk-title-ready body.admin-bar #masthead{top:var(--wp-admin--admin-bar--height,32px)}
+html.ts-pk-title-ready #masthead .ast-mobile-header-content{max-height:calc(100vh - var(--pk-head,0px));max-height:calc(100dvh - var(--pk-head,0px));overflow-y:auto}
+html.ts-pk-title-ready body.admin-bar #masthead .ast-mobile-header-content{max-height:calc(100dvh - var(--pk-head,0px) - var(--wp-admin--admin-bar--height,32px))}   /* the phone menu still opens fully from the pinned header */
+}
+@media screen and (min-height:501px) and (max-width:600px){html.ts-pk-title-ready body.admin-bar #masthead{top:0}}
+/* Reserve a useful finger stroke for every summary. Its two neighboring topic
+   controls stay visible as the viewport changes; title-only stacks may fold. */
+html .ts-pk .ts-pk-card.fit2 .sum{max-height:14em}
+html .ts-pk .ts-pk-card.fit3 .sum{max-height:10em}
+html .ts-pk .ts-pk-card.fit3 .row{min-height:26px;padding:.1rem .5rem;font-size:.75rem}
+html .ts-pk .ts-pk-card.fit3 .row b{width:1.2rem;height:1.2rem}
+html .ts-pk .ts-pk-card.fit3 .open{padding:.45rem .7rem}
+html .ts-pk .ts-pk-card .more{display:none;margin:.2rem .3rem;font-size:.72rem;font-weight:700;color:var(--pk-muted);text-align:center}
+html .ts-pk .ts-pk-card.fit1 .row:not(.near){display:none}
+html .ts-pk .ts-pk-card.fit1 .more{display:block}
+html .ts-pk .ts-pk-card.fit4 .sum{max-height:6.6em}
+html .ts-pk .ts-pk-card.fit5 .row,html .ts-pk .ts-pk-card.fit5 .more{display:none}
+html .ts-pk:not(.ts-pk-titles) .ts-pk-card.fit5 .row{display:flex}
+html .ts-pk .ts-pk-card.fit5 .open small,html .ts-pk .ts-pk-card.fit5 .side,html .ts-pk .ts-pk-card.fit5 .sum{display:none}
+html .ts-pk .ts-pk-card.fit5{padding:.25rem}
+html .ts-pk .ts-pk-card.fit5 .open{margin:.15rem 0}
+html .ts-pk:not(.ts-pk-titles) .ts-pk-card.fit5 .open{padding-block:.25rem}   /* keep the neighbouring link without taking space from landscape reading */
+html .ts-pk .ts-pk-card.fit5 .open > b{font-size:.95rem;margin-top:0;min-height:40px;display:flex;align-items:center}
+html .ts-pk .ts-pk-card.fit5 .sum{display:block;max-height:4.4em;margin-top:.15rem}   /* gist and whole-paragraph summaries retain a scroll surface on the smallest fit */
+html .ts-pk .ts-pk-card.fit5 .sum.is-gist li{line-height:inherit}   /* compact gist lines use the summary's spacing, not the page list's taller leading */
+html .ts-pk .ts-pk-card.fit5 .hint{margin-top:.3rem;padding-top:.3rem}   /* very short screens or very large text retain the name, summary and jump hint */
+html .ts-pk .ts-pk-card.ts-pk-stack{overflow-y:auto;overscroll-behavior:contain}   /* last resort: the card scrolls, and fit() brings the open box into view */
+/* A form is a text/control block, not the full-width column around it. */
+@media screen{html.ts-pk-ready .ts-pk-title-rail form{box-sizing:border-box}}
+/* Move the complete disclosure box, not just its text: its full-width button
+   must remain tappable. The surrounding full-width column is unchanged. */
+@media screen{
+html.ts-pk-ready.ts-pk-pad .ts-pk-title-content .uagb-faq-item{box-sizing:border-box;max-width:calc(100% - var(--pk-clear))}
+html.ts-pk-ready.ts-pk-pad:not(.ts-pk-left) .ts-pk-title-content .uagb-faq-item{margin-right:var(--pk-clear)}
+html.ts-pk-ready.ts-pk-pad.ts-pk-left .ts-pk-title-content .uagb-faq-item{margin-left:var(--pk-clear)}
+}
+/* Newly added rails show names and navigation only, never paragraph previews. */
+.ts-pk-titles[hidden]{display:none!important}
+.ts-pk-titles.is-single .ts-pk-nav{bottom:auto;height:min(120px,calc(var(--pk-vh,100vh) * .24))}
+@media screen and (max-height:500px){.ts-pk:not(.ts-pk-titles) .ts-pk-card{width:min(440px,calc(var(--pk-vw,100vw) - 78px));max-height:calc(100dvh - 24px)}}
+.ts-pk-titles .ts-pk-card b{overflow-wrap:anywhere}
+html .ts-pk-titles .ts-pk-card .row span{white-space:normal;overflow:visible;overflow-wrap:anywhere}
+@media print{.ts-pk{display:none!important}html.ts-pk-ready .entry-content .ts-jump{display:block!important}}

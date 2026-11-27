@@ -1,10 +1,8 @@
 {
-  "id": "live-winding-willow-names-1",
+  "id": "live-peek-navigation-v2-1",
   "op": "run",
   "target": "live",
-  "script": "winding-willow/push-winding-willow.sh",
-  "args": [
-    "--apply"
-  ],
+  "script": "peek-navigation-v2-production/push-navigation-v2.sh",
+  "args": ["--apply"],
   "tests": "auto"
 }

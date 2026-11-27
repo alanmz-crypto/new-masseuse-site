@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # "Push, then test": the whole after-a-change battery against one site, in one command. Read-only (public GETs plus one read of the error log).
 #
-#   ./post-change-test.sh <target> [minutes]       target: live staging24 staging25 staging26 staging27 staging30 staging31 staging32 staging33 staging34 staging36 staging37 staging38 staging39
+#   ./post-change-test.sh <target> [minutes] [live-reference]       target: live staging24 staging25 staging26 staging27 staging30 staging31 staging32 staging33 staging34 staging36 staging37 staging38 staging39 staging40
 #                                                  minutes = how far back to read the server's PHP error log (default 120)
 #
 # Run it right after changing a site (a PHP version switch, a plugin or theme update, a deploy). It checks:
@@ -18,9 +18,11 @@ here=$(cd "$(dirname "$0")" && pwd)
 creds="${S26_CREDS:-$here/../../remote_execution.txt}"
 target="${1:-}"; mins="${2:-120}"
 case "$target" in
-  live) host_t="thaisolitude.com"; ref_t="staging36"; host_r="staging36.thaisolitude.com" ;;
+  live) host_t="thaisolitude.com"; ref_t="${3:-staging36}"
+    case "$ref_t" in staging36|staging40) host_r="$ref_t.thaisolitude.com" ;;
+      *) echo "Unknown live comparison reference: $ref_t" >&2; exit 1 ;; esac ;;
   staging24|staging25|staging26|staging27|staging30|staging31|staging32|staging33|staging34|staging36|staging37|staging38|staging39|staging40) host_t="$target.thaisolitude.com"; ref_t="live"; host_r="thaisolitude.com" ;;
-  *) echo "Usage: $0 <live|staging24|staging25|staging26|staging27|staging30|staging31|staging32|staging33|staging34|staging36|staging37|staging38|staging39> [minutes]" >&2; exit 1 ;;
+  *) echo "Usage: $0 <live|staging24|staging25|staging26|staging27|staging30|staging31|staging32|staging33|staging34|staging36|staging37|staging38|staging39|staging40> [minutes] [live-reference]" >&2; exit 1 ;;
 esac
 case "$mins" in ''|*[!0-9]*) echo "minutes must be a number" >&2; exit 1 ;; esac
 url_t="https://$host_t"; url_r="https://$host_r"

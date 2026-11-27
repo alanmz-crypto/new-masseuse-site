@@ -128,6 +128,16 @@ gate "Peek title resize rehearsal snapshots, failure stops and post-browser reco
 gate "Peek title resize owned-copy cleanup and evidence (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/core-title-resize/test-cleanup.py"
 gate "Peek visitor-release snapshot, rollback rendering and evidence guards (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/peek-release/test-rehearsal.py"
 gate "Peek isolated-copy loopback transport (offline)" python3 -I -B "$here/work-with-me-employer/link-ideas/peek-release/test-loopback.py"
+production_navigation() (
+  dir="$here/work-with-me-employer/peek-navigation-v2-production"
+  temp=$(mktemp -d) || exit 1
+  trap 'rm -rf "$temp"' EXIT
+  python3 -I -B "$dir/package.py" "$temp/navigation.zip" || exit 1
+  node --check "$dir/navigation.js" || exit 1
+  node --check "$dir/verify-browser.cjs"
+)
+gate "Production navigation payload pins and JavaScript syntax" production_navigation
+
 peek_js_syntax() {
   local file
   while IFS= read -r file; do node --check "$file" || return 1; done < <(find "$here/work-with-me-employer/link-ideas" "$here/work-with-me-employer/search-contrast" -name '*.mjs' -not -path '*/node_modules/*' | sort)
