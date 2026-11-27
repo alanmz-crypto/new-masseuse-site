@@ -143,7 +143,11 @@ case "$op" in
     if [ "$rc" -ne 0 ]; then finish 1 "$base failed (exit $rc)"; fi
     if [ "$write" = 1 ] && [ "${tests:-auto}" = auto ]; then
       need_browsers
-      step "post-change-test.sh $target (pages, structured data, 20 pixel comparisons, PHP log)" info bash "$wwm/post-change-test.sh" "$target"
+      post_args=("$target")
+      if [[ "$target" = live && "$script" = peek-navigation-v2-production/push-navigation-v2.sh ]]; then
+        post_args+=(120 staging40)
+      fi
+      step "post-change-test.sh $target (pages, structured data, 20 pixel comparisons, PHP log)" info bash "$wwm/post-change-test.sh" "${post_args[@]}"
       step "prove-restore.sh $target (the export taken before the change restores; what moved since)" info bash "$wwm/prove-restore.sh" "$target"
       finish 0 "$base succeeded; read the two test sections: differences are expected only where the change is"
     fi

@@ -14,6 +14,9 @@ const b = await chromium.launch();
 let ok = 0, bad = 0;
 for (const [w, h, v] of views) {
   const ctx = await b.newContext({ viewport: { width: w, height: h }, reducedMotion: 'reduce', deviceScaleFactor: 1 });
+  await ctx.addInitScript(origin => {
+    if (window === window.top && location.origin === origin) localStorage.setItem('ts-pk-tip', 'seen');
+  }, new URL(base).origin);
   for (const p of pages) {
     const page = await ctx.newPage();
     try {
