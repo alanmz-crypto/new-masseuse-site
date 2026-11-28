@@ -17,6 +17,11 @@ BOOKING = 'https://www.windingwillowacupuncture.com/butsaba-dusrai-lmt'
 HEADING = "Now booking appointments at Winding Willow Acupuncture and for Solitude's corporate & group massage in Portland."
 PARAGRAPH = 'Book an appointment with Butsaba at Winding Willow, or arrange a corporate or group massage at a suitable Portland venue with Thai Solitude.'
 LABEL = 'Winding Willow Acupuncture · Corporate & Group Massage · Portland'
+EXPECTED_NOINDEX_ROUTES = frozenset({
+    '/personal-automation/',
+    '/personal-automation/privacy/',
+    '/personal-automation/terms/',
+})
 
 
 class NoticeParser(HTMLParser):
@@ -183,7 +188,7 @@ def sample_published_post(failures: list[str]) -> str | None:
         return None
 
 
-def check_notice(url: str, expected_status: int, failures: list[str], *, require_indexable: bool = True) -> bool:
+def check_notice(url: str, expected_status: int, failures: list[str], *, expected_noindex: bool | None = False) -> bool:
     try:
         status, headers, body, final_url = fetch(url)
     except (URLError, TimeoutError) as error:
@@ -200,8 +205,12 @@ def check_notice(url: str, expected_status: int, failures: list[str], *, require
     parser = NoticeParser()
     parser.feed(html)
     check(len(parser.bands) == 1, f'{url}: expected one booking notice, found {len(parser.bands)}', failures)
-    if require_indexable:
-        check(not noindex_present(headers, parser.meta_robots), f'{url}: noindex found in HTML or response headers', failures)
+    if expected_noindex is not None:
+        actual_noindex = noindex_present(headers, parser.meta_robots)
+        if expected_noindex:
+            check(actual_noindex, f'{url}: expected noindex on this deliberately excluded route', failures)
+        else:
+            check(not actual_noindex, f'{url}: noindex found in HTML or response headers', failures)
     if len(parser.bands) != 1:
         return False
     band = parser.bands[0]
@@ -235,9 +244,15 @@ def main() -> int:
     print(f'Live published pages discovered through REST: {len(pages)}')
     for slug, link in pages:
         before = len(failures)
-        check_notice(link, 200, failures)
+        path = urlparse(link).path.rstrip('/') or '/'
+        path = path if path == '/' else path + '/'
+        expected_noindex = path in EXPECTED_NOINDEX_ROUTES
+        check_notice(link, 200, failures, expected_noindex=expected_noindex)
         if len(failures) == before:
-            print(f'PASS page /{slug}/')
+            if expected_noindex:
+                print(f'PASS page /{slug}/ (intentional noindex)')
+            else:
+                print(f'PASS page /{slug}/')
 
     post_url = sample_published_post(failures)
     if post_url:
@@ -280,7 +295,7 @@ def main() -> int:
         check(status == 200, f'Category archive returned HTTP {status}', failures)
         if status == 200:
             before = len(failures)
-            check_notice(urljoin(ORIGIN, '/category/general/'), 200, failures, require_indexable=False)
+            check_notice(urljoin(ORIGIN, '/category/general/'), 200, failures, expected_noindex=None)
             if len(failures) == before:
                 print('PASS category archive /category/general/')
     except (URLError, TimeoutError) as error:
