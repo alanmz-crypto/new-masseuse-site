@@ -17,8 +17,9 @@ if ( ! defined( 'ABSPATH' ) || ! class_exists( 'WP_CLI' ) ) {
 
 $home = untrailingslashit( home_url() );
 $host = strtolower( (string) wp_parse_url( $home, PHP_URL_HOST ) );
-if ( 'https://thaisolitude.com' !== $home || 'thaisolitude.com' !== $host ) {
-	WP_CLI::error( 'Refusing to run: expected exact live URL https://thaisolitude.com; found ' . $home );
+$allowed_homes = array( 'http://thaisolitude.com', 'https://thaisolitude.com' );
+if ( ! in_array( $home, $allowed_homes, true ) || 'thaisolitude.com' !== $host ) {
+	WP_CLI::error( 'Refusing to run: expected the exact live host thaisolitude.com (HTTP or HTTPS); found ' . $home );
 }
 if ( 'astra' !== get_stylesheet() ) {
 	WP_CLI::error( 'Active theme is not Astra.' );
@@ -136,7 +137,7 @@ $set = function ( $post_id, $content ) {
 if ( 'rollback' === $mode ) {
 	$snapshot_file = isset( $args[1] ) ? (string) $args[1] : '';
 	$snapshot      = $snapshot_file && is_file( $snapshot_file ) ? json_decode( (string) file_get_contents( $snapshot_file ), true ) : null;
-	if ( ! is_array( $snapshot ) || 'https://thaisolitude.com' !== ( $snapshot['home'] ?? '' ) || (int) ( $snapshot['snippet_id'] ?? 0 ) !== $snippet_id || (int) ( $snapshot['css_id'] ?? 0 ) !== $css_id || ! isset( $snapshot['old_code'], $snapshot['old_css'] ) || hash( 'sha256', (string) $snapshot['old_code'] ) !== ( $snapshot['old_code_sha256'] ?? '' ) || hash( 'sha256', (string) $snapshot['old_css'] ) !== ( $snapshot['old_css_sha256'] ?? '' ) || '1' !== ( $snapshot['blog_public'] ?? '' ) || ( $snapshot['new_code_sha256'] ?? '' ) !== $current_code_sha || ( $snapshot['new_css_sha256'] ?? '' ) !== $current_css_sha || '1' !== (string) get_option( 'blog_public' ) ) {
+	if ( ! is_array( $snapshot ) || $home !== ( $snapshot['home'] ?? '' ) || (int) ( $snapshot['snippet_id'] ?? 0 ) !== $snippet_id || (int) ( $snapshot['css_id'] ?? 0 ) !== $css_id || ! isset( $snapshot['old_code'], $snapshot['old_css'] ) || hash( 'sha256', (string) $snapshot['old_code'] ) !== ( $snapshot['old_code_sha256'] ?? '' ) || hash( 'sha256', (string) $snapshot['old_css'] ) !== ( $snapshot['old_css_sha256'] ?? '' ) || '1' !== ( $snapshot['blog_public'] ?? '' ) || ( $snapshot['new_code_sha256'] ?? '' ) !== $current_code_sha || ( $snapshot['new_css_sha256'] ?? '' ) !== $current_css_sha || '1' !== (string) get_option( 'blog_public' ) ) {
 		WP_CLI::error( 'Rollback requires the exact applied production state and blog_public=1; nothing changed.' );
 	}
 	$code_result = $set( $snippet_id, $snapshot['old_code'] );
@@ -170,7 +171,7 @@ if ( 'ready' !== $state || $new_css_sha_actual !== $new_css_sha ) {
 
 $snapshot = array(
 	'created'          => gmdate( 'c' ),
-	'home'             => 'https://thaisolitude.com',
+	'home'             => $home,
 	'snippet_id'       => $snippet_id,
 	'css_id'           => $css_id,
 	'old_code_sha256'  => $current_code_sha,
