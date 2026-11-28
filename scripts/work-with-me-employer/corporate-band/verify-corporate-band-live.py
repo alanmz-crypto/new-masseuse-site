@@ -327,3 +327,4 @@ if __name__ == '__main__':
     raise SystemExit(main())
 
 # ref: ./install-corporate-band-live.php — updates only the live snippet and Additional CSS while preserving blog_public=1
+# src: ../../../docs/reviews/2026-10-31-site-review.md — the three Personal Automation pages are deliberately noindexed and unlisted
