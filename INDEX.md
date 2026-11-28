@@ -1,5 +1,6 @@
 # Index (newest first)
 
+- 2026-11-28 07:42 UTC  **FAIL**  `live-corporate-band-anchorfix-20261128-1`  [reports/2026-11-28/074214-live-corporate-band-anchorfix-20261128-1.md](reports/2026-11-28/074214-live-corporate-band-anchorfix-20261128-1.md)  (run 46122300007)
 - 2026-11-28 07:14 UTC  **FAIL**  `live-corporate-band-guardfix-20261128-1`  [reports/2026-11-28/071430-live-corporate-band-guardfix-20261128-1.md](reports/2026-11-28/071430-live-corporate-band-guardfix-20261128-1.md)  (run 46120215246)
 - 2026-11-28 06:57 UTC  **INVALID**  `live-corporate-band-20261128-1`  [reports/2026-11-28/065747-live-corporate-band-20261128-1.md](reports/2026-11-28/065747-live-corporate-band-20261128-1.md)  (run 46118962957)
 - 2026-11-28 06:50 UTC  **FAIL**  `live-corporate-band-20261128-1`  [reports/2026-11-28/065019-live-corporate-band-20261128-1.md](reports/2026-11-28/065019-live-corporate-band-20261128-1.md)  (run 46118391146)
