@@ -93,10 +93,11 @@ $current_code_sha = hash( 'sha256', $current_code );
 $current_css_sha  = hash( 'sha256', $current_css );
 $cache_blob       = maybe_serialize( get_option( 'wpcode_snippets' ) );
 $cache_has_fallback = false !== strpos( $cache_blob, 'astra_content_before' );
-$new_css          = str_replace( $css_anchor, $css_rule . $css_anchor, $current_css, $css_anchor_count );
+$css_anchor_position = strpos( $current_css, $css_anchor );
+$new_css             = false === $css_anchor_position ? $current_css : substr_replace( $current_css, $css_rule . $css_anchor, $css_anchor_position, strlen( $css_anchor ) );
 $new_css_sha_actual = hash( 'sha256', $new_css );
 
-$ready   = $old_code_sha === $current_code_sha && $old_css_sha === $current_css_sha && 1 === $css_anchor_count && ! $cache_has_fallback;
+$ready   = $old_code_sha === $current_code_sha && $old_css_sha === $current_css_sha && false !== $css_anchor_position && ! $cache_has_fallback;
 $applied = $new_code_sha === $current_code_sha && $new_css_sha === $current_css_sha && 1 === substr_count( $current_css, $css_rule ) && $cache_has_fallback;
 $state   = $ready ? 'ready' : ( $applied ? 'applied' : 'CHANGED' );
 $report  = sprintf(
