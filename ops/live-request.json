@@ -1,8 +1,8 @@
 {
-  "id": "live-peek-navigation-v2-1",
+  "id": "live-corporate-band-20261128-1",
   "op": "run",
   "target": "live",
-  "script": "peek-navigation-v2-production/push-navigation-v2.sh",
+  "script": "corporate-band/push-corporate-band-live.sh",
   "args": ["--apply"],
   "tests": "auto"
 }
